@@ -40,7 +40,7 @@ extern "C" {
 	TELLSTICK_API int WINAPI devAddDeviceWithArguments(char* strVendor, int* intArguments[], int intNumberOfArguments);
 	TELLSTICK_API bool WINAPI devRemoveDevice(int intDeviceId);
 	TELLSTICK_API int WINAPI devGetDeviceId(int intDeviceIndex);
-	TELLSTICK_API bool WINAPI devHasMethod(int id, int methodname);
+	TELLSTICK_API int WINAPI devMethods(int id);
 }
 
 #define TELLSTICK_TURNON	1

@@ -285,22 +285,22 @@ bool __stdcall devRemoveDevice(int intDeviceId){
 	return blnSuccess;
 }
 
-bool __stdcall devHasMethod(int id, int methodname){
+int __stdcall devMethods(int id){
 
-	bool blnExists = false;
+	int intMethods = 0;
 	try{
 		TelldusSettings ts;
 		char* strModel = ts.getModel(id);
 		Device* dev = ts.getDevice(id);
 		if (dev != NULL) {
-			blnExists = dev->hasMethod(methodname, strModel);
+			intMethods = dev->methods(strModel);
 		}
 	}
 	catch(exception e){
-		blnExists = false;
+		intMethods = 0;
 		handleException(e);
 	}
-	return blnExists;
+	return intMethods;
 }
 
 

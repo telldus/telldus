@@ -9,7 +9,7 @@ public:
 	virtual void turnOn(void);
 	virtual void turnOff(void);
 	virtual void bell(void);
-	virtual bool hasMethod(int methodname, char* strModel);
+	virtual int methods(char* strModel);
 	
 public:
 	~DeviceNexa(void);

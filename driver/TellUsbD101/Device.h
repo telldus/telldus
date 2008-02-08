@@ -14,7 +14,7 @@ public:
 	virtual void turnOff(void);
 	virtual void bell(void);
 	virtual void dim(unsigned char level);
-	virtual bool hasMethod(int methodname, char* strModel);
+	virtual int methods(char* strModel);
 	static int getDongleIndex();
 
 	static void debugLog(char* debugstring);

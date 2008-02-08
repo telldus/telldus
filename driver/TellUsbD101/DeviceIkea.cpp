@@ -130,12 +130,10 @@ string DeviceIkea::getStringCode(unsigned char level){
 /*
 * Has the device got the method?
 */
-bool DeviceIkea::hasMethod(int methodname, char* strModel){
+int DeviceIkea::methods(char* strModel){
 
 	if(strcmp(strModel, TELLSTICK_DEVICE_KOPPLA) == 0) {
-		if(methodname == TELLSTICK_TURNON || methodname == TELLSTICK_TURNOFF || methodname == TELLSTICK_DIM){
-			return true;
-		}
+		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_DIM);
 	}
-	return false;
+	return 0;
 }

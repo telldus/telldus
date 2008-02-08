@@ -45,8 +45,8 @@ void Device::dim(unsigned char level){
 }
 
 /*
-* Has Method, virtual
+* Methods, virtual
 */
-bool Device::hasMethod(int methodname, char* strModel){
-	return false;
+int Device::methods(char* strModel){
+	return 0;
 }

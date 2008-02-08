@@ -72,21 +72,8 @@ void DeviceSartano::turnOff(void){
 /*
 * Has the device got the method?
 */
-bool DeviceSartano::hasMethod(int methodname, char* strModel){
-
-	bool blnExists = false;
-
-	try{
-//		if(strModel == "xxxx" || strModel == "yyyy"){
-			if(methodname == TELLSTICK_TURNON || methodname == TELLSTICK_TURNOFF){
-				blnExists = true;
-//			}
-		}
-	}
-	catch(...){
-		throw;
-	}
-	return blnExists;
+int DeviceSartano::methods(char* strModel){
+	return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
 }
 
 /*

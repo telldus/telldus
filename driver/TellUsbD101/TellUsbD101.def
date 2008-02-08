@@ -17,7 +17,7 @@ EXPORTS
 	devAddDevice @12
 	devRemoveDevice @13
 
-	devHasMethod @14
+	devMethods @14
 	devTurnOn	@16
 	devTurnOff	@17
 	devBell @18

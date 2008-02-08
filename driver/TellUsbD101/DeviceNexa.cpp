@@ -132,7 +132,7 @@ string DeviceNexa::getStringCode(int intToConvert){
 /*
 * Has the device got the method?
 */
-bool DeviceNexa::hasMethod(int methodname, char* strModel){
+int DeviceNexa::methods(char* strModel){
 
 	if( strcmp(strModel, TELLSTICK_DEVICE_YCR3500) == 0 ||
 		strcmp(strModel, TELLSTICK_DEVICE_YCR300D) == 0 ||
@@ -151,13 +151,9 @@ bool DeviceNexa::hasMethod(int methodname, char* strModel){
 		strcmp(strModel, TELLSTICK_DEVICE_EL2010) == 0
  		)
 	{
-		if(methodname == TELLSTICK_TURNON || methodname == TELLSTICK_TURNOFF){
-			return true;
-		}
+		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
 	} else if ( strcmp(strModel, TELLSTICK_DEVICE_ML7100) == 0 ) {
-		if(methodname == TELLSTICK_BELL) {
-			return true;
-		}
+		return TELLSTICK_BELL;
 	}
-	return false;
+	return 0;
 }
