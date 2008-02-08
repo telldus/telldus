@@ -263,7 +263,7 @@ int __stdcall devAddDevice(){
 	int intNewDeviceId = -1;
 	try{
 		TelldusSettings ts;
-		int intNewDeviceId = ts.addDevice();
+		intNewDeviceId = ts.addDevice();
 	}
 	catch(exception e){
 		intNewDeviceId = -1;
@@ -292,7 +292,9 @@ bool __stdcall devHasMethod(int id, int methodname){
 		TelldusSettings ts;
 		char* strModel = ts.getModel(id);
 		Device* dev = ts.getDevice(id);
-		blnExists = dev->hasMethod(methodname, strModel);
+		if (dev != NULL) {
+			blnExists = dev->hasMethod(methodname, strModel);
+		}
 	}
 	catch(exception e){
 		blnExists = false;
