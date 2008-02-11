@@ -35,6 +35,7 @@ Feel free to improve the program.
 
 Revision history
 =================
+2008-02-11    0.2.0    Added support for SARTANO devices. General code cleanups.
 2008-02-11    0.1.4    Completely new switch logic, hopefully more robust with fewer bugs.
 2008-02-10    0.1.3    Modified switch logic. When dawn is before on-time, lights are not switched on. If dusk time is after off time, lights are not switched on.
 2008-01-30    0.1.2    Corrected a bug regarding datetimelocal.

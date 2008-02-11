@@ -13,10 +13,10 @@ $TELLSTICK_DEVICE = "/dev/tellstick";
 $CONFIG_FILE = "/etc/tellstickd.conf";
 $LOG_FILE = "/var/log/tellstickd";
 
-# After this point you really shouldn't need to go
+# You should not need to go beyond this point (unless you have found a bug or need to improve the functionality).
 $AUTHOR = "Magnus Juntti, juntti\@mail.com";
 $PROGRAM_NAME = "tellstickd";
-$VERSION = "0.1.4";
+$VERSION = "0.2.0";
 
 
 # Structure of the configurations to be read;
@@ -96,7 +96,7 @@ sub is_inbetween_times
 	$time2 += 2400;
     }
 
-    if ($curr_time >= $time1 && $curr_time <= $time2) {
+    if ($curr_time >= $time1 && $curr_time < $time2) {
 	return $YES;
     }
 
@@ -109,13 +109,23 @@ sub rfcmd_exec {
     my $device_id = $_[0];
     my $action = $_[1];
 
+    if ($device_cfg[$device_id][0] eq "SARTANO") {
+	$RFCMD_OPTIONS = "$TELLSTICK_DEVICE $device_cfg[$device_id][0] $device_cfg[$device_id][1]";
+    }
+    elsif ($device_cfg[$device_id][0] eq "NEXA") {
+	$RFCMD_OPTIONS = "$TELLSTICK_DEVICE $device_cfg[$device_id][0] $device_cfg[$device_id][1] $device_cfg[$device_id][2]";
+    }
+    else {
+	die("$PROGRAM_NAME: Device $device_id has an unknown protocol. Only NEXA and SARTANO allowed.\n");
+    }
 
-    # Action = 1 means turn lamp on
+
+    # Action = 1 means turn device on, 0 turn device off
     if ($action == 1) {
 	# Only turn the device on if it is not already turned on to avoid flashing dimmers.
 	if ($device_cfg[$device_id][22] == 0) {
 	    printf("$PROGRAM_NAME: Time is $current_time. Switching on $device_cfg[$device_id][0] device $device_cfg[$device_id][1]$device_cfg[$device_id][2].\n");
-	    `$RFCMD $TELLSTICK_DEVICE $device_cfg[$device_id][0] $device_cfg[$device_id][1] $device_cfg[$device_id][2] 1`;
+	    `$RFCMD $RFCMD_OPTIONS 1`;
 	    $device_cfg[$device_id][22] = 1;
 
 	    return;
@@ -127,7 +137,7 @@ sub rfcmd_exec {
     elsif ($action == 0) {
 	if ($device_cfg[$device_id][22] == 1) {
 	    printf("$PROGRAM_NAME: Time is $current_time. Switching off $device_cfg[$device_id][0] device $device_cfg[$device_id][1]$device_cfg[$device_id][2].\n");
-	    `$RFCMD $TELLSTICK_DEVICE $device_cfg[$device_id][0] $device_cfg[$device_id][1] $device_cfg[$device_id][2] 0`;
+	    `$RFCMD $RFCMD_OPTIONS 0`;
 	    $device_cfg[$device_id][22] = 0;
 
 	    return;
@@ -242,6 +252,10 @@ sub read_config
 	    $device_cfg[$i][7] = $inrad[7];   # Time in advance when getting dark
 	    $device_cfg[$i][22] = 1;          # Initial state set to so that they will be switched of at startup
 
+
+	    if ($device_cfg[$device_id][0] eq "SARTANO") {
+		$device_cfg[$i][2] = "";
+	    }
 
 	    # Some sanity checks
 	    # If the turn on time is not to be used, this is marked with -1
@@ -419,11 +433,11 @@ while (1) {
 	    # Sunrise time + requested offset
 	    if ($device_cfg[$i][5] == $YES) {
 		$device_cfg[$i][20] = add_time($sunrise_time, $device_cfg[$i][6]);
-		printf("$PROGRAM_NAME: Device $device_cfg[$i][1]$device_cfg[$i][2] sunrise off time set to $device_cfg[$i][20].\n");
+		printf("$PROGRAM_NAME: Device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] sunrise off time set to $device_cfg[$i][20].\n");
 
 		# Sunset time - requested offset
 		$device_cfg[$i][21] = subtract_time($sunset_time, $device_cfg[$i][7]);
-		printf("$PROGRAM_NAME: Device $device_cfg[$i][1]$device_cfg[$i][2] sunset on time set to $device_cfg[$i][21].\n");
+		printf("$PROGRAM_NAME: Device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] sunset on time set to $device_cfg[$i][21].\n");
 	    }
 	}
     }
