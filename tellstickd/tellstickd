@@ -1,0 +1,478 @@
+#!/usr/bin/perl
+
+use DateTime;
+use DateTime::Event::Sunrise;
+use Time::Local;
+
+# The following variables should be adapted to your geographical location and system setup
+$LATITUDE = "65.603";    # 65.603N 22.18W -> Luleå, Sweden
+$LONGITUDE = "22.18";
+$TIMEZONE = "Europe/Stockholm";
+$RFCMD = "/usr/local/bin/rfcmd";
+$TELLSTICK_DEVICE = "/dev/tellstick";
+$CONFIG_FILE = "/etc/tellstickd.conf";
+$LOG_FILE = "/var/log/tellstickd";
+
+# After this point you really shouldn't need to go
+$AUTHOR = "Magnus Juntti, juntti\@mail.com";
+$PROGRAM_NAME = "tellstickd";
+$VERSION = "0.1.3";
+
+
+# Structure of the configurations to be read;
+# $device_cfg[$i][0];   # Protocol, only NEXA and SARTANO supported so far by rfcmd
+# $device_cfg[$i][1];   # Housecode A-P
+# $device_cfg[$i][2];   # Channel 1-3
+# $device_cfg[$i][3];   # On time
+# $device_cfg[$i][4];   # Off time
+# $device_cfg[$i][5];   # Off when bright
+# $device_cfg[$i][6];   # Off when bright delay
+# $device_cfg[$i][7];   # Time in advance when getting dark
+# $device_cfg[$i][20];  # Sunrise off time, calculated in this program and stored here
+# $device_cfg[$i][21];  # Sunset on time, calculated in this program and stored here
+
+sub daemonize {
+    chdir '/'                 or die "$PROGRAM_NAME: Can't chdir to /: $!";
+    open STDIN, '/dev/null'   or die "$PROGRAM_NAME: Can't read /dev/null: $!";
+    defined(my $pid = fork)   or die "$PROGRAM_NAME: Can't fork: $!";
+    exit if $pid;
+    setsid                    or die "$PROGRAM_NAME: Can't start a new session: $!";
+    umask 0;
+}
+
+sub get_sunrise_time
+{
+    ($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time);
+    $Year += 1900;
+    $Month++;
+
+    my $dt = DateTime->new( year => $Year, month => $Month, day => $Day, time_zone => $TIMEZONE, );
+    my $sunrise = DateTime::Event::Sunrise ->new( longitude => $LONGITUDE, latitude => $LATITUDE, altitude => '0', iteration => '1');
+
+    $Month--;
+
+    my $dt1 = $sunrise->sunrise_datetime($dt);
+
+    ($sunrise_time) = $dt1->datetime =~ /T(.*)\:/;
+
+    return $sunrise_time
+}
+
+sub get_sunset_time
+{
+    ($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time);
+    $Year += 1900;
+    $Month++;
+
+    my $dt = DateTime->new( year => $Year, month => $Month, day => $Day, time_zone => $TIMEZONE, );
+    my $sunrise = DateTime::Event::Sunrise ->new( longitude => $LONGITUDE, latitude => $LATITUDE, altitude => '0', iteration => '1');
+
+    $Month--;
+
+    my $dt2 = $sunrise->sunset_datetime($dt);
+
+    ($sunset_time) = $dt2->datetime =~ /T(.*)\:/;
+
+    return $sunset_time;
+}
+
+sub is_sun_up
+{
+    $sunrise_time = get_sunrise_time();
+    $sunset_time = get_sunset_time();
+
+#    printf("sunrise: $sunrise_time\nsunset: $sunset_time\n");
+
+    my $curr_time = sprintf("%0d%02d", $Hour, $Minute);
+    $sunrise_time =~ s/://g;
+    $sunset_time =~ s/://g;
+
+    #Remove leading zeroes.
+    $curr_time =~ s/^0*//;
+    $sunrise_time =~ s/^0*//;
+    $sunset_time =~ s/^0*//;
+
+#    printf("curr_time = $curr_time, sunrise_time = $sunrise_time, sunset_time = $sunset_time\n");
+
+    if ($curr_time > $sunrise_time && $curr_time < $sunset_time) {
+	return $YES;
+    }
+    else {
+	return $NO;
+    }
+}
+
+sub add_time
+{
+    my $time1 = $_[0];
+    my $time2 = $_[1];
+
+    ($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time);
+    $Year += 1900;
+
+    ($time1_hour, $time1_minute) = $time1 =~ /(.*)\:(.*)/;
+    ($time2_hour, $time2_minute) = $time2 =~ /(.*)\:(.*)/;
+
+    $time1_epoch_seconds = timelocal(0,$time1_minute,$time1_hour, $Day, $Month, $Year);
+    $time2_offset_seconds = 3600*$time2_hour + 60*$time2_minute;
+
+    my $result_seconds = $time1_epoch_seconds + $time2_offset_seconds;
+  
+    ($min,$hour)= (localtime($result_seconds))[1,2];
+
+    return sprintf("%02d:%02d", $hour, $min);
+
+}
+
+sub subtract_time
+{
+    my $time1 = $_[0];
+    my $time2 = $_[1];
+
+    ($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time);
+    $Year += 1900;
+
+    ($time1_hour, $time1_minute) = $time1 =~ /(.*)\:(.*)/;
+    ($time2_hour, $time2_minute) = $time2 =~ /(.*)\:(.*)/;
+
+    $time1_epoch_seconds = timelocal(0,$time1_minute,$time1_hour, $Day, $Month, $Year);
+    $time2_offset_seconds = 3600*$time2_hour + 60*$time2_minute;
+
+    my $result_seconds = $time1_epoch_seconds - $time2_offset_seconds;
+  
+    ($min,$hour)= (localtime($result_seconds))[1,2];
+
+    return sprintf("%02d:%02d", $hour, $min);
+
+}
+
+# Time format sanity check routine
+sub is_time_format_correct
+{
+     my $time = $_[0];
+     my $ok = $YES;
+
+     my $number_of_matches = 0;
+
+     my $tmp = $time;
+     while ($tmp =~ /\:/g) {
+	 $number_of_matches++;
+     }
+
+     if ($number_of_matches != 1) {
+	 $ok = $NO;
+     }
+
+     (my $hour, my $minute) = $time =~ /^(.*?)\:(.*?)$/;
+
+     if ($hour !~ /^[0-9]+$/) {
+	 $ok = $NO;
+     }
+
+     if ($minute !~ /^[0-9]+$/) {
+	 $ok = $NO;
+     }
+
+     if ($hour < 0 || $hour > 23 || $minute < 0 || $minute > 59) {
+	 $ok = $NO;
+     }
+
+
+     return $ok;
+}
+
+sub read_config
+{
+    my $input_file = $_[0];
+
+    printf("$PROGRAM_NAME: Reading configuration file $conf_file...\n");
+
+    open(CFG_FILE, "<$input_file") or die "$PROGRAM_NAME: Could not access config file: $conf_file\n";
+
+    my $i = 0;
+    while ($_ = <CFG_FILE>) {
+	if ($_ !~ /^\#/ && $_ !~ /^\s/ && $_ !~ /^\n/) {
+	    chomp($_);
+	    @inrad = split /\s+/, $_;
+	    $device_cfg[$i][0] = $inrad[0];   # Protocol
+	    $device_cfg[$i][1] = $inrad[1];   # Housecode A-P
+	    $device_cfg[$i][2] = $inrad[2];   # Channel 1-3
+	    $device_cfg[$i][3] = $inrad[3];   # On time
+	    $device_cfg[$i][4] = $inrad[4];   # Off time
+	    $device_cfg[$i][5] = $inrad[5];   # Off when bright
+	    $device_cfg[$i][6] = $inrad[6];   # Off when bright delay
+	    $device_cfg[$i][7] = $inrad[7];   # Time in advance when getting dark
+
+
+	    # Some sanity checks
+	    # If the turn on time is not to be used, this is marked with -1
+	    if ($device_cfg[$i][3] != -1) { 
+		if (is_time_format_correct($device_cfg[$i][3]) == $NO) {
+		    die("$PROGRAM_NAME: Format of turn on time for device $device_cfg[$i][1]$device_cfg[$i][2] not correct. Exiting.\n");
+		}
+	    }
+	    else {
+		printf("$PROGRAM_NAME: Noted configuration for device $device_cfg[$i][1]$device_cfg[$i][2] with no turn on time.\n");
+	    }
+
+	    # If the turn off time is not to be used, this is marked with -1
+	    if ($device_cfg[$i][4] != -1) { 
+		if (is_time_format_correct($device_cfg[$i][4]) == $NO) {
+		    die("$PROGRAM_NAME: Format of turn off time for device $device_cfg[$i][1]$device_cfg[$i][2] not correct. Exiting.\n");
+		}
+	    }
+	    else {
+		printf("$PROGRAM_NAME: Noted configuration for device $device_cfg[$i][1]$device_cfg[$i][2] with no turn off time.\n");
+	    }
+
+	    if (is_time_format_correct($device_cfg[$i][6]) == $NO) {
+		die("$PROGRAM_NAME: Format of turn off after sunrise for device $device_cfg[$i][1]$device_cfg[$i][2] not correct. Exiting.\n");
+	    }
+
+	    if (is_time_format_correct($device_cfg[$i][7]) == $NO) {
+		die("$PROGRAM_NAME: Format of turn on before sunset for device $device_cfg[$i][1]$device_cfg[$i][2] not correct. Exiting.\n");
+	    }
+
+
+
+	    printf("$PROGRAM_NAME: $device_cfg[$i][0] device $device_cfg[$i][1]$device_cfg[$i][2] config:\n");
+	    if ($device_cfg[$i][3] == -1) {
+		printf("            On time:                 N/A\n");
+	    }
+	    else {
+		printf("            On time:                 $device_cfg[$i][3]\n");
+	    }
+
+	    if ($device_cfg[$i][4] == -1) {
+		printf("            Off time:                N/A\n");
+	    }
+	    else {
+		printf("            Off time:                $device_cfg[$i][4]\n");
+	    }
+
+	    if ($device_cfg[$i][5] == $YES) {
+		printf("            Turned off daytime:      yes\n");
+		printf("            Off post sunrise:        $device_cfg[$i][6]\n");
+		printf("            On pre sunset:           $device_cfg[$i][7]\n");
+	    }
+	    else {
+		printf("            Turned off daytime:      no\n");
+	    }
+
+	    $i++;
+	}
+    }
+
+    return $i;
+
+    close(CFG_FILE);
+}
+
+sub usageprompt
+{
+    printf("This program is intended for control of Tellstick remote devices.\n");
+    printf("Authour: $AUTHOR\n");
+    printf("Version: %s\n", $VERSION);
+
+    printf("\nUsage: %s [options]\n", $PROGRAM_NAME);
+    printf("\nOptions:\n");
+    printf("-c, --config filename   Searchpath to configuration file, if not given $CONFIG_FILE is assumed.\n");
+    printf("-d, --daemon            Run the program as a daemon and write a logfile.\n");
+    printf("-h, --help              Show this message and exit.\n");
+    printf("-l, --logfile filename  Redirect daemon logs to filename. Default $LOG_FILE\n");       
+}
+
+
+# ############## Main section ######################
+
+@months = qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec);
+@weekDays = qw(Sun Mon Tue Wed Thu Fri Sat Sun);
+$NO = 0;
+$YES = 1;
+$conf_file = "";
+$make_daemon = $NO;
+$output_to_logfile = $NO;
+
+$i = -1;
+while ($i < $#ARGV) {
+    if ($i+1 <= $#ARGV) {
+	if ($ARGV[$i+1] =~ /^--config$/ || $ARGV[$i+1] =~ /^-c$/) {
+	    $i++;
+	    $conf_file = $ARGV[$i+1];
+	}
+	elsif ($ARGV[$i+1] =~ /^-d$/ || $ARGV[$i+1] =~ /^--daemon$/) {
+	    $output_to_logfile = $YES;
+	    $make_daemon = $YES;
+	}
+	elsif ($ARGV[$i+1] =~ /^-h$/ || $ARGV[$i+1] =~ /^--help$/) {
+	    usageprompt();
+	    exit;
+	}
+	elsif ($ARGV[$i+1] =~ /^-l$/ || $ARGV[$i+1] =~ /^--logfile$/) {
+	    $output_to_logfile = $YES;
+	    $i++;
+	    $LOG_FILE = $ARGV[$i+1];
+	}
+	else {
+	    die("$PROGRAM_NAME: Unknown input argument: $ARGV[$i+1]\n");
+	}
+    }
+
+    $i++;
+}
+
+
+if ($output_to_logfile == $YES) {
+    open STDOUT, "> $LOG_FILE" or die "$PROGRAM_NAME: Can't write to $LOG_FILE: $!";
+    open STDERR, ">> $LOG_FILE" or die "$PROGRAM_NAME: Can't write to $LOG_FILE: $!";
+}
+
+if ($make_daemon == $YES) {
+    &daemonize();
+}
+
+if (length($conf_file) < 1) {
+    $conf_file = $CONFIG_FILE;
+}
+
+printf("$PROGRAM_NAME: Starting $PROGRAM_NAME version $VERSION...\n");
+
+# Read the configuration file
+$number_of_devices = read_config($conf_file);
+
+if ($number_of_devices < 1) {
+    die("$PROGRAM_NAME: Configuration file has no devices to control, exiting.\n");
+}
+else {
+    printf("$PROGRAM_NAME: Configurations for $number_of_devices device(s) read.\n");
+}
+
+###################################################################################################
+# Now to the eternal loop
+my $first_loop = $YES;
+while (1) {
+    # What is the current time
+    ($second, $minute, $hour, $dayOfMonth, $month, $yearOffset, $dayOfWeek, $dayOfYear, $daylightSavings) = localtime();
+    $year = 1900 + $yearOffset;
+    # $current_time = "$hour:$minute:$second, $weekDays[$dayOfWeek] $months[$month] $dayOfMonth, $year";
+    $current_time = sprintf("%02d:%02d", $hour, $minute);
+    # printf("$PROGRAM_NAME: Time is $current_time\n"); 
+
+    ###################################################################################################
+
+    # First, lets set the sunrise and sunset times for the devices that applies to, once a day, at 00:00.
+    if ($first_loop == $YES || $current_time eq "00:00") {
+	my $sunrise_time = get_sunrise_time();
+	printf("$PROGRAM_NAME: Sunrise today is expected at $sunrise_time\n");
+
+	my $sunset_time = get_sunset_time();
+	printf("$PROGRAM_NAME: Sunset today is expected at $sunset_time\n");
+
+	my $i = 0;
+	while($i < $number_of_devices) {
+	    # If the device is supposed to be off daytime, the following applies
+
+	    # Sunrise time + requested offset
+	    if ($device_cfg[$i][5] == $YES) {
+		$device_cfg[$i][20] = add_time($sunrise_time, $device_cfg[$i][6]);
+		printf("$PROGRAM_NAME: Device $device_cfg[$i][1]$device_cfg[$i][2] sunrise off time set to $device_cfg[$i][20].\n");
+	    }
+
+	    # Sunset time - requested offset
+	    if ($device_cfg[$i][5] == $YES) {
+		$device_cfg[$i][21] = subtract_time($sunset_time, $device_cfg[$i][7]);
+		printf("$PROGRAM_NAME: Device $device_cfg[$i][1]$device_cfg[$i][2] sunset on time set to $device_cfg[$i][21].\n");
+	    }
+	    
+	    $i++;
+	}
+    }
+
+    ###################################################################################################
+
+    # Below the required actions are performed for each device
+    my $i = 0;
+    while($i < $number_of_devices) {
+
+
+
+	# ON
+	# This is where we turn devices on depending on the state of the sun and the settings in daytime savings field $device_cfg[$i][5]
+	if ($device_cfg[$i][3] eq $current_time) {
+	    # In case daytime turn off is activated, check if sun is up before turning on lamp
+	    if ($device_cfg[$i][5] == $YES) {
+		if (is_sun_up() == $NO) {
+		    printf("$PROGRAM_NAME: Time is $current_time and the sun is not yet up. Turning on $device_cfg[$i][0] device $device_cfg[$i][1]$device_cfg[$i][2].\n");
+		    `$RFCMD $TELLSTICK_DEVICE $device_cfg[$i][0] $device_cfg[$i][1] $device_cfg[$i][2] 1`;
+		}
+		# This is where we end up when daytime saving is on and the sun is already up
+		else {
+		    	printf("$PROGRAM_NAME: Time is $current_time and the sun is up. $device_cfg[$i][0] device $device_cfg[$i][1]$device_cfg[$i][2] not turned on.\n");
+		}
+	    }
+	    # If daytime turn off is not activated, always turn on the lamps on.
+	    else {
+		printf("$PROGRAM_NAME: Time is $current_time. Turning on $device_cfg[$i][0] device $device_cfg[$i][1]$device_cfg[$i][2].\n");
+		`$RFCMD $TELLSTICK_DEVICE $device_cfg[$i][0] $device_cfg[$i][1] $device_cfg[$i][2] 1`;
+	    }
+	}
+
+
+
+
+
+
+
+	# DAWN / DUSK ACTIONS
+	# If on when bright feature is 1 (yes) then do the following (i.e. if lights are supposed to be turned off daytime)
+	if ($device_cfg[$i][5] == $YES) {
+	    # Sunrise turn off
+	    if ($device_cfg[$i][20] eq $current_time) {
+		printf("$PROGRAM_NAME: Time is $current_time. Turning off $device_cfg[$i][0] device $device_cfg[$i][1]$device_cfg[$i][2].\n");
+		`$RFCMD $TELLSTICK_DEVICE $device_cfg[$i][0] $device_cfg[$i][1] $device_cfg[$i][2] 0`;
+	    }
+
+	    # Sunset turn on if the sunset turn on time is before the desired turn off time
+	    if ($device_cfg[$i][21] eq $current_time) {
+		my $t_off = $device_cfg[$i][4];
+		my $ss_on = $device_cfg[$i][21];
+		$t_off =~ s/://g;
+		$ss_on =~ s/://g;
+		$t_off =~ s/^0*//;
+		$ss_on =~ s/^0*//;
+
+		# If sunset on time is before the desired off time then turn the device on.
+		if ($ss_on < $t_off) {
+		    printf("$PROGRAM_NAME: Time is $current_time. Turning on $device_cfg[$i][0] device $device_cfg[$i][1]$device_cfg[$i][2].\n");
+		    `$RFCMD $TELLSTICK_DEVICE $device_cfg[$i][0] $device_cfg[$i][1] $device_cfg[$i][2] 1`;
+		}
+		# If the sunset on time is after the desired off time then do nothing
+		else {
+		    printf("$PROGRAM_NAME: Time is $current_time. Not turning on $device_cfg[$i][0] device $device_cfg[$i][1]$device_cfg[$i][2] since the desired turn off time is already passed.\n");
+		}
+	    }
+	}
+
+
+
+
+
+
+	# OFF
+	# This is where we turn devices off, we do this regardless of any other settings.
+	if ($device_cfg[$i][4] eq $current_time) {
+	    printf("$PROGRAM_NAME: Time is $current_time. Turning off $device_cfg[$i][0] device $device_cfg[$i][1]$device_cfg[$i][2].\n");
+	    `$RFCMD $TELLSTICK_DEVICE $device_cfg[$i][0] $device_cfg[$i][1] $device_cfg[$i][2] 0`;
+	}
+	
+
+
+
+
+	# Move on to next device 
+	$i++;
+    }
+
+    $first_loop = $NO;
+    sleep(60);   # Wait a while until next round should be less than or equal to a minute, [seconds]
+}

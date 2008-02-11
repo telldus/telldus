@@ -1,0 +1,85 @@
+#!/bin/bash
+#
+# Init file for tellstickd remote light switch daemon
+#
+# Written by Magnus Juntti
+#
+# chkconfig: 35 54 46
+# description: tellstickd remote light switch daemon
+#
+# processname: tellstickd
+# config: /etc/tellstickd.conf
+# pidfile: /var/run/tellstick
+
+source /etc/rc.d/init.d/functions
+
+EXECUTABLE="/usr/local/bin/tellstickd"
+CONFIG_FILE="/etc/tellstickd.conf"
+LOG_FILE="/var/log/tellstickd"
+OPTIONS=""
+
+[ -x $EXECUTABLE ] || exit 1
+[ -r $CONFIG_FILE ] || exit 1
+
+RETVAL=0
+prog="tellstickd"
+desc="remote switch daemon"
+
+start() {
+	echo -n $"Starting $desc ($prog): "
+	daemon --user root $prog --daemon --config $CONFIG_FILE --logfile $LOG_FILE $OPTIONS
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
+	return $RETVAL
+}
+
+stop() {
+	echo -n $"Shutting down $desc ($prog): "
+	killproc $prog
+	RETVAL=$?
+	echo
+	[ $RETVAL -eq 0 ] && rm -f /var/lock/subsys/$prog
+	return $RETVAL
+}
+
+restart() {
+	stop
+	start
+}
+
+reload() {
+	echo -n $"Reloading $desc ($prog): "
+	killproc $prog -HUP
+	RETVAL=$?
+	echo
+	return $RETVAL
+}
+
+case "$1" in
+  start)
+	start
+	;;
+  stop)
+	stop
+	;;
+  restart)
+	restart
+	;;
+  reload)
+	reload
+	;;
+  condrestart)
+	[ -e /var/lock/subsys/$prog ] && restart
+	RETVAL=$?
+	;;
+  status)
+	status $prog
+	RETVAL=$?
+	;;
+  *)
+	echo $"Usage: $0 {start|stop|restart|reload|condrestart|status}"
+	RETVAL=1
+esac
+
+exit $RETVAL

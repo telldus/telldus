@@ -1,0 +1,46 @@
+General
+=================
+This software is intended for controlling remote switch devices with rfcmd.
+
+Dependencies
+=================
+For this script to run you need perl and the following perl-modules:
+DateTime
+DateTime::Event::Sunrise
+
+
+Installation
+=================
+0. Install rfcmd and necessary perl modules (on a typical Fedora/Centos/RHEL with the necessary repos installed, this should do it for you: yum install perl-DateTime perl-DateTime-Event-Sunrise).
+1. Copy the file tellstickd-version/tellstickd to /usr/local/bin/
+2. Copy the file tellstickd-version/tellstickd.conf to /etc/
+3. If you have a Redhat-type system (like RHEL, Centos or Fedora), copy the script found under tellstickd-version/init_script to /etc/rc.d/init.d, this way you can control the script as any other service, easily make it start at boot (with chkconfig --level 35 tellstickd on).
+4. Remember to make the perl-script and init script executable. As root chmod 755 /usr/local/bin/tellstickd /etc/rc.d/init.d/tellstickd
+
+Configuration
+=================
+1. In the very top of the perl file /usr/local/bin/tellstickd:
+	a. Set appropriate coordinates and timezone to suit your geographical location (further information: http://search.cpan.org/dist/DateTime-Event-Sunrise/lib/DateTime/Event/Sunrise.pm).
+	b. Specifiy the rfcmd binary location. Default: /usr/local/bin/rfcmd
+	c. Specify the tellstick device name. Default: /dev/tellstick
+	d. If the default locations of the config and logfile not are according to your wishes, modify them here. Note 1: this can also be done with the tellstickd options --config and --logfile. Note 2: If you use the init script, these settings must be done in the init-script /etc/rc.d/init.d/tellstickd.
+2. If you would like this script to start at boot-time, on a RHEL/Centos/Fedora system, execute the following command chkconfig --level 35 tellstickd on
+
+
+Licensing
+=================
+This software is freely distributable under the GNU General Public License,
+the full content of the license is included in the file LICENSE.
+Feel free to improve the program.
+
+Revision history
+=================
+2008-02-10    0.1.3    Modified switch logic. When dawn is before on-time, lights are not switched on. If dusk time is after off time, lights are not switched on.
+2008-01-30    0.1.2    Corrected a bug regarding datetimelocal.
+2008-01-15    0.1.1    Fixed some bugs. Added logfile capability.
+2008-01-11    0.1.0    Initial release
+
+Author
+=================
+Magnus Juntti
+juntti@mail.com
