@@ -16,7 +16,7 @@ $LOG_FILE = "/var/log/tellstickd";
 # You should not need to go beyond this point (unless you have found a bug or need to improve the functionality).
 $AUTHOR = "Magnus Juntti, juntti\@mail.com";
 $PROGRAM_NAME = "tellstickd";
-$VERSION = "0.2.0";
+$VERSION = "0.2.1";
 
 
 # Structure of the configurations to be read;
@@ -374,6 +374,9 @@ while ($i < $#ARGV) {
     $i++;
 }
 
+if ($#ARGV < 0) {
+    die "Try \"$PROGRAM_NAME --help\" for more information.\n";
+}
 
 if ($output_to_logfile == $YES) {
     open STDOUT, "> $LOG_FILE" or die "$PROGRAM_NAME: Can't write to $LOG_FILE: $!";
