@@ -1,5 +1,6 @@
 #!/usr/bin/perl
 
+use POSIX;
 use DateTime;
 use DateTime::Event::Sunrise;
 use Time::Local;
@@ -16,7 +17,7 @@ $LOG_FILE = "/var/log/tellstickd";
 # You should not need to go beyond this point (unless you have found a bug or need to improve the functionality).
 $AUTHOR = "Magnus Juntti, mjuntti\@gmail.com";
 $PROGRAM_NAME = "tellstickd";
-$VERSION = "0.2.1";
+$VERSION = "0.3.0";
 
 
 # Structure of the configurations to be read;
@@ -28,9 +29,13 @@ $VERSION = "0.2.1";
 # $device_cfg[$i][5];   # Off when bright, 0 = no, 1 = yes
 # $device_cfg[$i][6];   # Off when bright delay
 # $device_cfg[$i][7];   # Time in advance when getting dark
+# $device_cfg[$i][8];   # On time random interval
+# $device_cfg[$i][9];   # Off time random interval
 # $device_cfg[$i][20];  # Sunrise off time, calculated in this program and stored here
 # $device_cfg[$i][21];  # Sunset on time, calculated in this program and stored here
 # $device_cfg[$i][22];  # Switch state, 0 = off, 1 = on
+# $device_cfg[$i][23];  # Original on time
+# $device_cfg[$i][24];  # Original off time
 
 sub daemonize {
     chdir '/'                 or die "$PROGRAM_NAME: Can't chdir to /: $!";
@@ -82,8 +87,8 @@ sub is_inbetween_times
 {
     my $time1 = $_[0];
     my $time2 = $_[1];
+    my $curr_time = $_[2];
 
-    my $curr_time = $current_time;
     $curr_time =~ s/://g;
     $time1 =~ s/://g;
     $time2 =~ s/://g;
@@ -150,6 +155,8 @@ sub rfcmd_exec {
     return;
 }
 
+
+# Time format xx:yy for input parameters
 sub add_time
 {
     my $time1 = $_[0];
@@ -159,7 +166,8 @@ sub add_time
     $Year += 1900;
 
     ($time1_hour, $time1_minute) = $time1 =~ /(.*)\:(.*)/;
-    ($time2_hour, $time2_minute) = $time2 =~ /(.*)\:(.*)/;
+    ($time2_hour, $time2_minute) = $time2 =~ /(.*)\:(.*)/;$device_cfg[$i][8] = $inrad[8];   # On time random interval
+	    $device_cfg[$i][9] = $inrad[9];   # Off time random interval
 
     $time1_epoch_seconds = timelocal(0,$time1_minute,$time1_hour, $Day, $Month, $Year);
     $time2_offset_seconds = 3600*$time2_hour + 60*$time2_minute;
@@ -172,6 +180,7 @@ sub add_time
 
 }
 
+# Time format xx:yy for input parameters
 sub subtract_time
 {
     my $time1 = $_[0];
@@ -193,6 +202,53 @@ sub subtract_time
     return sprintf("%02d:%02d", $hour, $min);
 
 }
+
+sub randomize_on
+{
+    my $device_id = $_[0];
+
+    (my $random_hour, my $random_minute) = $device_cfg[$device_id][8] =~ /(.*)\:(.*)/;
+
+    my $rand_res = int(rand(60 * $random_hour + $random_minute));
+
+    my $rand_res_hour = floor($rand_res / 60);
+    my $rand_res_minute = $rand_res - 60*$rand_res_hour;
+
+    # Here we have the random offset in format xx:yy
+    my $random_time = sprintf("%02d:%02d", $rand_res_hour, $rand_res_minute);
+
+    $device_cfg[$device_id][3] = add_time($device_cfg[$device_id][23], $random_time); 
+
+    if (is_inbetween_times($device_cfg[$device_id][23], $device_cfg[$device_id][24], $device_cfg[$device_id][3]) == $NO) {
+	randomize_on($device_id);
+    } 
+
+    return;
+}
+
+sub randomize_off
+{
+    my $device_id = $_[0];
+
+    (my $random_hour, my $random_minute) = $device_cfg[$device_id][9] =~ /(.*)\:(.*)/;
+
+    my $rand_res = int(rand(60 * $random_hour + $random_minute));
+
+    my $rand_res_hour = floor($rand_res / 60);
+    my $rand_res_minute = $rand_res - 60*$rand_res_hour;
+
+    # Here we have the random offset in format xx:yy
+    my $random_time = sprintf("%02d:%02d", $rand_res_hour, $rand_res_minute);
+
+    $device_cfg[$device_id][4] = add_time($device_cfg[$device_id][24], $random_time); 
+
+    if (is_inbetween_times($device_cfg[$device_id][23], $device_cfg[$device_id][24], $device_cfg[$device_id][4]) == $YES) {
+	randomize_off($device_id);
+    } 
+
+    return;
+}
+
 
 # Time format sanity check routine
 sub is_time_format_correct
@@ -242,18 +298,22 @@ sub read_config
 	if ($_ !~ /^\#/ && $_ !~ /^\s/ && $_ !~ /^\n/) {
 	    chomp($_);
 	    @inrad = split /\s+/, $_;
-	    $device_cfg[$i][0] = $inrad[0];   # Protocol
-	    $device_cfg[$i][1] = $inrad[1];   # Housecode A-P
-	    $device_cfg[$i][2] = $inrad[2];   # Channel 1-3
-	    $device_cfg[$i][3] = $inrad[3];   # On time
-	    $device_cfg[$i][4] = $inrad[4];   # Off time
-	    $device_cfg[$i][5] = $inrad[5];   # Off when bright
-	    $device_cfg[$i][6] = $inrad[6];   # Off when bright delay
-	    $device_cfg[$i][7] = $inrad[7];   # Time in advance when getting dark
-	    $device_cfg[$i][22] = 1;          # Initial state set to so that they will be switched of at startup
+	    $device_cfg[$i][0] = $inrad[0];            # Protocol
+	    $device_cfg[$i][1] = $inrad[1];            # Housecode A-P
+	    $device_cfg[$i][2] = $inrad[2];            # Channel 1-3
+	    $device_cfg[$i][3] = $inrad[3];            # On time
+	    $device_cfg[$i][4] = $inrad[4];            # Off time
+	    $device_cfg[$i][5] = $inrad[5];            # Off when bright
+	    $device_cfg[$i][6] = $inrad[6];            # Off when bright delay
+	    $device_cfg[$i][7] = $inrad[7];            # Time in advance when getting dark
+	    $device_cfg[$i][8] = $inrad[8];            # On time random interval
+	    $device_cfg[$i][9] = $inrad[9];            # Off time random interval
+	    $device_cfg[$i][22] = 1;                   # Initial state set to on (1) so that they will be switched of at startup
+	    $device_cfg[$i][23] = $device_cfg[$i][3];  # Original on time is stored here pos 3 will be used for random on times
+	    $device_cfg[$i][24] = $device_cfg[$i][4];  # Original off time is stored here pos 4 will be used for random on times
 
 
-	    if ($device_cfg[$device_id][0] eq "SARTANO") {
+	    if ($device_cfg[$i][0] eq "SARTANO") {
 		$device_cfg[$i][2] = "";
 	    }
 
@@ -290,26 +350,29 @@ sub read_config
 
 	    printf("$PROGRAM_NAME: $device_cfg[$i][0] device $device_cfg[$i][1]$device_cfg[$i][2] config:\n");
 	    if ($device_cfg[$i][3] == -1) {
-		printf("            On time:                 N/A\n");
+		printf("            On time:                    N/A\n");
 	    }
 	    else {
-		printf("            On time:                 $device_cfg[$i][3]\n");
+		printf("            On time:                    $device_cfg[$i][3]\n");
 	    }
 
 	    if ($device_cfg[$i][4] == -1) {
-		printf("            Off time:                N/A\n");
+		printf("            Off time:                   N/A\n");
 	    }
 	    else {
-		printf("            Off time:                $device_cfg[$i][4]\n");
+		printf("            Off time:                   $device_cfg[$i][4]\n");
 	    }
 
+	    printf("            On time random interval:    $device_cfg[$i][8]\n");
+	    printf("            Off time random interval:   $device_cfg[$i][9]\n");
+
 	    if ($device_cfg[$i][5] == $YES) {
-		printf("            Turned off daytime:      yes\n");
-		printf("            Off post sunrise:        $device_cfg[$i][6]\n");
-		printf("            On pre sunset:           $device_cfg[$i][7]\n");
+		printf("            Turned off daytime:         yes\n");
+		printf("            Off post sunrise:           $device_cfg[$i][6]\n");
+		printf("            On pre sunset:              $device_cfg[$i][7]\n");
 	    }
 	    else {
-		printf("            Turned off daytime:      no\n");
+		printf("            Turned off daytime:         no\n");
 	    }
 
 	    $i++;
@@ -419,10 +482,10 @@ while (1) {
     # First, lets set the sunrise and sunset times for the devices that it applies to, once a day, at 00:00.
     if ($first_loop == $YES || $current_time eq "00:00") {
 	my $sunrise_time = get_sunrise_time();
-	printf("$PROGRAM_NAME: Sunrise today is expected at $sunrise_time\n");
+	printf("$PROGRAM_NAME: Time is $current_time. Sunrise today is expected at $sunrise_time\n");
 
 	my $sunset_time = get_sunset_time();
-	printf("$PROGRAM_NAME: Sunset today is expected at $sunset_time\n");
+	printf("$PROGRAM_NAME: Time is $current_time. Sunset today is expected at $sunset_time\n");
 
 	for (my $i = 0; $i < $number_of_devices; $i++) {
 	    # Initially all devices are switched off to get a known state
@@ -430,9 +493,15 @@ while (1) {
 		rfcmd_exec($i, 0);
 	    }
 
+	    # Lets set the actual on- and offtimes depending on random interval settings.
+	    randomize_on($i);
+	    printf("$PROGRAM_NAME: Today device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] will be turned on $device_cfg[$i][3]\n");
+
+	    randomize_off($i);
+	    printf("$PROGRAM_NAME: Today device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] will be turned off $device_cfg[$i][4]\n");
+
 
 	    # If the device is supposed to be off daytime, the following applies
-
 	    # Sunrise time + requested offset
 	    if ($device_cfg[$i][5] == $YES) {
 		$device_cfg[$i][20] = add_time($sunrise_time, $device_cfg[$i][6]);
@@ -453,7 +522,7 @@ while (1) {
 
 	# First if we consider daytime off
 	if ($device_cfg[$i][5] == $YES) {
-	    if (is_inbetween_times($device_cfg[$i][3], $device_cfg[$i][4]) == $YES && is_inbetween_times($device_cfg[$i][20], $device_cfg[$i][21]) == $NO) {
+	    if (is_inbetween_times($device_cfg[$i][3], $device_cfg[$i][4], $current_time) == $YES && is_inbetween_times($device_cfg[$i][20], $device_cfg[$i][21]) == $NO) {
 		rfcmd_exec($i, 1);
 	    }
 	    else {
@@ -464,7 +533,7 @@ while (1) {
 
 	# Then if daytime off is not considered
 	else {
-	    if (is_inbetween_times($device_cfg[$i][3], $device_cfg[$i][4]) == $YES) {
+	    if (is_inbetween_times($device_cfg[$i][3], $device_cfg[$i][4], $current_time) == $YES) {
 		rfcmd_exec($i, 1);
 	    }
 	    else {
@@ -476,5 +545,5 @@ while (1) {
     }
 
     $first_loop = $NO;
-    sleep(60);   # Wait a while until next round should be less than or equal to a minute [seconds].
+    sleep(50);   # Wait a while until next round [seconds].
 }
