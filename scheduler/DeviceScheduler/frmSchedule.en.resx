@@ -1,0 +1,451 @@
+<?xml version="1.0" encoding="utf-8"?>
+<root>
+  <!-- 
+    Microsoft ResX Schema 
+    
+    Version 2.0
+    
+    The primary goals of this format is to allow a simple XML format 
+    that is mostly human readable. The generation and parsing of the 
+    various data types are done through the TypeConverter classes 
+    associated with the data types.
+    
+    Example:
+    
+    ... ado.net/XML headers & schema ...
+    <resheader name="resmimetype">text/microsoft-resx</resheader>
+    <resheader name="version">2.0</resheader>
+    <resheader name="reader">System.Resources.ResXResourceReader, System.Windows.Forms, ...</resheader>
+    <resheader name="writer">System.Resources.ResXResourceWriter, System.Windows.Forms, ...</resheader>
+    <data name="Name1"><value>this is my long string</value><comment>this is a comment</comment></data>
+    <data name="Color1" type="System.Drawing.Color, System.Drawing">Blue</data>
+    <data name="Bitmap1" mimetype="application/x-microsoft.net.object.binary.base64">
+        <value>[base64 mime encoded serialized .NET Framework object]</value>
+    </data>
+    <data name="Icon1" type="System.Drawing.Icon, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+        <value>[base64 mime encoded string representing a byte array form of the .NET Framework object]</value>
+        <comment>This is a comment</comment>
+    </data>
+                
+    There are any number of "resheader" rows that contain simple 
+    name/value pairs.
+    
+    Each data row contains a name, and value. The row also contains a 
+    type or mimetype. Type corresponds to a .NET class that support 
+    text/value conversion through the TypeConverter architecture. 
+    Classes that don't support this are serialized and stored with the 
+    mimetype set.
+    
+    The mimetype is used for serialized objects, and tells the 
+    ResXResourceReader how to depersist the object. This is currently not 
+    extensible. For a given mimetype the value must be set accordingly:
+    
+    Note - application/x-microsoft.net.object.binary.base64 is the format 
+    that the ResXResourceWriter will generate, however the reader can 
+    read any of the formats listed below.
+    
+    mimetype: application/x-microsoft.net.object.binary.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Binary.BinaryFormatter
+            : and then encoded with base64 encoding.
+    
+    mimetype: application/x-microsoft.net.object.soap.base64
+    value   : The object must be serialized with 
+            : System.Runtime.Serialization.Formatters.Soap.SoapFormatter
+            : and then encoded with base64 encoding.
+
+    mimetype: application/x-microsoft.net.object.bytearray.base64
+    value   : The object must be serialized into a byte array 
+            : using a System.ComponentModel.TypeConverter
+            : and then encoded with base64 encoding.
+    -->
+  <xsd:schema id="root" xmlns="" xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata">
+    <xsd:import namespace="http://www.w3.org/XML/1998/namespace" />
+    <xsd:element name="root" msdata:IsDataSet="true">
+      <xsd:complexType>
+        <xsd:choice maxOccurs="unbounded">
+          <xsd:element name="metadata">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" />
+              </xsd:sequence>
+              <xsd:attribute name="name" use="required" type="xsd:string" />
+              <xsd:attribute name="type" type="xsd:string" />
+              <xsd:attribute name="mimetype" type="xsd:string" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="assembly">
+            <xsd:complexType>
+              <xsd:attribute name="alias" type="xsd:string" />
+              <xsd:attribute name="name" type="xsd:string" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="data">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+                <xsd:element name="comment" type="xsd:string" minOccurs="0" msdata:Ordinal="2" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" msdata:Ordinal="1" />
+              <xsd:attribute name="type" type="xsd:string" msdata:Ordinal="3" />
+              <xsd:attribute name="mimetype" type="xsd:string" msdata:Ordinal="4" />
+              <xsd:attribute ref="xml:space" />
+            </xsd:complexType>
+          </xsd:element>
+          <xsd:element name="resheader">
+            <xsd:complexType>
+              <xsd:sequence>
+                <xsd:element name="value" type="xsd:string" minOccurs="0" msdata:Ordinal="1" />
+              </xsd:sequence>
+              <xsd:attribute name="name" type="xsd:string" use="required" />
+            </xsd:complexType>
+          </xsd:element>
+        </xsd:choice>
+      </xsd:complexType>
+    </xsd:element>
+  </xsd:schema>
+  <resheader name="resmimetype">
+    <value>text/microsoft-resx</value>
+  </resheader>
+  <resheader name="version">
+    <value>2.0</value>
+  </resheader>
+  <resheader name="reader">
+    <value>System.Resources.ResXResourceReader, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <resheader name="writer">
+    <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
+  </resheader>
+  <data name="cmdCancel.Text" xml:space="preserve">
+    <value>Cancel</value>
+  </data>
+  <assembly alias="System.Drawing" name="System.Drawing, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a" />
+  <data name="label1.Size" type="System.Drawing.Size, System.Drawing">
+    <value>38, 13</value>
+  </data>
+  <data name="label1.Text" xml:space="preserve">
+    <value>Name:</value>
+  </data>
+  <data name="columnHeader1.Text" xml:space="preserve">
+    <value>Unit</value>
+  </data>
+  <data name="columnHeader2.Text" xml:space="preserve">
+    <value>Action</value>
+  </data>
+  <data name="label2.Size" type="System.Drawing.Size, System.Drawing">
+    <value>63, 13</value>
+  </data>
+  <data name="label2.Text" xml:space="preserve">
+    <value>Description:</value>
+  </data>
+  <data name="cmdAdd.Text" xml:space="preserve">
+    <value>Add...</value>
+  </data>
+  <data name="cmdRemove.Text" xml:space="preserve">
+    <value>Remove...</value>
+  </data>
+  <data name="label4.Size" type="System.Drawing.Size, System.Drawing">
+    <value>56, 13</value>
+  </data>
+  <data name="label4.Text" xml:space="preserve">
+    <value>Start date:</value>
+  </data>
+  <data name="groupBox1.Text" xml:space="preserve">
+    <value>Generall information</value>
+  </data>
+  <data name="groupBox2.Text" xml:space="preserve">
+    <value>Unit(s)</value>
+  </data>
+  <data name="label12.Size" type="System.Drawing.Size, System.Drawing">
+    <value>48, 13</value>
+  </data>
+  <data name="label12.Text" xml:space="preserve">
+    <value>a month.</value>
+  </data>
+  <data name="cboMontOct.Text" xml:space="preserve">
+    <value>October</value>
+  </data>
+  <data name="cboMonthAug.Size" type="System.Drawing.Size, System.Drawing">
+    <value>59, 17</value>
+  </data>
+  <data name="cboMonthAug.Text" xml:space="preserve">
+    <value>August</value>
+  </data>
+  <data name="cboMonthJuly.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 17</value>
+  </data>
+  <data name="cboMonthJuly.Text" xml:space="preserve">
+    <value>July</value>
+  </data>
+  <data name="cboMonthJune.Size" type="System.Drawing.Size, System.Drawing">
+    <value>49, 17</value>
+  </data>
+  <data name="cboMonthJune.Text" xml:space="preserve">
+    <value>June</value>
+  </data>
+  <data name="cboMonthMay.Size" type="System.Drawing.Size, System.Drawing">
+    <value>46, 17</value>
+  </data>
+  <data name="cboMonthMay.Text" xml:space="preserve">
+    <value>May</value>
+  </data>
+  <data name="cboMonthMar.Size" type="System.Drawing.Size, System.Drawing">
+    <value>56, 17</value>
+  </data>
+  <data name="cboMonthMar.Text" xml:space="preserve">
+    <value>March</value>
+  </data>
+  <data name="cboMonthFeb.Size" type="System.Drawing.Size, System.Drawing">
+    <value>67, 17</value>
+  </data>
+  <data name="cboMonthFeb.Text" xml:space="preserve">
+    <value>February</value>
+  </data>
+  <data name="cboMonthJan.Size" type="System.Drawing.Size, System.Drawing">
+    <value>63, 17</value>
+  </data>
+  <data name="cboMonthJan.Text" xml:space="preserve">
+    <value>January</value>
+  </data>
+  <data name="cboMonthDays.Items" xml:space="preserve">
+    <value>Monday</value>
+  </data>
+  <data name="cboMonthDays.Items1" xml:space="preserve">
+    <value>Tuesday</value>
+  </data>
+  <data name="cboMonthDays.Items2" xml:space="preserve">
+    <value>Wednesday</value>
+  </data>
+  <data name="cboMonthDays.Items3" xml:space="preserve">
+    <value>Thursday</value>
+  </data>
+  <data name="cboMonthDays.Items4" xml:space="preserve">
+    <value>Friday</value>
+  </data>
+  <data name="cboMonthDays.Items5" xml:space="preserve">
+    <value>Saturday</value>
+  </data>
+  <data name="cboMonthDays.Items6" xml:space="preserve">
+    <value>Sunday</value>
+  </data>
+  <data name="cboOrder.Items" xml:space="preserve">
+    <value>First</value>
+  </data>
+  <data name="cboOrder.Items1" xml:space="preserve">
+    <value>Second</value>
+  </data>
+  <data name="cboOrder.Items2" xml:space="preserve">
+    <value>Third</value>
+  </data>
+  <data name="cboOrder.Items3" xml:space="preserve">
+    <value>Fourth</value>
+  </data>
+  <data name="cboOrder.Items4" xml:space="preserve">
+    <value>Last</value>
+  </data>
+  <data name="rdbMonthThe.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 17</value>
+  </data>
+  <data name="rdbMonthThe.Text" xml:space="preserve">
+    <value>The</value>
+  </data>
+  <data name="rdbMonthDay.Size" type="System.Drawing.Size, System.Drawing">
+    <value>44, 17</value>
+  </data>
+  <data name="rdbMonthDay.Text" xml:space="preserve">
+    <value>Day</value>
+  </data>
+  <data name="label11.Size" type="System.Drawing.Size, System.Drawing">
+    <value>48, 13</value>
+  </data>
+  <data name="label11.Text" xml:space="preserve">
+    <value>a month.</value>
+  </data>
+  <data name="grpMonth.Text" xml:space="preserve">
+    <value>Schedule, month</value>
+  </data>
+  <data name="label14.Size" type="System.Drawing.Size, System.Drawing">
+    <value>176, 13</value>
+  </data>
+  <data name="label14.Text" xml:space="preserve">
+    <value>This schedule only runs at one time.</value>
+  </data>
+  <data name="grpOnce.Text" xml:space="preserve">
+    <value>Schedule, once</value>
+  </data>
+  <data name="label8.Size" type="System.Drawing.Size, System.Drawing">
+    <value>30, 13</value>
+  </data>
+  <data name="label8.Text" xml:space="preserve">
+    <value> day.</value>
+  </data>
+  <data name="label5.Size" type="System.Drawing.Size, System.Drawing">
+    <value>34, 13</value>
+  </data>
+  <data name="label5.Text" xml:space="preserve">
+    <value>Every</value>
+  </data>
+  <data name="grpDay.Text" xml:space="preserve">
+    <value>Schedule, days</value>
+  </data>
+  <data name="label9.Size" type="System.Drawing.Size, System.Drawing">
+    <value>50, 13</value>
+  </data>
+  <data name="label9.Text" xml:space="preserve">
+    <value>:st week.</value>
+  </data>
+  <data name="label10.Size" type="System.Drawing.Size, System.Drawing">
+    <value>34, 13</value>
+  </data>
+  <data name="label10.Text" xml:space="preserve">
+    <value>Every</value>
+  </data>
+  <data name="cboWeekSaturday.Size" type="System.Drawing.Size, System.Drawing">
+    <value>68, 17</value>
+  </data>
+  <data name="cboWeekSaturday.Text" xml:space="preserve">
+    <value>Saturday</value>
+  </data>
+  <data name="cboWeekSunday.Size" type="System.Drawing.Size, System.Drawing">
+    <value>62, 17</value>
+  </data>
+  <data name="cboWeekSunday.Text" xml:space="preserve">
+    <value>Sunday</value>
+  </data>
+  <data name="cboWeekFriday.Size" type="System.Drawing.Size, System.Drawing">
+    <value>54, 17</value>
+  </data>
+  <data name="cboWeekFriday.Text" xml:space="preserve">
+    <value>Friday</value>
+  </data>
+  <data name="cboWeekThursday.Size" type="System.Drawing.Size, System.Drawing">
+    <value>70, 17</value>
+  </data>
+  <data name="cboWeekThursday.Text" xml:space="preserve">
+    <value>Thursday</value>
+  </data>
+  <data name="cboWeekWednesday.Size" type="System.Drawing.Size, System.Drawing">
+    <value>83, 17</value>
+  </data>
+  <data name="cboWeekWednesday.Text" xml:space="preserve">
+    <value>Wednesday</value>
+  </data>
+  <data name="cboWeekTuesday.Size" type="System.Drawing.Size, System.Drawing">
+    <value>67, 17</value>
+  </data>
+  <data name="cboWeekTuesday.Text" xml:space="preserve">
+    <value>Tuesday</value>
+  </data>
+  <data name="cboWeekMonday.Size" type="System.Drawing.Size, System.Drawing">
+    <value>64, 17</value>
+  </data>
+  <data name="cboWeekMonday.Text" xml:space="preserve">
+    <value>Monday</value>
+  </data>
+  <data name="grpWeek.Text" xml:space="preserve">
+    <value>Schedule, week</value>
+  </data>
+  <data name="cboSchedule.Items" xml:space="preserve">
+    <value>Every day</value>
+  </data>
+  <data name="cboSchedule.Items1" xml:space="preserve">
+    <value>Every week</value>
+  </data>
+  <data name="cboSchedule.Items2" xml:space="preserve">
+    <value>Every month</value>
+  </data>
+  <data name="cboSchedule.Items3" xml:space="preserve">
+    <value>Once</value>
+  </data>
+  <data name="label7.Size" type="System.Drawing.Size, System.Drawing">
+    <value>33, 13</value>
+  </data>
+  <data name="label7.Text" xml:space="preserve">
+    <value>Time:</value>
+  </data>
+  <data name="label6.Size" type="System.Drawing.Size, System.Drawing">
+    <value>55, 13</value>
+  </data>
+  <data name="label6.Text" xml:space="preserve">
+    <value>Schedule:</value>
+  </data>
+  <data name="groupBox3.Text" xml:space="preserve">
+    <value>Scheduling details</value>
+  </data>
+  <data name="tabPage1.Text" xml:space="preserve">
+    <value>General</value>
+  </data>
+  <data name="tabPage2.Text" xml:space="preserve">
+    <value>Schedule</value>
+  </data>
+  <data name="label13.Size" type="System.Drawing.Size, System.Drawing">
+    <value>279, 13</value>
+  </data>
+  <data name="label13.Text" xml:space="preserve">
+    <value>Fill out the information below to schedule on or more units.</value>
+  </data>
+  <data name="label3.Size" type="System.Drawing.Size, System.Drawing">
+    <value>141, 13</value>
+  </data>
+  <data name="label3.Text" xml:space="preserve">
+    <value>Create a new schedule.</value>
+  </data>
+  <data name="pictureBox1.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
+    <value>
+        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
+</value>
+  </data>
+  <data name="$this.Text" xml:space="preserve">
+    <value>Schedule unit(s)</value>
+  </data>
+</root>

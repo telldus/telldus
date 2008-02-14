@@ -1,0 +1,61 @@
+<?xml version="1.0" encoding="utf-8"?>
+<xs:schema id="DataStorage" targetNamespace="http://tempuri.org/DataStorage.xsd" xmlns:mstns="http://tempuri.org/DataStorage.xsd" xmlns="http://tempuri.org/DataStorage.xsd" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:msdata="urn:schemas-microsoft-com:xml-msdata" xmlns:msprop="urn:schemas-microsoft-com:xml-msprop" attributeFormDefault="qualified" elementFormDefault="qualified">
+  <xs:annotation>
+    <xs:appinfo source="urn:schemas-microsoft-com:xml-msdatasource">
+      <DataSource DefaultConnectionIndex="0" FunctionsComponentName="QueriesTableAdapter" Modifier="AutoLayout, AnsiClass, Class, Public" SchemaSerializationMode="IncludeSchema" xmlns="urn:schemas-microsoft-com:xml-msdatasource">
+        <Connections>
+        </Connections>
+        <Tables>
+        </Tables>
+        <Sources>
+        </Sources>
+      </DataSource>
+    </xs:appinfo>
+  </xs:annotation>
+  <xs:element name="DataStorage" msdata:IsDataSet="true" msdata:UseCurrentLocale="true" msprop:Generator_UserDSName="DataStorage" msprop:Generator_DataSetName="DataStorage">
+    <xs:complexType>
+      <xs:choice minOccurs="0" maxOccurs="unbounded">
+        <xs:element name="Job" msprop:Generator_UserTableName="Job" msprop:Generator_RowDeletedName="JobRowDeleted" msprop:Generator_RowChangedName="JobRowChanged" msprop:Generator_RowClassName="JobRow" msprop:Generator_RowChangingName="JobRowChanging" msprop:Generator_RowEvArgName="JobRowChangeEvent" msprop:Generator_RowEvHandlerName="JobRowChangeEventHandler" msprop:Generator_TableClassName="JobDataTable" msprop:Generator_TableVarName="tableJob" msprop:Generator_RowDeletingName="JobRowDeleting" msprop:Generator_TablePropName="Job">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ID" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="1" msprop:Generator_UserColumnName="ID" msprop:Generator_ColumnVarNameInTable="columnID" msprop:Generator_ColumnPropNameInRow="ID" msprop:Generator_ColumnPropNameInTable="IDColumn" type="xs:int" />
+              <xs:element name="Name" msprop:Generator_UserColumnName="Name" msprop:Generator_ColumnVarNameInTable="columnName" msprop:Generator_ColumnPropNameInRow="Name" msprop:Generator_ColumnPropNameInTable="NameColumn" type="xs:string" />
+              <xs:element name="Description" msprop:Generator_UserColumnName="Description" msprop:Generator_ColumnVarNameInTable="columnDescription" msprop:Generator_ColumnPropNameInRow="Description" msprop:Generator_ColumnPropNameInTable="DescriptionColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="JobName" msprop:Generator_UserColumnName="JobName" msprop:Generator_ColumnVarNameInTable="columnJobName" msprop:Generator_ColumnPropNameInRow="JobName" msprop:Generator_ColumnPropNameInTable="JobNameColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="Username" msprop:Generator_UserColumnName="Username" msprop:Generator_ColumnVarNameInTable="columnUsername" msprop:Generator_ColumnPropNameInRow="Username" msprop:Generator_ColumnPropNameInTable="UsernameColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="Password" msprop:Generator_UserColumnName="Password" msprop:Generator_ColumnVarNameInTable="columnPassword" msprop:Generator_ColumnPropNameInRow="Password" msprop:Generator_ColumnPropNameInTable="PasswordColumn" type="xs:string" minOccurs="0" />
+              <xs:element name="StartTime" msprop:Generator_UserColumnName="StartTime" msprop:Generator_ColumnPropNameInRow="StartTime" msprop:Generator_ColumnVarNameInTable="columnStartTime" msprop:Generator_ColumnPropNameInTable="StartTimeColumn" type="xs:string" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+        <xs:element name="JobActions" msprop:Generator_UserTableName="JobActions" msprop:Generator_RowDeletedName="JobActionsRowDeleted" msprop:Generator_RowChangedName="JobActionsRowChanged" msprop:Generator_RowClassName="JobActionsRow" msprop:Generator_RowChangingName="JobActionsRowChanging" msprop:Generator_RowEvArgName="JobActionsRowChangeEvent" msprop:Generator_RowEvHandlerName="JobActionsRowChangeEventHandler" msprop:Generator_TableClassName="JobActionsDataTable" msprop:Generator_TableVarName="tableJobActions" msprop:Generator_RowDeletingName="JobActionsRowDeleting" msprop:Generator_TablePropName="JobActions">
+          <xs:complexType>
+            <xs:sequence>
+              <xs:element name="ID" msdata:AutoIncrement="true" msdata:AutoIncrementSeed="1" msprop:Generator_UserColumnName="ID" msprop:Generator_ColumnVarNameInTable="columnID" msprop:Generator_ColumnPropNameInRow="ID" msprop:Generator_ColumnPropNameInTable="IDColumn" type="xs:int" />
+              <xs:element name="JobID" msprop:Generator_UserColumnName="JobID" msprop:Generator_ColumnVarNameInTable="columnJobID" msprop:Generator_ColumnPropNameInRow="JobID" msprop:Generator_ColumnPropNameInTable="JobIDColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="DeviceID" msprop:Generator_UserColumnName="DeviceID" msprop:Generator_ColumnVarNameInTable="columnDeviceID" msprop:Generator_ColumnPropNameInRow="DeviceID" msprop:Generator_ColumnPropNameInTable="DeviceIDColumn" type="xs:int" minOccurs="0" />
+              <xs:element name="TurnOn" msprop:Generator_UserColumnName="TurnOn" msprop:Generator_ColumnVarNameInTable="columnTurnOn" msprop:Generator_ColumnPropNameInRow="TurnOn" msprop:Generator_ColumnPropNameInTable="TurnOnColumn" type="xs:boolean" minOccurs="0" />
+            </xs:sequence>
+          </xs:complexType>
+        </xs:element>
+      </xs:choice>
+    </xs:complexType>
+    <xs:unique name="Constraint1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:Job" />
+      <xs:field xpath="mstns:ID" />
+    </xs:unique>
+    <xs:unique name="Constraint2">
+      <xs:selector xpath=".//mstns:Job" />
+      <xs:field xpath="mstns:Name" />
+    </xs:unique>
+    <xs:unique name="JobActionsKey1" msdata:PrimaryKey="true">
+      <xs:selector xpath=".//mstns:JobActions" />
+      <xs:field xpath="mstns:ID" />
+    </xs:unique>
+  </xs:element>
+  <xs:annotation>
+    <xs:appinfo>
+      <msdata:Relationship name="Job_JobActions" msdata:parent="Job" msdata:child="JobActions" msdata:parentkey="ID" msdata:childkey="JobID" msprop:Generator_UserRelationName="Job_JobActions" msprop:Generator_RelationVarName="relationJob_JobActions" msprop:Generator_UserChildTable="JobActions" msprop:Generator_UserParentTable="Job" msprop:Generator_ParentPropName="JobRow" msprop:Generator_ChildPropName="GetJobActionsRows" />
+    </xs:appinfo>
+  </xs:annotation>
+</xs:schema>
