@@ -545,5 +545,5 @@ while (1) {
     }
 
     $first_loop = $NO;
-    sleep(50);   # Wait a while until next round [seconds].
+    sleep(60);   # Wait a while until next round [seconds].
 }
