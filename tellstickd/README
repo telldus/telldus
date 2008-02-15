@@ -35,6 +35,7 @@ Bug reports are welcome, but even more appreciated are patches with the solution
 
 Revision history
 =================
+2008-02-15    0.3.2    Corrected a fatal bug regarding switch logic.
 2008-02-15    0.3.1    Changed update interval back from 50 to 60 seconds.
 2008-02-14    0.3.0    New feature: On- and off times can be randomized within a given interval. Changed update interval from 60 to 50 seconds.
 2008-02-12    0.2.1    Changed behaviour when program is called without argument. Now presents: Try "tellstickd --help" for more information.

@@ -17,7 +17,7 @@ $LOG_FILE = "/var/log/tellstickd";
 # You should not need to go beyond this point (unless you have found a bug or need to improve the functionality).
 $AUTHOR = "Magnus Juntti, mjuntti\@gmail.com";
 $PROGRAM_NAME = "tellstickd";
-$VERSION = "0.3.1";
+$VERSION = "0.3.2";
 
 
 # Structure of the configurations to be read;
@@ -93,8 +93,8 @@ sub is_inbetween_times
     $time1 =~ s/://g;
     $time2 =~ s/://g;
     $curr_time =~ s/^0*//;
-    $sunrise_time =~ s/^0*//;
-    $sunset_time =~ s/^0*//;
+    $time1 =~ s/^0*//;
+    $time2 =~ s/^0*//;
 
     # If we pass midnight, the following has to be checked
     if ($time2 <= $time1) {
@@ -522,7 +522,7 @@ while (1) {
 
 	# First if we consider daytime off
 	if ($device_cfg[$i][5] == $YES) {
-	    if (is_inbetween_times($device_cfg[$i][3], $device_cfg[$i][4], $current_time) == $YES && is_inbetween_times($device_cfg[$i][20], $device_cfg[$i][21]) == $NO) {
+	    if (is_inbetween_times($device_cfg[$i][3], $device_cfg[$i][4], $current_time) == $YES && is_inbetween_times($device_cfg[$i][20], $device_cfg[$i][21], $current_time) == $NO) {
 		rfcmd_exec($i, 1);
 	    }
 	    else {
