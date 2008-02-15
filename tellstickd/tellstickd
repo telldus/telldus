@@ -17,7 +17,7 @@ $LOG_FILE = "/var/log/tellstickd";
 # You should not need to go beyond this point (unless you have found a bug or need to improve the functionality).
 $AUTHOR = "Magnus Juntti, mjuntti\@gmail.com";
 $PROGRAM_NAME = "tellstickd";
-$VERSION = "0.3.2";
+$VERSION = "0.3.3";
 
 
 # Structure of the configurations to be read;
@@ -254,35 +254,37 @@ sub randomize_off
 sub is_time_format_correct
 {
      my $time = $_[0];
-     my $ok = $YES;
-
      my $number_of_matches = 0;
-
      my $tmp = $time;
+
+     if (length($time) < 4 || length($time) > 5) {
+	 return $NO;
+     }
+
      while ($tmp =~ /\:/g) {
 	 $number_of_matches++;
      }
 
      if ($number_of_matches != 1) {
-	 $ok = $NO;
+	 return $NO;
      }
 
      (my $hour, my $minute) = $time =~ /^(.*?)\:(.*?)$/;
 
      if ($hour !~ /^[0-9]+$/) {
-	 $ok = $NO;
+	 return $NO;
      }
 
      if ($minute !~ /^[0-9]+$/) {
-	 $ok = $NO;
+	 return $NO;
      }
 
      if ($hour < 0 || $hour > 23 || $minute < 0 || $minute > 59) {
-	 $ok = $NO;
+	 return $NO;
      }
 
 
-     return $ok;
+     return $YES;
 }
 
 sub read_config
@@ -321,29 +323,37 @@ sub read_config
 	    # If the turn on time is not to be used, this is marked with -1
 	    if ($device_cfg[$i][3] != -1) { 
 		if (is_time_format_correct($device_cfg[$i][3]) == $NO) {
-		    die("$PROGRAM_NAME: Format of turn on time for device $device_cfg[$i][1]$device_cfg[$i][2] not correct. Exiting.\n");
+		    die("$PROGRAM_NAME: Format of turn on time for device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] not correct: $device_cfg[$i][3]\n");
 		}
 	    }
 	    else {
-		printf("$PROGRAM_NAME: Noted configuration for device $device_cfg[$i][1]$device_cfg[$i][2] with no turn on time.\n");
+		printf("$PROGRAM_NAME: Noted configuration for device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] with no turn on time.\n");
 	    }
 
 	    # If the turn off time is not to be used, this is marked with -1
 	    if ($device_cfg[$i][4] != -1) { 
 		if (is_time_format_correct($device_cfg[$i][4]) == $NO) {
-		    die("$PROGRAM_NAME: Format of turn off time for device $device_cfg[$i][1]$device_cfg[$i][2] not correct. Exiting.\n");
+		    die("$PROGRAM_NAME: Format of turn off time for device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] not correct: $device_cfg[$i][4]\n");
 		}
 	    }
 	    else {
-		printf("$PROGRAM_NAME: Noted configuration for device $device_cfg[$i][1]$device_cfg[$i][2] with no turn off time.\n");
+		printf("$PROGRAM_NAME: Noted configuration for device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] with no turn off time.\n");
 	    }
 
 	    if (is_time_format_correct($device_cfg[$i][6]) == $NO) {
-		die("$PROGRAM_NAME: Format of turn off after sunrise for device $device_cfg[$i][1]$device_cfg[$i][2] not correct. Exiting.\n");
+		die("$PROGRAM_NAME: Format of turn off after sunrise for device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] not correct: $device_cfg[$i][6]\n");
 	    }
 
 	    if (is_time_format_correct($device_cfg[$i][7]) == $NO) {
-		die("$PROGRAM_NAME: Format of turn on before sunset for device $device_cfg[$i][1]$device_cfg[$i][2] not correct. Exiting.\n");
+		die("$PROGRAM_NAME: Format of turn on before sunset for device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] not correct. Exiting.\n");
+	    }
+
+	    if (is_time_format_correct($device_cfg[$i][8]) == $NO) {
+		die("$PROGRAM_NAME: Format of on interfval for device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] not correct: $device_cfg[$i][8]\n");
+	    }
+
+	    if (is_time_format_correct($device_cfg[$i][9]) == $NO) {
+		die("$PROGRAM_NAME: Format of off interval for device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] not correct: $device_cfg[$i][9]\n");
 	    }
 
 
@@ -463,7 +473,7 @@ if ($number_of_devices < 1) {
     die("$PROGRAM_NAME: Configuration file has no devices to control, exiting.\n");
 }
 else {
-    printf("$PROGRAM_NAME: Configurations for $number_of_devices device(s) read.\n");
+    printf("$PROGRAM_NAME: Configurations for $number_of_devices device(s) read.\n\n");
 }
 
 ###################################################################################################
@@ -482,10 +492,11 @@ while (1) {
     # First, lets set the sunrise and sunset times for the devices that it applies to, once a day, at 00:00.
     if ($first_loop == $YES || $current_time eq "00:00") {
 	my $sunrise_time = get_sunrise_time();
+	printf("$PROGRAM_NAME: Recalculating sunrise/sunset. Current date: %d-%02d-%02d\n", $Year, $Month + 1, $Day);
 	printf("$PROGRAM_NAME: Time is $current_time. Sunrise today is expected at $sunrise_time\n");
 
 	my $sunset_time = get_sunset_time();
-	printf("$PROGRAM_NAME: Time is $current_time. Sunset today is expected at $sunset_time\n");
+	printf("$PROGRAM_NAME: Time is $current_time. Sunset today is expected at $sunset_time\n\n");
 
 	for (my $i = 0; $i < $number_of_devices; $i++) {
 	    # Initially all devices are switched off to get a known state
@@ -509,7 +520,10 @@ while (1) {
 
 		# Sunset time - requested offset
 		$device_cfg[$i][21] = subtract_time($sunset_time, $device_cfg[$i][7]);
-		printf("$PROGRAM_NAME: Device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] sunset on time set to $device_cfg[$i][21].\n");
+		printf("$PROGRAM_NAME: Device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] sunset on time set to $device_cfg[$i][21].\n\n");
+	    }
+	    else {
+		printf("\n");
 	    }
 	}
     }
