@@ -291,7 +291,7 @@ int __stdcall devMethods(int id){
 	try{
 		TelldusSettings ts;
 		char* strModel = ts.getModel(id);
-		Device* dev = ts.getDevice(id);
+		Device* dev = ts.getDevice(id, -1); //We send dongleIndex=-1 sice we wouldn't send any data!
 		if (dev != NULL) {
 			intMethods = dev->methods(strModel);
 		}
