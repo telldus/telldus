@@ -91,9 +91,9 @@ string DeviceIkea::getStringCode(unsigned char level){
 			if ((intCode>>i) & 1) {
 				strChannels.append("TT");
 				if (i % 2 == 0)
-					checksum1++;
-				else
 					checksum2++;
+				else
+					checksum1++;
 			} else {
 				strChannels.append("ª");
 			}
