@@ -90,10 +90,10 @@ string DeviceIkea::getStringCode(unsigned char level){
 		for (int i = 13; i >= 0; --i) {
 			if ((intCode>>i) & 1) {
 				strChannels.append("TT");
-				if (13 % 2 == 0)
-					checksum2++;
-				else
+				if (i % 2 == 0)
 					checksum1++;
+				else
+					checksum2++;
 			} else {
 				strChannels.append("ª");
 			}
@@ -103,22 +103,58 @@ string DeviceIkea::getStringCode(unsigned char level){
 		strReturn.append(checksum1 %2 == 0 ? "TT" : "ª"); //1st checksum
 		strReturn.append(checksum2 %2 == 0 ? "TT" : "ª"); //2nd checksum
 
+		int intLevel = 0;
 		if (level <= 12) {
-			strReturn.append("ªTTªTT"); //Level 0 - Off
+			intLevel = 10; // Level 10 is actually off
+		} else if (level <= 37) {
+			intLevel = 1;
+		} else if (level <= 62) {
+			intLevel = 2;
+		} else if (level <= 87) {
+			intLevel = 3;
+		} else if (level <= 112) {
+			intLevel = 4;
 		} else if (level <= 137) {
-			strReturn.append("TTªTTª"); //Level 5
+			intLevel = 5;
 		} else if (level <= 162) {
-			strReturn.append("ªTTTTª"); //Level 6
+			intLevel = 6;
+		} else if (level <= 187) {
+			intLevel = 7;
+		} else if (level <= 212) {
+			intLevel = 8;
+		} else if (level <= 237) {
+			intLevel = 9;
 		} else {
-			strReturn.append("ªªªª"); //Level 10 - On
+			intLevel = 0; // Level 0 is actually full on
 		}
 
-		if (intFadeStyle == 1)
-			strReturn.append("TTTTªª"); //Smooth
-		else
-			strReturn.append("TTªªTT"); //Instant
-		strReturn.append("+");
+		int intFade = 0;
+		if (intFadeStyle == 1) {
+			intFade = 11 << 4; //Smooth
+		} else {
+			intFade = 1 << 4; //Instant
+		}
 
+		intCode = intLevel | intFade; //Concat level and fade
+
+		checksum1 = 0;
+		checksum2 = 0;
+		for (int i = 0; i < 6; ++i) {
+			if ((intCode>>i) & 1) {
+				strReturn.append("TT");
+				if (i % 2 == 0)
+					checksum1++;
+				else
+					checksum2++;
+			} else {
+				strReturn.append("ª");
+			}
+		}
+
+		strReturn.append(checksum1 %2 == 0 ? "TT" : "ª"); //1st checksum
+		strReturn.append(checksum2 %2 == 0 ? "TT" : "ª"); //2nd checksum
+
+		strReturn.append("+");
 	}
 	catch(...){
 		throw;
