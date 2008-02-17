@@ -17,7 +17,7 @@ $LOG_FILE = "/var/log/tellstickd";
 # You should not need to go beyond this point (unless you have found a bug or need to improve the functionality).
 $AUTHOR = "Magnus Juntti, mjuntti\@gmail.com";
 $PROGRAM_NAME = "tellstickd";
-$VERSION = "0.3.3";
+$VERSION = "0.3.4";
 
 
 # Structure of the configurations to be read;
@@ -156,28 +156,34 @@ sub rfcmd_exec {
 }
 
 
-# Time format xx:yy for input parameters
+# Time format xx:yy for input parameters argument1 has to be positive, argument2 can be positive or negative
 sub add_time
 {
     my $time1 = $_[0];
     my $time2 = $_[1];
+    my $multiplier = 1;
 
     ($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time);
     $Year += 1900;
 
+    (my $sign) =  $time2 =~ /^(.*?)[0-9]/;
     ($time1_hour, $time1_minute) = $time1 =~ /(.*)\:(.*)/;
-    ($time2_hour, $time2_minute) = $time2 =~ /(.*)\:(.*)/;$device_cfg[$i][8] = $inrad[8];   # On time random interval
-	    $device_cfg[$i][9] = $inrad[9];   # Off time random interval
+    # Remove any leading signs
+    $time2 =~ s/^.*?[0-9]//g;
+    ($time2_hour, $time2_minute) = $time2 =~ /(.*)\:(.*)/;
+
+    if ($sign eq "-") {
+	$multiplier = -1;
+    }
 
     $time1_epoch_seconds = timelocal(0,$time1_minute,$time1_hour, $Day, $Month, $Year);
     $time2_offset_seconds = 3600*$time2_hour + 60*$time2_minute;
 
-    my $result_seconds = $time1_epoch_seconds + $time2_offset_seconds;
+    my $result_seconds = $time1_epoch_seconds + $multiplier*$time2_offset_seconds;
   
     ($min,$hour)= (localtime($result_seconds))[1,2];
 
     return sprintf("%02d:%02d", $hour, $min);
-
 }
 
 # Time format xx:yy for input parameters
@@ -185,22 +191,29 @@ sub subtract_time
 {
     my $time1 = $_[0];
     my $time2 = $_[1];
+    my $multiplier = 1;
 
     ($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time);
     $Year += 1900;
 
+    (my $sign) =  $time2 =~ /^(.*?)[0-9]/;
     ($time1_hour, $time1_minute) = $time1 =~ /(.*)\:(.*)/;
+    # Remove any leading signs
+    $time2 =~ s/^.*?[0-9]//g;
     ($time2_hour, $time2_minute) = $time2 =~ /(.*)\:(.*)/;
+
+    if ($sign eq "-") {
+	$multiplier = -1;
+    }
 
     $time1_epoch_seconds = timelocal(0,$time1_minute,$time1_hour, $Day, $Month, $Year);
     $time2_offset_seconds = 3600*$time2_hour + 60*$time2_minute;
 
-    my $result_seconds = $time1_epoch_seconds - $time2_offset_seconds;
+    my $result_seconds = $time1_epoch_seconds - $multiplier*$time2_offset_seconds;
   
     ($min,$hour)= (localtime($result_seconds))[1,2];
 
     return sprintf("%02d:%02d", $hour, $min);
-
 }
 
 sub randomize_on
@@ -256,6 +269,9 @@ sub is_time_format_correct
      my $time = $_[0];
      my $number_of_matches = 0;
      my $tmp = $time;
+
+     # Remove a leading signs, if it exists
+     $time =~ s/^.*?[0-9]//g;
 
      if (length($time) < 4 || length($time) > 5) {
 	 return $NO;
