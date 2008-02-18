@@ -35,6 +35,7 @@ Bug reports are welcome, but even more appreciated are patches with the solution
 
 Revision history
 =================
+2008-02-18    0.3.5    Changed sunset calculation parameters. Added init script for Debian and adaptions of tellstickd. All contributions of Anders Betner.
 2008-02-17    0.3.4    Now possible to use a minus sign (-) when setting <off when bright delay> and <prelight in afternoon>
 2008-02-15    0.3.3    General improvements.
 2008-02-15    0.3.2    Corrected a fatal bug regarding switch logic.
