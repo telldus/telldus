@@ -53,7 +53,7 @@ sub get_sunrise_time
     $Month++;
 
     my $dt = DateTime->new( year => $Year, month => $Month, day => $Day, time_zone => $TIMEZONE, );
-    my $sunrise = DateTime::Event::Sunrise ->new( longitude => $LONGITUDE, latitude => $LATITUDE, altitude => '0', iteration => '1');
+    my $sunrise = DateTime::Event::Sunrise ->new( longitude => $LONGITUDE, latitude => $LATITUDE, altitude => '-0.833', iteration => '1');
 
     $Month--;
 
@@ -71,7 +71,7 @@ sub get_sunset_time
     $Month++;
 
     my $dt = DateTime->new( year => $Year, month => $Month, day => $Day, time_zone => $TIMEZONE, );
-    my $sunrise = DateTime::Event::Sunrise ->new( longitude => $LONGITUDE, latitude => $LATITUDE, altitude => '0', iteration => '1');
+    my $sunrise = DateTime::Event::Sunrise ->new( longitude => $LONGITUDE, latitude => $LATITUDE, altitude => '-0.833', iteration => '1');
 
     $Month--;
 
@@ -475,6 +475,12 @@ if ($output_to_logfile == $YES) {
 if ($make_daemon == $YES) {
     &daemonize();
 }
+
+# Create pidfile
+my $pidFile = '/var/run/tellstickd.pid';
+open PIDFILE, ">$pidFile" or die "$PROGRAM_NAME: Can't open $pidFile: $!\n";
+print PIDFILE $$;
+close PIDFILE;
 
 if (length($conf_file) < 1) {
     $conf_file = $CONFIG_FILE;
