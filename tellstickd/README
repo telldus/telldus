@@ -14,7 +14,7 @@ Installation
 0. Install rfcmd and necessary perl modules (on a typical Fedora/Centos/RHEL with the necessary repos installed, this should do it for you: yum install perl-DateTime perl-DateTime-Event-Sunrise).
 1. Copy the file tellstickd-version/tellstickd to /usr/local/bin/
 2. Copy the file tellstickd-version/tellstickd.conf to /etc/
-3. If you have a Redhat-type system (like RHEL, Centos or Fedora), copy the script found under tellstickd-version/init_script to /etc/rc.d/init.d, this way you can control the script as any other service, easily make it start at boot (with chkconfig --level 35 tellstickd on).
+3. Copy the suitable init script found under tellstickd-version/init_script to /etc/rc.d/init.d, this way you can control the script as any other service, easily make it start at boot (with chkconfig --level 35 tellstickd on). The file init_script/tellstickd is a Redhat type script whereas init_script/tellstickd.debian not unexpectedly should work on Debian type systems.
 4. Remember to make the perl-script and init script executable. As root chmod 755 /usr/local/bin/tellstickd /etc/rc.d/init.d/tellstickd
 
 Configuration
