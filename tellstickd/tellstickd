@@ -132,7 +132,7 @@ sub rfcmd_exec {
     if ($action == 1) {
 	# Only turn the device on if it is not already turned on to avoid flashing dimmers.
 	# and check that it is not disabled by on/off time set to -1 in the config file
-	if ($device_cfg[$device_id][22] == 0  && $device_cfg[$device_id][23] != -1)) {
+	if ($device_cfg[$device_id][22] == 0  && $device_cfg[$device_id][23] != -1) {
 	    printf("$PROGRAM_NAME: Time is $current_time. Switching on $device_cfg[$device_id][0] device $device_cfg[$device_id][1]$device_cfg[$device_id][2].\n");
 	    `$RFCMD $RFCMD_OPTIONS 1`;
 	    $device_cfg[$device_id][22] = 1;
@@ -144,7 +144,7 @@ sub rfcmd_exec {
 	}
     }
     elsif ($action == 0) {
-	if ($device_cfg[$device_id][22] == 1  && $device_cfg[$device_id][24] != -1)) {
+	if ($device_cfg[$device_id][22] == 1  && $device_cfg[$device_id][24] != -1) {
 	    printf("$PROGRAM_NAME: Time is $current_time. Switching off $device_cfg[$device_id][0] device $device_cfg[$device_id][1]$device_cfg[$device_id][2].\n");
 	    `$RFCMD $RFCMD_OPTIONS 0`;
 	    $device_cfg[$device_id][22] = 0;
