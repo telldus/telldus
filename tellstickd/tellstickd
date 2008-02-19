@@ -13,6 +13,9 @@ $RFCMD = "/usr/local/bin/rfcmd";
 $TELLSTICK_DEVICE = "/dev/tellstick";
 $CONFIG_FILE = "/etc/tellstickd.conf";
 $LOG_FILE = "/var/log/tellstickd";
+$pidFile = '/var/run/tellstickd.pid';
+
+
 
 # You should not need to go beyond this point (unless you have found a bug or need to improve the functionality).
 $AUTHOR = "Magnus Juntti, mjuntti\@gmail.com";
@@ -128,7 +131,8 @@ sub rfcmd_exec {
     # Action = 1 means turn device on, 0 turn device off
     if ($action == 1) {
 	# Only turn the device on if it is not already turned on to avoid flashing dimmers.
-	if ($device_cfg[$device_id][22] == 0) {
+	# and check that it is not disabled by on/off time set to -1 in the config file
+	if ($device_cfg[$device_id][22] == 0  && $device_cfg[$device_id][23] != -1)) {
 	    printf("$PROGRAM_NAME: Time is $current_time. Switching on $device_cfg[$device_id][0] device $device_cfg[$device_id][1]$device_cfg[$device_id][2].\n");
 	    `$RFCMD $RFCMD_OPTIONS 1`;
 	    $device_cfg[$device_id][22] = 1;
@@ -140,7 +144,7 @@ sub rfcmd_exec {
 	}
     }
     elsif ($action == 0) {
-	if ($device_cfg[$device_id][22] == 1) {
+	if ($device_cfg[$device_id][22] == 1  && $device_cfg[$device_id][24] != -1)) {
 	    printf("$PROGRAM_NAME: Time is $current_time. Switching off $device_cfg[$device_id][0] device $device_cfg[$device_id][1]$device_cfg[$device_id][2].\n");
 	    `$RFCMD $RFCMD_OPTIONS 0`;
 	    $device_cfg[$device_id][22] = 0;
@@ -421,7 +425,8 @@ sub usageprompt
     printf("-c, --config filename   Searchpath to configuration file, if not given $CONFIG_FILE is assumed.\n");
     printf("-d, --daemon            Run the program as a daemon and write a logfile.\n");
     printf("-h, --help              Show this message and exit.\n");
-    printf("-l, --logfile filename  Redirect daemon logs to filename. Default $LOG_FILE\n");       
+    printf("-l, --logfile filename  Redirect daemon logs to filename. Default $LOG_FILE\n");
+    printf("--nopid                 Do not write process id into file $PIDFILE\n");      
 }
 
 
@@ -450,6 +455,9 @@ while ($i < $#ARGV) {
 	    usageprompt();
 	    exit;
 	}
+	elsif ($ARGV[$i+1] =~ /^--nopid$/) {
+	    $write_pid = $NO;
+	}
 	elsif ($ARGV[$i+1] =~ /^-l$/ || $ARGV[$i+1] =~ /^--logfile$/) {
 	    $output_to_logfile = $YES;
 	    $i++;
@@ -477,10 +485,11 @@ if ($make_daemon == $YES) {
 }
 
 # Create pidfile
-my $pidFile = '/var/run/tellstickd.pid';
-open PIDFILE, ">$pidFile" or die "$PROGRAM_NAME: Can't open $pidFile: $!\n";
-print PIDFILE $$;
-close PIDFILE;
+if (write_pid == $YES) {
+    open PIDFILE, ">$pidFile" or die "$PROGRAM_NAME: Can't open $pidFile: $!\n";
+    print PIDFILE $$;
+    close PIDFILE;
+}
 
 if (length($conf_file) < 1) {
     $conf_file = $CONFIG_FILE;
