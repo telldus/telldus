@@ -136,7 +136,7 @@ sub rfcmd_exec {
 	    printf("$PROGRAM_NAME: Time is $current_time. Switching on $device_cfg[$device_id][0] device $device_cfg[$device_id][1]$device_cfg[$device_id][2].\n");
 	    `$RFCMD $RFCMD_OPTIONS 1`;
 	    $device_cfg[$device_id][22] = 1;
-
+	    sleep(1);
 	    return;
 	}
 	else {
@@ -148,7 +148,7 @@ sub rfcmd_exec {
 	    printf("$PROGRAM_NAME: Time is $current_time. Switching off $device_cfg[$device_id][0] device $device_cfg[$device_id][1]$device_cfg[$device_id][2].\n");
 	    `$RFCMD $RFCMD_OPTIONS 0`;
 	    $device_cfg[$device_id][22] = 0;
-
+	    sleep(1);
 	    return;
 	}
 	else {
@@ -281,40 +281,13 @@ sub randomize_off
 sub is_time_format_correct
 {
      my $time = $_[0];
-     my $number_of_matches = 0;
-     my $tmp = $time;
-
-     # Remove a leading signs, if it exists
-     $time =~ s/^.*?[0-9]//g;
-
-     if (length($time) < 4 || length($time) > 5) {
-	 return $NO;
+     (my $hour, my $minute) = $time =~ /^-?(\d\d)\:(\d\d)$/;
+     if ($hour && $minute) {
+         if ($hour >=0 && $hour <= 23 && $minute >= 0 && $minute <= 59) {
+	     return $YES;
+	 }   
      }
-
-     while ($tmp =~ /\:/g) {
-	 $number_of_matches++;
-     }
-
-     if ($number_of_matches != 1) {
-	 return $NO;
-     }
-
-     (my $hour, my $minute) = $time =~ /^(.*?)\:(.*?)$/;
-
-     if ($hour !~ /^[0-9]+$/) {
-	 return $NO;
-     }
-
-     if ($minute !~ /^[0-9]+$/) {
-	 return $NO;
-     }
-
-     if ($hour < 0 || $hour > 23 || $minute < 0 || $minute > 59) {
-	 return $NO;
-     }
-
-
-     return $YES;
+     return $NO;
 }
 
 sub read_config
@@ -521,6 +494,8 @@ else {
 # Now to the eternal loop
 my $first_loop = $YES;
 while (1) {
+    $n_rfcmd_calls = 0;
+
     # What is the current time
     ($second, $minute, $hour, $dayOfMonth, $month, $yearOffset, $dayOfWeek, $dayOfYear, $daylightSavings) = localtime();
     $year = 1900 + $yearOffset;
@@ -580,9 +555,11 @@ while (1) {
 	if ($device_cfg[$i][5] == $YES) {
 	    if (is_inbetween_times($device_cfg[$i][3], $device_cfg[$i][4], $current_time) == $YES && is_inbetween_times($device_cfg[$i][20], $device_cfg[$i][21], $current_time) == $NO) {
 		rfcmd_exec($i, 1);
+		$n_rfcmd_calls++;
 	    }
 	    else {
 		rfcmd_exec($i, 0);
+		$n_rfcmd_calls++;
 	    }
 	}
 
@@ -591,9 +568,11 @@ while (1) {
 	else {
 	    if (is_inbetween_times($device_cfg[$i][3], $device_cfg[$i][4], $current_time) == $YES) {
 		rfcmd_exec($i, 1);
+		$n_rfcmd_calls++;
 	    }
 	    else {
 		rfcmd_exec($i, 0);
+		$n_rfcmd_calls++;
 	    }
 	}
 
@@ -601,5 +580,8 @@ while (1) {
     }
 
     $first_loop = $NO;
-    sleep(60);   # Wait a while until next round [seconds].
+
+    if ($n_rfcmd_calls < 30) {
+	sleep(60 - 2*$n_rfcmd_calls);   # Wait a while until next round [seconds]. If rfcmd has been called, reduce this figure by 2 seconds per call.
+    }
 }

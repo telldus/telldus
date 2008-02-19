@@ -33,23 +33,8 @@ This software is freely distributable under the GNU General Public License,
 the full content of the license is included in the file LICENSE.
 Bug reports are welcome, but even more appreciated are patches with the solution to the problem.
 
-Revision history
-=================
-2008-02-18    0.3.5    Changed sunset calculation parameters. Added init script for Debian and adaptions of tellstickd. All contributions of Anders Betner.
-2008-02-17    0.3.4    Now possible to use a minus sign (-) when setting <off when bright delay> and <prelight in afternoon>
-2008-02-15    0.3.3    General improvements.
-2008-02-15    0.3.2    Corrected a fatal bug regarding switch logic.
-2008-02-15    0.3.1    Changed update interval back from 50 to 60 seconds.
-2008-02-14    0.3.0    New feature: On- and off times can be randomized within a given interval. Changed update interval from 60 to 50 seconds.
-2008-02-12    0.2.1    Changed behaviour when program is called without argument. Now presents: Try "tellstickd --help" for more information.
-2008-02-11    0.2.0    Added support for SARTANO devices. General code cleanups.
-2008-02-11    0.1.4    Completely new switch logic, hopefully more robust with fewer bugs.
-2008-02-10    0.1.3    Modified switch logic. When dawn is before on-time, lights are not switched on. If dusk time is after off time, lights are not switched on.
-2008-01-30    0.1.2    Corrected a bug regarding datetimelocal.
-2008-01-15    0.1.1    Fixed some bugs. Added logfile capability.
-2008-01-11    0.1.0    Initial release
-
 Author
 =================
 Magnus Juntti
 mjuntti@gmail.com
+
