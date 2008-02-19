@@ -17,7 +17,7 @@ $LOG_FILE = "/var/log/tellstickd";
 # You should not need to go beyond this point (unless you have found a bug or need to improve the functionality).
 $AUTHOR = "Magnus Juntti, mjuntti\@gmail.com";
 $PROGRAM_NAME = "tellstickd";
-$VERSION = "0.3.4";
+$VERSION = "0.3.5";
 
 
 # Structure of the configurations to be read;
