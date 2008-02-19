@@ -99,7 +99,7 @@ sub is_inbetween_times
     $time1 =~ s/^0*//;
     $time2 =~ s/^0*//;
 
-    # If we pass midnight, the following has to be checked
+    # If we pass midnight, the following has to be checked/done
     if ($time2 <= $time1) {
 	$time2 += 2400;
     }
@@ -136,7 +136,7 @@ sub rfcmd_exec {
 	    printf("$PROGRAM_NAME: Time is $current_time. Switching on $device_cfg[$device_id][0] device $device_cfg[$device_id][1]$device_cfg[$device_id][2].\n");
 	    `$RFCMD $RFCMD_OPTIONS 1`;
 	    $device_cfg[$device_id][22] = 1;
-	    sleep(1);
+
 	    return;
 	}
 	else {
@@ -148,7 +148,7 @@ sub rfcmd_exec {
 	    printf("$PROGRAM_NAME: Time is $current_time. Switching off $device_cfg[$device_id][0] device $device_cfg[$device_id][1]$device_cfg[$device_id][2].\n");
 	    `$RFCMD $RFCMD_OPTIONS 0`;
 	    $device_cfg[$device_id][22] = 0;
-	    sleep(1);
+
 	    return;
 	}
 	else {
@@ -300,7 +300,11 @@ sub read_config
 
     my $i = 0;
     while ($_ = <CFG_FILE>) {
-	if ($_ !~ /^\#/ && $_ !~ /^\s/ && $_ !~ /^\n/) {
+	if ($_ =~ /^[\#|\s|\n]/) {
+	    # skip lines beginning with # or space or just a new line
+	    next;
+	}
+	if ($_ =~ /^[NEXA|SARTANO]/ ) {
 	    chomp($_);
 	    @inrad = split /\s+/, $_;
 	    $device_cfg[$i][0] = $inrad[0];            # Protocol
@@ -315,7 +319,7 @@ sub read_config
 	    $device_cfg[$i][9] = $inrad[9];            # Off time random interval
 	    $device_cfg[$i][22] = 1;                   # Initial state set to on (1) so that they will be switched of at startup
 	    $device_cfg[$i][23] = $device_cfg[$i][3];  # Original on time is stored here pos 3 will be used for random on times
-	    $device_cfg[$i][24] = $device_cfg[$i][4];  # Original off time is stored here pos 4 will be used for random on times
+	    $device_cfg[$i][24] = $device_cfg[$i][4];  # Original off time is stored here pos 4 will be used for random off times
 
 
 	    if ($device_cfg[$i][0] eq "SARTANO") {
@@ -389,12 +393,48 @@ sub read_config
 	    }
 
 	    $i++;
+	    next;
+	}
+	# Try to get config parameter name and value
+	(my $param, my $value) = $_ =~ /\s*(\w+)\s*=\s*([a-zA-Z0-9_\/\.]*)/;
+        if ($param && $value) {
+	    print "$param = $value\n";
+	    if ($param eq 'latitude') {
+		$Latitude = $value;
+		next;
+	    }
+	    if ($param eq 'longitude') {
+		$LONGITUDE = $value;
+		next;
+	    }
+	    if ($param eq 'timezone') {
+		$TIMEZONE = $value;
+		next;
+	    }
+	    if ($param eq 'rfcmd') {
+		$RFCMD = $value;
+		next;
+	    }
+	    if ($param eq 'tellstick_device') {
+		$TELLSTICK_DEVICE = $value;
+		next;
+	    }
+	    if ($param eq 'log_file') {
+		$LOG_FILE = $value;
+		next;
+	    }
+	    if ($param eq 'pid_file') {
+		$pidFile = $value;
+		next;
+	    }
+	    die ("$PROGRAM_NAME: Unknown config parameter $param = $value\n");
+	}
+	else {
+	    die("$PROGRAM_NAME: Unknown config file line $_\n");
 	}
     }
-
-    return $i;
-
     close(CFG_FILE);
+    return $i;
 }
 
 sub usageprompt
