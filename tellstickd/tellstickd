@@ -426,7 +426,7 @@ sub usageprompt
     printf("-d, --daemon            Run the program as a daemon and write a logfile.\n");
     printf("-h, --help              Show this message and exit.\n");
     printf("-l, --logfile filename  Redirect daemon logs to filename. Default $LOG_FILE\n");
-    printf("--nopid                 Do not write process id into file $PIDFILE\n");      
+    printf("--nopid                 Do not write process id into file $pidFile\n");      
 }
 
 
