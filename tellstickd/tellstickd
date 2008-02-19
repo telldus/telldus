@@ -224,6 +224,11 @@ sub randomize_on
 {
     my $device_id = $_[0];
 
+    # If the on- and off times are the same, just return
+    if ($device_cfg[$device_id][23] eq $device_cfg[$device_id][24]) {
+	return;
+    }
+
     (my $random_hour, my $random_minute) = $device_cfg[$device_id][8] =~ /(.*)\:(.*)/;
 
     my $rand_res = int(rand(60 * $random_hour + $random_minute));
@@ -246,6 +251,11 @@ sub randomize_on
 sub randomize_off
 {
     my $device_id = $_[0];
+
+    # If the on- and off times are the same, just return
+    if ($device_cfg[$device_id][23] eq $device_cfg[$device_id][24]) {
+	return;
+    }
 
     (my $random_hour, my $random_minute) = $device_cfg[$device_id][9] =~ /(.*)\:(.*)/;
 
@@ -369,7 +379,7 @@ sub read_config
 	    }
 
 	    if (is_time_format_correct($device_cfg[$i][8]) == $NO) {
-		die("$PROGRAM_NAME: Format of on interfval for device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] not correct: $device_cfg[$i][8]\n");
+		die("$PROGRAM_NAME: Format of on interval for device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] not correct: $device_cfg[$i][8]\n");
 	    }
 
 	    if (is_time_format_correct($device_cfg[$i][9]) == $NO) {
@@ -558,6 +568,7 @@ while (1) {
 	    }
 	}
     }
+
 
     ###################################################################################################
 
