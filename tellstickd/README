@@ -12,18 +12,23 @@ DateTime::Event::Sunrise
 Installation
 =================
 0. Install rfcmd and necessary perl modules (on a typical Fedora/Centos/RHEL with the necessary repos installed, this should do it for you: yum install perl-DateTime perl-DateTime-Event-Sunrise).
+
 1. Copy the file tellstickd-version/tellstickd to /usr/local/bin/
+
 2. Copy the file tellstickd-version/tellstickd.conf to /etc/
+
 3. Copy the suitable init script found under tellstickd-version/init_script to /etc/rc.d/init.d, this way you can control the script as any other service, easily make it start at boot (with chkconfig --level 35 tellstickd on). The file init_script/tellstickd is a Redhat type script whereas init_script/tellstickd.debian not unexpectedly should work on Debian type systems.
-4. Remember to make the perl-script and init script executable. As root chmod 755 /usr/local/bin/tellstickd /etc/rc.d/init.d/tellstickd
+4. Remember to make the perl-script and init scripts executable. As root chmod 755 /usr/local/bin/tellstickd /etc/rc.d/init.d/tellstickd
 
 Configuration
 =================
-1. In the very top of the perl file /usr/local/bin/tellstickd:
+1. In tellstickd.conf:
 	a. Set appropriate coordinates and timezone to suit your geographical location (further information: http://search.cpan.org/dist/DateTime-Event-Sunrise/lib/DateTime/Event/Sunrise.pm).
 	b. Specifiy the rfcmd binary location. Default: /usr/local/bin/rfcmd
 	c. Specify the tellstick device name. Default: /dev/tellstick
 	d. If the default locations of the config and logfile not are according to your wishes, modify them here. Note 1: this can also be done with the tellstickd options --config and --logfile. Note 2: If you use the init script, these settings must be done in the init-script /etc/rc.d/init.d/tellstickd.
+	e. Add device configurations. Multiple definitions for each device are possible (avoid having on and off times of multiple definitions overlapping each other).
+   
 2. If you would like this script to start at boot-time, on a RHEL/Centos/Fedora system, execute the following command chkconfig --level 35 tellstickd on
 
 
@@ -33,11 +38,9 @@ This software is freely distributable under the GNU General Public License,
 the full content of the license is included in the file LICENSE.
 Bug reports are welcome, but even more appreciated are patches with the solution to the problem.
 
-Author
+Authors
 =================
 Magnus Juntti
 mjuntti@gmail.com
 
-Co-author
-=================
 Anders Betnér

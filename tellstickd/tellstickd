@@ -18,7 +18,6 @@ $pidFile = '/var/run/tellstickd.pid';
 
 
 # You should not need to go beyond this point (unless you have found a bug or need to improve the functionality).
-$AUTHOR = "Magnus Juntti, mjuntti\@gmail.com";
 $PROGRAM_NAME = "tellstickd";
 $VERSION = "0.3.5";
 
@@ -440,7 +439,6 @@ sub read_config
 sub usageprompt
 {
     printf("This program is intended for control of Tellstick remote devices.\n");
-    printf("Authour: $AUTHOR\n");
     printf("Version: %s\n", $VERSION);
 
     printf("\nUsage: %s [options]\n", $PROGRAM_NAME);
