@@ -4,23 +4,49 @@ use POSIX;
 use DateTime;
 use DateTime::Event::Sunrise;
 use Time::Local;
+use strict;
 
 # The following variables should be adapted to your geographical location and system setup
-$LATITUDE = "65.603";    # 65.603N 22.18W -> Luleå, Sweden
-$LONGITUDE = "22.18";
-$TIMEZONE = "Europe/Stockholm";
-$RFCMD = "/usr/local/bin/rfcmd";
-$TELLSTICK_DEVICE = "/dev/tellstick";
-$CONFIG_FILE = "/etc/tellstickd.conf";
-$LOG_FILE = "/var/log/tellstickd";
-$pidFile = '/var/run/tellstickd.pid';
-
+my $LATITUDE = "65.603";    # 65.603N 22.18W -> Luleå, Sweden
+my $LONGITUDE = "22.18";
+my $TIMEZONE = "Europe/Stockholm";
+my $RFCMD = "/usr/local/bin/rfcmd";
+my $TELLSTICK_DEVICE = "/dev/tellstick";
+my $CONFIG_FILE = "/etc/tellstickd.conf";
+my $LOG_FILE = "/var/log/tellstickd";
+my $pidFile = '/var/run/tellstickd.pid';
 
 
 # You should not need to go beyond this point (unless you have found a bug or need to improve the functionality).
-$PROGRAM_NAME = "tellstickd";
-$VERSION = "0.3.5";
+my @months = qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec);
+my @weekDays = qw(Sun Mon Tue Wed Thu Fri Sat Sun);
+my $NO = 0;
+my $YES = 1;
+my @device_cfg;
+my $conf_file = "";
+my $make_daemon = $NO;
+my $output_to_logfile = $YES;
+my $write_pid = $YES;
+my $i = -1;
+my $n_rfcmd_calls;
+my $current_time;
+my $number_of_devices;
+my $Day;
+my $Month;
+my $Year;
+my $Minute;
+my $Hour;
+my $Second;
+my $WeekDay;
+my $DayOfYear;
+my $IsDST;
+my $daylightSavings;
+my $dayOfYear;
+my $dayOfWeek;
+my $dayOfMonth;
 
+my $PROGRAM_NAME = "tellstickd";
+my $VERSION = "0.3.5";
 
 # Structure of the configurations to be read;
 # $device_cfg[$i][0];   # Protocol, only NEXA and SARTANO supported so far by rfcmd
@@ -50,6 +76,8 @@ sub daemonize {
 
 sub get_sunrise_time
 {
+    my $sunrise_time;
+
     ($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time);
     $Year += 1900;
     $Month++;
@@ -68,6 +96,8 @@ sub get_sunrise_time
 
 sub get_sunset_time
 {
+    my $sunset_time;
+
     ($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time);
     $Year += 1900;
     $Month++;
@@ -115,6 +145,7 @@ sub is_inbetween_times
 sub rfcmd_exec {
     my $device_id = $_[0];
     my $action = $_[1];
+    my $RFCMD_OPTIONS;
 
     if ($device_cfg[$device_id][0] eq "SARTANO") {
 	$RFCMD_OPTIONS = "$TELLSTICK_DEVICE $device_cfg[$device_id][0] $device_cfg[$device_id][1]";
@@ -165,6 +196,14 @@ sub add_time
     my $time1 = $_[0];
     my $time2 = $_[1];
     my $multiplier = 1;
+    my $hour;
+    my $min;
+    my $time1_hour;
+    my $time1_minute;
+    my $time2_hour;
+    my $time2_minute;
+    my $time1_epoch_seconds;
+    my $time2_offset_seconds;
 
     ($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time);
     $Year += 1900;
@@ -195,6 +234,14 @@ sub subtract_time
     my $time1 = $_[0];
     my $time2 = $_[1];
     my $multiplier = 1;
+    my $hour;
+    my $min;
+    my $time1_hour;
+    my $time1_minute;
+    my $time2_hour;
+    my $time2_minute;
+    my $time1_epoch_seconds;
+    my $time2_offset_seconds;
 
     ($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time);
     $Year += 1900;
@@ -292,6 +339,7 @@ sub is_time_format_correct
 sub read_config
 {
     my $input_file = $_[0];
+    my @inrad;
 
     printf("$PROGRAM_NAME: Reading configuration file $conf_file\n");
 
@@ -453,16 +501,6 @@ sub usageprompt
 
 # ############## Main section ######################
 
-@months = qw(Jan Feb Mar Apr May Jun Jul Aug Sep Oct Nov Dec);
-@weekDays = qw(Sun Mon Tue Wed Thu Fri Sat Sun);
-$NO = 0;
-$YES = 1;
-$conf_file = "";
-$make_daemon = $NO;
-$output_to_logfile = $YES;
-$write_pid = $YES;
-
-$i = -1;
 while ($i < $#ARGV) {
     if ($i+1 <= $#ARGV) {
 	if ($ARGV[$i+1] =~ /^--config$/ || $ARGV[$i+1] =~ /^-c$/) {
@@ -536,11 +574,9 @@ while (1) {
     $n_rfcmd_calls = 0;
 
     # What is the current time
-    ($second, $minute, $hour, $dayOfMonth, $month, $yearOffset, $dayOfWeek, $dayOfYear, $daylightSavings) = localtime();
-    $year = 1900 + $yearOffset;
-    # $current_time = "$hour:$minute:$second, $weekDays[$dayOfWeek] $months[$month] $dayOfMonth, $year";
-    $current_time = sprintf("%02d:%02d", $hour, $minute);
-    # printf("$PROGRAM_NAME: Time is $current_time\n"); 
+    ($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime();
+    $Year += 1900;
+    $current_time = sprintf("%02d:%02d", $Hour, $Minute);
 
     ###################################################################################################
 
