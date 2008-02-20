@@ -341,7 +341,7 @@ sub read_config
     my $input_file = $_[0];
     my @inrad;
 
-    printf("$PROGRAM_NAME: Reading configuration file $conf_file\n");
+    printf("$PROGRAM_NAME: Reading configuration file $conf_file...\n");
 
     open(CFG_FILE, "<$input_file") or die "$PROGRAM_NAME: Could not access config file: $conf_file\n";
 
@@ -445,7 +445,7 @@ sub read_config
 	# Try to get config parameter name and value
 	(my $param, my $value) = $_ =~ /\s*(\w+)\s*=\s*([a-zA-Z0-9_\/\.]*)/;
         if ($param && $value) {
-	    print "$param = $value\n";
+	    printf("$PROGRAM_NAME: $param = $value\n");
 	    if ($param eq 'latitude') {
 		$LATITUDE = $value;
 		next;
