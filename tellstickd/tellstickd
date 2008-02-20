@@ -460,6 +460,7 @@ $YES = 1;
 $conf_file = "";
 $make_daemon = $NO;
 $output_to_logfile = $YES;
+$write_pid = $YES;
 
 $i = -1;
 while ($i < $#ARGV) {
@@ -506,7 +507,7 @@ if ($make_daemon == $YES) {
 }
 
 # Create pidfile
-if (write_pid == $YES) {
+if ($write_pid == $YES) {
     open PIDFILE, ">$pidFile" or die "$PROGRAM_NAME: Can't open $pidFile: $!\n";
     print PIDFILE $$;
     close PIDFILE;
