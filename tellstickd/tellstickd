@@ -443,7 +443,7 @@ sub read_config
 	    next;
 	}
 	# Try to get config parameter name and value
-	(my $param, my $value) = $_ =~ /\s*(\w+)\s*=\s*([a-zA-Z0-9_\/\.]*)/;
+	(my $param, my $value) = $_ =~ /\s*(\w+)\s*=\s*(-?[a-zA-Z0-9_\/\.]*)/;
         if ($param && $value) {
 	    printf("$PROGRAM_NAME: $param = $value\n");
 	    if ($param eq 'latitude') {
