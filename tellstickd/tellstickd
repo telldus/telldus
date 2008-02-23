@@ -27,7 +27,6 @@ my $conf_file = "";
 my $make_daemon = $NO;
 my $output_to_logfile = $YES;
 my $write_pid = $YES;
-my $i = -1;
 my $n_rfcmd_calls;
 my $current_time;
 my $number_of_devices;
@@ -46,7 +45,7 @@ my $dayOfWeek;
 my $dayOfMonth;
 
 my $PROGRAM_NAME = "tellstickd";
-my $VERSION = "0.3.5";
+my $VERSION = "0.4.0";
 
 # Structure of the configurations to be read;
 # $device_cfg[$i][0];   # Protocol, only NEXA and SARTANO supported so far by rfcmd
@@ -59,6 +58,7 @@ my $VERSION = "0.3.5";
 # $device_cfg[$i][7];   # Time in advance when getting dark
 # $device_cfg[$i][8];   # On time random interval
 # $device_cfg[$i][9];   # Off time random interval
+# $device_cfg[$i][10];  # Rule active these days [11234567], 1=monday, ... 7=sunday.
 # $device_cfg[$i][20];  # Sunrise off time, calculated in this program and stored here
 # $device_cfg[$i][21];  # Sunset on time, calculated in this program and stored here
 # $device_cfg[$i][22];  # Switch state, 0 = off, 1 = on
@@ -329,11 +329,25 @@ sub is_time_format_correct
      my $time = $_[0];
      (my $hour, my $minute) = $time =~ /^-?(\d\d)\:(\d\d)$/;
      if ($hour && $minute) {
-         if ($hour >=0 && $hour <= 23 && $minute >= 0 && $minute <= 59) {
+         if ($hour >= 0 && $hour <= 23 && $minute >= 0 && $minute <= 59) {
 	     return $YES;
 	 }   
      }
+
      return $NO;
+}
+
+# Time format sanity check routine
+sub is_rule_valid_today
+{
+    my $device_id = $_[0];
+    my $current_day = $_[1];
+
+    if ($device_cfg[$device_id][10] =~ /$current_day/) {
+	return $YES;
+    }
+    
+    return $NO;
 }
 
 sub read_config
@@ -357,13 +371,14 @@ sub read_config
 	    $device_cfg[$i][0] = $inrad[0];            # Protocol
 	    $device_cfg[$i][1] = $inrad[1];            # Housecode A-P
 	    $device_cfg[$i][2] = $inrad[2];            # Channel 1-3
-	    $device_cfg[$i][3] = $inrad[3];            # On time
-	    $device_cfg[$i][4] = $inrad[4];            # Off time
-	    $device_cfg[$i][5] = $inrad[5];            # Off when bright
-	    $device_cfg[$i][6] = $inrad[6];            # Off when bright delay
-	    $device_cfg[$i][7] = $inrad[7];            # Time in advance when getting dark
-	    $device_cfg[$i][8] = $inrad[8];            # On time random interval
-	    $device_cfg[$i][9] = $inrad[9];            # Off time random interval
+	    $device_cfg[$i][10] = $inrad[3];           # Rule valid days [1234567]
+	    $device_cfg[$i][3] = $inrad[4];            # On time
+	    $device_cfg[$i][4] = $inrad[5];            # Off time
+	    $device_cfg[$i][5] = $inrad[6];            # Off when bright
+	    $device_cfg[$i][6] = $inrad[7];            # Off when bright delay
+	    $device_cfg[$i][7] = $inrad[8];            # Time in advance when getting dark
+	    $device_cfg[$i][8] = $inrad[9];            # On time random interval
+	    $device_cfg[$i][9] = $inrad[10];           # Off time random interval
 	    $device_cfg[$i][22] = 1;                   # Initial state set to on (1) so that they will be switched of at startup
 	    $device_cfg[$i][23] = $device_cfg[$i][3];  # Original on time is stored here pos 3 will be used for random on times
 	    $device_cfg[$i][24] = $device_cfg[$i][4];  # Original off time is stored here pos 4 will be used for random off times
@@ -410,9 +425,22 @@ sub read_config
 		die("$PROGRAM_NAME: Format of off interval for device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] not correct: $device_cfg[$i][9]\n");
 	    }
 
+	    if ($device_cfg[$i][10] =~ /[^1-7]/) {
+		die("$PROGRAM_NAME: Device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2]: Specified rule validity day out of range: $device_cfg[$i][10]\n");
+	    }
+
 
 
 	    printf("$PROGRAM_NAME: $device_cfg[$i][0] device $device_cfg[$i][1]$device_cfg[$i][2] config:\n");
+
+	    printf("            This rule is valid:        ");
+	    for (my $j = 1 ; $j <= 7 ; $j++) {
+		if ($device_cfg[$i][10] =~ /$j/) {
+		    printf(" $weekDays[$j]");
+		}
+	    }
+	    printf("\n");
+
 	    if ($device_cfg[$i][3] == -1) {
 		printf("            On time:                    N/A\n");
 	    }
@@ -500,6 +528,7 @@ sub usageprompt
 
 
 # ############## Main section ######################
+my $i = -1;
 
 while ($i < $#ARGV) {
     if ($i+1 <= $#ARGV) {
@@ -626,30 +655,40 @@ while (1) {
     for ($i = 0; $i < $number_of_devices; $i++) {
 
 
-	# First if we consider daytime off
-	if ($device_cfg[$i][5] == $YES) {
-	    if (is_inbetween_times($device_cfg[$i][3], $device_cfg[$i][4], $current_time) == $YES && is_inbetween_times($device_cfg[$i][20], $device_cfg[$i][21], $current_time) == $NO) {
-		rfcmd_exec($i, 1);
-		$n_rfcmd_calls++;
-	    }
-	    else {
-		rfcmd_exec($i, 0);
-		$n_rfcmd_calls++;
-	    }
-	}
+	# Lets check if the rule is to be applied today
+	if (is_rule_valid_today($i, $WeekDay) == $YES) {
 
 
-	# Then if daytime off is not considered
-	else {
-	    if (is_inbetween_times($device_cfg[$i][3], $device_cfg[$i][4], $current_time) == $YES) {
-		rfcmd_exec($i, 1);
-		$n_rfcmd_calls++;
+
+	    # First if we consider daytime off
+	    if ($device_cfg[$i][5] == $YES) {
+		if (is_inbetween_times($device_cfg[$i][3], $device_cfg[$i][4], $current_time) == $YES && is_inbetween_times($device_cfg[$i][20], $device_cfg[$i][21], $current_time) == $NO) {
+		    rfcmd_exec($i, 1);
+		    $n_rfcmd_calls++;
+		}
+		else {
+		    rfcmd_exec($i, 0);
+		    $n_rfcmd_calls++;
+		}
 	    }
+
+
+	    # Then if daytime off is not considered
 	    else {
-		rfcmd_exec($i, 0);
-		$n_rfcmd_calls++;
+		if (is_inbetween_times($device_cfg[$i][3], $device_cfg[$i][4], $current_time) == $YES) {
+		    rfcmd_exec($i, 1);
+		    $n_rfcmd_calls++;
+		}
+		else {
+		    rfcmd_exec($i, 0);
+		    $n_rfcmd_calls++;
+		}
 	    }
-	}
+
+
+
+    }
+
 
 
     }
@@ -657,6 +696,6 @@ while (1) {
     $first_loop = $NO;
 
     if ($n_rfcmd_calls < 30) {
-	sleep(60 - 2*$n_rfcmd_calls);   # Wait a while until next round [seconds]. If rfcmd has been called, reduce this figure by 2 seconds per call.
+	sleep(60 - 1*$n_rfcmd_calls);   # Wait a while until next round [seconds]. If rfcmd has been called, reduce this figure by 1 second per call.
     }
 }
