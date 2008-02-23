@@ -23,9 +23,9 @@ my @weekDays = qw(Sun Mon Tue Wed Thu Fri Sat Sun);
 my $NO = 0;
 my $YES = 1;
 my @device_cfg;
-my $conf_file = "";
+my $conf_file = $CONFIG_FILE;
 my $make_daemon = $NO;
-my $output_to_logfile = $YES;
+my $output_to_logfile = $NO;
 my $write_pid = $YES;
 my $n_rfcmd_calls;
 my $current_time;
@@ -511,6 +511,7 @@ sub read_config
 	    }
 	    if ($param eq 'log_file') {
 		$LOG_FILE = $value;
+		$output_to_logfile = $YES;
 		next;
 	    }
 	    if ($param eq 'pid_file') {
@@ -543,15 +544,30 @@ sub usageprompt
 
 
 # ############## Main section ######################
-my $i = -1;
+my $i;
+
+# Check if the command line specifies a config file
+foreach $i (0 .. $#ARGV) {
+    if ($ARGV[$i] =~ /^--config$/ || $ARGV[$i] =~ /^-c$/) {
+	$conf_file = $ARGV[$i+1];
+    }
+}
+
+# Read the configuration file
+$number_of_devices = read_config($conf_file);
+
+if ($number_of_devices < 1) {
+    die("$PROGRAM_NAME: Configuration file has no devices to control, exiting.\n");
+}
+else {
+    printf("$PROGRAM_NAME: Configurations for $number_of_devices device(s) read.\n\n");
+}
+
+$i = -1;
 
 while ($i < $#ARGV) {
     if ($i+1 <= $#ARGV) {
-	if ($ARGV[$i+1] =~ /^--config$/ || $ARGV[$i+1] =~ /^-c$/) {
-	    $i++;
-	    $conf_file = $ARGV[$i+1];
-	}
-	elsif ($ARGV[$i+1] =~ /^-d$/ || $ARGV[$i+1] =~ /^--daemon$/) {
+	if ($ARGV[$i+1] =~ /^-d$/ || $ARGV[$i+1] =~ /^--daemon$/) {
 	    $output_to_logfile = $YES;
 	    $make_daemon = $YES;
 	}
@@ -586,30 +602,16 @@ if ($output_to_logfile == $YES) {
 
 if ($make_daemon == $YES) {
     &daemonize();
-}
-
-# Create pidfile
-if ($write_pid == $YES) {
-    open PIDFILE, ">$pidFile" or die "$PROGRAM_NAME: Can't open $pidFile: $!\n";
-    print PIDFILE $$ . "\n";
-    close PIDFILE;
-}
-
-if (length($conf_file) < 1) {
-    $conf_file = $CONFIG_FILE;
+    # Create pidfile
+    if ($write_pid == $YES) {
+	open PIDFILE, ">$pidFile" or die "$PROGRAM_NAME: Can't open $pidFile: $!\n";
+	print PIDFILE $$ . "\n";
+	close PIDFILE;
+    }
 }
 
 printf("$PROGRAM_NAME: Starting $PROGRAM_NAME version $VERSION\n");
 
-# Read the configuration file
-$number_of_devices = read_config($conf_file);
-
-if ($number_of_devices < 1) {
-    die("$PROGRAM_NAME: Configuration file has no devices to control, exiting.\n");
-}
-else {
-    printf("$PROGRAM_NAME: Configurations for $number_of_devices device(s) read.\n\n");
-}
 
 ###################################################################################################
 # Now to the eternal loop
