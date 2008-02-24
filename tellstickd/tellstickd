@@ -343,6 +343,11 @@ sub is_rule_valid_today
     my $device_id = $_[0];
     my $current_day = $_[1];
 
+    if (0 == $current_day) {
+	# Perl thinks 0 = Sunday, config file thinks 7 = Sunday
+	$current_day = 7;
+    }
+
     if ($device_cfg[$device_id][10] =~ /$current_day/) {
 	return $YES;
     }
