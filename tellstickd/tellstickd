@@ -80,12 +80,10 @@ sub get_sunrise_time
 
     ($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time);
     $Year += 1900;
-    $Month++;
 
-    my $dt = DateTime->new( year => $Year, month => $Month, day => $Day, time_zone => $TIMEZONE, );
+    # Note, localtime returns months 0..11, Datetime->new expects months 1..12.
+    my $dt = DateTime->new( year => $Year, month => $Month+1, day => $Day, time_zone => $TIMEZONE, );
     my $sunrise = DateTime::Event::Sunrise ->new( longitude => $LONGITUDE, latitude => $LATITUDE, altitude => '-0.833', iteration => '1');
-
-    $Month--;
 
     my $dt1 = $sunrise->sunrise_datetime($dt);
 
@@ -100,12 +98,10 @@ sub get_sunset_time
 
     ($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime(time);
     $Year += 1900;
-    $Month++;
 
-    my $dt = DateTime->new( year => $Year, month => $Month, day => $Day, time_zone => $TIMEZONE, );
+    # Note, localtime returns months 0..11, Datetime->new expects months 1..12.
+    my $dt = DateTime->new( year => $Year, month => $Month+1, day => $Day, time_zone => $TIMEZONE, );
     my $sunrise = DateTime::Event::Sunrise ->new( longitude => $LONGITUDE, latitude => $LATITUDE, altitude => '-0.833', iteration => '1');
-
-    $Month--;
 
     my $dt2 = $sunrise->sunset_datetime($dt);
 
