@@ -148,7 +148,16 @@ int DeviceNexa::methods(char* strModel){
 		strcmp(strModel, TELLSTICK_DEVICE_HDR105) == 0 ||
 		strcmp(strModel, TELLSTICK_DEVICE_EL2004) == 0 ||
 		strcmp(strModel, TELLSTICK_DEVICE_EL2016) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_EL2010) == 0
+		strcmp(strModel, TELLSTICK_DEVICE_EL2010) == 0 ||
+		strcmp(strModel, TELLSTICK_DEVICE_LYCR1000) == 0 ||
+		strcmp(strModel, TELLSTICK_DEVICE_LYCR300) == 0 ||
+		strcmp(strModel, TELLSTICK_DEVICE_LCMR1000) == 0 ||
+		strcmp(strModel, TELLSTICK_DEVICE_LCMR300) == 0 ||
+		strcmp(strModel, TELLSTICK_DEVICE_EL2023) == 0 ||
+		strcmp(strModel, TELLSTICK_DEVICE_EL2024) == 0 ||
+		strcmp(strModel, TELLSTICK_DEVICE_EL2021) == 0 ||
+		strcmp(strModel, TELLSTICK_DEVICE_EL2017) == 0 ||
+		strcmp(strModel, TELLSTICK_DEVICE_EL2019) == 0
  		)
 	{
 		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
