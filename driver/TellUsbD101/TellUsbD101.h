@@ -9,15 +9,16 @@
 // TELLSTICK_API functions as being imported from a DLL, whereas this DLL
 // sees symbols defined with this macro as being exported.
 
-#ifdef TellUsbD101_EXPORTS
-	#define TELLSTICK_API __declspec(dllexport)
-#else
-	#define TELLSTICK_API __declspec(dllimport)
-#endif
 #ifdef _WINDOWS
+	#ifdef TellUsbD101_EXPORTS
+		#define TELLSTICK_API __declspec(dllexport)
+	#else
+		#define TELLSTICK_API __declspec(dllimport)
+	#endif
 	#define WINAPI __stdcall
 #else
 	#define WINAPI
+	#define TELLSTICK_API
 #endif
 
 
@@ -28,14 +29,14 @@ extern "C" {
 	TELLSTICK_API bool WINAPI devDim(int intDeviceId, unsigned char level);
 	TELLSTICK_API int WINAPI devGetNumberOfDevices();
 	TELLSTICK_API char * WINAPI devGetName(int intDeviceId);
-	TELLSTICK_API bool WINAPI devSetName(int intDeviceId, const char* chNewName);
+	TELLSTICK_API bool WINAPI devSetName(int intDeviceId, char* chNewName);
 	TELLSTICK_API char* WINAPI devGetVendor(int intDeviceId);
-	TELLSTICK_API bool WINAPI devSetVendor(int intDeviceId, const char* chNewName);
+	TELLSTICK_API bool WINAPI devSetVendor(int intDeviceId, char* chNewName);
 	TELLSTICK_API char* WINAPI devGetModel(int intDeviceId);
-	TELLSTICK_API bool WINAPI devSetModel(int intDeviceId, const char* chNewName);
+	TELLSTICK_API bool WINAPI devSetModel(int intDeviceId, char* chNewName);
 	TELLSTICK_API int WINAPI devGetArgument(int intDeviceId, int intArgumentIndex);
 	TELLSTICK_API int WINAPI devGetNumberOfArguments(int intDeviceId);
-	TELLSTICK_API bool WINAPI devSetArguments(int intDeviceId, const char* strArguments);
+	TELLSTICK_API bool WINAPI devSetArguments(int intDeviceId, char* strArguments);
 	TELLSTICK_API int WINAPI devAddDevice();
 	TELLSTICK_API int WINAPI devAddDeviceWithArguments(char* strVendor, int* intArguments[], int intNumberOfArguments);
 	TELLSTICK_API bool WINAPI devRemoveDevice(int intDeviceId);

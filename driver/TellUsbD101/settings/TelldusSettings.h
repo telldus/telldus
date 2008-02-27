@@ -1,10 +1,10 @@
-#pragma once
-#include "device.h"
-#include "devicenexa.h"
-#include <string>
-#include <vector>
+#ifndef TELLDUSSETTINGS_H
+#define TELLDUSSETTINGS_H
 
-using namespace std;
+#include "../Device.h"
+#include <vector.h>
+
+class privateVars;
 
 class TelldusSettings
 {
@@ -20,7 +20,6 @@ public:
 	char* getModel(int intDeviceId);
 	bool setModel(int intDeviceId, char* strModel);
 	int* getArguments(int intDeviceId);
-	bool setArguments(int intDeviceId, int* intArguments[], int intNumberOfArguments);
 	bool setArguments(int intDeviceId, vector <int> vArguments);
 	int addDevice();
 	int getDeviceId(int intDeviceIndex);
@@ -30,13 +29,15 @@ public:
 	int getNumberOfArguments(int intDeviceId);
 
 	~TelldusSettings(void);
+	
+protected:
+	char *getStringSetting(int intDeviceId, const char* name);
+	bool setStringSetting(int intDeviceId, const char* name, const char *value);
 
 private:
 	int getNextDeviceId();
-
-	//variables
-	HKEY hk;
-	std::string strRegPathDevice;
-	std::string strRegPath;
-	int intMaxRegValueLength;
+	
+	privateVars *d;
 };
+
+#endif

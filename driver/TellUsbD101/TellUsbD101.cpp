@@ -1,15 +1,18 @@
 //DLL entry point
 
-#include "stdafx.h"
+#ifdef _WINDOWS
+	#include "stdafx.h"
+	#include <ole2.h>
+#endif
 #include "TellUsbD101.h"
-#include "TelldusSettings.h"
+#include "settings/TelldusSettings.h"
 #include "Device.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include <ole2.h>
 
 void handleException(std::exception e);
+using namespace std;
 
 
 #define MAX_LOADSTRING 100
@@ -18,7 +21,7 @@ void handleException(std::exception e);
 //delete on created objects
 //comment (just copy from the called methods)
 
-bool  __stdcall devTurnOn(int intDeviceId){
+bool WINAPI devTurnOn(int intDeviceId){
 	
 	try{
 		TelldusSettings ts;
@@ -39,7 +42,7 @@ bool  __stdcall devTurnOn(int intDeviceId){
 	return false;
 }
 
-bool  __stdcall devTurnOff(int intDeviceId){
+bool WINAPI devTurnOff(int intDeviceId){
 	
 	try{
 		TelldusSettings ts;
@@ -60,7 +63,7 @@ bool  __stdcall devTurnOff(int intDeviceId){
 	return false;
 }
 
-bool __stdcall devBell(int intDeviceId){
+bool WINAPI devBell(int intDeviceId){
 	
 	try{
 		TelldusSettings ts;
@@ -81,7 +84,7 @@ bool __stdcall devBell(int intDeviceId){
 	return false;
 }
 
-bool __stdcall devDim(int intDeviceId, unsigned char level){
+bool WINAPI devDim(int intDeviceId, unsigned char level){
 	
 	try{
 		TelldusSettings ts;
@@ -107,7 +110,7 @@ bool __stdcall devDim(int intDeviceId, unsigned char level){
 	return false;
 }
 
-int __stdcall devGetNumberOfDevices(void){
+int WINAPI devGetNumberOfDevices(void){
 	int intReturn = -1;
 	try{
 		TelldusSettings ts;
@@ -120,7 +123,7 @@ int __stdcall devGetNumberOfDevices(void){
 	return intReturn;
 }
 
-int __stdcall devGetDeviceId(int intDeviceIndex){
+int WINAPI devGetDeviceId(int intDeviceIndex){
 	int intReturn = -1;
 	try{
 		TelldusSettings ts;
@@ -134,7 +137,7 @@ int __stdcall devGetDeviceId(int intDeviceIndex){
 }
 
 //general settings:
-char * __stdcall devGetName(int intDeviceId){
+char * WINAPI devGetName(int intDeviceId){
 	char* strReturn;
 	try{
 		TelldusSettings ts;
@@ -147,7 +150,7 @@ char * __stdcall devGetName(int intDeviceId){
 	return strReturn;
 }
 
-bool __stdcall devSetName(int intDeviceId, char* strNewName){
+bool WINAPI devSetName(int intDeviceId, char* strNewName){
 	bool blnSuccess = false;
 	try{
 		TelldusSettings ts;
@@ -160,7 +163,7 @@ bool __stdcall devSetName(int intDeviceId, char* strNewName){
 	return blnSuccess;
 }
 
-char* __stdcall devGetVendor(int intDeviceId){
+char* WINAPI devGetVendor(int intDeviceId){
 	char* strReturn = "";
 	try{
 		TelldusSettings ts;
@@ -173,7 +176,7 @@ char* __stdcall devGetVendor(int intDeviceId){
 	return strReturn;
 }
 
-bool __stdcall devSetVendor(int intDeviceId, char* strVendor){
+bool WINAPI devSetVendor(int intDeviceId, char* strVendor){
 	bool blnSuccess = false;
 	try{
 		TelldusSettings ts;
@@ -186,7 +189,7 @@ bool __stdcall devSetVendor(int intDeviceId, char* strVendor){
 	return blnSuccess;
 }
 
- char* __stdcall devGetModel(int intDeviceId){
+ char* WINAPI devGetModel(int intDeviceId){
 	char* strReturn = "";
 	try{
 		TelldusSettings ts;
@@ -199,7 +202,7 @@ bool __stdcall devSetVendor(int intDeviceId, char* strVendor){
 	return strReturn;
 }
 
-bool __stdcall devSetModel(int intDeviceId, char* strNewModel){
+bool WINAPI devSetModel(int intDeviceId, char* strNewModel){
 	bool blnSuccess = false;
 	try{
 		TelldusSettings ts;
@@ -212,7 +215,7 @@ bool __stdcall devSetModel(int intDeviceId, char* strNewModel){
 	return blnSuccess;
 }
 
-bool __stdcall devSetArguments(int intDeviceId, char* strArguments){
+bool WINAPI devSetArguments(int intDeviceId, char* strArguments){
 	
 	vector <int> vArguments;
 	//int intArguments[] = new int[];	//bort?
@@ -232,7 +235,7 @@ bool __stdcall devSetArguments(int intDeviceId, char* strArguments){
 	}
 }
 
-int __stdcall devGetArgument(int intDeviceId, int intArgumentIndex){
+int WINAPI devGetArgument(int intDeviceId, int intArgumentIndex){
 	int intReturn;
 	try{
 		if(intArgumentIndex != -1){
@@ -247,7 +250,7 @@ int __stdcall devGetArgument(int intDeviceId, int intArgumentIndex){
 	return intReturn;
 }
 
-int __stdcall devGetNumberOfArguments(int intDeviceId){
+int WINAPI devGetNumberOfArguments(int intDeviceId){
 	int intReturn;
 	try{
 		TelldusSettings ts;
@@ -259,7 +262,7 @@ int __stdcall devGetNumberOfArguments(int intDeviceId){
 	return intReturn;
 }
 
-int __stdcall devAddDevice(){
+int WINAPI devAddDevice(){
 	int intNewDeviceId = -1;
 	try{
 		TelldusSettings ts;
@@ -272,7 +275,7 @@ int __stdcall devAddDevice(){
 	return intNewDeviceId;
 }
 
-bool __stdcall devRemoveDevice(int intDeviceId){
+bool WINAPI devRemoveDevice(int intDeviceId){
 	bool blnSuccess = false;
 	try{
 		TelldusSettings ts;
@@ -285,7 +288,7 @@ bool __stdcall devRemoveDevice(int intDeviceId){
 	return blnSuccess;
 }
 
-int __stdcall devMethods(int id){
+int WINAPI devMethods(int id){
 
 	int intMethods = 0;
 	try{
