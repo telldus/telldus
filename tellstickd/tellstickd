@@ -29,7 +29,7 @@ my $output_to_logfile = $YES;
 my $write_pid = $YES;
 my $n_rfcmd_calls;
 my $current_time;
-my $number_of_devices;
+my $number_of_rules;
 my $Day;
 my $Month;
 my $Year;
@@ -45,7 +45,7 @@ my $dayOfWeek;
 my $dayOfMonth;
 
 my $PROGRAM_NAME = "tellstickd";
-my $VERSION = "0.4.0";
+my $VERSION = "0.5.0";
 
 # Structure of the configurations to be read;
 # $device_cfg[$i][0];   # Protocol, only NEXA and SARTANO supported so far by rfcmd
@@ -245,7 +245,7 @@ sub subtract_time
     (my $sign) =  $time2 =~ /^(.*?)[0-9]/;
     ($time1_hour, $time1_minute) = $time1 =~ /(.*)\:(.*)/;
     # Remove any leading signs
-    $time2 =~ s/^.*?[0-9]//g;
+    $time2 =~ s/^-?//g;
     ($time2_hour, $time2_minute) = $time2 =~ /(.*)\:(.*)/;
 
     if ($sign eq "-") {
@@ -355,6 +355,8 @@ sub read_config
 {
     my $input_file = $_[0];
     my @inrad;
+    my $on_interval_end;
+    my $off_interval_end;
 
     printf("$PROGRAM_NAME: Reading configuration file $conf_file...\n");
 
@@ -366,29 +368,108 @@ sub read_config
 	    # skip lines beginning with # or space or just a new line
 	    next;
 	}
+
+
 	if ($_ =~ /^[NEXA|SARTANO]/ ) {
 	    chomp($_);
+
 	    @inrad = split /\s+/, $_;
 	    $device_cfg[$i][0] = $inrad[0];            # Protocol
-	    $device_cfg[$i][1] = $inrad[1];            # Housecode A-P
-	    $device_cfg[$i][2] = $inrad[2];            # Channel 1-3
-	    $device_cfg[$i][10] = $inrad[3];           # Rule valid days [1234567]
-	    $device_cfg[$i][3] = $inrad[4];            # On time
-	    $device_cfg[$i][4] = $inrad[5];            # Off time
-	    $device_cfg[$i][5] = $inrad[6];            # Off when bright
-	    $device_cfg[$i][6] = $inrad[7];            # Off when bright delay
-	    $device_cfg[$i][7] = $inrad[8];            # Time in advance when getting dark
-	    $device_cfg[$i][8] = $inrad[9];            # On time random interval
-	    $device_cfg[$i][9] = $inrad[10];           # Off time random interval
-	    $device_cfg[$i][22] = 1;                   # Initial state set to on (1) so that they will be switched of at startup
-	    $device_cfg[$i][23] = $device_cfg[$i][3];  # Original on time is stored here pos 3 will be used for random on times
-	    $device_cfg[$i][24] = $device_cfg[$i][4];  # Original off time is stored here pos 4 will be used for random off times
+	    $device_cfg[$i][1] = $inrad[1];            # Housecode A and channel for NEXA, channel for S
+	    $device_cfg[$i][10] = $inrad[2];           # Rule valid days [1234567]
+	    $device_cfg[$i][22] = 1;                   # Initial state set to on (1) so that they will be switched off at startup
 
 
 	    if ($device_cfg[$i][0] eq "SARTANO") {
 		$device_cfg[$i][2] = "";
 	    }
+	    elsif ($device_cfg[$i][0] eq "NEXA") {
+		# Put the housecode and channel in the respective fields.
+		($device_cfg[$i][2]) = $device_cfg[$i][1] =~ /^[A-P](.{1})$/;
+		($device_cfg[$i][1]) = $device_cfg[$i][1] =~ /^(.{1})[1-3]$/;
+	    }
+	    else {
+		die("$PROGRAM_NAME: Unsupported protcol: $device_cfg[$i][0]. Only NEXA or SARTANO allowed.\n");
+	    }
 
+
+
+
+	    # Lets find the on interval and put it into the proper fields, $device_cfg[$i][3]=On time, $device_cfg[$i][8] = On time random interval
+	    
+	    if ($inrad[3] =~ /-/) {
+		($device_cfg[$i][3], $on_interval_end) = $inrad[3] =~ /^(.*)-(.*)$/; 
+	    }
+	    else {
+		($device_cfg[$i][3]) = $inrad[3] =~ /^(.*)$/; 
+		$on_interval_end = $device_cfg[$i][3];
+	    }
+
+	    $device_cfg[$i][8] = subtract_time($on_interval_end, $device_cfg[$i][3]);
+
+
+
+	    # Off time = $device_cfg[$i][4], Off time random interval = $device_cfg[$i][9]
+	    if ($inrad[4] =~ /-/) {
+		($device_cfg[$i][4], $off_interval_end) = $inrad[4] =~ /^(.*)-(.*)$/;
+	    }
+	    else {
+		($device_cfg[$i][4]) = $inrad[4] =~ /^(.*)$/; 
+		$off_interval_end = $device_cfg[$i][4];
+	    }
+
+	    $device_cfg[$i][9] = subtract_time($off_interval_end, $device_cfg[$i][4]);
+
+
+
+	    # Save the original on and off
+	    $device_cfg[$i][23] = $device_cfg[$i][3];  # Original on time is stored here pos 3 will be used for random on times
+	    $device_cfg[$i][24] = $device_cfg[$i][4];  # Original off time is stored here pos 4 will be used for random off times
+
+
+
+
+
+	    # $inrad[5] is the off post sunrise value including sign, $inrad[6] is the on pre sunrise value sign, 
+	    if ($inrad[5] && $inrad[6]) {
+		# Found a parameter after off interval, assuming daytime switch off is sought.
+		$device_cfg[$i][5] = 1;
+
+
+		# First the off post sunrise
+		(my $sign, my $minutes) = $inrad[5] =~ /^([-\+]?)(.*?)$/;
+		
+		if ($sign eq "+") {
+		    $sign = "";
+		}
+
+		(my $hours) = floor($minutes / 60);
+		$minutes = $minutes - $hours * 60;
+
+		$device_cfg[$i][6] = sprintf("%s%02d:%02d", $sign, $hours, $minutes);
+
+		# Then figure on pre sunset out
+		(my $sign, my $minutes) = $inrad[6] =~ /^([-\+]?)(.*?)$/;
+		
+		if ($sign eq "+") {
+		    $sign = "";
+		}
+
+		(my $hours) = floor($minutes / 60);
+		$minutes = $minutes - $hours * 60;
+
+		$device_cfg[$i][7] = sprintf("%s%02d:%02d", $sign, $hours, $minutes);
+	    }
+	    else {
+		# If no parameters given after off interval it is assumed that the light will be on daytime
+		$device_cfg[$i][5] = 0;
+		$device_cfg[$i][6] = "00:00";
+		$device_cfg[$i][7] = "00:00";
+	    }
+
+
+	    
+	    ##############################################################################
 	    # Some sanity checks
 	    # If the turn on time is not to be used, this is marked with -1
 	    if ($device_cfg[$i][3] != -1) { 
@@ -603,13 +684,13 @@ if (length($conf_file) < 1) {
 printf("$PROGRAM_NAME: Starting $PROGRAM_NAME version $VERSION\n");
 
 # Read the configuration file
-$number_of_devices = read_config($conf_file);
+$number_of_rules = read_config($conf_file);
 
-if ($number_of_devices < 1) {
+if ($number_of_rules < 1) {
     die("$PROGRAM_NAME: Configuration file has no devices to control, exiting.\n");
 }
 else {
-    printf("$PROGRAM_NAME: Configurations for $number_of_devices device(s) read.\n\n");
+    printf("\n$PROGRAM_NAME: $number_of_rules rule(s) has been read.\n\n");
 }
 
 ###################################################################################################
@@ -634,7 +715,7 @@ while (1) {
 	my $sunset_time = get_sunset_time();
 	printf("$PROGRAM_NAME: Time is $current_time. Sunset today is expected at $sunset_time\n\n");
 
-	for (my $i = 0; $i < $number_of_devices; $i++) {
+	for (my $i = 0; $i < $number_of_rules; $i++) {
 	    # Initially all devices are switched off to get a known state
 	    if ($first_loop == $YES) {
 		rfcmd_exec($i, 0);
@@ -668,7 +749,7 @@ while (1) {
     ###################################################################################################
 
     # Below the required actions are performed for each device
-    for ($i = 0; $i < $number_of_devices; $i++) {
+    for ($i = 0; $i < $number_of_rules; $i++) {
 
 
 	# Lets check if the rule is to be applied today
