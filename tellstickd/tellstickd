@@ -207,7 +207,7 @@ sub add_time
     (my $sign) =  $time2 =~ /^(.*?)[0-9]/;
     ($time1_hour, $time1_minute) = $time1 =~ /(.*)\:(.*)/;
     # Remove any leading signs
-    $time2 =~ s/^.*?[0-9]//g;
+    $time2 =~ s/^-?//g;
     ($time2_hour, $time2_minute) = $time2 =~ /(.*)\:(.*)/;
 
     if ($sign eq "-") {
