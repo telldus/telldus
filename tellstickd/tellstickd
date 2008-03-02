@@ -27,7 +27,6 @@ my @device_cfg;
 my $conf_file = "";
 my $make_daemon = $NO;
 my $output_to_logfile = $YES;
-my $write_pid = $YES;
 my $n_rfcmd_calls;
 my $current_time;
 my $number_of_rules;
@@ -647,7 +646,6 @@ sub usageprompt
     printf("-d, --daemon            Run the program as a daemon and write a logfile.\n");
     printf("-h, --help              Show this message and exit.\n");
     printf("-l, --logfile filename  Redirect daemon logs to filename. Default $LOG_FILE\n");
-    printf("--nopid                 Do not write process id into file $pidFile\n");      
 }
 
 
@@ -667,9 +665,6 @@ while ($i < $#ARGV) {
 	elsif ($ARGV[$i+1] =~ /^-h$/ || $ARGV[$i+1] =~ /^--help$/) {
 	    usageprompt();
 	    exit;
-	}
-	elsif ($ARGV[$i+1] =~ /^--nopid$/) {
-	    $write_pid = $NO;
 	}
 	elsif ($ARGV[$i+1] =~ /^-l$/ || $ARGV[$i+1] =~ /^--logfile$/) {
 	    $output_to_logfile = $YES;
@@ -695,10 +690,6 @@ if ($output_to_logfile == $YES) {
 
 if ($make_daemon == $YES) {
     &daemonize();
-}
-
-# Create pidfile
-if ($write_pid == $YES) {
     open PIDFILE, ">$pidFile" or die "$PROGRAM_NAME: Can't open $pidFile: $!\n";
     print PIDFILE $$ . "\n";
     close PIDFILE;
