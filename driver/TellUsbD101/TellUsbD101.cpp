@@ -139,6 +139,7 @@ char * __stdcall devGetName(int intDeviceId){
 	try{
 		TelldusSettings ts;
 		strReturn = ts.getName(intDeviceId);
+		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
 	}
 	catch(exception e){
 		strReturn = "";
@@ -165,6 +166,7 @@ char* __stdcall devGetVendor(int intDeviceId){
 	try{
 		TelldusSettings ts;
 		strReturn = ts.getVendor(intDeviceId);
+		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
 	}
 	catch(exception e){
 		strReturn = "";
@@ -191,6 +193,7 @@ bool __stdcall devSetVendor(int intDeviceId, char* strVendor){
 	try{
 		TelldusSettings ts;
 		strReturn = ts.getModel(intDeviceId);
+		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
 	}
 	catch(exception e){
 		strReturn = "";
