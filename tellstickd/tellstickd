@@ -752,21 +752,29 @@ while (1) {
 
 	    # Lets set the actual on- and offtimes depending on random interval settings.
 	    randomize_on($i);
-	    printf("$PROGRAM_NAME: Today device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] will be turned on $device_cfg[$i][3]\n");
-
+#//	    if ($device_cfg[$i][2] == 16) {
+#		print "-- " . is_rule_valid_today($device_cfg[$i][10],$now) ."\n";
+#	    }
+	    if (is_rule_valid_today($device_cfg[$i][10],$now) == $YES) {
+		printf("$PROGRAM_NAME: Today device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] will be turned on $device_cfg[$i][3]\n");
+	    }
 	    randomize_off($i);
-	    printf("$PROGRAM_NAME: Today device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] will be turned off $device_cfg[$i][4]\n");
-
+	    if (is_rule_valid_today($device_cfg[$i][10],$now) == $YES) {
+		printf("$PROGRAM_NAME: Today device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] will be turned off $device_cfg[$i][4]\n");
+	    }
 
 	    # If the device is supposed to be off daytime, the following applies
 	    # Sunrise time + requested offset
 	    if ($device_cfg[$i][5] == $YES) {
 		$device_cfg[$i][20] = add_time($sunrise_time, $device_cfg[$i][6]);
-		printf("$PROGRAM_NAME: Device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] sunrise off time set to $device_cfg[$i][20].\n");
-
+		if (is_rule_valid_today($device_cfg[$i][10],$now) == $YES) {
+		    printf("$PROGRAM_NAME: Device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] sunrise off time set to $device_cfg[$i][20].\n");
+		}
 		# Sunset time - requested offset
 		$device_cfg[$i][21] = subtract_time($sunset_time, $device_cfg[$i][7]);
-		printf("$PROGRAM_NAME: Device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] sunset on time set to $device_cfg[$i][21].\n\n");
+		if (is_rule_valid_today($device_cfg[$i][10],$now) == $YES) {
+		    printf("$PROGRAM_NAME: Device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] sunset on time set to $device_cfg[$i][21].\n\n");
+		}
 	    }
 	    else {
 		printf("\n");
