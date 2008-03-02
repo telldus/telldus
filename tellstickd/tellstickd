@@ -732,7 +732,7 @@ while (1) {
     ($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime();
     $Year += 1900;
     $current_time = sprintf("%02d:%02d", $Hour, $Minute);
-    $now =  DateTime->now();
+    $now =  DateTime->now( time_zone => $TIMEZONE);
 
     ###################################################################################################
 
