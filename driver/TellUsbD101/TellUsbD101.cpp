@@ -218,9 +218,9 @@ bool WINAPI devSetModel(int intDeviceId, char* strNewModel){
 	return blnSuccess;
 }
 
-/*bool WINAPI devSetArguments(int intDeviceId, char* strArguments){
-	
-	vector <int> vArguments;
+bool WINAPI devSetArguments(int intDeviceId, char* strArguments){
+	return false;
+/*	vector <int> vArguments;
 	//int intArguments[] = new int[];	//bort?
 	try{
 		char* strTemp = strtok(strArguments, ",");
@@ -235,8 +235,8 @@ bool WINAPI devSetModel(int intDeviceId, char* strNewModel){
 	catch(exception e){
 		handleException(e);
 		return false;
-	}
-}*/
+	}*/
+}
 
 int WINAPI devGetArgument(int intDeviceId, int intArgumentIndex){
 	int intReturn;

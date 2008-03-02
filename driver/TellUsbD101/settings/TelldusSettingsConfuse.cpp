@@ -60,53 +60,6 @@ Device* TelldusSettings::getDevice(int intDeviceId){
 	return NULL;
 }
 
-/*
-* Get the name of the device
-*/
-char* TelldusSettings::getName(int intDeviceId){
-	return getStringSetting(intDeviceId, "name");
-}
-
-/*
-* Set the name of the device
-*/
-bool TelldusSettings::setName(int intDeviceId, char* strNewName){
-	bool blnSuccess = true;
-	setStringSetting(intDeviceId, "name", strNewName);
-	return blnSuccess;
-}
-
-/*
-* Get the device vendor
-*/
-char* TelldusSettings::getVendor(int intDeviceId){
-	return getStringSetting(intDeviceId, "vendor");
-}
-
-/*
-* Set the device vendor
-*/
-bool TelldusSettings::setVendor(int intDeviceId, char* strVendor){
-	bool blnSuccess = true;
-	setStringSetting(intDeviceId, "vendor", strVendor);
-	return blnSuccess;
-}
-
-/*
-* Get the device model
-*/
-char* TelldusSettings::getModel(int intDeviceId){
-	return getStringSetting(intDeviceId, "model");
-}
-
-/*
-* Set the device model
-*/
-bool TelldusSettings::setModel(int intDeviceId, char* strVendor){
-	bool blnSuccess = true;
-	setStringSetting(intDeviceId, "model", strVendor);
-	return blnSuccess;
-}
 
 int TelldusSettings::getDeviceId(int intDeviceIndex){
 	if (intDeviceIndex >= getNumberOfDevices()) { //Out of bounds

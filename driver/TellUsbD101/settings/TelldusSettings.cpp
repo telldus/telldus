@@ -34,3 +34,46 @@ Device* TelldusSettings::getDevice(int intDeviceId, int intDongleIndex){
 	}
 	return dev;
 }
+
+/*
+* Get the name of the device
+*/
+char* TelldusSettings::getName(int intDeviceId){
+	return getStringSetting(intDeviceId, "name");
+}
+
+/*
+* Set the name of the device
+*/
+bool TelldusSettings::setName(int intDeviceId, char* strNewName){
+	return setStringSetting(intDeviceId, "name", strNewName);
+}
+
+
+/*
+* Get the device vendor
+*/
+char* TelldusSettings::getVendor(int intDeviceId){
+	return getStringSetting(intDeviceId, "vendor");
+}
+
+/*
+* Set the device vendor
+*/
+bool TelldusSettings::setVendor(int intDeviceId, char* strVendor){
+	return setStringSetting(intDeviceId, "vendor", strVendor);
+}
+
+/*
+* Get the device model
+*/
+char* TelldusSettings::getModel(int intDeviceId){
+	return getStringSetting(intDeviceId, "model");
+}
+
+/*
+* Set the device model
+*/
+bool TelldusSettings::setModel(int intDeviceId, char* strModel){
+	return setStringSetting(intDeviceId, "model", strModel);
+}
