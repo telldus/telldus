@@ -774,7 +774,7 @@ while (1) {
 		    printf("$PROGRAM_NAME: Device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] sunset on time set to $device_cfg[$i][21].\n\n");
 		}
 	    }
-	    else {
+	    elsif (is_rule_valid_today($i, $now) == $YES) {
 		printf("\n");
 	    }
 	}
