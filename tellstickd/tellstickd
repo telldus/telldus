@@ -353,7 +353,7 @@ sub is_rule_valid_today
 {
     my $device_id = $_[0];
     my $now = $_[1];
-    my $rule = $device_cfg[$i][10];
+    my $rule = $device_cfg[$device_id][10];
 
     (my $week_rule) = $rule =~/^([e|o])/;
     if ($week_rule) {
