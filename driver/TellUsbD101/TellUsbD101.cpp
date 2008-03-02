@@ -142,6 +142,7 @@ char * WINAPI devGetName(int intDeviceId){
 	try{
 		TelldusSettings ts;
 		strReturn = ts.getName(intDeviceId);
+		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
 	}
 	catch(exception e){
 		strReturn = "";
@@ -168,6 +169,7 @@ char* WINAPI devGetVendor(int intDeviceId){
 	try{
 		TelldusSettings ts;
 		strReturn = ts.getVendor(intDeviceId);
+		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
 	}
 	catch(exception e){
 		strReturn = "";
@@ -194,6 +196,7 @@ bool WINAPI devSetVendor(int intDeviceId, char* strVendor){
 	try{
 		TelldusSettings ts;
 		strReturn = ts.getModel(intDeviceId);
+		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
 	}
 	catch(exception e){
 		strReturn = "";
