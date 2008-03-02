@@ -5,6 +5,7 @@ use DateTime;
 use DateTime::Event::Sunrise;
 use Time::Local;
 use strict;
+use sigtrap 'handler', \&daemon_exit, 'normal-signals';
 
 # The following variables should be adapted to your geographical location and system setup
 my $LATITUDE = "65.603";    # 65.603N 22.18W -> Luleå, Sweden
@@ -68,12 +69,20 @@ my $VERSION = "0.5.0";
 sub daemonize {
     chdir '/'                 or die "$PROGRAM_NAME: Can't chdir to /: $!";
     open STDIN, '/dev/null'   or die "$PROGRAM_NAME: Can't read /dev/null: $!";
+#open STDOUT, '>/dev/null' or die "Can't write to /dev/null: $!";
+#open STDERR, '>/dev/null' or die "$PROGRAM_NAME: Can't write to /dev/null: $!";
     defined(my $pid = fork)   or die "$PROGRAM_NAME: Can't fork: $!";
     exit if $pid;
     setsid                    or die "$PROGRAM_NAME: Can't start a new session: $!";
     umask 0;
 }
-
+sub daemon_exit() {
+    # Remove pidfile
+    unlink $pidFile;
+    # Since tellstickd most probably is stuck sleeping just kill ourself
+    kill('TERM', $$);
+    die;
+}
 sub get_sunrise_time
 {
     my $sunrise_time;
