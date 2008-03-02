@@ -334,18 +334,23 @@ sub is_time_format_correct
      return $NO;
 }
 
+
 # Time format sanity check routine
 sub is_rule_valid_today
 {
-    my $device_id = $_[0];
-    my $current_day = $_[1];
+    my $rule = $_[0];
+    my $now = $_[1];
 
-    if (0 == $current_day) {
-	# Perl thinks 0 = Sunday, config file thinks 7 = Sunday
-	$current_day = 7;
+    (my $week_rule) = $rule =~/^([e|o])/;
+    if ($week_rule) {
+	my $is_odd_week = ($now->week_number % 2);
+	if (($is_odd_week && ($week_rule eq "e"))  ||
+	    (!$is_odd_week && ($week_rule eq "o"))) {
+	    return $NO;
+	}
     }
-
-    if ($device_cfg[$device_id][10] =~ /$current_day/) {
+    my $day_of_week = $now->day_of_week;
+    if ($rule =~ /$day_of_week/) {
 	return $YES;
     }
     
@@ -514,7 +519,7 @@ sub read_config
 		die("$PROGRAM_NAME: Format of off interval for device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] not correct: $device_cfg[$i][9]\n");
 	    }
 
-	    if ($device_cfg[$i][10] =~ /[^1-7]/) {
+	    if ($device_cfg[$i][10] =~ /^[o|e][^1-7]/) {
 		die("$PROGRAM_NAME: Device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2]: Specified rule validity day out of range: $device_cfg[$i][10]\n");
 	    }
 
@@ -527,6 +532,12 @@ sub read_config
 		if ($device_cfg[$i][10] =~ /$j/) {
 		    printf(" $weekDays[$j]");
 		}
+	    }
+	    if ($device_cfg[$i][10] =~ /o/) {
+		printf(" (odd weeks)");
+	    }
+	    if ($device_cfg[$i][10] =~ /e/) {
+		printf(" (even weeks)");
 	    }
 	    printf("\n");
 
@@ -703,6 +714,7 @@ else {
 ###################################################################################################
 # Now to the eternal loop
 my $first_loop = $YES;
+my $now;
 while (1) {
     $n_rfcmd_calls = 0;
 
@@ -710,6 +722,7 @@ while (1) {
     ($Second, $Minute, $Hour, $Day, $Month, $Year, $WeekDay, $DayOfYear, $IsDST) = localtime();
     $Year += 1900;
     $current_time = sprintf("%02d:%02d", $Hour, $Minute);
+    $now =  DateTime->now();
 
     ###################################################################################################
 
@@ -760,7 +773,7 @@ while (1) {
 
 
 	# Lets check if the rule is to be applied today
-	if (is_rule_valid_today($i, $WeekDay) == $YES) {
+	if (is_rule_valid_today($device_cfg[$i][10], $now) == $YES) {
 
 
 
