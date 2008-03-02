@@ -12,7 +12,7 @@ EXPORTS
 	devSetName @8
 	devSetVendor @9
 	devSetModel @10
-	devSetArguments @11
+;	devSetArguments @11
 
 	devAddDevice @12
 	devRemoveDevice @13

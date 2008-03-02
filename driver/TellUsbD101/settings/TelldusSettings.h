@@ -2,7 +2,7 @@
 #define TELLDUSSETTINGS_H
 
 #include "../Device.h"
-#include <vector.h>
+//#include <vector>
 
 class privateVars;
 
@@ -20,7 +20,7 @@ public:
 	char* getModel(int intDeviceId);
 	bool setModel(int intDeviceId, char* strModel);
 	int* getArguments(int intDeviceId);
-	bool setArguments(int intDeviceId, vector <int> vArguments);
+//	bool setArguments(int intDeviceId, vector <int> vArguments);
 	int addDevice();
 	int getDeviceId(int intDeviceIndex);
 	bool removeDevice(int intDeviceId);

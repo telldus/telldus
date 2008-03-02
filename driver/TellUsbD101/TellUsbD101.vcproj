@@ -180,10 +180,6 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\Device.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\win\Device.cpp"
 				>
 				<FileConfiguration
@@ -206,6 +202,10 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\Device.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DeviceIkea.cpp"
 				>
 			</File>
@@ -226,7 +226,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\TelldusSettings.cpp"
+				RelativePath=".\settings\TelldusSettings.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\settings\TelldusSettingsWinRegistry.cpp"
 				>
 			</File>
 			<File
@@ -272,7 +276,7 @@
 				>
 			</File>
 			<File
-				RelativePath=".\TelldusSettings.h"
+				RelativePath=".\settings\TelldusSettings.h"
 				>
 			</File>
 			<File

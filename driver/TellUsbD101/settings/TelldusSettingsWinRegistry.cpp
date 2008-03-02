@@ -1,4 +1,4 @@
-#include "StdAfx.h"
+#include "../StdAfx.h"
 #include "TelldusSettings.h"
 #include <sstream> 
 #include <string>
@@ -8,15 +8,24 @@
 
 using namespace std;
 
+class privateVars {
+public:
+	HKEY hk;
+	std::string strRegPathDevice;
+	std::string strRegPath;
+	int intMaxRegValueLength;
+};
+
 /*
 * Constructor
 */
 TelldusSettings::TelldusSettings(void)
 {
-	strRegPathDevice = "SOFTWARE\\Telldus\\Devices\\";
-	strRegPath = "SOFTWARE\\Telldus\\";
+	d = new privateVars();
+	d->strRegPathDevice = "SOFTWARE\\Telldus\\Devices\\";
+	d->strRegPath = "SOFTWARE\\Telldus\\";
 	
-	intMaxRegValueLength = 1000;
+	d->intMaxRegValueLength = 1000;
 }
 
 /*
@@ -25,9 +34,9 @@ TelldusSettings::TelldusSettings(void)
 TelldusSettings::~TelldusSettings(void)
 {
 	//RegCloseKey(hk);	//close all, if still open //TODO: Need some way to know if open or closed
-	strRegPath = "";
-	strRegPathDevice = "";
-	intMaxRegValueLength = -1;
+	d->strRegPath = "";
+	d->strRegPathDevice = "";
+	d->intMaxRegValueLength = -1;
 
 }
 
@@ -40,17 +49,17 @@ int TelldusSettings::getNumberOfDevices(void){
 	
 	try{
 		
-		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strRegPathDevice.c_str(), 0, KEY_QUERY_VALUE, &hk);
+		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, d->strRegPathDevice.c_str(), 0, KEY_QUERY_VALUE, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
 		
 			string strNumSubKeys;
 			DWORD dNumSubKeys;
-			RegQueryInfoKey(hk, NULL, NULL, NULL, &dNumSubKeys, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
+			RegQueryInfoKey(d->hk, NULL, NULL, NULL, &dNumSubKeys, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 		
 			intNumberOfDevices = (int)dNumSubKeys;
 
-			RegCloseKey(hk);
+			RegCloseKey(d->hk);
 		}
 		else{
 			throw exception();	//couldn't open reg key
@@ -90,25 +99,25 @@ char* TelldusSettings::getName(int intDeviceId){
 
 	try{
 		std::ostringstream ssRegPath; 
-		ssRegPath << strRegPathDevice << intDeviceId;
+		ssRegPath << d->strRegPathDevice << intDeviceId;
 		string strCompleteRegPath = ssRegPath.str();
-		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &hk);
+		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
 			DWORD dwLength;
-			char* Buff = new char[intMaxRegValueLength];
+			char* Buff = new char[d->intMaxRegValueLength];
 
-			long lngStatus = RegQueryValueEx(hk, "Name", NULL, NULL, (LPBYTE)Buff, &dwLength);
+			long lngStatus = RegQueryValueEx(d->hk, "Name", NULL, NULL, (LPBYTE)Buff, &dwLength);
 			if(lngStatus == ERROR_MORE_DATA){
 				Buff = new char[dwLength];
-				lngStatus = RegQueryValueEx(hk, "Name", NULL, NULL, (LPBYTE)Buff, &dwLength);
+				lngStatus = RegQueryValueEx(d->hk, "Name", NULL, NULL, (LPBYTE)Buff, &dwLength);
 			}
 			strReturn = Buff;
 		}
 		else{
 			throw exception();	//couldn't open reg key
 		}
-		RegCloseKey(hk);
+		RegCloseKey(d->hk);
 	}
 	catch(...){
 		strReturn = "";
@@ -125,18 +134,18 @@ bool TelldusSettings::setName(int intDeviceId, char* strNewName){
 	try{
 		
 		std::ostringstream ssRegPath; 
-		ssRegPath << strRegPathDevice << intDeviceId;
+		ssRegPath << d->strRegPathDevice << intDeviceId;
 		string strCompleteRegPath = ssRegPath.str();
-		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strCompleteRegPath.c_str(), 0, KEY_WRITE, &hk);
+		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strCompleteRegPath.c_str(), 0, KEY_WRITE, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
-			intMaxRegValueLength = (int)strlen(strNewName);
-			RegSetValueEx(hk, "Name", 0, REG_SZ, (LPBYTE)strNewName, intMaxRegValueLength);
+			d->intMaxRegValueLength = (int)strlen(strNewName);
+			RegSetValueEx(d->hk, "Name", 0, REG_SZ, (LPBYTE)strNewName, d->intMaxRegValueLength);
 		}
 		else{
 			throw exception();	//couldn't open reg key
 		}
-		RegCloseKey(hk);
+		RegCloseKey(d->hk);
 
 	}
 	catch(...){
@@ -154,18 +163,18 @@ char* TelldusSettings::getVendor(int intDeviceId){
 
 	try{
 		std::ostringstream ssRegPath; 
-		ssRegPath << strRegPathDevice << intDeviceId;
+		ssRegPath << d->strRegPathDevice << intDeviceId;
 		string strCompleteRegPath = ssRegPath.str();
-		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, (LPCSTR)strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &hk);
+		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, (LPCSTR)strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
 			DWORD dwLength;
-			char* Buff = new char[intMaxRegValueLength];
+			char* Buff = new char[d->intMaxRegValueLength];
 
-			long lngStatus = RegQueryValueEx(hk, (LPCSTR)"Vendor", NULL, NULL, (LPBYTE)Buff, &dwLength);
+			long lngStatus = RegQueryValueEx(d->hk, (LPCSTR)"Vendor", NULL, NULL, (LPBYTE)Buff, &dwLength);
 			if(lngStatus == ERROR_MORE_DATA){
 				Buff = new char[dwLength];
-				lngStatus = RegQueryValueEx(hk, (LPCSTR)"Vendor", NULL, NULL, (LPBYTE)Buff, &dwLength);
+				lngStatus = RegQueryValueEx(d->hk, (LPCSTR)"Vendor", NULL, NULL, (LPBYTE)Buff, &dwLength);
 			}
 
 			strReturn = Buff;	
@@ -173,7 +182,7 @@ char* TelldusSettings::getVendor(int intDeviceId){
 		else{
 			throw exception();	//couldn't open reg key
 		}
-		RegCloseKey(hk);
+		RegCloseKey(d->hk);
 	}
 	catch(exception e){
 		strReturn = "";
@@ -195,18 +204,18 @@ bool TelldusSettings::setVendor(int intDeviceId, char* strVendor){
 	try{
 		
 		std::ostringstream ssRegPath; 
-		ssRegPath << strRegPathDevice << intDeviceId;
+		ssRegPath << d->strRegPathDevice << intDeviceId;
 		string strCompleteRegPath = ssRegPath.str();
-		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strCompleteRegPath.c_str(), 0, KEY_WRITE, &hk);
+		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strCompleteRegPath.c_str(), 0, KEY_WRITE, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
-		intMaxRegValueLength = (int)strlen(strVendor);
-			RegSetValueEx(hk, "Vendor", 0, REG_SZ, (LPBYTE)strVendor, intMaxRegValueLength);
+		d->intMaxRegValueLength = (int)strlen(strVendor);
+			RegSetValueEx(d->hk, "Vendor", 0, REG_SZ, (LPBYTE)strVendor, d->intMaxRegValueLength);
 		}
 		else{
 			throw exception();	//couldn't open reg key
 		}
-		RegCloseKey(hk);
+		RegCloseKey(d->hk);
 	}
 	catch(...){
 		blnSuccess = false;
@@ -223,26 +232,26 @@ char* TelldusSettings::getModel(int intDeviceId){
 
 	try{
 		std::ostringstream ssRegPath; 
-		ssRegPath << strRegPathDevice << intDeviceId;
+		ssRegPath << d->strRegPathDevice << intDeviceId;
 		string strCompleteRegPath = ssRegPath.str();
-		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &hk);
+		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
 			DWORD dwLength;
-			char* Buff = new char[intMaxRegValueLength];
+			char* Buff = new char[d->intMaxRegValueLength];
 
-			long lngStatus = RegQueryValueEx(hk, "Model", NULL, NULL, (LPBYTE)Buff, &dwLength);
+			long lngStatus = RegQueryValueEx(d->hk, "Model", NULL, NULL, (LPBYTE)Buff, &dwLength);
 			if(lngStatus == ERROR_MORE_DATA){
 
 				Buff = new char[dwLength];
-				lngStatus = RegQueryValueEx(hk, "Model", NULL, NULL, (LPBYTE)Buff, &dwLength);
+				lngStatus = RegQueryValueEx(d->hk, "Model", NULL, NULL, (LPBYTE)Buff, &dwLength);
 			}
 			strReturn = Buff;	
 		}
 		else{
 			throw exception();	//couldn't open reg key
 		}
-		RegCloseKey(hk);
+		RegCloseKey(d->hk);
 	}
 	catch(...){
 		strReturn = "";
@@ -259,18 +268,18 @@ bool TelldusSettings::setModel(int intDeviceId, char* strVendor){
 	try{
 		
 		std::ostringstream ssRegPath; 
-		ssRegPath << strRegPathDevice << intDeviceId;
+		ssRegPath << d->strRegPathDevice << intDeviceId;
 		string strCompleteRegPath = ssRegPath.str();
-		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strCompleteRegPath.c_str(), 0, KEY_WRITE, &hk);
+		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strCompleteRegPath.c_str(), 0, KEY_WRITE, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
-		intMaxRegValueLength = (int)strlen(strVendor);
-			RegSetValueEx(hk, "Model", 0, REG_SZ, (LPBYTE)strVendor, intMaxRegValueLength);
+		d->intMaxRegValueLength = (int)strlen(strVendor);
+			RegSetValueEx(d->hk, "Model", 0, REG_SZ, (LPBYTE)strVendor, d->intMaxRegValueLength);
 		}
 		else{
 			throw exception();	//couldn't open reg key
 		}
-		RegCloseKey(hk);
+		RegCloseKey(d->hk);
 	}
 	catch(...){
 		blnSuccess = false;
@@ -283,19 +292,19 @@ int TelldusSettings::getDeviceId(int intDeviceIndex){
 	
 	try{
 		
-		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strRegPathDevice.c_str(), 0, KEY_READ, &hk);
+		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, d->strRegPathDevice.c_str(), 0, KEY_READ, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
 		
-			char* Buff = new char[intMaxRegValueLength];
+			char* Buff = new char[d->intMaxRegValueLength];
 			DWORD size;
-			if (RegEnumKeyEx(hk, intDeviceIndex, (LPSTR)Buff, &size, NULL, NULL, NULL, NULL) == ERROR_SUCCESS) {
+			if (RegEnumKeyEx(d->hk, intDeviceIndex, (LPSTR)Buff, &size, NULL, NULL, NULL, NULL) == ERROR_SUCCESS) {
 				intReturn = (int)_atoi64(Buff);
 			}
 			
 			delete Buff;
 
-			RegCloseKey(hk);
+			RegCloseKey(d->hk);
 		}
 		else{
 			throw exception();	//couldn't open reg key
@@ -317,19 +326,19 @@ int TelldusSettings::getNumberOfArguments(int intDeviceId){
 
 	try{
 		std::ostringstream ssRegPath; 
-		ssRegPath << strRegPathDevice << intDeviceId;
+		ssRegPath << d->strRegPathDevice << intDeviceId;
 		string strCompleteRegPath = ssRegPath.str();
-		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &hk);
+		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
 			DWORD dNumValues;
-			RegQueryInfoKey(hk, NULL, NULL, NULL, NULL, NULL, NULL, &dNumValues, NULL, NULL, NULL, NULL);
+			RegQueryInfoKey(d->hk, NULL, NULL, NULL, NULL, NULL, NULL, &dNumValues, NULL, NULL, NULL, NULL);
 			intReturn = (int)dNumValues - 3;	//total number of values - model, name and vendor
 		}
 		else{
 			throw exception();	//couldn't open reg key
 		}
-		RegCloseKey(hk);
+		RegCloseKey(d->hk);
 	}
 	catch(...){
 		//error management
@@ -347,13 +356,13 @@ int* TelldusSettings::getArguments(int intDeviceId){
 
 	try{
 		std::ostringstream ssRegPath; 
-		ssRegPath << strRegPathDevice << intDeviceId;
+		ssRegPath << d->strRegPathDevice << intDeviceId;
 		string strCompleteRegPath = ssRegPath.str();
-		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &hk);
+		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
 			DWORD dNumValues;
-			RegQueryInfoKey(hk, NULL, NULL, NULL, NULL, NULL, NULL, &dNumValues, NULL, NULL, NULL, NULL);
+			RegQueryInfoKey(d->hk, NULL, NULL, NULL, NULL, NULL, NULL, &dNumValues, NULL, NULL, NULL, NULL);
 		
 			int intNumberOfArguments = (int)dNumValues - 3;	//total number of values - model, name and vendor
 			DWORD dwLength;
@@ -362,12 +371,12 @@ int* TelldusSettings::getArguments(int intDeviceId){
 
 			while(i < intNumberOfArguments){
 				
-				char* Buff = new char[intMaxRegValueLength];
+				char* Buff = new char[d->intMaxRegValueLength];
 				
 				_itoa(i, chConvertBuffer, 10);
-				long lngStatus = RegQueryValueEx(hk, chConvertBuffer, NULL, NULL, (LPBYTE)Buff, &dwLength);
+				long lngStatus = RegQueryValueEx(d->hk, chConvertBuffer, NULL, NULL, (LPBYTE)Buff, &dwLength);
 				if(lngStatus == ERROR_MORE_DATA){
-					lngStatus = RegQueryValueEx(hk, chConvertBuffer, NULL, NULL, (LPBYTE)Buff, &dwLength);
+					lngStatus = RegQueryValueEx(d->hk, chConvertBuffer, NULL, NULL, (LPBYTE)Buff, &dwLength);
 				}
 				int intReturn = (int)_atoi64(Buff);
 				vReturn.push_back(intReturn);
@@ -379,7 +388,7 @@ int* TelldusSettings::getArguments(int intDeviceId){
 		else{
 			throw exception();	//couldn't open reg key
 		}
-		RegCloseKey(hk);
+		RegCloseKey(d->hk);
 
 		intReturn = new int[vReturn.size()];
 
@@ -399,7 +408,7 @@ int* TelldusSettings::getArguments(int intDeviceId){
 /*
 * Set device arguments
 */
-bool TelldusSettings::setArguments(int intDeviceId, int* intArguments[], int intNumberOfArguments){
+/* bool TelldusSettings::setArguments(int intDeviceId, int* intArguments[], int intNumberOfArguments){
 
 	bool blnSuccess = true;
 	try{
@@ -427,12 +436,12 @@ bool TelldusSettings::setArguments(int intDeviceId, int* intArguments[], int int
 		blnSuccess = false;
 	}
 	return blnSuccess;
-}
+}*/
 
 /*
 * Set device arguments
 */
-bool TelldusSettings::setArguments(int intDeviceId, vector <int> vArguments){
+/* bool TelldusSettings::setArguments(int intDeviceId, vector <int> vArguments){
 
 	bool blnSuccess = true;
 	try{
@@ -463,7 +472,7 @@ bool TelldusSettings::setArguments(int intDeviceId, vector <int> vArguments){
 		blnSuccess = false;
 	}
 	return blnSuccess;
-}
+}*/
 
 
 /*
@@ -478,7 +487,7 @@ int TelldusSettings::addDevice(){
 		intDeviceId = getNextDeviceId();
 
 		std::ostringstream ssRegPath; 
-		ssRegPath << strRegPathDevice << intDeviceId;
+		ssRegPath << d->strRegPathDevice << intDeviceId;
 		string strCompleteRegPath = ssRegPath.str();
 		
 		if(RegCreateKeyEx(HKEY_CURRENT_USER,
@@ -488,13 +497,13 @@ int TelldusSettings::addDevice(){
 				   REG_OPTION_NON_VOLATILE,
 				   KEY_ALL_ACCESS,
 				   NULL,
-				   &hk,
+				   &d->hk,
 				   &dwDisp)){
 			//fail
 		   throw exception("Create Key failed");
 		}
 
-		RegCloseKey(hk);
+		RegCloseKey(d->hk);
 
 	}
 	catch(...){
@@ -511,24 +520,24 @@ int TelldusSettings::getNextDeviceId(){
 	int intReturn = -1;
 	try{
 		DWORD dwDisp;
-		long lnExists = RegCreateKeyEx(HKEY_CURRENT_USER, strRegPathDevice.c_str(), 0, NULL, REG_OPTION_NON_VOLATILE,
+		long lnExists = RegCreateKeyEx(HKEY_CURRENT_USER, d->strRegPathDevice.c_str(), 0, NULL, REG_OPTION_NON_VOLATILE,
 				   KEY_ALL_ACCESS,
 				   NULL,
-				   &hk,
+				   &d->hk,
 				   &dwDisp);	//create or open if already created
 				
 		if(lnExists == ERROR_SUCCESS){
 			
 			DWORD dwLength;
-			char* Buff = new char[intMaxRegValueLength];
+			char* Buff = new char[d->intMaxRegValueLength];
 
-			long lngStatus = RegQueryValueEx(hk, "LastUsedId", NULL, NULL, (LPBYTE)Buff, &dwLength);
+			long lngStatus = RegQueryValueEx(d->hk, "LastUsedId", NULL, NULL, (LPBYTE)Buff, &dwLength);
 
 			if(lngStatus == ERROR_MORE_DATA){
 
 
 				Buff = new char[dwLength];
-				lngStatus = RegQueryValueEx(hk, "LastUsedId", NULL, NULL, (LPBYTE)Buff, &dwLength);
+				lngStatus = RegQueryValueEx(d->hk, "LastUsedId", NULL, NULL, (LPBYTE)Buff, &dwLength);
 			}
 
 			if(lngStatus == ERROR_SUCCESS){
@@ -543,10 +552,10 @@ int TelldusSettings::getNextDeviceId(){
 
 			DWORD dwVal = intReturn;
 			
-			RegSetValueEx (hk, "LastUsedId", 0L, REG_DWORD, (CONST BYTE*) &dwVal, sizeof(DWORD));
+			RegSetValueEx (d->hk, "LastUsedId", 0L, REG_DWORD, (CONST BYTE*) &dwVal, sizeof(DWORD));
 			
 		}
-		RegCloseKey(hk);
+		RegCloseKey(d->hk);
 	}
 	catch(...){
 		intReturn = -1;
@@ -562,7 +571,7 @@ bool TelldusSettings::removeDevice(int intDeviceId){
 	bool blnSuccess = true;
 	try{
 		std::ostringstream ssRegPath; 
-		ssRegPath << strRegPathDevice << intDeviceId;
+		ssRegPath << d->strRegPathDevice << intDeviceId;
 		string strCompleteRegPath = ssRegPath.str();
 
 		long lngSuccess = RegDeleteKey(HKEY_CURRENT_USER, strCompleteRegPath.c_str());
