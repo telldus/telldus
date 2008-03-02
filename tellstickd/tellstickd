@@ -27,6 +27,7 @@ my @device_cfg;
 my $conf_file = "";
 my $make_daemon = $NO;
 my $output_to_logfile = $YES;
+my $simulate = $NO;
 my $n_rfcmd_calls;
 my $current_time;
 my $number_of_rules;
@@ -168,7 +169,9 @@ sub rfcmd_exec {
 	# and check that it is not disabled by on/off time set to -1 in the config file
 	if ($device_cfg[$device_id][22] == 0  && $device_cfg[$device_id][23] != -1) {
 	    printf("$PROGRAM_NAME: Time is $current_time. Switching on $device_cfg[$device_id][0] device $device_cfg[$device_id][1]$device_cfg[$device_id][2].\n");
-	    `$RFCMD $RFCMD_OPTIONS 1`;
+	    if ($simulate == $NO) {
+		`$RFCMD $RFCMD_OPTIONS 1`;
+	    }
 	    $device_cfg[$device_id][22] = 1;
 
 	    return;
@@ -180,7 +183,9 @@ sub rfcmd_exec {
     elsif ($action == 0) {
 	if ($device_cfg[$device_id][22] == 1  && $device_cfg[$device_id][24] != -1) {
 	    printf("$PROGRAM_NAME: Time is $current_time. Switching off $device_cfg[$device_id][0] device $device_cfg[$device_id][1]$device_cfg[$device_id][2].\n");
-	    `$RFCMD $RFCMD_OPTIONS 0`;
+	    if ($simulate == $NO) {
+		`$RFCMD $RFCMD_OPTIONS 0`;
+	    }
 	    $device_cfg[$device_id][22] = 0;
 
 	    return;
@@ -646,6 +651,7 @@ sub usageprompt
     printf("-d, --daemon            Run the program as a daemon and write a logfile.\n");
     printf("-h, --help              Show this message and exit.\n");
     printf("-l, --logfile filename  Redirect daemon logs to filename. Default $LOG_FILE\n");
+    printf("--simulate              Run in foreground, log to console, no actuall device operations performed.\n");
 }
 
 
@@ -671,6 +677,9 @@ while ($i < $#ARGV) {
 	    $i++;
 	    $LOG_FILE = $ARGV[$i+1];
 	}
+	elsif ($ARGV[$i+1] =~ /--simulate/) {
+	    $simulate = $YES;
+	}
 	else {
 	    die("$PROGRAM_NAME: Unknown input argument: $ARGV[$i+1]\n");
 	}
@@ -683,12 +692,12 @@ if ($#ARGV < 0) {
     die "Try \"$PROGRAM_NAME --help\" for more information.\n";
 }
 
-if ($output_to_logfile == $YES) {
+if ($output_to_logfile == $YES && $simulate == $NO) {
     open STDOUT, "> $LOG_FILE" or die "$PROGRAM_NAME: Can't write to $LOG_FILE: $!";
     open STDERR, ">> $LOG_FILE" or die "$PROGRAM_NAME: Can't write to $LOG_FILE: $!";
 }
 
-if ($make_daemon == $YES) {
+if ($make_daemon == $YES && $simulate == $NO) {
     &daemonize();
     open PIDFILE, ">$pidFile" or die "$PROGRAM_NAME: Can't open $pidFile: $!\n";
     print PIDFILE $$ . "\n";
