@@ -351,8 +351,9 @@ sub is_time_format_correct
 # Time format sanity check routine
 sub is_rule_valid_today
 {
-    my $rule = $_[0];
+    my $device_id = $_[0];
     my $now = $_[1];
+    my $rule = $device_cfg[$i][10];
 
     (my $week_rule) = $rule =~/^([e|o])/;
     if ($week_rule) {
@@ -752,14 +753,11 @@ while (1) {
 
 	    # Lets set the actual on- and offtimes depending on random interval settings.
 	    randomize_on($i);
-#//	    if ($device_cfg[$i][2] == 16) {
-#		print "-- " . is_rule_valid_today($device_cfg[$i][10],$now) ."\n";
-#	    }
-	    if (is_rule_valid_today($device_cfg[$i][10],$now) == $YES) {
+	    if (is_rule_valid_today($i, $now) == $YES) {
 		printf("$PROGRAM_NAME: Today device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] will be turned on $device_cfg[$i][3]\n");
 	    }
 	    randomize_off($i);
-	    if (is_rule_valid_today($device_cfg[$i][10],$now) == $YES) {
+	    if (is_rule_valid_today($i, $now) == $YES) {
 		printf("$PROGRAM_NAME: Today device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] will be turned off $device_cfg[$i][4]\n");
 	    }
 
@@ -767,12 +765,12 @@ while (1) {
 	    # Sunrise time + requested offset
 	    if ($device_cfg[$i][5] == $YES) {
 		$device_cfg[$i][20] = add_time($sunrise_time, $device_cfg[$i][6]);
-		if (is_rule_valid_today($device_cfg[$i][10],$now) == $YES) {
+		if (is_rule_valid_today($i, $now) == $YES) {
 		    printf("$PROGRAM_NAME: Device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] sunrise off time set to $device_cfg[$i][20].\n");
 		}
 		# Sunset time - requested offset
 		$device_cfg[$i][21] = subtract_time($sunset_time, $device_cfg[$i][7]);
-		if (is_rule_valid_today($device_cfg[$i][10],$now) == $YES) {
+		if (is_rule_valid_today($i, $now) == $YES) {
 		    printf("$PROGRAM_NAME: Device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] sunset on time set to $device_cfg[$i][21].\n\n");
 		}
 	    }
@@ -790,7 +788,7 @@ while (1) {
 
 
 	# Lets check if the rule is to be applied today
-	if (is_rule_valid_today($device_cfg[$i][10], $now) == $YES) {
+	if (is_rule_valid_today($i, $now) == $YES) {
 
 
 
