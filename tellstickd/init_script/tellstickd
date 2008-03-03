@@ -27,7 +27,7 @@ desc="remote switch daemon"
 
 start() {
 	echo -n $"Starting $desc ($prog): "
-	daemon --user root $prog --daemon --config $CONFIG_FILE --logfile $LOG_FILE $OPTIONS
+	daemon --user root $prog --daemon --config $CONFIG_FILE $OPTIONS
 	RETVAL=$?
 	echo
 	[ $RETVAL -eq 0 ] && touch /var/lock/subsys/$prog
