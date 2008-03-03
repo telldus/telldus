@@ -26,7 +26,6 @@ my $YES = 1;
 my @device_cfg;
 my $conf_file = "";
 my $make_daemon = $NO;
-my $output_to_logfile = $YES;
 my $simulate = $NO;
 my $n_rfcmd_calls;
 my $current_time;
@@ -684,7 +683,6 @@ while ($i < $#ARGV) {
 	    $conf_file = $ARGV[$i+1];
 	}
 	elsif ($ARGV[$i+1] =~ /^-d$/ || $ARGV[$i+1] =~ /^--daemon$/) {
-	    $output_to_logfile = $YES;
 	    $make_daemon = $YES;
 	}
 	elsif ($ARGV[$i+1] =~ /^-h$/ || $ARGV[$i+1] =~ /^--help$/) {
@@ -716,7 +714,11 @@ if ($LOG_FILE && $make_daemon && !$simulate) {
     open STDOUT, "> $LOG_FILE" or die "$PROGRAM_NAME: Can't write to $LOG_FILE: $!";
     open STDERR, ">> $LOG_FILE" or die "$PROGRAM_NAME: Can't write to $LOG_FILE: $!";
 }
-
+if (!$LOG_FILE && $make_daemon) {
+# start a daemon without a log file
+    open STDOUT, '>/dev/null' or die "Can't write to /dev/null: $!";
+    open STDERR, '>/dev/null' or die "$PROGRAM_NAME: Can't write to /dev/null: $!";
+}
 # Read the configuration file
 $number_of_rules = read_config($conf_file);
 
