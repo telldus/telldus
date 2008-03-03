@@ -15,7 +15,6 @@ source /etc/rc.d/init.d/functions
 
 EXECUTABLE="/usr/local/bin/tellstickd"
 CONFIG_FILE="/etc/tellstickd.conf"
-LOG_FILE="/var/log/tellstickd"
 OPTIONS=""
 
 [ -x $EXECUTABLE ] || exit 1
