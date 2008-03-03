@@ -371,6 +371,25 @@ sub is_rule_valid_today
     return $NO;
 }
 
+# Ugly hack, but we have to get the log_file option from the config file
+# before parsing the config file
+sub get_config_log_file_param
+{
+    my $input_file = $_[0];
+    open(CFG_FILE, "<$input_file") or die "$PROGRAM_NAME: Could not access config file: $conf_file\n";
+    
+    while ($_ = <CFG_FILE>) {
+	chomp($_);
+	(my $value) = $_ =~ /^log_file\s*=\s*([a-zA-Z0-9_\/\.]*)/;
+	if ($value) {
+	    close(CFG_FILE);
+	    return $value;
+	}
+    }
+    close(CFG_FILE);
+    return $NO;
+}
+
 sub read_config
 {
     my $input_file = $_[0];
@@ -691,8 +710,9 @@ if ($#ARGV < 0) {
 if (length($conf_file) < 1) {
     $conf_file = $CONFIG_FILE;
 }
+$LOG_FILE = get_config_log_file_param($conf_file);
 
-if ($output_to_logfile == $YES && $simulate == $NO) {
+if ($LOG_FILE && $make_daemon && !$simulate) {
     open STDOUT, "> $LOG_FILE" or die "$PROGRAM_NAME: Can't write to $LOG_FILE: $!";
     open STDERR, ">> $LOG_FILE" or die "$PROGRAM_NAME: Can't write to $LOG_FILE: $!";
 }
