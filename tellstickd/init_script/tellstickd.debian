@@ -16,7 +16,6 @@
 DAEMON="/usr/local/bin/tellstickd"
 NAME="tellstickd"
 CONFIG_FILE="/etc/tellstickd.conf"
-LOG_FILE="/var/log/tellstickd"
 PID_FILE="/var/run/tellstickd.pid"
 OPTIONS=""
 
@@ -30,7 +29,7 @@ desc="remote switch daemon"
 
 start() {
 	log_begin_msg "Starting $desc ($prog): "
-	start-stop-daemon --start --quiet --pidfile "$PID_FILE" --name $NAME --exec $DAEMON -- --daemon --config $CONFIG_FILE --logfile $LOG_FILE $OPTIONS
+	start-stop-daemon --start --quiet --pidfile "$PID_FILE" --name $NAME --exec $DAEMON -- --daemon --config $CONFIG_FILE $OPTIONS
 	log_end_msg $?
 
 }
@@ -47,9 +46,11 @@ restart() {
 }
 
 reload() {
-	log_begin_msg "Reloading $desc ($prog): "
-	start-stop-daemon --stop --quiet --pidfile "$PID_FILE" --name $NAME --signal 1
-	log_end_msg $?
+        restart
+#       the daemon doesn't reacto to sig HUP, so just restart it
+#	log_begin_msg "Reloading $desc ($prog): "
+#	start-stop-daemon --stop --quiet --pidfile "$PID_FILE" --name $NAME --signal 1
+#	log_end_msg $?
 }
 
 case "$1" in
@@ -68,7 +69,7 @@ case "$1" in
 
   *)
 	echo $"Usage: $0 {start|stop|restart|reload}"
-	RETVAL=1
+	exit 2
 esac
 
-exit $RETVAL
+exit 0
