@@ -651,7 +651,6 @@ sub usageprompt
     printf("-c, --config filename   Searchpath to configuration file, if not given $CONFIG_FILE is assumed.\n");
     printf("-d, --daemon            Run the program as a daemon and write a logfile.\n");
     printf("-h, --help              Show this message and exit.\n");
-    printf("-l, --logfile filename  Redirect daemon logs to filename. Default $LOG_FILE\n");
     printf("--simulate              Run in foreground, log to console, no actuall device operations performed.\n");
 }
 
@@ -673,11 +672,6 @@ while ($i < $#ARGV) {
 	    usageprompt();
 	    exit;
 	}
-	elsif ($ARGV[$i+1] =~ /^-l$/ || $ARGV[$i+1] =~ /^--logfile$/) {
-	    $output_to_logfile = $YES;
-	    $i++;
-	    $LOG_FILE = $ARGV[$i+1];
-	}
 	elsif ($ARGV[$i+1] =~ /--simulate/) {
 	    $simulate = $YES;
 	}
@@ -693,23 +687,15 @@ if ($#ARGV < 0) {
     die "Try \"$PROGRAM_NAME --help\" for more information.\n";
 }
 
-if ($output_to_logfile == $YES && $simulate == $NO) {
-    open STDOUT, "> $LOG_FILE" or die "$PROGRAM_NAME: Can't write to $LOG_FILE: $!";
-    open STDERR, ">> $LOG_FILE" or die "$PROGRAM_NAME: Can't write to $LOG_FILE: $!";
-}
-
-if ($make_daemon == $YES && $simulate == $NO) {
-    &daemonize();
-    open PIDFILE, ">$pidFile" or die "$PROGRAM_NAME: Can't open $pidFile: $!\n";
-    print PIDFILE $$ . "\n";
-    close PIDFILE;
-}
 
 if (length($conf_file) < 1) {
     $conf_file = $CONFIG_FILE;
 }
 
-printf("$PROGRAM_NAME: Starting $PROGRAM_NAME version $VERSION\n");
+if ($output_to_logfile == $YES && $simulate == $NO) {
+    open STDOUT, "> $LOG_FILE" or die "$PROGRAM_NAME: Can't write to $LOG_FILE: $!";
+    open STDERR, ">> $LOG_FILE" or die "$PROGRAM_NAME: Can't write to $LOG_FILE: $!";
+}
 
 # Read the configuration file
 $number_of_rules = read_config($conf_file);
@@ -720,6 +706,17 @@ if ($number_of_rules < 1) {
 else {
     printf("\n$PROGRAM_NAME: $number_of_rules rule(s) has been read.\n\n");
 }
+
+if ($make_daemon == $YES && $simulate == $NO) {
+    &daemonize();
+    open PIDFILE, ">$pidFile" or die "$PROGRAM_NAME: Can't open $pidFile: $!\n";
+    print PIDFILE $$ . "\n";
+    close PIDFILE;
+}
+
+
+printf("$PROGRAM_NAME: Starting $PROGRAM_NAME version $VERSION\n");
+
 
 ###################################################################################################
 # Now to the eternal loop
