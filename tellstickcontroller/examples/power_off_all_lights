@@ -1,0 +1,12 @@
+#!/bin/sh
+#
+# Power off every device that control light sources.
+#
+
+tellstickController --set bedroom_mythtv_leds off
+tellstickController --set bedroom_window off
+tellstickController --set kitchen_cabinets off
+tellstickController --set livingroom_cabinets off
+tellstickController --set livingroom_uplight off
+tellstickController --set livingroom_walls off
+

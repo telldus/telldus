@@ -1,0 +1,9 @@
+#!/bin/sh
+#
+# Power on bedroom MythTV, turn on backlight leds and turn off window lamp.
+#
+
+tellstickController --set bedroom_mythtv_power on
+tellstickController --set bedroom_mythtv_leds on
+tellstickController --set bedroom_window off
+

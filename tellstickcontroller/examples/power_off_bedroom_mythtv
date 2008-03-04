@@ -1,0 +1,8 @@
+#!/bin/sh
+#
+# Power off bedroom MythTV, turn off backlight leds.
+#
+
+tellstickController --set bedroom_mythtv_power off
+tellstickController --set bedroom_mythtv_leds off
+
