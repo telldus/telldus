@@ -416,7 +416,7 @@ sub read_config
 	    @inrad = split /\s+/, $_;
 	    $device_cfg[$i][0] = $inrad[0];            # Protocol
 	    $device_cfg[$i][1] = $inrad[1];            # Housecode A and channel for NEXA, channel for SARTANO.
-	    $device_cfg[$i][10] = $inrad[2];           # Rule valid days [1234567]
+	    $device_cfg[$i][10] = $inrad[2];           # Rule valid days [[oe]1234567]
 	    $device_cfg[$i][22] = 1;                   # Initial state set to on (1) so that they will be switched off at startup
 
 
@@ -835,9 +835,6 @@ while (1) {
 		    $n_rfcmd_calls++;
 		}
 	    }
-
-
-
     }
 
 
@@ -847,6 +844,6 @@ while (1) {
     $first_loop = $NO;
 
     if ($n_rfcmd_calls < 30) {
-	sleep(60 - 1*$n_rfcmd_calls);   # Wait a while until next round [seconds]. If rfcmd has been called, reduce this figure by 1 second per call.
+	sleep(60 - 2*$n_rfcmd_calls);   # Wait a while until next round [seconds]. If rfcmd has been called, reduce this figure by 2 seconds per call.
     }
 }
