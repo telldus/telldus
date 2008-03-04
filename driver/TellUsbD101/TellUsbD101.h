@@ -27,21 +27,23 @@ extern "C" {
 	TELLSTICK_API bool WINAPI devTurnOff(int intDeviceId);
 	TELLSTICK_API bool WINAPI devBell(int intDeviceId);
 	TELLSTICK_API bool WINAPI devDim(int intDeviceId, unsigned char level);
-	TELLSTICK_API int WINAPI devGetNumberOfDevices();
-	TELLSTICK_API char * WINAPI devGetName(int intDeviceId);
-	TELLSTICK_API bool WINAPI devSetName(int intDeviceId, char* chNewName);
-	TELLSTICK_API char* WINAPI devGetVendor(int intDeviceId);
-	TELLSTICK_API bool WINAPI devSetVendor(int intDeviceId, char* chNewName);
-	TELLSTICK_API char* WINAPI devGetModel(int intDeviceId);
-	TELLSTICK_API bool WINAPI devSetModel(int intDeviceId, char* chNewName);
-	TELLSTICK_API int WINAPI devGetArgument(int intDeviceId, int intArgumentIndex);
-	TELLSTICK_API int WINAPI devGetNumberOfArguments(int intDeviceId);
-	TELLSTICK_API bool WINAPI devSetArguments(int intDeviceId, char* strArguments);
-	TELLSTICK_API int WINAPI devAddDevice();
-	TELLSTICK_API int WINAPI devAddDeviceWithArguments(char* strVendor, int* intArguments[], int intNumberOfArguments);
-	TELLSTICK_API bool WINAPI devRemoveDevice(int intDeviceId);
-	TELLSTICK_API int WINAPI devGetDeviceId(int intDeviceIndex);
 	TELLSTICK_API int WINAPI devMethods(int id);
+	
+	TELLSTICK_API int WINAPI devGetNumberOfDevices();
+	TELLSTICK_API int WINAPI devGetDeviceId(int intDeviceIndex);
+	
+	TELLSTICK_API char * WINAPI devGetName(int intDeviceId);
+	TELLSTICK_API bool WINAPI devSetName(int intDeviceId, const char* chNewName);
+	TELLSTICK_API char * WINAPI devGetVendor(int intDeviceId);
+	TELLSTICK_API bool WINAPI devSetVendor(int intDeviceId, const char* chNewName);
+	TELLSTICK_API char * WINAPI devGetModel(int intDeviceId);
+	TELLSTICK_API bool WINAPI devSetModel(int intDeviceId, const char* chNewName);
+	
+	TELLSTICK_API const char * WINAPI devGetArgument(int intDeviceId, const char *strName, const char *defaultValue);
+	TELLSTICK_API bool WINAPI devSetArgument(int intDeviceId, const char *strName, const char* strValue);
+	
+	TELLSTICK_API int WINAPI devAddDevice();
+	TELLSTICK_API bool WINAPI devRemoveDevice(int intDeviceId);
 }
 
 #define TELLSTICK_TURNON	1

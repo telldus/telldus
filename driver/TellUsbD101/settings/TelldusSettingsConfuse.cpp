@@ -11,6 +11,8 @@
 //
 #include "TelldusSettings.h"
 #include <confuse.h>
+#include <stdlib.h>
+#include <string.h>
 
 using namespace std;
 
@@ -68,34 +70,6 @@ int TelldusSettings::getDeviceId(int intDeviceIndex){
 	cfg_t *cfg_device = cfg_getnsec(d->cfg, "device", intDeviceIndex);
 	int id = cfg_getint(cfg_device, "id");
 	return id;
-}
-
-/*
-* Get number of device arguments
-*/
-int TelldusSettings::getNumberOfArguments(int intDeviceId){
-	int intReturn = -1;
-	
-	return intReturn;
-}
-
-/*
-* Get device arguments
-*/
-int* TelldusSettings::getArguments(int intDeviceId){
-//	vector <int> vReturn;
-	int* intReturn = new int[2];
-	
-	return intReturn;
-}
-
-/*
-* Set device arguments
-*/
-bool TelldusSettings::setArguments(int intDeviceId, vector <int> vArguments){
-
-	bool blnSuccess = false;
-	return blnSuccess;
 }
 
 /*
@@ -184,7 +158,7 @@ void TelldusSettings::debugLog(int debugint){
 	}*/
 }
 
-char *TelldusSettings::getStringSetting(int intDeviceId, const char* name) {
+char *TelldusSettings::getStringSetting(int intDeviceId, const char* name, bool parameter) {
 	if (d->cfg == 0) {
 		return "";
 	}
@@ -192,16 +166,22 @@ char *TelldusSettings::getStringSetting(int intDeviceId, const char* name) {
 	for (int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
 		cfg_device = cfg_getnsec(d->cfg, "device", i);
 		if (cfg_getint(cfg_device, "id") == intDeviceId)  {
+			if (parameter) {
+				cfg_device = cfg_getsec(cfg_device, "parameters");
+			}
 			const char *strSetting = cfg_getstr(cfg_device, name);
+			if (strSetting == NULL) {
+				return NULL;
+			}
 			char *strReturn = (char *)malloc(strlen(strSetting) * sizeof(char));
 			strcpy(strReturn, strSetting);
 			return strReturn;
 		}
 	}
-	return "";
+	return 0;
 }
 
-bool TelldusSettings::setStringSetting(int intDeviceId, const char* name, const char *value) {
+bool TelldusSettings::setStringSetting(int intDeviceId, const char* name, const char *value, bool parameter) {
 	if (d->cfg == 0) {
 		return false;
 	}
@@ -209,7 +189,12 @@ bool TelldusSettings::setStringSetting(int intDeviceId, const char* name, const 
 	for (int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
 		cfg_device = cfg_getnsec(d->cfg, "device", i);
 		if (cfg_getint(cfg_device, "id") == intDeviceId)  {
-			cfg_setstr(cfg_device, name, value);
+			if (parameter) {
+				cfg_t *cfg_parameters = cfg_getsec(cfg_device, "parameters");
+				cfg_setstr(cfg_parameters, name, value);
+			} else {
+				cfg_setstr(cfg_device, name, value);
+			}
 			FILE *fp = fopen(CONFIG_FILE, "w");
 			cfg_print(d->cfg, fp);
 			fclose(fp);
@@ -220,15 +205,13 @@ bool TelldusSettings::setStringSetting(int intDeviceId, const char* name, const 
 }
 
 bool readConfig(cfg_t **cfg) {
-	cfg_opt_t device_opts[] = {
-		CFG_INT("id", -1, CFGF_NONE),
-		CFG_STR("name", "Unnamed", CFGF_NONE),
-		CFG_STR("vendor", "Nexa", CFGF_NONE),
-		CFG_STR("model", "1", CFGF_NONE),
-		
+	cfg_opt_t parameter_opts[] = {
 		//Nexa
 		CFG_STR("nexa_house", 0, CFGF_NONE),
 		CFG_STR("nexa_unit", 0, CFGF_NONE),
+		
+		//Sartano
+		CFG_STR("sartano_code", 0, CFGF_NONE),
 		
 		//Ikea
 		CFG_STR("ikea_system", 0, CFGF_NONE),
@@ -237,11 +220,22 @@ bool readConfig(cfg_t **cfg) {
 		
 		CFG_END()
 	};
+	
+	cfg_opt_t device_opts[] = {
+		CFG_INT("id", -1, CFGF_NONE),
+		CFG_STR("name", "Unnamed", CFGF_NONE),
+		CFG_STR("vendor", "Nexa", CFGF_NONE),
+		CFG_STR("model", "1", CFGF_NONE),
+		CFG_SEC("parameters", parameter_opts, CFGF_NONE),
+		CFG_END()
+	};
+	
 	cfg_opt_t opts[] = {
 		CFG_STR("deviceNode", "/dev/tellstick", CFGF_NONE),
 		CFG_SEC("device", device_opts, CFGF_MULTI),
 		CFG_END()
 	};
+	
 	(*cfg) = cfg_init(opts, CFGF_NOCASE);
 	if (cfg_parse((*cfg), CONFIG_FILE) == CFG_PARSE_ERROR) {
 		(*cfg) = 0;

@@ -142,7 +142,9 @@ char * WINAPI devGetName(int intDeviceId){
 	try{
 		TelldusSettings ts;
 		strReturn = ts.getName(intDeviceId);
+#ifdef _WINDOWS
 		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
+#endif
 	}
 	catch(exception e){
 		strReturn = "";
@@ -151,7 +153,7 @@ char * WINAPI devGetName(int intDeviceId){
 	return strReturn;
 }
 
-bool WINAPI devSetName(int intDeviceId, char* strNewName){
+bool WINAPI devSetName(int intDeviceId, const char* strNewName){
 	bool blnSuccess = false;
 	try{
 		TelldusSettings ts;
@@ -169,7 +171,9 @@ char* WINAPI devGetVendor(int intDeviceId){
 	try{
 		TelldusSettings ts;
 		strReturn = ts.getVendor(intDeviceId);
+#ifdef _WINDOWS
 		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
+#endif
 	}
 	catch(exception e){
 		strReturn = "";
@@ -178,7 +182,7 @@ char* WINAPI devGetVendor(int intDeviceId){
 	return strReturn;
 }
 
-bool WINAPI devSetVendor(int intDeviceId, char* strVendor){
+bool WINAPI devSetVendor(int intDeviceId, const char* strVendor){
 	bool blnSuccess = false;
 	try{
 		TelldusSettings ts;
@@ -196,7 +200,9 @@ bool WINAPI devSetVendor(int intDeviceId, char* strVendor){
 	try{
 		TelldusSettings ts;
 		strReturn = ts.getModel(intDeviceId);
+#ifdef _WINDOWS
 		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
+#endif
 	}
 	catch(exception e){
 		strReturn = "";
@@ -205,7 +211,7 @@ bool WINAPI devSetVendor(int intDeviceId, char* strVendor){
 	return strReturn;
 }
 
-bool WINAPI devSetModel(int intDeviceId, char* strNewModel){
+bool WINAPI devSetModel(int intDeviceId, const char* strNewModel){
 	bool blnSuccess = false;
 	try{
 		TelldusSettings ts;
@@ -218,51 +224,34 @@ bool WINAPI devSetModel(int intDeviceId, char* strNewModel){
 	return blnSuccess;
 }
 
-bool WINAPI devSetArguments(int intDeviceId, char* strArguments){
-	return false;
-/*	vector <int> vArguments;
-	//int intArguments[] = new int[];	//bort?
-	try{
-		char* strTemp = strtok(strArguments, ",");
+bool WINAPI devSetArgument(int intDeviceId, const char *strName, const char *strValue){
 	
-		while(strTemp != NULL){
-			vArguments.push_back(atoi(strTemp));
-			strTemp = strtok(NULL, ",");
-		}
-		TelldusSettings ts;
-		return ts.setArguments(intDeviceId, vArguments);
-	}
-	catch(exception e){
-		handleException(e);
-		return false;
-	}*/
-}
-
-int WINAPI devGetArgument(int intDeviceId, int intArgumentIndex){
-	int intReturn;
-	try{
-		if(intArgumentIndex != -1){
-			TelldusSettings ts;
-			int* intArguments = ts.getArguments(intDeviceId);
-			intReturn = intArguments[intArgumentIndex];
-		}
-	}
-	catch(exception e){
-		handleException(e);
-	}
-	return intReturn;
-}
-
-int WINAPI devGetNumberOfArguments(int intDeviceId){
-	int intReturn;
 	try{
 		TelldusSettings ts;
-		intReturn = ts.getNumberOfArguments(intDeviceId);
+		return ts.setArgument(intDeviceId, strName, strValue);
 	}
 	catch(exception e){
 		handleException(e);
 	}
-	return intReturn;
+	return false;
+}
+
+const char * WINAPI devGetArgument(int intDeviceId, const char *strName, const char *defaultValue){
+	char *strReturn = "";
+	try{
+		TelldusSettings ts;
+		strReturn = ts.getArgument(intDeviceId, strName);
+		if (strReturn == NULL) {
+			return defaultValue;
+		}
+#ifdef _WINDOWS
+		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
+#endif
+	}
+	catch(exception e){
+		handleException(e);
+	}
+	return strReturn;
 }
 
 int WINAPI devAddDevice(){

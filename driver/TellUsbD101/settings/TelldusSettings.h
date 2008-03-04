@@ -14,13 +14,13 @@ public:
 	Device* getDevice(int intDeviceId);
 	Device* getDevice(int intDeviceId, int intDongleIndex);
 	char* getName(int intDeviceId);
-	bool setName(int intDeviceId, char* strNewName);
+	bool setName(int intDeviceId, const char* strNewName);
 	char* getVendor(int intDeviceId);
-	bool setVendor(int intDeviceId, char* strVendor);
+	bool setVendor(int intDeviceId, const char* strVendor);
 	char* getModel(int intDeviceId);
-	bool setModel(int intDeviceId, char* strModel);
-	int* getArguments(int intDeviceId);
-//	bool setArguments(int intDeviceId, vector <int> vArguments);
+	bool setModel(int intDeviceId, const char* strModel);
+	char* getArgument(int intDeviceId, const char *strName);
+	bool setArgument(int intDeviceId, const char *strName, const char *strValue);
 	int addDevice();
 	int getDeviceId(int intDeviceIndex);
 	bool removeDevice(int intDeviceId);
@@ -31,8 +31,8 @@ public:
 	~TelldusSettings(void);
 	
 protected:
-	char *getStringSetting(int intDeviceId, const char* name);
-	bool setStringSetting(int intDeviceId, const char* name, const char *value);
+	char *getStringSetting(int intDeviceId, const char* name, bool parameter);
+	bool setStringSetting(int intDeviceId, const char* name, const char *value, bool parameter);
 
 private:
 	int getNextDeviceId();

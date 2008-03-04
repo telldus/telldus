@@ -6,19 +6,18 @@ EXPORTS
 	devGetName @3
 	devGetVendor @4
 	devGetModel @5
-	devGetNumberOfArguments @6
-	devGetArgument @7
+	devGetArgument @6
 
-	devSetName @8
-	devSetVendor @9
-	devSetModel @10
-	devSetArguments @11
+	devSetName @7
+	devSetVendor @8
+	devSetModel @9
+	devSetArgument @10
 
-	devAddDevice @12
-	devRemoveDevice @13
+	devAddDevice @11
+	devRemoveDevice @12
 
-	devMethods @14
-	devTurnOn	@16
-	devTurnOff	@17
-	devBell @18
-	devDim @19
+	devMethods @13
+	devTurnOn	@14
+	devTurnOff	@15
+	devBell @16
+	devDim @17
