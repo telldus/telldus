@@ -10,11 +10,11 @@ using namespace std;
 /*
 * Constructor
 */
-DeviceSartano::DeviceSartano(int intNewSystem, int intNewCode, int intDeviceIndex)
-	:Device(intDeviceIndex)
+DeviceSartano::DeviceSartano(char *strNewCode)
+	:Device()
 {
-	intSystem = intNewSystem;
-	intCode = intNewCode;
+// 	intSystem = intNewSystem;
+// 	intCode = intNewCode;
 }
 
 

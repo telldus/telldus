@@ -5,7 +5,7 @@
 class DeviceIkea : public Device
 {
 public:
-	DeviceIkea(int intSystem, int intUnits, int fadeStyle, int intDeviceIndex);
+	DeviceIkea(char *strSystem, char *strUnits, char *strFadeStyle);
 	virtual void turnOn(void);
 	virtual void turnOff(void);
 	virtual void dim(unsigned char level);

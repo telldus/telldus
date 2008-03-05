@@ -11,8 +11,8 @@ using namespace std;
 /*
 * Constructor
 */
-DeviceWaveman::DeviceWaveman(int intNewHouse, int intNewCode, int intDeviceIndex)
-	:DeviceNexa(intNewHouse, intNewCode, intDeviceIndex){
+DeviceWaveman::DeviceWaveman(char *strNewHouse, char *strNewCode)
+	:DeviceNexa(strNewHouse, strNewCode){
 }
 
 /*

@@ -6,28 +6,45 @@
 
 
 /*
-* Get the requested device, when the index of the USB dongle is known
+* Get the requested device
 * Note that the returned Device should be deleted when not in use anymore
 */
-Device* TelldusSettings::getDevice(int intDeviceId, int intDongleIndex){
+Device* TelldusSettings::getDevice(int intDeviceId){
 
-	Device* dev = 0;
+	Device* dev = NULL;
 	
 	try{
 		char* vendor = getVendor(intDeviceId);
 		
-/*		int* args = getArguments(intDeviceId);
-		
 		//each new brand must be added here
 		if (strcmp(vendor, "Nexa") == 0){
-			dev = new DeviceNexa((int)args[0], (int)args[1], intDongleIndex);
+			char *strHouse = getArgument(intDeviceId, "nexa_house");
+			char *strCode = getArgument(intDeviceId, "nexa_unit");
+			dev = new DeviceNexa(strHouse, strCode);
+		
 		} else if (strcmp(vendor, "Waveman") == 0) {
-			dev = new DeviceWaveman((int)args[0], (int)args[1], intDongleIndex);
+			char *strHouse = getArgument(intDeviceId, "nexa_house");
+			char *strCode = getArgument(intDeviceId, "nexa_unit");
+			dev = new DeviceWaveman(strHouse, strCode);
+		
 		} else if (strcmp(vendor, "Sartano") == 0) {
-			dev = new DeviceSartano((int)args[0], (int)args[1], intDongleIndex);
+			char *strCode = getArgument(intDeviceId, "sartano_code");
+			dev = new DeviceSartano(strCode);
+		
 		} else if (strcmp(vendor, "Ikea") == 0) {
-			dev = new DeviceIkea((int)args[0], (int)args[1], (int)args[2], intDongleIndex);
-		}*/
+			char *strSystem = getArgument(intDeviceId, "ikea_system");
+			char *strUnits = getArgument(intDeviceId, "ikea_units");
+			char *strFade = getArgument(intDeviceId, "ikea_fade");
+			dev = new DeviceIkea(strSystem, strUnits, strFade);
+		
+		} else {
+			return NULL;
+		}
+		
+#ifndef _WINDOWS
+		dev->setDevice( getSetting("deviceNode") );
+#endif
+		
 	}
 	catch(...){
 		throw;

@@ -286,7 +286,7 @@ int WINAPI devMethods(int id){
 	try{
 		TelldusSettings ts;
 		char* strModel = ts.getModel(id);
-		Device* dev = ts.getDevice(id, -1); //We send dongleIndex=-1 sice we wouldn't send any data!
+		Device* dev = ts.getDevice(id);
 		if (dev != NULL) {
 			intMethods = dev->methods(strModel);
 		}

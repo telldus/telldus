@@ -46,6 +46,16 @@ TelldusSettings::~TelldusSettings(void)
 }
 
 /*
+* Return a setting
+*/
+char *TelldusSettings::getSetting(const char *strName) {
+	if (d->cfg > 0) {
+		return cfg_getstr(d->cfg, strName);
+	}
+	return "";
+}
+
+/*
 * Return the number of stored devices
 */
 int TelldusSettings::getNumberOfDevices(void){
@@ -54,14 +64,6 @@ int TelldusSettings::getNumberOfDevices(void){
 	}
 	return 0;
 }
-
-/*
-* Get the requested device
-*/
-Device* TelldusSettings::getDevice(int intDeviceId){
-	return NULL;
-}
-
 
 int TelldusSettings::getDeviceId(int intDeviceIndex){
 	if (intDeviceIndex >= getNumberOfDevices()) { //Out of bounds

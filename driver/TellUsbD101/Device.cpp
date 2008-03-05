@@ -3,9 +3,8 @@
 /*
 * Constructor
 */
-Device::Device(int intDongleIndex)
+Device::Device()
 {
-  this->intDongleIndex = intDongleIndex;
 }
 
 /*
@@ -13,7 +12,6 @@ Device::Device(int intDongleIndex)
 */
 Device::~Device(void)
 {
-	intDongleIndex = -1;
 }
 
 /*

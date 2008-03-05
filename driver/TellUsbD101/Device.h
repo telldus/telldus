@@ -4,21 +4,22 @@
 
 class Device
 {
-private:
-	int intDongleIndex;
-protected:
-	void send(char* strMessage);
 public:
-	Device(int intDeviceIndex);
+	Device();
+	~Device(void);
+	
 	virtual void turnOn(void);
 	virtual void turnOff(void);
 	virtual void bell(void);
 	virtual void dim(unsigned char level);
 	virtual int methods(char* strModel);
-	static int getDongleIndex();
+	
+#ifndef _WINDOWS
+	void setDevice(const char *device);
+protected:
+	char *strDevice;
+#endif
 
-	static void debugLog(char* debugstring);
-
-public:
-	~Device(void);
+protected:
+	void send(char* strMessage);
 };

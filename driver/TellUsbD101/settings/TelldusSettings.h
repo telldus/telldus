@@ -10,9 +10,9 @@ class TelldusSettings
 {
 public:
 	TelldusSettings(void);
+	char * getSetting(const char *strName);
 	int getNumberOfDevices(void);
 	Device* getDevice(int intDeviceId);
-	Device* getDevice(int intDeviceId, int intDongleIndex);
 	char* getName(int intDeviceId);
 	bool setName(int intDeviceId, const char* strNewName);
 	char* getVendor(int intDeviceId);
@@ -26,7 +26,6 @@ public:
 	bool removeDevice(int intDeviceId);
 	void debugLog(char* debugstring);
 	void debugLog(int debugint);
-	int getNumberOfArguments(int intDeviceId);
 
 	~TelldusSettings(void);
 	

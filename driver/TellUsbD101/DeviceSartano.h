@@ -6,7 +6,7 @@
 class DeviceSartano : public Device
 {
 public:
-	DeviceSartano(int intSystem, int intCode, int intDeviceIndex);
+	DeviceSartano(char *strCode);
 	virtual void turnOn(void);
 	virtual void turnOff(void);
 	virtual int methods(char* strModel);

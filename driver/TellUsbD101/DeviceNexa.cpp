@@ -11,9 +11,20 @@ using namespace std;
 /*
 * Constructor
 */
-DeviceNexa::DeviceNexa(int intNewHouse, int intNewCode, int intDeviceIndex):Device(intDeviceIndex){
-	intHouse = intNewHouse;
-	intCode = intNewCode;
+DeviceNexa::DeviceNexa(char *strNewHouse, char *strNewCode)
+	:Device()
+{
+	if (strNewHouse != NULL && strlen(strNewHouse) > 0) {
+		intHouse = strNewHouse[0] - 'A';
+	} else {
+		intHouse = 0;
+	}
+	
+	if (strNewCode != NULL && strlen(strNewCode) > 0) {
+		intCode = atoi(strNewCode) - 1;
+	} else {
+		intCode = 0;
+	}
 }
 
 /*
@@ -21,8 +32,8 @@ DeviceNexa::DeviceNexa(int intNewHouse, int intNewCode, int intDeviceIndex):Devi
 */
 DeviceNexa::~DeviceNexa(void)
 {
-	intHouse = -1;
-	intCode = -1;
+// 	intHouse = -1;
+// 	intCode = -1;
 }
 
 /*
@@ -31,10 +42,9 @@ DeviceNexa::~DeviceNexa(void)
 void DeviceNexa::turnOn(void){
 
 	try{
-		//char* model = getModel(intDeviceId);
-		string strCode = getStringCode(intCode);
-		string strHouse = getStringCode(intHouse);
-		strCode.append(strHouse);
+		string strCode = getStringCode(intHouse);
+		string strUnit = getStringCode(intCode);
+		strCode.append(strUnit);
 		
 		strCode.insert(0, "S");
 		strCode.append("$k$k$kk$$kk$$kk$$k+");	//the "turn on"-code, keeps it like this, doesn't have to be regenerated each time
@@ -54,10 +64,10 @@ void DeviceNexa::turnOn(void){
 void DeviceNexa::turnOff(void){
 	
 	try{
-		string strCode = getStringCode(intCode);
-		string strHouse = getStringCode(intHouse);
-
-		strCode.append(strHouse);
+		string strCode = getStringCode(intHouse);
+		string strUnit = getStringCode(intCode);
+		strCode.append(strUnit);
+		
 		strCode.insert(0, "S");
 		strCode.append("$k$k$kk$$kk$$k$k$k+");	//the "turn off"-code, keeps it like this, doesn't have to be regenerated each time
 		
@@ -76,7 +86,7 @@ void DeviceNexa::turnOff(void){
 void DeviceNexa::bell(void){
 	
 	try{
-		string strCode = getStringCode(intCode);
+		string strCode = getStringCode(intHouse);
 
 		strCode.append("$kk$$kk$$kk$$k$k"); //the unit-code is always 7, doesn't have to be regenerated each time
 		strCode.insert(0, "S");
