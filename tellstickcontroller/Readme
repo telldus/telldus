@@ -60,7 +60,7 @@
    'Sunday'. A specified date like '2008-03-18', '2008-03-##',
    '####-03-##' or '####-##-15' is also allowed.
    The second part is mandatory and is either a expression or the
-   keyword 'None'. The expression can contain one or more of these
+   keyword 'No'. The expression can contain one or more of these
    keywords 'Sunrise', 'Sunset', 'Random(HH:MM)' and 'HH:MM'.
    Example rule: Weekend/07:15
    Example rule: Monday+Sunday/07:15
@@ -68,7 +68,7 @@
    Example rule: 2008-03-##/12:10
    Example rule: 07:15+Random(02:00)
    Example rule: Sunset-00:30
-   Example rule: None
+   Example rule: No
 
  AUTHOR
    Original version written by Rickard Andersson

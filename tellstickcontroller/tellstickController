@@ -4,7 +4,7 @@
 # tellstickController program
 #
 # Copyright (C) 2008 Rickard Andersson (ran42ran@gmail.com)
-# Version 1.3
+# Version 1.3.1
 #
 ######################################################################
 #
@@ -419,7 +419,10 @@ sub read_config($) {
   printlogger $text;
   foreach my $rule (@cfg_rule) {
     my ($alias, $on, $off) = @$rule;
-    $text = "$alias = on at $on and off at $off";
+    $text = "$alias =";
+    $text .= " on at $on" if ($on !~ /no/);
+    $text .= " and" if (($on !~ /no/) && ($off !~ /no/));
+    $text .= " off at $off" if ($off !~ /no/);
     println $text if ($option{"check"});
     printlogger $text;
   }
@@ -579,7 +582,7 @@ sub get_rule_datetime($$$$) {
     }
   }
   
-  if (defined($time) && ($time !~ /^not$/)) {
+  if (defined($time) && ($time !~ /^no$/)) {
     my $days = 0;
     my $hours = 0;
     my $minutes = 0;
@@ -911,7 +914,7 @@ __DATA__
 #-   'Sunday'. A specified date like '2008-03-18', '2008-03-##',
 #-   '####-03-##' or '####-##-15' is also allowed.
 #-   The second part is mandatory and is either a expression or the
-#-   keyword 'None'. The expression can contain one or more of these
+#-   keyword 'No'. The expression can contain one or more of these
 #-   keywords 'Sunrise', 'Sunset', 'Random(HH:MM)' and 'HH:MM'.
 #-   Example rule: Weekend/07:15
 #-   Example rule: Monday+Sunday/07:15
@@ -919,7 +922,7 @@ __DATA__
 #-   Example rule: 2008-03-##/12:10
 #-   Example rule: 07:15+Random(02:00)
 #-   Example rule: Sunset-00:30
-#-   Example rule: None
+#-   Example rule: No
 #-
 #- AUTHOR
 #-   Original version written by Rickard Andersson
@@ -927,7 +930,7 @@ __DATA__
 #-
 #- LICENSE
 #-   Copyright (C) 2008 Rickard Andersson
-#-   Version 1.3
+#-   Version 1.3.1
 #-   This program comes with ABSOLUTELY NO WARRANTY.
 #-   This is free software, and you are welcome to redistribute it
 #-   under certain conditions; See license file for details.
