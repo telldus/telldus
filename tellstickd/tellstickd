@@ -669,7 +669,7 @@ sub usageprompt
     printf("-c, --config filename   Searchpath to configuration file, if not given $CONFIG_FILE is assumed.\n");
     printf("-d, --daemon            Run the program as a daemon and write a logfile.\n");
     printf("-h, --help              Show this message and exit.\n");
-    printf("--simulate              Run in foreground, log to console, no actuall device operations performed.\n");
+    printf("--simulate              Run in foreground, log to console, no actual device operations performed.\n");
 }
 
 
