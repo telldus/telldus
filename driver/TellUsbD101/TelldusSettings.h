@@ -33,9 +33,11 @@ public:
 
 private:
 	int getNextDeviceId();
+	bool storeGlobal();
 
 	//variables
 	HKEY hk;
+	HKEY rootKey;
 	std::string strRegPathDevice;
 	std::string strRegPath;
 	int intMaxRegValueLength;
