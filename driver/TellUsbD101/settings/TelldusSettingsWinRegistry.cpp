@@ -7,10 +7,12 @@
 #include <fstream>
 
 using namespace std;
+bool storeGlobal(privateVars *d);
 
 class privateVars {
 public:
 	HKEY hk;
+	HKEY rootKey;
 	std::string strRegPathDevice;
 	std::string strRegPath;
 	int intMaxRegValueLength;
@@ -24,8 +26,12 @@ TelldusSettings::TelldusSettings(void)
 	d = new privateVars();
 	d->strRegPathDevice = "SOFTWARE\\Telldus\\Devices\\";
 	d->strRegPath = "SOFTWARE\\Telldus\\";
-	
 	d->intMaxRegValueLength = 1000;
+	if (storeGlobal(d)) {
+		d->rootKey = HKEY_LOCAL_MACHINE;
+	} else {
+		d->rootKey = HKEY_CURRENT_USER;
+	}
 }
 
 /*
@@ -49,7 +55,7 @@ int TelldusSettings::getNumberOfDevices(void){
 	
 	try{
 		
-		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, d->strRegPathDevice.c_str(), 0, KEY_QUERY_VALUE, &d->hk);
+		long lnExists = RegOpenKeyEx(d->rootKey, d->strRegPathDevice.c_str(), 0, KEY_QUERY_VALUE, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
 		
@@ -77,7 +83,7 @@ int TelldusSettings::getDeviceId(int intDeviceIndex){
 	
 	try{
 		
-		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, d->strRegPathDevice.c_str(), 0, KEY_READ, &d->hk);
+		long lnExists = RegOpenKeyEx(d->rootKey, d->strRegPathDevice.c_str(), 0, KEY_READ, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
 		
@@ -155,7 +161,7 @@ int TelldusSettings::addDevice(){
 		ssRegPath << d->strRegPathDevice << intDeviceId;
 		string strCompleteRegPath = ssRegPath.str();
 		
-		if(RegCreateKeyEx(HKEY_CURRENT_USER,
+		if(RegCreateKeyEx(d->rootKey,
 				   strCompleteRegPath.c_str(),
 				   0,
 				   NULL,
@@ -185,7 +191,7 @@ int TelldusSettings::getNextDeviceId(){
 	int intReturn = -1;
 	try{
 		DWORD dwDisp;
-		long lnExists = RegCreateKeyEx(HKEY_CURRENT_USER, d->strRegPathDevice.c_str(), 0, NULL, REG_OPTION_NON_VOLATILE,
+		long lnExists = RegCreateKeyEx(d->rootKey, d->strRegPathDevice.c_str(), 0, NULL, REG_OPTION_NON_VOLATILE,
 				   KEY_ALL_ACCESS,
 				   NULL,
 				   &d->hk,
@@ -239,7 +245,7 @@ bool TelldusSettings::removeDevice(int intDeviceId){
 		ssRegPath << d->strRegPathDevice << intDeviceId;
 		string strCompleteRegPath = ssRegPath.str();
 
-		long lngSuccess = RegDeleteKey(HKEY_CURRENT_USER, strCompleteRegPath.c_str());
+		long lngSuccess = RegDeleteKey(d->rootKey, strCompleteRegPath.c_str());
 		if(lngSuccess != ERROR_SUCCESS){
 			blnSuccess = false;
 		}
@@ -258,7 +264,7 @@ char *TelldusSettings::getStringSetting(int intDeviceId, const char* name, bool 
 		std::ostringstream ssRegPath; 
 		ssRegPath << d->strRegPathDevice << intDeviceId;
 		string strCompleteRegPath = ssRegPath.str();
-		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &d->hk);
+		long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
 			DWORD dwLength;
@@ -290,7 +296,7 @@ bool TelldusSettings::setStringSetting(int intDeviceId, const char* name, const 
 		std::ostringstream ssRegPath; 
 		ssRegPath << d->strRegPathDevice << intDeviceId;
 		string strCompleteRegPath = ssRegPath.str();
-		long lnExists = RegOpenKeyEx(HKEY_CURRENT_USER, strCompleteRegPath.c_str(), 0, KEY_WRITE, &d->hk);
+		long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_WRITE, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
 			d->intMaxRegValueLength = (int)strlen(value);
@@ -325,4 +331,37 @@ void TelldusSettings::debugLog(int debugint){
 			debugfile << debugint << endl;
 			debugfile.close();
 		}
+}
+
+bool storeGlobal(privateVars *d) {
+	bool blnReturn = false;
+	try{
+		long lnExists = RegOpenKeyEx(HKEY_LOCAL_MACHINE, d->strRegPathDevice.c_str(), 0, KEY_QUERY_VALUE, &d->hk);
+				
+		if(lnExists == ERROR_SUCCESS){
+			
+			DWORD dwLength;
+			char* Buff = new char[d->intMaxRegValueLength];
+
+			long lngStatus = RegQueryValueEx(d->hk, "SharedDevices", NULL, NULL, (LPBYTE)Buff, &dwLength);
+
+			if(lngStatus == ERROR_MORE_DATA){
+
+
+				Buff = new char[dwLength];
+				lngStatus = RegQueryValueEx(d->hk, "SharedDevices", NULL, NULL, (LPBYTE)Buff, &dwLength);
+			}
+
+			if(lngStatus == ERROR_SUCCESS){
+
+				int intValue = (int)Buff[0];
+				blnReturn = (intValue == 1);
+			}
+			delete Buff;
+		}
+		RegCloseKey(d->hk);
+	}
+	catch(...){
+	}
+	return blnReturn;
 }
