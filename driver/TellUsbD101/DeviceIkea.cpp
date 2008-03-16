@@ -11,10 +11,12 @@ using namespace std;
 /*
 * Constructor
 */
-DeviceIkea::DeviceIkea(int intNewSystem, int intNewUnits, int intNewFadeStyle, int intDeviceIndex):Device(intDeviceIndex){
-	intSystem = intNewSystem;
-	intUnits = intNewUnits;
-	intFadeStyle = intNewFadeStyle;
+DeviceIkea::DeviceIkea(char *strSystem, char *strUnits, char *strFadeStyle)
+	:Device()
+{
+//	intSystem = intNewSystem;
+//	intUnits = intNewUnits;
+//	intFadeStyle = intNewFadeStyle;
 }
 
 /*
