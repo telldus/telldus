@@ -226,8 +226,8 @@ void printUsage(void)
 	printf("\t DEVICE: /dev/ttyUSB[0..n]\n" );
 	printf("\t PROTOCOLS: NEXA, SARTANO, WAVEMAN\n" );
 	printf("\t PROTOCOL ARGUMENTS - NEXA, WAVEMAN: \n");
-	printf("\t\t HOUSE_CODE: A..P\n\t\t CHANNEL: 1..16\n\t\t ON_OFF: 0..1\n" );
+	printf("\t\t HOUSE_CODE: A..P\n\t\t CHANNEL: 1..16\n\t\t OFF_ON: 0..1\n" );
 	printf("\t PROTOCOL ARGUMENTS - SARTANO: \n");
-	printf("\t\t CHANNEL: 0000000000..1111111111\n\t\t ON_OFF: 0..1\n" );
+	printf("\t\t CHANNEL: 0000000000..1111111111\n\t\t OFF_ON: 0..1\n" );
 	printf("Copyright(C) Tord Andersson 2007\r\n");
 }
