@@ -45,10 +45,10 @@ my $dayOfWeek;
 my $dayOfMonth;
 
 my $PROGRAM_NAME = "tellstickd";
-my $VERSION = "0.6.0";
+my $VERSION = "0.6.1";
 
 # Structure of the configurations to be read;
-# $device_cfg[$i][0];   # Protocol, only NEXA and SARTANO supported so far by rfcmd
+# $device_cfg[$i][0];   # Protocol, only NEXA, WAVEMAN and SARTANO supported so far by rfcmd
 # $device_cfg[$i][1];   # Housecode A-P
 # $device_cfg[$i][2];   # Channel 1-3
 # $device_cfg[$i][3];   # On time
@@ -154,11 +154,11 @@ sub rfcmd_exec {
     if ($device_cfg[$device_id][0] eq "SARTANO") {
 	$RFCMD_OPTIONS = "$TELLSTICK_DEVICE $device_cfg[$device_id][0] $device_cfg[$device_id][1]";
     }
-    elsif ($device_cfg[$device_id][0] eq "NEXA") {
+    elsif ($device_cfg[$device_id][0] eq "NEXA" || $device_cfg[$device_id][0] eq "WAVEMAN") {
 	$RFCMD_OPTIONS = "$TELLSTICK_DEVICE $device_cfg[$device_id][0] $device_cfg[$device_id][1] $device_cfg[$device_id][2]";
     }
     else {
-	die("$PROGRAM_NAME: Device $device_id has an unknown protocol. Only NEXA and SARTANO allowed.\n");
+	die("$PROGRAM_NAME: Device $device_id has an unknown protocol. Only NEXA, WAVEMAN and SARTANO allowed.\n");
     }
 
 
@@ -410,12 +410,12 @@ sub read_config
 	}
 
 
-	if ($_ =~ /^[NEXA|SARTANO]/ ) {
+	if ($_ =~ /^[NEXA|WAVEMAN|SARTANO]/ ) {
 	    chomp($_);
 
 	    @inrad = split /\s+/, $_;
 	    $device_cfg[$i][0] = $inrad[0];            # Protocol
-	    $device_cfg[$i][1] = $inrad[1];            # Housecode A and channel for NEXA, channel for SARTANO.
+	    $device_cfg[$i][1] = $inrad[1];            # Housecode A and channel for NEXA, WAVEMAN, channel for SARTANO.
 	    $device_cfg[$i][10] = $inrad[2];           # Rule valid days [[oe]1234567]
 	    $device_cfg[$i][22] = 1;                   # Initial state set to on (1) so that they will be switched off at startup
 
@@ -423,7 +423,7 @@ sub read_config
 	    if ($device_cfg[$i][0] eq "SARTANO") {
 		$device_cfg[$i][2] = "";
 	    }
-	    elsif ($device_cfg[$i][0] eq "NEXA") {
+	    elsif ($device_cfg[$i][0] eq "NEXA" || $device_cfg[$i][0] eq "WAVEMAN") {
 		# Put the housecode and channel in the respective fields.
 		(my $house_code,my $channel) = $device_cfg[$i][1] =~ /^([A-P])(\d{1,2})$/;
 		if (!$house_code || !$channel || ($channel < 1) || ($channel > 16)) {
@@ -433,7 +433,7 @@ sub read_config
 		$device_cfg[$i][2] = $channel;
 	    }
 	    else {
-		die("$PROGRAM_NAME: Unsupported protcol: $device_cfg[$i][0]. Only NEXA or SARTANO allowed.\n");
+		die("$PROGRAM_NAME: Unsupported protcol: $device_cfg[$i][0]. Only NEXA, WAVEMAN or SARTANO allowed.\n");
 	    }
 
 
