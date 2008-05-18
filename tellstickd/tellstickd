@@ -45,7 +45,7 @@ my $dayOfWeek;
 my $dayOfMonth;
 
 my $PROGRAM_NAME = "tellstickd";
-my $VERSION = "0.6.1";
+my $VERSION = "0.6.2";
 
 # Structure of the configurations to be read;
 # $device_cfg[$i][0];   # Protocol, only NEXA, WAVEMAN and SARTANO supported so far by rfcmd
@@ -134,11 +134,15 @@ sub is_inbetween_times
 
     # If we pass midnight, the following has to be checked/done
     if ($time2 <= $time1) {
-	$time2 += 2400;
+	if ($curr_time >= $time1 && $curr_time < 2400 || $curr_time >= 0000 && $curr_time < $time2) {
+	    return $YES;
+	}
     }
-
-    if ($curr_time >= $time1 && $curr_time < $time2) {
-	return $YES;
+    # The following applies to the most common rules within a day.
+    else {
+	if ($curr_time >= $time1 && $curr_time < $time2) {
+	    return $YES;
+	}
     }
 
     return $NO;
