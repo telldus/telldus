@@ -21,7 +21,6 @@
 	#define TELLSTICK_API
 #endif
 
-
 extern "C" {
 	TELLSTICK_API bool WINAPI devTurnOn(int intDeviceId);
 	TELLSTICK_API bool WINAPI devTurnOff(int intDeviceId);

@@ -14,9 +14,28 @@ using namespace std;
 DeviceIkea::DeviceIkea(char *strSystem, char *strUnits, char *strFadeStyle)
 	:Device()
 {
-//	intSystem = intNewSystem;
-//	intUnits = intNewUnits;
-//	intFadeStyle = intNewFadeStyle;
+	if (strSystem != NULL && strlen(strSystem) > 0) {
+		intSystem = atoi(strSystem) - 1;
+	} else {
+		intSystem = 0;
+	}
+	if (strUnits != NULL && strlen(strUnits) > 0) {
+		intUnits = 0; //Start without any units
+		
+		char *strTemp = strtok(strUnits, ",");
+		do {
+			int intUnit = atoi(strTemp);
+			if (intUnit == 10) {
+				intUnit = 0;
+			}
+			intUnits = intUnits | ( 1<<(9-intUnit) );
+		} while ( (strTemp = strtok(NULL, ",")) != NULL );
+	}
+	if (strUnits != NULL && strlen(strUnits) > 0 && strcasecmp(strFadeStyle, "true") == 0) {
+		intFadeStyle = 1;
+	} else {
+		intFadeStyle = 0;
+	}
 }
 
 /*
