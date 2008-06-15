@@ -13,15 +13,12 @@ using namespace std;
 DeviceSartano::DeviceSartano(char *strNewCode)
 	:Device()
 {
-// 	intSystem = intNewSystem;
-// 	intCode = intNewCode;
+	strCode = strNewCode;
 }
 
 
 DeviceSartano::~DeviceSartano(void)
 {
-	intSystem = -1;
-	intCode = -1;
 }
 
 
@@ -31,14 +28,12 @@ DeviceSartano::~DeviceSartano(void)
 void DeviceSartano::turnOn(void){
 
 	try{
-		string strSystem = getStringCode(intSystem);
-		string strCode = getStringCode(intCode);
-		strSystem.append(strCode);
+		string strCode = getStringCode();
 		
-		strSystem.insert(0, "S");
-		strSystem.append("$k$k$kk$$k+");	//the "turn on"-code, keeps it like this, doesn't have to be regenerated each time
+		strCode.insert(0, "S");
+		strCode.append("$k$k$kk$$k+");	//the "turn on"-code, keeps it like this, doesn't have to be regenerated each time
 		
-		char* strMessage = const_cast<char*>(strSystem.c_str());
+		char* strMessage = const_cast<char*>(strCode.c_str());
 
 		Device::send(strMessage);
 	}
@@ -53,14 +48,12 @@ void DeviceSartano::turnOn(void){
 void DeviceSartano::turnOff(void){
 	
 	try{
-		string strSystem = getStringCode(intSystem);
-		string strCode = getStringCode(intCode);
-		strSystem.append(strCode);
+		string strCode = getStringCode();
 		
-		strSystem.insert(0, "S");
-		strSystem.append("$kk$$k$k$k+");	//the "turn off"-code, keeps it like this, doesn't have to be regenerated each time
+		strCode.insert(0, "S");
+		strCode.append("$kk$$k$k$k+");	//the "turn off"-code, keeps it like this, doesn't have to be regenerated each time
 		
-		char* strMessage = const_cast<char*>(strSystem.c_str());
+		char* strMessage = const_cast<char*>(strCode.c_str());
 
 		Device::send(strMessage);
 	}
@@ -79,31 +72,21 @@ int DeviceSartano::methods(char* strModel){
 /*
 *	Convert an integer to byte string where 0 is represented by $k and 1 by k$, reversed and padded with 0's as needed
 */
-string DeviceSartano::getStringCode(int intToConvert){
+string DeviceSartano::getStringCode(void){
 	
-	string strReturn = "";
+	string strReturn = strCode;
 
 	try{
-		bitset<5> bs ((long)intToConvert);
-		
-		strReturn = bs.to_string();
-
 		int intPos = (int)strReturn.find("0");
 		while (intPos < string::npos){
-			strReturn.replace(intPos, 1, "$k");
+			strReturn.replace(intPos, 1, "$kk$");
 			intPos = (int)strReturn.find("0", intPos + 1);
 		}
 
 		intPos = (int)strReturn.find("1");
 		while (intPos < string::npos){
-			strReturn.replace(intPos, 1, "k$");
+			strReturn.replace(intPos, 1, "$k$k");
 			intPos = (int)strReturn.find("1", intPos + 1);
-		}
-	
-		intPos = 0;
-		while (intPos < (int)strReturn.length()){
-			strReturn.insert(intPos, "$k");
-			intPos = intPos + 4;
 		}
 	}
 	catch(...){

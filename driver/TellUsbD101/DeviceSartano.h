@@ -14,8 +14,6 @@ public:
 	~DeviceSartano(void);
 
 protected:
-	std::string getStringCode(int);
-
-	int intSystem;
-	int intCode;
+	std::string getStringCode(void);
+	std::string strCode;
 };
