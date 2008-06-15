@@ -21,10 +21,10 @@ DeviceWaveman::DeviceWaveman(char *strNewHouse, char *strNewCode)
 void DeviceWaveman::turnOff(void){
 	
 	try{
-		string strCode = getStringCode(intCode);
-		string strHouse = getStringCode(intHouse);
-
-		strCode.append(strHouse);
+		string strCode = getStringCode(intHouse);
+		string strUnit = getStringCode(intCode);
+		strCode.append(strUnit);
+		
 		strCode.insert(0, "S");
 		strCode.append("$k$k$k$k$k$k$k$k$k+");	//the "turn off"-code, keeps it like this, doesn't have to be regenerated each time
 		
