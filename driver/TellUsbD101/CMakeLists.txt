@@ -28,3 +28,18 @@ INSTALL(TARGETS tellusbd101 LIBRARY
 	DESTINATION lib
 	)
 
+INSTALL(FILES
+	TellUsbD101.h
+	DESTINATION include
+	)
+
+SET(SYSCONF_INSTALL_DIR
+	"/etc"
+	CACHE PATH "The ${APPLICATION_NAME} sysconfig install dir (default prefix/etc)"
+	FORCE
+	)
+
+INSTALL(FILES
+	tellstick.conf
+	DESTINATION ${SYSCONF_INSTALL_DIR} 
+	)
