@@ -1,10 +1,10 @@
 // #include "StdAfx.h" //Needed?
 #include "DeviceIkea.h"
-#include <string>
 #include <algorithm>
 #include <bitset>
 #include <iostream>
 #include <fstream>
+#include <string.h>
 
 using namespace std;
 
@@ -21,7 +21,7 @@ DeviceIkea::DeviceIkea(char *strSystem, char *strUnits, char *strFadeStyle)
 	}
 	if (strUnits != NULL && strlen(strUnits) > 0) {
 		intUnits = 0; //Start without any units
-		
+
 		char *strTemp = strtok(strUnits, ",");
 		do {
 			int intUnit = atoi(strTemp);
@@ -100,7 +100,7 @@ void DeviceIkea::dim(unsigned char level){
 *	Convert an integer to byte string where 0 is represented by ª and 1 by TT
 */
 string DeviceIkea::getStringCode(unsigned char level){
-	
+
 	string strReturn = "STTTTTTª"; //Startcode, always like this;
 
 	try{

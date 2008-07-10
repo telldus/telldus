@@ -1,6 +1,6 @@
 // #include "StdAfx.h"
 #include "DeviceNexa.h"
-#include <string>
+#include <string.h>
 #include <algorithm>
 #include <bitset>
 #include <iostream>
@@ -19,7 +19,7 @@ DeviceNexa::DeviceNexa(char *strNewHouse, char *strNewCode)
 	} else {
 		intHouse = 0;
 	}
-	
+
 	if (strNewCode != NULL && strlen(strNewCode) > 0) {
 		intCode = atoi(strNewCode) - 1;
 	} else {
@@ -45,10 +45,10 @@ void DeviceNexa::turnOn(void){
 		string strCode = getStringCode(intHouse);
 		string strUnit = getStringCode(intCode);
 		strCode.append(strUnit);
-		
+
 		strCode.insert(0, "S");
 		strCode.append("$k$k$kk$$kk$$kk$$k+");	//the "turn on"-code, keeps it like this, doesn't have to be regenerated each time
-		
+
 		char* strMessage = const_cast<char*>(strCode.c_str());
 
 		Device::send(strMessage);
@@ -62,17 +62,17 @@ void DeviceNexa::turnOn(void){
 * Turn off this device
 */
 void DeviceNexa::turnOff(void){
-	
+
 	try{
 		string strCode = getStringCode(intHouse);
 		string strUnit = getStringCode(intCode);
 		strCode.append(strUnit);
-		
+
 		strCode.insert(0, "S");
 		strCode.append("$k$k$kk$$kk$$k$k$k+");	//the "turn off"-code, keeps it like this, doesn't have to be regenerated each time
-		
+
 		char* strMessage = const_cast<char*>(strCode.c_str());
-		
+
 		Device::send(strMessage);
 	}
 	catch(...){
@@ -84,16 +84,16 @@ void DeviceNexa::turnOff(void){
 * Send a bell
 */
 void DeviceNexa::bell(void){
-	
+
 	try{
 		string strCode = getStringCode(intHouse);
 
 		strCode.append("$kk$$kk$$kk$$k$k"); //the unit-code is always 7, doesn't have to be regenerated each time
 		strCode.insert(0, "S");
 		strCode.append("$kk$$kk$$kk$$kk$$k+");	//the "bell"-code, keeps it like this, doesn't have to be regenerated each time
-		
+
 		char* strMessage = const_cast<char*>(strCode.c_str());
-		
+
 		Device::send(strMessage);
 	}
 	catch(...){
@@ -105,12 +105,12 @@ void DeviceNexa::bell(void){
 *	Convert an integer to byte string where 0 is represented by $k and 1 by k$, reversed and padded with 0's as needed
 */
 string DeviceNexa::getStringCode(int intToConvert){
-	
+
 	string strReturn = "";
 
 	try{
 		bitset<4> bs ((long)intToConvert);
-		
+
 		strReturn = bs.to_string();
 		reverse(strReturn.begin(), strReturn.end());
 
@@ -125,7 +125,7 @@ string DeviceNexa::getStringCode(int intToConvert){
 			strReturn.replace(intPos, 1, "k$");
 			intPos = (int)strReturn.find("1", intPos + 1);
 		}
-	
+
 		intPos = 0;
 		while (intPos < (int)strReturn.length()){
 			strReturn.insert(intPos, "$k");
