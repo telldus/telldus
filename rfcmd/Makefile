@@ -9,3 +9,5 @@ all: $(FILES)
 clean:
 	rm -f $(FILES) *~ core
 
+install:
+	cp rfcmd /usr/local/bin
