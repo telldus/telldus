@@ -10,6 +10,7 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include <string.h>
 
 void handleException(std::exception e);
 using namespace std;
@@ -22,13 +23,13 @@ using namespace std;
 //comment (just copy from the called methods)
 
 bool WINAPI devTurnOn(int intDeviceId){
-	
+
 	try{
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
 			dev->turnOn();
-			
+
 			delete(dev);
 			return true;
 		}
@@ -43,13 +44,13 @@ bool WINAPI devTurnOn(int intDeviceId){
 }
 
 bool WINAPI devTurnOff(int intDeviceId){
-	
+
 	try{
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
 			dev->turnOff();
-			
+
 			delete(dev);
 			return true;
 		}
@@ -64,13 +65,13 @@ bool WINAPI devTurnOff(int intDeviceId){
 }
 
 bool WINAPI devBell(int intDeviceId){
-	
+
 	try{
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
 			dev->bell();
-			
+
 			delete(dev);
 			return true;
 		}
@@ -85,7 +86,7 @@ bool WINAPI devBell(int intDeviceId){
 }
 
 bool WINAPI devDim(int intDeviceId, unsigned char level){
-	
+
 	try{
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
@@ -225,7 +226,7 @@ bool WINAPI devSetModel(int intDeviceId, const char* strNewModel){
 }
 
 bool WINAPI devSetArgument(int intDeviceId, const char *strName, const char *strValue){
-	
+
 	try{
 		TelldusSettings ts;
 		return ts.setArgument(intDeviceId, strName, strValue);

@@ -3,7 +3,7 @@
 #include "../DeviceWaveman.h"
 #include "../DeviceSartano.h"
 #include "../DeviceIkea.h"
-
+#include <string.h>
 
 /*
 * Get the requested device
@@ -12,39 +12,39 @@
 Device* TelldusSettings::getDevice(int intDeviceId){
 
 	Device* dev = NULL;
-	
+
 	try{
 		char* vendor = getVendor(intDeviceId);
-		
+
 		//each new brand must be added here
 		if (strcmp(vendor, "Nexa") == 0){
 			char *strHouse = getArgument(intDeviceId, "nexa_house");
 			char *strCode = getArgument(intDeviceId, "nexa_unit");
 			dev = new DeviceNexa(strHouse, strCode);
-		
+
 		} else if (strcmp(vendor, "Waveman") == 0) {
 			char *strHouse = getArgument(intDeviceId, "nexa_house");
 			char *strCode = getArgument(intDeviceId, "nexa_unit");
 			dev = new DeviceWaveman(strHouse, strCode);
-		
+
 		} else if (strcmp(vendor, "Sartano") == 0) {
 			char *strCode = getArgument(intDeviceId, "sartano_code");
 			dev = new DeviceSartano(strCode);
-		
+
 		} else if (strcmp(vendor, "Ikea") == 0) {
 			char *strSystem = getArgument(intDeviceId, "ikea_system");
 			char *strUnits = getArgument(intDeviceId, "ikea_units");
 			char *strFade = getArgument(intDeviceId, "ikea_fade");
 			dev = new DeviceIkea(strSystem, strUnits, strFade);
-		
+
 		} else {
 			return NULL;
 		}
-		
+
 #ifndef _WINDOWS
 		dev->setDevice( getSetting("deviceNode") );
 #endif
-		
+
 	}
 	catch(...){
 		throw;
