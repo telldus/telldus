@@ -1,0 +1,23 @@
+LIBRARY TellUsbD101
+EXPORTS
+	devGetNumberOfDevices @1
+	devGetDeviceId @2
+
+	devGetName @3
+	devGetVendor @4
+	devGetModel @5
+	devGetArgument @6
+
+	devSetName @7
+	devSetVendor @8
+	devSetModel @9
+	devSetArgument @10
+
+	devAddDevice @11
+	devRemoveDevice @12
+
+	devMethods @13
+	devTurnOn	@14
+	devTurnOff	@15
+	devBell @16
+	devDim @17

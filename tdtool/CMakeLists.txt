@@ -1,0 +1,20 @@
+PROJECT(tdtool)
+
+SET(tdtool_SRCS
+  main.cpp
+)
+
+ADD_EXECUTABLE(tdtool
+  ${tdtool_SRCS}
+)
+
+INCLUDE_DIRECTORIES(
+  ${CMAKE_CURRENT_BINARY_DIR}
+  ${CMAKE_SOURCE_DIR}/driver
+)
+
+TARGET_LINK_LIBRARIES(tdtool
+  tellusbd101
+)
+
+INSTALL(TARGETS tdtool RUNTIME DESTINATION bin)
