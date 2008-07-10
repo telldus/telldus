@@ -72,6 +72,11 @@ int main(int argc, char **argv)
 		{ 0, 0, 0, 0}
 	};
 
+	if (argc < 2) {
+		print_usage( argv[0] );
+		return -1;
+	}
+
 	while ( (optch = getopt_long(argc,argv,optstring,long_opts,&longindex)) != -1 )
 		switch (optch) {
 			case 'f' :
