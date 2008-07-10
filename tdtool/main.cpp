@@ -2,6 +2,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <unistd.h>
+#include <string.h>
 #include "TellUsbD101.h"
 #ifdef __MINGW32__
   #define sleep(x) _sleep((x)*1000)
@@ -47,15 +48,34 @@ void list_devices() {
 	}
 }
 
-void switch_device( bool turnOn, int device ) {
+void switch_device( bool turnOn, char *device ) {
+	int deviceId = atoi(device);
+	if (deviceId == 0) { //Try to find the id from the name
+		int intNum = devGetNumberOfDevices();
+		int index = 0;
+		while (index < intNum) {
+			int id = devGetDeviceId(index);
+			char *name = devGetName( id );
+			if (strcasecmp(name, device) == 0) {
+				deviceId = id;
+				break;
+			}
+			index++;
+		}
+		if (deviceId == 0) {
+			printf("Device '%s', not found!\n", device);
+			return;
+		}
+	}
+
 	if (turnOn) {
-		char *name = devGetName( device );
-		bool ok = devTurnOn( device );
-		printf("Turning on device: %i %s - %s\n", device, name, (ok ? "ok" : "failed"));
+		char *name = devGetName( deviceId );
+		bool ok = devTurnOn( deviceId );
+		printf("Turning on device: %i %s - %s\n", deviceId, name, (ok ? "ok" : "failed"));
 	} else {
-		char *name = devGetName( device );
-		bool ok = devTurnOff( device );
-		printf("Turning off device: %i %s - %s\n", device, name, (ok ? "ok" : "failed"));
+		char *name = devGetName( deviceId );
+		bool ok = devTurnOff( deviceId );
+		printf("Turning off device: %i %s - %s\n", deviceId, name, (ok ? "ok" : "failed"));
 	}
 	sleep(1);
 }
@@ -80,7 +100,7 @@ int main(int argc, char **argv)
 	while ( (optch = getopt_long(argc,argv,optstring,long_opts,&longindex)) != -1 )
 		switch (optch) {
 			case 'f' :
-				switch_device(false, atoi(&optarg[0]));
+				switch_device(false, &optarg[0]);
 				break;
 			case 'h' :
 				print_usage( argv[0] );
@@ -89,7 +109,7 @@ int main(int argc, char **argv)
 				list_devices();
 				break;
 			case 'n' :
-				switch_device(true, atoi(&optarg[0]));
+				switch_device(true, &optarg[0]);
 				break;
 			default :
 				print_usage( argv[0] );
