@@ -134,8 +134,20 @@ int TelldusSettings::getNextDeviceId() {
 * Remove a device
 */
 bool TelldusSettings::removeDevice(int intDeviceId){
-	//TODO:
-	return false;
+	CFStringRef filterKey = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d."), intDeviceId); // The key to search for
+
+	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost );
+	if (!cfarray) return 0;
+	CFIndex size = CFArrayGetCount( cfarray );
+	for (CFIndex k = 0; k < size; ++k) {
+		CFStringRef key = (CFStringRef) CFArrayGetValueAtIndex(cfarray, k);
+		if (CFStringHasPrefix( key, filterKey ) ) {
+			CFPreferencesSetAppValue( key, NULL, d->app_ID ); //Remove the key
+		}
+	}
+	
+	CFPreferencesAppSynchronize( d->app_ID );
+	return true;
 }
 
 //only for debug reasons
