@@ -49,18 +49,59 @@ char *TelldusSettings::getSetting(const char *strName) {
 * Return the number of stored devices
 */
 int TelldusSettings::getNumberOfDevices(void) {
-	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, kCFPreferencesAnyUser, kCFPreferencesAnyHost );
+	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost );
 	if (!cfarray) return 0;
 	CFIndex size = CFArrayGetCount( cfarray );
+	int devices = 0;
 	for (CFIndex k = 0; k < size; ++k) {
-		//TODO: 
+		CFStringRef key = (CFStringRef) CFArrayGetValueAtIndex(cfarray, k);
+		if (CFStringHasPrefix( key, CFSTR("device.") ) &&
+			CFStringHasSuffix( key, CFSTR(".name") ) ) {
+			devices++;
+		}
 	}	
-	return 1;
+	return devices;
 }
 
-int TelldusSettings::getDeviceId(int intDeviceIndex){
-	//TODO:
-	return intDeviceIndex + 1;
+int TelldusSettings::getDeviceId(int intDeviceIndex) {
+	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost );
+	if (!cfarray) return 0;
+	CFIndex size = CFArrayGetCount( cfarray );
+	int index = 0;
+	int id = 0;
+	for (CFIndex k = 0; k < size; ++k) {
+		CFStringRef key = (CFStringRef) CFArrayGetValueAtIndex(cfarray, k);
+		if (CFStringHasPrefix( key, CFSTR("device.") ) &&
+			CFStringHasSuffix( key, CFSTR(".name") ) ) {
+			
+			if (index == intDeviceIndex) {			 
+				CFArrayRef split = CFStringCreateArrayBySeparatingStrings( 0, key, CFSTR(".") );
+				if ( !split || CFArrayGetCount( split ) != 3 ) continue;
+
+				// This code crashes!
+				//CFNumberRef cfid = (CFNumberRef) CFArrayGetValueAtIndex( split, 1 );
+				//if (cfid)
+				//	CFNumberGetValue( cfid, kCFNumberIntType, &id);
+
+				CFStringRef cfid = (CFStringRef) CFArrayGetValueAtIndex( split, 1 );				
+				char *cp = NULL;
+				CFIndex size = CFStringGetMaximumSizeForEncoding( CFStringGetLength( cfid ), kCFStringEncodingUTF8) + 1;
+				cp = (char *)malloc(size);
+				CFStringGetCString( cfid, cp, size, kCFStringEncodingUTF8 );
+				cp = (char *)realloc( cp, strlen(cp) + 1);
+				id = atoi(cp);
+				
+			 
+				CFRelease(key);
+				CFRelease(split);
+				CFRelease(cfid);	
+				break;
+			}
+			index++;
+		}
+		CFRelease( key );
+	}
+	return id;
 }
 
 /*
@@ -69,6 +110,7 @@ int TelldusSettings::getDeviceId(int intDeviceIndex){
 int TelldusSettings::addDevice() {
 	int id = getNextDeviceId();
 	setStringSetting( id, "name", "", false ); //Create a empty name so the device has an entry
+	setStringSetting( id, "model", "", false );
 	return id;
 }
 
@@ -76,10 +118,16 @@ int TelldusSettings::addDevice() {
 * Get next available device id
 */
 int TelldusSettings::getNextDeviceId() {
-	//TODO: find the highest id used and return this id+1
-	int id = getDeviceId( getNumberOfDevices()-1 );
-	id++;
-	return id;
+	int id = 0, max = 0;
+	int numberOfDevices = getNumberOfDevices();
+	for( int i = 0; i < numberOfDevices; i++) {
+		id = getDeviceId( i );
+		if (id > max) {
+			max = id;
+		}
+	}
+	max++;
+	return max;
 }
 
 /*
@@ -138,6 +186,6 @@ bool TelldusSettings::setStringSetting(int intDeviceId, const char* name, const 
 
 	CFPreferencesSetAppValue( key, cfvalue, d->app_ID );
 	CFPreferencesAppSynchronize( d->app_ID );
-	return false;
+	return true;
 }
 
