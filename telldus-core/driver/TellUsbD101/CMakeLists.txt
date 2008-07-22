@@ -1,7 +1,6 @@
 
 SET( tellusbd101_SRCS
 	Device.cpp
-	linux/Device.cpp
 	DeviceIkea.cpp
 	DeviceNexa.cpp
 	DeviceSartano.cpp
@@ -10,20 +9,25 @@ SET( tellusbd101_SRCS
 	TellUsbD101.cpp
 	)
 
-ADD_DEFINITIONS(
-	-DOS_LINUX
-	)
-
 IF (APPLE)
 	SET( tellusbd101_SRCS
 		${tellusbd101_SRCS}
+		win/Device.cpp
 		settings/TelldusSettingsCoreFoundationPreferences.cpp
+	)
+	ADD_DEFINITIONS(
+		-D_MACOSX
 	)
 ELSE ()
 	SET( tellusbd101_SRC
 		${tellusbd101_SRCS}
+		linux/Device.cpp
 		settings/TelldusSettingsConfuse.cpp
 	)
+	ADD_DEFINITIONS(
+		-D_LINUX
+	)
+
 ENDIF ()
 
 ADD_LIBRARY(tellusbd101 SHARED
@@ -35,6 +39,7 @@ IF (APPLE)
 
 	TARGET_LINK_LIBRARIES(tellusbd101
 		${COREFOUNDATION_LIBRARY}
+		ftd2xx
 	)
 ENDIF (APPLE)
 
