@@ -7,7 +7,6 @@ SET( tellusbd101_SRCS
 	DeviceSartano.cpp
 	DeviceWaveman.cpp
 	settings/TelldusSettings.cpp
-	settings/TelldusSettingsConfuse.cpp
 	TellUsbD101.cpp
 	)
 
@@ -15,14 +14,29 @@ ADD_DEFINITIONS(
 	-DOS_LINUX
 	)
 
+IF (APPLE)
+	SET( tellusbd101_SRCS
+		${tellusbd101_SRCS}
+		settings/TelldusSettingsCoreFoundationPreferences.cpp
+	)
+ELSE ()
+	SET( tellusbd101_SRC
+		${tellusbd101_SRCS}
+		settings/TelldusSettingsConfuse.cpp
+	)
+ENDIF ()
+
 ADD_LIBRARY(tellusbd101 SHARED
 	${tellusbd101_SRCS}
-	${tellusbd101_MOC_SRCS}
 	)
 
-TARGET_LINK_LIBRARIES(tellusbd101
-	confuse
+IF (APPLE)
+	FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
+
+	TARGET_LINK_LIBRARIES(tellusbd101
+		${COREFOUNDATION_LIBRARY}
 	)
+ENDIF (APPLE)
 
 INSTALL(TARGETS tellusbd101 LIBRARY
 	DESTINATION lib
@@ -39,7 +53,9 @@ SET(SYSCONF_INSTALL_DIR
 	FORCE
 	)
 
-INSTALL(FILES
-	tellstick.conf
-	DESTINATION ${SYSCONF_INSTALL_DIR} 
+IF (UNIX)
+	INSTALL(FILES
+		tellstick.conf
+		DESTINATION ${SYSCONF_INSTALL_DIR} 
 	)
+ENDIF ()
