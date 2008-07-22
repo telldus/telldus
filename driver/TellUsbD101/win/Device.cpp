@@ -1,11 +1,10 @@
-#include "..\Device.h"
+#include "../Device.h"
 #include <string>
 #include <sstream> 
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include "..\StdAfx.h"
-#include "FTD2XX.H"
+#include "ftd2xx.h"
 
 int getDongleIndex();
 
@@ -50,6 +49,7 @@ int getDongleIndex(){
 	try{
 		DWORD dwNumberOfDevices = 0;
 		
+		FT_SetVIDPID(0x1781, 0x0C30);
 		ftStatus = FT_CreateDeviceInfoList(&dwNumberOfDevices);
 		if (ftStatus == FT_OK) { 
 			for (int i = 0; i < (int)dwNumberOfDevices; i++) {  

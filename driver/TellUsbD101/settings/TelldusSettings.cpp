@@ -41,7 +41,7 @@ Device* TelldusSettings::getDevice(int intDeviceId){
 			return NULL;
 		}
 
-#ifndef _WINDOWS
+#ifdef _LINUX
 		dev->setDevice( getSetting("deviceNode") );
 #endif
 
