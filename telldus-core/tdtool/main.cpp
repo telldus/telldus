@@ -48,7 +48,7 @@ void list_devices() {
 	}
 }
 
-void switch_device( bool turnOn, char *device ) {
+int find_device( char *device ) {
 	int deviceId = atoi(device);
 	if (deviceId == 0) { //Try to find the id from the name
 		int intNum = devGetNumberOfDevices();
@@ -62,35 +62,73 @@ void switch_device( bool turnOn, char *device ) {
 			}
 			index++;
 		}
-		if (deviceId == 0) {
-			printf("Device '%s', not found!\n", device);
-			return;
-		}
+	}
+	return deviceId;
+}
+
+void switch_device( bool turnOn, char *device ) {
+	int deviceId = find_device( device );
+	if (deviceId == 0) {
+		printf("Device '%s', not found!\n", device);
+		return;
 	}
 
+	char *name = devGetName( deviceId );
 	if (turnOn) {
-		char *name = devGetName( deviceId );
 		bool ok = devTurnOn( deviceId );
 		printf("Turning on device: %i %s - %s\n", deviceId, name, (ok ? "ok" : "failed"));
 	} else {
-		char *name = devGetName( deviceId );
 		bool ok = devTurnOff( deviceId );
 		printf("Turning off device: %i %s - %s\n", deviceId, name, (ok ? "ok" : "failed"));
 	}
 	sleep(1);
 }
 
+void dim_device( char *device, int level ) {
+	int deviceId = find_device( device );
+	if (deviceId == 0) {
+		printf("Device '%s', not found!\n", device);
+		return;
+	}
+	if (level < 0 || level > 255) {
+		printf("Level %i out of range!\n", level);
+		return;
+	}
+
+	char *name = devGetName( deviceId );
+	bool ok = devDim( deviceId, (unsigned char)level );
+	printf("Dimming device: %i %s to %i - %s\n", deviceId, name, level, (ok ? "ok" : "failed"));
+	sleep(1);
+}
+
+void bell_device( char *device ) {
+	int deviceId = find_device( device );
+	if (deviceId == 0) {
+		printf("Device '%s', not found!\n", device);
+		return;
+	}
+
+	char *name = devGetName( deviceId );
+	bool ok = devBell( deviceId );
+	printf("Dimming device: %i %s - %s\n", deviceId, name, (ok ? "ok" : "failed"));
+	sleep(1);
+}
+
 int main(int argc, char **argv)
 {
 	int optch, longindex;
-	static char optstring[] = "ln:f:h";
+	static char optstring[] = "ln:f:d:b:v:h";
 	static struct option long_opts[] = {
 		{ "list", 0, 0, 'l' },
 		{ "on", 1, 0, 'n' },
 		{ "off", 1, 0, 'f' },
+		{ "dim", 1, 0, 'd' },
+		{ "bell", 1, 0, 'b' },
+		{ "dimlevel", 1, 0, 'v' },
 		{ "help", 1, 0, 'h' },
 		{ 0, 0, 0, 0}
 	};
+	int level = -1;
 
 	if (argc < 2) {
 		print_usage( argv[0] );
@@ -99,6 +137,14 @@ int main(int argc, char **argv)
 
 	while ( (optch = getopt_long(argc,argv,optstring,long_opts,&longindex)) != -1 )
 		switch (optch) {
+			case 'b' :
+				bell_device( &optarg[0] );
+				break;
+			case 'd' :
+				if (level >= 0) {
+					dim_device( &optarg[0], level );
+				}
+				break;
 			case 'f' :
 				switch_device(false, &optarg[0]);
 				break;
@@ -110,6 +156,9 @@ int main(int argc, char **argv)
 				break;
 			case 'n' :
 				switch_device(true, &optarg[0]);
+				break;
+			case 'v' :
+				level = atoi( &optarg[0] );
 				break;
 			default :
 				print_usage( argv[0] );
