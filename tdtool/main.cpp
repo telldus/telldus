@@ -22,13 +22,26 @@ void print_usage( char *name ) {
 	printf("       --help (-h short option)\n");
 	printf("             Shows this screen.\n");
 	printf("\n");
-	printf("       --on device\n");
-	printf("             Turns on device. device should be an integer of the device-id.\n");
-	printf("             The device-id is outputed with the --list option\n");
+	printf("       --on device (-n short option)\n");
+	printf("             Turns on device. 'device' could either be an integer of the device-id, or the name of the device.\n");
+	printf("             Both device-id and name is outputed with the --list option\n");
 	printf("\n");
-	printf("       --off device\n");
-	printf("             Turns off device. device should be an integer of the device-id.\n");
-	printf("             The device-id is outputed with the --list option\n");
+	printf("       --off device (-f short option)\n");
+	printf("             Turns off device. 'device' could either be an integer of the device-id, or the name of the device.\n");
+	printf("             Both device-id and name is outputed with the --list option\n");
+	printf("\n");
+	printf("       --dim device (-d short option)\n");
+	printf("             Dims device. 'device' could either be an integer of the device-id, or the name of the device.\n");
+	printf("             Both device-id and name is outputed with the --list option\n");
+	printf("		   Note: The dimlevel parameter must be set before using this option.
+	printf("\n");
+	printf("       --dimlevel level (-v short option)\n");
+	printf("             Set dim level. 'level' should an integer, 0-255.\n");
+	printf("             Note: This parameter must be set before using dim.\n");
+	printf("\n");
+	printf("       --bell device (-b short option)\n");
+	printf("             Sends bell command to devices supporting this. 'device' could either be an integer of the device-id, or the name of the device.\n");
+	printf("             Both device-id and name is outputed with the --list option\n");
 	printf("\n");
 }
 
