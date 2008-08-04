@@ -20,8 +20,13 @@
 	#define WINAPI
 	#define TELLSTICK_API
 #endif
+#ifndef __cplusplus
+	#define bool char
+#endif
 
+#ifdef __cplusplus
 extern "C" {
+#endif
 	TELLSTICK_API bool WINAPI devTurnOn(int intDeviceId);
 	TELLSTICK_API bool WINAPI devTurnOff(int intDeviceId);
 	TELLSTICK_API bool WINAPI devBell(int intDeviceId);
@@ -43,7 +48,9 @@ extern "C" {
 	
 	TELLSTICK_API int WINAPI devAddDevice();
 	TELLSTICK_API bool WINAPI devRemoveDevice(int intDeviceId);
+#ifdef __cplusplus
 }
+#endif
 
 #define TELLSTICK_TURNON	1
 #define TELLSTICK_TURNOFF	2
