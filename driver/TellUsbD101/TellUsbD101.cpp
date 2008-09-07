@@ -1,4 +1,7 @@
-//DLL entry point
+/**
+ * @defgroup core telldus-core
+ * Telldus Core is the base module used to interface a Telldus TellStick.
+ */
 
 #ifdef _WINDOWS
 	#include "stdafx.h"
@@ -22,6 +25,11 @@ using namespace std;
 //delete on created objects
 //comment (just copy from the called methods)
 
+/**
+ * Turns a device on, if the device supports this.
+ * @param intDeviceId The device id to turn on.
+ * @ingroup core
+ **/
 bool WINAPI devTurnOn(int intDeviceId){
 
 	try{
@@ -43,6 +51,11 @@ bool WINAPI devTurnOn(int intDeviceId){
 	return false;
 }
 
+/**
+ * Turns a device off, if the device supports this.
+ * @param intDeviceId The device id to turn off.
+ * @ingroup core
+ */
 bool WINAPI devTurnOff(int intDeviceId){
 
 	try{
