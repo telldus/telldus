@@ -18,8 +18,8 @@ IF (APPLE)
 	ADD_DEFINITIONS(
 		-D_MACOSX
 	)
-ELSE ()
-	SET( tellusbd101_SRC
+ELSE (APPLE)
+	SET( tellusbd101_SRCS
 		${tellusbd101_SRCS}
 		linux/Device.cpp
 		settings/TelldusSettingsConfuse.cpp
@@ -28,7 +28,7 @@ ELSE ()
 		-D_LINUX
 	)
 
-ENDIF ()
+ENDIF (APPLE)
 
 ADD_LIBRARY(tellusbd101 SHARED
 	${tellusbd101_SRCS}
@@ -40,6 +40,10 @@ IF (APPLE)
 	TARGET_LINK_LIBRARIES(tellusbd101
 		${COREFOUNDATION_LIBRARY}
 		ftd2xx
+	)
+ELSE (APPLE)
+	TARGET_LINK_LIBRARIES(tellusbd101
+		confuse
 	)
 ENDIF (APPLE)
 
@@ -63,4 +67,4 @@ IF (UNIX)
 		tellstick.conf
 		DESTINATION ${SYSCONF_INSTALL_DIR} 
 	)
-ENDIF ()
+ENDIF (UNIX)
