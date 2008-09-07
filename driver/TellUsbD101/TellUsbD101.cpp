@@ -18,6 +18,27 @@
 void handleException(std::exception e);
 using namespace std;
 
+/**
+ * @def TELLSTICK_TURNON
+ * @ingroup core
+ * Device-flag for devices supporting the devTurnOn() call.
+ * 
+ * @def TELLSTICK_TURNOFF
+ * @ingroup core
+ * Device-flag for devices supporting the devTurnOff() call.
+ * 
+ * @def TELLSTICK_BELL
+ * @ingroup core
+ * Device-flag for devices supporting the devBell() call.
+ * 
+ * @def TELLSTICK_TOGGLE
+ * @ingroup core
+ * This method is currently unimplemented
+ * 
+ * @def TELLSTICK_DIM
+ * @ingroup core
+ * Device-flag for devices supporting the devDim() call.
+ */
 
 #define MAX_LOADSTRING 100
 
@@ -26,7 +47,9 @@ using namespace std;
 //comment (just copy from the called methods)
 
 /**
- * Turns a device on, if the device supports this.
+ * Turns a device on.
+ * Make sure the device supports this by calling devMethods() before any
+ * call to this function.
  * @param intDeviceId The device id to turn on.
  * @ingroup core
  **/
@@ -52,7 +75,9 @@ bool WINAPI devTurnOn(int intDeviceId){
 }
 
 /**
- * Turns a device off, if the device supports this.
+ * Turns a device off.
+ * Make sure the device supports this by calling devMethods() before any
+ * call to this function.
  * @param intDeviceId The device id to turn off.
  * @ingroup core
  */
@@ -77,6 +102,13 @@ bool WINAPI devTurnOff(int intDeviceId){
 	return false;
 }
 
+/**
+ * Sends bell command to devices supporting this.
+ * Make sure the device supports this by calling devMethods() before any
+ * call to this function.
+ * @param intDeviceId The device id to send bell to
+ * @ingroup core
+ */
 bool WINAPI devBell(int intDeviceId){
 
 	try{
@@ -98,6 +130,14 @@ bool WINAPI devBell(int intDeviceId){
 	return false;
 }
 
+/**
+ * Dims a device.
+ * Make sure the device supports this by calling devMethods() before any
+ * call to this function.
+ * @param intDeviceId The device id to dim
+ * @param level The level the device should dim to. This value should be 0-255
+ * @ingroup core
+ */
 bool WINAPI devDim(int intDeviceId, unsigned char level){
 
 	try{
@@ -124,6 +164,11 @@ bool WINAPI devDim(int intDeviceId, unsigned char level){
 	return false;
 }
 
+/**
+ * This function returns the number of devices configured
+ * @returns an integer of the total number of devices configured
+ * @ingroup core
+ */
 int WINAPI devGetNumberOfDevices(void){
 	int intReturn = -1;
 	try{
@@ -137,6 +182,20 @@ int WINAPI devGetNumberOfDevices(void){
 	return intReturn;
 }
 
+/**
+ * This function returns the unique id of a device with a specific index.
+ * To get all the id numbers you should loop over all the devices:
+ * \code
+ * int intNumberOfDevices = devGetNumberOfDevices();
+ * for (int i = 0; i < intNumberOfDevices; i++) {
+ *   int id = devGetDeviceId( i );
+ *   // id now contains the id number of the device with index of i
+ * }
+ * \endcode
+ * @param intDeviceIndex The device index to query. The index starts from 0.
+ * @returns the unique id for the device or -1 if the device is not found.
+ * @ingroup core
+ */
 int WINAPI devGetDeviceId(int intDeviceIndex){
 	int intReturn = -1;
 	try{
@@ -150,7 +209,12 @@ int WINAPI devGetDeviceId(int intDeviceIndex){
 	return intReturn;
 }
 
-//general settings:
+/**
+ * Query a device for it's name.
+ * @param intDeviceId The unique id of the device to query
+ * @returns The name of the device or an empty string if the device is not found.
+ * @ingroup core
+ */
 char * WINAPI devGetName(int intDeviceId){
 	char* strReturn;
 	try{
@@ -294,6 +358,17 @@ bool WINAPI devRemoveDevice(int intDeviceId){
 	return blnSuccess;
 }
 
+/**
+ * Query a device for which methods it supports.
+ * @param id The device id to query
+ * @returns The method-flags OR'ed into an integer.
+ * @ingroup core
+ * @sa TELLSTICK_TURNON
+ * @sa TELLSTICK_TURNOFF
+ * @sa TELLSTICK_BELL
+ * @sa TELLSTICK_TOGGLE
+ * @sa TELLSTICK_DIM
+ */
 int WINAPI devMethods(int id){
 
 	int intMethods = 0;
