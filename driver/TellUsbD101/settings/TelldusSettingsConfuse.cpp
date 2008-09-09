@@ -180,7 +180,7 @@ char *TelldusSettings::getStringSetting(int intDeviceId, const char* name, bool 
 			return strReturn;
 		}
 	}
-	return 0;
+	return "";
 }
 
 bool TelldusSettings::setStringSetting(int intDeviceId, const char* name, const char *value, bool parameter) {
