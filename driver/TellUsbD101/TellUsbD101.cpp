@@ -35,6 +35,26 @@ using namespace std;
  * 
  * @def TELLSTICK_DIM
  * Device-flag for devices supporting the devDim() call.
+ * 
+ * @def TELLSTICK_SUCCESS
+ * Error code. Returned when the command succeeded
+ * 
+ * @def TELLSTICK_ERROR_NOT_FOUND
+ * Error code. Returned if a TellStick was not found on the system.
+ * 
+ * @def TELLSTICK_ERROR_PERMISSION_DENIED
+ * Error code. Returned if the user doesn't have privileges to open
+ * the TellStick device
+ * 
+ * @def TELLSTICK_ERROR_DEVICE_NOT_FOUND
+ * Error code. The supplied device id was not found
+ * 
+ * @def TELLSTICK_ERROR_METHOD_NOT_SUPPORTED
+ * Error code. The requested method is not supported device.
+ * This should be avoided by a call to devMethods().
+ * 
+ * @def TELLSTICK_ERROR_UNKNOWN
+ * Error code. An unkown error has occurred.
  */
 
 #define MAX_LOADSTRING 100
@@ -404,6 +424,18 @@ int WINAPI devMethods(int id){
 	return intMethods;
 }
 
+/**
+ * Get a human readable string from an error code returned
+ * from a function in telldus-core.
+ * @param intErrorNo The error code to translate.
+ * @returns a string ready to show to the user.
+ * @sa TELLSTICK_SUCCESS
+ * @sa TELLSTICK_ERROR_NOT_FOUND
+ * @sa TELLSTICK_ERROR_PERMISSION_DENIED
+ * @sa TELLSTICK_ERROR_DEVICE_NOT_FOUND
+ * @sa TELLSTICK_ERROR_METHOD_NOT_SUPPORTED
+ * @sa TELLSTICK_ERROR_UNKNOWN
+ */
 char * WINAPI devGetErrorString(int intErrorNo) {
 	const int numResponses = 5;
 	const char *responses[numResponses] = {
