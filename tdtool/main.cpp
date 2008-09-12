@@ -93,11 +93,11 @@ void switch_device( bool turnOn, char *device ) {
 
 	char *name = devGetName( deviceId );
 	if (turnOn) {
-		bool ok = devTurnOn( deviceId );
-		printf("Turning on device: %i %s - %s\n", deviceId, name, (ok ? "ok" : "failed"));
+		int retval = devTurnOn( deviceId );
+		printf("Turning on device: %i %s - %s\n", deviceId, name, devGetErrorString(retval));
 	} else {
-		bool ok = devTurnOff( deviceId );
-		printf("Turning off device: %i %s - %s\n", deviceId, name, (ok ? "ok" : "failed"));
+		int retval = devTurnOff( deviceId );
+		printf("Turning off device: %i %s - %s\n", deviceId, name, devGetErrorString(retval));
 	}
 	sleep(1);
 }
@@ -114,8 +114,8 @@ void dim_device( char *device, int level ) {
 	}
 
 	char *name = devGetName( deviceId );
-	bool ok = devDim( deviceId, (unsigned char)level );
-	printf("Dimming device: %i %s to %i - %s\n", deviceId, name, level, (ok ? "ok" : "failed"));
+	int retval = devDim( deviceId, (unsigned char)level );
+	printf("Dimming device: %i %s to %i - %s\n", deviceId, name, level, devGetErrorString(retval));
 	sleep(1);
 }
 
@@ -127,8 +127,8 @@ void bell_device( char *device ) {
 	}
 
 	char *name = devGetName( deviceId );
-	bool ok = devBell( deviceId );
-	printf("Sending bell to: %i %s - %s\n", deviceId, name, (ok ? "ok" : "failed"));
+	int retval = devBell( deviceId );
+	printf("Sending bell to: %i %s - %s\n", deviceId, name, devGetErrorString(retval));
 	sleep(1);
 }
 
