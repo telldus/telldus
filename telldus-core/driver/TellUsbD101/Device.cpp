@@ -17,28 +17,28 @@ Device::~Device(void)
 /*
 * Turn on, virtual
 */
-void Device::turnOn(void){
+int Device::turnOn(void){
 	//do nothing
 }
 
 /*
 * Turn off, virtual
 */
-void Device::turnOff(void){
+int Device::turnOff(void){
 	//do nothing
 }
 
 /*
 * Bell, virtual
 */
-void Device::bell(void){
+int Device::bell(void){
 	//do nothing
 }
 
 /*
 * Dim, virtual
 */
-void Device::dim(unsigned char level){
+int Device::dim(unsigned char level){
 	//do nothing
 }
 

@@ -25,7 +25,7 @@ DeviceSartano::~DeviceSartano(void)
 /*
 * Turn on this device
 */
-void DeviceSartano::turnOn(void){
+int DeviceSartano::turnOn(void){
 
 	try{
 		string strCode = getStringCode();
@@ -35,17 +35,18 @@ void DeviceSartano::turnOn(void){
 		
 		char* strMessage = const_cast<char*>(strCode.c_str());
 
-		Device::send(strMessage);
+		return Device::send(strMessage);
 	}
 	catch(...){
 		throw;
 	}
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 /*
 * Turn off this device
 */
-void DeviceSartano::turnOff(void){
+int DeviceSartano::turnOff(void){
 	
 	try{
 		string strCode = getStringCode();
@@ -55,11 +56,12 @@ void DeviceSartano::turnOff(void){
 		
 		char* strMessage = const_cast<char*>(strCode.c_str());
 
-		Device::send(strMessage);
+		return Device::send(strMessage);
 	}
 	catch(...){
 		throw;
 	}
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 /*

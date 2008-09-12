@@ -1,6 +1,7 @@
 /**
  * @defgroup core telldus-core
  * Telldus Core is the base module used to interface a Telldus TellStick.
+ * @{
  */
 
 #ifdef _WINDOWS
@@ -14,29 +15,25 @@
 #include <iostream>
 #include <fstream>
 #include <string.h>
+#include <stdlib.h>
 
 void handleException(std::exception e);
 using namespace std;
 
 /**
  * @def TELLSTICK_TURNON
- * @ingroup core
  * Device-flag for devices supporting the devTurnOn() call.
  * 
  * @def TELLSTICK_TURNOFF
- * @ingroup core
  * Device-flag for devices supporting the devTurnOff() call.
  * 
  * @def TELLSTICK_BELL
- * @ingroup core
  * Device-flag for devices supporting the devBell() call.
  * 
  * @def TELLSTICK_TOGGLE
- * @ingroup core
  * This method is currently unimplemented
  * 
  * @def TELLSTICK_DIM
- * @ingroup core
  * Device-flag for devices supporting the devDim() call.
  */
 
@@ -51,27 +48,33 @@ using namespace std;
  * Make sure the device supports this by calling devMethods() before any
  * call to this function.
  * @param intDeviceId The device id to turn on.
- * @ingroup core
  **/
-bool WINAPI devTurnOn(int intDeviceId){
+int WINAPI devTurnOn(int intDeviceId){
 
 	try{
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
-			dev->turnOn();
+			int methods = dev->methods( ts.getModel( intDeviceId ) );
+			int retval = 0;
+			
+			if ( !(methods & TELLSTICK_TURNON) ) {
+				retval = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+			} else {
+				retval = dev->turnOn();
+			}
 
 			delete(dev);
-			return true;
+			return retval;
 		}
 		else{
-			return false;
+			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
 	}
 	catch(exception e){
 		handleException(e);
 	}
-	return false;
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 /**
@@ -79,27 +82,33 @@ bool WINAPI devTurnOn(int intDeviceId){
  * Make sure the device supports this by calling devMethods() before any
  * call to this function.
  * @param intDeviceId The device id to turn off.
- * @ingroup core
  */
-bool WINAPI devTurnOff(int intDeviceId){
+int WINAPI devTurnOff(int intDeviceId){
 
 	try{
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
-			dev->turnOff();
+			int methods = dev->methods( ts.getModel( intDeviceId ) );
+			int retval = 0;
+
+			if ( !(methods & TELLSTICK_TURNOFF) ) {
+				retval = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+			} else {
+				retval = dev->turnOff();
+			}
 
 			delete(dev);
-			return true;
+			return retval;
 		}
 		else{
-			return false;
+			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
 	}
 	catch(exception e){
 		handleException(e);
 	}
-	return false;
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 /**
@@ -107,27 +116,33 @@ bool WINAPI devTurnOff(int intDeviceId){
  * Make sure the device supports this by calling devMethods() before any
  * call to this function.
  * @param intDeviceId The device id to send bell to
- * @ingroup core
  */
-bool WINAPI devBell(int intDeviceId){
+int WINAPI devBell(int intDeviceId){
 
 	try{
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
-			dev->bell();
+			int methods = dev->methods( ts.getModel( intDeviceId ) );
+			int retval = 0;
+
+			if ( !(methods & TELLSTICK_BELL) ) {
+				retval = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+			} else {
+				retval = dev->bell();
+			}
 
 			delete(dev);
-			return true;
+			return retval;
 		}
 		else{
-			return false;
+			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
 	}
 	catch(exception e){
 		handleException(e);
 	}
-	return false;
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 /**
@@ -136,38 +151,43 @@ bool WINAPI devBell(int intDeviceId){
  * call to this function.
  * @param intDeviceId The device id to dim
  * @param level The level the device should dim to. This value should be 0-255
- * @ingroup core
  */
-bool WINAPI devDim(int intDeviceId, unsigned char level){
-
+int WINAPI devDim(int intDeviceId, unsigned char level){
 	try{
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
-			if (level == 0) {
-				dev->turnOff();
-			} else if (level == 255) {
-				dev->turnOn();
+			int methods = dev->methods( ts.getModel( intDeviceId ) );
+			int retval = 0;
+
+			if ( !(methods & TELLSTICK_DIM) ) {
+				retval = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 			} else {
-				dev->dim(level);
+				if (level == 0) {
+					retval = dev->turnOff();
+				} else if (level == 255) {
+					retval = dev->turnOn();
+				} else {
+					retval = dev->dim(level);
+				}
 			}
+
 			delete(dev);
-			return true;
+			return retval;
 		}
 		else{
-			return false;
+			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
 	}
 	catch(exception e){
 		handleException(e);
 	}
-	return false;
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 /**
  * This function returns the number of devices configured
  * @returns an integer of the total number of devices configured
- * @ingroup core
  */
 int WINAPI devGetNumberOfDevices(void){
 	int intReturn = -1;
@@ -194,7 +214,6 @@ int WINAPI devGetNumberOfDevices(void){
  * \endcode
  * @param intDeviceIndex The device index to query. The index starts from 0.
  * @returns the unique id for the device or -1 if the device is not found.
- * @ingroup core
  */
 int WINAPI devGetDeviceId(int intDeviceIndex){
 	int intReturn = -1;
@@ -213,7 +232,6 @@ int WINAPI devGetDeviceId(int intDeviceIndex){
  * Query a device for it's name.
  * @param intDeviceId The unique id of the device to query
  * @returns The name of the device or an empty string if the device is not found.
- * @ingroup core
  */
 char * WINAPI devGetName(int intDeviceId){
 	char* strReturn;
@@ -362,7 +380,6 @@ bool WINAPI devRemoveDevice(int intDeviceId){
  * Query a device for which methods it supports.
  * @param id The device id to query
  * @returns The method-flags OR'ed into an integer.
- * @ingroup core
  * @sa TELLSTICK_TURNON
  * @sa TELLSTICK_TURNOFF
  * @sa TELLSTICK_BELL
@@ -387,13 +404,38 @@ int WINAPI devMethods(int id){
 	return intMethods;
 }
 
+char * WINAPI devGetErrorString(int intErrorNo) {
+	const int numResponses = 5;
+	const char *responses[numResponses] = {
+		"Success",
+		"TellStick not found",
+		"Permission denied",
+		"Device not found",
+		"The method you tried to use is not supported by the device"
+	};
+	char *strReturn;
+	intErrorNo = abs(intErrorNo); //We don't use negative values here.
+	if (intErrorNo >= numResponses) {
+		strReturn = "Unknown error";
+	} else {
+		// Copy the error string to strReturn
+		strReturn = (char *)malloc( sizeof(char) * strlen(responses[intErrorNo]) );
+ 		strcpy( strReturn, responses[intErrorNo] );
+	}
+
+#ifdef _WINDOWS
+	strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
+#endif
+	return strReturn;
+}
+
 
 //********
 //* Error management, set strLogName to "" to turn off
 //*
 void handleException(exception e){
 
-	char* strLogName = "c:\\errorlog.txt";
+	char* strLogName = "errorlog.txt";
 	//char* strLogName = "";
 
 	if(strlen(strLogName) > 0){
@@ -405,3 +447,4 @@ void handleException(exception e){
 	}
 }
 
+/*\@}*/

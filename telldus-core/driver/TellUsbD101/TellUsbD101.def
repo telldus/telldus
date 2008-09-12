@@ -21,3 +21,5 @@ EXPORTS
 	devTurnOff	@15
 	devBell @16
 	devDim @17
+	
+	devGetErrorString @18
