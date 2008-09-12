@@ -18,7 +18,7 @@ DeviceWaveman::DeviceWaveman(char *strNewHouse, char *strNewCode)
 /*
 * Turn off this device
 */
-void DeviceWaveman::turnOff(void){
+int DeviceWaveman::turnOff(void){
 	
 	try{
 		string strCode = getStringCode(intHouse);
@@ -30,11 +30,12 @@ void DeviceWaveman::turnOff(void){
 		
 		char* strMessage = const_cast<char*>(strCode.c_str());
 		
-		Device::send(strMessage);
+		return Device::send(strMessage);
 	}
 	catch(...){
 		throw;
 	}
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 /*

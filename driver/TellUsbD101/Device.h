@@ -8,10 +8,10 @@ public:
 	Device();
 	~Device(void);
 	
-	virtual void turnOn(void);
-	virtual void turnOff(void);
-	virtual void bell(void);
-	virtual void dim(unsigned char level);
+	virtual int turnOn(void);
+	virtual int turnOff(void);
+	virtual int bell(void);
+	virtual int dim(unsigned char level);
 	virtual int methods(char* strModel);
 	
 #ifndef _WINDOWS
@@ -21,5 +21,5 @@ protected:
 #endif
 
 protected:
-	void send(char* strMessage);
+	int send(char* strMessage);
 };

@@ -51,49 +51,52 @@ DeviceIkea::~DeviceIkea(void)
 /*
 * Turn on this device
 */
-void DeviceIkea::turnOn(void){
+int DeviceIkea::turnOn(void){
 	try{
 		string strCode = getStringCode(255);
 
 		char* strMessage = const_cast<char*>(strCode.c_str());
 
-		Device::send(strMessage);
+		return Device::send(strMessage);
 	}
 	catch(...){
 		throw;
 	}
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 /*
 * Turn off this device
 */
-void DeviceIkea::turnOff(void){
+int DeviceIkea::turnOff(void){
 	try{
 		string strCode = getStringCode(0);
 
 		char* strMessage = const_cast<char*>(strCode.c_str());
 
-		Device::send(strMessage);
+		return Device::send(strMessage);
 	}
 	catch(...){
 		throw;
 	}
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 /*
 * Turn off this device
 */
-void DeviceIkea::dim(unsigned char level){
+int DeviceIkea::dim(unsigned char level){
 	try{
 		string strCode = getStringCode(level);
 
 		char* strMessage = const_cast<char*>(strCode.c_str());
 
-		Device::send(strMessage);
+		return Device::send(strMessage);
 	}
 	catch(...){
 		throw;
 	}
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 /*

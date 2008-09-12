@@ -39,7 +39,7 @@ DeviceNexa::~DeviceNexa(void)
 /*
 * Turn on this device
 */
-void DeviceNexa::turnOn(void){
+int DeviceNexa::turnOn(void){
 
 	try{
 		string strCode = getStringCode(intHouse);
@@ -51,17 +51,18 @@ void DeviceNexa::turnOn(void){
 
 		char* strMessage = const_cast<char*>(strCode.c_str());
 
-		Device::send(strMessage);
+		return Device::send(strMessage);
 	}
 	catch(...){
 		throw;
 	}
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 /*
 * Turn off this device
 */
-void DeviceNexa::turnOff(void){
+int DeviceNexa::turnOff(void){
 
 	try{
 		string strCode = getStringCode(intHouse);
@@ -73,17 +74,18 @@ void DeviceNexa::turnOff(void){
 
 		char* strMessage = const_cast<char*>(strCode.c_str());
 
-		Device::send(strMessage);
+		return Device::send(strMessage);
 	}
 	catch(...){
 		throw;
 	}
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 /*
 * Send a bell
 */
-void DeviceNexa::bell(void){
+int DeviceNexa::bell(void){
 
 	try{
 		string strCode = getStringCode(intHouse);
@@ -94,11 +96,12 @@ void DeviceNexa::bell(void){
 
 		char* strMessage = const_cast<char*>(strCode.c_str());
 
-		Device::send(strMessage);
+		return Device::send(strMessage);
 	}
 	catch(...){
 		throw;
 	}
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 /*

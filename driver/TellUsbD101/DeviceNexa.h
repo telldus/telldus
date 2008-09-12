@@ -6,9 +6,9 @@ class DeviceNexa : public Device
 {
 public:
 	DeviceNexa(char *strHouse, char *strCode);
-	virtual void turnOn(void);
-	virtual void turnOff(void);
-	virtual void bell(void);
+	virtual int turnOn(void);
+	virtual int turnOff(void);
+	virtual int bell(void);
 	virtual int methods(char* strModel);
 	
 public:

@@ -6,9 +6,9 @@ class DeviceIkea : public Device
 {
 public:
 	DeviceIkea(char *strSystem, char *strUnits, char *strFadeStyle);
-	virtual void turnOn(void);
-	virtual void turnOff(void);
-	virtual void dim(unsigned char level);
+	virtual int turnOn(void);
+	virtual int turnOff(void);
+	virtual int dim(unsigned char level);
 	virtual int methods(char* strModel);
 	
 public:

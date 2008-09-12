@@ -20,21 +20,20 @@
 	#define WINAPI
 	#define TELLSTICK_API
 #endif
-#ifndef __cplusplus
-	#define bool char
-#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-	TELLSTICK_API bool WINAPI devTurnOn(int intDeviceId);
-	TELLSTICK_API bool WINAPI devTurnOff(int intDeviceId);
-	TELLSTICK_API bool WINAPI devBell(int intDeviceId);
-	TELLSTICK_API bool WINAPI devDim(int intDeviceId, unsigned char level);
+	TELLSTICK_API int WINAPI devTurnOn(int intDeviceId);
+	TELLSTICK_API int WINAPI devTurnOff(int intDeviceId);
+	TELLSTICK_API int WINAPI devBell(int intDeviceId);
+	TELLSTICK_API int WINAPI devDim(int intDeviceId, unsigned char level);
 	TELLSTICK_API int WINAPI devMethods(int id);
 	
 	TELLSTICK_API int WINAPI devGetNumberOfDevices();
 	TELLSTICK_API int WINAPI devGetDeviceId(int intDeviceIndex);
+	
+	TELLSTICK_API char * WINAPI devGetErrorString(int intErrorNo);
 	
 	TELLSTICK_API char * WINAPI devGetName(int intDeviceId);
 	TELLSTICK_API bool WINAPI devSetName(int intDeviceId, const char* chNewName);
@@ -52,11 +51,20 @@ extern "C" {
 }
 #endif
 
+//Device methods
 #define TELLSTICK_TURNON	1
 #define TELLSTICK_TURNOFF	2
 #define TELLSTICK_BELL		4
 #define TELLSTICK_TOGGLE	8
 #define TELLSTICK_DIM		16
+
+//Error codes
+#define TELLSTICK_SUCCESS 0
+#define TELLSTICK_ERROR_NOT_FOUND -1
+#define TELLSTICK_ERROR_PERMISSION_DENIED -2
+#define TELLSTICK_ERROR_DEVICE_NOT_FOUND -3
+#define TELLSTICK_ERROR_METHOD_NOT_SUPPORTED -4
+#define TELLSTICK_ERROR_UNKNOWN -99
 
 //Protocol Nexa
 #define TELLSTICK_DEVICE_YCR3500	"1"

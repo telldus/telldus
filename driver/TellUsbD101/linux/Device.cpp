@@ -3,16 +3,22 @@
 #include <fcntl.h>
 #include <termios.h>
 #include <string.h>
+#include <errno.h>
 
 /*
 * Send message to the USB dongle
 */
-void Device::send(char* strMessage) {
+int Device::send(char* strMessage) {
 	int fd = -1;
 	struct termios tio;
 
 	if( 0 > ( fd = open( strDevice, O_RDWR ) ) ) {
-		return;
+		if (errno == ENOENT) {
+			return TELLSTICK_ERROR_NOT_FOUND;
+		} else if (errno == EACCES) {
+			return TELLSTICK_ERROR_PERMISSION_DENIED;
+		}
+		return TELLSTICK_ERROR_UNKNOWN;
 	}
 
 	/* adjust serial port parameters */
@@ -23,9 +29,11 @@ void Device::send(char* strMessage) {
 	tcflush(fd, TCIFLUSH);
 	tcsetattr(fd,TCSANOW,&tio);
 
-	write(fd, strMessage, strlen(strMessage));
+ 	write(fd, strMessage, strlen(strMessage));
 
 	close(fd);
+	
+	return TELLSTICK_SUCCESS;
 }
 
 void Device::setDevice(const char *device) {
