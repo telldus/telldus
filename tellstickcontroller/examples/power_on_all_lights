@@ -9,4 +9,5 @@ tellstickController --set kitchen_cabinets on
 tellstickController --set livingroom_cabinets on
 tellstickController --set livingroom_uplight on
 tellstickController --set livingroom_walls on
+tellstickController --set livingroom_mythtv_leds on
 
