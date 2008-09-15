@@ -79,7 +79,7 @@
  *   if ( methods & TELLSTICK_TURNOFF ) {
  *     printf( "The device %d supports devTurnOff()\n", id );
  *   }
- *   if ( methods & TELLSTICK_TURNBELL ) {
+ *   if ( methods & TELLSTICK_BELL ) {
  *     printf( "The device %d supports devBell()\n", id );
  *   }
  * }
