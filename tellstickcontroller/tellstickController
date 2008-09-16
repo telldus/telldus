@@ -4,7 +4,7 @@
 # tellstickController program
 #
 # Copyright (C) 2008 Rickard Andersson (ran42ran@gmail.com)
-# Version 1.3.2
+# Version 1.4.0
 #
 ######################################################################
 #
@@ -46,7 +46,6 @@ my %cfg_set = (
   "dbfile" => "/var/lib/tellstickController.db",
   "logfile" => "/var/log/tellstickController.log",
   "pidfile" => "/var/run/tellstickController.pid",
-  "device" => "/dev/tellstick",
   "program" => "/usr/local/bin/rfcmd",
   "altitude" => "-0.833",
   "latitude" => "58.24",
@@ -313,12 +312,13 @@ sub read_config($) {
 
     if ($line =~ /^Alias\s+/i) {
       #println $line if ($option{"verbose"});
-      my (undef, $name, $dimmer, $prot, $code, $addr, $suffix)
+      my (undef, $name, $sender, $dimmer, $prot, $code, $addr, $suffix)
         = split(/\s+/, $line);
       if (defined($suffix)) {
         println "Wrong argument '$suffix' in line '$line'!";
       } else {
         $name = lc($name);
+        $sender = $sender;
         $dimmer = lc($dimmer);
         $prot = uc($prot);
         $code = uc($code);
@@ -328,7 +328,7 @@ sub read_config($) {
           if ($prot =~ /^NEXA|WAVEMAN$/) {
             if ($code =~ /^[A-P]$/) {
               if ($addr =~ /^[1-9]{1}|1{1}[0-6]{1}$/) {
-                $cfg_alias{$name} = "$prot $code $addr";
+                $cfg_alias{$name} = "$sender $prot $code $addr";
               } else {
                 println "Wrong channel '$addr' in line '$line'!";
               }
@@ -338,7 +338,7 @@ sub read_config($) {
           } elsif ($prot =~ /^SARTANO$/) {
             if ($code =~ /^[01]{10}$/) {
               if ($addr eq "") {
-                $cfg_alias{$name} = "$prot $code";
+                $cfg_alias{$name} = "$sender $prot $code";
               } else {
                 println "Wrong argument '$addr' in line '$line'!";
               }
@@ -447,8 +447,7 @@ sub call_program($$) {
       $mode = 1;
     }
     my $prog = $cfg_set{"program"};
-    my $dev = $cfg_set{"device"};
-    my $command = "$prog $dev $alias $mode";
+    my $command = "$prog $alias $mode";
     my $text = "Executing command: '$command'";
     println $text if ($option{"verbose"});
     system($command);
@@ -932,7 +931,7 @@ __DATA__
 #-
 #- LICENSE
 #-   Copyright (C) 2008 Rickard Andersson
-#-   Version 1.3.2
+#-   Version 1.4.0
 #-   This program comes with ABSOLUTELY NO WARRANTY.
 #-   This is free software, and you are welcome to redistribute it
 #-   under certain conditions; See license file for details.
