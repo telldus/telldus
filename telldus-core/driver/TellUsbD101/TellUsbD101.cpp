@@ -31,23 +31,23 @@ using namespace std;
  * Device-flag for devices supporting the devBell() call.
  * 
  * @def TELLSTICK_TOGGLE
- * This method is currently unimplemented
+ * This method is currently unimplemented.
  * 
  * @def TELLSTICK_DIM
  * Device-flag for devices supporting the devDim() call.
  * 
  * @def TELLSTICK_SUCCESS
- * Error code. Returned when the command succeeded
+ * Error code. Returned when the command succeeded.
  * 
  * @def TELLSTICK_ERROR_NOT_FOUND
  * Error code. Returned if a TellStick was not found on the system.
  * 
  * @def TELLSTICK_ERROR_PERMISSION_DENIED
  * Error code. Returned if the user doesn't have privileges to open
- * the TellStick device
+ * the TellStick device.
  * 
  * @def TELLSTICK_ERROR_DEVICE_NOT_FOUND
- * Error code. The supplied device id was not found
+ * Error code. The supplied device id was not found.
  * 
  * @def TELLSTICK_ERROR_METHOD_NOT_SUPPORTED
  * Error code. The requested method is not supported device.

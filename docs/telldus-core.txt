@@ -68,43 +68,43 @@
  *
  * TellStick can control many different types of devices and they
  * all support different features. For example, a bell doesn't support turning
- * on and not all lamp switches supports dimming.
- * To find out what a specific device supports call devMethods():
+ * on and not all lamp switches support dimming.
+ * To find out what a specific device support call devMethods():
  * \code
  * function checkFeatures( int id ) {
  *   int methods = devMethods( id );
  *   if ( methods & TELLSTICK_TURNON ) {
- *     printf( "The device %d supports devTurnOn()\n", id );
+ *     printf( "The device %d support devTurnOn()\n", id );
  *   }
  *   if ( methods & TELLSTICK_TURNOFF ) {
- *     printf( "The device %d supports devTurnOff()\n", id );
+ *     printf( "The device %d support devTurnOff()\n", id );
  *   }
  *   if ( methods & TELLSTICK_BELL ) {
- *     printf( "The device %d supports devBell()\n", id );
+ *     printf( "The device %d support devBell()\n", id );
  *   }
  * }
  * \endcode
  * 
- * When you know which fetures a device supports it is safe to call the
+ * When you know which fetures a device support it is safe to call the
  * controlling functions described in \ref sec_bu_controlling_functions.
  *
  * \subsubsection sec_bu_controlling_functions Controlling functions
  *
  * TellStick has a couple of functions for controlling the devices. Each of
- * them should only be called if the device supports the feature.
+ * them should only be called if the device support the feature.
  *
  * These functions all returns zero if the call was successfull and non-zero
  * otherwise.
  *
  * \paragraph devTurnOn devTurnOn()
  * Devices supporting \c TELLSTICK_TURNON. Most of the normal switches (for lamp
- * etc.) supports this.
+ * etc.) support this.
  * \paragraph devTurnOff devTurnOff()
  * Devices supporting \c TELLSTICK_TURNOFF. Almost all of the devices supporting
- * \c TELLSTICK_TURNON also supports this.
+ * \c TELLSTICK_TURNON also support this.
  * \paragraph devDim devDim()
  * Devices supporting \c TELLSTICK_DIM. This is a quite unusual feature for
- * dimmers. Many dimmers on the market that is dimmable has no way for sending
+ * dimmers. Many dimmers on the market that are dimmable have no way for sending
  * a specific level which means it doesn't support this feature.
  * \paragraph devBell devBell()
  * Devices supporting \c TELLSTICK_BELL. This is mostly wireless doorbells.
