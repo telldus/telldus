@@ -794,7 +794,7 @@ while (1) {
 		# Sunset time - requested offset
 		$device_cfg[$i][21] = subtract_time($sunset_time, $device_cfg[$i][7]);
 		if (is_rule_valid_today($i, $now) == $YES) {
-		    printf("$PROGRAM_NAME: Device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] sunset on time set to $device_cfg[$i][21].\n\n");
+		    printf("$PROGRAM_NAME: Device $device_cfg[$i][0] $device_cfg[$i][1]$device_cfg[$i][2] sunset on time set to $device_cfg[$i][21].\n");
 		}
 	    }
 	    elsif (is_rule_valid_today($i, $now) == $YES) {
