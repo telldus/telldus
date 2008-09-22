@@ -45,7 +45,7 @@ my $dayOfWeek;
 my $dayOfMonth;
 
 my $PROGRAM_NAME = "tellstickd";
-my $VERSION = "0.6.2";
+my $VERSION = "pre 0.6.3";
 
 # Structure of the configurations to be read;
 # $device_cfg[$i][0];   # Protocol, only NEXA, WAVEMAN and SARTANO supported so far by rfcmd
@@ -479,7 +479,7 @@ sub read_config
 
 
 	    # $inrad[5] is the off post sunrise value including sign, $inrad[6] is the on pre sunrise value sign, 
-	    if ($inrad[5] && $inrad[6]) {
+	    if (length($inrad[5]) > 0 && length($inrad[6]) > 0) {
 		# Found a parameter after off interval, assuming daytime switch off is sought.
 		$device_cfg[$i][5] = 1;
 
