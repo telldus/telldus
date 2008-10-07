@@ -9,14 +9,15 @@
 #endif
 
 void print_usage( char *name ) {
-	printf("Usage:\n");
-	printf("   %s [ options ]\n", name);
+	printf("\"tdtool\" is a command line utility to control a Telldus TellStick\n");
 	printf("\n");
-	printf("Options: -[bdfhlnv] [--list] [--help]\n");
-	printf("                    [--on device] [--off device] [--bell device]\n");
-	printf("                    [--dimlevel level --dim device]\n");
+	printf("Usage: %s [ options ]\n", name);
 	printf("\n");
 	printf("Options:\n");
+	printf("         -[bdfhlnv] [ --list ] [ --help ]\n");
+	printf("                    [ --on device ] [ --off device ] [ --bell device ]\n");
+	printf("                    [ --dimlevel level --dim device ]\n");
+	printf("\n");
 	printf("       --list (-l short option)\n");
 	printf("             List currently configured devices.\n");
 	printf("\n");
@@ -48,6 +49,14 @@ void print_usage( char *name ) {
 	printf("             either be an integer of the device-id, or the name of the device.\n");
 	printf("             Both device-id and name is outputed with the --list option\n");
 	printf("\n");
+	printf("Written by Micke Prag <micke.prag@telldus.se>\n");
+	printf("Report bugs to <info.tech@telldus.se>\n");
+	printf("\n");
+	printf("Copyright (C) 2008 Telldus Technologies AB\n");
+}
+
+void print_version() {
+	printf("tdtool 2.0\n");
 }
 
 void print_device( int index ) {
@@ -135,7 +144,7 @@ void bell_device( char *device ) {
 int main(int argc, char **argv)
 {
 	int optch, longindex;
-	static char optstring[] = "ln:f:d:b:v:h";
+	static char optstring[] = "ln:f:d:b:v:hi";
 	static struct option long_opts[] = {
 		{ "list", 0, 0, 'l' },
 		{ "on", 1, 0, 'n' },
@@ -143,7 +152,8 @@ int main(int argc, char **argv)
 		{ "dim", 1, 0, 'd' },
 		{ "bell", 1, 0, 'b' },
 		{ "dimlevel", 1, 0, 'v' },
-		{ "help", 1, 0, 'h' },
+		{ "help", 0, 0, 'h' },
+		{ "version", 0, 0, 'i'},
 		{ 0, 0, 0, 0}
 	};
 	int level = -1;
@@ -168,6 +178,9 @@ int main(int argc, char **argv)
 				break;
 			case 'h' :
 				print_usage( argv[0] );
+				break;
+			case 'i' :
+				print_version( );
 				break;
 			case 'l' :
 				list_devices();
