@@ -43,7 +43,7 @@
 #include <termios.h>
 
 #define PROG_NAME "rfcmd"
-#define PROG_VERSION "0.3"
+#define PROG_VERSION "2.0"
 /* #define RFCMD_DEBUG */
 
 /* Local function declarations */
