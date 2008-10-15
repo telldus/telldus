@@ -14,7 +14,7 @@ public:
 	virtual int dim(unsigned char level);
 	virtual int methods(char* strModel);
 	
-#ifndef _WINDOWS
+#ifdef _LINUX
 	void setDevice(const char *device);
 protected:
 	char *strDevice;

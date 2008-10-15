@@ -32,8 +32,6 @@ TelldusSettings::TelldusSettings(void)
 {
 	d = new privateVars();
 	readConfig(&d->cfg);
-// 	printf("Nu: %d\n", cfg_size(d->cfg, "device"));
-
 }
 
 /*
@@ -43,6 +41,7 @@ TelldusSettings::~TelldusSettings(void)
 {
 	if (d->cfg > 0)
 		cfg_free(d->cfg);
+	delete d;
 }
 
 /*
@@ -175,7 +174,7 @@ char *TelldusSettings::getStringSetting(int intDeviceId, const char* name, bool 
 			if (strSetting == NULL) {
 				return NULL;
 			}
-			char *strReturn = (char *)malloc(strlen(strSetting) * sizeof(char));
+			char *strReturn = (char *)malloc((strlen(strSetting)+1) * sizeof(char));
 			strcpy(strReturn, strSetting);
 			return strReturn;
 		}

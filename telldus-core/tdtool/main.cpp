@@ -50,19 +50,21 @@ void print_usage( char *name ) {
 	printf("             Both device-id and name is outputed with the --list option\n");
 	printf("\n");
 	printf("Written by Micke Prag <micke.prag@telldus.se>\n");
-	printf("Report bugs to <info.tech@telldus.se>\n");
 	printf("\n");
 	printf("Copyright (C) 2008 Telldus Technologies AB\n");
 }
 
 void print_version() {
 	printf("tdtool 2.0\n");
+	printf("\n");
+	printf("Report bugs to <info.tech@telldus.se>\n");
 }
 
 void print_device( int index ) {
 	int intId = devGetDeviceId(index);
 	char *name = devGetName(intId);
 	printf("%i\t%s\n", intId, name);
+	free(name);
 }
 
 void list_devices() {
@@ -85,8 +87,10 @@ int find_device( char *device ) {
 			char *name = devGetName( id );
 			if (strcasecmp(name, device) == 0) {
 				deviceId = id;
+				free(name);
 				break;
 			}
+			free(name);
 			index++;
 		}
 	}
@@ -101,13 +105,12 @@ void switch_device( bool turnOn, char *device ) {
 	}
 
 	char *name = devGetName( deviceId );
-	if (turnOn) {
-		int retval = devTurnOn( deviceId );
-		printf("Turning on device: %i %s - %s\n", deviceId, name, devGetErrorString(retval));
-	} else {
-		int retval = devTurnOff( deviceId );
-		printf("Turning off device: %i %s - %s\n", deviceId, name, devGetErrorString(retval));
-	}
+	int retval = (turnOn ? devTurnOn( deviceId ) : devTurnOff( deviceId ));
+	char *errorString = devGetErrorString(retval);
+	
+	printf("Turning %s device: %i %s - %s\n", (turnOn ? "on" : "off"), deviceId, name, errorString);
+	free(name);
+	free(errorString);
 	sleep(1);
 }
 
@@ -124,7 +127,10 @@ void dim_device( char *device, int level ) {
 
 	char *name = devGetName( deviceId );
 	int retval = devDim( deviceId, (unsigned char)level );
-	printf("Dimming device: %i %s to %i - %s\n", deviceId, name, level, devGetErrorString(retval));
+	char *errorString = devGetErrorString(retval);
+	printf("Dimming device: %i %s to %i - %s\n", deviceId, name, level, errorString);
+	free(name);
+	free(errorString);
 	sleep(1);
 }
 
@@ -137,7 +143,10 @@ void bell_device( char *device ) {
 
 	char *name = devGetName( deviceId );
 	int retval = devBell( deviceId );
-	printf("Sending bell to: %i %s - %s\n", deviceId, name, devGetErrorString(retval));
+	char *errorString = devGetErrorString(retval);
+	printf("Sending bell to: %i %s - %s\n", deviceId, name, errorString);
+	free(name);
+	free(errorString);
 	sleep(1);
 }
 

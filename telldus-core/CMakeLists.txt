@@ -8,4 +8,5 @@ endif(COMMAND cmake_policy)
 
 ADD_SUBDIRECTORY(driver)
 ADD_SUBDIRECTORY(tdtool)
+ADD_SUBDIRECTORY(rfcmd)
 
