@@ -75,7 +75,10 @@ int WINAPI devTurnOn(int intDeviceId){
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
-			int methods = dev->methods( ts.getModel( intDeviceId ) );
+			char *model = ts.getModel( intDeviceId );
+			int methods = dev->methods( model );
+			free(model);
+			
 			int retval = 0;
 			
 			if ( !(methods & TELLSTICK_TURNON) ) {
@@ -109,7 +112,9 @@ int WINAPI devTurnOff(int intDeviceId){
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
-			int methods = dev->methods( ts.getModel( intDeviceId ) );
+			char *model = ts.getModel( intDeviceId );
+			int methods = dev->methods( model );
+			free(model);
 			int retval = 0;
 
 			if ( !(methods & TELLSTICK_TURNOFF) ) {
@@ -143,7 +148,9 @@ int WINAPI devBell(int intDeviceId){
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
-			int methods = dev->methods( ts.getModel( intDeviceId ) );
+			char *model = ts.getModel( intDeviceId );
+			int methods = dev->methods( model );
+			free(model);
 			int retval = 0;
 
 			if ( !(methods & TELLSTICK_BELL) ) {
@@ -177,7 +184,9 @@ int WINAPI devDim(int intDeviceId, unsigned char level){
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
-			int methods = dev->methods( ts.getModel( intDeviceId ) );
+			char *model = ts.getModel( intDeviceId );
+			int methods = dev->methods( model );
+			free(model);
 			int retval = 0;
 
 			if ( !(methods & TELLSTICK_DIM) ) {
@@ -451,7 +460,7 @@ char * WINAPI devGetErrorString(int intErrorNo) {
 		strReturn = "Unknown error";
 	} else {
 		// Copy the error string to strReturn
-		strReturn = (char *)malloc( sizeof(char) * strlen(responses[intErrorNo]) );
+		strReturn = (char *)malloc( sizeof(char) * (strlen(responses[intErrorNo])+1) );
  		strcpy( strReturn, responses[intErrorNo] );
 	}
 

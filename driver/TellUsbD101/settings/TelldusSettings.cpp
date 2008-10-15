@@ -4,6 +4,7 @@
 #include "../DeviceSartano.h"
 #include "../DeviceIkea.h"
 #include <string.h>
+#include <stdlib.h>
 
 /*
 * Get the requested device
@@ -21,25 +22,35 @@ Device* TelldusSettings::getDevice(int intDeviceId){
 			char *strHouse = getArgument(intDeviceId, "nexa_house");
 			char *strCode = getArgument(intDeviceId, "nexa_unit");
 			dev = new DeviceNexa(strHouse, strCode);
-
+			free(strHouse);
+			free(strCode);
+		
 		} else if (strcmp(vendor, "Waveman") == 0) {
 			char *strHouse = getArgument(intDeviceId, "nexa_house");
 			char *strCode = getArgument(intDeviceId, "nexa_unit");
 			dev = new DeviceWaveman(strHouse, strCode);
+			free(strHouse);
+			free(strCode);
 
 		} else if (strcmp(vendor, "Sartano") == 0) {
 			char *strCode = getArgument(intDeviceId, "sartano_code");
 			dev = new DeviceSartano(strCode);
+			free(strCode);
 
 		} else if (strcmp(vendor, "Ikea") == 0) {
 			char *strSystem = getArgument(intDeviceId, "ikea_system");
 			char *strUnits = getArgument(intDeviceId, "ikea_units");
 			char *strFade = getArgument(intDeviceId, "ikea_fade");
 			dev = new DeviceIkea(strSystem, strUnits, strFade);
+			free(strSystem);
+			free(strUnits);
+			free(strFade);
 
 		} else {
+			free(vendor);
 			return NULL;
 		}
+		free(vendor);
 
 #ifdef _LINUX
 		dev->setDevice( getSetting("deviceNode") );

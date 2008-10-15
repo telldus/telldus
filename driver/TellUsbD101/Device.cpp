@@ -1,10 +1,14 @@
 #include "Device.h"
+#include <stdlib.h>
 
 /*
 * Constructor
 */
 Device::Device()
 {
+#ifdef _LINUX
+	strDevice = 0;
+#endif
 }
 
 /*
@@ -12,6 +16,11 @@ Device::Device()
 */
 Device::~Device(void)
 {
+#ifdef _LINUX
+	if (strDevice != 0) {
+		free(strDevice);
+	}
+#endif
 }
 
 /*
