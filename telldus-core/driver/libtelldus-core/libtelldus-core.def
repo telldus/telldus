@@ -1,4 +1,4 @@
-LIBRARY TellUsbD101
+LIBRARY telldus-core
 EXPORTS
 	devGetNumberOfDevices @1
 	devGetDeviceId @2

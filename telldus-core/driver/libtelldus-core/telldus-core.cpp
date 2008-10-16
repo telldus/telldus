@@ -8,7 +8,7 @@
 	#include "stdafx.h"
 	#include <ole2.h>
 #endif
-#include "TellUsbD101.h"
+#include "telldus-core.h"
 #include "settings/TelldusSettings.h"
 #include "Device.h"
 #include <vector>
