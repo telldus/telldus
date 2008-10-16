@@ -1,6 +1,6 @@
 #pragma once
 
-#include "TellUsbD101.h"
+#include "telldus-core.h"
 
 class Device
 {

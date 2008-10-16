@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="8,00"
-	Name="TellUsbD101"
+	Name="telldus-core"
 	ProjectGUID="{2A868E40-88D9-4800-A83F-21D0F8DCB611}"
-	RootNamespace="TellUsbD101"
+	RootNamespace="TelldusCore"
 	Keyword="Win32Proj"
 	>
 	<Platforms>
@@ -61,8 +61,9 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
+				AdditionalDependencies="advapi32.lib oleaut32.lib"
 				LinkIncremental="2"
-				ModuleDefinitionFile="$(SolutionDir)\tellTest3\tellTest3.def"
+				ModuleDefinitionFile="libtelldus-core.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				TargetMachine="1"
@@ -117,7 +118,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;TellUsbD101_EXPORTS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;TelldusCore_EXPORTS"
 				GeneratePreprocessedFile="0"
 				RuntimeLibrary="0"
 				UsePrecompiledHeader="0"
@@ -138,7 +139,7 @@
 				Name="VCLinkerTool"
 				AdditionalDependencies="advapi32.lib oleaut32.lib"
 				LinkIncremental="1"
-				ModuleDefinitionFile="TellUsbD101.def"
+				ModuleDefinitionFile="libtelldus-core.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
@@ -180,6 +181,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\Device.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\win\Device.cpp"
 				>
 				<FileConfiguration
@@ -202,10 +207,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Device.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\DeviceIkea.cpp"
 				>
 			</File>
@@ -226,15 +227,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\telldus-core.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\settings\TelldusSettings.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\settings\TelldusSettingsWinRegistry.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\TellUsbD101.cpp"
 				>
 			</File>
 		</Filter>
@@ -276,11 +277,11 @@
 				>
 			</File>
 			<File
-				RelativePath=".\settings\TelldusSettings.h"
+				RelativePath=".\telldus-core.h"
 				>
 			</File>
 			<File
-				RelativePath=".\TellUsbD101.h"
+				RelativePath=".\settings\TelldusSettings.h"
 				>
 			</File>
 		</Filter>
@@ -290,7 +291,7 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 			<File
-				RelativePath=".\TellUsbD101.def"
+				RelativePath=".\libtelldus-core.def"
 				>
 			</File>
 		</Filter>

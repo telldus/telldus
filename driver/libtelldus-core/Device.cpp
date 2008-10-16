@@ -27,28 +27,28 @@ Device::~Device(void)
 * Turn on, virtual
 */
 int Device::turnOn(void){
-	//do nothing
+	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 }
 
 /*
 * Turn off, virtual
 */
 int Device::turnOff(void){
-	//do nothing
+	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 }
 
 /*
 * Bell, virtual
 */
 int Device::bell(void){
-	//do nothing
+	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 }
 
 /*
 * Dim, virtual
 */
 int Device::dim(unsigned char level){
-	//do nothing
+	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 }
 
 /*

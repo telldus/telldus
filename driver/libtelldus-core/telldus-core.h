@@ -1,16 +1,16 @@
-#ifndef TELLUSBD101_H
-#define TELLUSBD101_H
+#ifndef TELLDUSCORE_H
+#define TELLDUSCORE_H
 
 // The following ifdef block is the standard way of creating macros
 // which make exporting from a DLL simpler.  All files within this DLL
-// are compiled with the TellUsbD101_EXPORTS symbol defined on the command line.
+// are compiled with the TelldusCore_EXPORTS symbol defined on the command line.
 // This symbol should not be defined on any project that uses this DLL.
 // This way any other project whose source files include this file see
 // TELLSTICK_API functions as being imported from a DLL, whereas this DLL
 // sees symbols defined with this macro as being exported.
 
 #ifdef _WINDOWS
-	#ifdef TellUsbD101_EXPORTS
+	#ifdef TelldusCore_EXPORTS
 		#define TELLSTICK_API __declspec(dllexport)
 	#else
 		#define TELLSTICK_API __declspec(dllimport)

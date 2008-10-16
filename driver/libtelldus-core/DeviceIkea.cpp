@@ -8,6 +8,10 @@
 
 using namespace std;
 
+#ifdef _WINDOWS
+#define strcasecmp(x, y) _strcmpi(x, y)
+#endif
+
 /*
 * Constructor
 */

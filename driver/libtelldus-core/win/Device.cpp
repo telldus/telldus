@@ -4,6 +4,10 @@
 #include <vector>
 #include <iostream>
 #include <fstream>
+
+#ifdef _WINDOWS
+#include "..\StdAfx.h"
+#endif
 #include "ftd2xx.h"
 
 int getDongleIndex();
@@ -11,7 +15,7 @@ int getDongleIndex();
 /*
 * Send message to the USB dongle
 */
-void Device::send(char* strMessage){
+int Device::send(char* strMessage){
 
 	try{
 		FT_STATUS ftStatus = FT_OK;
@@ -19,7 +23,7 @@ void Device::send(char* strMessage){
 		
 		int intDongleIndex = getDongleIndex();
 		if (intDongleIndex < 0) {
-			return;
+			return TELLSTICK_ERROR_NOT_FOUND;
 		}
 
 		ftStatus = FT_Open(intDongleIndex, &fthHandle);
@@ -35,6 +39,7 @@ void Device::send(char* strMessage){
 	catch(...){
 		throw;
 	}
+	return TELLSTICK_SUCCESS;
 }
 
 /*
@@ -48,8 +53,10 @@ int getDongleIndex(){
 
 	try{
 		DWORD dwNumberOfDevices = 0;
-		
+
+#ifndef _WINDOWS
 		FT_SetVIDPID(0x1781, 0x0C30);
+#endif
 		ftStatus = FT_CreateDeviceInfoList(&dwNumberOfDevices);
 		if (ftStatus == FT_OK) { 
 			for (int i = 0; i < (int)dwNumberOfDevices; i++) {  
