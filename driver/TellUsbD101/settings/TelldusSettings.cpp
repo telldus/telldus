@@ -16,6 +16,9 @@ Device* TelldusSettings::getDevice(int intDeviceId){
 
 	try{
 		char* vendor = getVendor(intDeviceId);
+		if (vendor == NULL) {
+			return NULL;
+		}
 
 		//each new brand must be added here
 		if (strcmp(vendor, "Nexa") == 0){
