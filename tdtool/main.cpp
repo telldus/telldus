@@ -111,7 +111,9 @@ void switch_device( bool turnOn, char *device ) {
 	printf("Turning %s device: %i %s - %s\n", (turnOn ? "on" : "off"), deviceId, name, errorString);
 	free(name);
 	free(errorString);
-	sleep(1);
+	if (retval == TELLSTICK_SUCCESS) {
+		sleep(1);
+	}
 }
 
 void dim_device( char *device, int level ) {
@@ -131,7 +133,9 @@ void dim_device( char *device, int level ) {
 	printf("Dimming device: %i %s to %i - %s\n", deviceId, name, level, errorString);
 	free(name);
 	free(errorString);
-	sleep(1);
+	if (retval == TELLSTICK_SUCCESS) {
+		sleep(1);
+	}
 }
 
 void bell_device( char *device ) {
@@ -147,7 +151,9 @@ void bell_device( char *device ) {
 	printf("Sending bell to: %i %s - %s\n", deviceId, name, errorString);
 	free(name);
 	free(errorString);
-	sleep(1);
+	if (retval == TELLSTICK_SUCCESS) {
+		sleep(1);
+	}
 }
 
 int main(int argc, char **argv)
