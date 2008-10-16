@@ -161,7 +161,7 @@ void TelldusSettings::debugLog(int debugint){
 
 char *TelldusSettings::getStringSetting(int intDeviceId, const char* name, bool parameter) {
 	if (d->cfg == 0) {
-		return "";
+		return NULL;
 	}
 	cfg_t *cfg_device;
 	for (int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
@@ -179,7 +179,7 @@ char *TelldusSettings::getStringSetting(int intDeviceId, const char* name, bool 
 			return strReturn;
 		}
 	}
-	return "";
+	return NULL;
 }
 
 bool TelldusSettings::setStringSetting(int intDeviceId, const char* name, const char *value, bool parameter) {
