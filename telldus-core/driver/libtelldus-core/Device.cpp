@@ -54,6 +54,6 @@ int Device::dim(unsigned char level){
 /*
 * Methods, virtual
 */
-int Device::methods(char* strModel){
+int Device::methods(int intModel){
 	return 0;
 }

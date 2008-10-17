@@ -9,7 +9,7 @@ public:
 	virtual int turnOn(void);
 	virtual int turnOff(void);
 	virtual int bell(void);
-	virtual int methods(char* strModel);
+	virtual int methods(int intModel);
 	
 public:
 	~DeviceNexa(void);

@@ -7,5 +7,5 @@ class DeviceWaveman : public DeviceNexa
 public:
 	DeviceWaveman(char *strHouse, char *strCode);
 	virtual int turnOff(void);
-	virtual int methods(char* strModel);
+	virtual int methods(int intModel);
 };

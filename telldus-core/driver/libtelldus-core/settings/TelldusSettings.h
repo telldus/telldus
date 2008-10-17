@@ -17,21 +17,21 @@ public:
 	bool setName(int intDeviceId, const char* strNewName);
 	char* getVendor(int intDeviceId);
 	bool setVendor(int intDeviceId, const char* strVendor);
-	char* getModel(int intDeviceId);
-	bool setModel(int intDeviceId, const char* strModel);
+	int getModel(int intDeviceId);
+	bool setModel(int intDeviceId, int intModel);
 	char* getArgument(int intDeviceId, const char *strName);
 	bool setArgument(int intDeviceId, const char *strName, const char *strValue);
 	int addDevice();
 	int getDeviceId(int intDeviceIndex);
 	bool removeDevice(int intDeviceId);
-	void debugLog(char* debugstring);
-	void debugLog(int debugint);
 
 	~TelldusSettings(void);
 	
 protected:
 	char *getStringSetting(int intDeviceId, const char* name, bool parameter);
 	bool setStringSetting(int intDeviceId, const char* name, const char *value, bool parameter);
+	int getIntSetting(int intDeviceId, const char* name, bool parameter);
+	bool setIntSetting(int intDeviceId, const char* name, int value, bool parameter);
 
 private:
 	int getNextDeviceId();
