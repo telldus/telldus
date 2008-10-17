@@ -141,24 +141,6 @@ bool TelldusSettings::removeDevice(int intDeviceId){
 	return blnSuccess;
 }
 
-//only for debug reasons
-void TelldusSettings::debugLog(char* debugstring){
-/*	ofstream debugfile("c:\\telldusdebug.txt", ios::app);
-	if(debugfile){
-		debugfile << debugstring << endl;
-		debugfile.close();
-	}*/
-}
-
-//only for debug reasons
-void TelldusSettings::debugLog(int debugint){
-/*	ofstream debugfile("c:\\telldusdebug.txt", ios::app);
-	if(debugfile){
-		debugfile << debugint << endl;
-		debugfile.close();
-	}*/
-}
-
 char *TelldusSettings::getStringSetting(int intDeviceId, const char* name, bool parameter) {
 	if (d->cfg == 0) {
 		return NULL;
@@ -205,6 +187,47 @@ bool TelldusSettings::setStringSetting(int intDeviceId, const char* name, const 
 	return false;
 }
 
+int TelldusSettings::getIntSetting(int intDeviceId, const char* name, bool parameter) {
+	if (d->cfg == 0) {
+		return 0;
+	}
+	cfg_t *cfg_device;
+	for(int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
+		cfg_device = cfg_getnsec(d->cfg, "device", i);
+		if (cfg_getint(cfg_device, "id") == intDeviceId) {
+			if (parameter) {
+				cfg_device = cfg_getsec(cfg_device, "parameters");
+			}
+			return cfg_getint(cfg_device, name);
+		}
+	}
+	return 0;
+}
+
+bool TelldusSettings::setIntSetting(int intDeviceId, const char* name, int value, bool parameter) {
+	if (d->cfg == 0) {
+		return false;
+	}
+	cfg_t *cfg_device;
+	for (int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
+		cfg_device = cfg_getnsec(d->cfg, "device", i);
+		if (cfg_getint(cfg_device, "id") == intDeviceId)  {
+			if (parameter) {
+				cfg_t *cfg_parameters = cfg_getsec(cfg_device, "parameters");
+				cfg_setint(cfg_parameters, name, value);
+			} else {
+				cfg_setint(cfg_device, name, value);
+			}
+			FILE *fp = fopen(CONFIG_FILE, "w");
+			cfg_print(d->cfg, fp);
+			fclose(fp);
+			return true;
+		}
+	}
+	return false;
+}
+
+
 bool readConfig(cfg_t **cfg) {
 	cfg_opt_t parameter_opts[] = {
 		//Nexa
@@ -226,7 +249,7 @@ bool readConfig(cfg_t **cfg) {
 		CFG_INT("id", -1, CFGF_NONE),
 		CFG_STR("name", "Unnamed", CFGF_NONE),
 		CFG_STR("vendor", "Nexa", CFGF_NONE),
-		CFG_STR("model", "1", CFGF_NONE),
+		CFG_INT("model", 1, CFGF_NONE),
 		CFG_SEC("parameters", parameter_opts, CFGF_NONE),
 		CFG_END()
 	};
