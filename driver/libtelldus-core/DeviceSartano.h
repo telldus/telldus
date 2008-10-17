@@ -9,7 +9,7 @@ public:
 	DeviceSartano(char *strCode);
 	virtual int turnOn(void);
 	virtual int turnOff(void);
-	virtual int methods(char* strModel);
+	virtual int methods(int strModel);
 
 	~DeviceSartano(void);
 

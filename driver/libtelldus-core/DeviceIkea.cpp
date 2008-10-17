@@ -194,9 +194,9 @@ string DeviceIkea::getStringCode(unsigned char level){
 /*
 * Has the device got the method?
 */
-int DeviceIkea::methods(char* strModel){
+int DeviceIkea::methods(int intModel){
 
-	if(strcmp(strModel, TELLSTICK_DEVICE_KOPPLA) == 0) {
+	if(intModel == TELLSTICK_DEVICE_KOPPLA) {
 		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_DIM);
 	}
 	return 0;

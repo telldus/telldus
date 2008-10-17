@@ -97,15 +97,15 @@ bool TelldusSettings::setVendor(int intDeviceId, const char* strVendor){
 /*
 * Get the device model
 */
-char* TelldusSettings::getModel(int intDeviceId){
-	return getStringSetting(intDeviceId, "model", false);
+int TelldusSettings::getModel(int intDeviceId){
+	return getIntSetting(intDeviceId, "model", false);
 }
 
 /*
 * Set the device model
 */
-bool TelldusSettings::setModel(int intDeviceId, const char* strModel){
-	return setStringSetting(intDeviceId, "model", strModel, false);
+bool TelldusSettings::setModel(int intDeviceId, int intModel){
+	return setIntSetting(intDeviceId, "model", intModel, false);
 }
 
 /*

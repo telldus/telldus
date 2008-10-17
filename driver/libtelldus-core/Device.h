@@ -12,7 +12,7 @@ public:
 	virtual int turnOff(void);
 	virtual int bell(void);
 	virtual int dim(unsigned char level);
-	virtual int methods(char* strModel);
+	virtual int methods(int intModel);
 	
 #ifdef _LINUX
 	void setDevice(const char *device);

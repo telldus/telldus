@@ -145,36 +145,36 @@ string DeviceNexa::getStringCode(int intToConvert){
 /*
 * Has the device got the method?
 */
-int DeviceNexa::methods(char* strModel){
+int DeviceNexa::methods(int intModel){
 
-	if( strcmp(strModel, TELLSTICK_DEVICE_YCR3500) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_YCR300D) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_WSR1000) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_CMR1000) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_CMR300) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_PA33300) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_EL2000) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_EL2005) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_EL2006) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_SYCR3500) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_SYCR300) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_HDR105) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_EL2004) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_EL2016) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_EL2010) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_LYCR1000) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_LYCR300) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_LCMR1000) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_LCMR300) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_EL2023) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_EL2024) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_EL2021) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_EL2017) == 0 ||
-		strcmp(strModel, TELLSTICK_DEVICE_EL2019) == 0
+	if( (intModel == TELLSTICK_DEVICE_YCR3500) ||
+		(intModel == TELLSTICK_DEVICE_YCR300D) ||
+		(intModel == TELLSTICK_DEVICE_WSR1000) ||
+		(intModel == TELLSTICK_DEVICE_CMR1000) ||
+		(intModel == TELLSTICK_DEVICE_CMR300) ||
+		(intModel == TELLSTICK_DEVICE_PA33300) ||
+		(intModel == TELLSTICK_DEVICE_EL2000) ||
+		(intModel == TELLSTICK_DEVICE_EL2005) ||
+		(intModel == TELLSTICK_DEVICE_EL2006) ||
+		(intModel == TELLSTICK_DEVICE_SYCR3500) ||
+		(intModel == TELLSTICK_DEVICE_SYCR300) ||
+		(intModel == TELLSTICK_DEVICE_HDR105) ||
+		(intModel == TELLSTICK_DEVICE_EL2004) ||
+		(intModel == TELLSTICK_DEVICE_EL2016) ||
+		(intModel == TELLSTICK_DEVICE_EL2010) ||
+		(intModel == TELLSTICK_DEVICE_LYCR1000) ||
+		(intModel == TELLSTICK_DEVICE_LYCR300) ||
+		(intModel == TELLSTICK_DEVICE_LCMR1000) ||
+		(intModel == TELLSTICK_DEVICE_LCMR300) ||
+		(intModel == TELLSTICK_DEVICE_EL2023) ||
+		(intModel == TELLSTICK_DEVICE_EL2024) ||
+		(intModel == TELLSTICK_DEVICE_EL2021) ||
+		(intModel == TELLSTICK_DEVICE_EL2017) ||
+		(intModel == TELLSTICK_DEVICE_EL2019) == 0
  		)
 	{
 		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
-	} else if ( strcmp(strModel, TELLSTICK_DEVICE_ML7100) == 0 ) {
+	} else if ( intModel == TELLSTICK_DEVICE_ML7100) {
 		return TELLSTICK_BELL;
 	}
 	return 0;

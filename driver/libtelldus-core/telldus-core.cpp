@@ -75,9 +75,8 @@ int WINAPI devTurnOn(int intDeviceId){
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
-			char *model = ts.getModel( intDeviceId );
+			int model = ts.getModel( intDeviceId );
 			int methods = dev->methods( model );
-			free(model);
 			
 			int retval = 0;
 			
@@ -112,9 +111,8 @@ int WINAPI devTurnOff(int intDeviceId){
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
-			char *model = ts.getModel( intDeviceId );
+			int model = ts.getModel( intDeviceId );
 			int methods = dev->methods( model );
-			free(model);
 			int retval = 0;
 
 			if ( !(methods & TELLSTICK_TURNOFF) ) {
@@ -148,9 +146,8 @@ int WINAPI devBell(int intDeviceId){
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
-			char *model = ts.getModel( intDeviceId );
+			int model = ts.getModel( intDeviceId );
 			int methods = dev->methods( model );
-			free(model);
 			int retval = 0;
 
 			if ( !(methods & TELLSTICK_BELL) ) {
@@ -184,9 +181,8 @@ int WINAPI devDim(int intDeviceId, unsigned char level){
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
-			char *model = ts.getModel( intDeviceId );
+			int model = ts.getModel( intDeviceId );
 			int methods = dev->methods( model );
-			free(model);
 			int retval = 0;
 
 			if ( !(methods & TELLSTICK_DIM) ) {
@@ -320,27 +316,24 @@ bool WINAPI devSetVendor(int intDeviceId, const char* strVendor){
 	return blnSuccess;
 }
 
- char* WINAPI devGetModel(int intDeviceId){
-	char* strReturn = "";
+int WINAPI devGetModel(int intDeviceId){
+	int intReturn = 0;
 	try{
 		TelldusSettings ts;
-		strReturn = ts.getModel(intDeviceId);
-#ifdef _WINDOWS
-		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
-#endif
+		intReturn = ts.getModel(intDeviceId);
 	}
 	catch(exception e){
-		strReturn = "";
+		intReturn = 0;
 		handleException(e);
 	}
-	return strReturn;
+	return intReturn;
 }
 
-bool WINAPI devSetModel(int intDeviceId, const char* strNewModel){
+bool WINAPI devSetModel(int intDeviceId, int intModel){
 	bool blnSuccess = false;
 	try{
 		TelldusSettings ts;
-		blnSuccess = ts.setModel(intDeviceId, strNewModel);
+		blnSuccess = ts.setModel(intDeviceId, intModel);
 	}
 	catch(exception e){
 		blnSuccess = false;
@@ -420,10 +413,10 @@ int WINAPI devMethods(int id){
 	int intMethods = 0;
 	try{
 		TelldusSettings ts;
-		char* strModel = ts.getModel(id);
+		int intModel = ts.getModel(id);
 		Device* dev = ts.getDevice(id);
 		if (dev != NULL) {
-			intMethods = dev->methods(strModel);
+			intMethods = dev->methods(intModel);
 		}
 	}
 	catch(exception e){
