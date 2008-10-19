@@ -37,15 +37,15 @@
  *
  * To list all of the configured devices, look at the following example:
  * \code
- * int intNumberOfDevices = devGetNumberOfDevices();
+ * int intNumberOfDevices = tdGetNumberOfDevices();
  * for (int i = 0; i < intNumberOfDevices; i++) {
- *   int id = devGetDeviceId( index );
- *   char *name = devGetName( id );
+ *   int id = tdGetDeviceId( index );
+ *   char *name = tdGetName( id );
  *   printf("%d\t%s\n", id, name);
  * }
  * \endcode
  *
- * First, we call devGetNumberOfDevices(). This returnes the total number of
+ * First, we call tdGetNumberOfDevices(). This returnes the total number of
  * devices configured. We then iterate over all of the devices with the index
  * in the variable \c i.
  * Since the devices could change between run of the program we could not be
@@ -54,13 +54,13 @@
  * store in a configuration file. Two different devices could never share the
  * same device id.
  *
- * The call to devGetDeviceId() returns the id for a specific index. This
+ * The call to tdGetDeviceId() returns the id for a specific index. This
  * function should only be called in a loop iterating over all of the devices.
  * After we have found the id for a device it is safe to store this or use it
  * the rest of the program.
  *
  * The next two lines of code queries the device for it's name with a call to
- * devGetName() and then displays it to stdout.
+ * tdGetName() and then displays it to stdout.
  *
  * \subsection sec_bu_sending Sending commands to TellStick
  *
@@ -69,18 +69,18 @@
  * TellStick can control many different types of devices and they
  * all support different features. For example, a bell doesn't support turning
  * on and not all lamp switches support dimming.
- * To find out what a specific device support call devMethods():
+ * To find out what a specific device support call tdMethods():
  * \code
  * function checkFeatures( int id ) {
- *   int methods = devMethods( id );
+ *   int methods = tdMethods( id );
  *   if ( methods & TELLSTICK_TURNON ) {
- *     printf( "The device %d support devTurnOn()\n", id );
+ *     printf( "The device %d support tdTurnOn()\n", id );
  *   }
  *   if ( methods & TELLSTICK_TURNOFF ) {
- *     printf( "The device %d support devTurnOff()\n", id );
+ *     printf( "The device %d support tdTurnOff()\n", id );
  *   }
  *   if ( methods & TELLSTICK_BELL ) {
- *     printf( "The device %d support devBell()\n", id );
+ *     printf( "The device %d support tdBell()\n", id );
  *   }
  * }
  * \endcode
@@ -96,17 +96,17 @@
  * These functions all returns zero if the call was successfull and non-zero
  * otherwise.
  *
- * \paragraph devTurnOn devTurnOn()
+ * \paragraph tdTurnOn tdTurnOn()
  * Devices supporting \c TELLSTICK_TURNON. Most of the normal switches (for lamp
  * etc.) support this.
- * \paragraph devTurnOff devTurnOff()
+ * \paragraph tdTurnOff tdTurnOff()
  * Devices supporting \c TELLSTICK_TURNOFF. Almost all of the devices supporting
  * \c TELLSTICK_TURNON also support this.
- * \paragraph devDim devDim()
+ * \paragraph tdDim tdDim()
  * Devices supporting \c TELLSTICK_DIM. This is a quite unusual feature for
  * dimmers. Many dimmers on the market that are dimmable have no way for sending
  * a specific level which means it doesn't support this feature.
- * \paragraph devBell devBell()
+ * \paragraph tdBell tdBell()
  * Devices supporting \c TELLSTICK_BELL. This is mostly wireless doorbells.
  *
  * \subsubsection sec_bu_error_codes Error codes
@@ -114,14 +114,14 @@
  * If any of the calls in \ref sec_bu_controlling_functions fails it returns
  * a non-zero error code. This values is one of the \c TELLSTICK_ERROR_* defines.
  * To translate the error code to a human readable string call the function
- * devGetErrorString(). Example:
+ * tdGetErrorString(). Example:
  * \code
- * printf("Error: %s\n", devGetErrorString( TELLSTICK_METHOD_NOT_SUPPORTED ) );
+ * printf("Error: %s\n", tdGetErrorString( TELLSTICK_METHOD_NOT_SUPPORTED ) );
  * //Error: The method you tried to use is not supported by the device
  *
- * int retval = devTurnOn( deviceID );
+ * int retval = tdTurnOn( deviceID );
  * if (retval != TELLSTICK_SUCCESS ) {
- *   printf("Error: %s\n", devGetErrorString( retval ) );
+ *   printf("Error: %s\n", tdGetErrorString( retval ) );
  * }
  * \endcode
  *
