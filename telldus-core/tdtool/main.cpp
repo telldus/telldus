@@ -3,7 +3,7 @@
 #include <stdlib.h>
 #include <unistd.h>
 #include <string.h>
-#include "TellUsbD101.h"
+#include "../driver/libtelldus-core/telldus-core.h"
 #ifdef __MINGW32__
   #define sleep(x) _sleep((x)*1000)
 #endif
@@ -61,14 +61,14 @@ void print_version() {
 }
 
 void print_device( int index ) {
-	int intId = devGetDeviceId(index);
-	char *name = devGetName(intId);
+	int intId = tdGetDeviceId(index);
+	char *name = tdGetName(intId);
 	printf("%i\t%s\n", intId, name);
 	free(name);
 }
 
 void list_devices() {
-	int intNum = devGetNumberOfDevices();
+	int intNum = tdGetNumberOfDevices();
 	printf("Number of devices: %i\n", intNum);
 	int i = 0;
 	while (i < intNum) {
@@ -80,11 +80,11 @@ void list_devices() {
 int find_device( char *device ) {
 	int deviceId = atoi(device);
 	if (deviceId == 0) { //Try to find the id from the name
-		int intNum = devGetNumberOfDevices();
+		int intNum = tdGetNumberOfDevices();
 		int index = 0;
 		while (index < intNum) {
-			int id = devGetDeviceId(index);
-			char *name = devGetName( id );
+			int id = tdGetDeviceId(index);
+			char *name = tdGetName( id );
 			if (strcasecmp(name, device) == 0) {
 				deviceId = id;
 				free(name);
@@ -104,9 +104,9 @@ void switch_device( bool turnOn, char *device ) {
 		return;
 	}
 
-	char *name = devGetName( deviceId );
-	int retval = (turnOn ? devTurnOn( deviceId ) : devTurnOff( deviceId ));
-	char *errorString = devGetErrorString(retval);
+	char *name = tdGetName( deviceId );
+	int retval = (turnOn ? tdTurnOn( deviceId ) : tdTurnOff( deviceId ));
+	char *errorString = tdGetErrorString(retval);
 	
 	printf("Turning %s device: %i %s - %s\n", (turnOn ? "on" : "off"), deviceId, name, errorString);
 	free(name);
@@ -127,9 +127,9 @@ void dim_device( char *device, int level ) {
 		return;
 	}
 
-	char *name = devGetName( deviceId );
-	int retval = devDim( deviceId, (unsigned char)level );
-	char *errorString = devGetErrorString(retval);
+	char *name = tdGetName( deviceId );
+	int retval = tdDim( deviceId, (unsigned char)level );
+	char *errorString = tdGetErrorString(retval);
 	printf("Dimming device: %i %s to %i - %s\n", deviceId, name, level, errorString);
 	free(name);
 	free(errorString);
@@ -145,9 +145,9 @@ void bell_device( char *device ) {
 		return;
 	}
 
-	char *name = devGetName( deviceId );
-	int retval = devBell( deviceId );
-	char *errorString = devGetErrorString(retval);
+	char *name = tdGetName( deviceId );
+	int retval = tdBell( deviceId );
+	char *errorString = tdGetErrorString(retval);
 	printf("Sending bell to: %i %s - %s\n", deviceId, name, errorString);
 	free(name);
 	free(errorString);

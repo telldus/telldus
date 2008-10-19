@@ -24,29 +24,29 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-	TELLSTICK_API int WINAPI devTurnOn(int intDeviceId);
-	TELLSTICK_API int WINAPI devTurnOff(int intDeviceId);
-	TELLSTICK_API int WINAPI devBell(int intDeviceId);
-	TELLSTICK_API int WINAPI devDim(int intDeviceId, unsigned char level);
-	TELLSTICK_API int WINAPI devMethods(int id);
+	TELLSTICK_API int WINAPI tdTurnOn(int intDeviceId);
+	TELLSTICK_API int WINAPI tdTurnOff(int intDeviceId);
+	TELLSTICK_API int WINAPI tdBell(int intDeviceId);
+	TELLSTICK_API int WINAPI tdDim(int intDeviceId, unsigned char level);
+	TELLSTICK_API int WINAPI tdMethods(int id);
 	
-	TELLSTICK_API int WINAPI devGetNumberOfDevices();
-	TELLSTICK_API int WINAPI devGetDeviceId(int intDeviceIndex);
+	TELLSTICK_API int WINAPI tdGetNumberOfDevices();
+	TELLSTICK_API int WINAPI tdGetDeviceId(int intDeviceIndex);
 	
-	TELLSTICK_API char * WINAPI devGetErrorString(int intErrorNo);
+	TELLSTICK_API char * WINAPI tdGetErrorString(int intErrorNo);
 	
-	TELLSTICK_API char * WINAPI devGetName(int intDeviceId);
-	TELLSTICK_API bool WINAPI devSetName(int intDeviceId, const char* chNewName);
-	TELLSTICK_API char * WINAPI devGetVendor(int intDeviceId);
-	TELLSTICK_API bool WINAPI devSetVendor(int intDeviceId, const char* chNewName);
-	TELLSTICK_API int WINAPI devGetModel(int intDeviceId);
-	TELLSTICK_API bool WINAPI devSetModel(int intDeviceId, int intModel);
+	TELLSTICK_API char * WINAPI tdGetName(int intDeviceId);
+	TELLSTICK_API bool WINAPI tdSetName(int intDeviceId, const char* chNewName);
+	TELLSTICK_API char * WINAPI tdGetVendor(int intDeviceId);
+	TELLSTICK_API bool WINAPI tdSetVendor(int intDeviceId, const char* chNewName);
+	TELLSTICK_API int WINAPI tdGetModel(int intDeviceId);
+	TELLSTICK_API bool WINAPI tdSetModel(int intDeviceId, int intModel);
 	
-	TELLSTICK_API const char * WINAPI devGetArgument(int intDeviceId, const char *strName, const char *defaultValue);
-	TELLSTICK_API bool WINAPI devSetArgument(int intDeviceId, const char *strName, const char* strValue);
+	TELLSTICK_API const char * WINAPI tdGetArgument(int intDeviceId, const char *strName, const char *defaultValue);
+	TELLSTICK_API bool WINAPI tdSetArgument(int intDeviceId, const char *strName, const char* strValue);
 	
-	TELLSTICK_API int WINAPI devAddDevice();
-	TELLSTICK_API bool WINAPI devRemoveDevice(int intDeviceId);
+	TELLSTICK_API int WINAPI tdAddDevice();
+	TELLSTICK_API bool WINAPI tdRemoveDevice(int intDeviceId);
 #ifdef __cplusplus
 }
 #endif

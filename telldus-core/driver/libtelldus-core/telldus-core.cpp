@@ -22,19 +22,19 @@ using namespace std;
 
 /**
  * @def TELLSTICK_TURNON
- * Device-flag for devices supporting the devTurnOn() call.
+ * Device-flag for devices supporting the tdTurnOn() call.
  * 
  * @def TELLSTICK_TURNOFF
- * Device-flag for devices supporting the devTurnOff() call.
+ * Device-flag for devices supporting the tdTurnOff() call.
  * 
  * @def TELLSTICK_BELL
- * Device-flag for devices supporting the devBell() call.
+ * Device-flag for devices supporting the tdBell() call.
  * 
  * @def TELLSTICK_TOGGLE
  * This method is currently unimplemented.
  * 
  * @def TELLSTICK_DIM
- * Device-flag for devices supporting the devDim() call.
+ * Device-flag for devices supporting the tdDim() call.
  * 
  * @def TELLSTICK_SUCCESS
  * Error code. Returned when the command succeeded.
@@ -51,7 +51,7 @@ using namespace std;
  * 
  * @def TELLSTICK_ERROR_METHOD_NOT_SUPPORTED
  * Error code. The requested method is not supported device.
- * This should be avoided by a call to devMethods().
+ * This should be avoided by a call to tdMethods().
  * 
  * @def TELLSTICK_ERROR_UNKNOWN
  * Error code. An unkown error has occurred.
@@ -65,11 +65,11 @@ using namespace std;
 
 /**
  * Turns a device on.
- * Make sure the device supports this by calling devMethods() before any
+ * Make sure the device supports this by calling tdMethods() before any
  * call to this function.
  * @param intDeviceId The device id to turn on.
  **/
-int WINAPI devTurnOn(int intDeviceId){
+int WINAPI tdTurnOn(int intDeviceId){
 
 	try{
 		TelldusSettings ts;
@@ -101,11 +101,11 @@ int WINAPI devTurnOn(int intDeviceId){
 
 /**
  * Turns a device off.
- * Make sure the device supports this by calling devMethods() before any
+ * Make sure the device supports this by calling tdMethods() before any
  * call to this function.
  * @param intDeviceId The device id to turn off.
  */
-int WINAPI devTurnOff(int intDeviceId){
+int WINAPI tdTurnOff(int intDeviceId){
 
 	try{
 		TelldusSettings ts;
@@ -136,11 +136,11 @@ int WINAPI devTurnOff(int intDeviceId){
 
 /**
  * Sends bell command to devices supporting this.
- * Make sure the device supports this by calling devMethods() before any
+ * Make sure the device supports this by calling tdMethods() before any
  * call to this function.
  * @param intDeviceId The device id to send bell to
  */
-int WINAPI devBell(int intDeviceId){
+int WINAPI tdBell(int intDeviceId){
 
 	try{
 		TelldusSettings ts;
@@ -171,12 +171,12 @@ int WINAPI devBell(int intDeviceId){
 
 /**
  * Dims a device.
- * Make sure the device supports this by calling devMethods() before any
+ * Make sure the device supports this by calling tdMethods() before any
  * call to this function.
  * @param intDeviceId The device id to dim
  * @param level The level the device should dim to. This value should be 0-255
  */
-int WINAPI devDim(int intDeviceId, unsigned char level){
+int WINAPI tdDim(int intDeviceId, unsigned char level){
 	try{
 		TelldusSettings ts;
 		Device* dev = ts.getDevice(intDeviceId);
@@ -214,7 +214,7 @@ int WINAPI devDim(int intDeviceId, unsigned char level){
  * This function returns the number of devices configured
  * @returns an integer of the total number of devices configured
  */
-int WINAPI devGetNumberOfDevices(void){
+int WINAPI tdGetNumberOfDevices(void){
 	int intReturn = -1;
 	try{
 		TelldusSettings ts;
@@ -231,16 +231,16 @@ int WINAPI devGetNumberOfDevices(void){
  * This function returns the unique id of a device with a specific index.
  * To get all the id numbers you should loop over all the devices:
  * \code
- * int intNumberOfDevices = devGetNumberOfDevices();
+ * int intNumberOfDevices = tdGetNumberOfDevices();
  * for (int i = 0; i < intNumberOfDevices; i++) {
- *   int id = devGetDeviceId( i );
+ *   int id = tdGetDeviceId( i );
  *   // id now contains the id number of the device with index of i
  * }
  * \endcode
  * @param intDeviceIndex The device index to query. The index starts from 0.
  * @returns the unique id for the device or -1 if the device is not found.
  */
-int WINAPI devGetDeviceId(int intDeviceIndex){
+int WINAPI tdGetDeviceId(int intDeviceIndex){
 	int intReturn = -1;
 	try{
 		TelldusSettings ts;
@@ -258,7 +258,7 @@ int WINAPI devGetDeviceId(int intDeviceIndex){
  * @param intDeviceId The unique id of the device to query
  * @returns The name of the device or an empty string if the device is not found.
  */
-char * WINAPI devGetName(int intDeviceId){
+char * WINAPI tdGetName(int intDeviceId){
 	char* strReturn;
 	try{
 		TelldusSettings ts;
@@ -274,7 +274,7 @@ char * WINAPI devGetName(int intDeviceId){
 	return strReturn;
 }
 
-bool WINAPI devSetName(int intDeviceId, const char* strNewName){
+bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
 	bool blnSuccess = false;
 	try{
 		TelldusSettings ts;
@@ -287,7 +287,7 @@ bool WINAPI devSetName(int intDeviceId, const char* strNewName){
 	return blnSuccess;
 }
 
-char* WINAPI devGetVendor(int intDeviceId){
+char* WINAPI tdGetVendor(int intDeviceId){
 	char* strReturn = "";
 	try{
 		TelldusSettings ts;
@@ -303,7 +303,7 @@ char* WINAPI devGetVendor(int intDeviceId){
 	return strReturn;
 }
 
-bool WINAPI devSetVendor(int intDeviceId, const char* strVendor){
+bool WINAPI tdSetVendor(int intDeviceId, const char* strVendor){
 	bool blnSuccess = false;
 	try{
 		TelldusSettings ts;
@@ -316,7 +316,7 @@ bool WINAPI devSetVendor(int intDeviceId, const char* strVendor){
 	return blnSuccess;
 }
 
-int WINAPI devGetModel(int intDeviceId){
+int WINAPI tdGetModel(int intDeviceId){
 	int intReturn = 0;
 	try{
 		TelldusSettings ts;
@@ -329,7 +329,7 @@ int WINAPI devGetModel(int intDeviceId){
 	return intReturn;
 }
 
-bool WINAPI devSetModel(int intDeviceId, int intModel){
+bool WINAPI tdSetModel(int intDeviceId, int intModel){
 	bool blnSuccess = false;
 	try{
 		TelldusSettings ts;
@@ -342,7 +342,7 @@ bool WINAPI devSetModel(int intDeviceId, int intModel){
 	return blnSuccess;
 }
 
-bool WINAPI devSetArgument(int intDeviceId, const char *strName, const char *strValue){
+bool WINAPI tdSetArgument(int intDeviceId, const char *strName, const char *strValue){
 
 	try{
 		TelldusSettings ts;
@@ -354,7 +354,7 @@ bool WINAPI devSetArgument(int intDeviceId, const char *strName, const char *str
 	return false;
 }
 
-const char * WINAPI devGetArgument(int intDeviceId, const char *strName, const char *defaultValue){
+const char * WINAPI tdGetArgument(int intDeviceId, const char *strName, const char *defaultValue){
 	char *strReturn = "";
 	try{
 		TelldusSettings ts;
@@ -372,7 +372,7 @@ const char * WINAPI devGetArgument(int intDeviceId, const char *strName, const c
 	return strReturn;
 }
 
-int WINAPI devAddDevice(){
+int WINAPI tdAddDevice(){
 	int intNewDeviceId = -1;
 	try{
 		TelldusSettings ts;
@@ -385,7 +385,7 @@ int WINAPI devAddDevice(){
 	return intNewDeviceId;
 }
 
-bool WINAPI devRemoveDevice(int intDeviceId){
+bool WINAPI tdRemoveDevice(int intDeviceId){
 	bool blnSuccess = false;
 	try{
 		TelldusSettings ts;
@@ -408,7 +408,7 @@ bool WINAPI devRemoveDevice(int intDeviceId){
  * @sa TELLSTICK_TOGGLE
  * @sa TELLSTICK_DIM
  */
-int WINAPI devMethods(int id){
+int WINAPI tdMethods(int id){
 
 	int intMethods = 0;
 	try{
@@ -438,7 +438,7 @@ int WINAPI devMethods(int id){
  * @sa TELLSTICK_ERROR_METHOD_NOT_SUPPORTED
  * @sa TELLSTICK_ERROR_UNKNOWN
  */
-char * WINAPI devGetErrorString(int intErrorNo) {
+char * WINAPI tdGetErrorString(int intErrorNo) {
 	const int numResponses = 5;
 	const char *responses[numResponses] = {
 		"Success",

@@ -1,25 +1,25 @@
 LIBRARY telldus-core
 EXPORTS
-	devGetNumberOfDevices @1
-	devGetDeviceId @2
+	tdGetNumberOfDevices @1
+	tdGetDeviceId @2
 
-	devGetName @3
-	devGetVendor @4
-	devGetModel @5
-	devGetArgument @6
+	tdGetName @3
+	tdGetVendor @4
+	tdGetModel @5
+	tdGetArgument @6
 
-	devSetName @7
-	devSetVendor @8
-	devSetModel @9
-	devSetArgument @10
+	tdSetName @7
+	tdSetVendor @8
+	tdSetModel @9
+	tdSetArgument @10
 
-	devAddDevice @11
-	devRemoveDevice @12
+	tdAddDevice @11
+	tdRemoveDevice @12
 
-	devMethods @13
-	devTurnOn	@14
-	devTurnOff	@15
-	devBell @16
-	devDim @17
+	tdMethods @13
+	tdTurnOn	@14
+	tdTurnOff	@15
+	tdBell @16
+	tdDim @17
 	
-	devGetErrorString @18
+	tdGetErrorString @18
