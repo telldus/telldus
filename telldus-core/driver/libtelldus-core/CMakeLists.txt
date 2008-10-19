@@ -1,5 +1,5 @@
 
-SET( tellusbd101_SRCS
+SET( telldus-core_SRCS
 	Device.cpp
 	DeviceIkea.cpp
 	DeviceNexa.cpp
@@ -10,8 +10,8 @@ SET( tellusbd101_SRCS
 	)
 
 IF (APPLE)
-	SET( tellusbd101_SRCS
-		${tellusbd101_SRCS}
+	SET( telldus-core_SRCS
+		${telldus-core_SRCS}
 		win/Device.cpp
 		settings/TelldusSettingsCoreFoundationPreferences.cpp
 	)
@@ -19,8 +19,8 @@ IF (APPLE)
 		-D_MACOSX
 	)
 ELSE (APPLE)
-	SET( tellusbd101_SRCS
-		${tellusbd101_SRCS}
+	SET( telldus-core_SRCS
+		${telldus-core_SRCS}
 		linux/Device.cpp
 		settings/TelldusSettingsConfuse.cpp
 	)
@@ -30,29 +30,29 @@ ELSE (APPLE)
 
 ENDIF (APPLE)
 
-ADD_LIBRARY(tellusbd101 SHARED
-	${tellusbd101_SRCS}
+ADD_LIBRARY(telldus-core SHARED
+	${telldus-core_SRCS}
 	)
 
 IF (APPLE)
 	FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
 
-	TARGET_LINK_LIBRARIES(tellusbd101
+	TARGET_LINK_LIBRARIES(telldus-core
 		${COREFOUNDATION_LIBRARY}
 		ftd2xx
 	)
 ELSE (APPLE)
-	TARGET_LINK_LIBRARIES(tellusbd101
+	TARGET_LINK_LIBRARIES(telldus-core
 		confuse
 	)
 ENDIF (APPLE)
 
-INSTALL(TARGETS tellusbd101
+INSTALL(TARGETS telldus-core
 	DESTINATION lib
 	)
 
 INSTALL(FILES
-	TellUsbD101.h
+	telldus-core.h
 	DESTINATION include
 	)
 
