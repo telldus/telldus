@@ -14,7 +14,7 @@ INCLUDE_DIRECTORIES(
 )
 
 TARGET_LINK_LIBRARIES(tdtool
-  tellusbd101
+  telldus-core
 )
 
 INSTALL(TARGETS tdtool RUNTIME DESTINATION bin)
