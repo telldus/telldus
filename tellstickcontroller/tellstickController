@@ -643,12 +643,9 @@ sub get_rule_datetime($$$$) {
 
     $hours = int $mins/60;
     $minutes = int $mins%60;
-#    $time = DateTime->now(time_zone => $cfg_set{"timezone"});
     $time = DateTime->now();
     $time->set(hour => 0, minute => 0, second => 0);
-#    $time->set_time_zone("UTC");
     $time->add(hours => $hours+24*$days, minutes => $minutes);
-#    $time->set_time_zone($cfg_set{"timezone"});
 #    println "days='$days', hours='$hours', minutes='$minutes'";
 #    println "time='$time'";
   } else {
