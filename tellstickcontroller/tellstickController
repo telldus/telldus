@@ -517,7 +517,7 @@ sub load_device_rules () {
 sub get_rule_datetime($$$$) {
   my ($rule, $now, $sunrise, $sunset) = @_;
 
-#  println "Rule='$rule'" if ($option{"verbose"});
+#  println "Rule='$rule'";
 
   my ($date, $time) = split(/\//, $rule);
   if (not defined($time)) {
@@ -643,7 +643,8 @@ sub get_rule_datetime($$$$) {
 
     $hours = int $mins/60;
     $minutes = int $mins%60;
-    $time = DateTime->now();
+# UTC ?
+    $time = get_datetime_now();
     $time->set(hour => 0, minute => 0, second => 0);
     $time->add(hours => $hours+24*$days, minutes => $minutes);
 #    println "days='$days', hours='$hours', minutes='$minutes'";
