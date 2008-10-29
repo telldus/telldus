@@ -170,7 +170,7 @@ int DeviceNexa::methods(int intModel){
 		(intModel == TELLSTICK_DEVICE_EL2024) ||
 		(intModel == TELLSTICK_DEVICE_EL2021) ||
 		(intModel == TELLSTICK_DEVICE_EL2017) ||
-		(intModel == TELLSTICK_DEVICE_EL2019) == 0
+		(intModel == TELLSTICK_DEVICE_EL2019)
  		)
 	{
 		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
