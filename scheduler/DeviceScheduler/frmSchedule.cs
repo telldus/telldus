@@ -466,8 +466,8 @@ namespace DeviceScheduler
             if (lvwDevices.SelectedItems.Count == 0) { return; }
 
             //Vill du ta bort markerad enhet?
-            DialogResult result = MessageBox.Show(Localization.GetString("msg3"), 
-                Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show(Localization.GetString("msg3"),
+                Localization.GetString("telldusscheduler"), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)
             {
