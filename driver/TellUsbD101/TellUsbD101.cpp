@@ -2,55 +2,58 @@
 
 #include "TellUsbD101.h"
 #include "../libtelldus-core/telldus-core.h"
+#include <stdio.h>
+#include <windows.h>
+#include <string>
+#include <sstream> 
+
 
 int __stdcall devGetNumberOfDevices(void){
-	int intReturn = -1;
-	return intReturn;
+	return tdGetNumberOfDevices();
 }
 
 int __stdcall devGetDeviceId(int intDeviceIndex){
-	int intReturn = -1;
-	return intReturn;
+	return tdGetDeviceId(intDeviceIndex);
 }
 
 char * __stdcall devGetName(int intDeviceId){
-	char* strReturn;
-	return strReturn;
+	return tdGetName(intDeviceId);
 }
 
 char* __stdcall devGetVendor(int intDeviceId){
-	char* strReturn = "";
-	return strReturn;
+	return tdGetVendor(intDeviceId);
 }
 
 char* __stdcall devGetModel(int intDeviceId){
-	char* strReturn = "";
-	return strReturn;
+	int intModel = tdGetModel(intDeviceId);
+
+	std::ostringstream ss;
+	std::string str;
+	ss << intModel;
+	str = ss.str();
+	char *strModel = (char *)SysAllocStringByteLen (str.c_str(), str.length());
+	return strModel;
 }
 
 int __stdcall devGetNumberOfArguments(int intDeviceId){
-	int intReturn = 0;
-	return intReturn;
+	return 0;
 }
 
 int __stdcall devGetArgument(int intDeviceId, int intArgumentIndex){
-	int intReturn;
-	return intReturn;
+	return 0;
 }
 
 bool __stdcall devSetName(int intDeviceId, char* strNewName){
-	bool blnSuccess = false;
-	return blnSuccess;
+	return tdSetName(intDeviceId, strNewName);
 }
 
 bool __stdcall devSetVendor(int intDeviceId, char* strVendor){
-	bool blnSuccess = false;
-	return blnSuccess;
+	return tdSetVendor(intDeviceId, strVendor);
 }
 
 bool __stdcall devSetModel(int intDeviceId, char* strNewModel){
-	bool blnSuccess = false;
-	return blnSuccess;
+	int intModel = atoi(strNewModel);
+	return tdSetModel(intDeviceId, intModel);
 }
 
 bool __stdcall devSetArguments(int intDeviceId, char* strArguments){
@@ -58,32 +61,29 @@ bool __stdcall devSetArguments(int intDeviceId, char* strArguments){
 }
 
 int __stdcall devAddDevice(){
-	int intNewDeviceId = -1;
-	return intNewDeviceId;
+	return tdAddDevice();
 }
 
 bool __stdcall devRemoveDevice(int intDeviceId){
-	bool blnSuccess = false;
-	return blnSuccess;
+	return tdRemoveDevice(intDeviceId);
 }
 
 int __stdcall devMethods(int id){
-	int intMethods = 0;
-	return intMethods;
+	return tdMethods(id);
 }
 
 bool  __stdcall devTurnOn(int intDeviceId){
-	return false;
+	return (tdTurnOn(intDeviceId) == TELLSTICK_SUCCESS ? true : false);
 }
 
 bool  __stdcall devTurnOff(int intDeviceId){
-	return false;
+	return (tdTurnOff(intDeviceId) == TELLSTICK_SUCCESS ? true : false);
 }
 
 bool __stdcall devBell(int intDeviceId){
-	return false;
+	return (tdBell(intDeviceId) == TELLSTICK_SUCCESS ? true : false);
 }
 
 bool __stdcall devDim(int intDeviceId, unsigned char level){
-	return false;
+	return (tdDim(intDeviceId, level) == TELLSTICK_SUCCESS ? true : false);
 }
