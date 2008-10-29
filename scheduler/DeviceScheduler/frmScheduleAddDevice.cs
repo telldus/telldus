@@ -24,8 +24,20 @@ namespace DeviceScheduler
             FillCombo();
 
             //Preselect device and action
-            cboDevices.SelectedIndex = 0;
-            cboAction.SelectedIndex = 0;
+            if (cboDevices.Items.Count > 0)
+            {
+                cboDevices.SelectedIndex = 0;
+            }
+            else
+            {
+                //"Inga enheter finns. Lägg först till enheter genom att klicka på \"configure unit(s)\"."
+                MessageBox.Show(Localization.GetString("nounitsexists"), Localization.GetString("telldusscheduler"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                this.Close();
+            }
+            if (cboAction.Items.Count > 0)
+            {
+                cboAction.SelectedIndex = 0;
+            }
         }
 
         private void FillCombo()

@@ -35,7 +35,7 @@ namespace DeviceScheduler
 
         private void SaveCheckbox()
         {
-            Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.OpenSubKey(@"Software\Telldus\Scheduler\Settings",true);
+            Microsoft.Win32.RegistryKey key = Microsoft.Win32.Registry.CurrentUser.CreateSubKey(@"Software\Telldus\Scheduler\Settings");
             key.SetValue("AskSecurityPolicy", !chkHide.Checked);
             key.Close();
         }

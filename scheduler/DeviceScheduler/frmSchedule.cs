@@ -183,14 +183,14 @@ namespace DeviceScheduler
 
                 if (lvwDevices.Items.Count == 0)
                 {
-                    MessageBox.Show(Localization.GetString("FailedToSelectUnits"), "", 
+                    MessageBox.Show(Localization.GetString("FailedToSelectUnits"), Localization.GetString("telldusscheduler"), 
                         MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     return false;
                 }
 
                 if (txtName.Text.Length == 0)
                 {
-                    MessageBox.Show(Localization.GetString("FailedToNameSchedule"), "", 
+                    MessageBox.Show(Localization.GetString("FailedToNameSchedule"), Localization.GetString("telldusscheduler"), 
                         MessageBoxButtons.OK, MessageBoxIcon.Exclamation);
                     return false;
                 }

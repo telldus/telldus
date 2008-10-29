@@ -78,19 +78,32 @@ namespace DeviceScheduler
 
         private bool ShowAskSecurityPolicy()
         {
-            RegistryKey key = Registry.CurrentUser.OpenSubKey(@"Software\Telldus\Scheduler\Settings");
-
-            if (key != null)
+            RegistryKey key = null;
+            bool blnReturn = true;
+            try
             {
-                if (key.GetValue("AskSecurityPolicy") != null)
+                key = Registry.CurrentUser.CreateSubKey(@"Software\Telldus\Scheduler\Settings");
+                if (key != null)
                 {
-                    return Convert.ToBoolean(key.GetValue("AskSecurityPolicy"));
-                    key.Close();
+                    if (key.GetValue("AskSecurityPolicy") != null)
+                    {
+                        blnReturn = Convert.ToBoolean(key.GetValue("AskSecurityPolicy"));
+                    }
                 }
             }
+            catch
+            {
+                throw;
+            }
+            finally
+            {
+                if (key != null)
+                    key.Close();
+            }
 
-            return true;
+            return blnReturn;
         }
+       
 
         //private void DisablePasswordPolicy()
         //{
@@ -230,17 +243,26 @@ namespace DeviceScheduler
                     {
                         DataStorage.JobRow job = m_Data.Job.FindByID(Convert.ToInt32(task.Parameters));
 
-                        ListViewItem lvwItem = lvwTasks.Items.Add(task.Name, 3);
-                        lvwItem.SubItems.Add(job.StartTime.ToString());
-                        lvwItem.SubItems.Add(task.Triggers[0].BeginDate.ToShortDateString());
-                        lvwItem.Tag = task;
-
+                        if (job != null)
+                        {
+                            ListViewItem lvwItem = lvwTasks.Items.Add(task.Name, 3);
+                            lvwItem.SubItems.Add(Convert.ToDateTime(job.StartTime).ToShortTimeString());
+                            lvwItem.SubItems.Add(task.Triggers[0].BeginDate.ToShortDateString());
+                            lvwItem.SubItems.Add(task.Comment);
+                            lvwItem.Tag = task;
+                        }
+                        else
+                        {
+                            //Den schemalagda uppgiften / kunde inte hittas i systemet och har förmodligen tagits bort manuellt.
+                            MessageBox.Show(Localization.GetString("thescheduledtask") + " " + task.Name + " " + Localization.GetString("couldnotbefoundprobablygone"), Localization.GetString("telldusscheduler"), MessageBoxButtons.OK, MessageBoxIcon.Error);
+                            m_Tasks.DeleteTask(task.Name);
+                        }
                     }
                     task.Close();
                 }
             }
         }
-
+        
         private void toolNew_Click(object sender, EventArgs e)
         {
             CreateSchedule();
@@ -275,8 +297,8 @@ namespace DeviceScheduler
             if (lvwTasks.SelectedItems.Count == 0) { return; }
 
             //"Vill du ta bort markerad schemaläggning?"
-            DialogResult result = MessageBox.Show(Localization.GetString("msg2"), 
-                Application.ProductName, MessageBoxButtons.YesNo, MessageBoxIcon.Question);
+            DialogResult result = MessageBox.Show(Localization.GetString("msg2"),
+                Localization.GetString("telldusscheduler"), MessageBoxButtons.YesNo, MessageBoxIcon.Question);
 
             if (result == DialogResult.Yes)
             {

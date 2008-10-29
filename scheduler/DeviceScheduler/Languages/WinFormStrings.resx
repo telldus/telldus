@@ -117,6 +117,9 @@
   <resheader name="writer">
     <value>System.Resources.ResXResourceWriter, System.Windows.Forms, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089</value>
   </resheader>
+  <data name="couldnotbefoundprobablygone" xml:space="preserve">
+    <value>kunde inte hittas i systemet och har förmodligen tagits bort manuellt.</value>
+  </data>
   <data name="FailedToNameSchedule" xml:space="preserve">
     <value>Du måste ge schemaläggningen ett namn.</value>
   </data>
@@ -135,10 +138,22 @@
   <data name="msg3" xml:space="preserve">
     <value>Vill du ta bort markerad enhet?</value>
   </data>
+  <data name="nounitsexists" xml:space="preserve">
+    <value>Inga enheter finns. Lägg först till enheter genom att klicka på "Konfigurera enheter".</value>
+    <comment>SP</comment>
+  </data>
+  <data name="thescheduledtask" xml:space="preserve">
+    <value>Den schemalagda uppgiften</value>
+    <comment>SP</comment>
+  </data>
   <data name="unitoff" xml:space="preserve">
     <value>Av</value>
   </data>
   <data name="uniton" xml:space="preserve">
     <value>På</value>
+  </data>
+  <data name="telldusscheduler" xml:space="preserve">
+    <value>Telldus Schemaläggare</value>
+    <comment>SP</comment>
   </data>
 </root>
