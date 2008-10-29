@@ -295,10 +295,11 @@ bool TelldusSettings::setIntSetting(int intDeviceId, const char* name, int value
 	std::ostringstream ssRegPath; 
 	ssRegPath << d->strRegPathDevice << intDeviceId;
 	string strCompleteRegPath = ssRegPath.str();
-	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &d->hk);
+	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_WRITE, &d->hk);
 	if (lnExists == ERROR_SUCCESS) {
 		DWORD dwVal = value;
-		if (RegSetValueEx (d->hk, name, 0L, REG_DWORD, (CONST BYTE*) &dwVal, sizeof(DWORD)) == ERROR_SUCCESS) {
+		lnExists = RegSetValueEx (d->hk, name, 0L, REG_DWORD, (CONST BYTE*) &dwVal, sizeof(DWORD));
+		if (lnExists == ERROR_SUCCESS) {
 			blnReturn = true;
 		}
 	}
