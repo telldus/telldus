@@ -4,7 +4,7 @@
 # tellstickController program
 #
 # Copyright (C) 2008 Rickard Andersson (ran42ran@gmail.com)
-# Version 1.4.1
+# Version 1.4.2
 #
 ######################################################################
 #
@@ -930,7 +930,7 @@ __DATA__
 #-
 #- LICENSE
 #-   Copyright (C) 2008 Rickard Andersson
-#-   Version 1.4.1
+#-   Version 1.4.2
 #-   This program comes with ABSOLUTELY NO WARRANTY.
 #-   This is free software, and you are welcome to redistribute it
 #-   under certain conditions; See license file for details.
