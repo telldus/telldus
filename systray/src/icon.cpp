@@ -14,7 +14,7 @@
 #include <QMenu>
 #include <QProcess>
 #include <QFile>
-#include "TellUsbD101.h"
+#include "telldus-core.h"
 
 Icon::Icon()
  : QObject()
@@ -50,8 +50,12 @@ void Icon::activated( QSystemTrayIcon::ActivationReason reason )
 void Icon::bell()
 {
 	QAction *action = (QAction *) sender();
-	if (!devBell( action->data().toInt() ))
-		i.showMessage( tr("Error"), tr("An error occurred while trying to transmit"), QSystemTrayIcon::Critical );
+	int retval = tdBell( action->data().toInt() );
+	if (retval != TELLSTICK_SUCCESS) {
+		char *errorString = tdGetErrorString( retval );
+		i.showMessage( tr("Error"), tr("An error occurred while trying to transmit!\n\n%1").arg(errorString), QSystemTrayIcon::Critical );
+		free( errorString );
+	}
 }
 
 /**
@@ -63,8 +67,12 @@ void Icon::dim()
 	int intId = action->data().toString().section(":", 0, 0).toInt();
 	int intLevel = action->data().toString().section(":", 1, 1).toInt();
 	//i.showMessage( "", QString::number(intId));
-	if (!devDim( intId, intLevel ))
-		i.showMessage( tr("Error"), tr("An error occurred while trying to transmit"), QSystemTrayIcon::Critical );
+	int retval = tdDim( intId, intLevel );
+	if (retval != TELLSTICK_SUCCESS) {
+		char *errorString = tdGetErrorString( retval );
+		i.showMessage( tr("Error"), tr("An error occurred while trying to transmit!\n\n%1").arg(errorString), QSystemTrayIcon::Critical );
+		free( errorString );
+	}
 }
 
 /**
@@ -73,8 +81,12 @@ void Icon::dim()
 void Icon::on()
 {
 	QAction *action = (QAction *) sender();
-	if (!devTurnOn( action->data().toInt() ))
-		i.showMessage( tr("Error"), tr("An error occurred while trying to transmit"), QSystemTrayIcon::Critical );
+	int retval = tdTurnOn( action->data().toInt() );
+	if (retval != TELLSTICK_SUCCESS) {
+		char *errorString = tdGetErrorString( retval );
+		i.showMessage( tr("Error"), tr("An error occurred while trying to transmit!\n\n%1").arg(errorString), QSystemTrayIcon::Critical );
+		free( errorString );
+	}
 }
 
 /**
@@ -83,8 +95,12 @@ void Icon::on()
 void Icon::off()
 {
 	QAction *action = (QAction *) sender();
-	if (!devTurnOff( action->data().toInt() ))
-		i.showMessage( tr("Error"), tr("An error occurred while trying to transmit"), QSystemTrayIcon::Critical );
+	int retval = tdTurnOff( action->data().toInt() );
+	if (retval != TELLSTICK_SUCCESS) {
+		char *errorString = tdGetErrorString( retval );
+		i.showMessage( tr("Error"), tr("An error occurred while trying to transmit!\n\n%1").arg(errorString), QSystemTrayIcon::Critical );
+		free( errorString );
+	}
 }
 
 
@@ -107,7 +123,7 @@ void Icon::setMenu()
 {
 	menu.clear();
 
-	int intNum = devGetNumberOfDevices();
+	int intNum = tdGetNumberOfDevices();
 	int index = 0;
 	while (index < intNum) {
 		addDevice(index, &menu);
@@ -131,10 +147,10 @@ void Icon::setMenu()
 }
 
 void Icon::addDevice( int index, QMenu *menu ) {
-	int intId = devGetDeviceId(index);
-	QMenu *m = menu->addMenu( devGetName(intId) );
+	int intId = tdGetDeviceId(index);
+	QMenu *m = menu->addMenu( tdGetName(intId) );
 
-	int methods = devMethods(intId);
+	int methods = tdMethods(intId);
 	if (methods & TELLSTICK_TURNON) {
 		QAction *on = m->addAction(tr("&On"));
 		on->setIcon(QIcon(":/images/lamp-on.png"));

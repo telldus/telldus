@@ -3,7 +3,7 @@ TEMPLATE = app
 SOURCES += main.cpp \
 icon.cpp
 #menu.cpp
-LIBS += -ltellusbd101 -L../bin
+LIBS += -ltelldus-core -L../bin
 win32{
     TARGET = ../../bin/SysTray
     CONFIG += release
