@@ -2,8 +2,9 @@ TEMPLATE = app
 
 SOURCES += main.cpp \
 icon.cpp
-#menu.cpp
-LIBS += -ltelldus-core -L../bin
+
+!macx:LIBS += -ltelldus-core -L../bin
+macx:LIBS += -framework telldus-core
 win32{
     TARGET = ../../bin/SysTray
     CONFIG += release
