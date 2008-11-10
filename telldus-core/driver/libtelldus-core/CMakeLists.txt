@@ -9,6 +9,10 @@ SET( telldus-core_SRCS
 	telldus-core.cpp
 	)
 
+SET( telldus-core_HDRS
+	telldus-core.h
+)
+	
 IF (APPLE)
 	SET( telldus-core_SRCS
 		${telldus-core_SRCS}
@@ -32,7 +36,13 @@ ENDIF (APPLE)
 
 ADD_LIBRARY(telldus-core SHARED
 	${telldus-core_SRCS}
+	${telldus-core_HDRS}
 	)
+	
+SET_PROPERTY(TARGET telldus-core
+	PROPERTY PUBLIC_HEADER {$telldus-core_HDRS}
+)
+
 
 IF (APPLE)
 	FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
@@ -41,8 +51,8 @@ IF (APPLE)
 		${COREFOUNDATION_LIBRARY}
 		ftd2xx
 	)
-	SET_PROPERTY(TARGET telldus-core
-		PROPERTY FRAMEWORK true
+	SET_PROPERTY(TARGET	telldus-core
+		PROPERTY FRAMEWORK TRUE	
 	)
 
 ELSE (APPLE)
@@ -53,11 +63,7 @@ ENDIF (APPLE)
 
 INSTALL(TARGETS telldus-core
 	DESTINATION lib
-	)
-
-INSTALL(FILES
-	telldus-core.h
-	DESTINATION include
+	PUBLIC_HEADER       DESTINATION         ${HEADER_DIR}
 	)
 
 SET(SYSCONF_INSTALL_DIR
