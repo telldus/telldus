@@ -41,6 +41,10 @@ IF (APPLE)
 		${COREFOUNDATION_LIBRARY}
 		ftd2xx
 	)
+	SET_PROPERTY(TARGET telldus-core
+		PROPERTY FRAMEWORK true
+	)
+
 ELSE (APPLE)
 	TARGET_LINK_LIBRARIES(telldus-core
 		confuse
