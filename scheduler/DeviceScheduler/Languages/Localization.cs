@@ -66,7 +66,7 @@ namespace DeviceScheduler
                 return ResMngr.GetString(name);
 
             }
-            catch (Exception ex)
+            catch
             {
                 return "";
             }

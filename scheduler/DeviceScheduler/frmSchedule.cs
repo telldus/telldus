@@ -280,7 +280,7 @@ namespace DeviceScheduler
                     else
                         task.SetAccountInformation(m_Job.Username, password);
                 }
-                catch (Exception e)
+                catch
                 {
                     MessageBox.Show(Localization.GetString("FailedToSetPassword"),
                         Application.ProductName, MessageBoxButtons.OK, MessageBoxIcon.Error);

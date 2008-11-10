@@ -299,7 +299,7 @@ namespace DeviceSchedulerAgent {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class JobDataTable : global::System.Data.TypedTableBase<JobRow> {
+        public partial class JobDataTable : global::System.Data.DataTable, global::System.Collections.IEnumerable {
             
             private global::System.Data.DataColumn columnID;
             
@@ -422,6 +422,11 @@ namespace DeviceSchedulerAgent {
             public JobRow FindByID(int ID) {
                 return ((JobRow)(this.Rows.Find(new object[] {
                             ID})));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public virtual global::System.Collections.IEnumerator GetEnumerator() {
+                return this.Rows.GetEnumerator();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
@@ -586,7 +591,7 @@ namespace DeviceSchedulerAgent {
         [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Data.Design.TypedDataSetGenerator", "2.0.0.0")]
         [global::System.Serializable()]
         [global::System.Xml.Serialization.XmlSchemaProviderAttribute("GetTypedTableSchema")]
-        public partial class JobActionsDataTable : global::System.Data.TypedTableBase<JobActionsRow> {
+        public partial class JobActionsDataTable : global::System.Data.DataTable, global::System.Collections.IEnumerable {
             
             private global::System.Data.DataColumn columnID;
             
@@ -702,6 +707,11 @@ namespace DeviceSchedulerAgent {
             public JobActionsRow FindByID(int ID) {
                 return ((JobActionsRow)(this.Rows.Find(new object[] {
                             ID})));
+            }
+            
+            [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+            public virtual global::System.Collections.IEnumerator GetEnumerator() {
+                return this.Rows.GetEnumerator();
             }
             
             [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
