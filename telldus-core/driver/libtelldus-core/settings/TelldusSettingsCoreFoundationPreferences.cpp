@@ -150,14 +150,6 @@ bool TelldusSettings::removeDevice(int intDeviceId){
 	return true;
 }
 
-//only for debug reasons
-void TelldusSettings::debugLog(char* debugstring){
-}
-
-//only for debug reasons
-void TelldusSettings::debugLog(int debugint){
-}
-
 char *TelldusSettings::getStringSetting(int intDeviceId, const char* name, bool parameter) {
 	CFStringRef cfname = CFStringCreateWithCString( 0, name, 0 );
 	
@@ -201,3 +193,44 @@ bool TelldusSettings::setStringSetting(int intDeviceId, const char* name, const 
 	return true;
 }
 
+int TelldusSettings::getIntSetting(int intDeviceId, const char* name, bool parameter) {
+	int retval = 0;
+	CFStringRef cfname = CFStringCreateWithCString( 0, name, 0 );
+	CFNumberRef cfvalue;
+	
+	CFStringRef key;
+	if (parameter) {
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d.parameters.%@"), intDeviceId, cfname);
+	} else {
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d.%@"), intDeviceId, cfname);		
+	}
+	
+	cfvalue = (CFNumberRef)CFPreferencesCopyAppValue(key, d->app_ID);
+
+	// If the preference exists, use it.
+	if (cfvalue) {
+	    // Numbers come out of preferences as CFNumber objects.
+	    if (!CFNumberGetValue(cfvalue, kCFNumberIntType, &retval)) {
+	        retval = 0;
+	    }
+	    CFRelease(cfvalue);
+	}
+	
+	return retval;
+}
+
+bool TelldusSettings::setIntSetting(int intDeviceId, const char* name, int value, bool parameter) {
+	CFStringRef cfname = CFStringCreateWithCString( 0, name, 0 );
+	CFNumberRef cfvalue = CFNumberCreate(NULL, kCFNumberIntType, &value);
+	
+	CFStringRef key;
+	if (parameter) {
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d.parameters.%@"), intDeviceId, cfname);
+	} else {
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d.%@"), intDeviceId, cfname);		
+	}
+	
+	CFPreferencesSetAppValue( key, cfvalue, d->app_ID );
+	CFPreferencesAppSynchronize( d->app_ID );
+	return true;	
+}
