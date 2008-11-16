@@ -4,7 +4,10 @@ SOURCES += main.cpp \
 icon.cpp
 
 !macx:LIBS += -ltelldus-core -L../bin
-macx:LIBS += -framework telldus-core
+macx{
+    LIBS += -framework telldus-core
+    ICON = images/systray.icns
+}
 win32{
     TARGET = ../../bin/SysTray
     CONFIG += release
