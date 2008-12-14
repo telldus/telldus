@@ -1,3 +1,4 @@
+
  NAME
    tellstickController
 
@@ -14,17 +15,18 @@
    A small database is used for keeping track of device states
    between every execution of tellstickController.
     
-   -a, --aliases       List of aliases for devices.
-   -c, --check         Check content of configuration file.
+   -h, --help          Show this help text.
+   -v, --verbose       Show extra information.
    -d, --daemon        Starts in daemon mode.
    -f, --file F        Set configfile to file F.
-   -g, --get D         Get state for device D.
-   -h, --help          Print this help text.
-   -l, --list          List states for all devices.
-   -s, --set D S       Set device D to state S.
+   -c, --check         Check content of configuration file.
    -t, --test          Test mode, no real devices will used.
-   -v, --verbose       Print extra information.
-   -x, --swap D        Swap state for device D.
+   -a, --aliases       List of aliases for devices/groups.
+   -l, --list          List states for all devices/groups.
+   -s, --set D S       Set device D to state S.
+   -g, --get D         Get state for device/group D.
+   -w, --swapfirst G   Swap states for group G based on first device state.
+   -x, --swap D        Swap state for device/group D.
 
  EXAMPLES
    tellstickController -l
@@ -52,6 +54,8 @@
 
    The aliases configures device name, channel, code, etc.
  
+   The groups configures a list of devices and a delay time.
+ 
    The rules can be written as a string containing two parts.
    The first part is optional and ends with an '/'. It can contain
    one or more of these keywords 'Weekend', 'Workweek', 'Monday',
@@ -71,11 +75,10 @@
 
  AUTHOR
    Original version written by Rickard Andersson
-   Improvments added by ...
 
  LICENSE
    Copyright (C) 2008 Rickard Andersson
-   Version 1.4.2
+   Version 1.5.0
    This program comes with ABSOLUTELY NO WARRANTY.
    This is free software, and you are welcome to redistribute it
    under certain conditions; See license file for details.

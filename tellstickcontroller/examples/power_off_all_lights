@@ -7,7 +7,9 @@ tellstickController --set bedroom_mythtv_leds off
 tellstickController --set bedroom_window off
 tellstickController --set kitchen_cabinets off
 tellstickController --set livingroom_cabinets off
-tellstickController --set livingroom_uplight off
-tellstickController --set livingroom_walls off
 tellstickController --set livingroom_mythtv_leds off
+tellstickController --set livingroom_uplight off
+tellstickController --set livingroom_wall_north off
+tellstickController --set livingroom_wall_east off
+tellstickController --set livingroom_window off
 

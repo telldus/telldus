@@ -4,7 +4,7 @@
 # tellstickController program
 #
 # Copyright (C) 2008 Rickard Andersson (ran42ran@gmail.com)
-# Version 1.4.2
+# Version 1.5.0
 #
 ######################################################################
 #
@@ -52,6 +52,7 @@ my %cfg_set = (
   "longitude" => "15.31",
   "timezone" => "Europe/Stockholm",
 );
+my %cfg_group = ();
 my %cfg_alias = ();
 my %cfg_dimmer = ();
 my @cfg_rule = ();
@@ -64,6 +65,7 @@ my %option = (
   "list" => 0,
   "device" => "",
   "state" => "",
+  "swapfirst" => 0,
   "swap" => 0,
   "test" => 0,
   "verbose" => 0,
@@ -119,6 +121,12 @@ sub check_args(@) {
       $option{"device"} = lc($args[0]);
       shift(@args);
       $option{"state"} = lc($args[0]);
+      shift(@args);
+      next;
+    } elsif ($args[0] =~ /^-(w|-swapfirst)$/) {
+      shift(@args);
+      $option{"swapfirst"} = 1;
+      $option{"device"} = lc($args[0]);
       shift(@args);
       next;
     } elsif ($args[0] =~ /^-(x|-swap)$/) {
@@ -316,6 +324,7 @@ sub read_config($) {
         = split(/\s+/, $line);
       if (defined($suffix)) {
         println "Wrong argument '$suffix' in line '$line'!";
+println $addr;
       } else {
         $name = lc($name);
         $sender = $sender;
@@ -355,6 +364,30 @@ sub read_config($) {
       next;
     }	
 
+    if ($line =~ /^Group\s+/i) {
+      println $line if ($option{"verbose"});
+      my (undef, $name, $delay, $aliases) = split(/\s+/, $line, 4);
+      $name = lc($name);
+      $delay = lc($delay);
+      if ($delay =~ /^\d+$/) {
+        my $error = 0;
+        $aliases = lc($aliases);
+        my @aliaslist = split(/\s+/, $aliases);
+        foreach my $alias (@aliaslist) {
+          if (! exists($cfg_alias{$alias})) {
+            println "Wrong alias '$alias' in line '$line'!";
+            $error += 1;
+          }	
+        }
+        if ($error == 0) {
+          $cfg_group{$name} = "$delay $aliases";
+        }
+      } else {
+        println "Wrong delay time '$delay' in line '$line'!";
+      }
+      next;
+    }	
+
     if ($line =~ /^Rule\s+/i) {
       #println $line if ($option{"verbose"});
       my (undef, $alias, $on, $off, $suffix) = split(/\s+/, $line);
@@ -364,7 +397,6 @@ sub read_config($) {
         $alias = lc($alias);
         $on = lc($on);
         $off = lc($off);
-        if (exists($cfg_alias{$alias})) {
         if ($on eq "") {
           println "Wrong on time '$on' in line '$line'!";
         } elsif ($off eq "") {
@@ -374,24 +406,26 @@ sub read_config($) {
             println "Wrong on time '$on' in line '$line'!";
           } elsif ($off !~ /[\w\/\+\-\:\$\(\)]+/) {
             println "Wrong off time '$off' in line '$line'!";
-          } else {
+          }
+        }
+        if (exists($cfg_alias{$alias})) {
             push @cfg_rule, [$alias, $on, $off];
-          }	
-        }	
+        } elsif (exists($cfg_group{$alias})) {
+            push @cfg_rule, [$alias, $on, $off];
         } else {
           println "Wrong alias '$alias' in line '$line'!";
-        }	
-      }	
+        }
+      }
       next;
-    }	
+    }
 
     if ($line =~ /^#/) {
       next;
-    }	
+    }
 
     if ($line =~ /^\s*/) {
       next;
-    }	
+    }
 
     println "Unhandled config line: '$line'!" if ($option{"check"});
   }
@@ -411,6 +445,18 @@ sub read_config($) {
   printlogger $text;
   foreach my $key (sort keys %cfg_alias) {
     $text = "$key = $cfg_alias{$key}";
+    println $text if ($option{"check"});
+    printlogger $text;
+  }
+  $text = "=== Group ===";
+  println $text if ($option{"check"});
+  printlogger $text;
+  foreach my $key (sort keys %cfg_group) {
+    my $val = $cfg_group{$key};
+    my ($delay, $aliases) = split(/\s+/, $val, 2);
+    $text = "$key =";
+    $text .= " delay time $delay seconds";
+    $text .= " between aliases ($aliases)";
     println $text if ($option{"check"});
     printlogger $text;
   }
@@ -480,10 +526,31 @@ sub load_device_rules () {
 
   foreach my $rule (@cfg_rule) {
     my ($alias, $on, $off) = @$rule;
-    my $time = get_rule_datetime($on, $today, $sunrise, $sunset);
-    push @device_on, [$time, $alias] if (defined($time) && ($now <= $time));
-    $time = get_rule_datetime($off, $today, $sunrise, $sunset);
-    push @device_off, [$time, $alias] if (defined($time) && ($now <= $time));
+    if (exists($cfg_alias{$alias})) {
+      my $time = get_rule_datetime($on, $today, $sunrise, $sunset);
+      push @device_on, [$time, $alias] if (defined($time) && ($now <= $time));
+      $time = get_rule_datetime($off, $today, $sunrise, $sunset);
+      push @device_off, [$time, $alias] if (defined($time) && ($now <= $time));
+    } else {
+      foreach my $val ($cfg_group{$alias}) {
+        my ($delay, $aliases) = split(/\s+/, $val, 2);
+        my $timedelay = 0;
+        my $ontime = get_rule_datetime($on, $today, $sunrise, $sunset);
+        my $offtime = get_rule_datetime($off, $today, $sunrise, $sunset);
+        my (@aliaslist) = split(/\s+/, $aliases);
+        foreach my $device (@aliaslist) {
+          if (defined($ontime)) {
+            my $time = $ontime->clone->add(seconds => $timedelay);
+            push @device_on, [$time, $device] if (defined($time) && ($now <= $time));
+          }
+          if (defined($offtime)) {
+            my $time = $offtime->clone->add(seconds => $timedelay);
+            push @device_off, [$time, $device] if (defined($time) && ($now <= $time));
+          }
+          $timedelay += $delay;
+        }
+      }
+    }
   }
 
   @device_on = sort { $a->[0] cmp $b->[0] } @device_on;
@@ -517,7 +584,7 @@ sub load_device_rules () {
 sub get_rule_datetime($$$$) {
   my ($rule, $now, $sunrise, $sunset) = @_;
 
-#  println "Rule='$rule'";
+#println "Rule='$rule'";
 
   my ($date, $time) = split(/\//, $rule);
   if (not defined($time)) {
@@ -590,7 +657,7 @@ sub get_rule_datetime($$$$) {
     my $op = "";
     my $rest = "";
     my $mins = 0;
-#    println "rule='$time'";
+#println "rule='$time'";
 
     while ($time ne "") {
       $op = $lastOp;
@@ -625,13 +692,13 @@ sub get_rule_datetime($$$$) {
         $expr = "";
       }
 
-#      println "expr='$expr', op='$op', rest='$rest'";
+#println "expr='$expr', op='$op', rest='$rest'";
       if ($op eq "+") {
         $mins += $expr;
       } elsif ($op eq "-") {
         $mins -= $expr;
       }
-#      println "mins='$mins'";
+#println "mins='$mins'";
     }
     if ($mins <= 0) {
       $mins = $mins % (24*60);
@@ -646,9 +713,9 @@ sub get_rule_datetime($$$$) {
 # UTC ?
     $time = get_datetime_now();
     $time->set(hour => 0, minute => 0, second => 0);
-    $time->add(hours => $hours+24*$days, minutes => $minutes);
-#    println "days='$days', hours='$hours', minutes='$minutes'";
-#    println "time='$time'";
+    $time->add(hours => $hours+24*$days, minutes => $minutes, seconds => 0);
+#println "days='$days', hours='$hours', minutes='$minutes'";
+#println "time='$time'";
   } else {
     $time = undef;
   }
@@ -713,8 +780,17 @@ sub get_device_state() {
       my $state = $device_state{$device};
       println "$state" if (not $option{"verbose"});
       println "Device $device = $state" if ($option{"verbose"});
+    } elsif (exists($cfg_group{$device})) {
+      my $val = $cfg_group{$device};
+      my ($delay, $aliases) = split(/\s+/, $val, 2);
+      my $states = "";
+      my (@aliaslist) = split(/\s+/, $aliases);
+      foreach my $alias (@aliaslist) {
+        $states .= " $device_state{$alias}";
+      }
+      println "Group $device =$states";
     } else {
-      println "No device found with alias '$device'!";
+      println "No alias or group found with name '$device'!";
     }
   }
 }
@@ -723,16 +799,58 @@ sub get_device_state() {
 sub set_device_state() {
   if ($option{"device"}) {
     if ($option{"state"}) {
+      my $state = $option{"state"};
+      if ($state !~ /^(on|off)$/i) {
+        println "No state found with name '$state'!";
+      }
       my $device = $option{"device"};
       if ($device_state{$device}) {
-        my $state = $option{"state"};
-        if ($state =~ /^(on|off)$/i) {
-          change_device_state($device, $state);
-        } else {
-          println "No state found with name '$state'!";
+        change_device_state($device, $state);
+      } elsif (exists($cfg_group{$device})) {
+        my $val = $cfg_group{$device};
+        my ($delay, $aliases) = split(/\s+/, $val, 2);
+        my (@aliaslist) = split(/\s+/, $aliases);
+        foreach my $alias (@aliaslist) {
+          change_device_state($alias, $state);
+          sleep(1);
         }
       } else {
-        println "No device found with alias '$device'!";
+        println "No alias or group found with name '$device'!";
+      }
+    }
+  }
+}
+
+
+sub swap_first_device_state() {
+  if ($option{"device"}) {
+    if ($option{"swapfirst"}) {
+      my $device = $option{"device"};
+      if ($device_state{$device}) {
+        my $state = $device_state{$device};
+        if ($state =~ /^off$/i) {
+          $state = 'on';
+        } else {
+          $state = 'off';
+        }
+        change_device_state($device, $state);
+      } elsif (exists($cfg_group{$device})) {
+        my $val = $cfg_group{$device};
+        my ($delay, $aliases) = split(/\s+/, $val, 2);
+        my ($alias) = split(/\s+/, $aliases);
+        my $state = $device_state{$alias};
+        if ($state =~ /^off$/i) {
+          $state = 'on';
+        } else {
+          $state = 'off';
+        }
+        my (@aliaslist) = split(/\s+/, $aliases);
+        foreach my $alias (@aliaslist) {
+          change_device_state($alias, $state);
+          sleep(1);
+        }
+      } else {
+        println "No alias or group found with name '$device'!";
       }
     }
   }
@@ -746,12 +864,27 @@ sub swap_device_state() {
       if ($device_state{$device}) {
         my $state = $device_state{$device};
         if ($state =~ /^off$/i) {
-          change_device_state($device, 'on');
+          $state = 'on';
         } else {
-          change_device_state($device, 'off');
+          $state = 'off';
+        }
+        change_device_state($device, $state);
+      } elsif (exists($cfg_group{$device})) {
+        my $val = $cfg_group{$device};
+        my ($delay, $aliases) = split(/\s+/, $val, 2);
+        my (@aliaslist) = split(/\s+/, $aliases);
+        foreach my $alias (@aliaslist) {
+          my $state = $device_state{$alias};
+          if ($state =~ /^off$/i) {
+            $state = 'on';
+          } else {
+            $state = 'off';
+          }
+          change_device_state($alias, $state);
+          sleep(1);
         }
       } else {
-        println "No device found with alias '$device'!";
+        println "No alias or group found with name '$device'!";
       }
     }
   }
@@ -762,6 +895,16 @@ sub list_all_devices() {
   foreach my $key (sort keys %device_state) {
     println "Device $key = $device_state{$key}";
   }
+  foreach my $key (sort keys %cfg_group) {
+    my $val = $cfg_group{$key};
+    my ($delay, $aliases) = split(/\s+/, $val, 2);
+    my $states = "";
+    my (@aliaslist) = split(/\s+/, $aliases);
+    foreach my $device (@aliaslist) {
+      $states .= " $device_state{$device}";
+    }
+    println "Group $key =$states";
+  }
 }
 
 
@@ -769,7 +912,12 @@ sub list_all_aliases {
   foreach my $key (sort keys %cfg_alias) {
     my $dimmer = "";
     $dimmer = " dimmer" if $cfg_dimmer{$key} eq "yes";
-    println "Device $key is an alias for$dimmer receiver $cfg_alias{$key}";
+    println "Alias $key = receiver ($cfg_alias{$key}$dimmer)";
+  }
+  foreach my $key (sort keys %cfg_group) {
+    my $val = $cfg_group{$key};
+    my ($delay, $aliases) = split(/\s+/, $val, 2);
+    println "Group $key = delay $delay seconds, aliases ($aliases)";
   }
 }
 
@@ -784,7 +932,7 @@ sub daemon_loop() {
     $next_day->set( hour => 0, minute => 0, second => 0 );
     println "Next reload of device rules = $next_day" if ($option{"verbose"});
 
-    my $wait_time = 60;
+    my $wait_time = 5;
     my $loop = 1;
 
     check_device_rules($now);
@@ -811,6 +959,8 @@ sub perform_action() {
     get_device_state();
   } elsif ($option{"set"}) {
     set_device_state();
+  } elsif ($option{"swapfirst"}) {
+    swap_first_device_state();
   } elsif ($option{"swap"}) {
     swap_device_state();
   } elsif ($option{"list"}) {
@@ -869,17 +1019,18 @@ __DATA__
 #-   A small database is used for keeping track of device states
 #-   between every execution of tellstickController.
 #-    
-#-   -a, --aliases       List of aliases for devices.
-#-   -c, --check         Check content of configuration file.
+#-   -h, --help          Show this help text.
+#-   -v, --verbose       Show extra information.
 #-   -d, --daemon        Starts in daemon mode.
 #-   -f, --file F        Set configfile to file F.
-#-   -g, --get D         Get state for device D.
-#-   -h, --help          Print this help text.
-#-   -l, --list          List states for all devices.
-#-   -s, --set D S       Set device D to state S.
+#-   -c, --check         Check content of configuration file.
 #-   -t, --test          Test mode, no real devices will used.
-#-   -v, --verbose       Print extra information.
-#-   -x, --swap D        Swap state for device D.
+#-   -a, --aliases       List of aliases for devices/groups.
+#-   -l, --list          List states for all devices/groups.
+#-   -s, --set D S       Set device D to state S.
+#-   -g, --get D         Get state for device/group D.
+#-   -w, --swapfirst G   Swap states for group G based on first device state.
+#-   -x, --swap D        Swap state for device/group D.
 #-
 #- EXAMPLES
 #-   tellstickController -l
@@ -907,6 +1058,8 @@ __DATA__
 #-
 #-   The aliases configures device name, channel, code, etc.
 #- 
+#-   The groups configures a list of devices and a delay time.
+#- 
 #-   The rules can be written as a string containing two parts.
 #-   The first part is optional and ends with an '/'. It can contain
 #-   one or more of these keywords 'Weekend', 'Workweek', 'Monday',
@@ -926,11 +1079,10 @@ __DATA__
 #-
 #- AUTHOR
 #-   Original version written by Rickard Andersson
-#-   Improvments added by ...
 #-
 #- LICENSE
 #-   Copyright (C) 2008 Rickard Andersson
-#-   Version 1.4.2
+#-   Version 1.5.0
 #-   This program comes with ABSOLUTELY NO WARRANTY.
 #-   This is free software, and you are welcome to redistribute it
 #-   under certain conditions; See license file for details.
