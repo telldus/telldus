@@ -6,6 +6,8 @@
 #include <QHBoxLayout>
 #include <QMessageBox>
 
+#include "editdevicedialog.h"
+
 DeviceWidget::DeviceWidget(QWidget *parent) :
 	QWidget(parent),
 	deviceView(this),
@@ -22,6 +24,7 @@ DeviceWidget::DeviceWidget(QWidget *parent) :
 	buttonLayout->setSpacing(0);
 
 	addToolButton.setIcon( QIcon( ":/images/list-add.png" ) );
+	connect(&addToolButton, SIGNAL(clicked()), this, SLOT(addDevice()));
 	buttonLayout->addWidget( &addToolButton );
 
 	removeToolButton.setIcon( QIcon( ":/images/list-remove.png" ) );
@@ -47,6 +50,19 @@ void DeviceWidget::changeEvent(QEvent *e)
 	default:
 		break;
 	}
+}
+
+void DeviceWidget::addDevice() {
+	Device *device = model.newDevice();
+
+	EditDeviceDialog *dialog = new EditDeviceDialog( );
+	if (dialog->exec() == QDialog::Accepted) {
+		//device->save();
+	} else {
+		delete device;
+	}
+
+	delete dialog;
 }
 
 void DeviceWidget::deleteDevice() {

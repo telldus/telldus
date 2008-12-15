@@ -19,7 +19,7 @@ public:
 
 	virtual bool removeRows ( int row, int count, const QModelIndex & parent = QModelIndex() );
 
-	const Device &newDevice() const;
+	Device *newDevice() const;
 
 private slots:
 	void deviceAdded( int id );

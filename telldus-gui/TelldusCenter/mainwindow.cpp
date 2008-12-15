@@ -5,9 +5,10 @@
 #include <QStackedWidget>
 #include <QStatusBar>
 #include <QToolBar>
+#include <QMessageBox>
 
 
-#include "../TelldusGui/TelldusGui_global.h"
+#include "../TelldusGui/telldusgui.h"
 
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 	: QMainWindow(parent, flags)
@@ -40,13 +41,18 @@ void MainWindow::setupMenu()
 	QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addSeparator();
 	helpMenu->addAction(tr("About &Qt"), qApp, SLOT(aboutQt()));
-	helpMenu->addAction(tr("About &TelldusCenter"), this, SLOT(slotAboutApplication()));
+	helpMenu->addAction(tr("About &Telldus Center"), this, SLOT(slotAboutApplication()));
 }
 
 void MainWindow::setupToolBar()
 {
 	setUnifiedTitleAndToolBarOnMac(true);
 	m_pagesBar = addToolBar(tr("Pages"));
+#if defined(Q_WS_MAC)
+	m_pagesBar->setIconSize(QSize(18, 18));
+#else
+	m_pagesBar->setIconSize(QSize(32, 32));
+#endif
 
 	QActionGroup *ag = new QActionGroup(this);
 
@@ -55,4 +61,11 @@ void MainWindow::setupToolBar()
 	actionDevices->setChecked( true );
 	ag->addAction(actionDevices);
 	m_pagesBar->addActions( ag->actions() );
+}
+
+void MainWindow::slotAboutApplication() {
+	QMessageBox::about(this, tr("About Telldus Center"),
+					   tr("<h2>Telldus Center 0.1</h2>"
+						  "<p>Copyright &copy; 2008 Telldus Technologies AB<p>"
+						  "<p>Telldus Center is a configuration utility for Telldus TellStick&reg;</p>"));
 }

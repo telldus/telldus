@@ -4,8 +4,12 @@
 TARGET = TelldusCenter
 TEMPLATE = app
 SOURCES += main.cpp \
-    mainwindow.cpp
-HEADERS += mainwindow.h
+    mainwindow.cpp \
+    tellduscenterapplication.cpp
+HEADERS += mainwindow.h \
+    tellduscenterapplication.h
 FORMS += 
 RESOURCES += resource.qrc
-LIBS += -lTelldusGui -L../TelldusGui
+macx:LIBS += -lTelldusGui \
+    -L../TelldusGui
+!macx:LIBS += -ltelldus-gui

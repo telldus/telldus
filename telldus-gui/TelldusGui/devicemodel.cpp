@@ -54,14 +54,17 @@ bool DeviceModel::removeRows ( int row, int count, const QModelIndex & parent ) 
 	return true;
 }
 
-const Device &DeviceModel::newDevice() const {
+Device *DeviceModel::newDevice() const {
 	Device *device = Device::newDevice();
 	connect(device, SIGNAL(deviceAdded(int)), this, SLOT(deviceAdded(int)));
-	return *device;
+	return device;
 }
 
 void DeviceModel::deviceAdded( int id ) {
-	qDebug("Yes");
+	int deviceCount = tdGetNumberOfDevices();
+	beginInsertRows( QModelIndex(), deviceCount - 1, deviceCount );
+	qDebug() << "Ny enhet: " << id;
+	endInsertRows();
 }
 
 int DeviceModel::deviceId( const QModelIndex &index ) const {

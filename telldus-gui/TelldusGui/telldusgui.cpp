@@ -1,4 +1,4 @@
-#include "TelldusGui_global.h"
+#include "telldusgui.h"
 
 #include "devicewidget.h"
 

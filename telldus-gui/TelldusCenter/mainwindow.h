@@ -13,6 +13,9 @@ public:
 	MainWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~MainWindow();
 
+private slots:
+	void slotAboutApplication();
+
 private:
 	void setupMenu();
 	void setupToolBar();

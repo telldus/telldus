@@ -1,24 +1,28 @@
 # -------------------------------------------------
 # Project created by QtCreator 2008-12-11T15:48:29
 # -------------------------------------------------
-TARGET = TelldusGui
 TEMPLATE = lib
 DEFINES += TELLDUSGUI_LIBRARY
 SOURCES += telldusgui.cpp \
     devicewidget.cpp \
-    devicemodel.cpp \
-    devicesetting/devicesetting.cpp \
-    device.cpp
+    devicemodel.cpp \ # devicesetting/devicesetting.cpp \
+    device.cpp \
+    editdevicedialog.cpp
 HEADERS += telldusgui.h \
-    TelldusGui_global.h \
     devicewidget.h \
-    devicemodel.h \
-    devicesetting/devicesetting.h \
-    device.h
+    devicemodel.h \ # devicesetting/devicesetting.h \
+    device.h \
+    editdevicedialog.h
 FORMS += 
 macx { 
     LIBS += -framework \
         telldus-core
     ICON = images/telldussetup.icns
+    TARGET = TelldusGui
 }
-RESOURCES += resource.qrc
+!macx { 
+    LIBS += -l \
+        telldus-core
+    TARGET = telldus-gui
+}
+RESOURCES += telldusgui.qrc
