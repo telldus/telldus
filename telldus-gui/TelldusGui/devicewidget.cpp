@@ -20,7 +20,7 @@ DeviceWidget::DeviceWidget(QWidget *parent) :
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	layout->addWidget(&deviceView);
 
-	QHBoxLayout *buttonLayout = new QHBoxLayout( this );
+	QHBoxLayout *buttonLayout = new QHBoxLayout;
 	buttonLayout->setSpacing(0);
 
 	addToolButton.setIcon( QIcon( ":/images/list-add.png" ) );

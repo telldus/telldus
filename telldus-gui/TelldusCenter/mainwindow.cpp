@@ -48,11 +48,7 @@ void MainWindow::setupToolBar()
 {
 	setUnifiedTitleAndToolBarOnMac(true);
 	m_pagesBar = addToolBar(tr("Pages"));
-#if defined(Q_WS_MAC)
-	m_pagesBar->setIconSize(QSize(18, 18));
-#else
 	m_pagesBar->setIconSize(QSize(32, 32));
-#endif
 
 	QActionGroup *ag = new QActionGroup(this);
 

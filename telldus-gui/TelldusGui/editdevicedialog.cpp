@@ -14,7 +14,7 @@ EditDeviceDialog::EditDeviceDialog(QWidget *parent, Qt::WFlags flags)
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
-	QHBoxLayout *deviceLayout = new QHBoxLayout(this);
+	QHBoxLayout *deviceLayout = new QHBoxLayout;
 
 	QTreeView *deviceView = new QTreeView(this);
 	deviceLayout->addWidget(deviceView);
@@ -24,9 +24,9 @@ EditDeviceDialog::EditDeviceDialog(QWidget *parent, Qt::WFlags flags)
 	deviceGroupBox->setLayout(deviceLayout);
 	layout->addWidget(deviceGroupBox);
 
-	QVBoxLayout *addressLayout = new QVBoxLayout(this);
+	QVBoxLayout *addressLayout = new QVBoxLayout;
 
-	QFormLayout *nameLayout = new QFormLayout(this);
+	QFormLayout *nameLayout = new QFormLayout;
 
 	QLabel *nameLabel = new QLabel(this);
 	nameLabel->setText( tr("&Name:") );
@@ -36,7 +36,7 @@ EditDeviceDialog::EditDeviceDialog(QWidget *parent, Qt::WFlags flags)
 	nameLayout->addRow(nameLabel, nameLineEdit);
 	addressLayout->addLayout( nameLayout );
 
-	QStackedLayout *settingsLayout = new QStackedLayout(this);
+	QStackedLayout *settingsLayout = new QStackedLayout;
 	QLabel *noDeviceLabel = new QLabel( tr("Choose a device above"), this );
 	noDeviceLabel->setAlignment( Qt::AlignCenter );
 	settingsLayout->addWidget( noDeviceLabel );
