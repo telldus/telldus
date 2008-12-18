@@ -20,6 +20,7 @@ EditDeviceDialog::EditDeviceDialog(QWidget *parent, Qt::WFlags flags)
 	QHBoxLayout *deviceLayout = new QHBoxLayout;
 
 	QTreeView *deviceView = new QTreeView(this);
+	deviceView->setModel( model );
 	deviceLayout->addWidget(deviceView);
 
 	QGroupBox *deviceGroupBox = new QGroupBox(this);

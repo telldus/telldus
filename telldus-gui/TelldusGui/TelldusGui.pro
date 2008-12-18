@@ -6,10 +6,6 @@ DEFINES += TELLDUSGUI_LIBRARY
 SOURCES += telldusgui.cpp \
     devicewidget.cpp \
     devicemodel.cpp \
-    \ \
-    \ \
-    \ \
-    \ \ # devicesetting/devicesetting.cpp \
     device.cpp \
     editdevicedialog.cpp \
     vendordevicemodel.cpp \
@@ -17,10 +13,6 @@ SOURCES += telldusgui.cpp \
 HEADERS += telldusgui.h \
     devicewidget.h \
     devicemodel.h \
-    \ \
-    \ \
-    \ \
-    \ \ # devicesetting/devicesetting.h \
     device.h \
     editdevicedialog.h \
     vendordevicemodel.h \
