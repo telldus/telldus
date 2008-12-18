@@ -1,5 +1,6 @@
 <RCC>
     <qresource prefix="/" >
+        <file>data/devices.xml</file>
         <file>images/list-add.png</file>
         <file>images/list-remove.png</file>
     </qresource>

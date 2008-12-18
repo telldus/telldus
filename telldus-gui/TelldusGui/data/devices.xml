@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf8" ?>
+<devices>
+	<vendor name="Ikea">
+		<device id="19" protocol="ikea" widget="3" image="koppla">Koppla</device>
+	</vendor>
+	<vendor name="Nexa">
+		<device id="1" protocol="arctech" widget="1" image="145041">YCR-3500</device>
+	</vendor>
+	<vendor name="Proove">
+		<device id="8" protocol="arctech" widget="1" image="143011">EL2000</device>
+	</vendor>
+	<vendor name="Sartano">
+		<device id="7" protocol="sartano" widget="2" image="51340">51343</device>
+	</vendor>
+	<vendor name="Waveman">
+		<device id="11" protocol="waveman" widget="1" image="17-356">17-356</device>
+	</vendor>
+</settings>
