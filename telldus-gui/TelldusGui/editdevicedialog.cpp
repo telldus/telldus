@@ -1,4 +1,6 @@
 #include "editdevicedialog.h"
+#include "vendordevicemodel.h"
+
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QStackedLayout>
@@ -10,7 +12,8 @@
 #include <QDialogButtonBox>
 
 EditDeviceDialog::EditDeviceDialog(QWidget *parent, Qt::WFlags flags)
-		:QDialog(parent, flags)
+		:QDialog(parent, flags),
+		model(new VendorDeviceModel(this))
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
 

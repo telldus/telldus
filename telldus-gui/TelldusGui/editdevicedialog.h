@@ -3,6 +3,8 @@
 
 #include <QDialog>
 
+class VendorDeviceModel;
+
 class EditDeviceDialog : public QDialog
 {
 public:
@@ -10,7 +12,7 @@ public:
 	virtual ~EditDeviceDialog();
 
 private:
-
+	VendorDeviceModel *model;
 };
 
 #endif // EDITDEVICEDIALOG_H

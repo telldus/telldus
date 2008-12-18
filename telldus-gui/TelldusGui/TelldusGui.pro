@@ -5,14 +5,26 @@ TEMPLATE = lib
 DEFINES += TELLDUSGUI_LIBRARY
 SOURCES += telldusgui.cpp \
     devicewidget.cpp \
-    devicemodel.cpp \ # devicesetting/devicesetting.cpp \
+    devicemodel.cpp \
+    \ \
+    \ \
+    \ \
+    \ \ # devicesetting/devicesetting.cpp \
     device.cpp \
-    editdevicedialog.cpp
+    editdevicedialog.cpp \
+    vendordevicemodel.cpp \
+    vendordevicetreeitem.cpp
 HEADERS += telldusgui.h \
     devicewidget.h \
-    devicemodel.h \ # devicesetting/devicesetting.h \
+    devicemodel.h \
+    \ \
+    \ \
+    \ \
+    \ \ # devicesetting/devicesetting.h \
     device.h \
-    editdevicedialog.h
+    editdevicedialog.h \
+    vendordevicemodel.h \
+    vendordevicetreeitem.h
 FORMS += 
 macx { 
     LIBS += -framework \
