@@ -5,11 +5,7 @@ VendorDeviceModel::VendorDeviceModel(QObject *parent)
 		:QAbstractItemModel(parent),
 		rootItem(new VendorDeviceTreeItem(0, ""))
 {
-	rootItem->appendChild( new VendorDeviceTreeItem(0, "Ikea", rootItem) );
-	rootItem->appendChild( new VendorDeviceTreeItem(0, "Nexa", rootItem) );
-	rootItem->appendChild( new VendorDeviceTreeItem(0, "Proove", rootItem) );
-	rootItem->appendChild( new VendorDeviceTreeItem(0, "Sartano", rootItem) );
-	rootItem->appendChild( new VendorDeviceTreeItem(0, "Waveman", rootItem) );
+	rootItem->parseXml( ":/data/devices.xml" );
 }
 
 VendorDeviceModel::~VendorDeviceModel() {
@@ -45,7 +41,7 @@ Qt::ItemFlags VendorDeviceModel::flags(const QModelIndex &index) const {
 	return Qt::ItemIsEnabled | Qt::ItemIsSelectable;
 }
 
-QVariant VendorDeviceModel::headerData(int section, Qt::Orientation orientation, int role) const {
+QVariant VendorDeviceModel::headerData(int , Qt::Orientation orientation, int role) const {
 	if (orientation == Qt::Horizontal && role == Qt::DisplayRole) {
 		return tr("Name");
 	}

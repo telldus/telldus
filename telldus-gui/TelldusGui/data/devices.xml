@@ -38,4 +38,4 @@
 	<vendor name="Waveman">
 		<device id="11" protocol="waveman" widget="1" image="17-356">17-356</device>
 	</vendor>
-</settings>
+</devices>

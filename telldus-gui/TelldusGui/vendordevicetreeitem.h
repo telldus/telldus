@@ -3,6 +3,8 @@
 
 #include <QVariant>
 
+class QXmlStreamReader;
+
 class VendorDeviceTreeItem
 {
 public:
@@ -18,7 +20,13 @@ public:
 	int row() const;
 	VendorDeviceTreeItem *parent();
 
+	bool parseXml( const QString &filename );
+
 private:
+	void parseVendor( QXmlStreamReader *reader );
+	void parseDevice( QXmlStreamReader *reader, VendorDeviceTreeItem *parent );
+	void skipUnknownElement( QXmlStreamReader *reader );
+
 	QList<VendorDeviceTreeItem *> childItems;
 
 	int deviceId;
