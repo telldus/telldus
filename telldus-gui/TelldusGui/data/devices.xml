@@ -1,5 +1,8 @@
 <?xml version="1.0" encoding="utf8" ?>
 <devices>
+	<vendor name="Ikea">
+		<device id="19" protocol="ikea" widget="3" image="koppla">Koppla</device>
+	</vendor>
 	<vendor name="Nexa">
 		<device id="1" protocol="arctech" widget="1" image="145041">YCR-3500</device>
 		<device id="2" protocol="arctech" widget="1" image="145041">YCR-300D</device>
@@ -10,14 +13,11 @@
 		<device id="12" protocol="arctech" widget="1" image="sycr">SYCR-3500</device>
 		<device id="13" protocol="arctech" widget="1" image="sycr">SYCR-300</device>
 		<device id="14" protocol="arctech" widget="1" image="hdr">HDR-105</device>
-		<device id="15" protocol="arctech" widget="1" image="ml">ML-7100</device>
+		<device id="15" protocol="arctech" widget="4" image="ml">ML-7100</device>
 		<device id="20" protocol="arctech" widget="1" image="14323">LYCR-1000</device>
 		<device id="21" protocol="arctech" widget="1" image="14323">LYCR-300</device>
 		<device id="22" protocol="arctech" widget="1" image="14327">LCMR-1000</device>
 		<device id="23" protocol="arctech" widget="1" image="14327">LCMR-300</device>
-	</vendor>
-	<vendor name="Sartano">
-		<device id="7" protocol="sartano" widget="2" image="51340">51343</device>
 	</vendor>
 	<vendor name="Proove">
 		<device id="8" protocol="arctech" widget="1" image="el2000">EL2000</device>
@@ -32,10 +32,10 @@
 		<device id="27" protocol="arctech" widget="1" image="14327">EL2017</device>
 		<device id="28" protocol="arctech" widget="1" image="el2019">EL2019</device>
 	</vendor>
+	<vendor name="Sartano">
+		<device id="7" protocol="sartano" widget="2" image="51340">51343</device>
+	</vendor>
 	<vendor name="Waveman">
 		<device id="11" protocol="waveman" widget="1" image="17-356">17-356</device>
-	</vendor>
-	<vendor name="Ikea">
-		<device id="19" protocol="ikea" widget="3" image="koppla">Koppla</device>
 	</vendor>
 </settings>
