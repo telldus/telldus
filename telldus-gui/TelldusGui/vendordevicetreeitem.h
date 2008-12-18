@@ -2,8 +2,7 @@
 #define VENDORDEVICETREEITEM_H
 
 #include <QVariant>
-
-class QXmlStreamReader;
+#include <QXmlStreamReader>
 
 class VendorDeviceTreeItem
 {

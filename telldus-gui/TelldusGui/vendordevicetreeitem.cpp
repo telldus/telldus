@@ -1,7 +1,6 @@
 #include "vendordevicetreeitem.h"
 
 #include <QFile>
-#include <QXmlStreamReader>
 #include <iostream>
 
 VendorDeviceTreeItem::VendorDeviceTreeItem(int id, const QString &displayString, VendorDeviceTreeItem *parent)
