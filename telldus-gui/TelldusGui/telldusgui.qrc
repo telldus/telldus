@@ -2,7 +2,8 @@
     <qresource prefix="/" >
         <file>data/devices.xml</file>
         <file>images/list-add.png</file>
-        <file>images/list-remove.png</file>
+        <file>images/list-edit.png</file>
+		<file>images/list-remove.png</file>
         <file>images/devices/17-356.jpg</file>
         <file>images/devices/14323.jpg</file>
         <file>images/devices/14327.jpg</file>

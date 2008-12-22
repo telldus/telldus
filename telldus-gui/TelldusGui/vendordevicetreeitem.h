@@ -23,6 +23,7 @@ public:
 	bool parseXml( const QString &filename );
 
 	QPixmap image() const;
+	int widget() const;
 
 private:
 	void parseVendor( QXmlStreamReader *reader );
@@ -31,7 +32,7 @@ private:
 
 	QList<VendorDeviceTreeItem *> childItems;
 
-	int deviceId;
+	int deviceId, settingsWidget;
 	QString deviceName;
 	QString img;
 	VendorDeviceTreeItem *parentItem;

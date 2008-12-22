@@ -7,6 +7,7 @@
 
 VendorDeviceTreeItem::VendorDeviceTreeItem(int id, VendorDeviceTreeItem *parent)
 		:deviceId(id),
+		settingsWidget(0),
 		parentItem(parent)
 {
 }
@@ -64,6 +65,11 @@ QPixmap VendorDeviceTreeItem::image() const {
 	}
 	return image;
 }
+
+int VendorDeviceTreeItem::widget() const {
+	return settingsWidget;
+}
+
 
 bool VendorDeviceTreeItem::parseXml( const QString &filename ) {
 	QFile file(filename);
@@ -134,8 +140,10 @@ void VendorDeviceTreeItem::parseVendor( QXmlStreamReader *reader ) {
 }
 
 void VendorDeviceTreeItem::parseDevice( QXmlStreamReader *reader, VendorDeviceTreeItem *parent ) {
-	VendorDeviceTreeItem *item = new VendorDeviceTreeItem(reader->attributes().value("id").toString().toInt(), parent);
-	item->img = reader->attributes().value("image").toString();
+	QXmlStreamAttributes attributes = reader->attributes();
+	VendorDeviceTreeItem *item = new VendorDeviceTreeItem(attributes.value("id").toString().toInt(), parent);
+	item->img = attributes.value("image").toString();
+	item->settingsWidget = attributes.value("widget").toString().toInt();
 	item->deviceName = reader->readElementText(); //This call must be the last one because it clears the attribute-list
 	parent->appendChild(item);
 

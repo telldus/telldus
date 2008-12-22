@@ -1,6 +1,7 @@
 #include "devicemodel.h"
 #include <telldus-core.h>
 #include <QQueue>
+#include <QIcon>
 #include <QDebug>
 
 DeviceModel::DeviceModel(QObject *parent)
@@ -18,20 +19,49 @@ int DeviceModel::rowCount(const QModelIndex &) const {
 }
 
 int DeviceModel::columnCount(const QModelIndex &) const {
-	return 1;
+	return 2;
 }
 
 QVariant DeviceModel::data(const QModelIndex &index, int role) const {
-	if (index.column() != 0) {
+	if (index.column() > 1) {
 		return QVariant();
 	}
 
-	if (role == Qt::DisplayRole) {
-		int id = deviceId( index );
-		char *name = tdGetName( id );
-		QString deviceName = QString( name );
-		delete name;
-		return deviceName;
+	if (index.column() == 0) {
+		if (role == Qt::DisplayRole) {
+			return tr("on");
+		} else if (role == Qt::DecorationRole) {
+			return QIcon( ":/images/list-add.png" );
+		} else if (role == Qt::TextAlignmentRole) {
+			return Qt::AlignCenter;
+		}
+	} else if (index.column() == 1) {
+		if (role == Qt::DisplayRole) {
+			int id = deviceId( index );
+			char *name = tdGetName( id );
+			QString deviceName = QString( name );
+			free( name );
+			return deviceName;
+		}
+	}
+
+	return QVariant();
+}
+
+QVariant DeviceModel::headerData ( int section, Qt::Orientation orientation, int role ) const {
+	if (orientation != Qt::Horizontal) {
+		return QVariant();
+	}
+
+	if (role != Qt::DisplayRole) {
+		return QVariant();
+	}
+
+	switch (section) {
+		case 0:
+			return tr("State");
+		case 1:
+			return tr("Device name");
 	}
 
 	return QVariant();

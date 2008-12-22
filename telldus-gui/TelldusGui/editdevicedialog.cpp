@@ -54,7 +54,7 @@ EditDeviceDialog::EditDeviceDialog(QWidget *parent, Qt::WFlags flags)
 	nameLayout->addRow(nameLabel, nameLineEdit);
 	addressLayout->addLayout( nameLayout );
 
-	QStackedLayout *settingsLayout = new QStackedLayout;
+	settingsLayout = new QStackedLayout;
 	QLabel *noDeviceLabel = new QLabel( tr("Choose a device above"), this );
 	noDeviceLabel->setAlignment( Qt::AlignCenter );
 	settingsLayout->addWidget( noDeviceLabel );
@@ -88,5 +88,5 @@ void EditDeviceDialog::selectionChanged( const QModelIndex & index ) {
 	}
 
 	deviceImage->setPixmap( item->image() );
-//	qDebug() << "Selection changed" << item->image();
+	settingsLayout->setCurrentIndex( item->widget() );
 }

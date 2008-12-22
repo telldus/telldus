@@ -2,7 +2,7 @@
 #define DEVICEWIDGET_H
 
 #include <QtGui/QWidget>
-#include <QtGui/QListView>
+#include <QtGui/QTableView>
 #include <QtGui/QToolButton>
 #include "devicemodel.h"
 
@@ -24,8 +24,8 @@ private slots:
 
 private:
 	DeviceModel model;
-	QListView deviceView;
-	QToolButton addToolButton, removeToolButton;
+	QTableView deviceView;
+	QToolButton addToolButton, removeToolButton, editToolButton;
 };
 
 #endif // DEVICEWIDGET_H

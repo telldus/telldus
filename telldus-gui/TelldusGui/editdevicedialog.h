@@ -8,6 +8,7 @@
 class VendorDeviceModel;
 class DeviceSetting;
 class QLabel;
+class QStackedLayout;
 
 class EditDeviceDialog : public QDialog
 {
@@ -21,6 +22,7 @@ private slots:
 
 private:
 	VendorDeviceModel *model;
+	QStackedLayout *settingsLayout;
 	QLabel *deviceImage;
 	QHash<int, DeviceSetting *> deviceSettings;
 };

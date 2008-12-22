@@ -12,9 +12,14 @@ DeviceWidget::DeviceWidget(QWidget *parent) :
 	QWidget(parent),
 	deviceView(this),
 	addToolButton(this),
-	removeToolButton(this)
+	removeToolButton(this),
+	editToolButton(this)
 {
 	deviceView.setModel( &model );
+	deviceView.resizeColumnsToContents();
+	deviceView.resizeRowsToContents();
+	deviceView.setAlternatingRowColors( true );
+	deviceView.setSelectionBehavior( QAbstractItemView::SelectRows );
 	connect( &deviceView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(listActivated(const QModelIndex &)) );
 
 	QVBoxLayout *layout = new QVBoxLayout(this);
@@ -24,11 +29,23 @@ DeviceWidget::DeviceWidget(QWidget *parent) :
 	buttonLayout->setSpacing(0);
 
 	addToolButton.setIcon( QIcon( ":/images/list-add.png" ) );
+	addToolButton.setText( tr("New") );
+	addToolButton.setToolButtonStyle( Qt::ToolButtonTextBesideIcon );
 	connect(&addToolButton, SIGNAL(clicked()), this, SLOT(addDevice()));
 	buttonLayout->addWidget( &addToolButton );
 
+	buttonLayout->addSpacing( 10 );
+
+	editToolButton.setIcon( QIcon( ":/images/list-edit.png" ) );
+	editToolButton.setText( tr("Edit") );
+	editToolButton.setToolButtonStyle( Qt::ToolButtonTextBesideIcon );
+	editToolButton.setEnabled( false );
+	buttonLayout->addWidget( &editToolButton );
+
 	removeToolButton.setIcon( QIcon( ":/images/list-remove.png" ) );
 	removeToolButton.setEnabled( false );
+	removeToolButton.setText( tr("Remove") );
+	removeToolButton.setToolButtonStyle( Qt::ToolButtonTextBesideIcon );
 	connect(&removeToolButton, SIGNAL(clicked()), this, SLOT(deleteDevice()));
 	buttonLayout->addWidget( &removeToolButton );
 
@@ -80,4 +97,5 @@ void DeviceWidget::deleteDevice() {
 
 void DeviceWidget::listActivated(const QModelIndex &) {
 	removeToolButton.setEnabled( true );
+	editToolButton.setEnabled( true );
 }
