@@ -21,6 +21,8 @@ public:
 	int rowCount(const QModelIndex &parent) const;
 	QModelIndex parent(const QModelIndex &index) const;
 
+	const VendorDeviceTreeItem* const item( const QModelIndex &index ) const;
+
 private:
 	VendorDeviceTreeItem *rootItem;
 };

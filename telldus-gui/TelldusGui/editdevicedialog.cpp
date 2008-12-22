@@ -1,5 +1,8 @@
 #include "editdevicedialog.h"
 #include "vendordevicemodel.h"
+#include "vendordevicetreeitem.h"
+
+#include "devicesettingnexa.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -11,6 +14,8 @@
 #include <QLineEdit>
 #include <QDialogButtonBox>
 
+#include <QDebug>
+
 EditDeviceDialog::EditDeviceDialog(QWidget *parent, Qt::WFlags flags)
 		:QDialog(parent, flags),
 		model(new VendorDeviceModel(this))
@@ -21,7 +26,16 @@ EditDeviceDialog::EditDeviceDialog(QWidget *parent, Qt::WFlags flags)
 
 	QTreeView *deviceView = new QTreeView(this);
 	deviceView->setModel( model );
+	QItemSelectionModel *selection = deviceView->selectionModel();
+	connect( selection, SIGNAL( currentChanged(const QModelIndex, const QModelIndex &) ), this, SLOT(selectionChanged( const QModelIndex & ) ));
 	deviceLayout->addWidget(deviceView);
+
+	QVBoxLayout *deviceInfoLayout = new QVBoxLayout;
+	deviceImage = new QLabel( this );
+	deviceInfoLayout->addWidget( deviceImage );
+	deviceInfoLayout->addStretch();
+
+	deviceLayout->addLayout( deviceInfoLayout );
 
 	QGroupBox *deviceGroupBox = new QGroupBox(this);
 	deviceGroupBox->setTitle( tr("Device") );
@@ -56,7 +70,23 @@ EditDeviceDialog::EditDeviceDialog(QWidget *parent, Qt::WFlags flags)
 	connect(buttonBox, SIGNAL(accepted()), this, SLOT(accept()));
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 	layout->addWidget(buttonBox);
+
+	deviceSettings[1] = new DeviceSettingNexa();
+	foreach( DeviceSetting *s, deviceSettings ) {
+		settingsLayout->addWidget( s );
+	}
 }
 
 EditDeviceDialog::~EditDeviceDialog() {
+	qDeleteAll( deviceSettings );
+}
+
+void EditDeviceDialog::selectionChanged( const QModelIndex & index ) {
+	const VendorDeviceTreeItem* const item = model->item(index);
+	if (!item) {
+		return;
+	}
+
+	deviceImage->setPixmap( item->image() );
+//	qDebug() << "Selection changed" << item->image();
 }

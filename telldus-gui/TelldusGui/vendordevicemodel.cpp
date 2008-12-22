@@ -3,7 +3,7 @@
 
 VendorDeviceModel::VendorDeviceModel(QObject *parent)
 		:QAbstractItemModel(parent),
-		rootItem(new VendorDeviceTreeItem(0, ""))
+		rootItem(new VendorDeviceTreeItem(0))
 {
 	rootItem->parseXml( ":/data/devices.xml" );
 }
@@ -97,4 +97,17 @@ int VendorDeviceModel::rowCount(const QModelIndex &parent) const {
 	}
 
 	return parentItem->childCount();
+}
+
+const VendorDeviceTreeItem* const VendorDeviceModel::item( const QModelIndex &index ) const {
+	if (!index.isValid()) {
+		return 0;
+	}
+
+	VendorDeviceTreeItem *item = static_cast<VendorDeviceTreeItem*>(index.internalPointer());
+	if (item) {
+		return item;
+	}
+
+	return 0;
 }

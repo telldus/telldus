@@ -9,14 +9,18 @@ SOURCES += telldusgui.cpp \
     device.cpp \
     editdevicedialog.cpp \
     vendordevicemodel.cpp \
-    vendordevicetreeitem.cpp
+    vendordevicetreeitem.cpp \
+    devicesettingnexa.cpp \
+    devicesetting.cpp
 HEADERS += telldusgui.h \
     devicewidget.h \
     devicemodel.h \
     device.h \
     editdevicedialog.h \
     vendordevicemodel.h \
-    vendordevicetreeitem.h
+    vendordevicetreeitem.h \
+    devicesettingnexa.h \
+    devicesetting.h
 FORMS += 
 macx { 
     LIBS += -framework \

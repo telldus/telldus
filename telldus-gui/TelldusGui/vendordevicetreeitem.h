@@ -6,8 +6,9 @@
 
 class VendorDeviceTreeItem
 {
+	Q_DISABLE_COPY(VendorDeviceTreeItem)
 public:
-	VendorDeviceTreeItem(int id, const QString &displayString, VendorDeviceTreeItem *parent = 0);
+	VendorDeviceTreeItem(int id = 0, VendorDeviceTreeItem *parent = 0);
 	~VendorDeviceTreeItem();
 
 	void appendChild(VendorDeviceTreeItem *child);
@@ -21,6 +22,8 @@ public:
 
 	bool parseXml( const QString &filename );
 
+	QPixmap image() const;
+
 private:
 	void parseVendor( QXmlStreamReader *reader );
 	void parseDevice( QXmlStreamReader *reader, VendorDeviceTreeItem *parent );
@@ -30,6 +33,7 @@ private:
 
 	int deviceId;
 	QString deviceName;
+	QString img;
 	VendorDeviceTreeItem *parentItem;
 };
 
