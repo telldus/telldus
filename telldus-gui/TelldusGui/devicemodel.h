@@ -22,6 +22,7 @@ public:
 	virtual QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 
 	Device *newDevice() const;
+	Device *device( const QModelIndex & ) const;
 
 private slots:
 	void deviceAdded( int id );

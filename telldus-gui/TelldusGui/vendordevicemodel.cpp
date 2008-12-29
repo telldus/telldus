@@ -1,5 +1,6 @@
 #include "vendordevicemodel.h"
 #include "vendordevicetreeitem.h"
+#include "device.h"
 
 VendorDeviceModel::VendorDeviceModel(QObject *parent)
 		:QAbstractItemModel(parent),
@@ -69,6 +70,15 @@ QModelIndex VendorDeviceModel::index(int row, int column, const QModelIndex &par
 	return QModelIndex();
 }
 
+QModelIndex VendorDeviceModel::index(Device *device) const {
+	VendorDeviceTreeItem *item = rootItem->findByDeviceId( device->model() );
+	if (!item) {
+		return QModelIndex();
+	}
+
+	return createIndex( item->row(), 0, item );
+}
+
 QModelIndex VendorDeviceModel::parent(const QModelIndex &index) const {
 	if (!index.isValid()) {
 		return QModelIndex();
@@ -99,7 +109,7 @@ int VendorDeviceModel::rowCount(const QModelIndex &parent) const {
 	return parentItem->childCount();
 }
 
-const VendorDeviceTreeItem* const VendorDeviceModel::item( const QModelIndex &index ) const {
+VendorDeviceTreeItem* VendorDeviceModel::item( const QModelIndex &index ) const {
 	if (!index.isValid()) {
 		return 0;
 	}

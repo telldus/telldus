@@ -37,11 +37,8 @@ QVariant DeviceModel::data(const QModelIndex &index, int role) const {
 		}
 	} else if (index.column() == 1) {
 		if (role == Qt::DisplayRole) {
-			int id = deviceId( index );
-			char *name = tdGetName( id );
-			QString deviceName = QString( name );
-			free( name );
-			return deviceName;
+			Device *device = this->device( index );
+			return device->name();
 		}
 	}
 
@@ -84,6 +81,10 @@ bool DeviceModel::removeRows ( int row, int count, const QModelIndex & parent ) 
 	return true;
 }
 
+Device *DeviceModel::device( const QModelIndex &index ) const {
+	return Device::getDevice( deviceId( index ) );
+}
+
 Device *DeviceModel::newDevice() const {
 	Device *device = Device::newDevice();
 	connect(device, SIGNAL(deviceAdded(int)), this, SLOT(deviceAdded(int)));
@@ -91,9 +92,9 @@ Device *DeviceModel::newDevice() const {
 }
 
 void DeviceModel::deviceAdded( int id ) {
+	Q_UNUSED(id);
 	int deviceCount = tdGetNumberOfDevices();
-	beginInsertRows( QModelIndex(), deviceCount - 1, deviceCount );
-	qDebug() << "Ny enhet: " << id;
+	beginInsertRows( QModelIndex(), deviceCount, deviceCount );
 	endInsertRows();
 }
 

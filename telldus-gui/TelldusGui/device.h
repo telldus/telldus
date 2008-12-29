@@ -3,6 +3,7 @@
 
 #include <QHash>
 #include <QPointer>
+#include <QString>
 
 class Device : public QObject
 {
@@ -10,10 +11,19 @@ class Device : public QObject
 	Q_DISABLE_COPY(Device)
 
 public:
-	virtual ~Device();
+	~Device();
 
 	static Device *getDevice( int id );
 	static Device *newDevice( );
+
+	void setModel( int model );
+	int model();
+
+	void setName( const QString & name );
+	const QString &name();
+
+	void setProtocol( const QString & protocol );
+	const QString &protocol();
 
 public slots:
 	void save();
@@ -26,7 +36,9 @@ private:
 
 	static QHash<int, Device *> devices;
 	QHash<QString, QString> p_settings;
-	int p_id;
+	int p_id, p_model;
+	QString p_name, p_protocol;
+	bool p_modelChanged, p_nameChanged, p_protocolChanged;
 };
 
 #endif // DEVICE_H

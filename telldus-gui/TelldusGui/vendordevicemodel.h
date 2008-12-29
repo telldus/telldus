@@ -5,6 +5,7 @@
 #include <QList>
 
 class VendorDeviceTreeItem;
+class Device;
 
 class VendorDeviceModel : public QAbstractItemModel
 {
@@ -18,10 +19,11 @@ public:
 	Qt::ItemFlags flags(const QModelIndex &index) const;
 	QVariant headerData(int section, Qt::Orientation orientation, int role) const;
 	QModelIndex index(int row, int column, const QModelIndex &parent) const;
+	QModelIndex index(Device *device) const;
 	int rowCount(const QModelIndex &parent) const;
 	QModelIndex parent(const QModelIndex &index) const;
 
-	const VendorDeviceTreeItem* const item( const QModelIndex &index ) const;
+	VendorDeviceTreeItem* item( const QModelIndex &index ) const;
 
 private:
 	VendorDeviceTreeItem *rootItem;

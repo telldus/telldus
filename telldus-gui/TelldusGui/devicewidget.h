@@ -21,6 +21,7 @@ private slots:
 	void listActivated(const QModelIndex &);
 	void addDevice();
 	void deleteDevice();
+	void editDevice();
 
 private:
 	DeviceModel model;

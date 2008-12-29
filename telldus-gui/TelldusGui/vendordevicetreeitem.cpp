@@ -70,6 +70,30 @@ int VendorDeviceTreeItem::widget() const {
 	return settingsWidget;
 }
 
+bool VendorDeviceTreeItem::isDevice() const {
+	return deviceId > 0;
+}
+
+int VendorDeviceTreeItem::deviceModel() const {
+	return deviceId;
+}
+
+const QString &VendorDeviceTreeItem::deviceProtocol() const {
+	return protocol;
+}
+
+VendorDeviceTreeItem * VendorDeviceTreeItem::findByDeviceId( int deviceId ) const {
+	foreach( VendorDeviceTreeItem *item, childItems ) {
+		if (item->deviceId == deviceId) {
+			return item;
+		}
+		VendorDeviceTreeItem *i = item->findByDeviceId( deviceId );
+		if (i) {
+			return i;
+		}
+	}
+	return 0;
+}
 
 bool VendorDeviceTreeItem::parseXml( const QString &filename ) {
 	QFile file(filename);
@@ -144,6 +168,7 @@ void VendorDeviceTreeItem::parseDevice( QXmlStreamReader *reader, VendorDeviceTr
 	VendorDeviceTreeItem *item = new VendorDeviceTreeItem(attributes.value("id").toString().toInt(), parent);
 	item->img = attributes.value("image").toString();
 	item->settingsWidget = attributes.value("widget").toString().toInt();
+	item->protocol = attributes.value("protocol").toString();
 	item->deviceName = reader->readElementText(); //This call must be the last one because it clears the attribute-list
 	parent->appendChild(item);
 

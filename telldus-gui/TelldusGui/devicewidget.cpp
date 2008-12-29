@@ -40,6 +40,7 @@ DeviceWidget::DeviceWidget(QWidget *parent) :
 	editToolButton.setText( tr("Edit") );
 	editToolButton.setToolButtonStyle( Qt::ToolButtonTextBesideIcon );
 	editToolButton.setEnabled( false );
+	connect(&editToolButton, SIGNAL(clicked()), this, SLOT(editDevice()));
 	buttonLayout->addWidget( &editToolButton );
 
 	removeToolButton.setIcon( QIcon( ":/images/list-remove.png" ) );
@@ -72,9 +73,9 @@ void DeviceWidget::changeEvent(QEvent *e)
 void DeviceWidget::addDevice() {
 	Device *device = model.newDevice();
 
-	EditDeviceDialog *dialog = new EditDeviceDialog( );
+	EditDeviceDialog *dialog = new EditDeviceDialog(device);
 	if (dialog->exec() == QDialog::Accepted) {
-		//device->save();
+		device->save();
 	} else {
 		delete device;
 	}
@@ -93,6 +94,17 @@ void DeviceWidget::deleteDevice() {
 		QModelIndex index = deviceView.currentIndex();
 		model.removeRow(index.row());
 	}
+}
+
+void DeviceWidget::editDevice() {
+	Device *device = model.device( deviceView.currentIndex() );
+
+	EditDeviceDialog *dialog = new EditDeviceDialog( device );
+	if (dialog->exec() == QDialog::Accepted) {
+		device->save();
+	}
+
+	delete dialog;
 }
 
 void DeviceWidget::listActivated(const QModelIndex &) {

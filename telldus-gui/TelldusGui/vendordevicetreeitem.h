@@ -24,6 +24,11 @@ public:
 
 	QPixmap image() const;
 	int widget() const;
+	bool isDevice() const;
+	int deviceModel() const;
+	const QString &deviceProtocol() const;
+
+	VendorDeviceTreeItem *findByDeviceId( int deviceId ) const;
 
 private:
 	void parseVendor( QXmlStreamReader *reader );
@@ -33,7 +38,7 @@ private:
 	QList<VendorDeviceTreeItem *> childItems;
 
 	int deviceId, settingsWidget;
-	QString deviceName;
+	QString deviceName, protocol;
 	QString img;
 	VendorDeviceTreeItem *parentItem;
 };
