@@ -248,7 +248,7 @@ bool readConfig(cfg_t **cfg) {
 	cfg_opt_t device_opts[] = {
 		CFG_INT("id", -1, CFGF_NONE),
 		CFG_STR("name", "Unnamed", CFGF_NONE),
-		CFG_STR("vendor", "Nexa", CFGF_NONE),
+		CFG_STR("protocol", "Nexa", CFGF_NONE),
 		CFG_INT("model", 1, CFGF_NONE),
 		CFG_SEC("parameters", parameter_opts, CFGF_NONE),
 		CFG_END()

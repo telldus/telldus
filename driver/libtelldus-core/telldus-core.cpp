@@ -287,11 +287,11 @@ bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
 	return blnSuccess;
 }
 
-char* WINAPI tdGetVendor(int intDeviceId){
+char* WINAPI tdGetProtocol(int intDeviceId){
 	char* strReturn = "";
 	try{
 		TelldusSettings ts;
-		strReturn = ts.getVendor(intDeviceId);
+		strReturn = ts.getProtocol(intDeviceId);
 #ifdef _WINDOWS
 		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
 #endif
@@ -303,11 +303,11 @@ char* WINAPI tdGetVendor(int intDeviceId){
 	return strReturn;
 }
 
-bool WINAPI tdSetVendor(int intDeviceId, const char* strVendor){
+bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
 	bool blnSuccess = false;
 	try{
 		TelldusSettings ts;
-		blnSuccess = ts.setVendor(intDeviceId, strVendor);
+		blnSuccess = ts.setProtocol(intDeviceId, strProtocol);
 	}
 	catch(exception e){
 		blnSuccess = false;

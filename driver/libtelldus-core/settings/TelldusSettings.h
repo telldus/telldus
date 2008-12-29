@@ -15,8 +15,8 @@ public:
 	Device* getDevice(int intDeviceId);
 	char* getName(int intDeviceId);
 	bool setName(int intDeviceId, const char* strNewName);
-	char* getVendor(int intDeviceId);
-	bool setVendor(int intDeviceId, const char* strVendor);
+	char* getProtocol(int intDeviceId);
+	bool setProtocol(int intDeviceId, const char* strVendor);
 	int getModel(int intDeviceId);
 	bool setModel(int intDeviceId, int intModel);
 	char* getArgument(int intDeviceId, const char *strName);
