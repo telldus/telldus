@@ -15,32 +15,32 @@ Device* TelldusSettings::getDevice(int intDeviceId){
 	Device* dev = NULL;
 
 	try{
-		char* vendor = getVendor(intDeviceId);
-		if (vendor == NULL) {
+		char* protocol = getProtocol(intDeviceId);
+		if (protocol == NULL) {
 			return NULL;
 		}
 
 		//each new brand must be added here
-		if (strcmp(vendor, "Nexa") == 0){
+		if (strcmp(protocol, "Nexa") == 0){
 			char *strHouse = getArgument(intDeviceId, "nexa_house");
 			char *strCode = getArgument(intDeviceId, "nexa_unit");
 			dev = new DeviceNexa(strHouse, strCode);
 			free(strHouse);
 			free(strCode);
 		
-		} else if (strcmp(vendor, "Waveman") == 0) {
+		} else if (strcmp(protocol, "Waveman") == 0) {
 			char *strHouse = getArgument(intDeviceId, "nexa_house");
 			char *strCode = getArgument(intDeviceId, "nexa_unit");
 			dev = new DeviceWaveman(strHouse, strCode);
 			free(strHouse);
 			free(strCode);
 
-		} else if (strcmp(vendor, "Sartano") == 0) {
+		} else if (strcmp(protocol, "Sartano") == 0) {
 			char *strCode = getArgument(intDeviceId, "sartano_code");
 			dev = new DeviceSartano(strCode);
 			free(strCode);
 
-		} else if (strcmp(vendor, "Ikea") == 0) {
+		} else if (strcmp(protocol, "Ikea") == 0) {
 			char *strSystem = getArgument(intDeviceId, "ikea_system");
 			char *strUnits = getArgument(intDeviceId, "ikea_units");
 			char *strFade = getArgument(intDeviceId, "ikea_fade");
@@ -50,10 +50,10 @@ Device* TelldusSettings::getDevice(int intDeviceId){
 			free(strFade);
 
 		} else {
-			free(vendor);
+			free(protocol);
 			return NULL;
 		}
-		free(vendor);
+		free(protocol);
 
 #ifdef _LINUX
 		dev->setDevice( getSetting("deviceNode") );
@@ -83,15 +83,15 @@ bool TelldusSettings::setName(int intDeviceId, const char* strNewName){
 /*
 * Get the device vendor
 */
-char* TelldusSettings::getVendor(int intDeviceId){
-	return getStringSetting(intDeviceId, "vendor", false);
+char* TelldusSettings::getProtocol(int intDeviceId){
+	return getStringSetting(intDeviceId, "protocol", false);
 }
 
 /*
 * Set the device vendor
 */
-bool TelldusSettings::setVendor(int intDeviceId, const char* strVendor){
-	return setStringSetting(intDeviceId, "vendor", strVendor, false);
+bool TelldusSettings::setProtocol(int intDeviceId, const char* strVendor){
+	return setStringSetting(intDeviceId, "protocol", strVendor, false);
 }
 
 /*
