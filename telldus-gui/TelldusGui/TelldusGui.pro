@@ -27,6 +27,7 @@ macx {
         telldus-core
     ICON = images/telldussetup.icns
     TARGET = TelldusGui
+    CONFIG += lib_bundle
 }
 !macx { 
     LIBS += -l \
