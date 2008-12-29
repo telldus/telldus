@@ -1,4 +1,3 @@
-
 SET( telldus-core_SRCS
 	Device.cpp
 	DeviceIkea.cpp
@@ -14,6 +13,7 @@ SET( telldus-core_HDRS
 )
 	
 IF (APPLE)
+	SET( telldus-core_TARGET	TelldusCore )
 	SET( telldus-core_SRCS
 		${telldus-core_SRCS}
 		win/Device.cpp
@@ -23,6 +23,7 @@ IF (APPLE)
 		-D_MACOSX
 	)
 ELSE (APPLE)
+	SET( telldus-core_TARGET	telldus-core )
 	SET( telldus-core_SRCS
 		${telldus-core_SRCS}
 		linux/Device.cpp
@@ -34,36 +35,37 @@ ELSE (APPLE)
 
 ENDIF (APPLE)
 
-ADD_LIBRARY(telldus-core SHARED
+ADD_LIBRARY(${telldus-core_TARGET} SHARED
 	${telldus-core_SRCS}
 	${telldus-core_HDRS}
 	)
 	
-SET_PROPERTY(TARGET telldus-core
+SET_PROPERTY(TARGET ${telldus-core_TARGET}
 	PROPERTY PUBLIC_HEADER {$telldus-core_HDRS}
 )
 
 
 IF (APPLE)
 	FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
+	FIND_LIBRARY(FTD2XX_LIBRARY ftd2xx)
 
-	TARGET_LINK_LIBRARIES(telldus-core
+	TARGET_LINK_LIBRARIES(${telldus-core_TARGET}
 		${COREFOUNDATION_LIBRARY}
-		ftd2xx
+		${FTD2XX_LIBRARY}
 	)
-	SET_PROPERTY(TARGET	telldus-core
+	SET_PROPERTY(TARGET	${telldus-core_TARGET}
 		PROPERTY FRAMEWORK TRUE	
 	)
 
 ELSE (APPLE)
-	TARGET_LINK_LIBRARIES(telldus-core
+	TARGET_LINK_LIBRARIES(${telldus-core_TARGET}
 		confuse
 	)
 ENDIF (APPLE)
 
-INSTALL(TARGETS telldus-core
+INSTALL(TARGETS ${telldus-core_TARGET}
 	DESTINATION lib
-	PUBLIC_HEADER       DESTINATION         ${HEADER_DIR}
+#	PUBLIC_HEADER       DESTINATION         ${HEADER_DIR}
 	)
 
 SET(SYSCONF_INSTALL_DIR
@@ -78,3 +80,4 @@ IF (UNIX)
 		DESTINATION ${SYSCONF_INSTALL_DIR} 
 	)
 ENDIF (UNIX)
+
