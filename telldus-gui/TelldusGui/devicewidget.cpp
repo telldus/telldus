@@ -5,6 +5,7 @@
 #include <QVBoxLayout>
 #include <QHBoxLayout>
 #include <QMessageBox>
+#include <QHeaderView>
 
 #include "editdevicedialog.h"
 
@@ -19,7 +20,10 @@ DeviceWidget::DeviceWidget(QWidget *parent) :
 	deviceView.resizeColumnsToContents();
 	deviceView.resizeRowsToContents();
 	deviceView.setAlternatingRowColors( true );
+	deviceView.setShowGrid( false );
 	deviceView.setSelectionBehavior( QAbstractItemView::SelectRows );
+	deviceView.horizontalHeader()->setStretchLastSection( true );
+	deviceView.verticalHeader()->hide();
 	connect( &deviceView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(listActivated(const QModelIndex &)) );
 
 	QVBoxLayout *layout = new QVBoxLayout(this);
