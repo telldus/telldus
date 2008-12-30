@@ -51,11 +51,11 @@ const QString &Device::name() {
 }
 
 void Device::setParameter( const QString &name, const QString &value ) {
-	tdSetArgument(p_id, name.toLocal8Bit(), value.toLocal8Bit());
+	tdSetDeviceParameter(p_id, name.toLocal8Bit(), value.toLocal8Bit());
 }
 
 QString Device::parameter( const QString &name, const QString &defaultValue ) const {
-	char *p = tdGetArgument(p_id, name.toLocal8Bit(), defaultValue.toLocal8Bit());
+	char *p = tdGetDeviceParameter(p_id, name.toLocal8Bit(), defaultValue.toLocal8Bit());
 	QString param( p );
 	free(p);
 	return param;
