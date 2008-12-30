@@ -354,13 +354,13 @@ bool WINAPI tdSetArgument(int intDeviceId, const char *strName, const char *strV
 	return false;
 }
 
-const char * WINAPI tdGetArgument(int intDeviceId, const char *strName, const char *defaultValue){
+char * WINAPI tdGetArgument(int intDeviceId, const char *strName, const char *defaultValue){
 	char *strReturn = "";
 	try{
 		TelldusSettings ts;
 		strReturn = ts.getArgument(intDeviceId, strName);
 		if (strReturn == NULL) {
-			return defaultValue;
+			strReturn = strdup(defaultValue);
 		}
 #ifdef _WINDOWS
 		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
