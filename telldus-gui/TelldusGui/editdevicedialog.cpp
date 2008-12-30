@@ -3,7 +3,10 @@
 #include "vendordevicetreeitem.h"
 #include "device.h"
 
+#include "devicesettingikea.h"
 #include "devicesettingnexa.h"
+#include "devicesettingnexabell.h"
+#include "devicesettingsartano.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -79,7 +82,10 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
 	layout->addWidget(buttonBox);
 
-	deviceSettings[1] = new DeviceSettingNexa();
+	deviceSettings[1] = new DeviceSettingNexa(device, this);
+	deviceSettings[2] = new DeviceSettingSartano(device, this);
+	deviceSettings[3] = new DeviceSettingIkea(device, this);
+	deviceSettings[4] = new DeviceSettingNexaBell(device, this);
 	foreach( DeviceSetting *s, deviceSettings ) {
 		settingsLayout->addWidget( s );
 	}
@@ -103,7 +109,12 @@ void EditDeviceDialog::selectionChanged( const QModelIndex & index ) {
 	}
 
 	deviceImage->setPixmap( item->image() );
-	settingsLayout->setCurrentIndex( item->widget() );
+
+	int widget = item->widget();
+	if (widget >= settingsLayout->count()) {
+		widget = 0;
+	}
+	settingsLayout->setCurrentIndex( widget );
 }
 
 void EditDeviceDialog::okClicked() {
@@ -132,6 +143,11 @@ void EditDeviceDialog::okClicked() {
 	device->setName( nameLineEdit->text().trimmed() );
 	device->setModel( item->deviceModel() );
 	device->setProtocol( item->deviceProtocol() );
+
+	DeviceSetting *w = qobject_cast<DeviceSetting *>(settingsLayout->currentWidget());
+	if (w) {
+		w->saveParameters();
+	}
 
 	this->accept();
 }

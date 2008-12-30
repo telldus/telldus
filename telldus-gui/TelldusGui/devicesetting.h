@@ -1,7 +1,7 @@
 //
 // C++ Interface: devicesetting
 //
-// Description: 
+// Description:
 //
 //
 // Author: Micke Prag <micke.prag@telldus.se>, (C) 2007
@@ -13,7 +13,8 @@
 #define DEVICESETTING_H
 
 #include <QWidget>
-//#include "deviceinfo.h"
+
+class Device;
 
 /**
 	@author Micke Prag <micke.prag@telldus.se>
@@ -22,16 +23,15 @@ class DeviceSetting : public QWidget
 {
 Q_OBJECT
 public:
-	DeviceSetting(QWidget *parent = 0);
+	DeviceSetting(Device *device, QWidget *parent = 0);
 
-	~DeviceSetting();
+	virtual ~DeviceSetting();
 
-//public slots:
-//	virtual void setDevice( DeviceInfo * );
-//	virtual void saveSetting() = 0;
+public slots:
+	virtual void saveParameters() = 0;
 
-//protected:
-//	DeviceInfo *p_dev;
+protected:
+	Device *p_device;
 };
 
 #endif

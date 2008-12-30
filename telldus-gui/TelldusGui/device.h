@@ -22,6 +22,9 @@ public:
 	void setName( const QString & name );
 	const QString &name();
 
+	void setParameter( const QString &name, const QString &value );
+	QString parameter( const QString &name, const QString &defaultValue ) const;
+
 	void setProtocol( const QString & protocol );
 	const QString &protocol();
 

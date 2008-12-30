@@ -1,7 +1,7 @@
 //
 // C++ Implementation: devicesetting
 //
-// Description: 
+// Description:
 //
 //
 // Author: Micke Prag <micke.prag@telldus.se>, (C) 2007
@@ -11,8 +11,9 @@
 //
 #include "devicesetting.h"
 
-DeviceSetting::DeviceSetting(QWidget *parent)
- : QWidget(parent)
+DeviceSetting::DeviceSetting(Device *device, QWidget *parent)
+	: QWidget(parent),
+	p_device(device)
 {
 }
 
@@ -20,12 +21,3 @@ DeviceSetting::DeviceSetting(QWidget *parent)
 DeviceSetting::~DeviceSetting()
 {
 }
-
-
-/**
- * @fn DeviceSetting::setDevice( DeviceInfo * )
- */
-//void DeviceSetting::setDevice( DeviceInfo *device )
-//{
-//	p_dev = device;
-//}

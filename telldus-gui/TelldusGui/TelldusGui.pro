@@ -10,7 +10,10 @@ SOURCES += telldusgui.cpp \
     editdevicedialog.cpp \
     vendordevicemodel.cpp \
     vendordevicetreeitem.cpp \
+    devicesettingikea.cpp \
     devicesettingnexa.cpp \
+    devicesettingnexabell.cpp \
+    devicesettingsartano.cpp \
     devicesetting.cpp
 HEADERS += telldusgui.h \
     devicewidget.h \
@@ -19,7 +22,10 @@ HEADERS += telldusgui.h \
     editdevicedialog.h \
     vendordevicemodel.h \
     vendordevicetreeitem.h \
+    devicesettingikea.h \
     devicesettingnexa.h \
+    devicesettingnexabell.h \
+    devicesettingsartano.h \
     devicesetting.h
 FORMS += 
 macx { 

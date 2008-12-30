@@ -1,7 +1,7 @@
 //
 // C++ Implementation: devicesettingnexa
 //
-// Description: 
+// Description:
 //
 //
 // Author: Micke Prag <micke.prag@telldus.se>, (C) 2007
@@ -10,27 +10,34 @@
 //
 //
 #include "devicesettingnexa.h"
+#include "device.h"
 #include <QGridLayout>
 #include <QDial>
 #include <QLabel>
 
-DeviceSettingNexa::DeviceSettingNexa(QWidget *parent)
- : DeviceSetting(parent)
+DeviceSettingNexa::DeviceSettingNexa(Device *device, QWidget *parent)
+ : DeviceSetting(device, parent),
+	dialHouse(0),
+	dialUnit(0),
+	labelHouse(0),
+	labelUnit(0)
 {
-	gridLayout1 = new QGridLayout(this);
-	gridLayout1->setSpacing(6);
-	gridLayout1->setMargin(9);
-	gridLayout1->setObjectName(QString::fromUtf8("gridLayout1"));
-	
-	dialCode = new QDial(this);
-	dialCode->setObjectName(QString::fromUtf8("dialCode"));
-	dialCode->setMinimum(1);
-	dialCode->setMaximum(16);
-	dialCode->setPageStep(1);
-	dialCode->setOrientation(Qt::Horizontal);
-	dialCode->setNotchesVisible(true);
+	QGridLayout *gridLayout = new QGridLayout(this);
+	gridLayout->setSpacing(6);
+	gridLayout->setMargin(9);
+	gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
 
-	gridLayout1->addWidget(dialCode, 1, 1, 1, 1);
+	QLabel *labelHouseTitle = new QLabel(this);
+	labelHouseTitle->setObjectName(QString::fromUtf8("labelHouseTitle"));
+	labelHouseTitle->setAlignment(Qt::AlignCenter);
+	labelHouseTitle->setText( tr("Housecode") );
+	gridLayout->addWidget(labelHouseTitle, 0, 0, 1, 1);
+
+	QLabel *labelUnitTitle = new QLabel(this);
+	labelUnitTitle->setObjectName(QString::fromUtf8("label_2"));
+	labelUnitTitle->setAlignment(Qt::AlignCenter);
+	labelUnitTitle->setText( tr("Unitcode") );
+	gridLayout->addWidget(labelUnitTitle, 0, 1, 1, 1);
 
 	dialHouse = new QDial(this);
 	dialHouse->setObjectName(QString::fromUtf8("dialHouse"));
@@ -39,38 +46,37 @@ DeviceSettingNexa::DeviceSettingNexa(QWidget *parent)
 	dialHouse->setPageStep(1);
 	dialHouse->setOrientation(Qt::Horizontal);
 	dialHouse->setNotchesVisible(true);
+	gridLayout->addWidget(dialHouse, 1, 0, 1, 1);
 
-	gridLayout1->addWidget(dialHouse, 1, 0, 1, 1);
-
-	label = new QLabel(this);
-	label->setObjectName(QString::fromUtf8("label"));
-	label->setAlignment(Qt::AlignCenter);
-	label->setText( tr("Housecode") );
-
-	gridLayout1->addWidget(label, 0, 0, 1, 1);
-
-	label_2 = new QLabel(this);
-	label_2->setObjectName(QString::fromUtf8("label_2"));
-	label_2->setAlignment(Qt::AlignCenter);
-	label_2->setText( tr("Unitcode") );
-
-	gridLayout1->addWidget(label_2, 0, 1, 1, 1);
+	dialUnit = new QDial(this);
+	dialUnit->setObjectName(QString::fromUtf8("dialCode"));
+	dialUnit->setMinimum(1);
+	dialUnit->setMaximum(16);
+	dialUnit->setPageStep(1);
+	dialUnit->setOrientation(Qt::Horizontal);
+	dialUnit->setNotchesVisible(true);
+	gridLayout->addWidget(dialUnit, 1, 1, 1, 1);
 
 	labelHouse = new QLabel(this);
 	labelHouse->setObjectName(QString::fromUtf8("labelHouse"));
 	labelHouse->setAlignment(Qt::AlignCenter);
 	labelHouse->setText( "A" );
+	gridLayout->addWidget(labelHouse, 2, 0, 1, 1);
+
+	labelUnit = new QLabel(this);
+	labelUnit->setObjectName(QString::fromUtf8("labelUnit"));
+	labelUnit->setAlignment(Qt::AlignCenter);
+	labelUnit->setText( "1" );
+	gridLayout->addWidget(labelUnit, 2, 1, 1, 1);
+
 	connect( dialHouse, SIGNAL( valueChanged( int ) ), this, SLOT( houseChanged(int) ) );
+	connect( dialUnit, SIGNAL(valueChanged(int)), labelUnit, SLOT(setNum(int)) );
 
-	gridLayout1->addWidget(labelHouse, 2, 0, 1, 1);
+	QString strHouse = device->parameter("nexa_house", "A");
+	uint intHouse = strHouse[0].toAscii() - 'A';
+	dialHouse->setValue( intHouse );
 
-	label_4 = new QLabel(this);
-	label_4->setObjectName(QString::fromUtf8("label_4"));
-	label_4->setAlignment(Qt::AlignCenter);
-	label_4->setText( "1" );
-	connect( dialCode, SIGNAL(valueChanged(int)), label_4, SLOT(setNum(int)) );
-
-	gridLayout1->addWidget(label_4, 2, 1, 1, 1);
+	dialUnit->setValue( device->parameter("nexa_unit", "1").toInt() );
 }
 
 
@@ -78,30 +84,11 @@ DeviceSettingNexa::~DeviceSettingNexa()
 {
 }
 
+void DeviceSettingNexa::saveParameters() {
+	p_device->setParameter( "nexa_house", QString('A' + dialHouse->value()) );
+	p_device->setParameter( "nexa_unit", QString::number(dialUnit->value()) );
+}
 
-/**
- * @fn DeviceSettingNexa::setDevice( DeviceInfo * )
- */
-//void DeviceSettingNexa::setDevice( DeviceInfo *device )
-//{
-//	DeviceSetting::setDevice( device );
-//	QString strHouse = device->setting("nexa_house", "A");
-//	uint intHouse = strHouse[0].toAscii() - 'A';
-//	dialHouse->setValue( intHouse );
-// 	dialCode->setValue( device->setting("nexa_unit", "1").toInt() );
-//}
-//
-///**
-// * @fn DeviceSettingNexa::saveSetting()
-// */
-//void DeviceSettingNexa::saveSetting() {
-//	p_dev->setSetting( "nexa_house", QString('A' + dialHouse->value()) );
-//	p_dev->setSetting( "nexa_unit", QString::number(dialCode->value()) );
-//}
-
-/**
- * @fn DeviceSettingNexa::houseChanged( int house )
- */
 void DeviceSettingNexa::houseChanged( int house )
 {
 	labelHouse->setText( QString('A' + house) );

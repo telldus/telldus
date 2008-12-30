@@ -9,10 +9,10 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef DEVICESETTINGNEXA_H
-#define DEVICESETTINGNEXA_H
+#ifndef DEVICESETTINGNEXABELL_H
+#define DEVICESETTINGNEXABELL_H
 
-#include "devicesetting.h"
+#include <devicesetting.h>
 
 class QGridLayout;
 class QDial;
@@ -21,13 +21,13 @@ class QLabel;
 /**
 	@author Micke Prag <micke.prag@telldus.se>
 */
-class DeviceSettingNexa : public DeviceSetting
+class DeviceSettingNexaBell : public DeviceSetting
 {
 Q_OBJECT
 public:
-	DeviceSettingNexa(Device *device, QWidget *parent = 0);
+	DeviceSettingNexaBell(Device *device, QWidget *parent = 0);
 
-	virtual ~DeviceSettingNexa();
+	virtual ~DeviceSettingNexaBell();
 
 public slots:
 	virtual void saveParameters();
@@ -38,9 +38,8 @@ protected slots:
 protected:
 	QGridLayout *gridLayout1;
 	QDial *dialHouse;
-	QDial *dialUnit;
+	QLabel *label;
 	QLabel *labelHouse;
-	QLabel *labelUnit;
 };
 
 #endif
