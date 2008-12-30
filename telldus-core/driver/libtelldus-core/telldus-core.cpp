@@ -342,11 +342,11 @@ bool WINAPI tdSetModel(int intDeviceId, int intModel){
 	return blnSuccess;
 }
 
-bool WINAPI tdSetArgument(int intDeviceId, const char *strName, const char *strValue){
+bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const char *strValue){
 
 	try{
 		TelldusSettings ts;
-		return ts.setArgument(intDeviceId, strName, strValue);
+		return ts.setDeviceParameter(intDeviceId, strName, strValue);
 	}
 	catch(exception e){
 		handleException(e);
@@ -354,11 +354,11 @@ bool WINAPI tdSetArgument(int intDeviceId, const char *strName, const char *strV
 	return false;
 }
 
-char * WINAPI tdGetArgument(int intDeviceId, const char *strName, const char *defaultValue){
+char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const char *defaultValue){
 	char *strReturn = "";
 	try{
 		TelldusSettings ts;
-		strReturn = ts.getArgument(intDeviceId, strName);
+		strReturn = ts.getDeviceParameter(intDeviceId, strName);
 		if (strReturn == NULL) {
 			strReturn = strdup(defaultValue);
 		}
