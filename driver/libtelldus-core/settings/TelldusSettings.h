@@ -19,8 +19,8 @@ public:
 	bool setProtocol(int intDeviceId, const char* strVendor);
 	int getModel(int intDeviceId);
 	bool setModel(int intDeviceId, int intModel);
-	char* getArgument(int intDeviceId, const char *strName);
-	bool setArgument(int intDeviceId, const char *strName, const char *strValue);
+	char* getDeviceParameter(int intDeviceId, const char *strName);
+	bool setDeviceParameter(int intDeviceId, const char *strName, const char *strValue);
 	int addDevice();
 	int getDeviceId(int intDeviceIndex);
 	bool removeDevice(int intDeviceId);

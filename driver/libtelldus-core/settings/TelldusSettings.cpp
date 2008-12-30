@@ -22,28 +22,28 @@ Device* TelldusSettings::getDevice(int intDeviceId){
 
 		//each new brand must be added here
 		if (strcmp(protocol, "Nexa") == 0){
-			char *strHouse = getArgument(intDeviceId, "nexa_house");
-			char *strCode = getArgument(intDeviceId, "nexa_unit");
+			char *strHouse = getDeviceParameter(intDeviceId, "nexa_house");
+			char *strCode = getDeviceParameter(intDeviceId, "nexa_unit");
 			dev = new DeviceNexa(strHouse, strCode);
 			free(strHouse);
 			free(strCode);
 		
 		} else if (strcmp(protocol, "Waveman") == 0) {
-			char *strHouse = getArgument(intDeviceId, "nexa_house");
-			char *strCode = getArgument(intDeviceId, "nexa_unit");
+			char *strHouse = getDeviceParameter(intDeviceId, "nexa_house");
+			char *strCode = getDeviceParameter(intDeviceId, "nexa_unit");
 			dev = new DeviceWaveman(strHouse, strCode);
 			free(strHouse);
 			free(strCode);
 
 		} else if (strcmp(protocol, "Sartano") == 0) {
-			char *strCode = getArgument(intDeviceId, "sartano_code");
+			char *strCode = getDeviceParameter(intDeviceId, "sartano_code");
 			dev = new DeviceSartano(strCode);
 			free(strCode);
 
 		} else if (strcmp(protocol, "Ikea") == 0) {
-			char *strSystem = getArgument(intDeviceId, "ikea_system");
-			char *strUnits = getArgument(intDeviceId, "ikea_units");
-			char *strFade = getArgument(intDeviceId, "ikea_fade");
+			char *strSystem = getDeviceParameter(intDeviceId, "ikea_system");
+			char *strUnits = getDeviceParameter(intDeviceId, "ikea_units");
+			char *strFade = getDeviceParameter(intDeviceId, "ikea_fade");
 			dev = new DeviceIkea(strSystem, strUnits, strFade);
 			free(strSystem);
 			free(strUnits);
@@ -111,13 +111,13 @@ bool TelldusSettings::setModel(int intDeviceId, int intModel){
 /*
 * Set device argument
 */
-bool TelldusSettings::setArgument(int intDeviceId, const char *strName, const char *strValue){
+bool TelldusSettings::setDeviceParameter(int intDeviceId, const char *strName, const char *strValue){
 	return setStringSetting(intDeviceId, strName, strValue, true);
 }
 
 /*
 * Get device argument
 */
-char* TelldusSettings::getArgument(int intDeviceId, const char *strName) {
+char* TelldusSettings::getDeviceParameter(int intDeviceId, const char *strName) {
 	return getStringSetting(intDeviceId, strName, true);
 }

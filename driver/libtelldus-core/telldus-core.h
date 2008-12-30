@@ -42,8 +42,8 @@ extern "C" {
 	TELLSTICK_API int WINAPI tdGetModel(int intDeviceId);
 	TELLSTICK_API bool WINAPI tdSetModel(int intDeviceId, int intModel);
 	
-	TELLSTICK_API char * WINAPI tdGetArgument(int intDeviceId, const char *strName, const char *defaultValue);
-	TELLSTICK_API bool WINAPI tdSetArgument(int intDeviceId, const char *strName, const char* strValue);
+	TELLSTICK_API char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const char *defaultValue);
+	TELLSTICK_API bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const char* strValue);
 	
 	TELLSTICK_API int WINAPI tdAddDevice();
 	TELLSTICK_API bool WINAPI tdRemoveDevice(int intDeviceId);
