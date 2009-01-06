@@ -34,7 +34,7 @@ DeviceSettingNexa::DeviceSettingNexa(Device *device, QWidget *parent)
 	gridLayout->addWidget(labelHouseTitle, 0, 0, 1, 1);
 
 	QLabel *labelUnitTitle = new QLabel(this);
-	labelUnitTitle->setObjectName(QString::fromUtf8("label_2"));
+	labelUnitTitle->setObjectName(QString::fromUtf8("labelUnitTitle"));
 	labelUnitTitle->setAlignment(Qt::AlignCenter);
 	labelUnitTitle->setText( tr("Unitcode") );
 	gridLayout->addWidget(labelUnitTitle, 0, 1, 1, 1);
