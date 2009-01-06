@@ -23,6 +23,10 @@ Device::~Device(void)
 #endif
 }
 
+int Device::getModel() {
+	return 1;
+}
+
 /*
 * Turn on, virtual
 */

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "telldus-core.h"
+#include <string>
 //#include <QMutex>
 
 class Device
@@ -13,7 +14,9 @@ public:
 	virtual int turnOff(void);
 	virtual int bell(void);
 	virtual int dim(unsigned char level);
-	virtual int methods(int intModel, int methodsSupported) = 0;
+	virtual int methods(int methodsSupported) = 0;
+	virtual std::string getProtocol() = 0;
+	int getModel();
 	
 #ifdef _LINUX
 	void setDevice(const char *device);

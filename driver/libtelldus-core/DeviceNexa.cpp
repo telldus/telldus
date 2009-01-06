@@ -145,8 +145,9 @@ string DeviceNexa::getStringCode(int intToConvert){
 /*
 * Has the device got the method?
 */
-int DeviceNexa::methods(int intModel, int methodsSupported){
-
+int DeviceNexa::methods(int methodsSupported){
+	int intModel = this->getModel();
+	
 	if( (intModel == TELLSTICK_DEVICE_YCR3500) ||
 		(intModel == TELLSTICK_DEVICE_YCR300D) ||
 		(intModel == TELLSTICK_DEVICE_WSR1000) ||
@@ -182,4 +183,8 @@ int DeviceNexa::methods(int intModel, int methodsSupported){
 		}
 	}
 	return 0;
+}
+
+std::string DeviceNexa::getProtocol() {
+	return "arctech";
 }

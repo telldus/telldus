@@ -9,7 +9,8 @@ public:
 	virtual int turnOn(void);
 	virtual int turnOff(void);
 	virtual int bell(void);
-	virtual int methods(int intModel, int methodsSupported);
+	virtual int methods(int methodsSupported);
+	virtual std::string getProtocol();
 	
 public:
 	~DeviceNexa(void);

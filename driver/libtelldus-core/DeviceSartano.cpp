@@ -67,7 +67,7 @@ int DeviceSartano::turnOff(void){
 /*
 * Has the device got the method?
 */
-int DeviceSartano::methods(int, int){
+int DeviceSartano::methods(int){
 	return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
 }
 
@@ -96,5 +96,9 @@ string DeviceSartano::getStringCode(void){
 	}
 	return strReturn;
 
+}
+
+std::string DeviceSartano::getProtocol() {
+	return "sartano";
 }
 
