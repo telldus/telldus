@@ -1,6 +1,7 @@
 #pragma once
 
 #include "telldus-core.h"
+//#include <QMutex>
 
 class Device
 {
@@ -12,7 +13,7 @@ public:
 	virtual int turnOff(void);
 	virtual int bell(void);
 	virtual int dim(unsigned char level);
-	virtual int methods(int intModel);
+	virtual int methods(int intModel, int methodsSupported) = 0;
 	
 #ifdef _LINUX
 	void setDevice(const char *device);
@@ -22,4 +23,7 @@ protected:
 
 protected:
 	int send(char* strMessage);
+
+//private:
+//	static QMutex deviceMutex;
 };

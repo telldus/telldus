@@ -9,7 +9,7 @@ public:
 	virtual int turnOn(void);
 	virtual int turnOff(void);
 	virtual int dim(unsigned char level);
-	virtual int methods(int intModel);
+	virtual int methods(int intModel, int methodsSupported);
 	
 public:
 	~DeviceIkea(void);
