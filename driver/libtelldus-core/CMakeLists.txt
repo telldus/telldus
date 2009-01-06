@@ -1,10 +1,15 @@
+FIND_PACKAGE( Qt4 REQUIRED )
+SET( QT_DONT_USE_QTGUI TRUE )
+INCLUDE( ${QT_USE_FILE} )
+
 SET( telldus-core_SRCS
+	Controller.cpp
 	Device.cpp
 	DeviceIkea.cpp
 	DeviceNexa.cpp
 	DeviceSartano.cpp
 	DeviceWaveman.cpp
-	settings/TelldusSettings.cpp
+	Settings.cpp
 	telldus-core.cpp
 	)
 
@@ -17,7 +22,7 @@ IF (APPLE)
 	SET( telldus-core_SRCS
 		${telldus-core_SRCS}
 		win/Device.cpp
-		settings/TelldusSettingsCoreFoundationPreferences.cpp
+		SettingsCoreFoundationPreferences.cpp
 	)
 	ADD_DEFINITIONS(
 		-D_MACOSX
@@ -27,7 +32,7 @@ ELSE (APPLE)
 	SET( telldus-core_SRCS
 		${telldus-core_SRCS}
 		linux/Device.cpp
-		settings/TelldusSettingsConfuse.cpp
+		SettingsConfuse.cpp
 	)
 	ADD_DEFINITIONS(
 		-D_LINUX
@@ -51,6 +56,7 @@ IF (APPLE)
 
 	TARGET_LINK_LIBRARIES(${telldus-core_TARGET}
 		${COREFOUNDATION_LIBRARY}
+		${QT_LIBRARIES}
 		${FTD2XX_LIBRARY}
 	)
 	SET_PROPERTY(TARGET	${telldus-core_TARGET}
@@ -59,6 +65,7 @@ IF (APPLE)
 
 ELSE (APPLE)
 	TARGET_LINK_LIBRARIES(${telldus-core_TARGET}
+		${QT_LIBRARIES}
 		confuse
 	)
 ENDIF (APPLE)
