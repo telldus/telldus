@@ -20,7 +20,7 @@ DeviceSettingSartano::DeviceSettingSartano(Device *device, QWidget *parent)
  : DeviceSetting(device, parent)
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
-	QGridLayout *gl = new QGridLayout(this);
+	QGridLayout *gl = new QGridLayout;
 
 	for( int i = 0; i < 10; ++i ) {
 		QButtonGroup *g = new QButtonGroup(this);
@@ -32,34 +32,28 @@ DeviceSettingSartano::DeviceSettingSartano(Device *device, QWidget *parent)
 
 		gl->addWidget(button1[i], 1, i);
 		gl->addWidget(button0[i], 0, i);
+		QLabel *label = 0;
 		if (i < 5) {
-			gl->addWidget( new QLabel(QString::number(i+1), this), 2, i );
+			label = new QLabel(QString::number(i+1), this);
 		} else {
-			gl->addWidget( new QLabel(QString('A'+i-5), this), 2, i );
+			label = new QLabel(QString('A'+i-5), this);
 		}
+		gl->addWidget( label, 2, i );
 	}
 
 	layout->addLayout( gl );
 	layout->addStretch( 1 );
-}
 
-DeviceSettingSartano::~DeviceSettingSartano() {
-}
-
-/**
-void DeviceSettingSartano::setDevice( DeviceInfo *device )
-{
-	DeviceSetting::setDevice( device );
-
-	QString setting = device->setting("sartano_code", "0000000000");
+	QString setting = device->parameter("sartano_code", "0000000000");
 	for (int i = 0; i < 10; ++i) {
-		qDebug(QString(setting[i]).toAscii());
 		if (setting[i] == '0') {
 			button1[i]->setChecked(true);
 		}
 	}
 }
-*/
+
+DeviceSettingSartano::~DeviceSettingSartano() {
+}
 
 void DeviceSettingSartano::saveParameters() {
 	QString setting;
