@@ -194,10 +194,14 @@ string DeviceIkea::getStringCode(unsigned char level){
 /*
 * Has the device got the method?
 */
-int DeviceIkea::methods(int intModel, int){
+int DeviceIkea::methods(int){
 
-	if(intModel == TELLSTICK_DEVICE_KOPPLA) {
+	if(this->getModel() == TELLSTICK_DEVICE_KOPPLA) {
 		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_DIM);
 	}
 	return 0;
+}
+
+std::string DeviceIkea::getProtocol() {
+	return "ikea";
 }
