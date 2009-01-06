@@ -145,7 +145,7 @@ string DeviceNexa::getStringCode(int intToConvert){
 /*
 * Has the device got the method?
 */
-int DeviceNexa::methods(int intModel){
+int DeviceNexa::methods(int intModel, int methodsSupported){
 
 	if( (intModel == TELLSTICK_DEVICE_YCR3500) ||
 		(intModel == TELLSTICK_DEVICE_YCR300D) ||
@@ -175,7 +175,11 @@ int DeviceNexa::methods(int intModel){
 	{
 		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
 	} else if ( intModel == TELLSTICK_DEVICE_ML7100) {
-		return TELLSTICK_BELL;
+		if (methodsSupported & TELLSTICK_BELL) {
+			return TELLSTICK_BELL;
+		} else if (methodsSupported & TELLSTICK_TURNON) {
+			return TELLSTICK_TURNON;
+		}
 	}
 	return 0;
 }

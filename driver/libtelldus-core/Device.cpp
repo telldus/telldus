@@ -50,10 +50,3 @@ int Device::bell(void){
 int Device::dim(unsigned char level){
 	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 }
-
-/*
-* Methods, virtual
-*/
-int Device::methods(int intModel){
-	return 0;
-}
