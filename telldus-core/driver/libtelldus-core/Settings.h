@@ -11,7 +11,6 @@ public:
 	Settings(void);
 	const char * getSetting(const char *strName);
 	int getNumberOfDevices(void);
-	Device* getDevice(int intDeviceId);
 	char* getName(int intDeviceId);
 	bool setName(int intDeviceId, const char* strNewName);
 	char* getProtocol(int intDeviceId);
