@@ -33,6 +33,8 @@ int Device::send(char* strMessage) {
 
 	close(fd);
 	
+	sleep(1);
+	
 	return TELLSTICK_SUCCESS;
 }
 

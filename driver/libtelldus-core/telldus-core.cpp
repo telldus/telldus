@@ -9,7 +9,7 @@
 	#include <ole2.h>
 #endif
 #include "telldus-core.h"
-#include "Settings.h"
+#include "Manager.h"
 #include "Device.h"
 #include <vector>
 #include <iostream>
@@ -19,6 +19,8 @@
 
 void handleException(std::exception e);
 using namespace std;
+
+char *wrapStdString( const std::string &string);
 
 /**
  * @def TELLSTICK_TURNON
@@ -59,9 +61,13 @@ using namespace std;
 
 #define MAX_LOADSTRING 100
 
-//TODO:
-//delete on created objects
-//comment (just copy from the called methods)
+/**
+ * Close the library and clean up the cache it uses.
+ * This should be called when the library is not supposed to be used anymore
+ **/
+void WINAPI tdClose(void) {
+	Manager::close();
+}
 
 /**
  * Turns a device on.
@@ -72,11 +78,11 @@ using namespace std;
 int WINAPI tdTurnOn(int intDeviceId){
 
 	try{
-		Settings ts;
-		Device* dev = ts.getDevice(intDeviceId);
+		Manager *manager = Manager::getInstance();
+		Device* dev = manager->getDevice(intDeviceId);
 		if(dev != NULL){
-			int model = ts.getModel( intDeviceId );
-			int methods = dev->methods( model, TELLSTICK_TURNON );
+			int model = dev->getModel();
+			int methods = dev->methods( TELLSTICK_TURNON );
 			
 			int retval = 0;
 			
@@ -86,7 +92,6 @@ int WINAPI tdTurnOn(int intDeviceId){
 				retval = dev->turnOn();
 			}
 
-			delete(dev);
 			return retval;
 		} else{
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
@@ -107,11 +112,11 @@ int WINAPI tdTurnOn(int intDeviceId){
 int WINAPI tdTurnOff(int intDeviceId){
 
 	try{
-		Settings ts;
-		Device* dev = ts.getDevice(intDeviceId);
+		Manager *manager = Manager::getInstance();
+		Device* dev = manager->getDevice(intDeviceId);
 		if(dev != NULL){
-			int model = ts.getModel( intDeviceId );
-			int methods = dev->methods( model, TELLSTICK_TURNOFF );
+			int model = dev->getModel( );
+			int methods = dev->methods( TELLSTICK_TURNOFF );
 			int retval = 0;
 
 			if ( !(methods & TELLSTICK_TURNOFF) ) {
@@ -120,7 +125,6 @@ int WINAPI tdTurnOff(int intDeviceId){
 				retval = dev->turnOff();
 			}
 
-			delete(dev);
 			return retval;
 		}
 		else{
@@ -142,11 +146,10 @@ int WINAPI tdTurnOff(int intDeviceId){
 int WINAPI tdBell(int intDeviceId){
 
 	try{
-		Settings ts;
-		Device* dev = ts.getDevice(intDeviceId);
+		Manager *manager = Manager::getInstance();
+		Device* dev = manager->getDevice(intDeviceId);
 		if(dev != NULL){
-			int model = ts.getModel( intDeviceId );
-			int methods = dev->methods( model, TELLSTICK_BELL );
+			int methods = dev->methods( TELLSTICK_BELL );
 			int retval = 0;
 
 			if ( !(methods & TELLSTICK_BELL) ) {
@@ -155,7 +158,6 @@ int WINAPI tdBell(int intDeviceId){
 				retval = dev->bell();
 			}
 
-			delete(dev);
 			return retval;
 		}
 		else{
@@ -177,11 +179,10 @@ int WINAPI tdBell(int intDeviceId){
  */
 int WINAPI tdDim(int intDeviceId, unsigned char level){
 	try{
-		Settings ts;
-		Device* dev = ts.getDevice(intDeviceId);
+		Manager *manager = Manager::getInstance();
+		Device* dev = manager->getDevice(intDeviceId);
 		if(dev != NULL){
-			int model = ts.getModel( intDeviceId );
-			int methods = dev->methods( model, TELLSTICK_DIM );
+			int methods = dev->methods( TELLSTICK_DIM );
 			int retval = 0;
 
 			if ( !(methods & TELLSTICK_DIM) ) {
@@ -196,7 +197,6 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
 				}
 			}
 
-			delete(dev);
 			return retval;
 		}
 		else{
@@ -258,19 +258,18 @@ int WINAPI tdGetDeviceId(int intDeviceIndex){
  * @returns The name of the device or an empty string if the device is not found.
  */
 char * WINAPI tdGetName(int intDeviceId){
-	char* strReturn;
+	std::string strReturn;
 	try{
 		Settings ts;
-		strReturn = ts.getName(intDeviceId);
-#ifdef _WINDOWS
-		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
-#endif
+		char *name = ts.getName(intDeviceId);
+		strReturn = name;
+		free(name);
 	}
 	catch(exception e){
 		strReturn = "";
 		handleException(e);
 	}
-	return strReturn;
+	return wrapStdString(strReturn);
 }
 
 bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
@@ -287,19 +286,18 @@ bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
 }
 
 char* WINAPI tdGetProtocol(int intDeviceId){
-	char* strReturn = "";
+	std::string strReturn = "";
 	try{
-		Settings ts;
-		strReturn = ts.getProtocol(intDeviceId);
-#ifdef _WINDOWS
-		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
-#endif
+		Manager *manager = Manager::getInstance();
+		Device* dev = manager->getDevice(intDeviceId);
+		if (dev != NULL) {
+			strReturn = dev->getProtocol();
+		}
 	}
 	catch(exception e){
-		strReturn = "";
 		handleException(e);
 	}
-	return strReturn;
+	return wrapStdString(strReturn);
 }
 
 bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
@@ -420,11 +418,10 @@ int WINAPI tdMethods(int id, int methodsSupported){
 
 	int intMethods = 0;
 	try{
-		Settings ts;
-		int intModel = ts.getModel(id);
-		Device* dev = ts.getDevice(id);
+		Manager *manager = Manager::getInstance();
+		Device* dev = manager->getDevice(id);
 		if (dev != NULL) {
-			intMethods = dev->methods(intModel, methodsSupported);
+			intMethods = dev->methods(methodsSupported);
 		}
 	}
 	catch(exception e){
@@ -488,6 +485,17 @@ void handleException(exception e){
 			errorfile.close();
 		}
 	}
+}
+
+inline char *wrapStdString( const std::string &string) {
+	char *returnVal;
+#ifdef _WINDOWS
+	returnVal = (char *)SysAllocStringByteLen(string.c_str(), string.size());
+#else
+	returnVal = (char *)malloc(sizeof(char) * (string.size()+1));
+	strcpy(returnVal, string.c_str());
+#endif
+	return returnVal;
 }
 
 /*\@}*/

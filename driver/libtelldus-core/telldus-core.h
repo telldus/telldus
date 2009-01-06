@@ -24,6 +24,7 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
+	TELLSTICK_API void WINAPI tdClose(void);
 	TELLSTICK_API int WINAPI tdTurnOn(int intDeviceId);
 	TELLSTICK_API int WINAPI tdTurnOff(int intDeviceId);
 	TELLSTICK_API int WINAPI tdBell(int intDeviceId);
