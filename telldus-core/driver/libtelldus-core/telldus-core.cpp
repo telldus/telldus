@@ -9,7 +9,7 @@
 	#include <ole2.h>
 #endif
 #include "telldus-core.h"
-#include "settings/TelldusSettings.h"
+#include "Settings.h"
 #include "Device.h"
 #include <vector>
 #include <iostream>
@@ -72,11 +72,11 @@ using namespace std;
 int WINAPI tdTurnOn(int intDeviceId){
 
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
 			int model = ts.getModel( intDeviceId );
-			int methods = dev->methods( model );
+			int methods = dev->methods( model, TELLSTICK_TURNON );
 			
 			int retval = 0;
 			
@@ -88,8 +88,7 @@ int WINAPI tdTurnOn(int intDeviceId){
 
 			delete(dev);
 			return retval;
-		}
-		else{
+		} else{
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
 	}
@@ -108,11 +107,11 @@ int WINAPI tdTurnOn(int intDeviceId){
 int WINAPI tdTurnOff(int intDeviceId){
 
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
 			int model = ts.getModel( intDeviceId );
-			int methods = dev->methods( model );
+			int methods = dev->methods( model, TELLSTICK_TURNOFF );
 			int retval = 0;
 
 			if ( !(methods & TELLSTICK_TURNOFF) ) {
@@ -143,11 +142,11 @@ int WINAPI tdTurnOff(int intDeviceId){
 int WINAPI tdBell(int intDeviceId){
 
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
 			int model = ts.getModel( intDeviceId );
-			int methods = dev->methods( model );
+			int methods = dev->methods( model, TELLSTICK_BELL );
 			int retval = 0;
 
 			if ( !(methods & TELLSTICK_BELL) ) {
@@ -178,11 +177,11 @@ int WINAPI tdBell(int intDeviceId){
  */
 int WINAPI tdDim(int intDeviceId, unsigned char level){
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		Device* dev = ts.getDevice(intDeviceId);
 		if(dev != NULL){
 			int model = ts.getModel( intDeviceId );
-			int methods = dev->methods( model );
+			int methods = dev->methods( model, TELLSTICK_DIM );
 			int retval = 0;
 
 			if ( !(methods & TELLSTICK_DIM) ) {
@@ -217,7 +216,7 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
 int WINAPI tdGetNumberOfDevices(void){
 	int intReturn = -1;
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		intReturn = ts.getNumberOfDevices();
 	}
 	catch(exception e){
@@ -243,7 +242,7 @@ int WINAPI tdGetNumberOfDevices(void){
 int WINAPI tdGetDeviceId(int intDeviceIndex){
 	int intReturn = -1;
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		intReturn = ts.getDeviceId(intDeviceIndex);
 	}
 	catch(exception e){
@@ -261,7 +260,7 @@ int WINAPI tdGetDeviceId(int intDeviceIndex){
 char * WINAPI tdGetName(int intDeviceId){
 	char* strReturn;
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		strReturn = ts.getName(intDeviceId);
 #ifdef _WINDOWS
 		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
@@ -277,7 +276,7 @@ char * WINAPI tdGetName(int intDeviceId){
 bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
 	bool blnSuccess = false;
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		blnSuccess = ts.setName(intDeviceId, strNewName);
 	}
 	catch(exception e){
@@ -290,7 +289,7 @@ bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
 char* WINAPI tdGetProtocol(int intDeviceId){
 	char* strReturn = "";
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		strReturn = ts.getProtocol(intDeviceId);
 #ifdef _WINDOWS
 		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
@@ -306,7 +305,7 @@ char* WINAPI tdGetProtocol(int intDeviceId){
 bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
 	bool blnSuccess = false;
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		blnSuccess = ts.setProtocol(intDeviceId, strProtocol);
 	}
 	catch(exception e){
@@ -319,7 +318,7 @@ bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
 int WINAPI tdGetModel(int intDeviceId){
 	int intReturn = 0;
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		intReturn = ts.getModel(intDeviceId);
 	}
 	catch(exception e){
@@ -332,7 +331,7 @@ int WINAPI tdGetModel(int intDeviceId){
 bool WINAPI tdSetModel(int intDeviceId, int intModel){
 	bool blnSuccess = false;
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		blnSuccess = ts.setModel(intDeviceId, intModel);
 	}
 	catch(exception e){
@@ -345,7 +344,7 @@ bool WINAPI tdSetModel(int intDeviceId, int intModel){
 bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const char *strValue){
 
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		return ts.setDeviceParameter(intDeviceId, strName, strValue);
 	}
 	catch(exception e){
@@ -357,7 +356,7 @@ bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const cha
 char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const char *defaultValue){
 	char *strReturn = "";
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		strReturn = ts.getDeviceParameter(intDeviceId, strName);
 		if (strReturn == NULL) {
 			strReturn = strdup(defaultValue);
@@ -375,7 +374,7 @@ char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const c
 int WINAPI tdAddDevice(){
 	int intNewDeviceId = -1;
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		intNewDeviceId = ts.addDevice();
 	}
 	catch(exception e){
@@ -388,7 +387,7 @@ int WINAPI tdAddDevice(){
 bool WINAPI tdRemoveDevice(int intDeviceId){
 	bool blnSuccess = false;
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		blnSuccess = ts.removeDevice(intDeviceId);
 	}
 	catch(exception e){
@@ -399,8 +398,17 @@ bool WINAPI tdRemoveDevice(int intDeviceId){
 }
 
 /**
- * Query a device for which methods it supports.
+ * Query a device for which methods it supports. By supplying the methods you support
+ * the library could remap the methods a device support for better fit the application.
+ * Example of querying a device supporting TELLSTICK_BELL:
+ * \code
+ * int methods = tdMethods(id, TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL);
+ * //methods is now TELLSTICK_BELL
+ * int methods = tdMethods(idm TELLSTICK_TURNON | TELLSTICK_TURNOFF);
+ * //methods is now TELLSTICK_TURNON because the client application doesn't support TELLSTICK_BELL
+ * \endcode
  * @param id The device id to query
+ * @param methodsSupported The methods the client application supports
  * @returns The method-flags OR'ed into an integer.
  * @sa TELLSTICK_TURNON
  * @sa TELLSTICK_TURNOFF
@@ -408,21 +416,22 @@ bool WINAPI tdRemoveDevice(int intDeviceId){
  * @sa TELLSTICK_TOGGLE
  * @sa TELLSTICK_DIM
  */
-int WINAPI tdMethods(int id){
+int WINAPI tdMethods(int id, int methodsSupported){
 
 	int intMethods = 0;
 	try{
-		TelldusSettings ts;
+		Settings ts;
 		int intModel = ts.getModel(id);
 		Device* dev = ts.getDevice(id);
 		if (dev != NULL) {
-			intMethods = dev->methods(intModel);
+			intMethods = dev->methods(intModel, methodsSupported);
 		}
 	}
 	catch(exception e){
 		intMethods = 0;
 		handleException(e);
 	}
+	intMethods = intMethods & methodsSupported; //Strip the methods not supported by client.
 	return intMethods;
 }
 

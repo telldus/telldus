@@ -1,16 +1,15 @@
-#ifndef TELLDUSSETTINGS_H
-#define TELLDUSSETTINGS_H
+#ifndef SETTINGS_H
+#define SETTINGS_H
 
-#include "../Device.h"
-//#include <vector>
+#include "Device.h"
 
 class privateVars;
 
-class TelldusSettings
+class Settings
 {
 public:
-	TelldusSettings(void);
-	char * getSetting(const char *strName);
+	Settings(void);
+	const char * getSetting(const char *strName);
 	int getNumberOfDevices(void);
 	Device* getDevice(int intDeviceId);
 	char* getName(int intDeviceId);
@@ -25,7 +24,7 @@ public:
 	int getDeviceId(int intDeviceIndex);
 	bool removeDevice(int intDeviceId);
 
-	~TelldusSettings(void);
+	~Settings(void);
 	
 protected:
 	char *getStringSetting(int intDeviceId, const char* name, bool parameter);

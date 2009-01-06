@@ -9,7 +9,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "TelldusSettings.h"
+#include "Settings.h"
 #include <confuse.h>
 #include <stdlib.h>
 #include <string.h>
@@ -28,7 +28,7 @@ const char* CONFIG_FILE = "/etc/tellstick.conf";
 /*
 * Constructor
 */
-TelldusSettings::TelldusSettings(void)
+Settings::Settings(void)
 {
 	d = new privateVars();
 	readConfig(&d->cfg);
@@ -37,7 +37,7 @@ TelldusSettings::TelldusSettings(void)
 /*
 * Destructor
 */
-TelldusSettings::~TelldusSettings(void)
+Settings::~Settings(void)
 {
 	if (d->cfg > 0)
 		cfg_free(d->cfg);
@@ -47,7 +47,7 @@ TelldusSettings::~TelldusSettings(void)
 /*
 * Return a setting
 */
-char *TelldusSettings::getSetting(const char *strName) {
+const char *Settings::getSetting(const char *strName) {
 	if (d->cfg > 0) {
 		return cfg_getstr(d->cfg, strName);
 	}
@@ -57,14 +57,14 @@ char *TelldusSettings::getSetting(const char *strName) {
 /*
 * Return the number of stored devices
 */
-int TelldusSettings::getNumberOfDevices(void){
+int Settings::getNumberOfDevices(void){
 	if (d->cfg > 0) {
 		return cfg_size(d->cfg, "device");
 	}
 	return 0;
 }
 
-int TelldusSettings::getDeviceId(int intDeviceIndex){
+int Settings::getDeviceId(int intDeviceIndex){
 	if (intDeviceIndex >= getNumberOfDevices()) { //Out of bounds
 		return -1;
 	}
@@ -76,7 +76,7 @@ int TelldusSettings::getDeviceId(int intDeviceIndex){
 /*
 * Add a new device
 */
-int TelldusSettings::addDevice(){
+int Settings::addDevice(){
 	int intDeviceId = getNextDeviceId();
 
 	FILE *fp = fopen(CONFIG_FILE, "w");
@@ -93,7 +93,7 @@ int TelldusSettings::addDevice(){
 /*
 * Get next available device id
 */
-int TelldusSettings::getNextDeviceId(){
+int Settings::getNextDeviceId(){
 	int intDeviceId = 0;
 	cfg_t *cfg_device;
 	for (int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
@@ -109,7 +109,7 @@ int TelldusSettings::getNextDeviceId(){
 /*
 * Remove a device
 */
-bool TelldusSettings::removeDevice(int intDeviceId){
+bool Settings::removeDevice(int intDeviceId){
 	bool blnSuccess = true;
 	FILE *fp = fopen(CONFIG_FILE, "w");
 	
@@ -141,7 +141,7 @@ bool TelldusSettings::removeDevice(int intDeviceId){
 	return blnSuccess;
 }
 
-char *TelldusSettings::getStringSetting(int intDeviceId, const char* name, bool parameter) {
+char *Settings::getStringSetting(int intDeviceId, const char* name, bool parameter) {
 	if (d->cfg == 0) {
 		return NULL;
 	}
@@ -164,7 +164,7 @@ char *TelldusSettings::getStringSetting(int intDeviceId, const char* name, bool 
 	return NULL;
 }
 
-bool TelldusSettings::setStringSetting(int intDeviceId, const char* name, const char *value, bool parameter) {
+bool Settings::setStringSetting(int intDeviceId, const char* name, const char *value, bool parameter) {
 	if (d->cfg == 0) {
 		return false;
 	}
@@ -187,7 +187,7 @@ bool TelldusSettings::setStringSetting(int intDeviceId, const char* name, const 
 	return false;
 }
 
-int TelldusSettings::getIntSetting(int intDeviceId, const char* name, bool parameter) {
+int Settings::getIntSetting(int intDeviceId, const char* name, bool parameter) {
 	if (d->cfg == 0) {
 		return 0;
 	}
@@ -204,7 +204,7 @@ int TelldusSettings::getIntSetting(int intDeviceId, const char* name, bool param
 	return 0;
 }
 
-bool TelldusSettings::setIntSetting(int intDeviceId, const char* name, int value, bool parameter) {
+bool Settings::setIntSetting(int intDeviceId, const char* name, int value, bool parameter) {
 	if (d->cfg == 0) {
 		return false;
 	}
