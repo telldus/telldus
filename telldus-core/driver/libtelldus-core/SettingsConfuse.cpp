@@ -229,7 +229,11 @@ bool TelldusSettings::setIntSetting(int intDeviceId, const char* name, int value
 
 
 bool readConfig(cfg_t **cfg) {
-	cfg_opt_t parameter_opts[] = {
+	cfg_opt_t controller_opts[] = {
+		CFG_INT("id", -1, CFGF_NONE),
+	};
+	
+	cfg_opt_t device_parameter_opts[] = {
 		//Nexa
 		CFG_STR("nexa_house", 0, CFGF_NONE),
 		CFG_STR("nexa_unit", 0, CFGF_NONE),
@@ -248,9 +252,10 @@ bool readConfig(cfg_t **cfg) {
 	cfg_opt_t device_opts[] = {
 		CFG_INT("id", -1, CFGF_NONE),
 		CFG_STR("name", "Unnamed", CFGF_NONE),
-		CFG_STR("protocol", "Nexa", CFGF_NONE),
+		CFG_INT("controller", 0, CFGF_NONE),
+		CFG_STR("protocol", "arctech", CFGF_NONE),
 		CFG_INT("model", 1, CFGF_NONE),
-		CFG_SEC("parameters", parameter_opts, CFGF_NONE),
+		CFG_SEC("parameters", device_parameter_opts, CFGF_NONE),
 		CFG_END()
 	};
 	

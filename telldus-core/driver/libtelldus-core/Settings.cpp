@@ -21,26 +21,26 @@ Device* TelldusSettings::getDevice(int intDeviceId){
 		}
 
 		//each new brand must be added here
-		if (strcmp(protocol, "Nexa") == 0){
+		if (strcasecmp(protocol, "arctech") == 0){
 			char *strHouse = getDeviceParameter(intDeviceId, "nexa_house");
 			char *strCode = getDeviceParameter(intDeviceId, "nexa_unit");
 			dev = new DeviceNexa(strHouse, strCode);
 			free(strHouse);
 			free(strCode);
 		
-		} else if (strcmp(protocol, "Waveman") == 0) {
+		} else if (strcasecmp(protocol, "Waveman") == 0) {
 			char *strHouse = getDeviceParameter(intDeviceId, "nexa_house");
 			char *strCode = getDeviceParameter(intDeviceId, "nexa_unit");
 			dev = new DeviceWaveman(strHouse, strCode);
 			free(strHouse);
 			free(strCode);
 
-		} else if (strcmp(protocol, "Sartano") == 0) {
+		} else if (strcasecmp(protocol, "Sartano") == 0) {
 			char *strCode = getDeviceParameter(intDeviceId, "sartano_code");
 			dev = new DeviceSartano(strCode);
 			free(strCode);
 
-		} else if (strcmp(protocol, "Ikea") == 0) {
+		} else if (strcasecmp(protocol, "Ikea") == 0) {
 			char *strSystem = getDeviceParameter(intDeviceId, "ikea_system");
 			char *strUnits = getDeviceParameter(intDeviceId, "ikea_units");
 			char *strFade = getDeviceParameter(intDeviceId, "ikea_fade");
