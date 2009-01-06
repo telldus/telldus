@@ -64,21 +64,11 @@ DeviceSettingIkea::DeviceSettingIkea(Device *device, QWidget *parent)
 
 	layout->addLayout( gl );
 	layout->addStretch( 1 );
-}
 
+	//Restore the settings
+	spinBox->setValue( device->parameter("ikea_system", "1").toInt() );
 
-DeviceSettingIkea::~DeviceSettingIkea()
-{
-}
-
-/**
-void DeviceSettingIkea::setDevice( DeviceInfo *device )
-{
-	DeviceSetting::setDevice( device );
-
-	spinBox->setValue( device->setting("ikea_system", "1").toInt() );
-
-	QString setting = device->setting("ikea_units", "");
+	QString setting = device->parameter("ikea_units", "");
 	if (setting != "") {
 		QStringList units = setting.split(",");
 		for(int i = 0; i < units.size(); ++i) {
@@ -92,10 +82,17 @@ void DeviceSettingIkea::setDevice( DeviceInfo *device )
 		}
 	}
 
-	QString fade = device->setting("ikea_fade", "false");
-	if (fade.compare("true", Qt::CaseInsensitive) == 0)
+	QString fade = device->parameter("ikea_fade", "false");
+	if (fade.compare("true", Qt::CaseInsensitive) == 0) {
 		smooth->setChecked( true );
-}*/
+	}
+
+}
+
+
+DeviceSettingIkea::~DeviceSettingIkea()
+{
+}
 
 void DeviceSettingIkea::saveParameters() {
 	p_device->setParameter( "ikea_system", QString::number(spinBox->value()) ); //System
