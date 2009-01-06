@@ -1,8 +1,8 @@
-#include "TelldusSettings.h"
-#include "../DeviceNexa.h"
-#include "../DeviceWaveman.h"
-#include "../DeviceSartano.h"
-#include "../DeviceIkea.h"
+#include "Settings.h"
+#include "DeviceNexa.h"
+#include "DeviceWaveman.h"
+#include "DeviceSartano.h"
+#include "DeviceIkea.h"
 #include <string.h>
 #include <stdlib.h>
 
@@ -10,7 +10,7 @@
 * Get the requested device
 * Note that the returned Device should be deleted when not in use anymore
 */
-Device* TelldusSettings::getDevice(int intDeviceId){
+Device* Settings::getDevice(int intDeviceId){
 
 	Device* dev = NULL;
 
@@ -69,55 +69,55 @@ Device* TelldusSettings::getDevice(int intDeviceId){
 /*
 * Get the name of the device
 */
-char* TelldusSettings::getName(int intDeviceId){
+char* Settings::getName(int intDeviceId){
 	return getStringSetting(intDeviceId, "name", false);
 }
 
 /*
 * Set the name of the device
 */
-bool TelldusSettings::setName(int intDeviceId, const char* strNewName){
+bool Settings::setName(int intDeviceId, const char* strNewName){
 	return setStringSetting(intDeviceId, "name", strNewName, false);
 }
 
 /*
 * Get the device vendor
 */
-char* TelldusSettings::getProtocol(int intDeviceId){
+char* Settings::getProtocol(int intDeviceId){
 	return getStringSetting(intDeviceId, "protocol", false);
 }
 
 /*
 * Set the device vendor
 */
-bool TelldusSettings::setProtocol(int intDeviceId, const char* strVendor){
+bool Settings::setProtocol(int intDeviceId, const char* strVendor){
 	return setStringSetting(intDeviceId, "protocol", strVendor, false);
 }
 
 /*
 * Get the device model
 */
-int TelldusSettings::getModel(int intDeviceId){
+int Settings::getModel(int intDeviceId){
 	return getIntSetting(intDeviceId, "model", false);
 }
 
 /*
 * Set the device model
 */
-bool TelldusSettings::setModel(int intDeviceId, int intModel){
+bool Settings::setModel(int intDeviceId, int intModel){
 	return setIntSetting(intDeviceId, "model", intModel, false);
 }
 
 /*
 * Set device argument
 */
-bool TelldusSettings::setDeviceParameter(int intDeviceId, const char *strName, const char *strValue){
+bool Settings::setDeviceParameter(int intDeviceId, const char *strName, const char *strValue){
 	return setStringSetting(intDeviceId, strName, strValue, true);
 }
 
 /*
 * Get device argument
 */
-char* TelldusSettings::getDeviceParameter(int intDeviceId, const char *strName) {
+char* Settings::getDeviceParameter(int intDeviceId, const char *strName) {
 	return getStringSetting(intDeviceId, strName, true);
 }
