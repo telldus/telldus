@@ -18,10 +18,16 @@
 DeviceSettingNexaBell::DeviceSettingNexaBell(Device *device, QWidget *parent)
  : DeviceSetting(device, parent)
 {
-	gridLayout1 = new QGridLayout(this);
-	gridLayout1->setSpacing(6);
-	gridLayout1->setMargin(9);
-	gridLayout1->setObjectName(QString::fromUtf8("gridLayout1"));
+	QGridLayout *gridLayout = new QGridLayout(this);
+	gridLayout->setSpacing(6);
+	gridLayout->setMargin(9);
+	gridLayout->setObjectName(QString::fromUtf8("gridLayout"));
+
+	QLabel *labelHouseTitle = new QLabel(this);
+	labelHouseTitle->setObjectName(QString::fromUtf8("labelHouseTitle"));
+	labelHouseTitle->setAlignment(Qt::AlignCenter);
+	labelHouseTitle->setText( tr("Housecode") );
+	gridLayout->addWidget(labelHouseTitle, 0, 0, 1, 1);
 
 	dialHouse = new QDial(this);
 	dialHouse->setObjectName(QString::fromUtf8("dialHouse"));
@@ -30,24 +36,19 @@ DeviceSettingNexaBell::DeviceSettingNexaBell(Device *device, QWidget *parent)
 	dialHouse->setPageStep(1);
 	dialHouse->setOrientation(Qt::Horizontal);
 	dialHouse->setNotchesVisible(true);
-
-	gridLayout1->addWidget(dialHouse, 1, 0, 1, 1);
-
-	label = new QLabel(this);
-	label->setObjectName(QString::fromUtf8("label"));
-	label->setAlignment(Qt::AlignCenter);
-	label->setText( tr("Housecode") );
-
-	gridLayout1->addWidget(label, 0, 0, 1, 1);
+	gridLayout->addWidget(dialHouse, 1, 0, 1, 1);
 
 	labelHouse = new QLabel(this);
 	labelHouse->setObjectName(QString::fromUtf8("labelHouse"));
 	labelHouse->setAlignment(Qt::AlignCenter);
 	labelHouse->setText( "A" );
+	gridLayout->addWidget(labelHouse, 2, 0, 1, 1);
+
 	connect( dialHouse, SIGNAL( valueChanged( int ) ), this, SLOT( houseChanged(int) ) );
 
-	gridLayout1->addWidget(labelHouse, 2, 0, 1, 1);
-
+	QString strHouse = device->parameter("nexa_house", "A");
+	uint intHouse = strHouse[0].toAscii() - 'A';
+	dialHouse->setValue( intHouse );
 }
 
 
@@ -55,24 +56,10 @@ DeviceSettingNexaBell::~DeviceSettingNexaBell()
 {
 }
 
-
-/**
-void DeviceSettingNexaBell::setDevice( DeviceInfo *device )
-{
-	DeviceSetting::setDevice( device );
-	QString strHouse = device->setting("nexa_house", "A");
-	uint intHouse = strHouse[0].toAscii() - 'A';
-	dialHouse->setValue( intHouse );
-}
-*/
-
 void DeviceSettingNexaBell::saveParameters() {
 	p_device->setParameter( "nexa_house", QString('A' + dialHouse->value()) );
 }
 
-/**
- * @fn DeviceSettingNexaBell::houseChanged( int house )
- */
 void DeviceSettingNexaBell::houseChanged( int house )
 {
 	labelHouse->setText( QString('A' + house) );

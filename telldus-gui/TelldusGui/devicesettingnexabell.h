@@ -36,9 +36,7 @@ protected slots:
 	void houseChanged( int house );
 
 protected:
-	QGridLayout *gridLayout1;
 	QDial *dialHouse;
-	QLabel *label;
 	QLabel *labelHouse;
 };
 
