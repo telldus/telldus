@@ -48,45 +48,35 @@ Device *Manager::getDevice(int intDeviceId){
 	}
 
 	try{
-		char* protocol = settings.getProtocol(intDeviceId);
-		if (protocol == NULL) {
+		std::string protocol = settings.getProtocol(intDeviceId);
+		if (protocol.length() == 0) {
 			return NULL;
 		}
 
 		//each new brand must be added here
-		if (strcasecmp(protocol, "arctech") == 0){
-			char *strHouse = settings.getDeviceParameter(intDeviceId, "nexa_house");
-			char *strCode = settings.getDeviceParameter(intDeviceId, "nexa_unit");
+		if (strcasecmp(protocol.c_str(), "arctech") == 0){
+			std::string strHouse = settings.getDeviceParameter(intDeviceId, "nexa_house");
+			std::string strCode = settings.getDeviceParameter(intDeviceId, "nexa_unit");
 			dev = new DeviceNexa(strHouse, strCode);
-			free(strHouse);
-			free(strCode);
-		
-		} else if (strcasecmp(protocol, "Waveman") == 0) {
-			char *strHouse = settings.getDeviceParameter(intDeviceId, "nexa_house");
-			char *strCode = settings.getDeviceParameter(intDeviceId, "nexa_unit");
+	
+		} else if (strcasecmp(protocol.c_str(), "Waveman") == 0) {
+			std::string strHouse = settings.getDeviceParameter(intDeviceId, "nexa_house");
+			std::string strCode = settings.getDeviceParameter(intDeviceId, "nexa_unit");
 			dev = new DeviceWaveman(strHouse, strCode);
-			free(strHouse);
-			free(strCode);
 
-		} else if (strcasecmp(protocol, "Sartano") == 0) {
-			char *strCode = settings.getDeviceParameter(intDeviceId, "sartano_code");
+		} else if (strcasecmp(protocol.c_str(), "Sartano") == 0) {
+			std::string strCode = settings.getDeviceParameter(intDeviceId, "sartano_code");
 			dev = new DeviceSartano(strCode);
-			free(strCode);
 
-		} else if (strcasecmp(protocol, "Ikea") == 0) {
-			char *strSystem = settings.getDeviceParameter(intDeviceId, "ikea_system");
-			char *strUnits = settings.getDeviceParameter(intDeviceId, "ikea_units");
-			char *strFade = settings.getDeviceParameter(intDeviceId, "ikea_fade");
+		} else if (strcasecmp(protocol.c_str(), "Ikea") == 0) {
+			std::string strSystem = settings.getDeviceParameter(intDeviceId, "ikea_system");
+			std::string strUnits = settings.getDeviceParameter(intDeviceId, "ikea_units");
+			std::string strFade = settings.getDeviceParameter(intDeviceId, "ikea_fade");
 			dev = new DeviceIkea(strSystem, strUnits, strFade);
-			free(strSystem);
-			free(strUnits);
-			free(strFade);
 
 		} else {
-			free(protocol);
 			return NULL;
 		}
-		free(protocol);
 
 #ifdef _LINUX
 		dev->setDevice( settings.getSetting("deviceNode") );
