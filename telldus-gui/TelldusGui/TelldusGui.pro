@@ -40,4 +40,7 @@ macx {
         telldus-core
     TARGET = telldus-gui
 }
+win32 {
+    LIBS += -L .
+}
 RESOURCES += telldusgui.qrc
