@@ -25,7 +25,7 @@ protected:
 #endif
 
 protected:
-	int send(char* strMessage);
+	int send(const std::string &strMessage);
 
 //private:
 //	static QMutex deviceMutex;
