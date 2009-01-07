@@ -4,27 +4,19 @@
 /*
 * Constructor
 */
-Device::Device()
+Device::Device(int model)
+	: model(model)
 {
-#ifdef _LINUX
-	strDevice = 0;
-#endif
 }
 
 /*
 * Destructor
 */
-Device::~Device(void)
-{
-#ifdef _LINUX
-	if (strDevice != 0) {
-		free(strDevice);
-	}
-#endif
+Device::~Device(void) {
 }
 
 int Device::getModel() {
-	return 1;
+	return model;
 }
 
 /*

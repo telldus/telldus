@@ -7,7 +7,7 @@
 class Device
 {
 public:
-	Device();
+	Device(int model);
 	~Device(void);
 	
 	virtual int turnOn(void);
@@ -19,14 +19,15 @@ public:
 	int getModel();
 	
 #ifdef _LINUX
-	void setDevice(const char *device);
+	void setDevice(const std::string &device);
 protected:
-	char *strDevice;
+	std::string strDevice;
 #endif
 
 protected:
 	int send(const std::string &strMessage);
 
-//private:
+private:
+	int model;
 //	static QMutex deviceMutex;
 };

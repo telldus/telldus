@@ -10,8 +10,8 @@ using namespace std;
 /*
 * Constructor
 */
-DeviceSartano::DeviceSartano(const std::string &strNewCode)
-	:Device()
+DeviceSartano::DeviceSartano(int model, const std::string &strNewCode)
+	:Device(model)
 {
 	strCode = strNewCode;
 }

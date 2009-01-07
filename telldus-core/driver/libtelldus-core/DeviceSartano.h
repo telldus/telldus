@@ -6,7 +6,7 @@
 class DeviceSartano : public Device
 {
 public:
-	DeviceSartano(const std::string &strCode);
+	DeviceSartano(int model, const std::string &strCode);
 	virtual int turnOn(void);
 	virtual int turnOff(void);
 	virtual int methods(int methodsSupported);

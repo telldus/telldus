@@ -52,27 +52,28 @@ Device *Manager::getDevice(int intDeviceId){
 		if (protocol.length() == 0) {
 			return NULL;
 		}
+		int intModel = settings.getModel(intDeviceId);
 
 		//each new brand must be added here
 		if (strcasecmp(protocol.c_str(), "arctech") == 0){
 			std::string strHouse = settings.getDeviceParameter(intDeviceId, "nexa_house");
 			std::string strCode = settings.getDeviceParameter(intDeviceId, "nexa_unit");
-			dev = new DeviceNexa(strHouse, strCode);
+			dev = new DeviceNexa(intModel, strHouse, strCode);
 	
 		} else if (strcasecmp(protocol.c_str(), "Waveman") == 0) {
 			std::string strHouse = settings.getDeviceParameter(intDeviceId, "nexa_house");
 			std::string strCode = settings.getDeviceParameter(intDeviceId, "nexa_unit");
-			dev = new DeviceWaveman(strHouse, strCode);
+			dev = new DeviceWaveman(intModel, strHouse, strCode);
 
 		} else if (strcasecmp(protocol.c_str(), "Sartano") == 0) {
 			std::string strCode = settings.getDeviceParameter(intDeviceId, "sartano_code");
-			dev = new DeviceSartano(strCode);
+			dev = new DeviceSartano(intModel, strCode);
 
 		} else if (strcasecmp(protocol.c_str(), "Ikea") == 0) {
 			std::string strSystem = settings.getDeviceParameter(intDeviceId, "ikea_system");
 			std::string strUnits = settings.getDeviceParameter(intDeviceId, "ikea_units");
 			std::string strFade = settings.getDeviceParameter(intDeviceId, "ikea_fade");
-			dev = new DeviceIkea(strSystem, strUnits, strFade);
+			dev = new DeviceIkea(intModel, strSystem, strUnits, strFade);
 
 		} else {
 			return NULL;
