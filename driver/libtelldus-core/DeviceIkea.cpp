@@ -13,8 +13,8 @@
 /*
 * Constructor
 */
-DeviceIkea::DeviceIkea(const std::string &strSystem, const std::string &strUnits, const std::string &strFadeStyle)
-	:Device()
+DeviceIkea::DeviceIkea(int model, const std::string &strSystem, const std::string &strUnits, const std::string &strFadeStyle)
+	:Device(model)
 {
 	if (strSystem.length() > 0) {
 		intSystem = atoi(strSystem.c_str()) - 1;

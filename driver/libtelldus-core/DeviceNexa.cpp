@@ -9,8 +9,8 @@
 /*
 * Constructor
 */
-DeviceNexa::DeviceNexa(const std::string &strHouse, const std::string &strCode)
-	:Device()
+DeviceNexa::DeviceNexa(int model, const std::string &strHouse, const std::string &strCode)
+	:Device(model)
 {
 	if (strHouse.length() > 0) {
 		intHouse = strHouse[0] - 'A';
