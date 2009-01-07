@@ -453,20 +453,15 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
 		"Device not found",
 		"The method you tried to use is not supported by the device"
 	};
-	char *strReturn;
+	std::string strReturn;
 	intErrorNo = abs(intErrorNo); //We don't use negative values here.
 	if (intErrorNo >= numResponses) {
 		strReturn = "Unknown error";
 	} else {
 		// Copy the error string to strReturn
-		strReturn = (char *)malloc( sizeof(char) * (strlen(responses[intErrorNo])+1) );
- 		strcpy( strReturn, responses[intErrorNo] );
+		strReturn = responses[intErrorNo];
 	}
-
-#ifdef _WINDOWS
-	strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
-#endif
-	return strReturn;
+	return wrapStdString(strReturn);
 }
 
 
