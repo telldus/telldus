@@ -1,18 +1,34 @@
-#ifndef TELLDUSGUI_GLOBAL_H
-#define TELLDUSGUI_GLOBAL_H
+#ifndef TELLDUSGUI_H
+#define TELLDUSGUI_H
 
-#include <QtCore/qglobal.h>
+// The following ifdef block is the standard way of creating macros
+// which make exporting from a DLL simpler.  All files within this DLL
+// are compiled with the TELLDUSGUI_EXPORTS symbol defined on the command line.
+// This symbol should not be defined on any project that uses this DLL.
+// This way any other project whose source files include this file see
+// TELLSTICK_API functions as being imported from a DLL, whereas this DLL
+// sees symbols defined with this macro as being exported.
 
-#if defined(TELLDUSGUI_LIBRARY)
-#  define TELLDUSGUISHARED_EXPORT Q_DECL_EXPORT
+#ifdef _WINDOWS
+	#ifdef TELLDUSGUI_EXPORTS
+		#define TELLSTICK_API __declspec(dllexport)
+	#else
+		#define TELLSTICK_API __declspec(dllimport)
+	#endif
+	#define WINAPI __stdcall
 #else
-#  define TELLDUSGUISHARED_EXPORT Q_DECL_IMPORT
+	#define WINAPI
+	#define TELLSTICK_API
 #endif
 
 class QWidget;
 
+#ifdef __cplusplus
 extern "C" {
-	QWidget *tdDeviceWidget( QWidget *parent = 0 );
+#endif
+	TELLSTICK_API QWidget WINAPI *tdDeviceWidget( QWidget *parent = 0 );
+#ifdef __cplusplus
 }
+#endif
 
-#endif // TELLDUSGUI_GLOBAL_H
+#endif // TELLDUSGUI_H
