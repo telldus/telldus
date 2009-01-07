@@ -5,7 +5,7 @@
 class DeviceNexa : public Device
 {
 public:
-	DeviceNexa(char *strHouse, char *strCode);
+	DeviceNexa(const std::string &strHouse, const std::string &strCode);
 	virtual int turnOn(void);
 	virtual int turnOff(void);
 	virtual int bell(void);
