@@ -20,7 +20,7 @@
 void handleException(std::exception e);
 using namespace std;
 
-char *wrapStdString( const std::string &string);
+inline char *wrapStdString( const std::string &string);
 
 /**
  * @def TELLSTICK_TURNON
@@ -261,9 +261,7 @@ char * WINAPI tdGetName(int intDeviceId){
 	std::string strReturn;
 	try{
 		Settings ts;
-		char *name = ts.getName(intDeviceId);
-		strReturn = name;
-		free(name);
+		strReturn = ts.getName(intDeviceId);
 	}
 	catch(exception e){
 		strReturn = "";
@@ -352,21 +350,18 @@ bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const cha
 }
 
 char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const char *defaultValue){
-	char *strReturn = "";
+	std::string strReturn = "";
 	try{
 		Settings ts;
 		strReturn = ts.getDeviceParameter(intDeviceId, strName);
-		if (strReturn == NULL) {
-			strReturn = strdup(defaultValue);
+		if (strReturn.empty()) {
+			strReturn = defaultValue;
 		}
-#ifdef _WINDOWS
-		strReturn = (char *)SysAllocStringByteLen (strReturn, lstrlen(strReturn));
-#endif
 	}
 	catch(exception e){
 		handleException(e);
 	}
-	return strReturn;
+	return wrapStdString(strReturn);
 }
 
 int WINAPI tdAddDevice(){
@@ -470,11 +465,11 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
 //*
 void handleException(exception e){
 
-	char* strLogName = "errorlog.txt";
+	std::string strLogName = "errorlog.txt";
 	//char* strLogName = "";
 
-	if(strlen(strLogName) > 0){
-		ofstream errorfile(strLogName, ios::app);
+	if(strLogName.length() > 0){
+		ofstream errorfile(strLogName.c_str(), ios::app);
 		if(errorfile){
 			errorfile << e.what() << endl;
 			errorfile.close();
