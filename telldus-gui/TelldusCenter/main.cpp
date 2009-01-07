@@ -15,14 +15,14 @@ int main(int argc, char *argv[])
 	MainWindow *w = new MainWindow();
 	w->show();
 
-	AutoUpdater* updater = 0;
 #ifdef Q_WS_MAC
+	AutoUpdater* updater = 0;
 	CocoaInitializer initializer;
 	updater = new SparkleAutoUpdater("file:///Users/micke/Documents/dev/appcast.xml");
-#endif
 	if (updater) {
 		//updater->checkForUpdates();
 	}
+#endif
 
 	return application.exec();
 }
