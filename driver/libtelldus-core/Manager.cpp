@@ -25,6 +25,8 @@
 #define strcasecmp _stricmp
 #endif
 
+using namespace TelldusCore;
+
 Manager *Manager::instance = 0;
 
 Manager::Manager() {

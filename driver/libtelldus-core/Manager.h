@@ -14,29 +14,32 @@
 
 #include "Settings.h"
 #include <map>
-class Device;
 
-typedef std::map<int, Device *> DeviceMap;
+namespace TelldusCore {
+	class Device;
 
-/**
-	@author Micke Prag <micke.prag@telldus.se>
-*/
-class Manager {
-public:
-	~Manager();
-	
-	Device *getDevice(int deviceId);
-	
-	static Manager *getInstance();
-	static void close();
-	
-private:
-	Manager();
-	
-	Settings settings;
-	DeviceMap devices;
-	
-	static Manager *instance;
-};
+	typedef std::map<int, Device *> DeviceMap;
+
+	/**
+		@author Micke Prag <micke.prag@telldus.se>
+	*/
+	class Manager {
+	public:
+		~Manager();
+		
+		Device *getDevice(int deviceId);
+		
+		static Manager *getInstance();
+		static void close();
+		
+	private:
+		Manager();
+		
+		Settings settings;
+		DeviceMap devices;
+		
+		static Manager *instance;
+	};
+}
 
 #endif

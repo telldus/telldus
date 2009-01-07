@@ -6,7 +6,7 @@
 #include <iostream>
 #include <fstream>
 
-using namespace std;
+using namespace TelldusCore;
 
 /*
 * Constructor
@@ -21,8 +21,8 @@ DeviceWaveman::DeviceWaveman(int model, const std::string &strHouse, const std::
 int DeviceWaveman::turnOff(void){
 	
 	try{
-		string strCode = getStringCode(intHouse);
-		string strUnit = getStringCode(intCode);
+		std::string strCode = getStringCode(intHouse);
+		std::string strUnit = getStringCode(intCode);
 		strCode.append(strUnit);
 		
 		strCode.insert(0, "S");
