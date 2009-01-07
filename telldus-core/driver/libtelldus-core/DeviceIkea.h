@@ -5,7 +5,7 @@
 class DeviceIkea : public Device
 {
 public:
-	DeviceIkea(char *strSystem, char *strUnits, char *strFadeStyle);
+	DeviceIkea(const std::string &strSystem, const std::string &strUnits, const std::string &strFadeStyle);
 	virtual int turnOn(void);
 	virtual int turnOff(void);
 	virtual int dim(unsigned char level);

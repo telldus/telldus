@@ -6,8 +6,6 @@
 #include <fstream>
 #include <string.h>
 
-using namespace std;
-
 #ifdef _WINDOWS
 #define strcasecmp(x, y) _strcmpi(x, y)
 #endif
@@ -15,18 +13,21 @@ using namespace std;
 /*
 * Constructor
 */
-DeviceIkea::DeviceIkea(char *strSystem, char *strUnits, char *strFadeStyle)
+DeviceIkea::DeviceIkea(const std::string &strSystem, const std::string &strUnits, const std::string &strFadeStyle)
 	:Device()
 {
-	if (strSystem != NULL && strlen(strSystem) > 0) {
-		intSystem = atoi(strSystem) - 1;
+	if (strSystem.length() > 0) {
+		intSystem = atoi(strSystem.c_str()) - 1;
 	} else {
 		intSystem = 0;
 	}
-	if (strUnits != NULL && strlen(strUnits) > 0) {
+	if (strUnits.length() > 0) {
 		intUnits = 0; //Start without any units
 
-		char *strTemp = strtok(strUnits, ",");
+		char tempUnits[strUnits.size()];
+		strUnits.copy(tempUnits, strUnits.length(), 0);
+		
+		char *strTemp = strtok(tempUnits, ",");
 		do {
 			int intUnit = atoi(strTemp);
 			if (intUnit == 10) {
@@ -34,8 +35,9 @@ DeviceIkea::DeviceIkea(char *strSystem, char *strUnits, char *strFadeStyle)
 			}
 			intUnits = intUnits | ( 1<<(9-intUnit) );
 		} while ( (strTemp = strtok(NULL, ",")) != NULL );
+		
 	}
-	if (strUnits != NULL && strlen(strUnits) > 0 && strcasecmp(strFadeStyle, "true") == 0) {
+	if (strUnits.length() > 0 && strcasecmp(strFadeStyle.c_str(), "true") == 0) {
 		intFadeStyle = 1;
 	} else {
 		intFadeStyle = 0;
@@ -57,9 +59,7 @@ DeviceIkea::~DeviceIkea(void)
 */
 int DeviceIkea::turnOn(void){
 	try{
-		string strCode = getStringCode(255);
-
-		char* strMessage = const_cast<char*>(strCode.c_str());
+		std::string strMessage = getStringCode(255);
 
 		return Device::send(strMessage);
 	}
@@ -74,9 +74,7 @@ int DeviceIkea::turnOn(void){
 */
 int DeviceIkea::turnOff(void){
 	try{
-		string strCode = getStringCode(0);
-
-		char* strMessage = const_cast<char*>(strCode.c_str());
+		std::string strMessage = getStringCode(0);
 
 		return Device::send(strMessage);
 	}
@@ -91,9 +89,7 @@ int DeviceIkea::turnOff(void){
 */
 int DeviceIkea::dim(unsigned char level){
 	try{
-		string strCode = getStringCode(level);
-
-		char* strMessage = const_cast<char*>(strCode.c_str());
+		std::string strMessage = getStringCode(level);
 
 		return Device::send(strMessage);
 	}
@@ -106,12 +102,12 @@ int DeviceIkea::dim(unsigned char level){
 /*
 *	Convert an integer to byte string where 0 is represented by ª and 1 by TT
 */
-string DeviceIkea::getStringCode(unsigned char level){
+std::string DeviceIkea::getStringCode(unsigned char level){
 
-	string strReturn = "STTTTTTª"; //Startcode, always like this;
+	std::string strReturn = "STTTTTTª"; //Startcode, always like this;
 
 	try{
-		string strChannels = "";
+		std::string strChannels = "";
 		int intCode = (intSystem << 10) | intUnits;
 		int checksum1 = 0;
 		int checksum2 = 0;
