@@ -11,8 +11,8 @@ using namespace std;
 /*
 * Constructor
 */
-DeviceWaveman::DeviceWaveman(char *strNewHouse, char *strNewCode)
-	:DeviceNexa(strNewHouse, strNewCode){
+DeviceWaveman::DeviceWaveman(const std::string &strHouse, const std::string &strCode)
+	:DeviceNexa(strHouse, strCode){
 }
 
 /*
@@ -28,9 +28,7 @@ int DeviceWaveman::turnOff(void){
 		strCode.insert(0, "S");
 		strCode.append("$k$k$k$k$k$k$k$k$k+");	//the "turn off"-code, keeps it like this, doesn't have to be regenerated each time
 		
-		char* strMessage = const_cast<char*>(strCode.c_str());
-		
-		return Device::send(strMessage);
+		return Device::send(strCode);
 	}
 	catch(...){
 		throw;

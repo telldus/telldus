@@ -5,7 +5,7 @@
 class DeviceWaveman : public DeviceNexa
 {
 public:
-	DeviceWaveman(char *strHouse, char *strCode);
+	DeviceWaveman(const std::string &strHouse, const std::string &strCode);
 	virtual int turnOff(void);
 	virtual int methods(int methodsSupported);
 };
