@@ -282,7 +282,7 @@ int Settings::getIntSetting(int intDeviceId, const std::string &name, bool param
 
 	std::string strSetting = getStringSetting(intDeviceId, name, parameter);
 	if (strSetting.length()) {
-		intReturn = atoi(strSetting.c_str());
+		intReturn = (int)strSetting[0];
 	}
 
 	return intReturn;
