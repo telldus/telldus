@@ -1,12 +1,11 @@
-#include "../StdAfx.h"
-#include "TelldusSettings.h"
+#include "StdAfx.h"
+#include "Settings.h"
 #include <sstream> 
 #include <string>
 #include <vector>
 #include <iostream>
 #include <fstream>
 
-using namespace std;
 bool storeGlobal(privateVars *d);
 
 class privateVars {
@@ -21,7 +20,7 @@ public:
 /*
 * Constructor
 */
-TelldusSettings::TelldusSettings(void)
+Settings::Settings(void)
 {
 	d = new privateVars();
 	d->strRegPathDevice = "SOFTWARE\\Telldus\\Devices\\";
@@ -37,7 +36,7 @@ TelldusSettings::TelldusSettings(void)
 /*
 * Destructor
 */
-TelldusSettings::~TelldusSettings(void)
+Settings::~Settings(void)
 {
 	//RegCloseKey(hk);	//close all, if still open //TODO: Need some way to know if open or closed
 	d->strRegPath = "";
@@ -49,7 +48,7 @@ TelldusSettings::~TelldusSettings(void)
 /*
 * Return the number of stored devices
 */
-int TelldusSettings::getNumberOfDevices(void){
+int Settings::getNumberOfDevices(void) const {
 	
 	int intNumberOfDevices = 0;
 	
@@ -59,7 +58,7 @@ int TelldusSettings::getNumberOfDevices(void){
 				
 		if(lnExists == ERROR_SUCCESS){
 		
-			string strNumSubKeys;
+			std::string strNumSubKeys;
 			DWORD dNumSubKeys;
 			RegQueryInfoKey(d->hk, NULL, NULL, NULL, &dNumSubKeys, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 		
@@ -68,7 +67,7 @@ int TelldusSettings::getNumberOfDevices(void){
 			RegCloseKey(d->hk);
 		}
 		else{
-			throw exception();	//couldn't open reg key
+			throw std::exception();	//couldn't open reg key
 		}
 	}
 	catch(...){
@@ -78,7 +77,7 @@ int TelldusSettings::getNumberOfDevices(void){
 }
 
 
-int TelldusSettings::getDeviceId(int intDeviceIndex){
+int Settings::getDeviceId(int intDeviceIndex) const {
 	int intReturn = -1;
 	
 	try{
@@ -98,7 +97,7 @@ int TelldusSettings::getDeviceId(int intDeviceIndex){
 			RegCloseKey(d->hk);
 		}
 		else{
-			throw exception();	//couldn't open reg key
+			throw std::exception();	//couldn't open reg key
 		}
 	}
 	catch(...){
@@ -112,7 +111,7 @@ int TelldusSettings::getDeviceId(int intDeviceIndex){
 /*
 * Add a new device
 */
-int TelldusSettings::addDevice(){
+int Settings::addDevice(){
 
 	int intDeviceId = -1;
 	try{
@@ -122,7 +121,7 @@ int TelldusSettings::addDevice(){
 
 		std::ostringstream ssRegPath; 
 		ssRegPath << d->strRegPathDevice << intDeviceId;
-		string strCompleteRegPath = ssRegPath.str();
+		std::string strCompleteRegPath = ssRegPath.str();
 		
 		if(RegCreateKeyEx(d->rootKey,
 				   strCompleteRegPath.c_str(),
@@ -134,7 +133,7 @@ int TelldusSettings::addDevice(){
 				   &d->hk,
 				   &dwDisp)){
 			//fail
-		   throw exception("Create Key failed");
+		   throw std::exception("Create Key failed");
 		}
 
 		RegCloseKey(d->hk);
@@ -149,7 +148,7 @@ int TelldusSettings::addDevice(){
 /*
 * Get next available device id
 */
-int TelldusSettings::getNextDeviceId(){
+int Settings::getNextDeviceId() const {
 
 	int intReturn = -1;
 	try{
@@ -200,13 +199,13 @@ int TelldusSettings::getNextDeviceId(){
 /*
 * Remove a device
 */
-bool TelldusSettings::removeDevice(int intDeviceId){
+bool Settings::removeDevice(int intDeviceId){
 
 	bool blnSuccess = true;
 	try{
 		std::ostringstream ssRegPath; 
 		ssRegPath << d->strRegPathDevice << intDeviceId;
-		string strCompleteRegPath = ssRegPath.str();
+		std::string strCompleteRegPath = ssRegPath.str();
 
 		long lngSuccess = RegDeleteKey(d->rootKey, strCompleteRegPath.c_str());
 		if(lngSuccess != ERROR_SUCCESS){
@@ -220,28 +219,28 @@ bool TelldusSettings::removeDevice(int intDeviceId){
 	return blnSuccess;
 }
 
-char *TelldusSettings::getStringSetting(int intDeviceId, const char* name, bool parameter) {
-	char* strReturn = "";
+std::string Settings::getStringSetting(int intDeviceId, const std::string &name, bool parameter) const {
+	std::string strReturn = "";
 
 	try{
 		std::ostringstream ssRegPath; 
 		ssRegPath << d->strRegPathDevice << intDeviceId;
-		string strCompleteRegPath = ssRegPath.str();
+		std::string strCompleteRegPath = ssRegPath.str();
 		long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
 			DWORD dwLength;
 			char* Buff = new char[d->intMaxRegValueLength];
 
-			long lngStatus = RegQueryValueEx(d->hk, name, NULL, NULL, (LPBYTE)Buff, &dwLength);
+			long lngStatus = RegQueryValueEx(d->hk, name.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
 			if(lngStatus == ERROR_MORE_DATA){
 				Buff = new char[dwLength];
-				lngStatus = RegQueryValueEx(d->hk, name, NULL, NULL, (LPBYTE)Buff, &dwLength);
+				lngStatus = RegQueryValueEx(d->hk, name.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
 			}
 			strReturn = Buff;
 		}
 		else{
-			throw exception();	//couldn't open reg key
+			throw std::exception();	//couldn't open reg key
 		}
 		RegCloseKey(d->hk);
 	}
@@ -251,22 +250,22 @@ char *TelldusSettings::getStringSetting(int intDeviceId, const char* name, bool 
 	return strReturn;
 }
 
-bool TelldusSettings::setStringSetting(int intDeviceId, const char* name, const char *value, bool parameter) {
+bool Settings::setStringSetting(int intDeviceId, const std::string &name, const std::string &value, bool parameter) {
 
 	bool blnSuccess = true;
 	try{
 		
 		std::ostringstream ssRegPath; 
 		ssRegPath << d->strRegPathDevice << intDeviceId;
-		string strCompleteRegPath = ssRegPath.str();
+		std::string strCompleteRegPath = ssRegPath.str();
 		long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_WRITE, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
-			d->intMaxRegValueLength = (int)strlen(value);
-			RegSetValueEx(d->hk, name, 0, REG_SZ, (LPBYTE)value, d->intMaxRegValueLength);
+			d->intMaxRegValueLength = (int)value.length();
+			RegSetValueEx(d->hk, name.c_str(), 0, REG_SZ, (LPBYTE)value.c_str(), d->intMaxRegValueLength);
 		}
 		else{
-			throw exception();	//couldn't open reg key
+			throw std::exception();	//couldn't open reg key
 		}
 		RegCloseKey(d->hk);
 
@@ -278,27 +277,27 @@ bool TelldusSettings::setStringSetting(int intDeviceId, const char* name, const 
 
 }
 
-int TelldusSettings::getIntSetting(int intDeviceId, const char* name, bool parameter) {
+int Settings::getIntSetting(int intDeviceId, const std::string &name, bool parameter) const {
 	int intReturn = 0;
 
-	char *strSetting = getStringSetting(intDeviceId, name, parameter);
-	if (strlen(strSetting)) {
-		intReturn = (int)strSetting[0];
+	std::string strSetting = getStringSetting(intDeviceId, name, parameter);
+	if (strSetting.length()) {
+		intReturn = atoi(strSetting.c_str());
 	}
 
 	return intReturn;
 }
 
-bool TelldusSettings::setIntSetting(int intDeviceId, const char* name, int value, bool parameter) {
+bool Settings::setIntSetting(int intDeviceId, const std::string &name, int value, bool parameter) {
 	bool blnReturn = false;
 
 	std::ostringstream ssRegPath; 
 	ssRegPath << d->strRegPathDevice << intDeviceId;
-	string strCompleteRegPath = ssRegPath.str();
+	std::string strCompleteRegPath = ssRegPath.str();
 	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_WRITE, &d->hk);
 	if (lnExists == ERROR_SUCCESS) {
 		DWORD dwVal = value;
-		lnExists = RegSetValueEx (d->hk, name, 0L, REG_DWORD, (CONST BYTE*) &dwVal, sizeof(DWORD));
+		lnExists = RegSetValueEx (d->hk, name.c_str(), 0L, REG_DWORD, (CONST BYTE*) &dwVal, sizeof(DWORD));
 		if (lnExists == ERROR_SUCCESS) {
 			blnReturn = true;
 		}

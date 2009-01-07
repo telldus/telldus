@@ -21,7 +21,7 @@ char * __stdcall devGetName(int intDeviceId){
 }
 
 char* __stdcall devGetVendor(int intDeviceId){
-	return tdGetVendor(intDeviceId);
+	return tdGetProtocol(intDeviceId);
 }
 
 char* __stdcall devGetModel(int intDeviceId){
@@ -31,7 +31,7 @@ char* __stdcall devGetModel(int intDeviceId){
 	std::string str;
 	ss << intModel;
 	str = ss.str();
-	char *strModel = (char *)SysAllocStringByteLen (str.c_str(), str.length());
+	char *strModel = (char *)SysAllocStringByteLen (str.c_str(), (UINT)str.length());
 	return strModel;
 }
 
@@ -47,8 +47,12 @@ bool __stdcall devSetName(int intDeviceId, char* strNewName){
 	return tdSetName(intDeviceId, strNewName);
 }
 
-bool __stdcall devSetVendor(int intDeviceId, char* strVendor){
-	return tdSetVendor(intDeviceId, strVendor);
+bool __stdcall devSetVendor(int intDeviceId, char* strVendor) {
+	if (_stricmp(strVendor, "nexa") == 0) {
+		return tdSetProtocol(intDeviceId, "arctech");
+	} else {
+		return tdSetProtocol(intDeviceId, strVendor);
+	}
 }
 
 bool __stdcall devSetModel(int intDeviceId, char* strNewModel){
@@ -69,7 +73,7 @@ bool __stdcall devRemoveDevice(int intDeviceId){
 }
 
 int __stdcall devMethods(int id){
-	return tdMethods(id);
+	return tdMethods(id, TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_DIM | TELLSTICK_BELL);
 }
 
 bool  __stdcall devTurnOn(int intDeviceId){

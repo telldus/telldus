@@ -17,10 +17,13 @@
 #include "DeviceSartano.h"
 #include "DeviceIkea.h"
 
-
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+
+#ifdef _WINDOWS
+#define strcasecmp _stricmp
+#endif
 
 Manager *Manager::instance = 0;
 

@@ -181,6 +181,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\Device.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\win\Device.cpp"
 				>
 				<FileConfiguration
@@ -203,10 +207,6 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Device.cpp"
-				>
-			</File>
-			<File
 				RelativePath=".\DeviceIkea.cpp"
 				>
 			</File>
@@ -223,19 +223,23 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Settings.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Settings.h"
+				>
+			</File>
+			<File
+				RelativePath=".\SettingsWinRegistry.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\stdafx.cpp"
 				>
 			</File>
 			<File
 				RelativePath=".\telldus-core.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\settings\TelldusSettings.cpp"
-				>
-			</File>
-			<File
-				RelativePath=".\settings\TelldusSettingsWinRegistry.cpp"
 				>
 			</File>
 		</Filter>
@@ -269,6 +273,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\Manager.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Manager.h"
+				>
+			</File>
+			<File
 				RelativePath=".\Resource.h"
 				>
 			</File>
@@ -278,10 +290,6 @@
 			</File>
 			<File
 				RelativePath=".\telldus-core.h"
-				>
-			</File>
-			<File
-				RelativePath=".\settings\TelldusSettings.h"
 				>
 			</File>
 		</Filter>
