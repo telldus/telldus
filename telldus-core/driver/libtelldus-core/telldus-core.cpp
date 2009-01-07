@@ -19,6 +19,7 @@
 
 void handleException(std::exception e);
 using namespace std;
+using namespace TelldusCore;
 
 inline char *wrapStdString( const std::string &string);
 
@@ -465,8 +466,8 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
 //*
 void handleException(exception e){
 
-	std::string strLogName = "errorlog.txt";
-	//char* strLogName = "";
+// 	std::string strLogName = "errorlog.txt";
+	std::string strLogName = "";
 
 	if(strLogName.length() > 0){
 		ofstream errorfile(strLogName.c_str(), ios::app);

@@ -1,11 +1,12 @@
 #include "Device.h"
 #include <stdlib.h>
 
+using namespace TelldusCore;
 /*
 * Constructor
 */
-Device::Device(int model)
-	: model(model)
+Device::Device(int m)
+	: model(m)
 {
 }
 

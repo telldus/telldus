@@ -10,6 +10,8 @@
 #define strcasecmp(x, y) _strcmpi(x, y)
 #endif
 
+using namespace TelldusCore;
+
 /*
 * Constructor
 */

@@ -5,6 +5,8 @@
 #include <string.h>
 #include <errno.h>
 
+using namespace TelldusCore;
+
 /*
 * Send message to the USB dongle
 */

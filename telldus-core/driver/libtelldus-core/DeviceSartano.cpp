@@ -5,7 +5,7 @@
 #include <algorithm>
 #include <fstream>
 
-using namespace std;
+using namespace TelldusCore;
 
 /*
 * Constructor
@@ -70,7 +70,7 @@ int DeviceSartano::methods(int){
 /*
 *	Convert an integer to byte string where 0 is represented by $k and 1 by k$, reversed and padded with 0's as needed
 */
-string DeviceSartano::getStringCode(void){
+std::string DeviceSartano::getStringCode(void){
 	
 	std::string strReturn = strCode;
 
