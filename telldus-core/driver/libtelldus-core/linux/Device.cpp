@@ -12,7 +12,7 @@ int Device::send(const std::string &strMessage) {
 	int fd = -1;
 	struct termios tio;
 
-	if( 0 > ( fd = open( strDevice, O_RDWR ) ) ) {
+	if( 0 > ( fd = open( strDevice.c_str(), O_RDWR ) ) ) {
 		if (errno == ENOENT) {
 			return TELLSTICK_ERROR_NOT_FOUND;
 		} else if (errno == EACCES) {
@@ -38,6 +38,6 @@ int Device::send(const std::string &strMessage) {
 	return TELLSTICK_SUCCESS;
 }
 
-void Device::setDevice(const char *device) {
-	strDevice = strdup(device);
+void Device::setDevice(const std::string &device) {
+	strDevice = device;
 }
