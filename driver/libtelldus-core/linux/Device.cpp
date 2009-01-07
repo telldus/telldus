@@ -8,7 +8,7 @@
 /*
 * Send message to the USB dongle
 */
-int Device::send(char* strMessage) {
+int Device::send(const std::string &strMessage) {
 	int fd = -1;
 	struct termios tio;
 
@@ -29,7 +29,7 @@ int Device::send(char* strMessage) {
 	tcflush(fd, TCIFLUSH);
 	tcsetattr(fd,TCSANOW,&tio);
 
- 	write(fd, strMessage, strlen(strMessage));
+ 	write(fd, strMessage.c_str(), strMessage.length());
 
 	close(fd);
 	
