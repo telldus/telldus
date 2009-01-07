@@ -24,17 +24,17 @@ DeviceIkea::DeviceIkea(const std::string &strSystem, const std::string &strUnits
 	if (strUnits.length() > 0) {
 		intUnits = 0; //Start without any units
 
-		char tempUnits[strUnits.size()];
-		strUnits.copy(tempUnits, strUnits.length(), 0);
+		char tempUnits[strUnits.size()+1];
+		strcpy(tempUnits, strUnits.c_str());
 		
-		char *strTemp = strtok(tempUnits, ",");
+		char *strToken = strtok(tempUnits, ",");
 		do {
-			int intUnit = atoi(strTemp);
+			int intUnit = atoi(strToken);
 			if (intUnit == 10) {
 				intUnit = 0;
 			}
 			intUnits = intUnits | ( 1<<(9-intUnit) );
-		} while ( (strTemp = strtok(NULL, ",")) != NULL );
+		} while ( (strToken = strtok(NULL, ",")) != NULL );
 		
 	}
 	if (strUnits.length() > 0 && strcasecmp(strFadeStyle.c_str(), "true") == 0) {
