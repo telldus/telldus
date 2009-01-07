@@ -47,7 +47,7 @@ Settings::~Settings(void)
 /*
 * Return a setting
 */
-std::string Settings::getSetting(const std::string &strName) {
+std::string Settings::getSetting(const std::string &strName) const {
 	if (d->cfg > 0) {
 		return cfg_getstr(d->cfg, strName.c_str());
 	}
@@ -57,14 +57,14 @@ std::string Settings::getSetting(const std::string &strName) {
 /*
 * Return the number of stored devices
 */
-int Settings::getNumberOfDevices(void){
+int Settings::getNumberOfDevices(void) const {
 	if (d->cfg > 0) {
 		return cfg_size(d->cfg, "device");
 	}
 	return 0;
 }
 
-int Settings::getDeviceId(int intDeviceIndex){
+int Settings::getDeviceId(int intDeviceIndex) const {
 	if (intDeviceIndex >= getNumberOfDevices()) { //Out of bounds
 		return -1;
 	}
@@ -93,7 +93,7 @@ int Settings::addDevice(){
 /*
 * Get next available device id
 */
-int Settings::getNextDeviceId(){
+int Settings::getNextDeviceId() const {
 	int intDeviceId = 0;
 	cfg_t *cfg_device;
 	for (int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
@@ -141,7 +141,7 @@ bool Settings::removeDevice(int intDeviceId){
 	return blnSuccess;
 }
 
-std::string Settings::getStringSetting(int intDeviceId, const std::string &name, bool parameter) {
+std::string Settings::getStringSetting(int intDeviceId, const std::string &name, bool parameter) const {
 	if (d->cfg == 0) {
 		return NULL;
 	}
@@ -182,7 +182,7 @@ bool Settings::setStringSetting(int intDeviceId, const std::string &name, const 
 	return false;
 }
 
-int Settings::getIntSetting(int intDeviceId, const std::string &name, bool parameter) {
+int Settings::getIntSetting(int intDeviceId, const std::string &name, bool parameter) const {
 	if (d->cfg == 0) {
 		return 0;
 	}
