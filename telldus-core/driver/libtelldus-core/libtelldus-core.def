@@ -4,14 +4,14 @@ EXPORTS
 	tdGetDeviceId @2
 
 	tdGetName @3
-	tdGetVendor @4
+	tdGetProtocol @4
 	tdGetModel @5
-	tdGetArgument @6
+	tdGetDeviceParameter @6
 
 	tdSetName @7
-	tdSetVendor @8
+	tdSetProtocol @8
 	tdSetModel @9
-	tdSetArgument @10
+	tdSetDeviceParameter @10
 
 	tdAddDevice @11
 	tdRemoveDevice @12
@@ -23,3 +23,5 @@ EXPORTS
 	tdDim @17
 	
 	tdGetErrorString @18
+	
+	tdClose @19

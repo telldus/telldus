@@ -24,9 +24,13 @@ DeviceIkea::DeviceIkea(int model, const std::string &strSystem, const std::strin
 	if (strUnits.length() > 0) {
 		intUnits = 0; //Start without any units
 
-		char tempUnits[strUnits.size()+1];
+		char *tempUnits = new char[strUnits.size()+1];
+#ifdef _WINDOWS
+		strcpy_s(tempUnits, strUnits.size()+1, strUnits.c_str());
+#else
 		strcpy(tempUnits, strUnits.c_str());
-		
+#endif
+
 		char *strToken = strtok(tempUnits, ",");
 		do {
 			int intUnit = atoi(strToken);
@@ -35,7 +39,8 @@ DeviceIkea::DeviceIkea(int model, const std::string &strSystem, const std::strin
 			}
 			intUnits = intUnits | ( 1<<(9-intUnit) );
 		} while ( (strToken = strtok(NULL, ",")) != NULL );
-		
+
+		free(tempUnits);
 	}
 	if (strUnits.length() > 0 && strcasecmp(strFadeStyle.c_str(), "true") == 0) {
 		intFadeStyle = 1;

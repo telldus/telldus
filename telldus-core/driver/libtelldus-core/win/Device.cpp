@@ -17,7 +17,7 @@ int getDongleIndex();
 /*
 * Send message to the USB dongle
 */
-int Device::send(char* strMessage){
+int Device::send(const std::string &strMessage){
 
 	try{
 		FT_STATUS ftStatus = FT_OK;
@@ -33,8 +33,10 @@ int Device::send(char* strMessage){
 		ftStatus = FT_SetBaudRate(fthHandle, intBaudRate);
 		ULONG bytesWritten;
 
-		int intLen = (int)strlen(strMessage);
-		ftStatus = FT_Write(fthHandle, strMessage, intLen, &bytesWritten);
+		char *tempMessage = (char *)malloc(sizeof(char) * (strMessage.size()+1));
+		strcpy(tempMessage, strMessage.c_str());
+		ftStatus = FT_Write(fthHandle, tempMessage, (DWORD)strMessage.length(), &bytesWritten);
+		free(tempMessage);
   
 		ftStatus = FT_Close(fthHandle);
 	}
