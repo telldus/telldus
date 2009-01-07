@@ -10,7 +10,7 @@ using namespace std;
 /*
 * Constructor
 */
-DeviceSartano::DeviceSartano(char *strNewCode)
+DeviceSartano::DeviceSartano(const std::string &strNewCode)
 	:Device()
 {
 	strCode = strNewCode;
@@ -28,14 +28,12 @@ DeviceSartano::~DeviceSartano(void)
 int DeviceSartano::turnOn(void){
 
 	try{
-		string strCode = getStringCode();
+		std::string strCode = getStringCode();
 		
 		strCode.insert(0, "S");
 		strCode.append("$k$k$kk$$k+");	//the "turn on"-code, keeps it like this, doesn't have to be regenerated each time
 		
-		char* strMessage = const_cast<char*>(strCode.c_str());
-
-		return Device::send(strMessage);
+		return Device::send(strCode);
 	}
 	catch(...){
 		throw;
@@ -49,14 +47,12 @@ int DeviceSartano::turnOn(void){
 int DeviceSartano::turnOff(void){
 	
 	try{
-		string strCode = getStringCode();
+		std::string strCode = getStringCode();
 		
 		strCode.insert(0, "S");
 		strCode.append("$kk$$k$k$k+");	//the "turn off"-code, keeps it like this, doesn't have to be regenerated each time
 		
-		char* strMessage = const_cast<char*>(strCode.c_str());
-
-		return Device::send(strMessage);
+		return Device::send(strCode);
 	}
 	catch(...){
 		throw;
@@ -76,19 +72,19 @@ int DeviceSartano::methods(int){
 */
 string DeviceSartano::getStringCode(void){
 	
-	string strReturn = strCode;
+	std::string strReturn = strCode;
 
 	try{
-		int intPos = (int)strReturn.find("0");
-		while (intPos < string::npos){
+		size_t intPos = strReturn.find("0");
+		while (intPos < std::string::npos){
 			strReturn.replace(intPos, 1, "$kk$");
-			intPos = (int)strReturn.find("0", intPos + 1);
+			intPos = strReturn.find("0", intPos + 1);
 		}
 
-		intPos = (int)strReturn.find("1");
-		while (intPos < string::npos){
+		intPos = strReturn.find("1");
+		while (intPos < std::string::npos){
 			strReturn.replace(intPos, 1, "$k$k");
-			intPos = (int)strReturn.find("1", intPos + 1);
+			intPos = strReturn.find("1", intPos + 1);
 		}
 	}
 	catch(...){
