@@ -3,28 +3,28 @@
 /*
 * Get the name of the device
 */
-char* Settings::getName(int intDeviceId){
+std::string Settings::getName(int intDeviceId){
 	return getStringSetting(intDeviceId, "name", false);
 }
 
 /*
 * Set the name of the device
 */
-bool Settings::setName(int intDeviceId, const char* strNewName){
+bool Settings::setName(int intDeviceId, const std::string &strNewName){
 	return setStringSetting(intDeviceId, "name", strNewName, false);
 }
 
 /*
 * Get the device vendor
 */
-char* Settings::getProtocol(int intDeviceId){
+std::string Settings::getProtocol(int intDeviceId){
 	return getStringSetting(intDeviceId, "protocol", false);
 }
 
 /*
 * Set the device vendor
 */
-bool Settings::setProtocol(int intDeviceId, const char* strVendor){
+bool Settings::setProtocol(int intDeviceId, const std::string &strVendor){
 	return setStringSetting(intDeviceId, "protocol", strVendor, false);
 }
 
@@ -45,13 +45,13 @@ bool Settings::setModel(int intDeviceId, int intModel){
 /*
 * Set device argument
 */
-bool Settings::setDeviceParameter(int intDeviceId, const char *strName, const char *strValue){
+bool Settings::setDeviceParameter(int intDeviceId, const std::string &strName, const std::string &strValue){
 	return setStringSetting(intDeviceId, strName, strValue, true);
 }
 
 /*
 * Get device argument
 */
-char* Settings::getDeviceParameter(int intDeviceId, const char *strName) {
+std::string Settings::getDeviceParameter(int intDeviceId, const std::string &strName) {
 	return getStringSetting(intDeviceId, strName, true);
 }

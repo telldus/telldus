@@ -47,9 +47,9 @@ Settings::~Settings(void)
 /*
 * Return a setting
 */
-const char *Settings::getSetting(const char *strName) {
+std::string Settings::getSetting(const std::string &strName) {
 	if (d->cfg > 0) {
-		return cfg_getstr(d->cfg, strName);
+		return cfg_getstr(d->cfg, strName.c_str());
 	}
 	return "";
 }
@@ -141,7 +141,7 @@ bool Settings::removeDevice(int intDeviceId){
 	return blnSuccess;
 }
 
-char *Settings::getStringSetting(int intDeviceId, const char* name, bool parameter) {
+std::string Settings::getStringSetting(int intDeviceId, const std::string &name, bool parameter) {
 	if (d->cfg == 0) {
 		return NULL;
 	}
@@ -152,19 +152,14 @@ char *Settings::getStringSetting(int intDeviceId, const char* name, bool paramet
 			if (parameter) {
 				cfg_device = cfg_getsec(cfg_device, "parameters");
 			}
-			const char *strSetting = cfg_getstr(cfg_device, name);
-			if (strSetting == NULL) {
-				return NULL;
-			}
-			char *strReturn = (char *)malloc((strlen(strSetting)+1) * sizeof(char));
-			strcpy(strReturn, strSetting);
-			return strReturn;
+			std::string strSetting = cfg_getstr(cfg_device, name.c_str());
+			return strSetting;
 		}
 	}
 	return NULL;
 }
 
-bool Settings::setStringSetting(int intDeviceId, const char* name, const char *value, bool parameter) {
+bool Settings::setStringSetting(int intDeviceId, const std::string &name, const std::string &value, bool parameter) {
 	if (d->cfg == 0) {
 		return false;
 	}
@@ -174,9 +169,9 @@ bool Settings::setStringSetting(int intDeviceId, const char* name, const char *v
 		if (cfg_getint(cfg_device, "id") == intDeviceId)  {
 			if (parameter) {
 				cfg_t *cfg_parameters = cfg_getsec(cfg_device, "parameters");
-				cfg_setstr(cfg_parameters, name, value);
+				cfg_setstr(cfg_parameters, name.c_str(), value.c_str());
 			} else {
-				cfg_setstr(cfg_device, name, value);
+				cfg_setstr(cfg_device, name.c_str(), value.c_str());
 			}
 			FILE *fp = fopen(CONFIG_FILE, "w");
 			cfg_print(d->cfg, fp);
@@ -187,7 +182,7 @@ bool Settings::setStringSetting(int intDeviceId, const char* name, const char *v
 	return false;
 }
 
-int Settings::getIntSetting(int intDeviceId, const char* name, bool parameter) {
+int Settings::getIntSetting(int intDeviceId, const std::string &name, bool parameter) {
 	if (d->cfg == 0) {
 		return 0;
 	}
@@ -198,13 +193,13 @@ int Settings::getIntSetting(int intDeviceId, const char* name, bool parameter) {
 			if (parameter) {
 				cfg_device = cfg_getsec(cfg_device, "parameters");
 			}
-			return cfg_getint(cfg_device, name);
+			return cfg_getint(cfg_device, name.c_str());
 		}
 	}
 	return 0;
 }
 
-bool Settings::setIntSetting(int intDeviceId, const char* name, int value, bool parameter) {
+bool Settings::setIntSetting(int intDeviceId, const std::string &name, int value, bool parameter) {
 	if (d->cfg == 0) {
 		return false;
 	}
@@ -214,9 +209,9 @@ bool Settings::setIntSetting(int intDeviceId, const char* name, int value, bool 
 		if (cfg_getint(cfg_device, "id") == intDeviceId)  {
 			if (parameter) {
 				cfg_t *cfg_parameters = cfg_getsec(cfg_device, "parameters");
-				cfg_setint(cfg_parameters, name, value);
+				cfg_setint(cfg_parameters, name.c_str(), value);
 			} else {
-				cfg_setint(cfg_device, name, value);
+				cfg_setint(cfg_device, name.c_str(), value);
 			}
 			FILE *fp = fopen(CONFIG_FILE, "w");
 			cfg_print(d->cfg, fp);
