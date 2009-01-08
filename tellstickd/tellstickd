@@ -45,7 +45,7 @@ my $dayOfWeek;
 my $dayOfMonth;
 
 my $PROGRAM_NAME = "tellstickd";
-my $VERSION = "pre 0.6.3";
+my $VERSION = "0.6.3";
 
 # Structure of the configurations to be read;
 # $device_cfg[$i][0];   # Protocol, only NEXA, WAVEMAN and SARTANO supported so far by rfcmd

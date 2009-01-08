@@ -13,7 +13,7 @@
 
 source /etc/rc.d/init.d/functions
 
-EXECUTABLE="/usr/local/bin/tellstickd"
+EXECUTABLE="/usr/bin/tellstickd"
 CONFIG_FILE="/etc/tellstickd.conf"
 OPTIONS=""
 
