@@ -1,12 +1,8 @@
 #include <stdio.h>
 #include <getopt.h>
 #include <stdlib.h>
-#include <unistd.h>
 #include <string.h>
 #include "../driver/libtelldus-core/telldus-core.h"
-#ifdef __MINGW32__
-  #define sleep(x) _sleep((x)*1000)
-#endif
 
 void print_usage( char *name ) {
 	printf("\"tdtool\" is a command line utility to control a Telldus TellStick\n");
@@ -87,10 +83,10 @@ int find_device( char *device ) {
 			char *name = tdGetName( id );
 			if (strcasecmp(name, device) == 0) {
 				deviceId = id;
-				free(name);
+ 				free(name);
 				break;
 			}
-			free(name);
+ 			free(name);
 			index++;
 		}
 	}
@@ -105,15 +101,19 @@ void switch_device( bool turnOn, char *device ) {
 	}
 
 	char *name = tdGetName( deviceId );
+	int deviceType = tdGetDeviceType( deviceId );
+	printf("Turning %s %s %i, %s",
+					(turnOn ? "on" : "off"),
+					(deviceType == TELLSTICK_TYPE_DEVICE ? "device" : "group"),
+					deviceId,
+					name);
+	free(name);
+
 	int retval = (turnOn ? tdTurnOn( deviceId ) : tdTurnOff( deviceId ));
 	char *errorString = tdGetErrorString(retval);
 	
-	printf("Turning %s device: %i %s - %s\n", (turnOn ? "on" : "off"), deviceId, name, errorString);
-	free(name);
+	printf(" - %s\n", errorString);
 	free(errorString);
-	if (retval == TELLSTICK_SUCCESS) {
-		sleep(1);
-	}
 }
 
 void dim_device( char *device, int level ) {
@@ -133,9 +133,6 @@ void dim_device( char *device, int level ) {
 	printf("Dimming device: %i %s to %i - %s\n", deviceId, name, level, errorString);
 	free(name);
 	free(errorString);
-	if (retval == TELLSTICK_SUCCESS) {
-		sleep(1);
-	}
 }
 
 void bell_device( char *device ) {
@@ -149,11 +146,8 @@ void bell_device( char *device ) {
 	int retval = tdBell( deviceId );
 	char *errorString = tdGetErrorString(retval);
 	printf("Sending bell to: %i %s - %s\n", deviceId, name, errorString);
-	free(name);
+ 	free(name);
 	free(errorString);
-	if (retval == TELLSTICK_SUCCESS) {
-		sleep(1);
-	}
 }
 
 int main(int argc, char **argv)
@@ -211,5 +205,6 @@ int main(int argc, char **argv)
 				return -1;
 		}
 
+	tdClose(); //Cleaning up
 	return 0;
 }
