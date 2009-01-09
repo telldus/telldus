@@ -358,6 +358,13 @@ bool WINAPI tdSetModel(int intDeviceId, int intModel){
 	try{
 		Settings ts;
 		blnSuccess = ts.setModel(intDeviceId, intModel);
+		Manager *manager = Manager::getInstance();
+		if (manager->deviceLoaded(intDeviceId)) {
+			Device *device = manager->getDevice(intDeviceId);
+			if (device) {
+				device->setModel( intModel );
+			}
+		}
 	}
 	catch(exception e){
 		blnSuccess = false;

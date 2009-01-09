@@ -102,6 +102,15 @@ Device *Manager::getDevice(int intDeviceId){
 	return dev;
 }
 
+
+bool Manager::deviceLoaded(int deviceId) const {
+	DeviceMap::const_iterator iterator = devices.find(deviceId);
+	if (iterator == devices.end()) {
+		return false;
+	}
+	return true;
+}
+
 Manager *Manager::getInstance() {
 	if (Manager::instance == 0) {
 		Manager::instance = new Manager();
@@ -114,5 +123,4 @@ void Manager::close() {
 		delete Manager::instance;
 	}
 }
-
 
