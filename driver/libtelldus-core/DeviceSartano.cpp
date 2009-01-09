@@ -94,7 +94,7 @@ std::string DeviceSartano::getStringCode(void){
 
 }
 
-std::string DeviceSartano::getProtocol() {
+std::string DeviceSartano::getProtocol() const {
 	return "sartano";
 }
 

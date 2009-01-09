@@ -12,7 +12,7 @@ namespace TelldusCore {
 		virtual int turnOff(void);
 		virtual int dim(unsigned char level);
 		virtual int methods(int methodsSupported);
-		virtual std::string getProtocol();
+		virtual std::string getProtocol() const;
 		
 	public:
 		~DeviceIkea(void);
