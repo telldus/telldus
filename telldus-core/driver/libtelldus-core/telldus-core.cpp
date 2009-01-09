@@ -11,6 +11,7 @@
 #include "telldus-core.h"
 #include "Manager.h"
 #include "Device.h"
+#include "DeviceGroup.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -38,6 +39,12 @@ inline char *wrapStdString( const std::string &string);
  * 
  * @def TELLSTICK_DIM
  * Device-flag for devices supporting the tdDim() call.
+ * 
+ * @def TELLSTICK_TYPE_DEVICE
+ * Device type of a single device.
+ * 
+ * @def TELLSTICK_TYPE_GROUP
+ * Device type of a device which contains other devices.
  * 
  * @def TELLSTICK_SUCCESS
  * Error code. Returned when the command succeeded.
@@ -251,6 +258,27 @@ int WINAPI tdGetDeviceId(int intDeviceIndex){
 		handleException(e);
 	}
 	return intReturn;
+}
+
+/**
+ * Returns which type the device is. The device could be either
+ * TELLSTICK_TYPE_DEVICE or TELLSTICK_TYPE_GROUP
+ */
+int WINAPI tdGetDeviceType(int intDeviceId) {
+	try{
+		Manager *manager = Manager::getInstance();
+		Device* dev = manager->getDevice(intDeviceId);
+		if (dev != NULL) {
+			DeviceGroup *deviceGroup = dynamic_cast<DeviceGroup*>(dev);
+			if (deviceGroup) {
+				return TELLSTICK_TYPE_GROUP;
+			}
+		}
+	}
+	catch(exception e){
+		handleException(e);
+	}
+	return TELLSTICK_TYPE_DEVICE;
 }
 
 /**

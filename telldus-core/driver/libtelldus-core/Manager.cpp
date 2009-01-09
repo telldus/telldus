@@ -12,6 +12,7 @@
 #include "Manager.h"
 #include "Device.h"
 
+#include "DeviceGroup.h"
 #include "DeviceNexa.h"
 #include "DeviceWaveman.h"
 #include "DeviceSartano.h"
@@ -65,6 +66,10 @@ Device *Manager::getDevice(int intDeviceId){
 			std::string strCode = settings.getDeviceParameter(intDeviceId, "nexa_unit");
 			dev = new DeviceNexa(intModel, strHouse, strCode);
 	
+		} else if (strcasecmp(protocol.c_str(), "group") == 0) {
+			std::string strDevices = settings.getDeviceParameter(intDeviceId, "devices");
+			dev = new DeviceGroup(intModel, strDevices);
+
 		} else if (strcasecmp(protocol.c_str(), "Waveman") == 0) {
 			std::string strHouse = settings.getDeviceParameter(intDeviceId, "nexa_house");
 			std::string strCode = settings.getDeviceParameter(intDeviceId, "nexa_unit");
