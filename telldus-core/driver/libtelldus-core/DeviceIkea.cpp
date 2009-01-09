@@ -205,6 +205,6 @@ int DeviceIkea::methods(int){
 	return 0;
 }
 
-std::string DeviceIkea::getProtocol() {
+std::string DeviceIkea::getProtocol() const {
 	return "ikea";
 }

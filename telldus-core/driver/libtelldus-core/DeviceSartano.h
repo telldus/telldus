@@ -11,7 +11,7 @@ namespace TelldusCore {
 		virtual int turnOn(void);
 		virtual int turnOff(void);
 		virtual int methods(int methodsSupported);
-		virtual std::string getProtocol();
+		virtual std::string getProtocol() const;
 	
 		~DeviceSartano(void);
 	

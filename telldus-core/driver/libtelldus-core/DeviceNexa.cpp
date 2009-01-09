@@ -176,6 +176,6 @@ int DeviceNexa::methods(int methodsSupported){
 	return 0;
 }
 
-std::string DeviceNexa::getProtocol() {
+std::string DeviceNexa::getProtocol() const {
 	return "arctech";
 }

@@ -12,7 +12,7 @@ namespace TelldusCore {
 		virtual int turnOff(void);
 		virtual int bell(void);
 		virtual int methods(int methodsSupported);
-		virtual std::string getProtocol();
+		virtual std::string getProtocol() const;
 		
 	public:
 		~DeviceNexa(void);

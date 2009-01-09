@@ -17,7 +17,7 @@ namespace TelldusCore {
 		virtual int bell(void);
 		virtual int dim(unsigned char level);
 		virtual int methods(int methodsSupported) = 0;
-		virtual std::string getProtocol() = 0;
+		virtual std::string getProtocol() const = 0;
 		int getModel();
 		
 	#ifdef _LINUX
