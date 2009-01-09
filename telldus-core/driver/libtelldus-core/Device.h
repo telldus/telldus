@@ -18,7 +18,8 @@ namespace TelldusCore {
 		virtual int dim(unsigned char level);
 		virtual int methods(int methodsSupported) = 0;
 		virtual std::string getProtocol() const = 0;
-		int getModel();
+		int getModel() const;
+		void setModel( int intModel );
 		
 	#ifdef _LINUX
 		void setDevice(const std::string &device);

@@ -16,8 +16,12 @@ Device::Device(int m)
 Device::~Device(void) {
 }
 
-int Device::getModel() {
+int Device::getModel() const {
 	return model;
+}
+
+void Device::setModel( int intModel ) {
+	model = intModel;
 }
 
 /*

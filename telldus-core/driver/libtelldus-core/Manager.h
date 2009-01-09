@@ -29,6 +29,8 @@ namespace TelldusCore {
 		
 		Device *getDevice(int deviceId);
 		
+		bool deviceLoaded(int deviceId) const;
+		
 		static Manager *getInstance();
 		static void close();
 		
