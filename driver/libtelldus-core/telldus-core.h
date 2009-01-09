@@ -33,7 +33,7 @@ extern "C" {
 	
 	TELLSTICK_API int WINAPI tdGetNumberOfDevices();
 	TELLSTICK_API int WINAPI tdGetDeviceId(int intDeviceIndex);
-	TELLSTICK_API int WINAPI tdGetDeviceType(int intDeviceIndex);
+	TELLSTICK_API int WINAPI tdGetDeviceType(int intDeviceId);
 	
 	TELLSTICK_API char * WINAPI tdGetErrorString(int intErrorNo);
 	
