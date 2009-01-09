@@ -33,6 +33,7 @@ extern "C" {
 	
 	TELLSTICK_API int WINAPI tdGetNumberOfDevices();
 	TELLSTICK_API int WINAPI tdGetDeviceId(int intDeviceIndex);
+	TELLSTICK_API int WINAPI tdGetDeviceType(int intDeviceIndex);
 	
 	TELLSTICK_API char * WINAPI tdGetErrorString(int intErrorNo);
 	
@@ -66,6 +67,10 @@ extern "C" {
 #define TELLSTICK_ERROR_DEVICE_NOT_FOUND -3
 #define TELLSTICK_ERROR_METHOD_NOT_SUPPORTED -4
 #define TELLSTICK_ERROR_UNKNOWN -99
+
+//Device typedef
+#define TELLSTICK_TYPE_DEVICE	1
+#define TELLSTICK_TYPE_GROUP	2
 
 //Protocol Nexa
 #define TELLSTICK_DEVICE_YCR3500	1

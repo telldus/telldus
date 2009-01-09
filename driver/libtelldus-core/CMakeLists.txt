@@ -5,6 +5,7 @@ INCLUDE( ${QT_USE_FILE} )
 SET( telldus-core_SRCS
 	Controller.cpp
 	Device.cpp
+	DeviceGroup.cpp
 	DeviceIkea.cpp
 	DeviceNexa.cpp
 	DeviceSartano.cpp

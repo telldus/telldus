@@ -229,6 +229,9 @@ bool readConfig(cfg_t **cfg) {
 	};
 	
 	cfg_opt_t device_parameter_opts[] = {
+		//Groups
+		CFG_STR("devices", 0, CFGF_NONE),
+		
 		//Nexa
 		CFG_STR("nexa_house", 0, CFGF_NONE),
 		CFG_STR("nexa_unit", 0, CFGF_NONE),
