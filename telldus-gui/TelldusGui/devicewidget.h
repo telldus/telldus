@@ -15,6 +15,10 @@ public:
 	explicit DeviceWidget(QWidget *parent = 0);
 	virtual ~DeviceWidget();
 
+signals:
+	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
+	void eventTriggered( const QString &name, const QString &title );
+
 protected:
 	virtual void changeEvent(QEvent *e);
 

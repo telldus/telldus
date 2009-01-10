@@ -97,12 +97,21 @@ bool DeviceModel::removeRows ( int row, int count, const QModelIndex & parent ) 
 }
 
 Device *DeviceModel::device( const QModelIndex &index ) const {
-	return Device::getDevice( deviceId( index ) );
+	int id = deviceId( index );
+	bool loaded = Device::deviceLoaded( id );
+	Device *device = Device::getDevice( id );
+	if (!loaded) {
+		connect(device, SIGNAL(showMessage(const QString &, const QString &, const QString &)), this, SIGNAL(showMessage(const QString &, const QString &, const QString &)));
+		connect(device, SIGNAL(eventTriggered(const QString &, const QString &)), this, SIGNAL(eventTriggered(const QString &, const QString &)));
+	}
+	return device;
 }
 
 Device *DeviceModel::newDevice() const {
 	Device *device = Device::newDevice();
 	connect(device, SIGNAL(deviceAdded(int)), this, SLOT(deviceAdded(int)));
+	connect(device, SIGNAL(shfowMessage(const QString &, const QString &, const QString &)), this, SIGNAL(showsMessage(const QString &, const QString &, const QString &)));
+	connect(device, SIGNAL(eventTriggered(const QString &, const QString &)), this, SIGNAL(eventTriggered(const QString &, const QString &)));
 	return device;
 }
 

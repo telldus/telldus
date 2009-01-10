@@ -21,7 +21,8 @@ DeviceWidget::DeviceWidget(QWidget *parent) :
 	deviceView.resizeColumnsToContents();
 	deviceView.resizeRowsToContents();
 	connect( &deviceView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(listActivated(const QModelIndex &)) );
-
+	connect(&model, SIGNAL(showMessage(const QString &, const QString &, const QString &)), this, SIGNAL(showMessage(const QString &, const QString &, const QString &)));
+	connect(&model, SIGNAL(eventTriggered(const QString &, const QString &)), this, SIGNAL(eventTriggered(const QString &, const QString &)));
 
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	layout->addWidget(&deviceView);

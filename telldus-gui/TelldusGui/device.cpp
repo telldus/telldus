@@ -95,6 +95,10 @@ Device *Device::newDevice( ) {
 	return new Device(0);
 }
 
+bool Device::deviceLoaded( int id ) {
+	return devices.contains(id);
+}
+
 void Device::save() {
 	bool deviceIsAdded = false;
 	if (p_id == 0) { //This is a new device
@@ -124,15 +128,15 @@ void Device::save() {
 }
 
 void Device::turnOff() {
-	tdTurnOff( p_id );
+	triggerEvent( tdTurnOff( p_id ) );
 }
 
 void Device::turnOn() {
-	tdTurnOn( p_id );
+	triggerEvent( tdTurnOn( p_id ) );
 }
 
 void Device::bell() {
-	tdBell( p_id );
+	triggerEvent( tdBell( p_id ) );
 }
 
 void Device::updateMethods() {
@@ -144,4 +148,10 @@ void Device::updateMethods() {
 			emit methodsChanged( p_methods );
 		}
 	}
+}
+
+void Device::triggerEvent( int messageId ) {
+	char *message = tdGetErrorString( messageId );
+	emit showMessage( "", message, "" );
+	free( message );
 }

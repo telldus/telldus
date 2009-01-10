@@ -15,6 +15,7 @@ public:
 
 	static Device *getDevice( int id );
 	static Device *newDevice( );
+	static bool deviceLoaded( int id );
 
 	void setModel( int model );
 	int model();
@@ -40,10 +41,13 @@ public slots:
 signals:
 	void deviceAdded( int id );
 	void methodsChanged( int newMethods );
+	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
+	void eventTriggered( const QString &name, const QString &title );
 
 private:
 	Device(int id);
 	void updateMethods();
+	void triggerEvent( int message );
 
 	static QHash<int, Device *> devices;
 	QHash<QString, QString> p_settings;

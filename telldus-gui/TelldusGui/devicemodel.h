@@ -25,6 +25,10 @@ public:
 	Device *newDevice() const;
 	Device *device( const QModelIndex & ) const;
 
+signals:
+	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
+	void eventTriggered( const QString &name, const QString &title );
+
 private slots:
 	void deviceAdded( int id );
 
