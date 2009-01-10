@@ -13,6 +13,11 @@ public:
 
 	static TelldusCenterApplication *instance();
 
+public slots:
+	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
+	void eventTriggered( const QString &name, const QString &title );
+
+
 private:
 	QSystemTrayIcon systrayIcon;
 };

@@ -1,4 +1,5 @@
 #include "tellduscenterapplication.h"
+#include <QDebug>
 
 TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 		:QApplication(argc, argv),
@@ -15,6 +16,14 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 }
 
 TelldusCenterApplication::~TelldusCenterApplication() {
+}
+
+void TelldusCenterApplication::showMessage( const QString &title, const QString &message, const QString &detailedMessage ) {
+	qDebug() << "showMessage:" << title << message << detailedMessage;
+}
+
+void TelldusCenterApplication::eventTriggered( const QString &name, const QString &title ) {
+	qDebug() << "eventTriggered:" << name << title;
 }
 
 TelldusCenterApplication *TelldusCenterApplication::instance() {

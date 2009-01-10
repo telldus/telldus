@@ -8,6 +8,7 @@
 #include <QMessageBox>
 #include <QSettings>
 
+#include "tellduscenterapplication.h"
 #include "../TelldusGui/telldusgui.h"
 
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
@@ -26,8 +27,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 	setupToolBar();
 
 	//QStackedWidget *centralWidget = new QStackedWidget(this);
+	TelldusCenterApplication *app = TelldusCenterApplication::instance();
 	QWidget *centralWidget = tdDeviceWidget(this);
 	setCentralWidget(centralWidget);
+	connect(centralWidget, SIGNAL(showMessage(const QString &, const QString &, const QString &)), app, SLOT(showMessage(const QString &, const QString &, const QString &)));
+	connect(centralWidget, SIGNAL(eventTriggered(const QString &, const QString &)), app, SLOT(eventTriggered(const QString &, const QString &)));
+
 
 	setWindowTitle( tr("Telldus Center") );
 }
