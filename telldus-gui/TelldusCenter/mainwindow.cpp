@@ -6,7 +6,7 @@
 #include <QStatusBar>
 #include <QToolBar>
 #include <QMessageBox>
-
+#include <QSettings>
 
 #include "../TelldusGui/telldusgui.h"
 
@@ -15,6 +15,12 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 	, m_pagesBar(0)
 {
 	setAttribute(Qt::WA_DeleteOnClose, true);
+
+	// Restore size and position
+	QSettings settings;
+	resize(settings.value("Size", size()).toSize());
+	move(settings.value("Pos", pos()).toPoint());
+
 	statusBar()->setSizeGripEnabled(true);
 	setupMenu();
 	setupToolBar();
@@ -28,6 +34,13 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 
 MainWindow::~MainWindow()
 {
+
+}
+
+void MainWindow::closeEvent( QCloseEvent *event ) {
+	QSettings settings;
+	settings.setValue("Size", size());
+	settings.setValue("Pos", pos());
 
 }
 

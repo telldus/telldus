@@ -10,6 +10,11 @@ int main(int argc, char *argv[])
 {
 	Q_INIT_RESOURCE( resource );
 
+	QCoreApplication::setOrganizationName("Telldus");
+	QCoreApplication::setOrganizationDomain("www.telldus.se");
+	QCoreApplication::setApplicationName("Telldus Center");
+
+
 	TelldusCenterApplication application(argc, argv);
 
 	MainWindow *w = new MainWindow();

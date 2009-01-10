@@ -13,6 +13,9 @@ public:
 	MainWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~MainWindow();
 
+protected:
+	virtual void closeEvent( QCloseEvent *event );
+
 private slots:
 	void slotAboutApplication();
 
