@@ -28,20 +28,29 @@ public:
 	void setProtocol( const QString & protocol );
 	const QString &protocol();
 
+	int methods() const;
+
 public slots:
 	void save();
+	void turnOff();
+	void turnOn();
+	void bell();
+
 
 signals:
 	void deviceAdded( int id );
+	void methodsChanged( int newMethods );
 
 private:
 	Device(int id);
+	void updateMethods();
 
 	static QHash<int, Device *> devices;
 	QHash<QString, QString> p_settings;
 	int p_id, p_model;
 	QString p_name, p_protocol;
 	bool p_modelChanged, p_nameChanged, p_protocolChanged;
+	mutable int p_methods;
 };
 
 #endif // DEVICE_H

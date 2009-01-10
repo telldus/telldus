@@ -16,6 +16,7 @@ public:
 	virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
 	virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
+//	virtual Qt::ItemFlags flags ( const QModelIndex & index ) const;
 
 	virtual bool removeRows ( int row, int count, const QModelIndex & parent = QModelIndex() );
 

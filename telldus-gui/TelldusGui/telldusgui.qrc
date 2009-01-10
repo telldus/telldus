@@ -1,23 +1,26 @@
 <RCC>
     <qresource prefix="/" >
         <file>data/devices.xml</file>
-        <file>images/list-add.png</file>
-        <file>images/list-edit.png</file>
-		<file>images/list-remove.png</file>
-        <file>images/devices/17-356.jpg</file>
+        <file>images/bell.png</file>
+        <file>images/devices/143011.jpg</file>
         <file>images/devices/14323.jpg</file>
         <file>images/devices/14327.jpg</file>
-        <file>images/devices/51340.jpg</file>
-        <file>images/devices/143011.jpg</file>
         <file>images/devices/145041.jpg</file>
         <file>images/devices/145071.jpg</file>
         <file>images/devices/145091.jpg</file>
+        <file>images/devices/17-356.jpg</file>
+        <file>images/devices/51340.jpg</file>
         <file>images/devices/el2005.jpg</file>
         <file>images/devices/el2019.jpg</file>
         <file>images/devices/hdr.jpg</file>
         <file>images/devices/koppla.jpg</file>
         <file>images/devices/ml.jpg</file>
         <file>images/devices/sycr.jpg</file>
+        <file>images/list-add.png</file>
+        <file>images/list-edit.png</file>
+        <file>images/list-remove.png</file>
+        <file>images/turn-off.png</file>
+        <file>images/turn-on.png</file>
         <file>images/vendors/ikea.jpg</file>
         <file>images/vendors/intertechno.jpg</file>
         <file>images/vendors/nexa.jpg</file>

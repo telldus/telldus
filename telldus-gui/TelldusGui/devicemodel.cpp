@@ -19,11 +19,11 @@ int DeviceModel::rowCount(const QModelIndex &) const {
 }
 
 int DeviceModel::columnCount(const QModelIndex &) const {
-	return 2;
+	return 3;
 }
 
 QVariant DeviceModel::data(const QModelIndex &index, int role) const {
-	if (index.column() > 1) {
+	if (index.column() > 2) {
 		return QVariant();
 	}
 
@@ -31,7 +31,7 @@ QVariant DeviceModel::data(const QModelIndex &index, int role) const {
 		if (role == Qt::DisplayRole) {
 			return tr("on");
 		} else if (role == Qt::DecorationRole) {
-			return QIcon( ":/images/list-add.png" );
+			return QIcon( ":/images/devices.png" );
 		} else if (role == Qt::TextAlignmentRole) {
 			return Qt::AlignCenter;
 		}
@@ -40,10 +40,23 @@ QVariant DeviceModel::data(const QModelIndex &index, int role) const {
 			Device *device = this->device( index );
 			return device->name();
 		}
+	} else if (index.column() == 2) {
+//		if (role == Qt::DisplayRole) {
+//			Device *device = this->device( index );
+//			return device->methods();
+//		}
 	}
 
 	return QVariant();
 }
+
+/*Qt::ItemFlags DeviceModel::flags ( const QModelIndex & index ) const {
+	if (!index.isValid()) {
+		 return Qt::ItemIsEnabled;
+	}
+
+	return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
+}*/
 
 QVariant DeviceModel::headerData ( int section, Qt::Orientation orientation, int role ) const {
 	if (orientation != Qt::Horizontal) {
@@ -59,6 +72,8 @@ QVariant DeviceModel::headerData ( int section, Qt::Orientation orientation, int
 			return tr("State");
 		case 1:
 			return tr("Device name");
+		case 2:
+			return tr("Action");
 	}
 
 	return QVariant();

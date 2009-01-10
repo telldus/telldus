@@ -14,7 +14,9 @@ SOURCES += telldusgui.cpp \
     devicesettingnexa.cpp \
     devicesettingnexabell.cpp \
     devicesettingsartano.cpp \
-    devicesetting.cpp
+    devicesetting.cpp \
+    methodwidget.cpp \
+    deviceview.cpp
 HEADERS += telldusgui.h \
     devicewidget.h \
     devicemodel.h \
@@ -26,7 +28,9 @@ HEADERS += telldusgui.h \
     devicesettingnexa.h \
     devicesettingnexabell.h \
     devicesettingsartano.h \
-    devicesetting.h
+    devicesetting.h \
+    methodwidget.h \
+    deviceview.h
 FORMS += 
 macx { 
     LIBS += -framework \
@@ -40,7 +44,6 @@ macx {
         telldus-core
     TARGET = telldus-gui
 }
-win32 {
-    LIBS += -L .
-}
+win32:LIBS += -L \
+    .
 RESOURCES += telldusgui.qrc

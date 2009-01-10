@@ -11,7 +11,8 @@ Device::Device(int id)
 		p_protocol(""),
 		p_modelChanged(false),
 		p_nameChanged(false),
-		p_protocolChanged(false)
+		p_protocolChanged(false),
+		p_methods(0)
 {
 	if (id > 0) {
 		char *name = tdGetName(id);
@@ -73,6 +74,12 @@ const QString &Device::protocol() {
 	return p_protocol;
 }
 
+int Device::methods() const {
+	if (p_methods == 0) {
+		const_cast<Device*>(this)->updateMethods();
+	}
+	return p_methods;
+}
 
 Device *Device::getDevice( int id ) {
 
@@ -102,6 +109,7 @@ void Device::save() {
 
 	if (p_modelChanged) {
 		tdSetModel(p_id, p_model);
+		updateMethods();
 		p_modelChanged = false;
 	}
 
@@ -112,5 +120,28 @@ void Device::save() {
 
 	if (deviceIsAdded) {
 		emit deviceAdded(p_id);
+	}
+}
+
+void Device::turnOff() {
+	tdTurnOff( p_id );
+}
+
+void Device::turnOn() {
+	tdTurnOn( p_id );
+}
+
+void Device::bell() {
+	tdBell( p_id );
+}
+
+void Device::updateMethods() {
+	int methods = tdMethods(p_id, TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL | TELLSTICK_DIM);
+	if (p_methods != methods) {
+		bool doEmit = (p_methods > 0);
+		p_methods = methods;
+		if (doEmit) {
+			emit methodsChanged( p_methods );
+		}
 	}
 }

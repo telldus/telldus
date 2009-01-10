@@ -5,6 +5,7 @@
 #include <QtGui/QTableView>
 #include <QtGui/QToolButton>
 #include "devicemodel.h"
+#include "deviceview.h"
 
 
 class DeviceWidget : public QWidget {
@@ -25,7 +26,7 @@ private slots:
 
 private:
 	DeviceModel model;
-	QTableView deviceView;
+	DeviceView deviceView;
 	QToolButton addToolButton, removeToolButton, editToolButton;
 };
 
