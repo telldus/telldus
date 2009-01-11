@@ -9,7 +9,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "TelldusSettings.h"
+#include "Settings.h"
 #include <stdlib.h>
 #include <string.h>
 #include <CoreFoundation/CoreFoundation.h>
@@ -25,7 +25,7 @@ public:
 /*
 * Constructor
 */
-TelldusSettings::TelldusSettings(void)
+Settings::Settings(void)
 {
 	d = new privateVars();
 	d->app_ID = CFSTR( "com.telldus.core" );
@@ -34,21 +34,21 @@ TelldusSettings::TelldusSettings(void)
 /*
 * Destructor
 */
-TelldusSettings::~TelldusSettings(void)
+Settings::~Settings(void)
 {
 }
 
 /*
 * Return a setting
 */
-char *TelldusSettings::getSetting(const char *strName) {
+std::string Settings::getSetting(const std::string &strName) const {
 	return "";
 }
 
 /*
 * Return the number of stored devices
 */
-int TelldusSettings::getNumberOfDevices(void) {
+int Settings::getNumberOfDevices(void) const {
 	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost );
 	if (!cfarray) return 0;
 	CFIndex size = CFArrayGetCount( cfarray );
@@ -63,7 +63,7 @@ int TelldusSettings::getNumberOfDevices(void) {
 	return devices;
 }
 
-int TelldusSettings::getDeviceId(int intDeviceIndex) {
+int Settings::getDeviceId(int intDeviceIndex) const {
 	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost );
 	if (!cfarray) return 0;
 	CFIndex size = CFArrayGetCount( cfarray );
@@ -107,7 +107,7 @@ int TelldusSettings::getDeviceId(int intDeviceIndex) {
 /*
 * Add a new device
 */
-int TelldusSettings::addDevice() {
+int Settings::addDevice() {
 	int id = getNextDeviceId();
 	setStringSetting( id, "name", "", false ); //Create a empty name so the device has an entry
 	setStringSetting( id, "model", "", false );
@@ -117,7 +117,7 @@ int TelldusSettings::addDevice() {
 /*
 * Get next available device id
 */
-int TelldusSettings::getNextDeviceId() {
+int Settings::getNextDeviceId() const {
 	int id = 0, max = 0;
 	int numberOfDevices = getNumberOfDevices();
 	for( int i = 0; i < numberOfDevices; i++) {
@@ -133,7 +133,7 @@ int TelldusSettings::getNextDeviceId() {
 /*
 * Remove a device
 */
-bool TelldusSettings::removeDevice(int intDeviceId){
+bool Settings::removeDevice(int intDeviceId){
 	CFStringRef filterKey = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d."), intDeviceId); // The key to search for
 
 	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost );
@@ -150,8 +150,8 @@ bool TelldusSettings::removeDevice(int intDeviceId){
 	return true;
 }
 
-char *TelldusSettings::getStringSetting(int intDeviceId, const char* name, bool parameter) {
-	CFStringRef cfname = CFStringCreateWithCString( 0, name, 0 );
+std::string Settings::getStringSetting(int intDeviceId, const std::string &name, bool parameter) const {
+	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), 0 );
 	
 	CFStringRef key;
 	if (parameter) {
@@ -177,9 +177,9 @@ char *TelldusSettings::getStringSetting(int intDeviceId, const char* name, bool 
 	return cp;
 }
 
-bool TelldusSettings::setStringSetting(int intDeviceId, const char* name, const char *value, bool parameter) {
-	CFStringRef cfname = CFStringCreateWithCString( 0, name, 0 );
-	CFStringRef cfvalue = CFStringCreateWithCString( 0, value, 0 );
+bool Settings::setStringSetting(int intDeviceId, const std::string &name, const std::string &value, bool parameter) {
+	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), 0 );
+	CFStringRef cfvalue = CFStringCreateWithCString( 0, value.c_str(), 0 );
 	
 	CFStringRef key;
 	if (parameter) {
@@ -193,9 +193,9 @@ bool TelldusSettings::setStringSetting(int intDeviceId, const char* name, const 
 	return true;
 }
 
-int TelldusSettings::getIntSetting(int intDeviceId, const char* name, bool parameter) {
+int Settings::getIntSetting(int intDeviceId, const std::string &name, bool parameter) const {
 	int retval = 0;
-	CFStringRef cfname = CFStringCreateWithCString( 0, name, 0 );
+	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), 0 );
 	CFNumberRef cfvalue;
 	
 	CFStringRef key;
@@ -219,8 +219,8 @@ int TelldusSettings::getIntSetting(int intDeviceId, const char* name, bool param
 	return retval;
 }
 
-bool TelldusSettings::setIntSetting(int intDeviceId, const char* name, int value, bool parameter) {
-	CFStringRef cfname = CFStringCreateWithCString( 0, name, 0 );
+bool Settings::setIntSetting(int intDeviceId, const std::string &name, int value, bool parameter) {
+	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), 0 );
 	CFNumberRef cfvalue = CFNumberCreate(NULL, kCFNumberIntType, &value);
 	
 	CFStringRef key;
