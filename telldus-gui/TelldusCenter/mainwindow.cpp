@@ -42,7 +42,7 @@ MainWindow::~MainWindow()
 
 }
 
-void MainWindow::closeEvent( QCloseEvent *event ) {
+void MainWindow::closeEvent( QCloseEvent */*event*/ ) {
 	QSettings settings;
 	settings.setValue("Size", size());
 	settings.setValue("Pos", pos());
