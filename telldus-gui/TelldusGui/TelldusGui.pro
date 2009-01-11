@@ -34,7 +34,7 @@ HEADERS += telldusgui.h \
 FORMS += 
 macx { 
     LIBS += -framework \
-        telldus-core
+        TelldusCore
     ICON = images/telldussetup.icns
     TARGET = TelldusGui
     CONFIG += lib_bundle
