@@ -14,6 +14,8 @@
 
 int getDongleIndex();
 
+using namespace TelldusCore;
+
 /*
 * Send message to the USB dongle
 */
