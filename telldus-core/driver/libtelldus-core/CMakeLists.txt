@@ -3,7 +3,6 @@ SET( QT_DONT_USE_QTGUI TRUE )
 INCLUDE( ${QT_USE_FILE} )
 
 SET( telldus-core_SRCS
-	Controller.cpp
 	Device.cpp
 	DeviceGroup.cpp
 	DeviceIkea.cpp
