@@ -56,7 +56,7 @@ QPixmap VendorDeviceTreeItem::image() const {
 	if (deviceId == 0) {
 		filename = ":/images/vendors/" + img.toLower() + ".jpg";
 	} else {
-		filename = ":/images/devices/" + img + ".jpg";
+		filename = ":/images/devices/" + img + ".png";
 	}
 	QPixmap image = QPixmap(filename);
 	if (image.isNull()) {
