@@ -110,7 +110,7 @@ Device *DeviceModel::device( const QModelIndex &index ) const {
 Device *DeviceModel::newDevice() const {
 	Device *device = Device::newDevice();
 	connect(device, SIGNAL(deviceAdded(int)), this, SLOT(deviceAdded(int)));
-	connect(device, SIGNAL(shfowMessage(const QString &, const QString &, const QString &)), this, SIGNAL(showsMessage(const QString &, const QString &, const QString &)));
+	connect(device, SIGNAL(showMessage(const QString &, const QString &, const QString &)), this, SIGNAL(showsMessage(const QString &, const QString &, const QString &)));
 	connect(device, SIGNAL(eventTriggered(const QString &, const QString &)), this, SIGNAL(eventTriggered(const QString &, const QString &)));
 	return device;
 }
