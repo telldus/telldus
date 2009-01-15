@@ -1,6 +1,7 @@
 #include "vendordevicemodel.h"
 #include "vendordevicetreeitem.h"
 #include "device.h"
+#include <QPixmap>
 
 VendorDeviceModel::VendorDeviceModel(QObject *parent)
 		:QAbstractItemModel(parent),
@@ -25,13 +26,15 @@ QVariant VendorDeviceModel::data(const QModelIndex &index, int role) const {
 		return QVariant();
 	}
 
-	if (role != Qt::DisplayRole) {
-		return QVariant();
+	if (role == Qt::DisplayRole) {
+		VendorDeviceTreeItem *item = static_cast<VendorDeviceTreeItem*>(index.internalPointer());
+		return item->data(index.column());
+	} else if (role == Qt::DecorationRole) {
+		VendorDeviceTreeItem *item = static_cast<VendorDeviceTreeItem*>(index.internalPointer());
+		QPixmap pixmap = item->image();
+		return pixmap.scaled(22, 22, Qt::KeepAspectRatio);
 	}
-
-	VendorDeviceTreeItem *item = static_cast<VendorDeviceTreeItem*>(index.internalPointer());
-
-	return item->data(index.column());
+	return QVariant();
 }
 
 Qt::ItemFlags VendorDeviceModel::flags(const QModelIndex &index) const {
