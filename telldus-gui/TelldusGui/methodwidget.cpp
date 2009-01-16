@@ -42,6 +42,8 @@ void MethodWidget::updateMethods(int newMethods) {
 	turnOff->setVisible( newMethods & TELLSTICK_TURNOFF );
 	turnOn->setVisible( newMethods & TELLSTICK_TURNON );
 	bell->setVisible( newMethods & TELLSTICK_BELL );
-//	qDebug() << "Methods: " << newMethods;
+	if (newMethods == 0) {
+		qDebug() << "Methods: " << newMethods;
+	}
 }
 

@@ -8,6 +8,7 @@ SOURCES += telldusgui.cpp \
     devicemodel.cpp \
     device.cpp \
     editdevicedialog.cpp \
+    editgroupdialog.cpp \
     vendordevicemodel.cpp \
     vendordevicetreeitem.cpp \
     devicesettingikea.cpp \
@@ -22,6 +23,7 @@ HEADERS += telldusgui.h \
     devicemodel.h \
     device.h \
     editdevicedialog.h \
+    editgroupdialog.h \
     vendordevicemodel.h \
     vendordevicetreeitem.h \
     devicesettingikea.h \

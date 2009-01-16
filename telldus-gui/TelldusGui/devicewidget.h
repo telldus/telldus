@@ -25,6 +25,7 @@ protected:
 private slots:
 	void listActivated(const QModelIndex &);
 	void addDevice();
+	void addGroup();
 	void deleteDevice();
 	void editDevice();
 

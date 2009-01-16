@@ -6,8 +6,10 @@
 #include <QHBoxLayout>
 #include <QMessageBox>
 #include <QHeaderView>
+#include <QMenu>
 
 #include "editdevicedialog.h"
+#include "editgroupdialog.h"
 #include "methodwidget.h"
 
 DeviceWidget::DeviceWidget(QWidget *parent) :
@@ -30,10 +32,18 @@ DeviceWidget::DeviceWidget(QWidget *parent) :
 	QHBoxLayout *buttonLayout = new QHBoxLayout;
 	buttonLayout->setSpacing(0);
 
+	QMenu *newMenu = new QMenu( this );
+	QAction *newDeviceMenuAction = newMenu->addAction( tr("New device...") );
+	connect(newDeviceMenuAction, SIGNAL(triggered()), this, SLOT(addDevice()));
+	QAction *newGroupMenuAction = newMenu->addAction( tr("New group...") );
+	connect(newGroupMenuAction, SIGNAL(triggered()), this, SLOT(addGroup()));
+
 	addToolButton.setIcon( QIcon( ":/images/list-add.png" ) );
 	addToolButton.setText( tr("New") );
 	addToolButton.setToolButtonStyle( Qt::ToolButtonTextBesideIcon );
-	connect(&addToolButton, SIGNAL(clicked()), this, SLOT(addDevice()));
+	addToolButton.setPopupMode( QToolButton::MenuButtonPopup );
+	addToolButton.setMenu( newMenu );
+	connect(&addToolButton, SIGNAL(clicked()), this, SLOT(addGroup()));
 	buttonLayout->addWidget( &addToolButton );
 
 	buttonLayout->addSpacing( 10 );
@@ -76,6 +86,19 @@ void DeviceWidget::addDevice() {
 	Device *device = model.newDevice();
 
 	EditDeviceDialog *dialog = new EditDeviceDialog(device);
+	if (dialog->exec() == QDialog::Accepted) {
+		device->save();
+	} else {
+		delete device;
+	}
+
+	delete dialog;
+}
+
+void DeviceWidget::addGroup() {
+	Device *device = model.newDevice();
+
+	EditGroupDialog *dialog = new EditGroupDialog(device, &model);
 	if (dialog->exec() == QDialog::Accepted) {
 		device->save();
 	} else {
