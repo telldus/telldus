@@ -15,7 +15,7 @@ FORMS +=
 RESOURCES += resource.qrc
 macx {
     HEADERS += sparkleautoupdater.h
-    LIBS += -framework TelldusGui -framework Sparkle
+    LIBS += -framework TelldusGui -framework TelldusCore -framework Sparkle
     OBJECTIVE_SOURCES += SparkleAutoUpdater.mm \
         CocoaInitializer.mm
     QMAKE_INFO_PLIST = Info.plist

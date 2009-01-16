@@ -4,6 +4,7 @@
 #include <QApplication>
 #include <QSystemTrayIcon>
 #include <QPointer>
+#include <QMenu>
 
 #include "mainwindow.h"
 
@@ -19,6 +20,7 @@ public:
 #endif
 
 	void showMainWindow();
+	bool isMainWindowShown();
 
 	static TelldusCenterApplication *instance();
 
@@ -26,10 +28,15 @@ public slots:
 	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
 	void eventTriggered( const QString &name, const QString &title );
 
+private slots:
+	void activated( QSystemTrayIcon::ActivationReason reason );
+	void updateSystrayMenu();
+	void addDevice( int id );
 
 private:
 	QSystemTrayIcon systrayIcon;
 	QPointer<MainWindow> mainWindow;
+	QMenu systrayMenu;
 };
 
 #endif // TELLDUSCENTERAPPLICATION_H

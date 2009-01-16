@@ -54,7 +54,7 @@ void MainWindow::setupMenu()
 	menuBar()->clear();
 
 	// File
-	QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
+//	QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
 	// Help
 	QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addSeparator();
