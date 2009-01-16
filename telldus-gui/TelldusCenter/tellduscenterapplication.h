@@ -2,10 +2,9 @@
 #define TELLDUSCENTERAPPLICATION_H
 
 #include <QApplication>
-#include <QSystemTrayIcon>
 #include <QPointer>
-#include <QMenu>
 
+#include "systrayicon.h"
 #include "mainwindow.h"
 
 class TelldusCenterApplication : public QApplication
@@ -28,15 +27,9 @@ public slots:
 	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
 	void eventTriggered( const QString &name, const QString &title );
 
-private slots:
-	void activated( QSystemTrayIcon::ActivationReason reason );
-	void updateSystrayMenu();
-	void addDevice( int id );
-
 private:
-	QSystemTrayIcon systrayIcon;
+	SystrayIcon systrayIcon;
 	QPointer<MainWindow> mainWindow;
-	QMenu systrayMenu;
 };
 
 #endif // TELLDUSCENTERAPPLICATION_H
