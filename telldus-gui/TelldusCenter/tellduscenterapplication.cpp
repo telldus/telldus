@@ -18,6 +18,28 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 TelldusCenterApplication::~TelldusCenterApplication() {
 }
 
+void TelldusCenterApplication::showMainWindow() {
+	if (!mainWindow) {
+		mainWindow = new MainWindow();
+	}
+	mainWindow->show();
+}
+
+#if defined(Q_WS_MAC)
+bool TelldusCenterApplication::event(QEvent *event)
+{
+	switch (event->type()) {
+	case QEvent::ApplicationActivate: {
+		showMainWindow();
+		return true;
+	}
+	default:
+		break;
+	}
+	return QApplication::event(event);
+}
+#endif
+
 void TelldusCenterApplication::showMessage( const QString &title, const QString &message, const QString &detailedMessage ) {
 	qDebug() << "showMessage:" << title << message << detailedMessage;
 }

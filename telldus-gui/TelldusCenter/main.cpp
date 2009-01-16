@@ -1,5 +1,4 @@
 #include "tellduscenterapplication.h"
-#include "mainwindow.h"
 
 #ifdef Q_WS_MAC
 #include "CocoaInitializer.h"
@@ -16,9 +15,7 @@ int main(int argc, char *argv[])
 
 
 	TelldusCenterApplication application(argc, argv);
-
-	MainWindow *w = new MainWindow();
-	w->show();
+	application.showMainWindow();
 
 #ifdef Q_WS_MAC
 	AutoUpdater* updater = 0;

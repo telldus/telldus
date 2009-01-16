@@ -3,6 +3,9 @@
 
 #include <QApplication>
 #include <QSystemTrayIcon>
+#include <QPointer>
+
+#include "mainwindow.h"
 
 class TelldusCenterApplication : public QApplication
 {
@@ -10,6 +13,12 @@ class TelldusCenterApplication : public QApplication
 public:
 	TelldusCenterApplication(int &argc, char **argv);
 	virtual ~TelldusCenterApplication();
+
+#if defined(Q_WS_MAC)
+	bool event(QEvent *event);
+#endif
+
+	void showMainWindow();
 
 	static TelldusCenterApplication *instance();
 
@@ -20,6 +29,7 @@ public slots:
 
 private:
 	QSystemTrayIcon systrayIcon;
+	QPointer<MainWindow> mainWindow;
 };
 
 #endif // TELLDUSCENTERAPPLICATION_H
