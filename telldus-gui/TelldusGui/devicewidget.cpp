@@ -124,7 +124,12 @@ void DeviceWidget::deleteDevice() {
 void DeviceWidget::editDevice() {
 	Device *device = model.device( deviceView.currentIndex() );
 
-	EditDeviceDialog *dialog = new EditDeviceDialog( device );
+	QDialog *dialog;
+	if (device->deviceType() == TELLSTICK_TYPE_GROUP) {
+		dialog = new EditGroupDialog( device, &model );
+	} else {
+		dialog = new EditDeviceDialog( device );
+	}
 	if (dialog->exec() == QDialog::Accepted) {
 		device->save();
 	}

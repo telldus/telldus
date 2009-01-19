@@ -1,6 +1,8 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
+#include "telldus-core.h"
+
 #include <QHash>
 #include <QPointer>
 #include <QString>
@@ -28,6 +30,8 @@ public:
 
 	void setProtocol( const QString & protocol );
 	const QString &protocol();
+
+	int deviceType() const;
 
 	int methods() const;
 

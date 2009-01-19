@@ -1,5 +1,4 @@
 #include "device.h"
-#include "telldus-core.h"
 #include <stdlib.h>
 
 QHash<int, Device *> Device::devices;
@@ -79,6 +78,10 @@ int Device::methods() const {
 		const_cast<Device*>(this)->updateMethods();
 	}
 	return p_methods;
+}
+
+int Device::deviceType() const {
+	return tdGetDeviceType(p_id);
 }
 
 Device *Device::getDevice( int id ) {

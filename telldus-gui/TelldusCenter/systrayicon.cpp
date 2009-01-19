@@ -47,7 +47,7 @@ void SystrayIcon::updateSystrayMenu() {
 
 void SystrayIcon::addDevice( int intId ) {
 	char *name = tdGetName(intId);
-	QString deviceName( name );
+	QString deviceName = QString::fromLocal8Bit( name );
 	free(name);
 	QMenu *m = systrayMenu.addMenu( deviceName );
 
