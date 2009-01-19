@@ -12,7 +12,7 @@
 EditGroupDialog::EditGroupDialog(Device *d, DeviceModel *m, QWidget *parent, Qt::WFlags flags)
 		:QDialog(parent, flags),
 		device(d),
-		model(model)
+		model(m)
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
