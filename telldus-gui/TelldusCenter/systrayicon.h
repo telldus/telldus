@@ -17,9 +17,16 @@ public slots:
 	void eventTriggered( const QString &name, const QString &title );
 
 private slots:
-//	void activated( QSystemTrayIcon::ActivationReason reason );
+#if !defined(Q_WS_MAC)
+	void activated( QSystemTrayIcon::ActivationReason reason );
+#endif
 	void updateSystrayMenu();
 	void addDevice( int id );
+
+	void on();
+	void off();
+	void dim();
+	void bell();
 
 private:
 	QMenu systrayMenu;

@@ -1,5 +1,6 @@
 #include "systrayicon.h"
 #include "telldus-core.h"
+#include "tellduscenterapplication.h"
 
 #include <QApplication>
 #include <QDebug>
@@ -11,17 +12,75 @@ SystrayIcon::SystrayIcon( QObject * parent )
 	setIcon(QIcon(":/images/devices-bw.png"));
 #else
 	setIcon(QIcon(":/images/devices.png"));
+	connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(activated(QSystemTrayIcon::ActivationReason)));
 #endif
-//	connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(activated(QSystemTrayIcon::ActivationReason)));
 	updateSystrayMenu();
 	setContextMenu( &systrayMenu );
 	show();
 }
 
-//void SystrayIcon::activated( QSystemTrayIcon::ActivationReason reason ) {
-//	if (reason == QSystemTrayIcon::Trigger) {
-//	}
-//}
+#if !defined(Q_WS_MAC)
+void SystrayIcon::activated( QSystemTrayIcon::ActivationReason reason ) {
+	if (reason == QSystemTrayIcon::Trigger) {
+		TelldusCenterApplication *app = TelldusCenterApplication::instance();
+		app->showMainWindow();
+	}
+}
+#endif
+
+void SystrayIcon::on() {
+	QAction *action = qobject_cast<QAction*>(sender());
+	if (action) {
+		int retval = tdTurnOn( action->data().toInt() );
+		if (retval != TELLSTICK_SUCCESS) {
+			char *errorString = tdGetErrorString( retval );
+			QString message = QString::fromLocal8Bit( errorString );
+			free(errorString);
+			emit showEventMessage("", message, "");
+		}
+	}
+}
+
+void SystrayIcon::off() {
+	QAction *action = qobject_cast<QAction*>(sender());
+	if (action) {
+		int retval = tdTurnOff( action->data().toInt() );
+		if (retval != TELLSTICK_SUCCESS) {
+			char *errorString = tdGetErrorString( retval );
+			QString message = QString::fromLocal8Bit( errorString );
+			free(errorString);
+			emit showEventMessage("", message, "");
+		}
+	}
+}
+
+void SystrayIcon::dim() {
+	QAction *action = qobject_cast<QAction*>(sender());
+	if (action) {
+		int intId = action->data().toString().section(":", 0, 0).toInt();
+		int intLevel = action->data().toString().section(":", 1, 1).toInt();
+		int retval = tdDim( intId, intLevel );
+		if (retval != TELLSTICK_SUCCESS) {
+			char *errorString = tdGetErrorString( retval );
+			QString message = QString::fromLocal8Bit( errorString );
+			free(errorString);
+			emit showEventMessage("", message, "");
+		}
+	}
+}
+
+void SystrayIcon::bell() {
+	QAction *action = qobject_cast<QAction*>(sender());
+	if (action) {
+		int retval = tdBell( action->data().toInt() );
+		if (retval != TELLSTICK_SUCCESS) {
+			char *errorString = tdGetErrorString( retval );
+			QString message = QString::fromLocal8Bit( errorString );
+			free(errorString);
+			emit showEventMessage("", message, "");
+		}
+	}
+}
 
 void SystrayIcon::eventTriggered( const QString &name, const QString &title ) {
 	qDebug() << "Systray - eventTriggered:" << name << title;

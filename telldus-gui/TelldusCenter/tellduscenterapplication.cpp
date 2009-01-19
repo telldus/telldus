@@ -7,7 +7,8 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 		systrayIcon(this)
 {
 	connect(&systrayIcon, SIGNAL(showEventMessage(const QString &, const QString &, const QString &)), this, SLOT(showMessage(QString,QString,QString)));
-	//setQuitOnLastWindowClosed( false );
+
+	setQuitOnLastWindowClosed( false );
 }
 
 TelldusCenterApplication::~TelldusCenterApplication() {
@@ -52,8 +53,7 @@ void TelldusCenterApplication::showMessage( const QString &title, const QString 
 		msgBox.setStandardButtons( QMessageBox::Ok );
 		msgBox.exec();
 	} else {
-		systrayIcon.showMessage(title, message, QSystemTrayIcon::Warning);
-		qDebug() << "showMessage:" << title << message << detailedMessage;
+		systrayIcon.showMessage((title != "" ? title : "Telldus Center"), message, QSystemTrayIcon::Warning);
 	}
 }
 
