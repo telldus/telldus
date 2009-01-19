@@ -21,12 +21,12 @@
         <file>images/list-remove.png</file>
         <file>images/turn-off.png</file>
         <file>images/turn-on.png</file>
-        <file>images/vendors/ikea.jpg</file>
+        <file>images/vendors/ikea.png</file>
         <file>images/vendors/intertechno.jpg</file>
-        <file>images/vendors/nexa.jpg</file>
-        <file>images/vendors/proove.jpg</file>
-        <file>images/vendors/sartano.jpg</file>
+        <file>images/vendors/nexa.png</file>
+        <file>images/vendors/proove.png</file>
+        <file>images/vendors/sartano.png</file>
         <file>images/vendors/telldus.jpg</file>
-        <file>images/vendors/waveman.jpg</file>
+        <file>images/vendors/waveman.png</file>
     </qresource>
 </RCC>
