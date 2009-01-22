@@ -151,7 +151,7 @@ bool Settings::removeDevice(int intDeviceId){
 }
 
 std::string Settings::getStringSetting(int intDeviceId, const std::string &name, bool parameter) const {
-	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), 0 );
+	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), kCFStringEncodingUTF8 );
 	
 	CFStringRef key;
 	if (parameter) {
@@ -178,8 +178,8 @@ std::string Settings::getStringSetting(int intDeviceId, const std::string &name,
 }
 
 bool Settings::setStringSetting(int intDeviceId, const std::string &name, const std::string &value, bool parameter) {
-	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), 0 );
-	CFStringRef cfvalue = CFStringCreateWithCString( 0, value.c_str(), 0 );
+	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), kCFStringEncodingUTF8 );
+	CFStringRef cfvalue = CFStringCreateWithCString( 0, value.c_str(), kCFStringEncodingUTF8 );
 	
 	CFStringRef key;
 	if (parameter) {
@@ -195,7 +195,7 @@ bool Settings::setStringSetting(int intDeviceId, const std::string &name, const 
 
 int Settings::getIntSetting(int intDeviceId, const std::string &name, bool parameter) const {
 	int retval = 0;
-	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), 0 );
+	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), kCFStringEncodingUTF8 );
 	CFNumberRef cfvalue;
 	
 	CFStringRef key;
@@ -220,7 +220,7 @@ int Settings::getIntSetting(int intDeviceId, const std::string &name, bool param
 }
 
 bool Settings::setIntSetting(int intDeviceId, const std::string &name, int value, bool parameter) {
-	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), 0 );
+	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), kCFStringEncodingUTF8 );
 	CFNumberRef cfvalue = CFNumberCreate(NULL, kCFNumberIntType, &value);
 	
 	CFStringRef key;
