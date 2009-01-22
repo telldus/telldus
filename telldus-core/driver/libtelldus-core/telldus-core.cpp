@@ -330,8 +330,8 @@ char* WINAPI tdGetProtocol(int intDeviceId){
 bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
 	bool blnSuccess = false;
 	try{
-		Settings ts;
-		blnSuccess = ts.setProtocol(intDeviceId, strProtocol);
+		Manager *manager = Manager::getInstance();
+		blnSuccess = manager->setProtocol(intDeviceId, strProtocol);
 	}
 	catch(exception e){
 		blnSuccess = false;

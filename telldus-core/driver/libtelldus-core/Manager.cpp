@@ -102,6 +102,17 @@ Device *Manager::getDevice(int intDeviceId){
 	return dev;
 }
 
+bool Manager::setProtocol(int intDeviceId, const std::string &strProtocol) {
+	bool retval = settings.setProtocol( intDeviceId, strProtocol );
+	
+	// Delete the device to reload it when the protocol changes
+	DeviceMap::iterator iterator = devices.find(intDeviceId);
+	if (iterator != devices.end()) {
+		Device *device = iterator->second;
+		devices.erase( iterator );
+		delete device;
+	}
+}
 
 bool Manager::deviceLoaded(int deviceId) const {
 	DeviceMap::const_iterator iterator = devices.find(deviceId);
