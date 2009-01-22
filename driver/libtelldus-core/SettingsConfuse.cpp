@@ -1,7 +1,7 @@
 //
 // C++ Implementation: telldussettingsconfuse
 //
-// Description: 
+// Description:
 //
 //
 // Author: Micke Prag <micke.prag@telldus.se>, (C) 2008
@@ -83,7 +83,7 @@ int Settings::addDevice(){
 	cfg_print(d->cfg, fp); //Print the config-file
 	fprintf(fp, "device {\n  id=%d\n}\n", intDeviceId); //Print the new device
 	fclose(fp);
-	
+
 	//Re-read config-file
 	cfg_free(d->cfg);
 	readConfig(&d->cfg);
@@ -112,10 +112,10 @@ int Settings::getNextDeviceId() const {
 bool Settings::removeDevice(int intDeviceId){
 	bool blnSuccess = true;
 	FILE *fp = fopen(CONFIG_FILE, "w");
-	
+
 	// Print all opts
 	for(int i = 0; d->cfg->opts[i].name; i++) {
-		
+
 		// Check if it isn't a device section
 		if (strcmp(d->cfg->opts[i].name, "device") != 0) {
 			cfg_opt_print(&d->cfg->opts[i], fp);
@@ -133,17 +133,17 @@ bool Settings::removeDevice(int intDeviceId){
 		}
 	}
 	fclose(fp);
-	
+
 	//Re-read config-file
 	cfg_free(d->cfg);
 	readConfig(&d->cfg);
-	
+
 	return blnSuccess;
 }
 
 std::string Settings::getStringSetting(int intDeviceId, const std::string &name, bool parameter) const {
 	if (d->cfg == 0) {
-		return NULL;
+		return "";
 	}
 	cfg_t *cfg_device;
 	for (int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
@@ -152,11 +152,14 @@ std::string Settings::getStringSetting(int intDeviceId, const std::string &name,
 			if (parameter) {
 				cfg_device = cfg_getsec(cfg_device, "parameters");
 			}
-			std::string strSetting = cfg_getstr(cfg_device, name.c_str());
-			return strSetting;
+			char *setting = cfg_getstr(cfg_device, name.c_str());
+			if (setting == 0) { //The parameter does not exists
+				return "";
+			}
+			return setting;
 		}
 	}
-	return NULL;
+	return "";
 }
 
 bool Settings::setStringSetting(int intDeviceId, const std::string &name, const std::string &value, bool parameter) {
@@ -227,26 +230,26 @@ bool readConfig(cfg_t **cfg) {
 	cfg_opt_t controller_opts[] = {
 		CFG_INT("id", -1, CFGF_NONE),
 	};
-	
+
 	cfg_opt_t device_parameter_opts[] = {
 		//Groups
 		CFG_STR("devices", 0, CFGF_NONE),
-		
+
 		//Nexa
 		CFG_STR("nexa_house", 0, CFGF_NONE),
 		CFG_STR("nexa_unit", 0, CFGF_NONE),
-		
+
 		//Sartano
 		CFG_STR("sartano_code", 0, CFGF_NONE),
-		
+
 		//Ikea
 		CFG_STR("ikea_system", 0, CFGF_NONE),
 		CFG_STR("ikea_units", 0, CFGF_NONE),
 		CFG_STR("ikea_fade", 0, CFGF_NONE),
-		
+
 		CFG_END()
 	};
-	
+
 	cfg_opt_t device_opts[] = {
 		CFG_INT("id", -1, CFGF_NONE),
 		CFG_STR("name", "Unnamed", CFGF_NONE),
@@ -256,13 +259,13 @@ bool readConfig(cfg_t **cfg) {
 		CFG_SEC("parameters", device_parameter_opts, CFGF_NONE),
 		CFG_END()
 	};
-	
+
 	cfg_opt_t opts[] = {
 		CFG_STR("deviceNode", "/dev/tellstick", CFGF_NONE),
 		CFG_SEC("device", device_opts, CFGF_MULTI),
 		CFG_END()
 	};
-	
+
 	(*cfg) = cfg_init(opts, CFGF_NOCASE);
 	if (cfg_parse((*cfg), CONFIG_FILE) == CFG_PARSE_ERROR) {
 		(*cfg) = 0;
