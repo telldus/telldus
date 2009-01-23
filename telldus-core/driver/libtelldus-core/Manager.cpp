@@ -114,6 +114,18 @@ bool Manager::setProtocol(int intDeviceId, const std::string &strProtocol) {
 	}
 }
 
+bool Manager::setModel(int intDeviceId, int intModel) {
+	bool retval = settings.setModel(intDeviceId, intModel);
+	if (deviceLoaded(intDeviceId)) {
+		Device *device = getDevice(intDeviceId);
+		if (device) {
+			device->setModel( intModel );
+		}
+	}
+	return retval;
+}
+
+
 bool Manager::deviceLoaded(int deviceId) const {
 	DeviceMap::const_iterator iterator = devices.find(deviceId);
 	if (iterator == devices.end()) {
