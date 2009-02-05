@@ -60,6 +60,10 @@ int DeviceSartano::turnOff(void){
 	return TELLSTICK_ERROR_UNKNOWN;
 }
 
+bool DeviceSartano::parameterMatches( const std::string &name, const std::string &value ) const {
+	return false;
+}
+
 /*
 * Has the device got the method?
 */

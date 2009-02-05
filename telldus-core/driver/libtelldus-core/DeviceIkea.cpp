@@ -194,6 +194,10 @@ std::string DeviceIkea::getStringCode(unsigned char level){
 
 }
 
+bool DeviceIkea::parameterMatches( const std::string &name, const std::string &value ) const {
+	return false;
+}
+
 /*
 * Has the device got the method?
 */

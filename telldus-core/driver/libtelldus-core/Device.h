@@ -18,6 +18,7 @@ namespace TelldusCore {
 		virtual int dim(unsigned char level);
 		virtual int methods(int methodsSupported) = 0;
 		virtual std::string getProtocol() const = 0;
+		virtual bool parameterMatches( const std::string &name, const std::string &value ) const = 0;
 		int getModel() const;
 		void setModel( int intModel );
 		

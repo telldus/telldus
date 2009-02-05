@@ -117,6 +117,10 @@ int DeviceGroup::dim(unsigned char level){
 	return retVal;
 }
 
+bool DeviceGroup::parameterMatches( const std::string &name, const std::string &value ) const {
+	return false;
+}
+
 /*
 * Has the device got the method?
 */
