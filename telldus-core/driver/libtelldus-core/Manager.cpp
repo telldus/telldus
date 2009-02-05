@@ -32,7 +32,9 @@ using namespace TelldusCore;
 
 Manager *Manager::instance = 0;
 
-Manager::Manager() {
+Manager::Manager()
+	: lastCallbackId(0)
+{
 	Controller *controller = new TellStickDuo("TSQVB5HU");
 	controllers[1] = controller;
 }
@@ -110,6 +112,16 @@ Device *Manager::getDevice(int intDeviceId){
 	return dev;
 }
 
+void Manager::loadAllDevices() {
+	int numberOfDevices = settings.getNumberOfDevices();
+	for (int i = 0; i < numberOfDevices; ++i) {
+		int id = settings.getDeviceId(i);
+		if (!deviceLoaded(id)) {
+			getDevice(id);
+		}
+	}
+}
+
 bool Manager::setProtocol(int intDeviceId, const std::string &strProtocol) {
 	bool retval = settings.setProtocol( intDeviceId, strProtocol );
 	
@@ -143,14 +155,68 @@ bool Manager::deviceLoaded(int deviceId) const {
 }
 
 void Manager::parseMessage( const std::string &message ) {
-	for(CallbackList::const_iterator it = callbacks.begin(); it != callbacks.end(); ++it) {
-		(*it).event(1, 1, message.c_str(), (*it).context);
+	loadAllDevices(); //Make sure all devices is loaded before we iterator the list.
+	
+	std::map<std::string, std::string> parameters;
+	std::string protocol;
+	int method = 0;
+	
+	size_t prevPos = 0;
+	size_t pos = message.find(";");
+	while(pos != std::string::npos) {
+		std::string param = message.substr(prevPos, pos-prevPos);
+		prevPos = pos+1;
+		size_t delim = param.find(":");
+		if (delim == std::string::npos) {
+			break;
+		}
+		if (param.substr(0, delim).compare("protocol") == 0) {
+			protocol = param.substr(delim+1, param.length()-delim);
+		} else if (param.substr(0, delim).compare("method") == 0) {
+			method = Device::methodId(param.substr(delim+1, param.length()-delim));
+		} else {
+			parameters[param.substr(0, delim)] = param.substr(delim+1, param.length()-delim);
+		}
+		pos = message.find(";", pos+1);
+	}
+	for (DeviceMap::const_iterator it = devices.begin(); it != devices.end(); ++it) {
+		if (it->second->getProtocol().compare(protocol) != 0) {
+			continue;
+		}
+		if (! (it->second->methods(ALL_METHODS) & method)) {
+			continue;
+		}
+		bool found = true;
+		for (std::map<std::string, std::string>::const_iterator p_it = parameters.begin(); p_it != parameters.end(); ++p_it) {
+			if (!it->second->parameterMatches(p_it->first, p_it->second)) {
+				found = false;
+				break;
+			}
+		}
+		if (found) {
+			for(CallbackList::const_iterator callback_it = callbacks.begin(); callback_it != callbacks.end(); ++callback_it) {
+				(*callback_it).event(it->first, 1, message.c_str(), (*callback_it).id, (*callback_it).context);
+			}
+		}
+	}
+
+	for(RawCallbackList::const_iterator it = rawCallbacks.begin(); it != rawCallbacks.end(); ++it) {
+		(*it).event(message.c_str(), (*it).id, (*it).context);
 	}
 }
 
-void Manager::registerDeviceEvent( deviceEvent eventFunction, void *context ) {
-	CallbackStruct callback = {eventFunction, context};
+int Manager::registerDeviceEvent( deviceEvent eventFunction, void *context ) {
+	int id = ++lastCallbackId;
+	CallbackStruct callback = {eventFunction, id, context};
 	callbacks.push_back(callback);
+	return id;
+}
+
+int Manager::registerRawDeviceEvent( rawDeviceEvent eventFunction, void *context ) {
+	int id = ++lastCallbackId;
+	RawCallbackStruct callback = {eventFunction, id, context};
+	rawCallbacks.push_back(callback);
+	return id;
 }
 
 Manager *Manager::getInstance() {
