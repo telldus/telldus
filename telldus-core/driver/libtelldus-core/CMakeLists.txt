@@ -9,6 +9,7 @@ SET( telldus-core_SRCS
 	DeviceNexa.cpp
 	DeviceSartano.cpp
 	DeviceWaveman.cpp
+	Controller.cpp
 	Manager.cpp
 	Settings.cpp
 	telldus-core.cpp
