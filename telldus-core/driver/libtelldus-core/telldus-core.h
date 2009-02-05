@@ -21,9 +21,15 @@
 	#define TELLSTICK_API
 #endif
 
+typedef void (WINAPI *deviceEvent)(int deviceId, int method, const char *data, int callbackId, void *context);
+typedef void (WINAPI *rawDeviceEvent)(const char *data, int callbackId, void *context);
+
 #ifdef __cplusplus
 extern "C" {
 #endif
+	TELLSTICK_API void WINAPI tdInit(void);
+	TELLSTICK_API int WINAPI tdRegisterDeviceEvent( deviceEvent eventFunction, void *context );
+	TELLSTICK_API int WINAPI tdRegisterRawDeviceEvent( rawDeviceEvent eventFunction, void *context );
 	TELLSTICK_API void WINAPI tdClose(void);
 	TELLSTICK_API int WINAPI tdTurnOn(int intDeviceId);
 	TELLSTICK_API int WINAPI tdTurnOff(int intDeviceId);
