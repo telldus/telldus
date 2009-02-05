@@ -19,6 +19,7 @@ namespace TelldusCore {
 		virtual int dim(unsigned char level);
 		virtual int methods(int methodsSupported);
 		virtual std::string getProtocol() const;
+		virtual bool parameterMatches( const std::string &name, const std::string &value ) const;
 		
 	public:
 		~DeviceGroup(void);

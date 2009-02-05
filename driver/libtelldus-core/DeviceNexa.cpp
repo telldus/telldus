@@ -133,6 +133,19 @@ std::string DeviceNexa::getStringCode(int intToConvert){
 
 }
 
+bool DeviceNexa::parameterMatches( const std::string &name, const std::string &value ) const {
+	if (value.length() == 0) {
+		return false;
+	}
+	
+	if (name.compare("arctech_house") == 0) {
+		return intHouse == value[0] - 'A';
+	} else if (name.compare("arctech_unit") == 0) {
+		return intCode == atoi(value.c_str()) - 1;
+	}
+	return true;
+}
+
 /*
 * Has the device got the method?
 */
