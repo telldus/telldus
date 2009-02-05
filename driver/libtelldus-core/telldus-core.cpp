@@ -12,6 +12,7 @@
 #include "Manager.h"
 #include "Device.h"
 #include "DeviceGroup.h"
+#include "TellStickDuo.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -68,6 +69,20 @@ inline char *wrapStdString( const std::string &string);
  */
 
 #define MAX_LOADSTRING 100
+
+void WINAPI tdInit(void) {
+	Manager::getInstance(); //Create the manager-object
+}
+
+int WINAPI tdRegisterDeviceEvent( deviceEvent eventFunction, void *context ) {
+	Manager *manager = Manager::getInstance();
+	return manager->registerDeviceEvent( eventFunction, context );
+}
+
+int WINAPI tdRegisterRawDeviceEvent( rawDeviceEvent eventFunction, void *context ) {
+	Manager *manager = Manager::getInstance();
+	return manager->registerRawDeviceEvent( eventFunction, context );
+}
 
 /**
  * Close the library and clean up the cache it uses.
