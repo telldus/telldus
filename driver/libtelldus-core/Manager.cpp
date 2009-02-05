@@ -18,6 +18,8 @@
 #include "DeviceSartano.h"
 #include "DeviceIkea.h"
 
+#include "TellStickDuo.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -31,11 +33,17 @@ using namespace TelldusCore;
 Manager *Manager::instance = 0;
 
 Manager::Manager() {
+	Controller *controller = new TellStickDuo("TSQVB5HU");
+	controllers[1] = controller;
 }
 
 Manager::~Manager() {
 	// Clean up the device-map
 	for (DeviceMap::iterator it = devices.begin(); it != devices.end(); ++it) {
+		delete( it->second );
+	}
+	// Clean up the controller-map
+	for (ControllerMap::iterator it = controllers.begin(); it != controllers.end(); ++it) {
 		delete( it->second );
 	}
 }
@@ -132,6 +140,17 @@ bool Manager::deviceLoaded(int deviceId) const {
 		return false;
 	}
 	return true;
+}
+
+void Manager::parseMessage( const std::string &message ) {
+	for(CallbackList::const_iterator it = callbacks.begin(); it != callbacks.end(); ++it) {
+		(*it).event(1, 1, message.c_str(), (*it).context);
+	}
+}
+
+void Manager::registerDeviceEvent( deviceEvent eventFunction, void *context ) {
+	CallbackStruct callback = {eventFunction, context};
+	callbacks.push_back(callback);
 }
 
 Manager *Manager::getInstance() {
