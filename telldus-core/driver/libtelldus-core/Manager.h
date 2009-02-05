@@ -12,13 +12,22 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
+#include <QObject>
 #include "Settings.h"
 #include <map>
 
 namespace TelldusCore {
 	class Device;
+	class Controller;
+
+	struct CallbackStruct {
+		deviceEvent event;
+		void *context;
+	};
 
 	typedef std::map<int, Device *> DeviceMap;
+	typedef std::map<int, Controller *> ControllerMap;
+	typedef std::list<CallbackStruct> CallbackList;
 
 	/**
 		@author Micke Prag <micke.prag@telldus.se>
@@ -39,11 +48,16 @@ namespace TelldusCore {
 		static Manager *getInstance();
 		static void close();
 		
+		void registerDeviceEvent( deviceEvent eventFunction, void *context );
+		void parseMessage( const std::string &message );
+		
 	private:
 		Manager();
 		
 		Settings settings;
 		DeviceMap devices;
+		ControllerMap controllers;
+		CallbackList callbacks;
 		
 		static Manager *instance;
 	};
