@@ -5,12 +5,6 @@
 
 using namespace TelldusCore;
 
-const int ALL_METHODS =
-		TELLSTICK_TURNON |
-		TELLSTICK_TURNOFF |
-		TELLSTICK_BELL |
-		TELLSTICK_DIM;
-
 /*
 * Constructor
 */

@@ -6,6 +6,12 @@
 
 namespace TelldusCore {
 
+	const int ALL_METHODS =
+			TELLSTICK_TURNON |
+			TELLSTICK_TURNOFF |
+			TELLSTICK_BELL |
+			TELLSTICK_DIM;
+
 	class Device
 	{
 	public:
@@ -21,6 +27,8 @@ namespace TelldusCore {
 		virtual bool parameterMatches( const std::string &name, const std::string &value ) const = 0;
 		int getModel() const;
 		void setModel( int intModel );
+		
+		static bool methodId( const std::string &methodName );
 		
 	#ifdef _LINUX
 		void setDevice(const std::string &device);
