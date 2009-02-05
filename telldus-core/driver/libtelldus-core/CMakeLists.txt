@@ -12,11 +12,18 @@ SET( telldus-core_SRCS
 	Manager.cpp
 	Settings.cpp
 	telldus-core.cpp
+	TellStickDuo.cpp
 	)
 
 SET( telldus-core_HDRS
 	telldus-core.h
 )
+
+SET( telldus-core_MOC_HDRS
+	)
+	
+QT4_WRAP_CPP(  telldus-core_MOC_SRCS  ${telldus-core_MOC_HDRS} )
+QT4_AUTOMOC (  ${telldus-core_SRCS}                     )
 	
 IF (APPLE)
 	SET( telldus-core_TARGET	TelldusCore )
@@ -44,16 +51,17 @@ ENDIF (APPLE)
 ADD_LIBRARY(${telldus-core_TARGET} SHARED
 	${telldus-core_SRCS}
 	${telldus-core_HDRS}
+	${telldus-core_MOC_SRCS}
 	)
 	
 SET_PROPERTY(TARGET ${telldus-core_TARGET}
 	PROPERTY PUBLIC_HEADER {$telldus-core_HDRS}
 )
 
+FIND_LIBRARY(FTD2XX_LIBRARY ftd2xx)
 
 IF (APPLE)
 	FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
-	FIND_LIBRARY(FTD2XX_LIBRARY ftd2xx)
 
 	TARGET_LINK_LIBRARIES(${telldus-core_TARGET}
 		${COREFOUNDATION_LIBRARY}
@@ -67,6 +75,7 @@ IF (APPLE)
 ELSE (APPLE)
 	TARGET_LINK_LIBRARIES(${telldus-core_TARGET}
 		${QT_LIBRARIES}
+		${FTD2XX_LIBRARY}
 		confuse
 	)
 ENDIF (APPLE)
