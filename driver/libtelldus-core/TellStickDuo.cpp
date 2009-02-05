@@ -155,9 +155,9 @@ void PrivateTellStickDuoListener::processData( const std::string &data ) {
 		} else if (data[i] == 10) { // \n found
 			if (message.substr(0,2).compare("+V") == 0) {
 				parent->fwVersion = atoi(message.substr(2).c_str());
-			} else {
+			} else if (message.substr(0,2).compare("+R") == 0) {
 				Manager *manager = Manager::getInstance();
-				manager->parseMessage(message);
+				manager->parseMessage(message.substr(2));
 			}
 			message.clear();
 		} else { // Append the character
