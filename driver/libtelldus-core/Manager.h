@@ -22,12 +22,19 @@ namespace TelldusCore {
 
 	struct CallbackStruct {
 		deviceEvent event;
+		int id;
+		void *context;
+	};
+	struct RawCallbackStruct {
+		rawDeviceEvent event;
+		int id;
 		void *context;
 	};
 
 	typedef std::map<int, Device *> DeviceMap;
 	typedef std::map<int, Controller *> ControllerMap;
 	typedef std::list<CallbackStruct> CallbackList;
+	typedef std::list<RawCallbackStruct> RawCallbackList;
 
 	/**
 		@author Micke Prag <micke.prag@telldus.se>
@@ -48,8 +55,12 @@ namespace TelldusCore {
 		static Manager *getInstance();
 		static void close();
 		
-		void registerDeviceEvent( deviceEvent eventFunction, void *context );
+		int registerDeviceEvent( deviceEvent eventFunction, void *context );
+		int registerRawDeviceEvent( rawDeviceEvent eventFunction, void *context );
 		void parseMessage( const std::string &message );
+	
+	protected:
+		void loadAllDevices();
 		
 	private:
 		Manager();
@@ -58,6 +69,9 @@ namespace TelldusCore {
 		DeviceMap devices;
 		ControllerMap controllers;
 		CallbackList callbacks;
+		RawCallbackList rawCallbacks;
+		
+		int lastCallbackId;
 		
 		static Manager *instance;
 	};
