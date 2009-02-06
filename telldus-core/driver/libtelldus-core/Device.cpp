@@ -52,7 +52,7 @@ int Device::dim(unsigned char level){
 	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 }
 
-bool Device::methodId( const std::string &methodName ) {
+int Device::methodId( const std::string &methodName ) {
 	if (methodName.compare("turnon") == 0) {
 		return TELLSTICK_TURNON;
 	}

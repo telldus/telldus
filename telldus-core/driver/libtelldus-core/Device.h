@@ -28,7 +28,7 @@ namespace TelldusCore {
 		int getModel() const;
 		void setModel( int intModel );
 		
-		static bool methodId( const std::string &methodName );
+		static int methodId( const std::string &methodName );
 		
 	#ifdef _LINUX
 		void setDevice(const std::string &device);
