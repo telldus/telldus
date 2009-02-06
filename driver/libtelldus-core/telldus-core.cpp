@@ -61,7 +61,7 @@ inline char *wrapStdString( const std::string &string);
  * Error code. The supplied device id was not found.
  * 
  * @def TELLSTICK_ERROR_METHOD_NOT_SUPPORTED
- * Error code. The requested method is not supported device.
+ * Error code. The requested method is not supported by the device.
  * This should be avoided by a call to tdMethods().
  * 
  * @def TELLSTICK_ERROR_UNKNOWN
