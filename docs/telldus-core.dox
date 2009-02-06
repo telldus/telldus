@@ -32,6 +32,11 @@
  * 
  * Telldus provides a non-gui library to list, query and control the devices
  * called telldus-core.
+ * To initiate the library a call to tdInit() must be made. This call will
+ * open up all controllers (e.g. a TellStick) and start listen for events from
+ * them.
+ * When you are done with telldus-core, call tdClose() to allow the library to
+ * clean up after itself.
  *
  * \subsection sec_bu_listing Listing devices
  *
@@ -42,6 +47,7 @@
  *   int id = tdGetDeviceId( index );
  *   char *name = tdGetName( id );
  *   printf("%d\t%s\n", id, name);
+ *   free(name);
  * }
  * \endcode
  *
@@ -60,7 +66,9 @@
  * the rest of the program.
  *
  * The next two lines of code queries the device for it's name with a call to
- * tdGetName() and then displays it to stdout.
+ * tdGetName() and then displays it to stdout. Since telldus-core gives up the
+ * ownership of the string we must manualy free up the resource after we are
+ * done with it. 
  *
  * \subsection sec_bu_sending Sending commands to TellStick
  *
