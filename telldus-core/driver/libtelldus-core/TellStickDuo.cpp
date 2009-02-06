@@ -66,9 +66,9 @@ TellStickDuo::TellStickDuo(const std::string &serial)
 		char message[] = "V+";
 		DWORD bytesWritten;
 		FT_Write(ftHandle, message, sizeof(message), &bytesWritten);
+	} else {	
+		printf("Open: %d - %d\n", (int)ftStatus, connected());
 	}
-	
-	printf("Open: %d - %d\n", (int)ftStatus, connected());
 }
 
 
