@@ -195,7 +195,7 @@ void Manager::parseMessage( const std::string &message ) {
 		}
 		if (found) {
 			for(CallbackList::const_iterator callback_it = callbacks.begin(); callback_it != callbacks.end(); ++callback_it) {
-				(*callback_it).event(it->first, 1, message.c_str(), (*callback_it).id, (*callback_it).context);
+				(*callback_it).event(it->first, method, message.c_str(), (*callback_it).id, (*callback_it).context);
 			}
 		}
 	}
