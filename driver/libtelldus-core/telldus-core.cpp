@@ -104,7 +104,6 @@ int WINAPI tdTurnOn(int intDeviceId){
 		Manager *manager = Manager::getInstance();
 		Device* dev = manager->getDevice(intDeviceId);
 		if(dev != NULL){
-			int model = dev->getModel();
 			int methods = dev->methods( TELLSTICK_TURNON );
 			
 			int retval = 0;
@@ -138,7 +137,6 @@ int WINAPI tdTurnOff(int intDeviceId){
 		Manager *manager = Manager::getInstance();
 		Device* dev = manager->getDevice(intDeviceId);
 		if(dev != NULL){
-			int model = dev->getModel( );
 			int methods = dev->methods( TELLSTICK_TURNOFF );
 			int retval = 0;
 
