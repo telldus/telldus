@@ -101,7 +101,7 @@ int DeviceGroup::dim(unsigned char level){
 	
 	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
 		int methods = (*it)->methods(ALL_METHODS);
-		if (ALL_METHODS & TELLSTICK_DIM) {
+		if (methods & TELLSTICK_DIM) {
 			int success = (*it)->dim(level);
 			if (retVal != TELLSTICK_SUCCESS) {
 				retVal = success;
