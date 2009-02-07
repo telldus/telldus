@@ -55,3 +55,21 @@ bool Settings::setDeviceParameter(int intDeviceId, const std::string &strName, c
 std::string Settings::getDeviceParameter(int intDeviceId, const std::string &strName) const {
 	return getStringSetting(intDeviceId, strName, true);
 }
+
+#ifndef _LINUX
+
+bool Settings::setDeviceState( int intDeviceId, int intDeviceState, const std::string &strDeviceStateValue ) {
+	bool retval = setIntSetting( intDeviceId, "state", intDeviceState, true );
+	setStringSetting( intDeviceId, "stateValue", strDeviceStateValue, true );
+	return retval;
+}
+
+int Settings::getDeviceState( int intDeviceId ) const {
+	return getIntSetting( intDeviceId, "state", true );
+}
+
+std::string Settings::getDeviceStateValue( int intDeviceId ) const {
+	return getStringSetting( intDeviceId, "state", true );
+}
+
+#endif

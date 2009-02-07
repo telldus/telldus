@@ -19,6 +19,10 @@ public:
 	bool setModel(int intDeviceId, int intModel);
 	std::string getDeviceParameter(int intDeviceId, const std::string &strName) const;
 	bool setDeviceParameter(int intDeviceId, const std::string &strName, const std::string &strValue);
+	bool setDeviceState( int intDeviceId, int intDeviceState, const std::string &strDeviceStateValue );
+	int getDeviceState( int intDeviceId ) const;
+	std::string getDeviceStateValue( int intDeviceId ) const;
+
 	int addDevice();
 	int getDeviceId(int intDeviceIndex) const;
 	bool removeDevice(int intDeviceId);
