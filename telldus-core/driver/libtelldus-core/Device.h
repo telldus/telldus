@@ -16,7 +16,7 @@ namespace TelldusCore {
 	{
 	public:
 		Device(int model);
-		~Device(void);
+		virtual ~Device(void);
 		
 		virtual int turnOn(void);
 		virtual int turnOff(void);
