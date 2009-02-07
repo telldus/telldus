@@ -18,10 +18,7 @@ namespace TelldusCore {
 		Device(int model);
 		virtual ~Device(void);
 		
-		virtual int turnOn(void);
-		virtual int turnOff(void);
-		virtual int bell(void);
-		virtual int dim(unsigned char level);
+		int switchState( int newState, const std::string &value = "" );
 		virtual int methods(int methodsSupported) = 0;
 		virtual std::string getProtocol() const = 0;
 		virtual bool parameterMatches( const std::string &name, const std::string &value ) const = 0;
@@ -37,6 +34,10 @@ namespace TelldusCore {
 	#endif
 	
 	protected:
+		virtual int turnOn(void);
+		virtual int turnOff(void);
+		virtual int bell(void);
+		virtual int dim(unsigned char level);
 		int send(const std::string &strMessage);
 	
 	private:

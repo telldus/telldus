@@ -16,6 +16,20 @@ Device::Device(int m)
 Device::~Device(void) {
 }
 
+int Device::switchState( int newState, const std::string &value ) {
+	switch (newState) {
+		case TELLSTICK_TURNON:
+			return turnOn();
+		case TELLSTICK_TURNOFF:
+			return turnOff();
+		case TELLSTICK_BELL:
+			return bell();
+		case TELLSTICK_DIM:
+			return dim( value[0] );
+	}
+	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+}
+
 int Device::getModel() const {
 	return model;
 }

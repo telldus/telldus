@@ -111,7 +111,7 @@ int WINAPI tdTurnOn(int intDeviceId){
 			if ( !(methods & TELLSTICK_TURNON) ) {
 				retval = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 			} else {
-				retval = dev->turnOn();
+				retval = dev->switchState(TELLSTICK_TURNON);
 			}
 
 			return retval;
@@ -143,7 +143,7 @@ int WINAPI tdTurnOff(int intDeviceId){
 			if ( !(methods & TELLSTICK_TURNOFF) ) {
 				retval = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 			} else {
-				retval = dev->turnOff();
+				retval = dev->switchState(TELLSTICK_TURNOFF);
 			}
 
 			return retval;
@@ -176,7 +176,7 @@ int WINAPI tdBell(int intDeviceId){
 			if ( !(methods & TELLSTICK_BELL) ) {
 				retval = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 			} else {
-				retval = dev->bell();
+				retval = dev->switchState( TELLSTICK_BELL );
 			}
 
 			return retval;
@@ -210,11 +210,11 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
 				retval = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 			} else {
 				if (level == 0) {
-					retval = dev->turnOff();
+					retval = dev->switchState( TELLSTICK_TURNOFF );
 				} else if (level == 255) {
-					retval = dev->turnOn();
+					retval = dev->switchState( TELLSTICK_TURNON );
 				} else {
-					retval = dev->dim(level);
+					retval = dev->switchState( TELLSTICK_DIM, (char *)&level);
 				}
 			}
 
