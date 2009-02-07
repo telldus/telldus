@@ -132,6 +132,8 @@ bool Manager::setProtocol(int intDeviceId, const std::string &strProtocol) {
 		devices.erase( iterator );
 		delete device;
 	}
+	
+	return retval;
 }
 
 bool Manager::setModel(int intDeviceId, int intModel) {
