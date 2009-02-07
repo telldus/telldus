@@ -48,7 +48,7 @@ int DeviceGroup::turnOn(void) {
 	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
 		int methods = (*it)->methods(ALL_METHODS);
 		if (methods & TELLSTICK_TURNON) {
-			int success = (*it)->turnOn();
+			int success = (*it)->switchState( TELLSTICK_TURNON );
 			if (retVal != TELLSTICK_SUCCESS) {
 				retVal = success;
 			}
@@ -66,7 +66,7 @@ int DeviceGroup::turnOff(void) {
 	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
 		int methods = (*it)->methods(ALL_METHODS);
 		if (methods & TELLSTICK_TURNOFF) {
-			int success = (*it)->turnOff();
+			int success = (*it)->switchState( TELLSTICK_TURNOFF );
 			if (retVal != TELLSTICK_SUCCESS) {
 				retVal = success;
 			}
@@ -84,7 +84,7 @@ int DeviceGroup::bell(void){
 	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
 		int methods = (*it)->methods(ALL_METHODS);
 		if (methods & TELLSTICK_BELL) {
-			int success = (*it)->bell();
+			int success = (*it)->switchState( TELLSTICK_BELL );
 			if (retVal != TELLSTICK_SUCCESS) {
 				retVal = success;
 			}
@@ -102,7 +102,7 @@ int DeviceGroup::dim(unsigned char level){
 	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
 		int methods = (*it)->methods(ALL_METHODS);
 		if (methods & TELLSTICK_DIM) {
-			int success = (*it)->dim(level);
+			int success = (*it)->switchState( TELLSTICK_DIM, (char*)&level);
 			if (retVal != TELLSTICK_SUCCESS) {
 				retVal = success;
 			}
