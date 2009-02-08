@@ -11,8 +11,8 @@ using namespace TelldusCore;
 /*
 * Constructor
 */
-DeviceNexa::DeviceNexa(int model, const std::string &strHouse, const std::string &strCode)
-	:Device(model)
+DeviceNexa::DeviceNexa(int id, int model, const std::string &strHouse, const std::string &strCode)
+	:Device(id, model)
 {
 	if (strHouse.length() > 0) {
 		intHouse = strHouse[0] - 'A';

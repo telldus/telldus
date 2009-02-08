@@ -10,8 +10,8 @@ using namespace TelldusCore;
 /*
 * Constructor
 */
-DeviceSartano::DeviceSartano(int model, const std::string &strNewCode)
-	:Device(model)
+DeviceSartano::DeviceSartano(int id, int model, const std::string &strNewCode)
+	:Device(id, model)
 {
 	strCode = strNewCode;
 }

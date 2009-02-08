@@ -230,6 +230,12 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
 	return TELLSTICK_ERROR_UNKNOWN;
 }
 
+int WINAPI tdLastSentCommand( int intDeviceId ) {
+	Manager *manager = Manager::getInstance();
+	int lastSentCommand = manager->getDeviceState( intDeviceId );
+	return (lastSentCommand > 0 ? lastSentCommand : TELLSTICK_TURNOFF );
+}
+
 /**
  * This function returns the number of devices configured
  * @returns an integer of the total number of devices configured

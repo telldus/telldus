@@ -7,10 +7,7 @@ namespace TelldusCore {
 	class DeviceIkea : public Device
 	{
 	public:
-		DeviceIkea(int model, const std::string &strSystem, const std::string &strUnits, const std::string &strFadeStyle);
-		virtual int turnOn(void);
-		virtual int turnOff(void);
-		virtual int dim(unsigned char level);
+		DeviceIkea(int id, int model, const std::string &strSystem, const std::string &strUnits, const std::string &strFadeStyle);
 		virtual int methods(int methodsSupported);
 		virtual std::string getProtocol() const;
 		virtual bool parameterMatches( const std::string &name, const std::string &value ) const;
@@ -19,6 +16,10 @@ namespace TelldusCore {
 		~DeviceIkea(void);
 	
 	protected:
+		virtual int turnOn(void);
+		virtual int turnOff(void);
+		virtual int dim(unsigned char level);
+
 		int intSystem;
 		int intUnits;
 		int intFadeStyle;

@@ -74,26 +74,26 @@ Device *Manager::getDevice(int intDeviceId){
 		if (strcasecmp(protocol.c_str(), "arctech") == 0){
 			std::string strHouse = settings.getDeviceParameter(intDeviceId, "nexa_house");
 			std::string strCode = settings.getDeviceParameter(intDeviceId, "nexa_unit");
-			dev = new DeviceNexa(intModel, strHouse, strCode);
+			dev = new DeviceNexa(intDeviceId, intModel, strHouse, strCode);
 	
 		} else if (strcasecmp(protocol.c_str(), "group") == 0) {
 			std::string strDevices = settings.getDeviceParameter(intDeviceId, "devices");
-			dev = new DeviceGroup(intModel, strDevices);
+			dev = new DeviceGroup(intDeviceId, intModel, strDevices);
 
 		} else if (strcasecmp(protocol.c_str(), "Waveman") == 0) {
 			std::string strHouse = settings.getDeviceParameter(intDeviceId, "nexa_house");
 			std::string strCode = settings.getDeviceParameter(intDeviceId, "nexa_unit");
-			dev = new DeviceWaveman(intModel, strHouse, strCode);
+			dev = new DeviceWaveman(intDeviceId, intModel, strHouse, strCode);
 
 		} else if (strcasecmp(protocol.c_str(), "Sartano") == 0) {
 			std::string strCode = settings.getDeviceParameter(intDeviceId, "sartano_code");
-			dev = new DeviceSartano(intModel, strCode);
+			dev = new DeviceSartano(intDeviceId, intModel, strCode);
 
 		} else if (strcasecmp(protocol.c_str(), "Ikea") == 0) {
 			std::string strSystem = settings.getDeviceParameter(intDeviceId, "ikea_system");
 			std::string strUnits = settings.getDeviceParameter(intDeviceId, "ikea_units");
 			std::string strFade = settings.getDeviceParameter(intDeviceId, "ikea_fade");
-			dev = new DeviceIkea(intModel, strSystem, strUnits, strFade);
+			dev = new DeviceIkea(intDeviceId, intModel, strSystem, strUnits, strFade);
 
 		} else {
 			return NULL;
@@ -147,6 +147,17 @@ bool Manager::setModel(int intDeviceId, int intModel) {
 	return retval;
 }
 
+bool Manager::setDeviceState( int intDeviceId, int intDeviceState, const std::string &strDeviceStateValue ) {
+	return settings.setDeviceState(intDeviceId, intDeviceState, strDeviceStateValue);
+}
+
+int Manager::getDeviceState( int intDeviceId ) const {
+	return settings.getDeviceState(intDeviceId);
+}
+
+std::string Manager::getDeviceStateValue( int intDeviceId ) const {
+	return settings.getDeviceStateValue(intDeviceId);
+}
 
 bool Manager::deviceLoaded(int deviceId) const {
 	DeviceMap::const_iterator iterator = devices.find(deviceId);
