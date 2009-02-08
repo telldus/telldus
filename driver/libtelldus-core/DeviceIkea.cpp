@@ -15,8 +15,8 @@ using namespace TelldusCore;
 /*
 * Constructor
 */
-DeviceIkea::DeviceIkea(int model, const std::string &strSystem, const std::string &strUnits, const std::string &strFadeStyle)
-	:Device(model)
+DeviceIkea::DeviceIkea(int id, int model, const std::string &strSystem, const std::string &strUnits, const std::string &strFadeStyle)
+	:Device(id, model)
 {
 	if (strSystem.length() > 0) {
 		intSystem = atoi(strSystem.c_str()) - 1;

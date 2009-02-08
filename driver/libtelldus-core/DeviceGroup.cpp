@@ -8,8 +8,8 @@ using namespace TelldusCore;
 /*
 * Constructor
 */
-DeviceGroup::DeviceGroup(int model, const std::string &strDevices)
-	:Device(model)
+DeviceGroup::DeviceGroup(int id, int model, const std::string &strDevices)
+	:Device(id, model)
 {
 	if (strDevices.length() > 0) {
 		char *tempDevices = new char[strDevices.size()+1];

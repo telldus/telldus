@@ -1,12 +1,14 @@
 #include "Device.h"
+#include "Manager.h"
 #include <stdlib.h>
 
 using namespace TelldusCore;
 /*
 * Constructor
 */
-Device::Device(int m)
-	: model(m)
+Device::Device(int id, int m)
+	: deviceId(id),
+      model(m)
 {
 }
 
@@ -17,17 +19,28 @@ Device::~Device(void) {
 }
 
 int Device::switchState( int newState, const std::string &value ) {
+	int retVal = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 	switch (newState) {
 		case TELLSTICK_TURNON:
-			return turnOn();
+			retVal = turnOn();
+			break;
 		case TELLSTICK_TURNOFF:
-			return turnOff();
+			retVal = turnOff();
+			break;
 		case TELLSTICK_BELL:
-			return bell();
+			retVal = bell();
+			break;
 		case TELLSTICK_DIM:
-			return dim( value[0] );
+			retVal = dim( value[0] );
+			break;
 	}
-	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+	if (retVal == TELLSTICK_SUCCESS) {
+		if (newState != TELLSTICK_BELL) { //Bell doesn't toggle any state
+			Manager *manager = Manager::getInstance();
+			manager->setDeviceState(deviceId, newState, "");
+		}
+	}
+	return retVal;
 }
 
 int Device::getModel() const {
