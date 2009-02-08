@@ -18,11 +18,11 @@ MethodWidget::MethodWidget( Device *device, QWidget *parent )
 	layout->setMargin(0);
 	layout->setSpacing(0);
 
-	turnOff->setIcon( QIcon(":/images/turn-off.png") );
+	turnOff->setIcon( QIcon(":/images/state_2.png") );
 	turnOff->setVisible( false );
 	layout->addWidget( turnOff );
 
-	turnOn->setIcon( QIcon(":/images/turn-on.png") );
+	turnOn->setIcon( QIcon(":/images/state_1.png") );
 	turnOn->setVisible( false );
 	layout->addWidget( turnOn );
 

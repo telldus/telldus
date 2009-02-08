@@ -29,9 +29,20 @@ QVariant DeviceModel::data(const QModelIndex &index, int role) const {
 
 	if (index.column() == 0) {
 		if (role == Qt::DisplayRole) {
-			return tr("on");
+			Device *device = this->device( index );
+			switch( device->lastSentCommand() ) {
+				case TELLSTICK_TURNON:
+					return tr("on");
+				case TELLSTICK_TURNOFF:
+					return tr("off");
+				case TELLSTICK_DIM:
+					return tr("dimmed");
+			}
+			return tr("unknown %1").arg(device->lastSentCommand());
 		} else if (role == Qt::DecorationRole) {
-			return QIcon( ":/images/devices.png" );
+			Device *device = this->device( index );
+			int lastSentCommand = device->lastSentCommand();
+			return QIcon( QString(":/images/state_%1.png").arg(lastSentCommand) );
 		} else if (role == Qt::TextAlignmentRole) {
 			return Qt::AlignCenter;
 		}
@@ -133,4 +144,8 @@ int DeviceModel::deviceId( int index ) const {
 	int id = tdGetDeviceId( index );
 	indexToId[index] = id;
 	return id;
+}
+
+void DeviceModel::deviceEvent(int /*deviceId*/, int /*method*/, const char */*data*/, int /*callbackId*/, void */*context*/) {
+	//TODO:
 }

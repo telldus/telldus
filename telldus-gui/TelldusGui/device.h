@@ -32,6 +32,7 @@ public:
 	const QString &protocol();
 
 	int deviceType() const;
+	int lastSentCommand() const;
 
 	int methods() const;
 
@@ -40,7 +41,6 @@ public slots:
 	void turnOff();
 	void turnOn();
 	void bell();
-
 
 signals:
 	void deviceAdded( int id );

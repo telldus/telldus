@@ -21,7 +21,7 @@ Device::Device(int id)
 		p_model = tdGetModel(id);
 
 		char *protocol = tdGetProtocol(id);
-		p_protocol = QString::fromUtf8( protocol );
+		p_protocol = QString::fromLocal8Bit( protocol );
 		free( protocol );
 	}
 }
@@ -121,7 +121,7 @@ void Device::save() {
 	}
 
 	if (p_protocolChanged) {
-		tdSetProtocol(p_id, p_protocol.toUtf8());
+		tdSetProtocol(p_id, p_protocol.toLocal8Bit());
 		p_protocolChanged = false;
 	}
 
@@ -140,6 +140,10 @@ void Device::turnOn() {
 
 void Device::bell() {
 	triggerEvent( tdBell( p_id ) );
+}
+
+int Device::lastSentCommand() const {
+	return tdLastSentCommand( p_id );
 }
 
 void Device::updateMethods() {
