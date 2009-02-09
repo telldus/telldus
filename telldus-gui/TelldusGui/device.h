@@ -1,7 +1,7 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
-#include "telldus-core.h"
+#include <telldus-core.h>
 
 #include <QHash>
 #include <QPointer>
@@ -52,9 +52,13 @@ signals:
 private:
 	Device(int id);
 	void updateMethods();
+	void updateState();
 	void triggerEvent( int message );
 
 	static QHash<int, Device *> devices;
+	static void deviceEvent(int deviceId, int, const char *, int, void *);
+
+	static int callbackId;
 	QHash<QString, QString> p_settings;
 	int p_id, p_model, p_state;
 	QString p_name, p_protocol;

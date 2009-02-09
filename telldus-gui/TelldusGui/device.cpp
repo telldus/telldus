@@ -2,6 +2,7 @@
 #include <stdlib.h>
 
 QHash<int, Device *> Device::devices;
+int Device::callbackId = tdRegisterDeviceEvent( &Device::deviceEvent, 0);
 
 Device::Device(int id)
 		:p_id(id),
@@ -25,7 +26,7 @@ Device::Device(int id)
 		p_protocol = QString::fromLocal8Bit( protocol );
 		free( protocol );
 
-		p_state = tdLastSentCommand(id);
+		updateState();
 	}
 }
 
@@ -160,17 +161,30 @@ void Device::updateMethods() {
 	}
 }
 
+void Device::updateState() {
+	int lastSentCommand = tdLastSentCommand( p_id );
+	if (lastSentCommand != p_state) {
+		p_state = lastSentCommand;
+		emit stateChanged(p_id, p_state);
+	}
+}
+
 void Device::triggerEvent( int messageId ) {
 	if (messageId == TELLSTICK_SUCCESS) {
 		//Update the last sent command
-		int lastSentCommand = tdLastSentCommand( p_id );
-		if (lastSentCommand != p_state) {
-			p_state = lastSentCommand;
-			emit stateChanged(p_id, p_state);
-		}
+		updateState();
 	} else {
 		char *message = tdGetErrorString( messageId );
 		emit showMessage( "", message, "" );
 		free( message );
+	}
+}
+
+void Device::deviceEvent(int deviceId, int, const char *, int, void *) {
+	if (Device::deviceLoaded( deviceId )) {
+		Device *device = Device::getDevice( deviceId );
+		if (device) {
+			device->updateState();
+		}
 	}
 }
