@@ -35,10 +35,8 @@ int Device::switchState( int newState, const std::string &value ) {
 			break;
 	}
 	if (retVal == TELLSTICK_SUCCESS) {
-		if (newState != TELLSTICK_BELL) { //Bell doesn't toggle any state
-			Manager *manager = Manager::getInstance();
-			manager->setDeviceState(deviceId, newState, "");
-		}
+		Manager *manager = Manager::getInstance();
+		manager->setDeviceState(deviceId, newState, "");
 	}
 	return retVal;
 }

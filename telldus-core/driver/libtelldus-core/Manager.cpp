@@ -148,7 +148,10 @@ bool Manager::setModel(int intDeviceId, int intModel) {
 }
 
 bool Manager::setDeviceState( int intDeviceId, int intDeviceState, const std::string &strDeviceStateValue ) {
-	return settings.setDeviceState(intDeviceId, intDeviceState, strDeviceStateValue);
+	if (intDeviceState != TELLSTICK_BELL) {
+		return settings.setDeviceState(intDeviceId, intDeviceState, strDeviceStateValue);
+	}
+	return true;
 }
 
 int Manager::getDeviceState( int intDeviceId ) const {
@@ -207,6 +210,8 @@ void Manager::parseMessage( const std::string &message ) {
 			}
 		}
 		if (found) {
+			//First save the last sent command
+			setDeviceState(it->first, method, "");
 			for(CallbackList::const_iterator callback_it = callbacks.begin(); callback_it != callbacks.end(); ++callback_it) {
 				(*callback_it).event(it->first, method, message.c_str(), (*callback_it).id, (*callback_it).context);
 			}
