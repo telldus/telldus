@@ -19,11 +19,14 @@ using namespace std;
 class privateVars {
 public:
 	cfg_t *cfg;
+	cfg_t *var_cfg;
 };
 
 bool readConfig(cfg_t **cfg);
+bool readVarConfig(cfg_t **cfg);
 
 const char* CONFIG_FILE = "/etc/tellstick.conf";
+const char* VAR_CONFIG_FILE = "/var/state/telldus-core.conf";
 
 /*
 * Constructor
@@ -32,6 +35,7 @@ Settings::Settings(void)
 {
 	d = new privateVars();
 	readConfig(&d->cfg);
+	readVarConfig(&d->var_cfg);
 }
 
 /*
@@ -139,6 +143,56 @@ bool Settings::removeDevice(int intDeviceId){
 	readConfig(&d->cfg);
 
 	return blnSuccess;
+}
+
+bool Settings::setDeviceState( int intDeviceId, int intDeviceState, const std::string &strDeviceStateValue ) {
+	if (d->var_cfg == 0) {
+		return false;
+	}
+	cfg_t *cfg_device;
+	for (int i = 0; i < cfg_size(d->var_cfg, "device"); ++i) {
+		cfg_device = cfg_getnsec(d->var_cfg, "device", i);
+		int deviceId = atoi(cfg_title(cfg_device));
+		if (deviceId == intDeviceId)  {
+			cfg_setint(cfg_device, "state", intDeviceState);
+			cfg_setstr(cfg_device, "stateValue", strDeviceStateValue.c_str());
+			
+			FILE *fp = fopen(VAR_CONFIG_FILE, "w");
+			cfg_print(d->var_cfg, fp);
+			fclose(fp);
+			return true;
+		}
+	}
+	// The device is not found in the file, we must create it manualy...
+	FILE *fp = fopen(VAR_CONFIG_FILE, "w");
+	cfg_print(d->var_cfg, fp); //Print the config-file
+	fprintf(fp, "device %d {\n}\n", intDeviceId); //Print the new device
+	fclose(fp);
+
+	//Re-read config-file
+	cfg_free(d->var_cfg);
+	readVarConfig(&d->var_cfg);
+
+	return false;
+}
+
+int Settings::getDeviceState( int intDeviceId ) const {
+	if (d->var_cfg == 0) {
+		return false;
+	}
+	cfg_t *cfg_device;
+	for (int i = 0; i < cfg_size(d->var_cfg, "device"); ++i) {
+		cfg_device = cfg_getnsec(d->var_cfg, "device", i);
+		int deviceId = atoi(cfg_title(cfg_device));
+		if (deviceId == intDeviceId)  {
+			return cfg_getint(cfg_device, "state");
+		}
+	}
+	return TELLSTICK_TURNOFF;
+}
+
+std::string Settings::getDeviceStateValue( int intDeviceId ) const {
+	return "";
 }
 
 std::string Settings::getStringSetting(int intDeviceId, const std::string &name, bool parameter) const {
@@ -268,6 +322,28 @@ bool readConfig(cfg_t **cfg) {
 
 	(*cfg) = cfg_init(opts, CFGF_NOCASE);
 	if (cfg_parse((*cfg), CONFIG_FILE) == CFG_PARSE_ERROR) {
+		(*cfg) = 0;
+		return false;
+	}
+
+	return true;
+}
+
+bool readVarConfig(cfg_t **cfg) {
+
+	cfg_opt_t device_opts[] = {
+		CFG_INT("state", 0, CFGF_NONE),
+		CFG_STR("stateValue", "", CFGF_NONE),
+		CFG_END()
+	};
+
+	cfg_opt_t opts[] = {
+		CFG_SEC("device", device_opts, CFGF_MULTI | CFGF_TITLE),
+		CFG_END()
+	};
+
+	(*cfg) = cfg_init(opts, CFGF_NOCASE);
+	if (cfg_parse((*cfg), VAR_CONFIG_FILE) == CFG_PARSE_ERROR) {
 		(*cfg) = 0;
 		return false;
 	}
