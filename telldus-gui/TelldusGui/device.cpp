@@ -6,6 +6,7 @@ QHash<int, Device *> Device::devices;
 Device::Device(int id)
 		:p_id(id),
 		p_model(0),
+		p_state(0),
 		p_name(""),
 		p_protocol(""),
 		p_modelChanged(false),
@@ -23,6 +24,8 @@ Device::Device(int id)
 		char *protocol = tdGetProtocol(id);
 		p_protocol = QString::fromLocal8Bit( protocol );
 		free( protocol );
+
+		p_state = tdLastSentCommand(id);
 	}
 }
 
@@ -143,7 +146,7 @@ void Device::bell() {
 }
 
 int Device::lastSentCommand() const {
-	return tdLastSentCommand( p_id );
+	return p_state;
 }
 
 void Device::updateMethods() {
@@ -158,7 +161,16 @@ void Device::updateMethods() {
 }
 
 void Device::triggerEvent( int messageId ) {
-	char *message = tdGetErrorString( messageId );
-	emit showMessage( "", message, "" );
-	free( message );
+	if (messageId == TELLSTICK_SUCCESS) {
+		//Update the last sent command
+		int lastSentCommand = tdLastSentCommand( p_id );
+		if (lastSentCommand != p_state) {
+			p_state = lastSentCommand;
+			emit stateChanged(p_id, p_state);
+		}
+	} else {
+		char *message = tdGetErrorString( messageId );
+		emit showMessage( "", message, "" );
+		free( message );
+	}
 }

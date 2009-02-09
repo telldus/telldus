@@ -45,6 +45,7 @@ public slots:
 signals:
 	void deviceAdded( int id );
 	void methodsChanged( int newMethods );
+	void stateChanged( int deviceId, int newState );
 	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
 	void eventTriggered( const QString &name, const QString &title );
 
@@ -55,7 +56,7 @@ private:
 
 	static QHash<int, Device *> devices;
 	QHash<QString, QString> p_settings;
-	int p_id, p_model;
+	int p_id, p_model, p_state;
 	QString p_name, p_protocol;
 	bool p_modelChanged, p_nameChanged, p_protocolChanged;
 	mutable int p_methods;

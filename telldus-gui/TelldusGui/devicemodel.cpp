@@ -112,8 +112,7 @@ Device *DeviceModel::device( const QModelIndex &index ) const {
 	bool loaded = Device::deviceLoaded( id );
 	Device *device = Device::getDevice( id );
 	if (!loaded) {
-		connect(device, SIGNAL(showMessage(const QString &, const QString &, const QString &)), this, SIGNAL(showMessage(const QString &, const QString &, const QString &)));
-		connect(device, SIGNAL(eventTriggered(const QString &, const QString &)), this, SIGNAL(eventTriggered(const QString &, const QString &)));
+		connectDeviceSignals( device );
 	}
 	return device;
 }
@@ -121,8 +120,7 @@ Device *DeviceModel::device( const QModelIndex &index ) const {
 Device *DeviceModel::newDevice() const {
 	Device *device = Device::newDevice();
 	connect(device, SIGNAL(deviceAdded(int)), this, SLOT(deviceAdded(int)));
-	connect(device, SIGNAL(showMessage(const QString &, const QString &, const QString &)), this, SIGNAL(showMessage(const QString &, const QString &, const QString &)));
-	connect(device, SIGNAL(eventTriggered(const QString &, const QString &)), this, SIGNAL(eventTriggered(const QString &, const QString &)));
+	connectDeviceSignals(device);
 	return device;
 }
 
@@ -131,6 +129,17 @@ void DeviceModel::deviceAdded( int id ) {
 	int deviceCount = tdGetNumberOfDevices();
 	beginInsertRows( QModelIndex(), deviceCount, deviceCount );
 	endInsertRows();
+}
+
+void DeviceModel::deviceStateChanged( int deviceId, int /*newState*/ ) {
+	int deviceCount = rowCount();
+	for (int i = 0; i < deviceCount; ++i) {
+		if (this->deviceId(i) == deviceId) {
+			QModelIndex index = this->index(i, 0);
+			emit dataChanged( index, index );
+			break;
+		}
+	}
 }
 
 int DeviceModel::deviceId( const QModelIndex &index ) const {
@@ -148,4 +157,10 @@ int DeviceModel::deviceId( int index ) const {
 
 void DeviceModel::deviceEvent(int /*deviceId*/, int /*method*/, const char */*data*/, int /*callbackId*/, void */*context*/) {
 	//TODO:
+}
+
+void DeviceModel::connectDeviceSignals( Device *device ) const {
+	connect(device, SIGNAL(showMessage(const QString &, const QString &, const QString &)), this, SIGNAL(showMessage(const QString &, const QString &, const QString &)));
+	connect(device, SIGNAL(eventTriggered(const QString &, const QString &)), this, SIGNAL(eventTriggered(const QString &, const QString &)));
+	connect(device, SIGNAL(stateChanged(int, int)), this, SLOT(deviceStateChanged(int,int)));
 }
