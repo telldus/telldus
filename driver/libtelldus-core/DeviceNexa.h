@@ -7,15 +7,19 @@ namespace TelldusCore {
 	class DeviceNexa : public Device
 	{
 	public:
-		DeviceNexa(int id, int model, const std::string &strHouse, const std::string &strCode);
+		DeviceNexa(int id, int model, const std::string &name);
 		virtual int methods(int methodsSupported);
 		virtual std::string getProtocol() const;
 		virtual bool parameterMatches( const std::string &name, const std::string &value ) const;
+		
+		bool setHouse(const std::string &newHouse);
+		bool setUnit(const std::string &newUnit);
 		
 	public:
 		~DeviceNexa(void);
 	
 	protected:
+		virtual bool setDeviceParameter(const std::string &strName, const std::string &strValue);
 		virtual int turnOn(void);
 		virtual int turnOff(void);
 		virtual int bell(void);

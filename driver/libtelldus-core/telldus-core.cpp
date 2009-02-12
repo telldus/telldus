@@ -243,8 +243,8 @@ int WINAPI tdLastSentCommand( int intDeviceId ) {
 int WINAPI tdGetNumberOfDevices(void){
 	int intReturn = -1;
 	try{
-		Settings ts;
-		intReturn = ts.getNumberOfDevices();
+		Manager *manager = Manager::getInstance();
+		intReturn = manager->getNumberOfDevices();
 	}
 	catch(exception e){
 		intReturn = -1;
@@ -269,8 +269,8 @@ int WINAPI tdGetNumberOfDevices(void){
 int WINAPI tdGetDeviceId(int intDeviceIndex){
 	int intReturn = -1;
 	try{
-		Settings ts;
-		intReturn = ts.getDeviceId(intDeviceIndex);
+		Manager *manager = Manager::getInstance();
+		intReturn = manager->getDeviceId(intDeviceIndex);
 	}
 	catch(exception e){
 		intReturn = -1;
@@ -306,10 +306,13 @@ int WINAPI tdGetDeviceType(int intDeviceId) {
  * @returns The name of the device or an empty string if the device is not found.
  */
 char * WINAPI tdGetName(int intDeviceId){
-	std::string strReturn;
-	try{
-		Settings ts;
-		strReturn = ts.getName(intDeviceId);
+	std::string strReturn = "";
+	try {
+		Manager *manager = Manager::getInstance();
+		Device *dev = manager->getDevice( intDeviceId );
+		if (dev != NULL) {
+			strReturn = dev->getName();
+		}
 	}
 	catch(exception e){
 		strReturn = "";
@@ -321,8 +324,11 @@ char * WINAPI tdGetName(int intDeviceId){
 bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
 	bool blnSuccess = false;
 	try{
-		Settings ts;
-		blnSuccess = ts.setName(intDeviceId, strNewName);
+		Manager *manager = Manager::getInstance();
+		Device *dev = manager->getDevice( intDeviceId );
+		if (dev != NULL) {
+			blnSuccess = dev->setName(strNewName);
+		}
 	}
 	catch(exception e){
 		blnSuccess = false;
@@ -350,7 +356,7 @@ bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
 	bool blnSuccess = false;
 	try{
 		Manager *manager = Manager::getInstance();
-		blnSuccess = manager->setProtocol(intDeviceId, strProtocol);
+		blnSuccess = manager->setDeviceProtocol(intDeviceId, strProtocol);
 	}
 	catch(exception e){
 		blnSuccess = false;
@@ -379,7 +385,10 @@ bool WINAPI tdSetModel(int intDeviceId, int intModel){
 	bool blnSuccess = false;
 	try{
 		Manager *manager = Manager::getInstance();
-		manager->setModel(intDeviceId, intModel);
+		Device* dev = manager->getDevice(intDeviceId);
+		if (dev != NULL) {
+			blnSuccess = dev->setModel(intModel);
+		}
 	}
 	catch(exception e){
 		blnSuccess = false;
@@ -391,8 +400,11 @@ bool WINAPI tdSetModel(int intDeviceId, int intModel){
 bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const char *strValue){
 
 	try{
-		Settings ts;
-		return ts.setDeviceParameter(intDeviceId, strName, strValue);
+		Manager *manager = Manager::getInstance();
+		Device *dev = manager->getDevice( intDeviceId );
+		if (dev != NULL) {
+			return dev->setParameter(strName, strValue);
+		}
 	}
 	catch(exception e){
 		handleException(e);
@@ -403,8 +415,8 @@ bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const cha
 char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const char *defaultValue){
 	std::string strReturn = "";
 	try{
-		Settings ts;
-		strReturn = ts.getDeviceParameter(intDeviceId, strName);
+		Manager *manager = Manager::getInstance();
+		strReturn = manager->getDeviceParameter(intDeviceId, strName);
 		if (strReturn.empty()) {
 			strReturn = defaultValue;
 		}
@@ -418,8 +430,8 @@ char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const c
 int WINAPI tdAddDevice(){
 	int intNewDeviceId = -1;
 	try{
-		Settings ts;
-		intNewDeviceId = ts.addDevice();
+		Manager *manager = Manager::getInstance();
+		intNewDeviceId = manager->addDevice();
 	}
 	catch(exception e){
 		intNewDeviceId = -1;
@@ -431,8 +443,8 @@ int WINAPI tdAddDevice(){
 bool WINAPI tdRemoveDevice(int intDeviceId){
 	bool blnSuccess = false;
 	try{
-		Settings ts;
-		blnSuccess = ts.removeDevice(intDeviceId);
+		Manager *manager = Manager::getInstance();
+		blnSuccess = manager->removeDevice(intDeviceId);
 	}
 	catch(exception e){
 		blnSuccess = false;

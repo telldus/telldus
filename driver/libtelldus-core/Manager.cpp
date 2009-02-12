@@ -69,31 +69,32 @@ Device *Manager::getDevice(int intDeviceId){
 			return NULL;
 		}
 		int intModel = settings.getModel(intDeviceId);
+		std::string strName = settings.getName(intDeviceId);
 
 		//each new brand must be added here
 		if (strcasecmp(protocol.c_str(), "arctech") == 0){
-			std::string strHouse = settings.getDeviceParameter(intDeviceId, "nexa_house");
-			std::string strCode = settings.getDeviceParameter(intDeviceId, "nexa_unit");
-			dev = new DeviceNexa(intDeviceId, intModel, strHouse, strCode);
+			dev = new DeviceNexa(intDeviceId, intModel, strName);
+			((DeviceNexa*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "nexa_house"));
+			((DeviceNexa*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "nexa_unit"));
 	
 		} else if (strcasecmp(protocol.c_str(), "group") == 0) {
-			std::string strDevices = settings.getDeviceParameter(intDeviceId, "devices");
-			dev = new DeviceGroup(intDeviceId, intModel, strDevices);
+			dev = new DeviceGroup(intDeviceId, intModel, strName);
+			((DeviceGroup*)dev)->setDevices(settings.getDeviceParameter(intDeviceId, "devices"));
 
 		} else if (strcasecmp(protocol.c_str(), "Waveman") == 0) {
-			std::string strHouse = settings.getDeviceParameter(intDeviceId, "nexa_house");
-			std::string strCode = settings.getDeviceParameter(intDeviceId, "nexa_unit");
-			dev = new DeviceWaveman(intDeviceId, intModel, strHouse, strCode);
+			dev = new DeviceWaveman(intDeviceId, intModel, strName);
+			((DeviceWaveman*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "nexa_house"));
+			((DeviceWaveman*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "nexa_unit"));
 
 		} else if (strcasecmp(protocol.c_str(), "Sartano") == 0) {
-			std::string strCode = settings.getDeviceParameter(intDeviceId, "sartano_code");
-			dev = new DeviceSartano(intDeviceId, intModel, strCode);
+			dev = new DeviceSartano(intDeviceId, intModel, strName);
+			((DeviceSartano*)dev)->setCode(settings.getDeviceParameter(intDeviceId, "sartano_code"));
 
 		} else if (strcasecmp(protocol.c_str(), "Ikea") == 0) {
-			std::string strSystem = settings.getDeviceParameter(intDeviceId, "ikea_system");
-			std::string strUnits = settings.getDeviceParameter(intDeviceId, "ikea_units");
-			std::string strFade = settings.getDeviceParameter(intDeviceId, "ikea_fade");
-			dev = new DeviceIkea(intDeviceId, intModel, strSystem, strUnits, strFade);
+			dev = new DeviceIkea(intDeviceId, intModel, strName);
+			((DeviceIkea*)dev)->setSystem(settings.getDeviceParameter(intDeviceId, "ikea_system"));
+			((DeviceIkea*)dev)->setUnits(settings.getDeviceParameter(intDeviceId, "ikea_units"));
+			((DeviceIkea*)dev)->setFade(settings.getDeviceParameter(intDeviceId, "ikea_fade"));
 
 		} else {
 			return NULL;
@@ -112,8 +113,16 @@ Device *Manager::getDevice(int intDeviceId){
 	return dev;
 }
 
+int Manager::getNumberOfDevices(void) const {
+	return settings.getNumberOfDevices();
+}
+
+int Manager::getDeviceId(int intDeviceIndex) const {
+	return settings.getDeviceId(intDeviceIndex);
+}
+
 void Manager::loadAllDevices() {
-	int numberOfDevices = settings.getNumberOfDevices();
+	int numberOfDevices = getNumberOfDevices();
 	for (int i = 0; i < numberOfDevices; ++i) {
 		int id = settings.getDeviceId(i);
 		if (!deviceLoaded(id)) {
@@ -122,7 +131,7 @@ void Manager::loadAllDevices() {
 	}
 }
 
-bool Manager::setProtocol(int intDeviceId, const std::string &strProtocol) {
+bool Manager::setDeviceProtocol(int intDeviceId, const std::string &strProtocol) {
 	bool retval = settings.setProtocol( intDeviceId, strProtocol );
 	
 	// Delete the device to reload it when the protocol changes
@@ -136,15 +145,8 @@ bool Manager::setProtocol(int intDeviceId, const std::string &strProtocol) {
 	return retval;
 }
 
-bool Manager::setModel(int intDeviceId, int intModel) {
-	bool retval = settings.setModel(intDeviceId, intModel);
-	if (deviceLoaded(intDeviceId)) {
-		Device *device = getDevice(intDeviceId);
-		if (device) {
-			device->setModel( intModel );
-		}
-	}
-	return retval;
+bool Manager::setDeviceModel(int intDeviceId, int intModel) {
+	return settings.setModel(intDeviceId, intModel);
 }
 
 bool Manager::setDeviceState( int intDeviceId, int intDeviceState, const std::string &strDeviceStateValue ) {
@@ -248,5 +250,35 @@ void Manager::close() {
 	if (Manager::instance != 0) {
 		delete Manager::instance;
 	}
+}
+
+bool TelldusCore::Manager::setDeviceParameter(int intDeviceId, const std::string & strName, const std::string & strValue) {
+	return settings.setDeviceParameter(intDeviceId, strName, strValue);
+}
+
+std::string TelldusCore::Manager::getDeviceParameter(int intDeviceId, const std::string & strName) const {
+	return settings.getDeviceParameter( intDeviceId, strName );
+}
+
+int TelldusCore::Manager::addDevice() {
+	return settings.addDevice();
+}
+
+bool TelldusCore::Manager::removeDevice(int intDeviceId) {
+	if (deviceLoaded(intDeviceId)) {
+		DeviceMap::iterator iterator = devices.find(intDeviceId);
+		if (iterator == devices.end()) { // Should not be possible since deviceLoaded() returned true
+			return false;
+		}
+		Device *dev = iterator->second;
+		devices.erase(iterator);
+		delete dev;
+	}
+	
+	return settings.removeDevice(intDeviceId);
+}
+
+bool TelldusCore::Manager::setDeviceName(int intDeviceId, const std::string & strNewName) {
+	return settings.setName(intDeviceId, strNewName);
 }
 

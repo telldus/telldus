@@ -15,14 +15,21 @@ using namespace TelldusCore;
 /*
 * Constructor
 */
-DeviceIkea::DeviceIkea(int id, int model, const std::string &strSystem, const std::string &strUnits, const std::string &strFadeStyle)
-	:Device(id, model)
+DeviceIkea::DeviceIkea(int id, int model, const std::string &name)
+	:Device(id, model, name)
 {
+}
+
+bool DeviceIkea::setSystem(const std::string &strSystem) {
 	if (strSystem.length() > 0) {
 		intSystem = atoi(strSystem.c_str()) - 1;
 	} else {
 		intSystem = 0;
 	}
+	return true;
+}
+
+bool DeviceIkea::setUnits(const std::string &strUnits) {
 	if (strUnits.length() > 0) {
 		intUnits = 0; //Start without any units
 
@@ -44,11 +51,16 @@ DeviceIkea::DeviceIkea(int id, int model, const std::string &strSystem, const st
 
 		free(tempUnits);
 	}
-	if (strUnits.length() > 0 && strcasecmp(strFadeStyle.c_str(), "true") == 0) {
+	return true;
+}
+
+bool DeviceIkea::setFade(const std::string &strFadeStyle) {
+	if (strFadeStyle.length() > 0 && strcasecmp(strFadeStyle.c_str(), "true") == 0) {
 		intFadeStyle = 1;
 	} else {
 		intFadeStyle = 0;
 	}
+	return true;
 }
 
 /*
@@ -59,6 +71,17 @@ DeviceIkea::~DeviceIkea(void)
 	intSystem = -1;
 	intUnits = -1;
 	intFadeStyle = -1;
+}
+
+bool DeviceIkea::setDeviceParameter(const std::string &strName, const std::string &strValue) {
+	if (strName.compare("ikea_system") == 0) {
+		return setSystem(strValue);
+	} else if (strName.compare("ikea_units") == 0) {
+		return setUnits(strValue);
+	} else if (strName.compare("ikea_fade") == 0) {
+		return setFade(strValue);
+	}
+	return false;
 }
 
 /*

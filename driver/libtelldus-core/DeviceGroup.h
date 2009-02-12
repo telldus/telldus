@@ -12,14 +12,18 @@ namespace TelldusCore {
 	class DeviceGroup : public Device
 	{
 	public:
-		DeviceGroup(int id, int model, const std::string &strDevices);
+		DeviceGroup(int id, int model, const std::string &name);
 		~DeviceGroup(void);
 
 		virtual int methods(int methodsSupported);
 		virtual std::string getProtocol() const;
 		virtual bool parameterMatches( const std::string &name, const std::string &value ) const;
+		
+		bool setDevices(const std::string &newDevices);
 				
 	protected:
+		virtual bool setDeviceParameter(const std::string &strName, const std::string &strValue);
+		
 		virtual int turnOn(void);
 		virtual int turnOff(void);
 		virtual int bell(void);

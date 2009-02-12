@@ -11,20 +11,11 @@ using namespace TelldusCore;
 /*
 * Constructor
 */
-DeviceNexa::DeviceNexa(int id, int model, const std::string &strHouse, const std::string &strCode)
-	:Device(id, model)
+DeviceNexa::DeviceNexa(int id, int model, const std::string &name)
+	:Device(id, model, name),
+	intHouse(0),
+	intCode(0)
 {
-	if (strHouse.length() > 0) {
-		intHouse = strHouse[0] - 'A';
-	} else {
-		intHouse = 0;
-	}
-
-	if (strCode.length() > 0) {
-		intCode = atoi(strCode.c_str()) - 1;
-	} else {
-		intCode = 0;
-	}
 }
 
 /*
@@ -32,6 +23,33 @@ DeviceNexa::DeviceNexa(int id, int model, const std::string &strHouse, const std
 */
 DeviceNexa::~DeviceNexa(void)
 {}
+
+bool DeviceNexa::setHouse(const std::string &newHouse) {
+	if (newHouse.length() > 0) {
+		intHouse = newHouse[0] - 'A';
+	} else {
+		intHouse = 0;
+	}
+	return true;
+}
+
+bool DeviceNexa::setUnit(const std::string &newUnit) {
+	if (newUnit.length() > 0) {
+		intCode = atoi(newUnit.c_str()) - 1;
+	} else {
+		intCode = 0;
+	}
+	return true;
+}
+
+bool DeviceNexa::setDeviceParameter(const std::string &strName, const std::string &strValue) {
+	if (strName.compare("nexa_house") == 0) {
+		return setHouse(strValue);
+	} else if (strName.compare("nexa_unit") == 0) {
+		return setUnit(strValue);
+	}
+	return false;
+}
 
 /*
 * Turn on this device
