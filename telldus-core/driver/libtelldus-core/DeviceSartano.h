@@ -7,14 +7,18 @@ namespace TelldusCore {
 	class DeviceSartano : public Device
 	{
 	public:
-		DeviceSartano(int id, int model, const std::string &strCode);
+		DeviceSartano(int id, int model, const std::string &name);
+		virtual ~DeviceSartano(void);
+		
 		virtual int methods(int methodsSupported);
 		virtual std::string getProtocol() const;
 		virtual bool parameterMatches( const std::string &name, const std::string &value ) const;
 	
-		~DeviceSartano(void);
+		bool setCode(const std::string &strNewCode);
 	
 	protected:
+		virtual bool setDeviceParameter(const std::string &strName, const std::string &strValue);
+		
 		virtual int turnOn(void);
 		virtual int turnOff(void);
 

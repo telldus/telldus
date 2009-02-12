@@ -10,10 +10,9 @@ using namespace TelldusCore;
 /*
 * Constructor
 */
-DeviceSartano::DeviceSartano(int id, int model, const std::string &strNewCode)
-	:Device(id, model)
+DeviceSartano::DeviceSartano(int id, int model, const std::string &name)
+	:Device(id, model, name)
 {
-	strCode = strNewCode;
 }
 
 
@@ -21,6 +20,16 @@ DeviceSartano::~DeviceSartano(void)
 {
 }
 
+bool DeviceSartano::setCode(const std::string &strNewCode) {
+	strCode = strNewCode;
+}
+
+bool DeviceSartano::setDeviceParameter(const std::string &strName, const std::string &strValue) {
+	if (strName.compare("sartano_code") == 0) {
+		return setCode(strValue);
+	}
+	return false;
+}
 
 /*
 * Turn on this device

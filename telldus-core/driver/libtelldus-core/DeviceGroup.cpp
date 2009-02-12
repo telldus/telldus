@@ -8,35 +8,45 @@ using namespace TelldusCore;
 /*
 * Constructor
 */
-DeviceGroup::DeviceGroup(int id, int model, const std::string &strDevices)
-	:Device(id, model)
+DeviceGroup::DeviceGroup(int id, int model, const std::string &name)
+	:Device(id, model, name)
 {
-	if (strDevices.length() > 0) {
-		char *tempDevices = new char[strDevices.size()+1];
-#ifdef _WINDOWS
-		strcpy_s(tempDevices, strDevices.size()+1, strDevices.c_str());
-#else
-		strcpy(tempDevices, strDevices.c_str());
-#endif
-
-		Manager *manager = Manager::getInstance();
-		char *strToken = strtok(tempDevices, ",");
-		do {
-			int intDevice = atoi(strToken);
-			Device *device = manager->getDevice(intDevice);
-			if (device != NULL) {
-				deviceList.push_back( device );
-			}
-		} while ( (strToken = strtok(NULL, ",")) != NULL );
-
-		free(tempDevices);
-	}
 }
 
 /*
 * Destructor
 */
 DeviceGroup::~DeviceGroup(void) {
+}
+
+bool DeviceGroup::setDeviceParameter(const std::string &strName, const std::string &strValue) {
+	if (strName.compare("devices") == 0) {
+		return setDevices(strValue);
+	}
+	return false;
+}
+
+bool DeviceGroup::setDevices(const std::string &newDevices) {
+/*	if (strDevices.length() > 0) {
+		char *tempDevices = new char[strDevices.size()+1];
+	#ifdef _WINDOWS
+		strcpy_s(tempDevices, strDevices.size()+1, strDevices.c_str());
+	#else
+		strcpy(tempDevices, strDevices.c_str());
+	#endif
+	
+		Manager *manager = Manager::getInstance();
+		char *strToken = strtok(tempDevices, ",");
+		do {
+		int intDevice = atoi(strToken);
+		Device *device = manager->getDevice(intDevice);
+		if (device != NULL) {
+		deviceList.push_back( device );
+	}
+	} while ( (strToken = strtok(NULL, ",")) != NULL );
+	
+		free(tempDevices);
+	}*/
 }
 
 /*
@@ -131,3 +141,4 @@ int DeviceGroup::methods(int supportedMethods){
 std::string DeviceGroup::getProtocol() const {
 	return "group";
 }
+

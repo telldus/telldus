@@ -47,13 +47,19 @@ namespace TelldusCore {
 		
 		bool deviceLoaded(int deviceId) const;
 		
-		bool setProtocol(int intDeviceId, const std::string &strProtocol);
-// 		bool setName(int intDeviceId, const std::string &strNewName);
-		bool setModel(int intDeviceId, int intModel);
-// 		bool setDeviceParameter(int intDeviceId, const std::string &strName, const std::string &strValue);
+		int getNumberOfDevices(void) const;
+		int getDeviceId(int intDeviceIndex) const;
+		bool setDeviceProtocol(int intDeviceId, const std::string &strProtocol);
+		bool setDeviceName(int intDeviceId, const std::string &strNewName);
+		bool setDeviceModel(int intDeviceId, int intModel);
+		bool setDeviceParameter(int intDeviceId, const std::string &strName, const std::string &strValue);
+		std::string getDeviceParameter(int intDeviceId, const std::string &strName) const;
 		bool setDeviceState( int intDeviceId, int intDeviceState, const std::string &strDeviceStateValue );
 		int getDeviceState( int intDeviceId ) const;
-		std::string getDeviceStateValue( int intDeviceId ) const;		
+		std::string getDeviceStateValue( int intDeviceId ) const;
+		
+		int addDevice();
+		bool removeDevice(int intDeviceId);
 		
 		static Manager *getInstance();
 		static void close();

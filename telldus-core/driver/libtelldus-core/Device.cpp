@@ -6,9 +6,10 @@ using namespace TelldusCore;
 /*
 * Constructor
 */
-Device::Device(int id, int m)
+Device::Device(int id, int m, const std::string &name)
 	: deviceId(id),
-      model(m)
+		model(m),
+		deviceName(name)
 {
 }
 
@@ -45,8 +46,21 @@ int Device::getModel() const {
 	return model;
 }
 
-void Device::setModel( int intModel ) {
-	model = intModel;
+bool Device::setModel( int intModel ) {
+	Manager *manager = Manager::getInstance();
+	if (manager->setDeviceModel( deviceId, intModel )) {
+		model = intModel;
+		return true;
+	}
+	return false;
+}
+
+bool Device::setParameter(const std::string &strName, const std::string &strValue) {
+	if (setDeviceParameter( strName, strValue )) {
+		Manager *manager = Manager::getInstance();
+		return manager->setDeviceParameter(deviceId, strName, strValue);
+	}
+	return false;
 }
 
 /*
@@ -91,4 +105,17 @@ int Device::methodId( const std::string &methodName ) {
 		return TELLSTICK_DIM;
 	}
 	return 0;
+}
+
+std::string Device::getName() const {
+	return deviceName;
+}
+
+bool Device::setName(const std::string & newName) {
+	Manager *manager = Manager::getInstance();
+	if (manager->setDeviceName(deviceId, newName)) {
+		deviceName = newName;
+		return true;
+	}
+	return false;
 }
