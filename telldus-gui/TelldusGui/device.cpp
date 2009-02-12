@@ -107,7 +107,7 @@ bool Device::deviceLoaded( int id ) {
 }
 
 void Device::save() {
-	bool deviceIsAdded = false;
+	bool deviceIsAdded = false, methodsChanged = false;
 	if (p_id == 0) { //This is a new device
 		p_id = tdAddDevice();
 		deviceIsAdded = true;
@@ -120,13 +120,18 @@ void Device::save() {
 
 	if (p_modelChanged) {
 		tdSetModel(p_id, p_model);
-		updateMethods();
+		methodsChanged = true;
 		p_modelChanged = false;
 	}
 
 	if (p_protocolChanged) {
 		tdSetProtocol(p_id, p_protocol.toLocal8Bit());
+		methodsChanged = true;
 		p_protocolChanged = false;
+	}
+
+	if (methodsChanged) {
+		updateMethods();
 	}
 
 	if (deviceIsAdded) {
