@@ -1,13 +1,22 @@
-FILES = rfcmd 
 
-INCLUDEDIR = /usr/src/linux/include
+SRCS=	rfcmd.c ftdi.c
+CFLAGS=-O2	-Wall -I/usr/local/include
+LFLAGS=	-L/usr/local/lib -R/usr/local/lib
+#linux:LFLAGS=-Wl,-rpath,/usr/local/lib
+LIBS=	-lftdi -lusb
+PROG= 	rfcmd
+FT=	find_telldus
+OBJS= 	$(SRCS:.c=.o)
+CC= 	gcc
 
-CFLAGS = -O2 -Wall
+all: $(PROG) $(FT)
 
-all: $(FILES)
+$(PROG): $(OBJS)
+	$(CC) $(CFLAGS) $(OBJS) -o $(PROG) $(LFLAGS) $(LIBS)
 
-clean:
-	rm -f $(FILES) *~ core
+rfcmd.o: rfcmd.c
 
-install:
-	cp rfcmd /usr/local/bin
+ftdi.o:	ftdi.c
+
+$(FT): $(FT).c
+	$(CC) $(CFLAGS) -o $@ $(FT).c $(LFLAGS) $(LIBS)

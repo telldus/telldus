@@ -4,6 +4,7 @@ PROJECT(rfcmd)
 
 SET(rfcmd_SRCS
   rfcmd.c
+  ftdi.c
 )
 
 IF(${RFCMD_DEBUG})
@@ -14,8 +15,14 @@ INCLUDE_DIRECTORIES(
   /usr/src/linux/include
 )
 
+FIND_LIBRARY(FTDI_LIBRARY ftdi)
+
 ADD_EXECUTABLE(rfcmd
   ${rfcmd_SRCS}
+)
+
+TARGET_LINK_LIBRARIES(rfcmd
+ ${FTDI_LIBRARY}
 )
 
 INSTALL(TARGETS rfcmd RUNTIME DESTINATION bin)
