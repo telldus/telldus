@@ -3,7 +3,7 @@
  ****************************************************************************
  *
  * rfcmd - utility to control NEXA and other RF remote receivers through a TellStick
-   USB interface
+ * USB interface
  *
  * Copyright (C) 2007 Tord Andersson <tord.o.andersson@gmail.com>
  *
@@ -13,6 +13,8 @@
  *   Tord Andersson <tord.o.andersson@gmail.com>
  *   Micke Prag <micke.prag@telldus.se>
  *   Gudmund Berggren
+ *
+ *   Tapani Rintala / userspace libusb / libftdi - version 02-2009
  */
 
 /*******************************************************************************
@@ -43,7 +45,7 @@
 #include <termios.h>
 
 #define PROG_NAME "rfcmd"
-#define PROG_VERSION "2.0"
+#define PROG_VERSION "2.0.1"
 /* #define RFCMD_DEBUG */
 
 /* Local function declarations */
@@ -57,50 +59,40 @@ int createIkeaString(const char * pSystemStr, const char * pChannelStr,
 
 void printUsage(void);
 
+int usbWriteFtdi(char *cmdstr);
+
+
 int main( int argc, char **argv )
 {
 	struct termios tio;
 	int fd = -1;
 	char txStr[100];
 
-	if( (argc == 6) && (strcmp(*(argv+2), "NEXA") == 0))
-	{
-		if (createNexaString(*(argv+3), *(argv+4), *(argv+5), txStr, 0) == 0)
-		{
+	if( (argc == 6) && (strcmp(*(argv+2), "NEXA") == 0)) {
+		if (createNexaString(*(argv+3), *(argv+4), *(argv+5), txStr, 0) == 0) {
 			printUsage();
 			exit(1);
 		}
 		/* else - a send cmd string was created */
-	}
-	else if( (argc == 6) && (strcmp(*(argv+2), "WAVEMAN") == 0))
-	{
-		if (createNexaString(*(argv+3),*(argv+4), *(argv+5), txStr, 1) == 0)
-		{
+	} else if( (argc == 6) && (strcmp(*(argv+2), "WAVEMAN") == 0)) {
+		if (createNexaString(*(argv+3),*(argv+4), *(argv+5), txStr, 1) == 0) {
 			printUsage();
 			exit(1);
 		}
-	}
-	else if( (argc == 5) && (strcmp(*(argv+2), "SARTANO") == 0))
-	{
-		if (createSartanoString(*(argv+3), *(argv+4), txStr) == 0)
-		{
+	} else if( (argc == 5) && (strcmp(*(argv+2), "SARTANO") == 0)) {
+		if (createSartanoString(*(argv+3), *(argv+4), txStr) == 0) {
 			printUsage();
 			exit(1);
 		}
 		/* else - a send cmd string was created */
-	}
-	else if ( (argc == 7) && (strcmp(*(argv+2),"IKEA")==0) )
-	{
+	} else if ( (argc == 7) && (strcmp(*(argv+2),"IKEA")==0) ) {
 		//                    System,   Channel,    Level,    DimStyle, TXString
-		if ( createIkeaString(*(argv+3), *(argv+4), *(argv+5), *(argv+6),txStr) == 0 )
-		{
+		if ( createIkeaString(*(argv+3), *(argv+4), *(argv+5), *(argv+6),txStr) == 0 ) {
 			printUsage();
 			exit(1);
 		}
 		/* else - a send cmd string was created */
-	}
-	else /* protocol or parameters not recognized */
-	{
+	} else { /* protocol or parameters not recognized */
 		printUsage();
 		exit(1);
 	}
@@ -109,28 +101,30 @@ int main( int argc, char **argv )
 	printf("txStr: %s\n", txStr);
 #endif
 
-	if( 0 > ( fd = open( *(argv+1), O_RDWR ) ) )
-	{
-		fprintf(stderr,  "%s - Error opening %s\n", PROG_NAME, *(argv+1));
-		exit(1);
+	if(strlen(txStr) > 0) {
+		if (strcmp(*(argv+1), "LIBUSB") != 0) {
+			if( 0 > ( fd = open( *(argv+1), O_RDWR ) ) ) {
+				fprintf(stderr,  "%s - Error opening %s\n", PROG_NAME, *(argv+1));
+				exit(1);
+			}
+
+			/* adjust serial port parameters */
+			bzero(&tio, sizeof(tio)); /* clear struct for new port settings */
+			tio.c_cflag = B4800 | CS8 | CLOCAL | CREAD; /* CREAD not used yet */
+			tio.c_iflag = IGNPAR;
+			tio.c_oflag = 0;
+			tcflush(fd, TCIFLUSH);
+			tcsetattr(fd,TCSANOW,&tio);
+
+			write(fd, txStr, strlen(txStr));
+
+			sleep(1); /* one second sleep to avoid		device 'choking' */
+			close(fd); /* Modified : Close fd to make a clean exit */
+		} else {
+			usbWriteFtdi( txStr );
+		}
 	}
-
-	if(strlen(txStr) > 0)
-	{
-		/* adjust serial port parameters */
-		bzero(&tio, sizeof(tio)); /* clear struct for new port settings */
-		tio.c_cflag = B4800 | CS8 | CLOCAL | CREAD; /* CREAD not used yet */
-		tio.c_iflag = IGNPAR;
-		tio.c_oflag = 0;
-		tcflush(fd, TCIFLUSH);
-		tcsetattr(fd,TCSANOW,&tio);
-
-		write(fd, txStr, strlen(txStr));
-
-		sleep(1); /* one second sleep to avoid		device 'choking' */
-		close(fd); /* Modified : Close fd to make a clean exit */
-	}
-	exit(0);
+  exit(0);
 }
 
 
@@ -160,9 +154,7 @@ int createNexaString(const char * pHouseStr, const char * pChannelStr,
 	   (on_offCode < 0) || (on_offCode > 1))
 	{
 
-	}
-	else
-	{
+	} else {
 		/* b0..b11 txCode where 'X' will be represented by 1 for simplicity.
 		   b0 will be sent first */
 		txCode = houseCode;
@@ -177,14 +169,11 @@ int createNexaString(const char * pHouseStr, const char * pChannelStr,
 		strcat(pTxStr,"S");
 		for(bit=0;bit<12;bit++)
 		{
-			if((bitmask & txCode) == 0)
-			{
+			if((bitmask & txCode) == 0) {
 				/* bit timing might need further refinement */
 				strcat(pTxStr," ` `"); /* 320 us high, 960 us low,  320 us high, 960 us low */
 				/* strcat(pTxStr,"$k$k"); *//* 360 us high, 1070 us low,  360 us high, 1070 us low */
-			}
-			else /* add 'X' (floating bit) */
-			{
+			} else { /* add 'X' (floating bit) */
 				strcat(pTxStr," `` "); /* 320 us high, 960 us low, 960 us high,  320 us low */
 				/*strcat(pTxStr,"$kk$"); *//* 360 us high, 1070 us low, 1070 us high,  360 us low */
 			}
@@ -217,23 +206,16 @@ int createSartanoString(const char * pChannelStr, const char * pOn_offStr,
 
 	/* check converted parameters for validity */
 	if((strlen(pChannelStr) != 10) ||
-		(on_offCode < 0) || (on_offCode > 1))
-	{
-
-	}
-	else
-	{
+	   (on_offCode < 0) || (on_offCode > 1)) {
+	} else {
 		strcat(pTxStr,"S");
 		for(bit=0;bit<=9;bit++)
 		{
-			if(strncmp(pChannelStr+bit, "1", 1) == 0) //If it is a "1"
-			{
+			if(strncmp(pChannelStr+bit, "1", 1) == 0) { //If it is a "1"
 				strcat(pTxStr,"$k$k");
-			}
-			else
-			{
+			} else {
 				strcat(pTxStr,"$kk$");
-			}
+	    }
 		}
 		if (on_offCode >= 1)
 			strcat(pTxStr,"$k$k$kk$"); //the "turn on"-code
@@ -249,7 +231,6 @@ int createSartanoString(const char * pChannelStr, const char * pOn_offStr,
 #endif
 
 	return strlen(pTxStr);
-
 }
 
 int createIkeaString( const char * pSystemStr, const char * pChannelStr, const char * pLevelStr, const char *pDimStyle, char * pStrReturn)
@@ -279,8 +260,7 @@ int createIkeaString( const char * pSystemStr, const char * pChannelStr, const c
 		return 0;
 	}
 
-	if (channelCode == 10)
-	{
+	if (channelCode == 10) {
 		channelCode = 0;
 	}
 	rawChannelCode = (1<<(9-channelCode));
@@ -288,50 +268,34 @@ int createIkeaString( const char * pSystemStr, const char * pChannelStr, const c
 	strcat(pStrReturn, STARTCODE ) ; //Startcode, always like this;
 	intCode = (systemCode << 10) | rawChannelCode;
 
-	for ( i = 13; i >= 0; --i)
-	{
-		if ((intCode>>i) & 1)
-		{
+	for ( i = 13; i >= 0; --i) {
+		if ((intCode>>i) & 1) {
 			strcat(pStrReturn, TT );
-			if (i % 2 == 0)
-			{
+			if (i % 2 == 0) {
 				checksum2++;
-			}
-			else
-			{
+			} else {
 				checksum1++;
 			}
-		}
-		else
-		{
+		} else {
 			strcat(pStrReturn,A);
 		}
 	}
 
-	if (checksum1 %2 == 0)
-	{
+	if (checksum1 %2 == 0) {
 		strcat(pStrReturn, TT );
-	}
-	else
-	{
+	} else {
 		strcat(pStrReturn, A) ; //1st checksum
 	}
 
-	if (checksum2 %2 == 0)
-	{
+	if (checksum2 %2 == 0) {
 		strcat(pStrReturn, TT );
-	}
-	else
-	{
+	} else {
 		strcat(pStrReturn, A ) ; //2nd checksum
 	}
 
-	if (DimStyle == 1)
-	{
+	if (DimStyle == 1) {
 		intFade = 11 << 4; //Smooth
-	}
-	else
-	{
+	} else {
 		intFade = 1 << 4; //Instant
 	}
 
@@ -376,42 +340,29 @@ int createIkeaString( const char * pSystemStr, const char * pChannelStr, const c
 	checksum1 = 0;
 	checksum2 = 0;
 
-	for (i = 0; i < 6; ++i)
-	{
-		if ((intCode>>i) & 1)
-		{
+	for (i = 0; i < 6; ++i) {
+		if ((intCode>>i) & 1) {
 			strcat(pStrReturn, TT);
 
-			if (i % 2 == 0)
-			{
+			if (i % 2 == 0) {
 				checksum1++;
-			}
-			else
-			{
+			} else {
 				checksum2++;
 			}
-		}
-		else
-		{
+		} else {
 			strcat(pStrReturn, A );
 		}
 	}
 
-	if (checksum1 %2 == 0)
-	{
+	if (checksum1 %2 == 0) {
 		strcat(pStrReturn, TT);
-	}
-	else
-	{
+	} else {
 		strcat(pStrReturn, A ) ; //2nd checksum
 	}
 
-	if (checksum2 %2 == 0)
-	{
+	if (checksum2 %2 == 0) {
 		strcat(pStrReturn, TT );
-	}
-	else
-	{
+	} else {
 		strcat(pStrReturn, A ) ; //2nd checksum
 	}
 
@@ -425,7 +376,7 @@ void printUsage(void)
 {
 	printf("%s v%s - Send RF remote commands\n", PROG_NAME, PROG_VERSION);
 	printf("Usage: rfcmd DEVICE PROTOCOL [PROTOCOL_ARGUMENTS] \n");
-	printf("\t DEVICE: /dev/ttyUSB[0..n]\n" );
+	printf("\t DEVICE: /dev/ttyUSB[0..n] | LIBUSB\n" );
 	printf("\t PROTOCOLS: NEXA, SARTANO, WAVEMAN, IKEA\n" );
 	printf("\t PROTOCOL ARGUMENTS - NEXA, WAVEMAN:\n");
 	printf("\t\tHOUSE_CODE: A..P\n\t\tCHANNEL: 1..16\n\t\tOFF_ON: 0..1\n" );
