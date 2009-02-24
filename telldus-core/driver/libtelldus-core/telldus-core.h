@@ -56,6 +56,9 @@ extern "C" {
 	
 	TELLSTICK_API int WINAPI tdAddDevice();
 	TELLSTICK_API bool WINAPI tdRemoveDevice(int intDeviceId);
+	
+	TELLSTICK_API int WINAPI tdSendRawCommand(const char *command, int reserved);
+
 #ifdef __cplusplus
 }
 #endif
