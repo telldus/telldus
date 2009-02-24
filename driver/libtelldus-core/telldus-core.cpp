@@ -522,6 +522,15 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
 	return wrapStdString(strReturn);
 }
 
+/**
+ * Send a raw command to TellStick. Please read the TellStick protocol
+ * definition on how the command should be constructed.
+ * @param command The command for TellStick in its native format
+ * @returns TELLSTICK_SUCCESS on success or one of the errorcodes on failure
+ */
+int WINAPI tdSendRawCommand(const char *command, int reserved) {
+	//TODO: to be implemented
+}
 
 //********
 //* Error management, set strLogName to "" to turn off
