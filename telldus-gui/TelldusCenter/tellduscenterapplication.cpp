@@ -1,7 +1,12 @@
 #include "tellduscenterapplication.h"
 #include <QMessageBox>
+#include <QDir>
+#include <QIcon>
+#include <QPluginLoader>
+
 #include <QDebug>
 #include <telldus-core.h>
+#include "tellduscenterplugin.h"
 
 TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 		:QApplication(argc, argv),
@@ -15,10 +20,17 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 	connect(this, SIGNAL(sigDeviceEvent(int, int, const QString &)), this, SLOT(deviceEvent(int, int, const QString &)), Qt::QueuedConnection);
 	tdInit();
 	tdRegisterDeviceEvent( &TelldusCenterApplication::deviceEvent, 0 );
+
+	loadPlugins();
 }
 
 TelldusCenterApplication::~TelldusCenterApplication() {
+	qDeleteAll(p_plugins);
 	tdClose();
+}
+
+PluginList TelldusCenterApplication::plugins() const {
+	return p_plugins;
 }
 
 void TelldusCenterApplication::showMainWindow() {
@@ -62,6 +74,38 @@ void TelldusCenterApplication::showMessage( const QString &title, const QString 
 void TelldusCenterApplication::deviceEvent(int deviceId, int method, const char *data, int /*callbackId*/, void */*context*/) {
 	TelldusCenterApplication *app = TelldusCenterApplication::instance();
 	emit app->sigDeviceEvent(deviceId, method, data);
+}
+
+void TelldusCenterApplication::loadPlugins() {
+	QDir pluginsDir = QDir(qApp->applicationDirPath());
+
+#if defined(Q_OS_WIN)
+	if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release")
+		pluginsDir.cdUp();
+#elif defined(Q_OS_MAC)
+	if (pluginsDir.dirName() == "MacOS") {
+		pluginsDir.cdUp();
+		pluginsDir.cdUp();
+		pluginsDir.cdUp();
+	}
+#endif
+	pluginsDir.cd("plugins");
+
+	foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
+		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
+		QObject *plugin = loader.instance();
+		if (plugin) { //Load the plugin
+			loadPlugin(plugin);
+		}
+	}
+}
+
+void TelldusCenterApplication::loadPlugin(QObject *plugin) {
+	TelldusCenterPlugin *iPlugin = qobject_cast<TelldusCenterPlugin *>(plugin);
+	if (!iPlugin) {
+		return;
+	}
+	p_plugins.append(iPlugin);
 }
 
 void TelldusCenterApplication::deviceEvent(int deviceId, int method, const QString &/*data*/) {

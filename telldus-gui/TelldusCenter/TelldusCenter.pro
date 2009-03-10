@@ -2,6 +2,7 @@
 # Project created by QtCreator 2008-12-11T11:01:36
 # -------------------------------------------------
 TEMPLATE = app
+
 SOURCES += main.cpp \
     mainwindow.cpp \
     tellduscenterapplication.cpp \
@@ -13,7 +14,8 @@ HEADERS += mainwindow.h \
     autoupdater.h \
     CocoaInitializer.h \
     systrayicon.h \
-    message.h
+    message.h \
+    tellduscenterplugin.h
 RESOURCES += resource.qrc
 TARGET = TelldusCenter
 macx { 

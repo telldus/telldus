@@ -3,9 +3,14 @@
 
 #include <QApplication>
 #include <QPointer>
+//#incldue
 
 #include "systrayicon.h"
 #include "mainwindow.h"
+
+class TelldusCenterPlugin;
+
+typedef QList<TelldusCenterPlugin *> PluginList;
 
 class TelldusCenterApplication : public QApplication
 {
@@ -18,6 +23,7 @@ public:
 	bool event(QEvent *event);
 #endif
 
+	PluginList plugins() const;
 	void showMainWindow();
 	bool isMainWindowShown();
 
@@ -35,8 +41,11 @@ private slots:
 
 private:
 	static void deviceEvent(int deviceId, int method, const char *data, int callbackId, void *context);
+	void loadPlugins();
+	void loadPlugin(QObject *plugin);
 
 	SystrayIcon systrayIcon;
+	PluginList p_plugins;
 	QPointer<MainWindow> mainWindow;
 };
 

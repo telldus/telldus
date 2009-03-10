@@ -2,9 +2,12 @@
 #define MAINWINDOW_H
 
 #include <QtGui/QMainWindow>
+#include <QHash>
 
 class QToolBar;
 class Message;
+
+class MainWindowPrivate;
 
 class MainWindow : public QMainWindow
 {
@@ -22,14 +25,14 @@ protected:
 
 private slots:
 	void slotAboutApplication();
+	void slotPagesClick();
 
 private:
 	void setupMenu();
 	void setupToolBar();
 
 private:
-	QToolBar *m_pagesBar;
-	Message *p_message;
+	MainWindowPrivate *d;
 };
 
 #endif // MAINWINDOW_H
