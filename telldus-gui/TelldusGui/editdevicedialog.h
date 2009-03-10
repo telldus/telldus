@@ -23,6 +23,7 @@ public:
 private slots:
 	void selectionChanged( const QModelIndex & );
 	void okClicked();
+	void cancelClicked();
 
 private:
 	VendorDeviceModel *model;
@@ -32,6 +33,9 @@ private:
 	QLineEdit *nameLineEdit;
 	QItemSelectionModel *selection;
 	QHash<int, DeviceSetting *> deviceSettings;
+#ifdef Q_WS_HILDON
+	QStackedLayout *stacked_layout;
+#endif
 };
 
 #endif // EDITDEVICEDIALOG_H

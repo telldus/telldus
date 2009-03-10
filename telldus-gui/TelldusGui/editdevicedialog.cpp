@@ -31,6 +31,10 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 		selection(0)
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
+#ifdef Q_WS_HILDON
+	stacked_layout = new QStackedLayout;
+	layout->addLayout(stacked_layout);
+#endif
 
 	QHBoxLayout *deviceLayout = new QHBoxLayout;
 
@@ -51,7 +55,11 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 	QGroupBox *deviceGroupBox = new QGroupBox(this);
 	deviceGroupBox->setTitle( tr("Device") );
 	deviceGroupBox->setLayout(deviceLayout);
+#ifdef Q_WS_HILDON
+	stacked_layout->addWidget(deviceGroupBox);
+#else
 	layout->addWidget(deviceGroupBox);
+#endif
 
 	QVBoxLayout *addressLayout = new QVBoxLayout;
 
@@ -74,12 +82,16 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 	QGroupBox *settingsGroupBox = new QGroupBox(this);
 	settingsGroupBox->setTitle( tr("Addresscode") );
 	settingsGroupBox->setLayout( addressLayout );
+#ifdef Q_WS_HILDON
+	stacked_layout->addWidget(settingsGroupBox);
+#else
 	layout->addWidget( settingsGroupBox );
+#endif
 
 	QDialogButtonBox *buttonBox = new QDialogButtonBox(this);
 	buttonBox->setStandardButtons( QDialogButtonBox::Save | QDialogButtonBox::Cancel );
 	connect(buttonBox, SIGNAL(accepted()), this, SLOT(okClicked()));
-	connect(buttonBox, SIGNAL(rejected()), this, SLOT(reject()));
+	connect(buttonBox, SIGNAL(rejected()), this, SLOT(cancelClicked()));
 	layout->addWidget(buttonBox);
 
 	deviceSettings[1] = new DeviceSettingNexa(device, this);
@@ -118,6 +130,7 @@ void EditDeviceDialog::selectionChanged( const QModelIndex & index ) {
 }
 
 void EditDeviceDialog::okClicked() {
+
 	VendorDeviceTreeItem* const item = model->item( selection->currentIndex() );
 	if (!item || !item->isDevice()) {
 		QMessageBox msgBox;
@@ -128,6 +141,13 @@ void EditDeviceDialog::okClicked() {
 		msgBox.exec();
 		return;
 	}
+
+#ifdef Q_WS_HILDON
+	if (stacked_layout->currentIndex() == 0) {
+		stacked_layout->setCurrentIndex(1);
+		return;
+	}
+#endif
 
 	if (nameLineEdit->text().trimmed() == "") {
 		QMessageBox msgBox;
@@ -150,4 +170,14 @@ void EditDeviceDialog::okClicked() {
 	}
 
 	this->accept();
+}
+
+void EditDeviceDialog::cancelClicked() {
+#ifdef Q_WS_HILDON
+	if (stacked_layout->currentIndex() > 0) {
+		stacked_layout->setCurrentIndex(stacked_layout->currentIndex()-1);
+		return;
+	}
+#endif
+	this->reject();
 }
