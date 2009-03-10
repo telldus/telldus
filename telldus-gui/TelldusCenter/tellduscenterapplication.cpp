@@ -53,12 +53,7 @@ void TelldusCenterApplication::eventTriggered( const QString &name, const QStrin
 
 void TelldusCenterApplication::showMessage( const QString &title, const QString &message, const QString &detailedMessage ) {
 	if (isMainWindowShown()) {
-		QMessageBox msgBox( mainWindow );
-		msgBox.setText( message );
-		msgBox.setInformativeText( detailedMessage );
-		msgBox.setIcon( QMessageBox::Warning );
-		msgBox.setStandardButtons( QMessageBox::Ok );
-		msgBox.exec();
+		mainWindow->showMessage(title, message, detailedMessage);
 	} else {
 		systrayIcon.showMessage((title != "" ? title : "Telldus Center"), message, QSystemTrayIcon::Warning);
 	}

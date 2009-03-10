@@ -6,15 +6,17 @@ SOURCES += main.cpp \
     mainwindow.cpp \
     tellduscenterapplication.cpp \
     autoupdater.cpp \
-    systrayicon.cpp
+    systrayicon.cpp \
+    message.cpp
 HEADERS += mainwindow.h \
     tellduscenterapplication.h \
     autoupdater.h \
     CocoaInitializer.h \
-    systrayicon.h
+    systrayicon.h \
+    message.h
 RESOURCES += resource.qrc
 TARGET = TelldusCenter
-macx {
+macx { 
     HEADERS += sparkleautoupdater.h
     LIBS += -framework \
         TelldusGui \
@@ -27,9 +29,7 @@ macx {
     QMAKE_INFO_PLIST = Info.plist
     ICON = TelldusCenter.icns
 }
-!macx {
-    LIBS += -ltelldus-gui
-}
+!macx:LIBS += -ltelldus-gui
 win32:LIBS += -L \
     .
 VERSION = 1.3.0

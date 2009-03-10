@@ -7,13 +7,16 @@
 #include <QToolBar>
 #include <QMessageBox>
 #include <QSettings>
+#include <QVBoxLayout>
 
 #include "tellduscenterapplication.h"
+#include "message.h"
 #include "../TelldusGui/telldusgui.h"
 
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
-	: QMainWindow(parent, flags)
-	, m_pagesBar(0)
+	: QMainWindow(parent, flags),
+	m_pagesBar(0),
+	p_message(new Message(this))
 {
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -26,13 +29,20 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 	setupMenu();
 	setupToolBar();
 
+	QWidget *centralWidget = new QWidget(this);
+	QVBoxLayout *layout = new QVBoxLayout;
+	centralWidget->setLayout(layout);
+
+	layout->addWidget(p_message);
+
 	//QStackedWidget *centralWidget = new QStackedWidget(this);
 	TelldusCenterApplication *app = TelldusCenterApplication::instance();
-	QWidget *centralWidget = tdDeviceWidget(this);
-	setCentralWidget(centralWidget);
-	connect(centralWidget, SIGNAL(showMessage(const QString &, const QString &, const QString &)), app, SLOT(showMessage(const QString &, const QString &, const QString &)));
-	connect(centralWidget, SIGNAL(eventTriggered(const QString &, const QString &)), app, SLOT(eventTriggered(const QString &, const QString &)));
+	QWidget *deviceWidget = tdDeviceWidget(this);
+	connect(deviceWidget, SIGNAL(showMessage(const QString &, const QString &, const QString &)), app, SLOT(showMessage(const QString &, const QString &, const QString &)));
+	connect(deviceWidget, SIGNAL(eventTriggered(const QString &, const QString &)), app, SLOT(eventTriggered(const QString &, const QString &)));
+	layout->addWidget(deviceWidget);
 
+	setCentralWidget(centralWidget);
 
 	setWindowTitle( tr("Telldus Center") );
 }
@@ -40,6 +50,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 MainWindow::~MainWindow()
 {
 
+}
+
+void MainWindow::showMessage( const QString &title, const QString &message, const QString &detailedMessage ) {
+	p_message->showMessage( title, message, detailedMessage );
 }
 
 void MainWindow::closeEvent( QCloseEvent */*event*/ ) {
