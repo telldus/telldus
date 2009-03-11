@@ -8,11 +8,25 @@
 #include <telldus-core.h>
 #include "tellduscenterplugin.h"
 
+class TelldusCenterPlugin;
+
+typedef QList<TelldusCenterPlugin *> PluginList;
+
+
+class TelldusCenterApplicationPrivate {
+public:
+	SystrayIcon *systrayIcon;
+	PluginList plugins;
+	QPointer<MainWindow> mainWindow;
+};
+
 TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
-		:QApplication(argc, argv),
-		systrayIcon(this)
+		:QApplication(argc, argv)
 {
-	connect(&systrayIcon, SIGNAL(showEventMessage(const QString &, const QString &, const QString &)), this, SLOT(showMessage(QString,QString,QString)));
+	d = new TelldusCenterApplicationPrivate;
+	d->systrayIcon = new SystrayIcon( this );
+
+	connect(d->systrayIcon, SIGNAL(showEventMessage(const QString &, const QString &, const QString &)), this, SLOT(showMessage(QString,QString,QString)));
 
 	setQuitOnLastWindowClosed( false );
 
@@ -25,23 +39,24 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 }
 
 TelldusCenterApplication::~TelldusCenterApplication() {
-	qDeleteAll(p_plugins);
+	qDeleteAll(d->plugins);
+	delete d;
 	tdClose();
 }
 
 PluginList TelldusCenterApplication::plugins() const {
-	return p_plugins;
+	return d->plugins;
 }
 
 void TelldusCenterApplication::showMainWindow() {
 	if (!isMainWindowShown()) {
-		mainWindow = new MainWindow();
+		d->mainWindow = new MainWindow();
 	}
-	mainWindow->show();
+	d->mainWindow->show();
 }
 
 bool TelldusCenterApplication::isMainWindowShown() {
-	return !mainWindow.isNull();
+	return !d->mainWindow.isNull();
 }
 
 #if defined(Q_WS_MAC)
@@ -65,9 +80,9 @@ void TelldusCenterApplication::eventTriggered( const QString &name, const QStrin
 
 void TelldusCenterApplication::showMessage( const QString &title, const QString &message, const QString &detailedMessage ) {
 	if (isMainWindowShown()) {
-		mainWindow->showMessage(title, message, detailedMessage);
+		d->mainWindow->showMessage(title, message, detailedMessage);
 	} else {
-		systrayIcon.showMessage((title != "" ? title : "Telldus Center"), message, QSystemTrayIcon::Warning);
+		d->systrayIcon->showMessage((title != "" ? title : "Telldus Center"), message, QSystemTrayIcon::Warning);
 	}
 }
 
@@ -105,7 +120,13 @@ void TelldusCenterApplication::loadPlugin(QObject *plugin) {
 	if (!iPlugin) {
 		return;
 	}
-	p_plugins.append(iPlugin);
+	QObject *qObjectPlugin = qobject_cast<QObject *>(plugin);
+	if (qObjectPlugin) {
+		if (qObjectPlugin->metaObject()->indexOfSignal( QMetaObject::normalizedSignature("hej()") ) >= 0) {
+			connect(qObjectPlugin, SIGNAL(hej()), this, SLOT(aboutQt()));
+		}
+	}
+	d->plugins.append(iPlugin);
 }
 
 void TelldusCenterApplication::deviceEvent(int deviceId, int method, const QString &/*data*/) {

@@ -9,6 +9,7 @@
 #include "mainwindow.h"
 
 class TelldusCenterPlugin;
+class TelldusCenterApplicationPrivate;
 
 typedef QList<TelldusCenterPlugin *> PluginList;
 
@@ -44,9 +45,7 @@ private:
 	void loadPlugins();
 	void loadPlugin(QObject *plugin);
 
-	SystrayIcon systrayIcon;
-	PluginList p_plugins;
-	QPointer<MainWindow> mainWindow;
+	TelldusCenterApplicationPrivate *d;
 };
 
 #endif // TELLDUSCENTERAPPLICATION_H
