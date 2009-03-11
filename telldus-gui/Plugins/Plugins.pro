@@ -1,3 +1,4 @@
 TEMPLATE=subdirs
-SUBDIRS = TouchInterface
+SUBDIRS = Devices \
+          TouchInterface
  
