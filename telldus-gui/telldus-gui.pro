@@ -1,3 +1,4 @@
 TEMPLATE=subdirs
 SUBDIRS = TelldusGui \
-          TelldusCenter
+          TelldusCenter \
+          Plugins

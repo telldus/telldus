@@ -14,7 +14,6 @@
 #include "tellduscenterapplication.h"
 #include "tellduscenterplugin.h"
 #include "message.h"
-#include "../TelldusGui/telldusgui.h"
 
 class MainWindowPrivate {
 public:
@@ -47,12 +46,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 
 	d->stackedLayout = new QStackedLayout;
 	layout->addLayout(d->stackedLayout);
-
-	TelldusCenterApplication *app = TelldusCenterApplication::instance();
-	QWidget *deviceWidget = tdDeviceWidget(this);
-	connect(deviceWidget, SIGNAL(showMessage(const QString &, const QString &, const QString &)), app, SLOT(showMessage(const QString &, const QString &, const QString &)));
-	connect(deviceWidget, SIGNAL(eventTriggered(const QString &, const QString &)), app, SLOT(eventTriggered(const QString &, const QString &)));
-	d->stackedLayout->addWidget(deviceWidget);
 
 	setCentralWidget(centralWidget);
 
@@ -99,14 +92,6 @@ void MainWindow::setupToolBar()
 	QActionGroup *ag = new QActionGroup(this);
 
 	QSet<QString> toolbarIcons;
-	QAction *actionDevices = new QAction( QIcon(":/images/devices.png"), tr("Devices"), this );
-	actionDevices->setCheckable( true );
-	actionDevices->setChecked( true );
-	actionDevices->setData(0);
-	connect(actionDevices, SIGNAL(triggered()), this, SLOT(slotPagesClick()));
-	ag->addAction(actionDevices);
-	toolbarIcons.insert("devices");
-
 	TelldusCenterApplication *app = TelldusCenterApplication::instance();
 	PluginList plugins = app->plugins();
 	foreach( TelldusCenterPlugin *plugin, plugins ) {
@@ -133,6 +118,7 @@ void MainWindow::setupToolBar()
 		}
 
 	}
+	ag->actions().first()->setChecked( true );
 	d->pagesBar->addActions( ag->actions() );
 }
 
