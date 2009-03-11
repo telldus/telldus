@@ -2,7 +2,7 @@
 # Project created by QtCreator 2008-12-11T11:01:36
 # -------------------------------------------------
 TEMPLATE = app
-
+QT += script
 SOURCES += main.cpp \
     mainwindow.cpp \
     tellduscenterapplication.cpp \

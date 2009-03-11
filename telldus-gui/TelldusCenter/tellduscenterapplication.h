@@ -44,6 +44,7 @@ private:
 	static void deviceEvent(int deviceId, int method, const char *data, int callbackId, void *context);
 	void loadPlugins();
 	void loadPlugin(QObject *plugin);
+	void loadScripts();
 
 	TelldusCenterApplicationPrivate *d;
 };

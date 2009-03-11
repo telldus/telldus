@@ -3,6 +3,7 @@
 #include <QDir>
 #include <QIcon>
 #include <QPluginLoader>
+#include <QScriptEngine>
 
 #include <QDebug>
 #include <telldus-core.h>
@@ -18,6 +19,7 @@ public:
 	SystrayIcon *systrayIcon;
 	PluginList plugins;
 	QPointer<MainWindow> mainWindow;
+	QScriptEngine scriptEngine;
 };
 
 TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
@@ -36,6 +38,7 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 	tdRegisterDeviceEvent( &TelldusCenterApplication::deviceEvent, 0 );
 
 	loadPlugins();
+	loadScripts();
 }
 
 TelldusCenterApplication::~TelldusCenterApplication() {
@@ -104,7 +107,10 @@ void TelldusCenterApplication::loadPlugins() {
 		pluginsDir.cdUp();
 	}
 #endif
-	pluginsDir.cd("plugins");
+	if (!pluginsDir.cd("plugins")) {
+		return;
+	}
+	this->addLibraryPath( pluginsDir.absolutePath() );
 
 	foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
 		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
@@ -127,6 +133,16 @@ void TelldusCenterApplication::loadPlugin(QObject *plugin) {
 		}
 	}
 	d->plugins.append(iPlugin);
+}
+
+void TelldusCenterApplication::loadScripts() {
+	foreach (QString extension, d->scriptEngine.availableExtensions()) {
+		d->scriptEngine.importExtension( extension );
+		if (d->scriptEngine.hasUncaughtException()) {
+			qDebug() << QString("Error in %1:%2:").arg(extension).arg(d->scriptEngine.uncaughtExceptionLineNumber())
+					<< d->scriptEngine.uncaughtException().toString();
+		}
+	}
 }
 
 void TelldusCenterApplication::deviceEvent(int deviceId, int method, const QString &/*data*/) {
