@@ -31,7 +31,8 @@ IF (APPLE)
 	SET( telldus-core_SRCS
 		${telldus-core_SRCS}
 		win/Device.cpp
-		SettingsCoreFoundationPreferences.cpp
+#		SettingsCoreFoundationPreferences.cpp
+		SettingsQt.cpp
 	)
 	ADD_DEFINITIONS(
 		-D_MACOSX
