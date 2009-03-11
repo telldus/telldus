@@ -1,9 +1,14 @@
 #include <QtCore>
 #include <QLabel>
 #include "touchplugin.h"
+#include "panel.h"
 
 QIcon TouchPlugin::iconForPage( const QString &page ) const {
+	Q_UNUSED(page);
 	return QIcon(":/images/touchinterface.png");
+}
+
+void TouchPlugin::init() {
 }
 
 QString TouchPlugin::pluginName() const {
@@ -11,7 +16,8 @@ QString TouchPlugin::pluginName() const {
 }
 
 QWidget *TouchPlugin::widget( const QString &page, QWidget *parent ) const {
-	return new QLabel("Hello world", parent);
+	Q_UNUSED(page)
+	return new Panel(parent);
 }
 
 QStringList TouchPlugin::widgets() const {

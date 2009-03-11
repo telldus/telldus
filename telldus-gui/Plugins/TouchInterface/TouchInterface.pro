@@ -7,6 +7,11 @@ TARGET = TouchInterface
 TEMPLATE = lib
 CONFIG += plugin
 DESTDIR = ../../TelldusCenter/plugins
-SOURCES += touchplugin.cpp
-HEADERS += touchplugin.h
+SOURCES += touchplugin.cpp \
+    panel.cpp \
+    button.cpp
+HEADERS += touchplugin.h \
+    panel.h \
+    button.h
 RESOURCES += TouchInterface.qrc
+contains(QT_CONFIG, opengl):QT += opengl

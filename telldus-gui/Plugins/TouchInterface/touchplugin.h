@@ -11,10 +11,14 @@ class TouchPlugin : public QObject, public TelldusCenterPlugin
 	Q_INTERFACES(TelldusCenterPlugin)
 public:
 	virtual QIcon iconForPage( const QString &page ) const;
+	virtual void init();
 	virtual QString pluginName() const;
 
 	virtual QWidget *widget( const QString &page, QWidget *parent ) const;
 	virtual QStringList widgets() const;
+
+signals:
+	void hej();
 
 };
 
