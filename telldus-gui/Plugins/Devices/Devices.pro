@@ -10,3 +10,8 @@ DESTDIR = ../../TelldusCenter/plugins
 SOURCES += devicesplugin.cpp
 HEADERS += devicesplugin.h
 #RESOURCES += Devices.qrc
+macx {
+    LIBS += -framework \
+        TelldusGui
+}
+!macx:LIBS += -ltelldus-gui
