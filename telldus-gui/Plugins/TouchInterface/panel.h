@@ -12,13 +12,10 @@ public:
 	Panel(QWidget *parent = 0);
 	~Panel();
 
-	void paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget *);
-
 protected:
 	void resizeEvent(QResizeEvent *event);
 
 private slots:
-	void tick(int frame);
 	void click();
 
 private:
