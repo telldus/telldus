@@ -4,26 +4,37 @@
 QHash<int, Device *> Device::devices;
 int Device::callbackId = tdRegisterDeviceEvent( &Device::deviceEvent, 0);
 
+class DevicePrivate {
+public:
+	int id, model, state;
+	QString name, protocol;
+	bool modelChanged, nameChanged, protocolChanged;
+	mutable int methods;
+	mutable QHash<QString, QString> settings;
+};
+
 Device::Device(int id)
-		:p_id(id),
-		p_model(0),
-		p_state(0),
-		p_name(""),
-		p_protocol(""),
-		p_modelChanged(false),
-		p_nameChanged(false),
-		p_protocolChanged(false),
-		p_methods(0)
 {
-	if (id > 0) {
+	d = new DevicePrivate;
+	d->id = id;
+	d->model = 0;
+	d->state = 0;
+	d->name = "";
+	d->protocol = "";
+	d->modelChanged = false;
+	d->nameChanged = false;
+	d->protocolChanged = false;
+	d->methods = 0;
+
+	if (d->id > 0) {
 		char *name = tdGetName(id);
-		p_name = QString::fromLocal8Bit( name );
+		d->name = QString::fromLocal8Bit( name );
 		free( name );
 
-		p_model = tdGetModel(id);
+		d->model = tdGetModel(id);
 
 		char *protocol = tdGetProtocol(id);
-		p_protocol = QString::fromLocal8Bit( protocol );
+		d->protocol = QString::fromLocal8Bit( protocol );
 		free( protocol );
 
 		updateState();
@@ -31,61 +42,62 @@ Device::Device(int id)
 }
 
 Device::~Device() {
+	delete d;
 }
 
 void Device::setModel( int model ) {
-	p_model = model;
-	p_modelChanged = true;
+	d->model = model;
+	d->modelChanged = true;
 }
 
 int Device::model() {
-	return p_model;
+	return d->model;
 }
 
 void Device::setName( const QString & name ) {
-	if (name.compare(p_name, Qt::CaseSensitive) == 0) {
+	if (name.compare(d->name, Qt::CaseSensitive) == 0) {
 		return;
 	}
-	p_name = name;
-	p_nameChanged = true;
+	d->name = name;
+	d->nameChanged = true;
 }
 
 const QString &Device::name() {
-	return p_name;
+	return d->name;
 }
 
 void Device::setParameter( const QString &name, const QString &value ) {
-	tdSetDeviceParameter(p_id, name.toLocal8Bit(), value.toLocal8Bit());
+	tdSetDeviceParameter(d->id, name.toLocal8Bit(), value.toLocal8Bit());
 }
 
 QString Device::parameter( const QString &name, const QString &defaultValue ) const {
-	char *p = tdGetDeviceParameter(p_id, name.toLocal8Bit(), defaultValue.toLocal8Bit());
+	char *p = tdGetDeviceParameter(d->id, name.toLocal8Bit(), defaultValue.toLocal8Bit());
 	QString param( p );
 	free(p);
 	return param;
 }
 
 void Device::setProtocol( const QString & protocol ) {
-	if (protocol.compare(p_protocol, Qt::CaseSensitive) == 0) {
+	if (protocol.compare(d->protocol, Qt::CaseSensitive) == 0) {
 		return;
 	}
-	p_protocol = protocol;
-	p_protocolChanged = true;
+	d->protocol = protocol;
+	d->protocolChanged = true;
 }
 
 const QString &Device::protocol() {
-	return p_protocol;
+	return d->protocol;
 }
 
 int Device::methods() const {
-	if (p_methods == 0) {
+	if (d->methods == 0) {
 		const_cast<Device*>(this)->updateMethods();
 	}
-	return p_methods;
+	return d->methods;
 }
 
 int Device::deviceType() const {
-	return tdGetDeviceType(p_id);
+	return tdGetDeviceType(d->id);
 }
 
 Device *Device::getDevice( int id ) {
@@ -108,26 +120,26 @@ bool Device::deviceLoaded( int id ) {
 
 void Device::save() {
 	bool deviceIsAdded = false, methodsChanged = false;
-	if (p_id == 0) { //This is a new device
-		p_id = tdAddDevice();
+	if (d->id == 0) { //This is a new device
+		d->id = tdAddDevice();
 		deviceIsAdded = true;
 	}
 
-	if (p_nameChanged) {
-		tdSetName(p_id, p_name.toLocal8Bit());
-		p_nameChanged = false;
+	if (d->nameChanged || deviceIsAdded) {
+		tdSetName(d->id, d->name.toLocal8Bit());
+		d->nameChanged = false;
 	}
 
-	if (p_modelChanged) {
-		tdSetModel(p_id, p_model);
+	if (d->modelChanged || deviceIsAdded) {
+		tdSetModel(d->id, d->model);
 		methodsChanged = true;
-		p_modelChanged = false;
+		d->modelChanged = false;
 	}
 
-	if (p_protocolChanged) {
-		tdSetProtocol(p_id, p_protocol.toLocal8Bit());
+	if (d->protocolChanged || deviceIsAdded) {
+		tdSetProtocol(d->id, d->protocol.toLocal8Bit());
 		methodsChanged = true;
-		p_protocolChanged = false;
+		d->protocolChanged = false;
 	}
 
 	if (methodsChanged) {
@@ -135,42 +147,42 @@ void Device::save() {
 	}
 
 	if (deviceIsAdded) {
-		emit deviceAdded(p_id);
+		emit deviceAdded(d->id);
 	}
 }
 
 void Device::turnOff() {
-	triggerEvent( tdTurnOff( p_id ) );
+	triggerEvent( tdTurnOff( d->id ) );
 }
 
 void Device::turnOn() {
-	triggerEvent( tdTurnOn( p_id ) );
+	triggerEvent( tdTurnOn( d->id ) );
 }
 
 void Device::bell() {
-	triggerEvent( tdBell( p_id ) );
+	triggerEvent( tdBell( d->id ) );
 }
 
 int Device::lastSentCommand() const {
-	return p_state;
+	return d->state;
 }
 
 void Device::updateMethods() {
-	int methods = tdMethods(p_id, TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL | TELLSTICK_DIM);
-	if (p_methods != methods) {
-		bool doEmit = (p_methods > 0);
-		p_methods = methods;
+	int methods = tdMethods(d->id, TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL | TELLSTICK_DIM);
+	if (d->methods != methods) {
+		bool doEmit = (d->methods > 0);
+		d->methods = methods;
 		if (doEmit) {
-			emit methodsChanged( p_methods );
+			emit methodsChanged( d->methods );
 		}
 	}
 }
 
 void Device::updateState() {
-	int lastSentCommand = tdLastSentCommand( p_id );
-	if (lastSentCommand != p_state) {
-		p_state = lastSentCommand;
-		emit stateChanged(p_id, p_state);
+	int lastSentCommand = tdLastSentCommand( d->id );
+	if (lastSentCommand != d->state) {
+		d->state = lastSentCommand;
+		emit stateChanged(d->id, d->state);
 	}
 }
 

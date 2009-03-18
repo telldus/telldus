@@ -7,6 +7,8 @@
 #include <QPointer>
 #include <QString>
 
+class DevicePrivate;
+
 class Device : public QObject
 {
 	Q_OBJECT
@@ -55,15 +57,11 @@ private:
 	void updateState();
 	void triggerEvent( int message );
 
+	DevicePrivate *d;
 	static QHash<int, Device *> devices;
 	static void deviceEvent(int deviceId, int, const char *, int, void *);
 
 	static int callbackId;
-	QHash<QString, QString> p_settings;
-	int p_id, p_model, p_state;
-	QString p_name, p_protocol;
-	bool p_modelChanged, p_nameChanged, p_protocolChanged;
-	mutable int p_methods;
 };
 
 #endif // DEVICE_H
