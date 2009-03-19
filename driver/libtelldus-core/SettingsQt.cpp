@@ -91,15 +91,17 @@ int Settings::addDevice() {
 * Get next available device id
 */
 int Settings::getNextDeviceId() const {
-	int id = 0, max = 1;
-	return max;
+	int id = d->settings->value("lastUsedDeviceId", 0).toInt() + 1;
+	d->settings->setValue("lastUsedDeviceId", id);
+	return id;
 }
 
 /*
 * Remove a device
 */
 bool Settings::removeDevice(int intDeviceId) {
-	return false;
+	d->settings->remove( QString("devices/%1").arg(intDeviceId) );
+	return true;
 }
 
 std::string Settings::getStringSetting(int intDeviceId, const std::string &name, bool parameter) const {
