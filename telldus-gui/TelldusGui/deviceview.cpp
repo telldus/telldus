@@ -16,7 +16,8 @@ DeviceView::DeviceView(QWidget *parent)
 
 void DeviceView::setModel ( QAbstractItemModel * model ) {
 	QTableView::setModel( model );
-	rowsInserted(QModelIndex(), 0, model->rowCount());
+	rowsInserted(QModelIndex(), 1, model->rowCount());
+	connect( model, SIGNAL(rowsInserted(const QModelIndex &, int, int)), this, SLOT(rowsInserted(const QModelIndex &, int, int)) );
 }
 
 void DeviceView::rowsInserted ( const QModelIndex & /*parent*/, int start, int end ) {
@@ -25,7 +26,7 @@ void DeviceView::rowsInserted ( const QModelIndex & /*parent*/, int start, int e
 		return;
 	}
 
-	for (int i = start; i < end; ++i) {
+	for (int i = start-1; i < end; ++i) {
 		QModelIndex index = model->index( i, 2, QModelIndex() );
 		this->setIndexWidget( index, new MethodWidget( model->device(index), this ) );
 	}
