@@ -8,6 +8,8 @@ endif(COMMAND cmake_policy)
 
 
 SET(BUILD_LIBTELLDUS-CORE	TRUE	CACHE BOOL "Build libtelldus-core")
+SET(SUPPORT_TELLSTICK_DUO FALSE CACHE BOOL "Include support for TellStick Duo")
+
 SET(BUILD_RFCMD		TRUE	CACHE BOOL "Build rfcmd")
 SET(BUILD_TDTOOL	TRUE	CACHE BOOL "Build tdtool")
 

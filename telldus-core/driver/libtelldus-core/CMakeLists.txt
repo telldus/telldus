@@ -13,7 +13,6 @@ SET( telldus-core_SRCS
 	Manager.cpp
 	Settings.cpp
 	telldus-core.cpp
-	TellStickDuo.cpp
 	)
 
 SET( telldus-core_HDRS
@@ -24,7 +23,15 @@ SET( telldus-core_MOC_HDRS
 	)
 	
 QT4_WRAP_CPP(  telldus-core_MOC_SRCS  ${telldus-core_MOC_HDRS} )
-QT4_AUTOMOC (  ${telldus-core_SRCS}                     )
+QT4_AUTOMOC (  ${telldus-core_SRCS} )
+
+IF (SUPPORT_TELLSTICK_DUO)
+	ADD_DEFINITIONS( -DTELLSTICK_DUO )
+	SET( telldus-core_SRCS
+		${telldus-core_SRCS}
+		TellStickDuo.cpp
+	)
+ENDIF(SUPPORT_TELLSTICK_DUO)
 	
 IF (APPLE)
 	SET( telldus-core_TARGET	TelldusCore )
