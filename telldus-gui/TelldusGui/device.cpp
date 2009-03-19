@@ -67,14 +67,16 @@ const QString &Device::name() {
 }
 
 void Device::setParameter( const QString &name, const QString &value ) {
-	tdSetDeviceParameter(d->id, name.toLocal8Bit(), value.toLocal8Bit());
+	d->settings[name] = value;
 }
 
 QString Device::parameter( const QString &name, const QString &defaultValue ) const {
-	char *p = tdGetDeviceParameter(d->id, name.toLocal8Bit(), defaultValue.toLocal8Bit());
-	QString param( p );
-	free(p);
-	return param;
+	if (!d->settings.contains(name)) {
+		char *p = tdGetDeviceParameter(d->id, name.toLocal8Bit(), defaultValue.toLocal8Bit());
+		d->settings[name] = p;
+		free(p);
+	}
+	return d->settings[name];
 }
 
 void Device::setProtocol( const QString & protocol ) {
@@ -140,6 +142,11 @@ void Device::save() {
 		tdSetProtocol(d->id, d->protocol.toLocal8Bit());
 		methodsChanged = true;
 		d->protocolChanged = false;
+	}
+
+	//Save all parameters
+	for( QHash<QString, QString>::const_iterator it = d->settings.begin(); it != d->settings.end(); ++it) {
+		tdSetDeviceParameter(d->id, it.key().toLocal8Bit(), it.value().toLocal8Bit());
 	}
 
 	if (methodsChanged) {
