@@ -18,7 +18,10 @@
 #include "DeviceSartano.h"
 #include "DeviceIkea.h"
 
+#include "Controller.h"
+#ifdef TELLSTICK_DUO
 #include "TellStickDuo.h"
+#endif
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,8 +38,10 @@ Manager *Manager::instance = 0;
 Manager::Manager()
 	: lastCallbackId(0)
 {
+#ifdef TELLSTICK_DUO
 	Controller *controller = new TellStickDuo("TSQVB5HU");
 	controllers[1] = controller;
+#endif
 }
 
 Manager::~Manager() {
