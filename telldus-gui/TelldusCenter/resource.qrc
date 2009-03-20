@@ -2,5 +2,6 @@
     <qresource prefix="/" >
         <file>images/devices-bw.png</file>
         <file>images/devices.png</file>
+        <file>images/TelldusCenter_128.png</file>
     </qresource>
 </RCC>
