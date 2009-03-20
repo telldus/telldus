@@ -6,6 +6,8 @@ if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
+SET(PACKAGE_VERSION 2)
+SET(PACKAGE_SOVERSION 2.0.0)
 
 SET(BUILD_LIBTELLDUS-CORE	TRUE	CACHE BOOL "Build libtelldus-core")
 SET(SUPPORT_TELLSTICK_DUO FALSE CACHE BOOL "Include support for TellStick Duo")
