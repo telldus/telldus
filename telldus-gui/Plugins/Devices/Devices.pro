@@ -6,12 +6,15 @@ QT += core \
 TARGET = Devices
 TEMPLATE = lib
 CONFIG += plugin
-DESTDIR = ../../TelldusCenter/plugins
 SOURCES += devicesplugin.cpp
 HEADERS += devicesplugin.h
 #RESOURCES += Devices.qrc
 macx {
     LIBS += -framework \
         TelldusGui
+    DESTDIR = ../../TelldusCenter/TelldusCenter.app/Contents/Plugins
 }
-!macx:LIBS += -ltelldus-gui
+!macx {
+    LIBS += -ltelldus-gui
+    DESTDIR = ../../TelldusCenter/Plugins
+}

@@ -6,7 +6,6 @@ QT += core \
 TARGET = TouchInterface
 TEMPLATE = lib
 CONFIG += plugin
-DESTDIR = ../../TelldusCenter/plugins
 SOURCES += touchplugin.cpp \
     panel.cpp \
     button.cpp
@@ -14,4 +13,11 @@ HEADERS += touchplugin.h \
     panel.h \
     button.h
 RESOURCES += TouchInterface.qrc
+macx {
+    DESTDIR = ../../TelldusCenter/TelldusCenter.app/Contents/Plugins
+}
+!macx {
+    DESTDIR = ../../TelldusCenter/Plugins
+}
+
 contains(QT_CONFIG, opengl):QT += opengl
