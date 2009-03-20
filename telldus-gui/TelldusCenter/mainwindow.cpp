@@ -124,9 +124,8 @@ void MainWindow::setupToolBar()
 
 void MainWindow::slotAboutApplication() {
 	QMessageBox::about(this, tr("About Telldus Center"),
-					   tr("<h2>Telldus Center 0.1</h2>"
-						  "<p>Copyright &copy; 2008 Telldus Technologies AB<p>"
-						  "<p>Telldus Center is a configuration utility for Telldus TellStick&reg;</p>"));
+					   tr("<center><img src=':/images/TelldusCenter_128.png' width=128 height=128 /><h2>Telldus Center 2.0.0_alpha1</h2>"
+						  "<p>Copyright &copy; 2009 Telldus Technologies AB<p></center>"));
 }
 
 void MainWindow::slotPagesClick() {
