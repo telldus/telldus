@@ -1,6 +1,7 @@
 # -------------------------------------------------
 # Project created by QtCreator 2009-03-10T12:16:44
 # -------------------------------------------------
+CONFIG += release
 QT += core \
     gui
 TARGET = Devices

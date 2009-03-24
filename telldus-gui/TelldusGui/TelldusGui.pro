@@ -2,6 +2,7 @@
 # Project created by QtCreator 2008-12-11T15:48:29
 # -------------------------------------------------
 TEMPLATE = lib
+CONFIG += release
 DEFINES += TELLDUSGUI_LIBRARY
 SOURCES += telldusgui.cpp \
     devicewidget.cpp \
@@ -40,6 +41,7 @@ macx {
     ICON = images/telldussetup.icns
     TARGET = TelldusGui
     CONFIG += lib_bundle
+    DESTDIR = ../TelldusCenter/TelldusCenter.app/Contents/Frameworks
 }
 !macx { 
     LIBS += -l \
