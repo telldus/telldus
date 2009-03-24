@@ -118,7 +118,9 @@ void MainWindow::setupToolBar()
 			}
 
 		}
-		ag->actions().first()->setChecked( true );
+		if (!ag->actions().empty()) {
+			ag->actions().first()->setChecked( true );
+		}
 		d->pagesBar->addActions( ag->actions() );
 	}
 }

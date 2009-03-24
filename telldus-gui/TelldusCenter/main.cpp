@@ -15,15 +15,19 @@ int main(int argc, char *argv[])
 
 
 	TelldusCenterApplication application(argc, argv);
+	QCoreApplication::setLibraryPaths( QStringList( QCoreApplication::applicationDirPath() ) );
+	application.loadPlugins();
+	application.loadScripts();
+
 	application.showMainWindow();
 
 #ifdef Q_WS_MAC
-	AutoUpdater* updater = 0;
+/*	AutoUpdater* updater = 0;
 	CocoaInitializer initializer;
 	updater = new SparkleAutoUpdater("file:///Users/micke/Documents/dev/appcast.xml");
 	if (updater) {
 		//updater->checkForUpdates();
-	}
+	}*/
 #endif
 
 	return application.exec();

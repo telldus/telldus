@@ -16,7 +16,6 @@ typedef QList<TelldusCenterPlugin *> PluginList;
 
 class TelldusCenterApplicationPrivate {
 public:
-	SystrayIcon *systrayIcon;
 	PluginList plugins;
 	QPointer<MainWindow> mainWindow;
 	QScriptEngine scriptEngine;
@@ -26,9 +25,6 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 		:QApplication(argc, argv)
 {
 	d = new TelldusCenterApplicationPrivate;
-	d->systrayIcon = new SystrayIcon( this );
-
-	connect(d->systrayIcon, SIGNAL(showEventMessage(const QString &, const QString &, const QString &)), this, SLOT(showMessage(QString,QString,QString)));
 
 	setQuitOnLastWindowClosed( false );
 
@@ -37,8 +33,6 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 	tdInit();
 	tdRegisterDeviceEvent( &TelldusCenterApplication::deviceEvent, 0 );
 
-	loadPlugins();
-	loadScripts();
 }
 
 TelldusCenterApplication::~TelldusCenterApplication() {
@@ -48,6 +42,9 @@ TelldusCenterApplication::~TelldusCenterApplication() {
 }
 
 PluginList TelldusCenterApplication::plugins() const {
+	if (d->plugins.empty()) {
+		return PluginList();
+	}
 	return d->plugins;
 }
 
@@ -85,7 +82,7 @@ void TelldusCenterApplication::showMessage( const QString &title, const QString 
 	if (isMainWindowShown()) {
 		d->mainWindow->showMessage(title, message, detailedMessage);
 	} else {
-		d->systrayIcon->showMessage((title != "" ? title : "Telldus Center"), message, QSystemTrayIcon::Warning);
+		//d->systrayIcon->showMessage((title != "" ? title : "Telldus Center"), message, QSystemTrayIcon::Warning);
 	}
 }
 
@@ -108,7 +105,7 @@ void TelldusCenterApplication::loadPlugins() {
 	if (!pluginsDir.cd("plugins")) {
 		return;
 	}
-	this->addLibraryPath( pluginsDir.absolutePath() );
+	this->setLibraryPaths( QStringList(pluginsDir.absolutePath()) );
 
 	foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
 		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));

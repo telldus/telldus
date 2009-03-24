@@ -5,7 +5,6 @@
 #include <QPointer>
 //#incldue
 
-#include "systrayicon.h"
 #include "mainwindow.h"
 
 class TelldusCenterPlugin;
@@ -28,6 +27,9 @@ public:
 	void showMainWindow();
 	bool isMainWindowShown();
 
+	void loadPlugins();
+	void loadScripts();
+
 	static TelldusCenterApplication *instance();
 
 signals:
@@ -42,9 +44,7 @@ private slots:
 
 private:
 	static void deviceEvent(int deviceId, int method, const char *data, int callbackId, void *context);
-	void loadPlugins();
 	void loadPlugin(QObject *plugin);
-	void loadScripts();
 
 	TelldusCenterApplicationPrivate *d;
 };

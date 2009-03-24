@@ -1,6 +1,6 @@
 #include "systrayicon.h"
 #include "telldus-core.h"
-#include "tellduscenterapplication.h"
+//#include "tellduscenterapplication.h"
 
 #include <QApplication>
 #include <QDebug>
