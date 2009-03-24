@@ -17,6 +17,7 @@ SystrayPlugin::SystrayPlugin( )
 {
 	d = new SystrayPluginPrivate;
 	d->icon = new SystrayIcon(this);
+	qApp->setQuitOnLastWindowClosed( false );
 }
 
 SystrayPlugin::~SystrayPlugin() {

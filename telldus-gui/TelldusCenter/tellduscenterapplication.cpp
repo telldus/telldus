@@ -26,8 +26,6 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 {
 	d = new TelldusCenterApplicationPrivate;
 
-	setQuitOnLastWindowClosed( false );
-
 	//We use queued connection since it is called from another thread
 	connect(this, SIGNAL(sigDeviceEvent(int, int, const QString &)), this, SLOT(deviceEvent(int, int, const QString &)), Qt::QueuedConnection);
 	tdInit();
