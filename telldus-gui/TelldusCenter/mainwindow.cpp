@@ -91,35 +91,36 @@ void MainWindow::setupToolBar()
 
 	QActionGroup *ag = new QActionGroup(this);
 
-	QSet<QString> toolbarIcons;
 	TelldusCenterApplication *app = TelldusCenterApplication::instance();
 	PluginList plugins = app->plugins();
-	foreach( TelldusCenterPlugin *plugin, plugins ) {
+	if (!plugins.empty()) {
+		QSet<QString> toolbarIcons;
+		foreach( TelldusCenterPlugin *plugin, plugins ) {
+			QStringList widgets = plugin->widgets();
+			foreach( QString widget, widgets ) {
+				QString page = widget.section('.', 0, 0);
+				if (!toolbarIcons.contains( page )) {
+					QWidget *pageWidget = plugin->widget( page, this );
+					if (!pageWidget) {
+						continue;
+					}
+					QAction *action = new QAction( plugin->iconForPage( page ), page, this );
+					action->setCheckable( true );
+					action->setChecked( false );
 
-		QStringList widgets = plugin->widgets();
-		foreach( QString widget, widgets ) {
-			QString page = widget.section('.', 0, 0);
-			if (!toolbarIcons.contains( page )) {
-				QWidget *pageWidget = plugin->widget( page, this );
-				if (!pageWidget) {
-					continue;
+					int index = d->stackedLayout->addWidget( pageWidget );
+					action->setData( index );
+
+					connect(action, SIGNAL(triggered()), this, SLOT(slotPagesClick()));
+					ag->addAction( action );
+					toolbarIcons.insert(page);
 				}
-				QAction *action = new QAction( plugin->iconForPage( page ), page, this );
-				action->setCheckable( true );
-				action->setChecked( false );
-
-				int index = d->stackedLayout->addWidget( pageWidget );
-				action->setData( index );
-
-				connect(action, SIGNAL(triggered()), this, SLOT(slotPagesClick()));
-				ag->addAction( action );
-				toolbarIcons.insert(page);
 			}
-		}
 
+		}
+		ag->actions().first()->setChecked( true );
+		d->pagesBar->addActions( ag->actions() );
 	}
-	ag->actions().first()->setChecked( true );
-	d->pagesBar->addActions( ag->actions() );
 }
 
 void MainWindow::slotAboutApplication() {
