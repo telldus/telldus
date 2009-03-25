@@ -12,7 +12,9 @@
 #include "Manager.h"
 #include "Device.h"
 #include "DeviceGroup.h"
-#include "TellStickDuo.h"
+#ifdef TELLSTICK_DUO
+  #include "TellStickDuo.h"
+#endif
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -530,6 +532,7 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
  */
 int WINAPI tdSendRawCommand(const char *command, int reserved) {
 	//TODO: to be implemented
+	return TELLSTICK_SUCCESS;
 }
 
 //********

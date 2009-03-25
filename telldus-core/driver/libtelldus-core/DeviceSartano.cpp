@@ -22,6 +22,7 @@ DeviceSartano::~DeviceSartano(void)
 
 bool DeviceSartano::setCode(const std::string &strNewCode) {
 	strCode = strNewCode;
+	return true;
 }
 
 bool DeviceSartano::setDeviceParameter(const std::string &strName, const std::string &strValue) {
