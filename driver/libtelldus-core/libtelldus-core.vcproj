@@ -1,11 +1,12 @@
 <?xml version="1.0" encoding="Windows-1252"?>
 <VisualStudioProject
 	ProjectType="Visual C++"
-	Version="8,00"
-	Name="telldus-core"
+	Version="9,00"
+	Name="libtelldus-core"
 	ProjectGUID="{2A868E40-88D9-4800-A83F-21D0F8DCB611}"
 	RootNamespace="TelldusCore"
 	Keyword="Win32Proj"
+	TargetFrameworkVersion="131072"
 	>
 	<Platforms>
 		<Platform
@@ -40,6 +41,7 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
+				AdditionalIncludeDirectories="C:\Qt\2009.01\qt\include;C:\Qt\2009.01\qt\include\QtCore"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;TELLDUSCORE_EXPORTS"
 				GeneratePreprocessedFile="0"
 				MinimalRebuild="true"
@@ -62,10 +64,13 @@
 			<Tool
 				Name="VCLinkerTool"
 				AdditionalDependencies="advapi32.lib oleaut32.lib"
+				OutputFile="$(OutDir)\telldus-core.dll"
 				LinkIncremental="2"
 				ModuleDefinitionFile="libtelldus-core.def"
 				GenerateDebugInformation="true"
 				SubSystem="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -85,9 +90,6 @@
 			/>
 			<Tool
 				Name="VCAppVerifierTool"
-			/>
-			<Tool
-				Name="VCWebDeploymentTool"
 			/>
 			<Tool
 				Name="VCPostBuildEventTool"
@@ -118,6 +120,7 @@
 			/>
 			<Tool
 				Name="VCCLCompilerTool"
+				AdditionalIncludeDirectories="C:\Qt\2009.01\qt\include;C:\Qt\2009.01\qt\include\QtCore"
 				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;TelldusCore_EXPORTS"
 				GeneratePreprocessedFile="0"
 				RuntimeLibrary="0"
@@ -137,13 +140,18 @@
 			/>
 			<Tool
 				Name="VCLinkerTool"
-				AdditionalDependencies="advapi32.lib oleaut32.lib"
+				AdditionalDependencies="advapi32.lib oleaut32.lib QtCore4.lib"
+				OutputFile="$(OutDir)\telldus-core.dll"
 				LinkIncremental="1"
+				AdditionalLibraryDirectories="C:\Qt\2009.01\qt\lib"
 				ModuleDefinitionFile="libtelldus-core.def"
+				DelayLoadDLLs=""
 				GenerateDebugInformation="true"
 				SubSystem="2"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
+				RandomizedBaseAddress="1"
+				DataExecutionPrevention="0"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -165,9 +173,6 @@
 				Name="VCAppVerifierTool"
 			/>
 			<Tool
-				Name="VCWebDeploymentTool"
-			/>
-			<Tool
 				Name="VCPostBuildEventTool"
 			/>
 		</Configuration>
@@ -180,10 +185,6 @@
 			Filter="cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx"
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
-			<File
-				RelativePath=".\Device.cpp"
-				>
-			</File>
 			<File
 				RelativePath=".\win\Device.cpp"
 				>
@@ -207,6 +208,14 @@
 				</FileConfiguration>
 			</File>
 			<File
+				RelativePath=".\Device.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DeviceGroup.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\DeviceIkea.cpp"
 				>
 			</File>
@@ -220,6 +229,10 @@
 			</File>
 			<File
 				RelativePath=".\DeviceWaveman.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\Manager.cpp"
 				>
 			</File>
 			<File
@@ -253,6 +266,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DeviceGroup.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DeviceIkea.h"
 				>
 			</File>
@@ -270,10 +287,6 @@
 			</File>
 			<File
 				RelativePath=".\win\FTD2XX.H"
-				>
-			</File>
-			<File
-				RelativePath=".\Manager.cpp"
 				>
 			</File>
 			<File
@@ -309,6 +322,10 @@
 		</File>
 		<File
 			RelativePath=".\FTD2XX.lib"
+			>
+		</File>
+		<File
+			RelativePath="..\..\..\..\..\..\..\..\Qt\2009.01\qt\lib\QtCore4.lib"
 			>
 		</File>
 		<File
