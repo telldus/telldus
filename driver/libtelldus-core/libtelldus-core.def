@@ -25,3 +25,8 @@ EXPORTS
 	tdGetErrorString @18
 	
 	tdClose @19
+	
+	tdInit @20
+	tdRegisterDeviceEvent @21
+	tdLastSentCommand @22
+	tdGetDeviceType @23

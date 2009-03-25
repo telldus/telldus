@@ -47,6 +47,7 @@ bool DeviceGroup::setDevices(const std::string &newDevices) {
 	
 		free(tempDevices);
 	}*/
+	return true;
 }
 
 /*
