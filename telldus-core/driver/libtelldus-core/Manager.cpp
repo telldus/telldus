@@ -14,6 +14,7 @@
 
 #include "DeviceGroup.h"
 #include "DeviceNexa.h"
+#include "DeviceRisingSun.h"
 #include "DeviceWaveman.h"
 #include "DeviceSartano.h"
 #include "DeviceIkea.h"
@@ -85,6 +86,11 @@ Device *Manager::getDevice(int intDeviceId){
 		} else if (strcasecmp(protocol.c_str(), "group") == 0) {
 			dev = new DeviceGroup(intDeviceId, intModel, strName);
 			((DeviceGroup*)dev)->setDevices(settings.getDeviceParameter(intDeviceId, "devices"));
+			
+		} else if (strcasecmp(protocol.c_str(), "risingsun") == 0) {
+			dev = new DeviceRisingSun(intDeviceId, intModel, strName);
+			((DeviceRisingSun*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "nexa_house"));
+			((DeviceRisingSun*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "nexa_unit"));
 
 		} else if (strcasecmp(protocol.c_str(), "Waveman") == 0) {
 			dev = new DeviceWaveman(intDeviceId, intModel, strName);
