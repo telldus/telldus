@@ -4,7 +4,7 @@
 		<device id="19" protocol="ikea" widget="3" image="koppla">Koppla</device>
 	</vendor>
 	<vendor name="Kjell &amp; Company" image="kjelloco">
-		<device id="29" protocol="rinsingsun" widget="5" image="RSL366R">50-219</device>
+		<device id="29" protocol="risingsun" widget="5" image="RSL366R">50-219</device>
 	</vendor>
 	<vendor name="Nexa" image="nexa">
 		<device id="1" protocol="arctech" widget="1" image="145041">YCR-3500</device>
