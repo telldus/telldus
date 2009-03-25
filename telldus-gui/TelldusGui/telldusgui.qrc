@@ -16,6 +16,7 @@
         <file>images/devices/koppla.png</file>
         <file>images/devices/ml.png</file>
         <file>images/devices/sycr.png</file>
+        <file>images/devices/RSL366R.png</file>
         <file>images/list-add.png</file>
         <file>images/list-edit.png</file>
         <file>images/list-remove.png</file>
@@ -26,6 +27,7 @@
         <file>images/vendors/sartano.png</file>
         <file>images/vendors/telldus.jpg</file>
         <file>images/vendors/waveman.png</file>
+        <file>images/vendors/kjelloco.png</file>
         <file>images/state_1.png</file>
         <file>images/state_2.png</file>
     </qresource>
