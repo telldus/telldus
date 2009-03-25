@@ -54,7 +54,7 @@ int VendorDeviceTreeItem::row() const {
 QPixmap VendorDeviceTreeItem::image() const {
 	QString filename;
 	if (deviceId == 0) {
-		filename = ":/images/vendors/" + img.toLower() + ".png";
+		filename = ":/images/vendors/" + img + ".png";
 	} else {
 		filename = ":/images/devices/" + img + ".png";
 	}
@@ -141,7 +141,7 @@ bool VendorDeviceTreeItem::parseXml( const QString &filename ) {
 void VendorDeviceTreeItem::parseVendor( QXmlStreamReader *reader ) {
 	VendorDeviceTreeItem *item = new VendorDeviceTreeItem(0, this);
 	item->deviceName = reader->attributes().value("name").toString();
-	item->img = reader->attributes().value("name").toString();
+	item->img = reader->attributes().value("image").toString();
 	appendChild(item);
 
 	reader->readNext();
