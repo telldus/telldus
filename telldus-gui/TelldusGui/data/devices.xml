@@ -35,6 +35,9 @@
 		<device id="27" protocol="arctech" widget="1" image="14327">EL2017</device>
 		<device id="28" protocol="arctech" widget="1" image="el2019">EL2019</device>
 	</vendor>
+	<vendor name="Roxcore" image="roxcore">
+		<device id="30" protocol="brateck" widget="6" image="projectorscreen">Projector screen</device>
+	</vendor>
 	<vendor name="Sartano" image="sartano">
 		<device id="7" protocol="sartano" widget="2" image="51340">51343</device>
 	</vendor>
