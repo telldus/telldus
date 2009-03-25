@@ -12,6 +12,7 @@ SET( telldus-core_SRCS
 	DeviceGroup.cpp
 	DeviceIkea.cpp
 	DeviceNexa.cpp
+	DeviceRisingSun.cpp
 	DeviceSartano.cpp
 	DeviceWaveman.cpp
 	Controller.cpp
