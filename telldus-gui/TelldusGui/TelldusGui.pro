@@ -12,6 +12,7 @@ SOURCES += telldusgui.cpp \
     editgroupdialog.cpp \
     vendordevicemodel.cpp \
     vendordevicetreeitem.cpp \
+    devicesettingbrateck.cpp \
     devicesettingikea.cpp \
     devicesettingnexa.cpp \
     devicesettingnexabell.cpp \
@@ -28,6 +29,7 @@ HEADERS += telldusgui.h \
     editgroupdialog.h \
     vendordevicemodel.h \
     vendordevicetreeitem.h \
+    devicesettingbrateck.h \
     devicesettingikea.h \
     devicesettingnexa.h \
     devicesettingnexabell.h \

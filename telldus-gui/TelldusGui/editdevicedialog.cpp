@@ -3,6 +3,7 @@
 #include "vendordevicetreeitem.h"
 #include "device.h"
 
+#include "devicesettingbrateck.h"
 #include "devicesettingikea.h"
 #include "devicesettingnexa.h"
 #include "devicesettingnexabell.h"
@@ -100,6 +101,7 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 	deviceSettings[3] = new DeviceSettingIkea(device, this);
 	deviceSettings[4] = new DeviceSettingNexaBell(device, this);
 	deviceSettings[5] = new DeviceSettingRisingSun(device, this);
+	deviceSettings[6] = new DeviceSettingBrateck(device, this);
 	foreach( DeviceSetting *s, deviceSettings ) {
 		settingsLayout->addWidget( s );
 	}
@@ -113,7 +115,7 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 }
 
 EditDeviceDialog::~EditDeviceDialog() {
-	qDeleteAll( deviceSettings );
+//	qDeleteAll( deviceSettings );
 }
 
 void EditDeviceDialog::selectionChanged( const QModelIndex & index ) {
