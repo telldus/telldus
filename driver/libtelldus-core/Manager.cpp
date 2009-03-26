@@ -12,6 +12,7 @@
 #include "Manager.h"
 #include "Device.h"
 
+#include "DeviceBrateck.h"
 #include "DeviceGroup.h"
 #include "DeviceNexa.h"
 #include "DeviceRisingSun.h"
@@ -83,6 +84,10 @@ Device *Manager::getDevice(int intDeviceId){
 			((DeviceNexa*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "nexa_house"));
 			((DeviceNexa*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "nexa_unit"));
 	
+		} else if (strcasecmp(protocol.c_str(), "brateck") == 0) {
+			dev = new DeviceBrateck(intDeviceId, intModel, strName);
+			((DeviceBrateck*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "nexa_house"));
+
 		} else if (strcasecmp(protocol.c_str(), "group") == 0) {
 			dev = new DeviceGroup(intDeviceId, intModel, strName);
 			((DeviceGroup*)dev)->setDevices(settings.getDeviceParameter(intDeviceId, "devices"));
