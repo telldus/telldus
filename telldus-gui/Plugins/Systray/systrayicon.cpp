@@ -14,6 +14,8 @@ SystrayIcon::SystrayIcon( QObject * parent )
 	setIcon(QIcon(":/images/devices.png"));
 	connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(activated(QSystemTrayIcon::ActivationReason)));
 #endif
+	qApp->setQuitOnLastWindowClosed( false );
+
 	updateSystrayMenu();
 	setContextMenu( &systrayMenu );
 	show();
@@ -22,8 +24,8 @@ SystrayIcon::SystrayIcon( QObject * parent )
 #if !defined(Q_WS_MAC)
 void SystrayIcon::activated( QSystemTrayIcon::ActivationReason reason ) {
 	if (reason == QSystemTrayIcon::Trigger) {
-		TelldusCenterApplication *app = TelldusCenterApplication::instance();
-		app->showMainWindow();
+//		TelldusCenterApplication *app = TelldusCenterApplication::instance();
+//		app->showMainWindow();
 	}
 }
 #endif
@@ -172,3 +174,4 @@ void SystrayIcon::addDevice( int intId ) {
 		connect( bell, SIGNAL(triggered()), this, SLOT(bell()));
 	}
 }
+

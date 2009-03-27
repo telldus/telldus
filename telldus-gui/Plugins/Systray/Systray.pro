@@ -2,20 +2,23 @@
 # Project created by QtCreator 2009-03-10T12:16:44
 # -------------------------------------------------
 QT += core \
-    gui
+    gui \
+    script
 TARGET = SystrayIcon
 TEMPLATE = lib
 CONFIG += plugin
 SOURCES += systrayicon.cpp \
-    systrayplugin.cpp
+    systrayplugin.cpp \
+    systrayobject.cpp
 HEADERS += systrayplugin.h \
-    systrayicon.h
-macx {
-    LIBS += -framework TelldusCore
+    systrayicon.h \
+    systrayobject.h
+macx { 
+    LIBS += -framework \
+        TelldusCore
     DESTDIR = ../../TelldusCenter/TelldusCenter.app/Contents/Plugins
 }
-!macx {
+!macx { 
     LIBS += -ltelldus-core
-    DESTDIR = ../../TelldusCenter/Plugins
+    DESTDIR = ../../TelldusCenter/Plugins/script
 }
-

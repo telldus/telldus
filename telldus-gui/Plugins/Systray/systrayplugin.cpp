@@ -1,43 +1,35 @@
-#include <QtCore>
-#include <QLabel>
-#include <QApplication>
 #include "systrayplugin.h"
-
-#include "../../TelldusGui/telldusgui.h"
-#include "systrayicon.h"
+#include "systrayobject.h"
+#include <QScriptEngine>
+#include <QDebug>
 
 class SystrayPluginPrivate {
 public:
-	SystrayIcon *icon;
+	SystrayObject *icon;
 };
 
-SystrayPlugin::SystrayPlugin( )
-		: QObject(),
-		TelldusCenterPlugin()
+SystrayPlugin::SystrayPlugin ( QObject * parent )
+		:QScriptExtensionPlugin( parent )
 {
 	d = new SystrayPluginPrivate;
-	d->icon = new SystrayIcon(this);
-	qApp->setQuitOnLastWindowClosed( false );
+	d->icon = 0;
 }
 
 SystrayPlugin::~SystrayPlugin() {
 	delete d;
 }
 
-QIcon SystrayPlugin::iconForPage( const QString &page ) const {
-	return QIcon(":/images/devices.png");
+void SystrayPlugin::initialize ( const QString & key, QScriptEngine * engine ) {
+	if (key == "com.telldus.systray") {
+		d->icon = new SystrayObject(this);
+
+		QScriptValue value = engine->newQObject(d->icon);
+		engine->globalObject().property("com").property("telldus").setProperty("systray", value);
+	}
 }
 
-QString SystrayPlugin::pluginName() const {
-	return "Systray icon";
-}
-
-QWidget *SystrayPlugin::widget( const QString &page, QWidget *parent ) const {
-	return 0;
-}
-
-QStringList SystrayPlugin::widgets() const {
-	return QStringList();
+QStringList SystrayPlugin::keys () const {
+	return QStringList() << "com.telldus.systray";
 }
 
 Q_EXPORT_PLUGIN2(SystrayInterface, SystrayPlugin)
