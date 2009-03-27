@@ -9,6 +9,7 @@ endif(COMMAND cmake_policy)
 ######## Non configurable options  ########
 SET( telldus-core_SRCS
 	Device.cpp
+	DeviceBrateck.cpp
 	DeviceGroup.cpp
 	DeviceIkea.cpp
 	DeviceNexa.cpp
