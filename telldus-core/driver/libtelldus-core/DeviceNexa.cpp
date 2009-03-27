@@ -121,27 +121,14 @@ std::string DeviceNexa::getStringCode(int intToConvert){
 	std::string strReturn = "";
 
 	try{
-		std::bitset<4> bs ((long)intToConvert);
-
-		strReturn = bs.to_string();
-		reverse(strReturn.begin(), strReturn.end());
-
-		size_t intPos = strReturn.find("0");
-		while (intPos < std::string::npos){
-			strReturn.replace(intPos, 1, "$k");
-			intPos = strReturn.find("0", intPos + 1);
-		}
-
-		intPos = strReturn.find("1");
-		while (intPos < std::string::npos){
-			strReturn.replace(intPos, 1, "k$");
-			intPos = strReturn.find("1", intPos + 1);
-		}
-
-		intPos = 0;
-		while (intPos < strReturn.length()){
-			strReturn.insert(intPos, "$k");
-			intPos = intPos + 4;
+		for( int i = 0; i < 4; ++i ) {
+			if (intToConvert & 1) { //Convert 1
+				strReturn.append("$kk$");
+			} else { //Convert 0
+				strReturn.append("$k$k");
+			}
+			intToConvert >>= 1;
+			
 		}
 	}
 	catch(...){
