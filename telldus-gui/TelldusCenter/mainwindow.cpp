@@ -27,6 +27,7 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 {
 	d = new MainWindowPrivate;
 	d->message = new Message(this);
+	connect(qApp, SIGNAL(showMessage(QString,QString,QString)), d->message, SLOT(showMessage(QString,QString,QString)));
 
 	setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -57,10 +58,6 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 MainWindow::~MainWindow()
 {
 	delete d;
-}
-
-void MainWindow::showMessage( const QString &title, const QString &message, const QString &detailedMessage ) {
-	d->message->showMessage( title, message, detailedMessage );
 }
 
 void MainWindow::closeEvent( QCloseEvent */*event*/ ) {

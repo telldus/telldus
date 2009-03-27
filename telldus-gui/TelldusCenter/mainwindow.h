@@ -17,9 +17,6 @@ public:
 	MainWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~MainWindow();
 
-public slots:
-	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
-
 protected:
 	virtual void closeEvent( QCloseEvent *event );
 
