@@ -25,7 +25,6 @@ public:
 
 	PluginList plugins() const;
 	void showMainWindow();
-	bool isMainWindowShown();
 
 	void loadPlugins();
 	void loadScripts();
@@ -34,10 +33,11 @@ public:
 
 signals:
 	void sigDeviceEvent(int deviceId, int method, const QString &data);
+	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
 
 public slots:
-	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
 	void eventTriggered( const QString &name, const QString &title );
+	bool isMainWindowShown();
 
 private slots:
 	void deviceEvent(int deviceId, int method, const QString &data);

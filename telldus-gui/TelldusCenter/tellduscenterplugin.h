@@ -7,6 +7,7 @@ public:
 	virtual ~TelldusCenterPlugin() {}
 
 	virtual QIcon iconForPage( const QString &page ) const = 0;
+//	virtual void init() = 0;
 	virtual QString pluginName() const = 0;
 	virtual QWidget *widget( const QString &page, QWidget *parent ) const = 0;
 	virtual QStringList widgets() const = 0;

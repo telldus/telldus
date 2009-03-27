@@ -76,14 +76,6 @@ void TelldusCenterApplication::eventTriggered( const QString &name, const QStrin
 	qDebug() << "Systray - eventTriggered:" << name << title;
 }
 
-void TelldusCenterApplication::showMessage( const QString &title, const QString &message, const QString &detailedMessage ) {
-	if (isMainWindowShown()) {
-		d->mainWindow->showMessage(title, message, detailedMessage);
-	} else {
-		//d->systrayIcon->showMessage((title != "" ? title : "Telldus Center"), message, QSystemTrayIcon::Warning);
-	}
-}
-
 void TelldusCenterApplication::deviceEvent(int deviceId, int method, const char *data, int /*callbackId*/, void */*context*/) {
 	TelldusCenterApplication *app = TelldusCenterApplication::instance();
 	emit app->sigDeviceEvent(deviceId, method, data);
@@ -100,10 +92,13 @@ void TelldusCenterApplication::loadPlugins() {
 		pluginsDir.cdUp();
 	}
 #endif
-	if (!pluginsDir.cd("plugins")) {
+	if (!pluginsDir.cd("Plugins")) {
 		return;
 	}
 	this->setLibraryPaths( QStringList(pluginsDir.absolutePath()) );
+
+	QScriptValue object = d->scriptEngine.newQObject(this);
+	d->scriptEngine.globalObject().setProperty("application", object);
 
 	foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
 		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
