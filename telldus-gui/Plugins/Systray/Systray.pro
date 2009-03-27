@@ -16,7 +16,7 @@ HEADERS += systrayplugin.h \
 macx { 
     LIBS += -framework \
         TelldusCore
-    DESTDIR = ../../TelldusCenter/TelldusCenter.app/Contents/Plugins
+    DESTDIR = ../../TelldusCenter/TelldusCenter.app/Contents/Plugins/script
 }
 !macx { 
     LIBS += -ltelldus-core
