@@ -56,7 +56,7 @@ std::string Settings::getDeviceParameter(int intDeviceId, const std::string &str
 	return getStringSetting(intDeviceId, strName, true);
 }
 
-#ifndef _LINUX
+#ifndef _CONFUSE
 
 bool Settings::setDeviceState( int intDeviceId, int intDeviceState, const std::string &strDeviceStateValue ) {
 	bool retval = setIntSetting( intDeviceId, "state", intDeviceState, true );
