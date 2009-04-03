@@ -32,12 +32,19 @@ SET( telldus-core_MOC_HDRS
 QT4_WRAP_CPP(  telldus-core_MOC_SRCS  ${telldus-core_MOC_HDRS} )
 QT4_AUTOMOC (  ${telldus-core_SRCS} )
 
-FIND_LIBRARY(FTD2XX_LIBRARY ftd2xx)
 
 SET( telldus-core_LIBRARIES
 	${QT_LIBRARIES}
-	${FTD2XX_LIBRARY}
 )
+
+IF (SUPPORT_USB)
+	FIND_LIBRARY(FTD2XX_LIBRARY ftd2xx)
+
+	SET( telldus-core_LIBRARIES
+		${telldus-core_LIBRARIES}
+		${FTD2XX_LIBRARY}
+	)
+ENDIF (SUPPORT_USB)
 
 
 ######## Configurable options for the platform  ########
