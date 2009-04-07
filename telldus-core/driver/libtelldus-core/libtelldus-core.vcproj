@@ -186,6 +186,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath=".\Device.cpp"
+				>
+			</File>
+			<File
 				RelativePath=".\win\Device.cpp"
 				>
 				<FileConfiguration
@@ -208,7 +212,7 @@
 				</FileConfiguration>
 			</File>
 			<File
-				RelativePath=".\Device.cpp"
+				RelativePath=".\DeviceBrateck.cpp"
 				>
 			</File>
 			<File
@@ -221,6 +225,10 @@
 			</File>
 			<File
 				RelativePath=".\DeviceNexa.cpp"
+				>
+			</File>
+			<File
+				RelativePath=".\DeviceRisingSun.cpp"
 				>
 			</File>
 			<File
@@ -266,6 +274,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\DeviceBrateck.h"
+				>
+			</File>
+			<File
 				RelativePath=".\DeviceGroup.h"
 				>
 			</File>
@@ -275,6 +287,10 @@
 			</File>
 			<File
 				RelativePath=".\DeviceNexa.h"
+				>
+			</File>
+			<File
+				RelativePath=".\DeviceRisingSun.h"
 				>
 			</File>
 			<File
