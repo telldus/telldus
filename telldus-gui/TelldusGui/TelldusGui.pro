@@ -52,6 +52,14 @@ macx {
         telldus-core
     TARGET = telldus-gui
 }
-win32:LIBS += -L \
-    .
+win32 {
+    debug {
+        DESTDIR = ../TelldusCenter/debug
+        LIBS += -L../TelldusCenter/debug
+    }
+    release {
+        DESTDIR = ../TelldusCenter/release
+        LIBS += -L../TelldusCenter/release
+    }
+}
 RESOURCES += telldusgui.qrc

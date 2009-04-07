@@ -146,7 +146,9 @@ void Device::save() {
 
 	//Save all parameters
 	for( QHash<QString, QString>::const_iterator it = d->settings.begin(); it != d->settings.end(); ++it) {
-		tdSetDeviceParameter(d->id, it.key().toLocal8Bit(), it.value().toLocal8Bit());
+		QByteArray name(it.key().toLocal8Bit() );
+		QByteArray value(it.value().toLocal8Bit() );
+		tdSetDeviceParameter(d->id, name.constData(), value.constData());
 	}
 
 	if (methodsChanged) {
