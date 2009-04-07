@@ -237,7 +237,9 @@ std::string Settings::getStringSetting(int intDeviceId, const std::string &name,
 				Buff = new char[dwLength];
 				lngStatus = RegQueryValueEx(d->hk, name.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
 			}
-			strReturn = Buff;
+			if (lngStatus == ERROR_SUCCESS) {
+				strReturn = Buff;
+			}
 		}
 		else{
 			throw std::exception();	//couldn't open reg key
