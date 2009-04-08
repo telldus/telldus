@@ -12,7 +12,7 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include <QObject>
+#include <QtCore/QObject>
 #include "Settings.h"
 #include <map>
 

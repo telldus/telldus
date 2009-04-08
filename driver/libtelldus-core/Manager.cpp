@@ -20,6 +20,7 @@
 #include "DeviceSartano.h"
 #include "DeviceIkea.h"
 #include "DeviceUndefined.h"
+#include "DeviceUpm.h"
 
 #include "Controller.h"
 #ifdef TELLSTICK_DUO
@@ -113,6 +114,11 @@ Device *Manager::getDevice(int intDeviceId){
 			((DeviceIkea*)dev)->setUnits(settings.getDeviceParameter(intDeviceId, "ikea_units"));
 			((DeviceIkea*)dev)->setFade(settings.getDeviceParameter(intDeviceId, "ikea_fade"));
 
+		} else if (strcasecmp(protocol.c_str(), "upm") == 0) {
+			dev = new DeviceUpm(intDeviceId, intModel, strName);
+			((DeviceUpm*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "house"));
+			((DeviceUpm*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "unit"));
+		
 		} else {
 			//This is a dummy device needed when the parameters isn't setup correclty.
 			dev = new DeviceUndefined(intDeviceId, intModel, strName);
