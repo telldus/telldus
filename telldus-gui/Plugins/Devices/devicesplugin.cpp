@@ -15,7 +15,7 @@ QString DevicesPlugin::pluginName() const {
 
 QWidget *DevicesPlugin::widget( const QString &page, QWidget *parent ) const {
 	QWidget *deviceWidget = tdDeviceWidget(parent);
-	connect(deviceWidget, SIGNAL(showMessage(const QString &, const QString &, const QString &)), qApp, SLOT(showMessage(const QString &, const QString &, const QString &)));
+	connect(deviceWidget, SIGNAL(showMessage(const QString &, const QString &, const QString &)), qApp, SIGNAL(showMessage(const QString &, const QString &, const QString &)));
 	connect(deviceWidget, SIGNAL(eventTriggered(const QString &, const QString &)), qApp, SLOT(eventTriggered(const QString &, const QString &)));
 	return deviceWidget;
 }

@@ -11,8 +11,8 @@ SOURCES += devicesplugin.cpp
 HEADERS += devicesplugin.h
 #RESOURCES += Devices.qrc
 macx {
-    LIBS += -framework \
-        TelldusGui
+    LIBS += -F../../TelldusCenter/TelldusCenter.app/Contents/Frameworks -framework \
+        TelldusGui -framework TelldusCore
     DESTDIR = ../../TelldusCenter/TelldusCenter.app/Contents/Plugins
 }
 !macx {
