@@ -19,6 +19,7 @@
 #include "DeviceWaveman.h"
 #include "DeviceSartano.h"
 #include "DeviceIkea.h"
+#include "DeviceUndefined.h"
 
 #include "Controller.h"
 #ifdef TELLSTICK_DUO
@@ -113,7 +114,8 @@ Device *Manager::getDevice(int intDeviceId){
 			((DeviceIkea*)dev)->setFade(settings.getDeviceParameter(intDeviceId, "ikea_fade"));
 
 		} else {
-			return NULL;
+			//This is a dummy device needed when the parameters isn't setup correclty.
+			dev = new DeviceUndefined(intDeviceId, intModel, strName);
 		}
 
 #ifdef _LINUX
