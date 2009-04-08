@@ -15,6 +15,7 @@ SET( telldus-core_SRCS
 	DeviceNexa.cpp
 	DeviceRisingSun.cpp
 	DeviceSartano.cpp
+	DeviceUndefined.cpp
 	DeviceWaveman.cpp
 	Controller.cpp
 	Manager.cpp
