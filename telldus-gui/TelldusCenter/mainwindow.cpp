@@ -14,18 +14,22 @@
 #include "tellduscenterapplication.h"
 #include "tellduscenterplugin.h"
 #include "message.h"
+#include "plugintree.h"
 
 class MainWindowPrivate {
 public:
 	QToolBar *pagesBar;
 	Message *message;
 	QStackedLayout *stackedLayout;
+	PluginTree pluginTree;
+	QActionGroup *pagesActionGroup;
 };
 
 MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 	: QMainWindow(parent, flags)
 {
 	d = new MainWindowPrivate;
+	d->pagesActionGroup = new QActionGroup( this );
 	d->message = new Message(this);
 	connect(qApp, SIGNAL(showMessage(QString,QString,QString)), d->message, SLOT(showMessage(QString,QString,QString)));
 
@@ -86,8 +90,6 @@ void MainWindow::setupToolBar()
 	d->pagesBar = addToolBar(tr("Pages"));
 	d->pagesBar->setIconSize(QSize(32, 32));
 
-	QActionGroup *ag = new QActionGroup(this);
-
 	TelldusCenterApplication *app = TelldusCenterApplication::instance();
 	PluginList plugins = app->plugins();
 	if (!plugins.empty()) {
@@ -95,30 +97,32 @@ void MainWindow::setupToolBar()
 		foreach( TelldusCenterPlugin *plugin, plugins ) {
 			QStringList widgets = plugin->widgets();
 			foreach( QString widget, widgets ) {
-				QString page = widget.section('.', 0, 0);
-				if (!toolbarIcons.contains( page )) {
-					QWidget *pageWidget = plugin->widget( page, this );
-					if (!pageWidget) {
-						continue;
-					}
-					QAction *action = new QAction( plugin->iconForPage( page ), page, this );
-					action->setCheckable( true );
-					action->setChecked( false );
-
-					int index = d->stackedLayout->addWidget( pageWidget );
-					action->setData( index );
-
-					connect(action, SIGNAL(triggered()), this, SLOT(slotPagesClick()));
-					ag->addAction( action );
-					toolbarIcons.insert(page);
-				}
+				this->addWidget( widget, plugin->iconForPage( d->pluginTree.page(widget) ), plugin->widget(widget, this) );
 			}
+		}
+	}
+	if (!d->pagesActionGroup->actions().empty()) {
+		d->pagesActionGroup->actions().first()->setChecked( true );
+	}
+}
 
-		}
-		if (!ag->actions().empty()) {
-			ag->actions().first()->setChecked( true );
-		}
-		d->pagesBar->addActions( ag->actions() );
+void MainWindow::addWidget( const QString &page, const QIcon &icon, QWidget *widget ) {
+	QString topLevel = d->pluginTree.page( page );
+
+	bool pageExists = d->pluginTree.pages().contains( topLevel );
+	d->pluginTree.add( page, widget );
+	if (!pageExists) {
+		QAction *action = new QAction( icon, page, this );
+		action->setCheckable( true );
+		action->setChecked( false );
+
+		int index = d->stackedLayout->addWidget( widget );
+		action->setData( index );
+
+		connect(action, SIGNAL(triggered()), this, SLOT(slotPagesClick()));
+		d->pagesActionGroup->addAction( action );
+		//toolbarIcons.insert(page);
+		d->pagesBar->addAction( action );
 	}
 }
 

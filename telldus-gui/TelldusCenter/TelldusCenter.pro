@@ -8,13 +8,15 @@ SOURCES += main.cpp \
     mainwindow.cpp \
     tellduscenterapplication.cpp \
     autoupdater.cpp \
-    message.cpp
+    message.cpp \
+    plugintree.cpp
 HEADERS += mainwindow.h \
     tellduscenterapplication.h \
     autoupdater.h \
     CocoaInitializer.h \
     message.h \
-    tellduscenterplugin.h
+    tellduscenterplugin.h \
+    plugintree.h
 RESOURCES += resource.qrc
 TARGET = TelldusCenter
 macx { 

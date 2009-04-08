@@ -17,6 +17,9 @@ public:
 	MainWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
 	~MainWindow();
 
+public slots:
+	void addWidget( const QString &page, const QIcon &icon, QWidget *widget );
+
 protected:
 	virtual void closeEvent( QCloseEvent *event );
 
