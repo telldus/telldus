@@ -301,6 +301,9 @@ bool readConfig(cfg_t **cfg) {
 		CFG_STR("ikea_units", 0, CFGF_NONE),
 		CFG_STR("ikea_fade", 0, CFGF_NONE),
 
+		CFG_STR("house", 0, CFGF_NONE),
+		CFG_STR("unit", 0, CFGF_NONE),
+
 		CFG_END()
 	};
 
