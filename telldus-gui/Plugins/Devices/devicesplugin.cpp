@@ -21,7 +21,7 @@ QWidget *DevicesPlugin::widget( const QString &page, QWidget *parent ) const {
 }
 
 QStringList DevicesPlugin::widgets() const {
-	return QStringList() << "devicest.default";
+	return QStringList() << "devices.default";
 }
 
 Q_EXPORT_PLUGIN2(DevicesInterface, DevicesPlugin)
