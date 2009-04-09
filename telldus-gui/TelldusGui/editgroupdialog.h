@@ -2,9 +2,13 @@
 #define EDITGROUPDIALOG_H
 
 #include <QDialog>
+#include <QModelIndex>
 
 class Device;
 class DeviceModel;
+class ProxyModel;
+class QToolButton;
+class QTableView;
 
 class EditGroupDialog : public QDialog
 {
@@ -14,11 +18,18 @@ public:
 	virtual ~EditGroupDialog();
 
 private slots:
+	void availableListActivated(const QModelIndex &);
+	void addedListActivated(const QModelIndex &);
+	void addClicked();
+	void removeClicked();
 	void okClicked();
 
 private:
+	QToolButton *addToolButton, *removeToolButton;
+	QTableView *availableListView, *addedListView;
 	Device *device;
 	DeviceModel *model;
+	ProxyModel *availableProxyModel, *addedProxyModel;
 };
 
 #endif // EDITGROUPDIALOG_H
