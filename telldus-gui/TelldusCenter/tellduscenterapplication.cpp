@@ -8,6 +8,7 @@
 #include <QDebug>
 #include <telldus-core.h>
 #include "tellduscenterplugin.h"
+#include "plugintree.h"
 
 class TelldusCenterPlugin;
 
@@ -17,7 +18,7 @@ typedef QList<TelldusCenterPlugin *> PluginList;
 class TelldusCenterApplicationPrivate {
 public:
 	PluginList plugins;
-	QPointer<MainWindow> mainWindow;
+	MainWindow *mainWindow;
 	QScriptEngine scriptEngine;
 };
 
@@ -25,6 +26,11 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 		:QApplication(argc, argv)
 {
 	d = new TelldusCenterApplicationPrivate;
+	d->mainWindow = new MainWindow( );
+
+	loadPlugins();
+	loadScripts();
+	loadToolbar();
 
 	//We use queued connection since it is called from another thread
 	connect(this, SIGNAL(sigDeviceEvent(int, int, const QString &)), this, SLOT(deviceEvent(int, int, const QString &)), Qt::QueuedConnection);
@@ -47,14 +53,11 @@ PluginList TelldusCenterApplication::plugins() const {
 }
 
 void TelldusCenterApplication::showMainWindow() {
-	if (!isMainWindowShown()) {
-		d->mainWindow = new MainWindow();
-	}
 	d->mainWindow->show();
 }
 
 bool TelldusCenterApplication::isMainWindowShown() {
-	return !d->mainWindow.isNull();
+	return d->mainWindow->isVisible();
 }
 
 #if defined(Q_WS_MAC)
@@ -100,6 +103,10 @@ void TelldusCenterApplication::loadPlugins() {
 	QScriptValue object = d->scriptEngine.newQObject(this);
 	d->scriptEngine.globalObject().setProperty("application", object);
 
+	QScriptValue mainWindowObject = d->scriptEngine.newQObject(d->mainWindow);
+	d->scriptEngine.globalObject().property("application").setProperty("mainwindow", mainWindowObject);
+
+
 	foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
 		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
 		QObject *plugin = loader.instance();
@@ -129,6 +136,18 @@ void TelldusCenterApplication::loadScripts() {
 		if (d->scriptEngine.hasUncaughtException()) {
 			qDebug() << QString("Error in %1:%2:").arg(extension).arg(d->scriptEngine.uncaughtExceptionLineNumber())
 					<< d->scriptEngine.uncaughtException().toString();
+		}
+	}
+}
+
+void TelldusCenterApplication::loadToolbar() {
+	if (!d->plugins.empty()) {
+		QSet<QString> toolbarIcons;
+		foreach( TelldusCenterPlugin *plugin, d->plugins ) {
+			QStringList widgets = plugin->widgets();
+			foreach( QString widget, widgets ) {
+				d->mainWindow->addWidget( widget, plugin->iconForPage( PluginTree::page(widget) ), plugin->widget(widget, d->mainWindow) );
+			}
 		}
 	}
 }

@@ -8,7 +8,7 @@
 #include <QMessageBox>
 #include <QSettings>
 #include <QVBoxLayout>
-
+#include <QCloseEvent>
 #include <QDebug>
 
 #include "tellduscenterapplication.h"
@@ -64,11 +64,13 @@ MainWindow::~MainWindow()
 	delete d;
 }
 
-void MainWindow::closeEvent( QCloseEvent */*event*/ ) {
+void MainWindow::closeEvent( QCloseEvent *event ) {
 	QSettings settings;
 	settings.setValue("Size", size());
 	settings.setValue("Pos", pos());
 
+	this->hide();
+	event->ignore();
 }
 
 void MainWindow::setupMenu()
@@ -89,21 +91,6 @@ void MainWindow::setupToolBar()
 	setUnifiedTitleAndToolBarOnMac(true);
 	d->pagesBar = addToolBar(tr("Pages"));
 	d->pagesBar->setIconSize(QSize(32, 32));
-
-	TelldusCenterApplication *app = TelldusCenterApplication::instance();
-	PluginList plugins = app->plugins();
-	if (!plugins.empty()) {
-		QSet<QString> toolbarIcons;
-		foreach( TelldusCenterPlugin *plugin, plugins ) {
-			QStringList widgets = plugin->widgets();
-			foreach( QString widget, widgets ) {
-				this->addWidget( widget, plugin->iconForPage( d->pluginTree.page(widget) ), plugin->widget(widget, this) );
-			}
-		}
-	}
-	if (!d->pagesActionGroup->actions().empty()) {
-		d->pagesActionGroup->actions().first()->setChecked( true );
-	}
 }
 
 void MainWindow::addWidget( const QString &page, const QIcon &icon, QWidget *widget ) {
@@ -123,6 +110,10 @@ void MainWindow::addWidget( const QString &page, const QIcon &icon, QWidget *wid
 		d->pagesActionGroup->addAction( action );
 		//toolbarIcons.insert(page);
 		d->pagesBar->addAction( action );
+	}
+
+	if (d->pagesActionGroup->actions().count() == 1) { //First icon
+		d->pagesActionGroup->actions().first()->setChecked( true );
 	}
 }
 

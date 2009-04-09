@@ -15,9 +15,6 @@ int main(int argc, char *argv[])
 
 
 	TelldusCenterApplication application(argc, argv);
-	//QCoreApplication::setLibraryPaths( QStringList( QCoreApplication::applicationDirPath() ) );
-	application.loadPlugins();
-	application.loadScripts();
 
 	application.showMainWindow();
 

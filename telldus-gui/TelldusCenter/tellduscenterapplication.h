@@ -28,6 +28,7 @@ public:
 
 	void loadPlugins();
 	void loadScripts();
+	void loadToolbar();
 
 	static TelldusCenterApplication *instance();
 
