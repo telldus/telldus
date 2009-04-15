@@ -112,8 +112,8 @@ bool VendorDeviceTreeItem::parseXml( const QString &filename ) {
 		if (reader.isStartElement()) {
 			if (reader.name() == "devices") { //First element
 				reader.readNext();
-			} else if (reader.name() == "vendor") {
-				parseVendor( &reader );
+			} else if (reader.name() == "type") {
+				parseType( &reader );
 			} else {
 				reader.raiseError( QObject::tr("Not a Telldus device-file"));
 			}
@@ -138,11 +138,35 @@ bool VendorDeviceTreeItem::parseXml( const QString &filename ) {
 	return true;
 }
 
-void VendorDeviceTreeItem::parseVendor( QXmlStreamReader *reader ) {
+void VendorDeviceTreeItem::parseType( QXmlStreamReader *reader ) {
 	VendorDeviceTreeItem *item = new VendorDeviceTreeItem(0, this);
 	item->deviceName = reader->attributes().value("name").toString();
-	item->img = reader->attributes().value("image").toString();
 	appendChild(item);
+
+	reader->readNext();
+	while(!reader->atEnd()) {
+		if (reader->isEndElement()) {
+			reader->readNext();
+			break;
+		}
+
+		if (reader->isStartElement()) {
+			if (reader->name() == "vendor") {
+				parseVendor( reader, item );
+			} else {
+				skipUnknownElement( reader );
+			}
+		} else {
+			reader->readNext();
+		}
+	}
+}
+
+void VendorDeviceTreeItem::parseVendor( QXmlStreamReader *reader, VendorDeviceTreeItem *parent ) {
+	VendorDeviceTreeItem *item = new VendorDeviceTreeItem(0, parent);
+	item->deviceName = reader->attributes().value("name").toString();
+	item->img = reader->attributes().value("image").toString();
+	parent->appendChild(item);
 
 	reader->readNext();
 	while(!reader->atEnd()) {

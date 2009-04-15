@@ -31,7 +31,8 @@ public:
 	VendorDeviceTreeItem *findByDeviceId( int deviceId ) const;
 
 private:
-	void parseVendor( QXmlStreamReader *reader );
+	void parseType( QXmlStreamReader *reader );
+	void parseVendor( QXmlStreamReader *reader, VendorDeviceTreeItem *parent );
 	void parseDevice( QXmlStreamReader *reader, VendorDeviceTreeItem *parent );
 	void skipUnknownElement( QXmlStreamReader *reader );
 

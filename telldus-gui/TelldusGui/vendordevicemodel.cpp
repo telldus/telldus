@@ -28,17 +28,13 @@ QVariant VendorDeviceModel::data(const QModelIndex &index, int role) const {
 
 	if (role == Qt::DisplayRole) {
 		VendorDeviceTreeItem *item = static_cast<VendorDeviceTreeItem*>(index.internalPointer());
-		if (item->isDevice()) {
-			return item->data(index.column());
-		}
-		return "";
+		return item->data(index.column());
 	} else if (role == Qt::DecorationRole) {
 		VendorDeviceTreeItem *item = static_cast<VendorDeviceTreeItem*>(index.internalPointer());
-		QPixmap pixmap = item->image();
 		if (item->isDevice()) {
+			QPixmap pixmap = item->image();
 			return pixmap.scaled(22, 22, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 		}
-		return pixmap.scaled(150, 15, Qt::KeepAspectRatio, Qt::SmoothTransformation);
 	}
 	return QVariant();
 }
