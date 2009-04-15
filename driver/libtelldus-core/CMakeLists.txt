@@ -18,6 +18,7 @@ SET( telldus-core_SRCS
 	DeviceUndefined.cpp
 	DeviceUpm.cpp
 	DeviceWaveman.cpp
+	DeviceX10.cpp
 	Controller.cpp
 	Manager.cpp
 	Settings.cpp

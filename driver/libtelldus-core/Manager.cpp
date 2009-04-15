@@ -21,6 +21,7 @@
 #include "DeviceIkea.h"
 #include "DeviceUndefined.h"
 #include "DeviceUpm.h"
+#include "DeviceX10.h"
 
 #include "Controller.h"
 #ifdef TELLSTICK_DUO
@@ -118,6 +119,11 @@ Device *Manager::getDevice(int intDeviceId){
 			dev = new DeviceUpm(intDeviceId, intModel, strName);
 			((DeviceUpm*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "house"));
 			((DeviceUpm*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "unit"));
+		
+		} else if (strcasecmp(protocol.c_str(), "x10") == 0) {
+			dev = new DeviceX10(intDeviceId, intModel, strName);
+			((DeviceX10*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "nexa_house"));
+			((DeviceX10*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "nexa_unit"));
 		
 		} else {
 			//This is a dummy device needed when the parameters isn't setup correclty.
