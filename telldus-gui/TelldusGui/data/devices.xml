@@ -1,47 +1,71 @@
 <?xml version="1.0" encoding="utf8" ?>
 <devices>
-	<vendor name="Ikea" image="ikea">
-		<device id="19" protocol="ikea" widget="3" image="koppla">Koppla</device>
-	</vendor>
-	<vendor name="Kjell &amp; Company" image="kjelloco">
-		<device id="29" protocol="risingsun" widget="5" image="RSL366R">50-219</device>
-	</vendor>
-	<vendor name="Nexa" image="nexa">
-		<device id="1" protocol="arctech" widget="1" image="145041">YCR-3500</device>
-		<device id="2" protocol="arctech" widget="1" image="145041">YCR-300D</device>
-		<device id="3" protocol="arctech" widget="1" image="145091">WSR-10000</device>
-		<device id="4" protocol="arctech" widget="1" image="145071">CMR-1000</device>
-		<device id="5" protocol="arctech" widget="1" image="145071">CMR-300</device>
-		<device id="6" protocol="arctech" widget="1" image="143011">PA3-3300</device>
-		<device id="12" protocol="arctech" widget="1" image="sycr">SYCR-3500</device>
-		<device id="13" protocol="arctech" widget="1" image="sycr">SYCR-300</device>
-		<device id="14" protocol="arctech" widget="1" image="hdr">HDR-105</device>
-		<device id="15" protocol="arctech" widget="4" image="ml">ML-7100</device>
-		<device id="20" protocol="arctech" widget="1" image="14323">LYCR-1000</device>
-		<device id="21" protocol="arctech" widget="1" image="14323">LYCR-300</device>
-		<device id="22" protocol="arctech" widget="1" image="14327">LCMR-1000</device>
-		<device id="23" protocol="arctech" widget="1" image="14327">LCMR-300</device>
-	</vendor>
-	<vendor name="Proove" image="proove">
-		<device id="8" protocol="arctech" widget="1" image="143011">EL2000</device>
-		<device id="9" protocol="arctech" widget="1" image="el2005">EL2005</device>
-		<device id="10" protocol="arctech" widget="1" image="el2005">EL2006</device>
-		<device id="16" protocol="arctech" widget="1" image="el2005">EL2004</device>
-		<device id="17" protocol="arctech" widget="1" image="el2005">EL2016</device>
-		<device id="18" protocol="arctech" widget="1" image="hdr">EL2010</device>
-		<device id="24" protocol="arctech" widget="1" image="14323">EL2023</device>
-		<device id="25" protocol="arctech" widget="1" image="14323">EL2024</device>
-		<device id="26" protocol="arctech" widget="1" image="14327">EL2021</device>
-		<device id="27" protocol="arctech" widget="1" image="14327">EL2017</device>
-		<device id="28" protocol="arctech" widget="1" image="el2019">EL2019</device>
-	</vendor>
-	<vendor name="Roxcore" image="roxcore">
-		<device id="30" protocol="brateck" widget="6" image="projectorscreen">Projector screen</device>
-	</vendor>
-	<vendor name="Sartano" image="sartano">
-		<device id="7" protocol="sartano" widget="2" image="51340">51343</device>
-	</vendor>
-	<vendor name="Waveman" image="waveman">
-		<device id="11" protocol="waveman" widget="1" image="17-356">17-356</device>
-	</vendor>
+	<type name="Remote Switches - Type 1" expanded="true">
+<!-- 		<text></text> -->
+		<vendor name="CoCo Technologies" image="coco">
+			<!--<text>http://www.coco-technology.com/index_EN.htm</text>-->
+			<device model="codeswitch" protocol="arctech" widget="1" image="coco_cs" name="Code Switch">Code Switch</device>
+ 			<device model="selflearning" protocol="arctech" widget="x" image="coco_sl" name="Self Learning">Self Learning</device>
+			<device model="bell" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
+		</vendor>
+		<vendor name="HomeEasy" image="homeeasy">
+			<!--<text>http://www.homeeasy.eu/home.php</text>-->
+			<device model="codeswitch" protocol="arctech" widget="1" image="homeeasy_cs" name="Code Switch">Code Switch</device>
+			<device model="selflearning" protocol="arctech" widget="x" image="homeeasy_sl" name="Self Learning">Self Learning</device>
+		</vendor>
+		<vendor name="Intertechno" image="intertechno">
+<!-- 			<text>http://www.intertechno.at/</text> -->
+			<device model="codeswitch" protocol="arctech" widget="1" image="intertechno_cs" name="Code Switch">Code Switch</device>
+			<device model="selflearning" protocol="arctech" widget="x" image="intertechno_sl" name="Self Learning">Self Learning</device>
+			<device model="bell" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
+		</vendor>
+		<vendor name="Kjell o Company" image="kjelloco">
+<!-- 			<text>http://www.kjell.com/</text> -->
+			<device model="codeswitch" protocol="risingsun" widget="5" image="RSL366R" name="Code Switch">Code Switch</device>
+		</vendor>
+		<vendor name="KlikAanKlikUit" image="klikaanklikuit">
+<!-- 			<text>http://www.klikaanklikuit.nl/producten.asp</text> -->
+			<device model="codeswitch" protocol="arctech" widget="1" image="coco_cs" name="Code Switch">Code Switch</device>
+			<device model="selflearning" protocol="arctech" widget="x" image="coco_sl" name="Self Learning">Self Learning</device>
+			<device model="bell" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
+		</vendor>
+		<vendor name="Nexa" image="nexa">
+<!-- 			<text>http://www.nexa.se/</text> -->
+			<device model="codeswitch" protocol="arctech" widget="1" image="nexa_cs" name="Code Switch">Code Switch</device>
+			<device model="selflearning" protocol="arctech" widget="x" image="nexa_sl" name="Self Learning">Self Learning</device>
+			<device model="bell" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
+		</vendor>
+		<vendor name="Proove" image="proove">
+<!-- 			<text>http://www.proove.se/</text> -->
+			<device model="codeswitch" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
+			<device model="selflearning" protocol="arctech" widget="x" image="arctech_sl" name="Self Learning">Self Learning</device>
+			<device model="bell" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
+		</vendor>
+		<vendor name="Waveman" image="waveman">
+<!-- 			<text></text> -->
+			<device model="codeswitch" protocol="waveman" widget="1" image="waveman_cs" name="Code Switch">Code Switch</device>
+		</vendor>
+	</type>
+	<type name="Remote Switches - Type 2" expanded="true">
+<!-- 		<text></text> -->
+		<vendor name="Elro" image="elro">
+<!-- 			<text>http://www.elro-nl.com/elro-en-05/home.htm</text> -->
+			<device model="codeswitch" protocol="sartano" widget="2" image="elro_cs" name="Code Switch">Code Switch</device>
+		</vendor>
+		<vendor name="Sartano" image="sartano">
+<!-- 			<text></text> -->
+			<device model="codeswitch" protocol="sartano" widget="2" image="sartano_cs" name="Code Switch">Code Switch</device>
+		</vendor>
+	</type>
+	<type name="Remote Switches - Type 3" expanded="true">
+<!-- 		<text></text> -->
+		<vendor name="IKEA" image="ikea">
+			<device model="selflearning" protocol="ikea" widget="3" image="koppla">Koppla</device>
+		</vendor>
+	</type>
+	<type name="Projector screens" expanded="true">
+		<vendor name="Roxcore" image="roxcore">
+			<device id="30" protocol="brateck" widget="6" image="projectorscreen">Projector screen</device>
+		</vendor>
+	</type>
 </devices>
