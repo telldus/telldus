@@ -113,6 +113,8 @@ int main( int argc, char **argv )
 			tio.c_cflag = B4800 | CS8 | CLOCAL | CREAD; /* CREAD not used yet */
 			tio.c_iflag = IGNPAR;
 			tio.c_oflag = 0;
+			tio.c_ispeed = 4800;
+			tio.c_ospeed = 4800;
 			tcflush(fd, TCIFLUSH);
 			tcsetattr(fd,TCSANOW,&tio);
 
