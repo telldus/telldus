@@ -4,41 +4,58 @@ INCLUDE_DIRECTORIES(
   /usr/src/linux/include
 )
 
-PROJECT(rfcmd)
+#### Project: rfcmd ####
 
-FIND_LIBRARY(FTDI_LIBRARY ftdi)
+PROJECT(rfcmd)
 
 SET(rfcmd_SRCS
   rfcmd.c
-  ftdi.c
 )
 
 IF(${RFCMD_DEBUG})
 	ADD_DEFINITIONS( -DRFCMD_DEBUG )
 ENDIF(${RFCMD_DEBUG})
 
+IF (BUILD_RFCMD_WITH_LIBFTDI)
+	ADD_DEFINITIONS( -DLIBFTDI )
+
+	SET(rfcmd_SRCS
+		${rfcmd_SRCS}
+		ftdi.c
+	)
+ENDIF (BUILD_RFCMD_WITH_LIBFTDI)
+
 ADD_EXECUTABLE(rfcmd
   ${rfcmd_SRCS}
 )
 
-TARGET_LINK_LIBRARIES(rfcmd
- ${FTDI_LIBRARY}
-)
+IF (BUILD_RFCMD_WITH_LIBFTDI)
+	FIND_LIBRARY(FTDI_LIBRARY ftdi)
+
+	TARGET_LINK_LIBRARIES(rfcmd
+	${FTDI_LIBRARY}
+	)
+ENDIF (BUILD_RFCMD_WITH_LIBFTDI)
 
 INSTALL(TARGETS rfcmd RUNTIME DESTINATION bin)
 
-PROJECT(find_telldus)
 
-SET(find_telldus_SRCS
-  find_telldus.c
-)
+#### Project: find_telldus ####
 
-ADD_EXECUTABLE(find_telldus
-  ${find_telldus_SRCS}
-)
+IF (BUILD_RFCMD_WITH_LIBFTDI)
+	PROJECT(find_telldus)
 
-TARGET_LINK_LIBRARIES(find_telldus
- ${FTDI_LIBRARY}
-)
+	SET(find_telldus_SRCS
+		find_telldus.c
+	)
 
-INSTALL(TARGETS find_telldus RUNTIME DESTINATION bin)
+	ADD_EXECUTABLE(find_telldus
+		${find_telldus_SRCS}
+	)
+
+	TARGET_LINK_LIBRARIES(find_telldus
+	${FTDI_LIBRARY}
+	)
+
+	INSTALL(TARGETS find_telldus RUNTIME DESTINATION bin)
+ENDIF (BUILD_RFCMD_WITH_LIBFTDI)
