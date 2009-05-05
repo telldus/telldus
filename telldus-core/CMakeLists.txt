@@ -15,6 +15,7 @@ SET(SUPPORT_USB TRUE CACHE BOOL "Build support for usb-devices")
 SET(USE_QT_SETTINGS_BACKEND FALSE CACHE BOOL "Use QT as settings backend instead of the native one")
 
 SET(BUILD_RFCMD		TRUE	CACHE BOOL "Build rfcmd")
+SET(BUILD_RFCMD_WITH_LIBFTDI	TRUE	CACHE	BOOL "Enable support for using rfcmd with libftdi (does not need kernel-driver)")
 SET(BUILD_TDTOOL	TRUE	CACHE BOOL "Build tdtool")
 
 ADD_SUBDIRECTORY(driver)

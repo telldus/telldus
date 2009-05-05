@@ -59,8 +59,9 @@ int createIkeaString(const char * pSystemStr, const char * pChannelStr,
 
 void printUsage(void);
 
+#ifdef LIBFTDI
 int usbWriteFtdi(char *cmdstr);
-
+#endif
 
 int main( int argc, char **argv )
 {
@@ -123,7 +124,11 @@ int main( int argc, char **argv )
 			sleep(1); /* one second sleep to avoid		device 'choking' */
 			close(fd); /* Modified : Close fd to make a clean exit */
 		} else {
+#ifdef LIBFTDI
 			usbWriteFtdi( txStr );
+#else
+			fprintf(stderr,  "%s - Support for libftdi is not compiled in, please recompile rfcmd with support for libftdi\n", PROG_NAME);
+#endif
 		}
 	}
   exit(0);
@@ -378,7 +383,11 @@ void printUsage(void)
 {
 	printf("%s v%s - Send RF remote commands\n", PROG_NAME, PROG_VERSION);
 	printf("Usage: rfcmd DEVICE PROTOCOL [PROTOCOL_ARGUMENTS] \n");
+#ifdef LIBFTDI
 	printf("\t DEVICE: /dev/ttyUSB[0..n] | LIBUSB\n" );
+#else
+	printf("\t DEVICE: /dev/ttyUSB[0..n]\n" );
+#endif
 	printf("\t PROTOCOLS: NEXA, SARTANO, WAVEMAN, IKEA\n" );
 	printf("\t PROTOCOL ARGUMENTS - NEXA, WAVEMAN:\n");
 	printf("\t\tHOUSE_CODE: A..P\n\t\tCHANNEL: 1..16\n\t\tOFF_ON: 0..1\n" );
