@@ -6,6 +6,10 @@
 #include <iostream>
 #include <fstream>
 
+#ifdef _WINDOWS
+#define strcasecmp _stricmp
+#endif
+
 using namespace TelldusCore;
 
 /*
