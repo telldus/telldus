@@ -7,7 +7,7 @@ namespace TelldusCore {
 	class DeviceSartano : public Device
 	{
 	public:
-		DeviceSartano(int id, int model, const std::string &name);
+		DeviceSartano(int id, const std::string &model, const std::string &name);
 		virtual ~DeviceSartano(void);
 		
 		virtual int methods(int methodsSupported);

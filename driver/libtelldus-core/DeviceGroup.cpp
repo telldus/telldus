@@ -8,7 +8,7 @@ using namespace TelldusCore;
 /*
 * Constructor
 */
-DeviceGroup::DeviceGroup(int id, int model, const std::string &name)
+DeviceGroup::DeviceGroup(int id, const std::string &model, const std::string &name)
 	:Device(id, model, name)
 {
 }

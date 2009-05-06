@@ -11,7 +11,7 @@ using namespace TelldusCore;
 /*
 * Constructor
 */
-DeviceWaveman::DeviceWaveman(int id, int model, const std::string &name)
+DeviceWaveman::DeviceWaveman(int id, const std::string &model, const std::string &name)
 	:DeviceNexa(id, model, name){
 }
 

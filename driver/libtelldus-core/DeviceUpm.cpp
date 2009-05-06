@@ -17,7 +17,7 @@ const char BOFF[] = {S,L,S,L,0};
 /*
 * Constructor
 */
-DeviceUpm::DeviceUpm(int id, int model, const std::string &name)
+DeviceUpm::DeviceUpm(int id, const std::string &model, const std::string &name)
 	:Device(id, model, name)
 {
 }

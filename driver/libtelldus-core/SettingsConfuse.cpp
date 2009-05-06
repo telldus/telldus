@@ -312,7 +312,7 @@ bool readConfig(cfg_t **cfg) {
 		CFG_STR("name", "Unnamed", CFGF_NONE),
 		CFG_INT("controller", 0, CFGF_NONE),
 		CFG_STR("protocol", "arctech", CFGF_NONE),
-		CFG_INT("model", 1, CFGF_NONE),
+		CFG_STR("model", "", CFGF_NONE),
 		CFG_SEC("parameters", device_parameter_opts, CFGF_NONE),
 		CFG_END()
 	};

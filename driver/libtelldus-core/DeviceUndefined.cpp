@@ -5,7 +5,7 @@ using namespace TelldusCore;
 /*
 * Constructor
 */
-DeviceUndefined::DeviceUndefined(int id, int model, const std::string &name)
+DeviceUndefined::DeviceUndefined(int id, const std::string &model, const std::string &name)
 	:Device(id, model, name)
 {
 }

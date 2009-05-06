@@ -7,7 +7,7 @@ namespace TelldusCore {
 	class DeviceUpm : public Device
 	{
 	public:
-		DeviceUpm(int id, int model, const std::string &name);
+		DeviceUpm(int id, const std::string &model, const std::string &name);
 		virtual ~DeviceUpm(void);
 		
 		virtual int methods(int methodsSupported);

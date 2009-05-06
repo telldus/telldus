@@ -15,7 +15,7 @@ namespace TelldusCore {
 	class Device
 	{
 	public:
-		Device(int id, int model, const std::string &name);
+		Device(int id, const std::string model, const std::string &name);
 		virtual ~Device(void);
 		
 		int switchState( int newState, const std::string &value = "" );
@@ -24,8 +24,8 @@ namespace TelldusCore {
 		virtual bool parameterMatches( const std::string &name, const std::string &value ) const = 0;
 		bool setParameter(const std::string &strName, const std::string &strValue);
 
-		int getModel() const;
-		bool setModel( int intModel );
+		std::string getModel() const;
+		bool setModel( const std::string & strModel );
 		std::string getName() const;
 		bool setName( const std::string &newName );
 		
@@ -46,8 +46,8 @@ namespace TelldusCore {
 		int send(const std::string &strMessage);
 	
 	private:
-		int deviceId, model;
-		std::string deviceName;
+		int deviceId;
+		std::string deviceName, model;
 	//	static QMutex deviceMutex;
 	};
 

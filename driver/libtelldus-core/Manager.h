@@ -51,7 +51,7 @@ namespace TelldusCore {
 		int getDeviceId(int intDeviceIndex) const;
 		bool setDeviceProtocol(int intDeviceId, const std::string &strProtocol);
 		bool setDeviceName(int intDeviceId, const std::string &strNewName);
-		bool setDeviceModel(int intDeviceId, int intModel);
+		bool setDeviceModel(int intDeviceId, const std::string &strModel);
 		bool setDeviceParameter(int intDeviceId, const std::string &strName, const std::string &strValue);
 		std::string getDeviceParameter(int intDeviceId, const std::string &strName) const;
 		bool setDeviceState( int intDeviceId, int intDeviceState, const std::string &strDeviceStateValue );

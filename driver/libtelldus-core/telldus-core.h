@@ -48,8 +48,8 @@ extern "C" {
 	TELLSTICK_API bool WINAPI tdSetName(int intDeviceId, const char* chNewName);
 	TELLSTICK_API char * WINAPI tdGetProtocol(int intDeviceId);
 	TELLSTICK_API bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol);
-	TELLSTICK_API int WINAPI tdGetModel(int intDeviceId);
-	TELLSTICK_API bool WINAPI tdSetModel(int intDeviceId, int intModel);
+	TELLSTICK_API char * WINAPI tdGetModel(int intDeviceId);
+	TELLSTICK_API bool WINAPI tdSetModel(int intDeviceId, const char *intModel);
 	
 	TELLSTICK_API char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const char *defaultValue);
 	TELLSTICK_API bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const char* strValue);

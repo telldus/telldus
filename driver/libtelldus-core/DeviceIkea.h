@@ -7,7 +7,7 @@ namespace TelldusCore {
 	class DeviceIkea : public Device
 	{
 	public:
-		DeviceIkea(int id, int model, const std::string &name);
+		DeviceIkea(int id, const std::string &model, const std::string &name);
 		virtual ~DeviceIkea(void);
 		
 		virtual int methods(int methodsSupported);

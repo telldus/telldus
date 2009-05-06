@@ -11,7 +11,7 @@ using namespace TelldusCore;
 /*
 * Constructor
 */
-DeviceRisingSun::DeviceRisingSun(int id, int model, const std::string &name)
+DeviceRisingSun::DeviceRisingSun(int id, const std::string &model, const std::string &name)
 	:Device(id, model, name),
 	intHouse(0),
 	intCode(0)

@@ -15,7 +15,7 @@ using namespace TelldusCore;
 /*
 * Constructor
 */
-DeviceIkea::DeviceIkea(int id, int model, const std::string &name)
+DeviceIkea::DeviceIkea(int id, const std::string &model, const std::string &name)
 	:Device(id, model, name)
 {
 }
@@ -225,11 +225,7 @@ bool DeviceIkea::parameterMatches( const std::string &name, const std::string &v
 * Has the device got the method?
 */
 int DeviceIkea::methods(int){
-
-	if(this->getModel() == TELLSTICK_DEVICE_KOPPLA) {
-		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_DIM);
-	}
-	return 0;
+	return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_DIM);
 }
 
 std::string DeviceIkea::getProtocol() const {

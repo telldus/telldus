@@ -18,7 +18,7 @@ const char BDOWN[] = {S,L,S,L,S,L,S,L,S,L,S,L,L,S,L,S,S,0};
 /*
 * Constructor
 */
-DeviceBrateck::DeviceBrateck(int id, int model, const std::string &name)
+DeviceBrateck::DeviceBrateck(int id, const std::string &model, const std::string &name)
 	:Device(id, model, name)
 {
 }

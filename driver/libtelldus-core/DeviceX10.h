@@ -7,7 +7,7 @@ namespace TelldusCore {
 	class DeviceX10 : public Device
 	{
 	public:
-		DeviceX10(int id, int model, const std::string &name);
+		DeviceX10(int id, const std::string &model, const std::string &name);
 		virtual int methods(int methodsSupported);
 		virtual std::string getProtocol() const;
 		virtual bool parameterMatches( const std::string &name, const std::string &value ) const;

@@ -15,8 +15,8 @@ public:
 	bool setName(int intDeviceId, const std::string &strNewName);
 	std::string getProtocol(int intDeviceId) const;
 	bool setProtocol(int intDeviceId, const std::string &strVendor);
-	int getModel(int intDeviceId) const;
-	bool setModel(int intDeviceId, int intModel);
+	std::string getModel(int intDeviceId) const;
+	bool setModel(int intDeviceId, const std::string &strModel);
 	std::string getDeviceParameter(int intDeviceId, const std::string &strName) const;
 	bool setDeviceParameter(int intDeviceId, const std::string &strName, const std::string &strValue);
 	bool setDeviceState( int intDeviceId, int intDeviceState, const std::string &strDeviceStateValue );
