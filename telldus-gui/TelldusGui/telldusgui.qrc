@@ -32,5 +32,6 @@
         <file>images/vendors/waveman.png</file>
         <file>images/state_1.png</file>
         <file>images/state_2.png</file>
+        <file>images/devices/bell.png</file>
     </qresource>
 </RCC>

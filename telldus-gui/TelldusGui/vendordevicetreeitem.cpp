@@ -1,13 +1,13 @@
 #include "vendordevicetreeitem.h"
 
+#include "device.h"
 #include <QFile>
 #include <QPixmap>
 #include <QDebug>
 #include <iostream>
 
-VendorDeviceTreeItem::VendorDeviceTreeItem(int id, VendorDeviceTreeItem *parent)
-		:deviceId(id),
-		settingsWidget(0),
+VendorDeviceTreeItem::VendorDeviceTreeItem(VendorDeviceTreeItem *parent)
+		:settingsWidget(0),
 		parentItem(parent)
 {
 }
@@ -53,7 +53,7 @@ int VendorDeviceTreeItem::row() const {
 
 QPixmap VendorDeviceTreeItem::image() const {
 	QString filename;
-	if (deviceId == 0) {
+	if (model == "") {
 		filename = ":/images/vendors/" + img + ".png";
 	} else {
 		filename = ":/images/devices/" + img + ".png";
@@ -71,23 +71,24 @@ int VendorDeviceTreeItem::widget() const {
 }
 
 bool VendorDeviceTreeItem::isDevice() const {
-	return deviceId > 0;
+	return model.length() > 0;
 }
 
-int VendorDeviceTreeItem::deviceModel() const {
-	return deviceId;
+QString VendorDeviceTreeItem::deviceModel() const {
+	return model;
 }
 
 const QString &VendorDeviceTreeItem::deviceProtocol() const {
 	return protocol;
 }
 
-VendorDeviceTreeItem * VendorDeviceTreeItem::findByDeviceId( int deviceId ) const {
+VendorDeviceTreeItem * VendorDeviceTreeItem::findByDevice( const Device &device ) const {
 	foreach( VendorDeviceTreeItem *item, childItems ) {
-		if (item->deviceId == deviceId) {
+		if (item->deviceProtocol() == device.protocol() &&
+			item->deviceModel() == device.model()) {
 			return item;
 		}
-		VendorDeviceTreeItem *i = item->findByDeviceId( deviceId );
+		VendorDeviceTreeItem *i = item->findByDevice( device );
 		if (i) {
 			return i;
 		}
@@ -139,7 +140,7 @@ bool VendorDeviceTreeItem::parseXml( const QString &filename ) {
 }
 
 void VendorDeviceTreeItem::parseType( QXmlStreamReader *reader ) {
-	VendorDeviceTreeItem *item = new VendorDeviceTreeItem(0, this);
+	VendorDeviceTreeItem *item = new VendorDeviceTreeItem(this);
 	item->deviceName = reader->attributes().value("name").toString();
 	appendChild(item);
 
@@ -163,7 +164,7 @@ void VendorDeviceTreeItem::parseType( QXmlStreamReader *reader ) {
 }
 
 void VendorDeviceTreeItem::parseVendor( QXmlStreamReader *reader, VendorDeviceTreeItem *parent ) {
-	VendorDeviceTreeItem *item = new VendorDeviceTreeItem(0, parent);
+	VendorDeviceTreeItem *item = new VendorDeviceTreeItem(parent);
 	item->deviceName = reader->attributes().value("name").toString();
 	item->img = reader->attributes().value("image").toString();
 	parent->appendChild(item);
@@ -189,7 +190,8 @@ void VendorDeviceTreeItem::parseVendor( QXmlStreamReader *reader, VendorDeviceTr
 
 void VendorDeviceTreeItem::parseDevice( QXmlStreamReader *reader, VendorDeviceTreeItem *parent ) {
 	QXmlStreamAttributes attributes = reader->attributes();
-	VendorDeviceTreeItem *item = new VendorDeviceTreeItem(attributes.value("id").toString().toInt(), parent);
+	VendorDeviceTreeItem *item = new VendorDeviceTreeItem(parent);
+	item->model = attributes.value("model").toString();
 	item->img = attributes.value("image").toString();
 	item->settingsWidget = attributes.value("widget").toString().toInt();
 	item->protocol = attributes.value("protocol").toString();

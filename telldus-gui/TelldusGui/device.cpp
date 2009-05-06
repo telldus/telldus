@@ -6,8 +6,8 @@ int Device::callbackId = tdRegisterDeviceEvent( &Device::deviceEvent, 0);
 
 class DevicePrivate {
 public:
-	int id, model, state;
-	QString name, protocol;
+	int id, state;
+	QString name, protocol, model;
 	bool modelChanged, nameChanged, protocolChanged;
 	mutable int methods;
 	mutable QHash<QString, QString> settings;
@@ -17,7 +17,7 @@ Device::Device(int id)
 {
 	d = new DevicePrivate;
 	d->id = id;
-	d->model = 0;
+	d->model = "";
 	d->state = 0;
 	d->name = "";
 	d->protocol = "";
@@ -45,12 +45,12 @@ Device::~Device() {
 	delete d;
 }
 
-void Device::setModel( int model ) {
+void Device::setModel( const QString &model ) {
 	d->model = model;
 	d->modelChanged = true;
 }
 
-int Device::model() {
+QString Device::model() const {
 	return d->model;
 }
 
@@ -62,7 +62,7 @@ void Device::setName( const QString & name ) {
 	d->nameChanged = true;
 }
 
-const QString &Device::name() {
+QString &Device::name() const {
 	return d->name;
 }
 
@@ -87,7 +87,7 @@ void Device::setProtocol( const QString & protocol ) {
 	d->protocolChanged = true;
 }
 
-const QString &Device::protocol() {
+QString &Device::protocol() const {
 	return d->protocol;
 }
 
@@ -133,7 +133,7 @@ void Device::save() {
 	}
 
 	if (d->modelChanged || deviceIsAdded) {
-		tdSetModel(d->id, d->model);
+		tdSetModel(d->id, d->model.toLocal8Bit());
 		methodsChanged = true;
 		d->modelChanged = false;
 	}

@@ -76,7 +76,7 @@ QModelIndex VendorDeviceModel::index(int row, int column, const QModelIndex &par
 }
 
 QModelIndex VendorDeviceModel::index(Device *device) const {
-	VendorDeviceTreeItem *item = rootItem->findByDeviceId( device->model() );
+	VendorDeviceTreeItem *item = rootItem->findByDevice( *device );
 	if (!item) {
 		return QModelIndex();
 	}

@@ -3,12 +3,13 @@
 
 #include <QVariant>
 #include <QXmlStreamReader>
+#include "device.h"
 
 class VendorDeviceTreeItem
 {
 	Q_DISABLE_COPY(VendorDeviceTreeItem)
 public:
-	VendorDeviceTreeItem(int id = 0, VendorDeviceTreeItem *parent = 0);
+	VendorDeviceTreeItem(VendorDeviceTreeItem *parent = 0);
 	~VendorDeviceTreeItem();
 
 	void appendChild(VendorDeviceTreeItem *child);
@@ -25,10 +26,10 @@ public:
 	QPixmap image() const;
 	int widget() const;
 	bool isDevice() const;
-	int deviceModel() const;
+	QString deviceModel() const;
 	const QString &deviceProtocol() const;
 
-	VendorDeviceTreeItem *findByDeviceId( int deviceId ) const;
+	VendorDeviceTreeItem *findByDevice( const Device &device ) const;
 
 private:
 	void parseType( QXmlStreamReader *reader );
@@ -38,8 +39,8 @@ private:
 
 	QList<VendorDeviceTreeItem *> childItems;
 
-	int deviceId, settingsWidget;
-	QString deviceName, protocol;
+	int settingsWidget;
+	QString deviceName, protocol, model;
 	QString img;
 	VendorDeviceTreeItem *parentItem;
 };

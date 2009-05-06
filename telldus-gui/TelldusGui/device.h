@@ -21,17 +21,17 @@ public:
 	static Device *newDevice( );
 	static bool deviceLoaded( int id );
 
-	void setModel( int model );
-	int model();
+	void setModel( const QString &model );
+	QString model() const;
 
 	void setName( const QString & name );
-	const QString &name();
+	QString &name() const;
 
 	void setParameter( const QString &name, const QString &value );
 	QString parameter( const QString &name, const QString &defaultValue ) const;
 
 	void setProtocol( const QString & protocol );
-	const QString &protocol();
+	QString &protocol() const;
 
 	int deviceType() const;
 	int lastSentCommand() const;

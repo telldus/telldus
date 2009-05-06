@@ -55,8 +55,11 @@ QT4_WRAP_CPP(  telldus-gui_MOC_SRCS  ${telldus-gui_MOC_HDRS} )
 QT4_AUTOMOC (  ${telldus-gui_SRCS} )
 QT4_ADD_RESOURCES  (telldus-gui_RSRCS     telldusgui.qrc         )
 
+FIND_LIBRARY( TELLDUSCORE_LIBRARY telldus-core )
+
 SET( telldus-gui_LIBRARIES
 	${QT_LIBRARIES}
+	${TELLDUSCORE_LIBRARY}
 )
 
 ######## Configurable options for the platform  ########
@@ -106,7 +109,7 @@ ADD_LIBRARY(${telldus-gui_TARGET} SHARED
 TARGET_LINK_LIBRARIES( ${telldus-gui_TARGET}	${telldus-gui_LIBRARIES} )
 
 SET_PROPERTY(TARGET ${telldus-gui_TARGET}
-	PROPERTY FRAMEWORK TRUE	
+	PROPERTY FRAMEWORK TRUE
 )
 SET_PROPERTY(TARGET ${telldus-gui_TARGET}
 	PROPERTY PUBLIC_HEADER ${telldus-gui_HDRS}
