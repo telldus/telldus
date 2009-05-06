@@ -11,14 +11,14 @@
 
 #ifdef _WINDOWS
 	#ifdef TELLDUSGUI_EXPORTS
-		#define TELLSTICK_API __declspec(dllexport)
+		#define TELLDUSGUI_API __declspec(dllexport)
 	#else
-		#define TELLSTICK_API __declspec(dllimport)
+		#define TELLDUSGUI_API __declspec(dllimport)
 	#endif
 	#define WINAPI __stdcall
 #else
 	#define WINAPI
-	#define TELLSTICK_API
+	#define TELLDUSGUI_API
 #endif
 
 class QWidget;
@@ -26,7 +26,7 @@ class QWidget;
 #ifdef __cplusplus
 extern "C" {
 #endif
-	TELLSTICK_API QWidget WINAPI *tdDeviceWidget( QWidget *parent = 0 );
+	TELLDUSGUI_API QWidget* WINAPI tdDeviceWidget( QWidget *parent = 0 );
 #ifdef __cplusplus
 }
 #endif
