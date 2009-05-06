@@ -79,6 +79,11 @@ ELSE (USE_QT_SETTINGS_BACKEND)
 			${telldus-core_SRCS}
 			SettingsCoreFoundationPreferences.cpp
 		)
+	ELSEIF (WIN32)
+		SET( telldus-core_SRCS
+			${telldus-core_SRCS}
+			SettingsWinRegistry.cpp
+		)
 	ELSE (APPLE)
 		SET( telldus-core_LIBRARIES
 			${telldus-core_LIBRARIES}
@@ -105,6 +110,17 @@ IF (APPLE)
 	)
 	ADD_DEFINITIONS(
 		-D_MACOSX
+	)
+ELSEIF (WIN32)
+	#### Windows ####
+	SET( telldus-core_TARGET	TelldusCore )
+	SET( telldus-core_SRCS
+		${telldus-core_SRCS}
+		win/Device.cpp
+	)
+	ADD_DEFINITIONS(
+		-D_WINDOWS
+		-DTELLDUSCORE_EXPORTS
 	)
 ELSE (APPLE)
 	#### Linux ####
