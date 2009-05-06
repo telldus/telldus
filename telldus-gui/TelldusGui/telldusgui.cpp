@@ -2,6 +2,6 @@
 
 #include "devicewidget.h"
 
-QWidget *tdDeviceWidget( QWidget *parent ) {
+QWidget* WINAPI tdDeviceWidget( QWidget *parent ) {
 	return new DeviceWidget(parent);
 }
