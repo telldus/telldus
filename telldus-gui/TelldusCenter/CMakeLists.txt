@@ -51,6 +51,9 @@ SET( telldus-center_TARGET	TelldusCenter )
 IF (APPLE) #### Mac OS X ####
 
 ELSEIF (WIN32) #### Windows ####
+	INCLUDE_DIRECTORIES(
+		${TELLDUSCORE_INCLUDE_DIR}
+	)
 
 ELSE (APPLE) #### Linux ####
 
