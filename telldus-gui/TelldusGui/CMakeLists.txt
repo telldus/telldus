@@ -53,7 +53,7 @@ SET( telldus-gui_MOC_HDRS
 
 QT4_WRAP_CPP(  telldus-gui_MOC_SRCS  ${telldus-gui_MOC_HDRS} )
 QT4_AUTOMOC (  ${telldus-gui_SRCS} )
-
+QT4_ADD_RESOURCES  (telldus-gui_RSRCS     telldusgui.qrc         )
 
 SET( telldus-gui_LIBRARIES
 	${QT_LIBRARIES}
@@ -78,6 +78,13 @@ ELSEIF (WIN32)
 		-D_WINDOWS
 		-DTELLDUSGUI_EXPORTS
 	)
+	INCLUDE_DIRECTORIES(
+		${TELLDUSCORE_INCLUDE_DIR}
+	)
+	SET( telldus-gui_LIBRARIES
+		${telldus-gui_LIBRARIES}
+		${TELLDUSCORE_LIBRARY}
+	)
 ELSE (APPLE)
 	#### Linux ####
 	SET( telldus-gui_TARGET	telldus-gui )
@@ -93,6 +100,7 @@ ADD_LIBRARY(${telldus-gui_TARGET} SHARED
 	${telldus-gui_SRCS}
 	${telldus-gui_HDRS}
 	${telldus-gui_MOC_SRCS}
+	${telldus-gui_RSRCS}
 )
 
 TARGET_LINK_LIBRARIES( ${telldus-gui_TARGET}	${telldus-gui_LIBRARIES} )
