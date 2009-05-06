@@ -12,7 +12,7 @@
 #ifndef DEVICESETTINGNEXABELL_H
 #define DEVICESETTINGNEXABELL_H
 
-#include <devicesetting.h>
+#include "devicesetting.h"
 
 class QGridLayout;
 class QDial;

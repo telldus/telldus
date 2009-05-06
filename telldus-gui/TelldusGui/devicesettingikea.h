@@ -12,7 +12,7 @@
 #ifndef DEVICESETTINGIKEA_H
 #define DEVICESETTINGIKEA_H
 
-#include <devicesetting.h>
+#include "devicesetting.h"
 #include <QHash>
 #include <QSpinBox>
 #include <QCheckBox>

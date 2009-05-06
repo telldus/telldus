@@ -12,7 +12,7 @@
 #ifndef DEVICESETTINGSARTANO_H
 #define DEVICESETTINGSARTANO_H
 
-#include <devicesetting.h>
+#include "devicesetting.h"
 #include <QHash>
 #include <QRadioButton>
 

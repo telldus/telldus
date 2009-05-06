@@ -12,7 +12,7 @@
 #ifndef DEVICESETTINGBRATECK_H
 #define DEVICESETTINGBRATECK_H
 
-#include <devicesetting.h>
+#include "devicesetting.h"
 #include <QHash>
 
 class QSlider;
