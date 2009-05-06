@@ -9,6 +9,7 @@
 #include "devicesettingnexabell.h"
 #include "devicesettingrisingsun.h"
 #include "devicesettingsartano.h"
+#include "devicesettingupm.h"
 
 #include <QVBoxLayout>
 #include <QHBoxLayout>
@@ -102,6 +103,7 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 	deviceSettings[4] = new DeviceSettingNexaBell(device, this);
 	deviceSettings[5] = new DeviceSettingRisingSun(device, this);
 	deviceSettings[6] = new DeviceSettingBrateck(device, this);
+	deviceSettings[7] = new DeviceSettingUpm(device, this);
 	foreach( DeviceSetting *s, deviceSettings ) {
 		settingsLayout->addWidget( s );
 	}

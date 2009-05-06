@@ -18,6 +18,7 @@ SOURCES += telldusgui.cpp \
     devicesettingnexabell.cpp \
     devicesettingrisingsun.cpp \
     devicesettingsartano.cpp \
+    devicesettingupm.cpp \
     devicesetting.cpp \
     methodwidget.cpp \
     deviceview.cpp
@@ -35,6 +36,7 @@ HEADERS += telldusgui.h \
     devicesettingnexabell.h \
     devicesettingrisingsun.h \
     devicesettingsartano.h \
+    devicesettingupm.h \
     devicesetting.h \
     methodwidget.h \
     deviceview.h
