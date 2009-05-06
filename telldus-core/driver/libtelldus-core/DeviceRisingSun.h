@@ -7,7 +7,7 @@ namespace TelldusCore {
 	class DeviceRisingSun : public Device
 	{
 	public:
-		DeviceRisingSun(int id, int model, const std::string &name);
+		DeviceRisingSun(int id, const std::string &model, const std::string &name);
 		virtual int methods(int methodsSupported);
 		virtual std::string getProtocol() const;
 		virtual bool parameterMatches( const std::string &name, const std::string &value ) const;

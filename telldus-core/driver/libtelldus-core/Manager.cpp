@@ -78,56 +78,56 @@ Device *Manager::getDevice(int intDeviceId){
 		if (protocol.length() == 0) {
 			return NULL;
 		}
-		int intModel = settings.getModel(intDeviceId);
+		std::string strModel = settings.getModel(intDeviceId);
 		std::string strName = settings.getName(intDeviceId);
 
 		//each new brand must be added here
 		if (strcasecmp(protocol.c_str(), "arctech") == 0){
-			dev = new DeviceNexa(intDeviceId, intModel, strName);
+			dev = new DeviceNexa(intDeviceId, strModel, strName);
 			((DeviceNexa*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "nexa_house"));
 			((DeviceNexa*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "nexa_unit"));
 	
 		} else if (strcasecmp(protocol.c_str(), "brateck") == 0) {
-			dev = new DeviceBrateck(intDeviceId, intModel, strName);
+			dev = new DeviceBrateck(intDeviceId, strModel, strName);
 			((DeviceBrateck*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "nexa_house"));
 
 		} else if (strcasecmp(protocol.c_str(), "group") == 0) {
-			dev = new DeviceGroup(intDeviceId, intModel, strName);
+			dev = new DeviceGroup(intDeviceId, strModel, strName);
 			((DeviceGroup*)dev)->setDevices(settings.getDeviceParameter(intDeviceId, "devices"));
 			
 		} else if (strcasecmp(protocol.c_str(), "risingsun") == 0) {
-			dev = new DeviceRisingSun(intDeviceId, intModel, strName);
+			dev = new DeviceRisingSun(intDeviceId, strModel, strName);
 			((DeviceRisingSun*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "nexa_house"));
 			((DeviceRisingSun*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "nexa_unit"));
 
 		} else if (strcasecmp(protocol.c_str(), "Waveman") == 0) {
-			dev = new DeviceWaveman(intDeviceId, intModel, strName);
+			dev = new DeviceWaveman(intDeviceId, strModel, strName);
 			((DeviceWaveman*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "nexa_house"));
 			((DeviceWaveman*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "nexa_unit"));
 
 		} else if (strcasecmp(protocol.c_str(), "Sartano") == 0) {
-			dev = new DeviceSartano(intDeviceId, intModel, strName);
+			dev = new DeviceSartano(intDeviceId, strModel, strName);
 			((DeviceSartano*)dev)->setCode(settings.getDeviceParameter(intDeviceId, "sartano_code"));
 
 		} else if (strcasecmp(protocol.c_str(), "Ikea") == 0) {
-			dev = new DeviceIkea(intDeviceId, intModel, strName);
+			dev = new DeviceIkea(intDeviceId, strModel, strName);
 			((DeviceIkea*)dev)->setSystem(settings.getDeviceParameter(intDeviceId, "ikea_system"));
 			((DeviceIkea*)dev)->setUnits(settings.getDeviceParameter(intDeviceId, "ikea_units"));
 			((DeviceIkea*)dev)->setFade(settings.getDeviceParameter(intDeviceId, "ikea_fade"));
 
 		} else if (strcasecmp(protocol.c_str(), "upm") == 0) {
-			dev = new DeviceUpm(intDeviceId, intModel, strName);
+			dev = new DeviceUpm(intDeviceId, strModel, strName);
 			((DeviceUpm*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "house"));
 			((DeviceUpm*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "unit"));
 		
 		} else if (strcasecmp(protocol.c_str(), "x10") == 0) {
-			dev = new DeviceX10(intDeviceId, intModel, strName);
+			dev = new DeviceX10(intDeviceId, strModel, strName);
 			((DeviceX10*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "nexa_house"));
 			((DeviceX10*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "nexa_unit"));
 		
 		} else {
 			//This is a dummy device needed when the parameters isn't setup correclty.
-			dev = new DeviceUndefined(intDeviceId, intModel, strName);
+			dev = new DeviceUndefined(intDeviceId, strModel, strName);
 		}
 
 #ifdef _LINUX
@@ -175,8 +175,8 @@ bool Manager::setDeviceProtocol(int intDeviceId, const std::string &strProtocol)
 	return retval;
 }
 
-bool Manager::setDeviceModel(int intDeviceId, int intModel) {
-	return settings.setModel(intDeviceId, intModel);
+bool Manager::setDeviceModel(int intDeviceId, const std::string &strModel) {
+	return settings.setModel(intDeviceId, strModel);
 }
 
 bool Manager::setDeviceState( int intDeviceId, int intDeviceState, const std::string &strDeviceStateValue ) {

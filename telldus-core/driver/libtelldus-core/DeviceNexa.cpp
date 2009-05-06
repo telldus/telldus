@@ -11,7 +11,7 @@ using namespace TelldusCore;
 /*
 * Constructor
 */
-DeviceNexa::DeviceNexa(int id, int model, const std::string &name)
+DeviceNexa::DeviceNexa(int id, const std::string &model, const std::string &name)
 	:Device(id, model, name),
 	intHouse(0),
 	intCode(0)
@@ -155,36 +155,13 @@ bool DeviceNexa::parameterMatches( const std::string &name, const std::string &v
 * Has the device got the method?
 */
 int DeviceNexa::methods(int methodsSupported){
-	int intModel = this->getModel();
+	std::string strModel = this->getModel();
 	
-	if( (intModel == TELLSTICK_DEVICE_YCR3500) ||
-		(intModel == TELLSTICK_DEVICE_YCR300D) ||
-		(intModel == TELLSTICK_DEVICE_WSR1000) ||
-		(intModel == TELLSTICK_DEVICE_CMR1000) ||
-		(intModel == TELLSTICK_DEVICE_CMR300) ||
-		(intModel == TELLSTICK_DEVICE_PA33300) ||
-		(intModel == TELLSTICK_DEVICE_EL2000) ||
-		(intModel == TELLSTICK_DEVICE_EL2005) ||
-		(intModel == TELLSTICK_DEVICE_EL2006) ||
-		(intModel == TELLSTICK_DEVICE_SYCR3500) ||
-		(intModel == TELLSTICK_DEVICE_SYCR300) ||
-		(intModel == TELLSTICK_DEVICE_HDR105) ||
-		(intModel == TELLSTICK_DEVICE_EL2004) ||
-		(intModel == TELLSTICK_DEVICE_EL2016) ||
-		(intModel == TELLSTICK_DEVICE_EL2010) ||
-		(intModel == TELLSTICK_DEVICE_LYCR1000) ||
-		(intModel == TELLSTICK_DEVICE_LYCR300) ||
-		(intModel == TELLSTICK_DEVICE_LCMR1000) ||
-		(intModel == TELLSTICK_DEVICE_LCMR300) ||
-		(intModel == TELLSTICK_DEVICE_EL2023) ||
-		(intModel == TELLSTICK_DEVICE_EL2024) ||
-		(intModel == TELLSTICK_DEVICE_EL2021) ||
-		(intModel == TELLSTICK_DEVICE_EL2017) ||
-		(intModel == TELLSTICK_DEVICE_EL2019)
- 		)
+	if (strcasecmp(strModel.c_str(), "codeswitch") == 0 ||
+		  strcasecmp(strModel.c_str(), "selflearning") == 0)
 	{
 		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
-	} else if ( intModel == TELLSTICK_DEVICE_ML7100) {
+	} else if (strcasecmp(strModel.c_str(), "bell") == 0) {
 		if (methodsSupported & TELLSTICK_BELL) {
 			return TELLSTICK_BELL;
 		} else if (methodsSupported & TELLSTICK_TURNON) {

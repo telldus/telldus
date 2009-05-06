@@ -12,7 +12,7 @@ namespace TelldusCore {
 	class DeviceGroup : public Device
 	{
 	public:
-		DeviceGroup(int id, int model, const std::string &name);
+		DeviceGroup(int id, const std::string &model, const std::string &name);
 		~DeviceGroup(void);
 
 		virtual int methods(int methodsSupported);

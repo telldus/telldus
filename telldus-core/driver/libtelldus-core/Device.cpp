@@ -6,7 +6,7 @@ using namespace TelldusCore;
 /*
 * Constructor
 */
-Device::Device(int id, int m, const std::string &name)
+Device::Device(int id, const std::string m, const std::string &name)
 	: deviceId(id),
 		model(m),
 		deviceName(name)
@@ -42,14 +42,14 @@ int Device::switchState( int newState, const std::string &value ) {
 	return retVal;
 }
 
-int Device::getModel() const {
+std::string Device::getModel() const {
 	return model;
 }
 
-bool Device::setModel( int intModel ) {
+bool Device::setModel( const std::string &strModel ) {
 	Manager *manager = Manager::getInstance();
-	if (manager->setDeviceModel( deviceId, intModel )) {
-		model = intModel;
+	if (manager->setDeviceModel( deviceId, strModel )) {
+		model = strModel;
 		return true;
 	}
 	return false;

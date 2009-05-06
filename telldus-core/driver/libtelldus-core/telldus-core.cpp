@@ -367,29 +367,28 @@ bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
 	return blnSuccess;
 }
 
-int WINAPI tdGetModel(int intDeviceId){
-	int intReturn = 0;
+char* WINAPI tdGetModel(int intDeviceId){
+	std::string strReturn = "";
 	try{
 		Manager *manager = Manager::getInstance();
 		Device* dev = manager->getDevice(intDeviceId);
 		if (dev != NULL) {
-			intReturn = dev->getModel();
+			strReturn = dev->getModel();
 		}
 	}
 	catch(exception e){
-		intReturn = 0;
 		handleException(e);
 	}
-	return intReturn;
+	return wrapStdString(strReturn);
 }
 
-bool WINAPI tdSetModel(int intDeviceId, int intModel){
+bool WINAPI tdSetModel(int intDeviceId, const char *strModel){
 	bool blnSuccess = false;
 	try{
 		Manager *manager = Manager::getInstance();
 		Device* dev = manager->getDevice(intDeviceId);
 		if (dev != NULL) {
-			blnSuccess = dev->setModel(intModel);
+			blnSuccess = dev->setModel(strModel);
 		}
 	}
 	catch(exception e){

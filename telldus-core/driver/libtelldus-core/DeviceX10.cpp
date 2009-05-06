@@ -17,7 +17,7 @@ const char STOP_CODE[] = {S,0};
 /*
 * Constructor
 */
-DeviceX10::DeviceX10(int id, int model, const std::string &name)
+DeviceX10::DeviceX10(int id, const std::string &model, const std::string &name)
 	:Device(id, model, name),
 	intHouse(0),
 	intCode(0)

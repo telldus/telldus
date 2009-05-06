@@ -31,15 +31,15 @@ bool Settings::setProtocol(int intDeviceId, const std::string &strVendor){
 /*
 * Get the device model
 */
-int Settings::getModel(int intDeviceId) const {
-	return getIntSetting(intDeviceId, "model", false);
+std::string Settings::getModel(int intDeviceId) const {
+	return getStringSetting(intDeviceId, "model", false);
 }
 
 /*
 * Set the device model
 */
-bool Settings::setModel(int intDeviceId, int intModel){
-	return setIntSetting(intDeviceId, "model", intModel, false);
+bool Settings::setModel(int intDeviceId, const std::string &strModel){
+	return setStringSetting(intDeviceId, "model", strModel, false);
 }
 
 /*
