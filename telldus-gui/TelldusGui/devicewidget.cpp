@@ -111,7 +111,7 @@ void DeviceWidget::addGroup() {
 void DeviceWidget::deleteDevice() {
 	QMessageBox msgBox;
 	msgBox.setText( tr("Are you sure you want to remove the selected device?") );
-	msgBox.setInformativeText( tr("The device will be removed premanently from this application as well as all other applications.") );
+	msgBox.setInformativeText( tr("The device will be removed permanently from this application as well as all other applications.") );
 	msgBox.setIcon( QMessageBox::Warning );
 	msgBox.setStandardButtons( QMessageBox::Yes | QMessageBox::No );
 	msgBox.setDefaultButton( QMessageBox::No );
