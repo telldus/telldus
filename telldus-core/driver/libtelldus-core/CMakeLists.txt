@@ -117,6 +117,7 @@ ELSEIF (WIN32)
 	SET( telldus-core_SRCS
 		${telldus-core_SRCS}
 		win/Device.cpp
+		libtelldus-core.def
 	)
 	ADD_DEFINITIONS(
 		-D_WINDOWS
