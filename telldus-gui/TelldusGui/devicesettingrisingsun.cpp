@@ -104,8 +104,8 @@ DeviceSettingRisingSun::DeviceSettingRisingSun(Device *device, QWidget *parent)
 	dialUnit->setWrapping(true);
 	gridLayoutRight->addWidget(dialUnit, 1, 1, 1, 2);
 
-	dialHouse->setValue( device->parameter("nexa_house", "1").toInt() );
-	dialUnit->setValue( device->parameter("nexa_unit", "1").toInt() );
+	dialHouse->setValue( device->parameter("house", "1").toInt() );
+	dialUnit->setValue( device->parameter("unit", "1").toInt() );
 }
 
 
@@ -116,7 +116,7 @@ DeviceSettingRisingSun::~DeviceSettingRisingSun()
 void DeviceSettingRisingSun::saveParameters() {
 	int house = (dialHouse->value() == 0 ? 4 : dialHouse->value());
 	int unit = (dialUnit->value() == 0 ? 4 : dialUnit->value());
-	p_device->setParameter( "nexa_house", QString::number(house) );
-	p_device->setParameter( "nexa_unit", QString::number(unit) );
+	p_device->setParameter( "house", QString::number(house) );
+	p_device->setParameter( "unit", QString::number(unit) );
 }
 

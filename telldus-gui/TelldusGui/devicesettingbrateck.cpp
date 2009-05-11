@@ -44,7 +44,7 @@ DeviceSettingBrateck::DeviceSettingBrateck(Device *device, QWidget *parent)
 	layout->addLayout( gl );
 	layout->addSpacerItem( new QSpacerItem(20, 109, QSizePolicy::Minimum, QSizePolicy::Expanding) );
 
-	setting = device->parameter("nexa_house", "00000000");
+	setting = device->parameter("house", "00000000");
 	setting.truncate(8); //Make sure it is the correct length
 	for (int i = 0; i < 8; ++i) {
 		if (setting[i] == '0') {
@@ -61,7 +61,7 @@ DeviceSettingBrateck::~DeviceSettingBrateck() {
 }
 
 void DeviceSettingBrateck::saveParameters() {
-	p_device->setParameter( "nexa_house", setting );
+	p_device->setParameter( "house", setting );
 }
 
 void DeviceSettingBrateck::sliderChanged( int value ) {
