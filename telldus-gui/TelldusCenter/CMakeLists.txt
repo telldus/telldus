@@ -37,6 +37,7 @@ FIND_LIBRARY( TELLDUSCORE_LIBRARY telldus-core )
 
 SET( telldus-center_LIBRARIES
 	${QT_LIBRARIES}
+	"${QT_LIBRARY_DIR}/qtmain.lib"
 	${TELLDUSCORE_LIBRARY}
 )
 
@@ -54,7 +55,13 @@ ELSEIF (WIN32) #### Windows ####
 	INCLUDE_DIRECTORIES(
 		${TELLDUSCORE_INCLUDE_DIR}
 	)
-
+	SET(CMAKE_EXE_LINKER_FLAGS
+		"${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:WINDOWS"
+	)
+	SET( telldus-center_LIBRARIES
+		${telldus-center_LIBRARIES}
+		"${QT_LIBRARY_DIR}/qtmain.lib"
+	)
 ELSE (APPLE) #### Linux ####
 
 ENDIF (APPLE)
