@@ -25,14 +25,7 @@ char* __stdcall devGetVendor(int intDeviceId){
 }
 
 char* __stdcall devGetModel(int intDeviceId){
-	int intModel = tdGetModel(intDeviceId);
-
-	std::ostringstream ss;
-	std::string str;
-	ss << intModel;
-	str = ss.str();
-	char *strModel = (char *)SysAllocStringByteLen (str.c_str(), (UINT)str.length());
-	return strModel;
+	return tdGetModel(intDeviceId);
 }
 
 int __stdcall devGetNumberOfArguments(int intDeviceId){
@@ -56,8 +49,7 @@ bool __stdcall devSetVendor(int intDeviceId, char* strVendor) {
 }
 
 bool __stdcall devSetModel(int intDeviceId, char* strNewModel){
-	int intModel = atoi(strNewModel);
-	return tdSetModel(intDeviceId, intModel);
+	return tdSetModel(intDeviceId, strNewModel);
 }
 
 bool __stdcall devSetArguments(int intDeviceId, char* strArguments){
