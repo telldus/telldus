@@ -26,7 +26,7 @@ bool DeviceSartano::setCode(const std::string &strNewCode) {
 }
 
 bool DeviceSartano::setDeviceParameter(const std::string &strName, const std::string &strValue) {
-	if (strName.compare("sartano_code") == 0) {
+	if (strName.compare("code") == 0) {
 		return setCode(strValue);
 	}
 	return false;
