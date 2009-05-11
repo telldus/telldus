@@ -62,6 +62,10 @@ ELSEIF (WIN32) #### Windows ####
 		${telldus-center_LIBRARIES}
 		"${QT_LIBRARY_DIR}/qtmain.lib"
 	)
+	SET(telldus-center_SRCS
+		${telldus-center_SRCS}
+		resource.rc
+	)
 ELSE (APPLE) #### Linux ####
 
 ENDIF (APPLE)
@@ -73,7 +77,7 @@ ADD_EXECUTABLE(${telldus-center_TARGET}
 	${telldus-center_SRCS}
 	${telldus-center_MOC_SRCS}
 	${telldus-center_RSRCS}
-	)
+)
 
 TARGET_LINK_LIBRARIES( ${telldus-center_TARGET}	${telldus-center_LIBRARIES} )
 
