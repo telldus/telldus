@@ -1,4 +1,4 @@
-LIBRARY telldus-core
+LIBRARY tellduscore
 EXPORTS
 	tdGetNumberOfDevices @1
 	tdGetDeviceId @2
@@ -30,3 +30,6 @@ EXPORTS
 	tdRegisterDeviceEvent @21
 	tdLastSentCommand @22
 	tdGetDeviceType @23
+
+	tdSendRawCommand @24
+	tdRegisterRawDeviceEvent @25
