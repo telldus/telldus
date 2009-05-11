@@ -75,9 +75,6 @@ Device *Manager::getDevice(int intDeviceId){
 
 	try{
 		std::string protocol = settings.getProtocol(intDeviceId);
-		if (protocol.length() == 0) {
-			return NULL;
-		}
 		std::string strModel = settings.getModel(intDeviceId);
 		std::string strName = settings.getName(intDeviceId);
 
