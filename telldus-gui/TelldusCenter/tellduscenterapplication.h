@@ -24,7 +24,6 @@ public:
 #endif
 
 	PluginList plugins() const;
-	void showMainWindow();
 
 	void loadPlugins();
 	void loadScripts();
@@ -39,6 +38,7 @@ signals:
 public slots:
 	void eventTriggered( const QString &name, const QString &title );
 	bool isMainWindowShown();
+	void showMainWindow();
 
 private slots:
 	void deviceEvent(int deviceId, int method, const QString &data);

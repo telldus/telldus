@@ -6,6 +6,7 @@ SystrayObject::SystrayObject( QObject * parent )
 		icon( new SystrayIcon )
 {
 	connect(icon, SIGNAL(showEventMessage(QString,QString,QString)), qApp, SIGNAL(showMessage(QString,QString,QString)));
+	connect(icon, SIGNAL(triggered()), this, SIGNAL(triggered()));
 }
 
 SystrayObject::~SystrayObject() {

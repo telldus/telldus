@@ -11,7 +11,7 @@ SystrayIcon::SystrayIcon( QObject * parent )
 #if defined(Q_WS_MAC)
 	setIcon(QIcon(":/images/devices-bw.png"));
 #else
-	setIcon(QIcon(":/images/devices.png"));
+	setIcon(QIcon(":/images/TelldusCenter_128.png"));
 	connect(this, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(activated(QSystemTrayIcon::ActivationReason)));
 #endif
 	qApp->setQuitOnLastWindowClosed( false );
@@ -21,14 +21,13 @@ SystrayIcon::SystrayIcon( QObject * parent )
 	show();
 }
 
-#if !defined(Q_WS_MAC)
 void SystrayIcon::activated( QSystemTrayIcon::ActivationReason reason ) {
+#if !defined(Q_WS_MAC)
 	if (reason == QSystemTrayIcon::Trigger) {
-//		TelldusCenterApplication *app = TelldusCenterApplication::instance();
-//		app->showMainWindow();
+		emit triggered();
 	}
-}
 #endif
+}
 
 void SystrayIcon::on() {
 	QAction *action = qobject_cast<QAction*>(sender());
