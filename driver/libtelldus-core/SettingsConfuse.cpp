@@ -289,20 +289,12 @@ bool readConfig(cfg_t **cfg) {
 		//Groups
 		CFG_STR("devices", 0, CFGF_NONE),
 
-		//Nexa
-		CFG_STR("nexa_house", 0, CFGF_NONE),
-		CFG_STR("nexa_unit", 0, CFGF_NONE),
-
-		//Sartano
-		CFG_STR("sartano_code", 0, CFGF_NONE),
-
-		//Ikea
-		CFG_STR("ikea_system", 0, CFGF_NONE),
-		CFG_STR("ikea_units", 0, CFGF_NONE),
-		CFG_STR("ikea_fade", 0, CFGF_NONE),
-
 		CFG_STR("house", 0, CFGF_NONE),
 		CFG_STR("unit", 0, CFGF_NONE),
+		CFG_STR("code", 0, CFGF_NONE),
+		CFG_STR("system", 0, CFGF_NONE),
+		CFG_STR("units", 0, CFGF_NONE),
+		CFG_STR("fade", 0, CFGF_NONE),
 
 		CFG_END()
 	};

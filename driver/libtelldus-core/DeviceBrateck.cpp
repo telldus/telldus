@@ -34,7 +34,7 @@ bool DeviceBrateck::setHouse(const std::string &strNewHouse) {
 }
 
 bool DeviceBrateck::setDeviceParameter(const std::string &strName, const std::string &strValue) {
-	if (strName.compare("nexa_house") == 0) {
+	if (strName.compare("house") == 0) {
 		return setHouse(strValue);
 	}
 	return false;

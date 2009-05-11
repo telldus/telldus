@@ -47,9 +47,9 @@ bool DeviceNexa::setUnit(const std::string &newUnit) {
 }
 
 bool DeviceNexa::setDeviceParameter(const std::string &strName, const std::string &strValue) {
-	if (strName.compare("nexa_house") == 0) {
+	if (strName.compare("house") == 0) {
 		return setHouse(strValue);
-	} else if (strName.compare("nexa_unit") == 0) {
+	} else if (strName.compare("unit") == 0) {
 		return setUnit(strValue);
 	}
 	return false;

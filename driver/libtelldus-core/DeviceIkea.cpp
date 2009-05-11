@@ -74,11 +74,11 @@ DeviceIkea::~DeviceIkea(void)
 }
 
 bool DeviceIkea::setDeviceParameter(const std::string &strName, const std::string &strValue) {
-	if (strName.compare("ikea_system") == 0) {
+	if (strName.compare("system") == 0) {
 		return setSystem(strValue);
-	} else if (strName.compare("ikea_units") == 0) {
+	} else if (strName.compare("units") == 0) {
 		return setUnits(strValue);
-	} else if (strName.compare("ikea_fade") == 0) {
+	} else if (strName.compare("fade") == 0) {
 		return setFade(strValue);
 	}
 	return false;
