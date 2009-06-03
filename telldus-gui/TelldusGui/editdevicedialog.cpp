@@ -3,6 +3,7 @@
 #include "vendordevicetreeitem.h"
 #include "device.h"
 
+#include "devicesettingarctechselflearning.h"
 #include "devicesettingbrateck.h"
 #include "devicesettingikea.h"
 #include "devicesettingnexa.h"
@@ -104,7 +105,8 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 	deviceSettings[5] = new DeviceSettingRisingSun(device, this);
 	deviceSettings[6] = new DeviceSettingBrateck(device, this);
 	deviceSettings[7] = new DeviceSettingUpm(device, this);
-	foreach( DeviceSetting *s, deviceSettings ) {
+	deviceSettings[8] = new DeviceSettingArctechSelflearning(device, this);
+foreach( DeviceSetting *s, deviceSettings ) {
 		settingsLayout->addWidget( s );
 	}
 

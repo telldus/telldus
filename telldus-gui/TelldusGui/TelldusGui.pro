@@ -12,6 +12,7 @@ SOURCES += telldusgui.cpp \
     editgroupdialog.cpp \
     vendordevicemodel.cpp \
     vendordevicetreeitem.cpp \
+    devicesettingarctechselflearning.cpp \
     devicesettingbrateck.cpp \
     devicesettingikea.cpp \
     devicesettingnexa.cpp \
@@ -30,6 +31,7 @@ HEADERS += telldusgui.h \
     editgroupdialog.h \
     vendordevicemodel.h \
     vendordevicetreeitem.h \
+    devicesettingarctechselflearning.h \
     devicesettingbrateck.h \
     devicesettingikea.h \
     devicesettingnexa.h \
