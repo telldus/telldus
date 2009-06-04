@@ -232,6 +232,11 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
 	return TELLSTICK_ERROR_UNKNOWN;
 }
 
+/**
+ * Returns the last sent command to a specific device
+ * @param intDeviceId The device id to query
+ * @returns the last sent command as integer, example TELLSTICK_TURNON or TELLSTICK_TURNOFF
+ */
 int WINAPI tdLastSentCommand( int intDeviceId ) {
 	Manager *manager = Manager::getInstance();
 	int lastSentCommand = manager->getDeviceState( intDeviceId );
