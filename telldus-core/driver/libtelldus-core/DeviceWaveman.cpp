@@ -21,8 +21,8 @@ DeviceWaveman::DeviceWaveman(int id, const std::string &model, const std::string
 int DeviceWaveman::turnOff(void){
 	
 	try{
-		std::string strCode = getStringCode(intHouse);
-		std::string strUnit = getStringCode(intCode);
+		std::string strCode = getStringCodeSwitch(intHouse);
+		std::string strUnit = getStringCodeSwitch(intCode);
 		strCode.append(strUnit);
 		
 		strCode.insert(0, "S");
