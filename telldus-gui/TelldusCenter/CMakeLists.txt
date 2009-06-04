@@ -37,7 +37,6 @@ FIND_LIBRARY( TELLDUSCORE_LIBRARY telldus-core )
 
 SET( telldus-center_LIBRARIES
 	${QT_LIBRARIES}
-	"${QT_LIBRARY_DIR}/qtmain.lib"
 	${TELLDUSCORE_LIBRARY}
 )
 
