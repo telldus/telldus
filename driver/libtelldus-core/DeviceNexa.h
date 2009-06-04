@@ -22,11 +22,16 @@ namespace TelldusCore {
 		virtual bool setDeviceParameter(const std::string &strName, const std::string &strValue);
 		virtual int turnOn(void);
 		virtual int turnOff(void);
+		virtual int dim(unsigned char level);
 		virtual int bell(void);
+		
+		bool isSelflearning() const;
+		bool isDimmer() const;
 
 		int intHouse;
 		int intCode;
-		std::string getStringCode(int);
+		std::string getStringCodeSwitch(int);
+		std::string getStringSelflearning(bool dim, unsigned char level);
 	};
 	
 }
