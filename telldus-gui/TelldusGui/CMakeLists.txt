@@ -15,6 +15,7 @@ SET( telldus-gui_SRCS
 	editgroupdialog.cpp
 	vendordevicemodel.cpp
 	vendordevicetreeitem.cpp
+	devicesettingarctechselflearning.cpp
 	devicesettingbrateck.cpp
 	devicesettingikea.cpp
 	devicesettingnexa.cpp
@@ -39,6 +40,7 @@ SET( telldus-gui_MOC_HDRS
 	editgroupdialog.h
 	vendordevicemodel.h
 	vendordevicetreeitem.h
+	devicesettingarctechselflearning.h
 	devicesettingbrateck.h
 	devicesettingikea.h
 	devicesettingnexa.h
