@@ -37,16 +37,24 @@
  *    Arg 6: DimStyle (0=instant change, 1=gradually change)
  ******************************************************************************/
 
+/*******************************************************************************
+ * Modifications to rfcmd.c ver 2.1.0 done by Tord Andersson
+ *  Introduced semaphore protection to avoid problems with simultaneous port 
+ *  access from several processes (typically cron jobs). Note! Need rt lib. 
+ ******************************************************************************/
+
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <fcntl.h>
 #include <unistd.h>
 #include <termios.h>
+#include <semaphore.h>
 
 #define PROG_NAME "rfcmd"
-#define PROG_VERSION "2.0.1"
-/* #define RFCMD_DEBUG */
+#define PROG_VERSION "2.1.0"
+/* #define RFCMD_DEBUG */ 
 
 /* Local function declarations */
 int createNexaString(const char * pHouseStr, const char * pChannelStr,
@@ -67,6 +75,10 @@ int main( int argc, char **argv )
 {
 	struct termios tio;
 	int fd = -1;
+	sem_t * portMutex;
+	char SEM_NAME[]= "RFCMD_SEM"; /* Semaphore for multiple access ctrl */
+
+
 	char txStr[100];
 
 	if( (argc == 6) && (strcmp(*(argv+2), "NEXA") == 0)) {
@@ -100,12 +112,39 @@ int main( int argc, char **argv )
 
 #ifdef RFCMD_DEBUG
 	printf("txStr: %s\n", txStr);
+
 #endif
 
 	if(strlen(txStr) > 0) {
+		/* create the semaphore - will reuse an existing one if it exists */
+		portMutex = sem_open(SEM_NAME,O_CREAT,0644,1);
+    		if(portMutex == SEM_FAILED)
+    		{
+			fprintf(stderr,  "%s - Error creating port semaphore\n", PROG_NAME);
+			perror("Semaphore open error");
+                        sem_unlink(SEM_NAME);
+      			exit(1);
+		}
+
+		/* lock semaphore to protect port from multiple access */
+    		if(sem_wait(portMutex) != 0)
+		{
+                        fprintf(stderr,  "%s - Error aquiring port semaphore\n", PROG_NAME);
+                        sem_unlink(SEM_NAME);
+                        sem_close(portMutex);
+                        exit(1); 
+		}
+
+
 		if (strcmp(*(argv+1), "LIBUSB") != 0) {
 			if( 0 > ( fd = open( *(argv+1), O_RDWR ) ) ) {
 				fprintf(stderr,  "%s - Error opening %s\n", PROG_NAME, *(argv+1));
+                		if(sem_post(portMutex) != 0)
+                		{
+                        		fprintf(stderr,  "%s - Error releasing port semaphore\n", PROG_NAME);
+				}
+                        	sem_unlink(SEM_NAME);
+                        	sem_close(portMutex);
 				exit(1);
 			}
 
@@ -129,6 +168,19 @@ int main( int argc, char **argv )
 #else
 			fprintf(stderr,  "%s - Support for libftdi is not compiled in, please recompile rfcmd with support for libftdi\n", PROG_NAME);
 #endif
+		}
+		/* Unlock semaphore */
+    		if(sem_post(portMutex) != 0)
+    		{
+                        fprintf(stderr,  "%s - Error releasing port semaphore\n", PROG_NAME);
+                        sem_unlink(SEM_NAME);
+			sem_close(portMutex);          
+        		exit(1);
+    		}
+		else
+		{
+                        sem_unlink(SEM_NAME);
+			sem_close(portMutex);	
 		}
 	}
   exit(0);
@@ -232,10 +284,6 @@ int createSartanoString(const char * pChannelStr, const char * pOn_offStr,
 		/* add stop/sync bit and command termination char '+'*/
 		strcat(pTxStr,"$k+");
 	}
-
-#ifdef RFCMD_DEBUG
-	printf("txCode: %04X\n", txCode);
-#endif
 
 	return strlen(pTxStr);
 }
