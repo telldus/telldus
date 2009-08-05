@@ -5,7 +5,7 @@ if test "$PHP_TELLDUS" = "yes"; then
 	AC_DEFINE(HAVE_TELLDUS, 1, [Whether you have Telldus TellStick])
 
 	SEARCH_PATH="/usr/local /usr"
-	SEARCH_FOR="/include/TellUsbD101.h"
+	SEARCH_FOR="/include/telldus-core.h"
 	if test -r $PHP_TELLDUS/; then # path given as parameter
 		TELLDUS_DIR=$PHP_TELLDUS
 	else # search default path list
@@ -24,8 +24,8 @@ if test "$PHP_TELLDUS" = "yes"; then
 	# --enable-telldus -> add include path
 	PHP_ADD_INCLUDE($TELLDUS_DIR/include)
 	# --enable-telldus -> check for lib and symbol presence
-	LIBNAME=tellusbd101
-	LIBSYMBOL=devGetNumberOfDevices
+	LIBNAME=telldus-core
+	LIBSYMBOL=tdGetNumberOfDevices
 	PHP_CHECK_LIBRARY($LIBNAME,$LIBSYMBOL,
 	[
 		PHP_ADD_LIBRARY_WITH_PATH($LIBNAME, $TELLDUS_DIR/lib, TELLDUS_SHARED_LIBADD)
@@ -39,3 +39,4 @@ if test "$PHP_TELLDUS" = "yes"; then
 
 	PHP_NEW_EXTENSION(telldus, telldus.c, $ext_shared)
 fi
+

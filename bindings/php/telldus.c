@@ -4,19 +4,19 @@
 
 #include "php.h"
 #include "php_telldus.h"
-#include "TellUsbD101.h"
+#include <telldus-core.h>
 
 
 static function_entry telldus_functions[] = {
-	PHP_FE(telldus_dev_turn_on, NULL)
-	PHP_FE(telldus_dev_turn_off, NULL)
-	PHP_FE(telldus_dev_bell, NULL)
-	PHP_FE(telldus_dev_dim, NULL)
-	PHP_FE(telldus_dev_methods, NULL)
+	PHP_FE(tdTurnOn, NULL)
+	PHP_FE(tdTurnOff, NULL)
+	PHP_FE(tdBell, NULL)
+	PHP_FE(tdDim, NULL)
+	PHP_FE(tdMethods, NULL)
 
-	PHP_FE(telldus_get_number_of_devices, NULL)
-	PHP_FE(telldus_get_device_id, NULL)
-	PHP_FE(telldus_get_name, NULL)
+	PHP_FE(tdGetNumberOfDevices, NULL)
+	PHP_FE(tdGetDeviceId, NULL)
+	PHP_FE(tdGetName, NULL)
 	{NULL, NULL, NULL}
 };
 
@@ -63,7 +63,7 @@ PHP_MSHUTDOWN_FUNCTION(telldus)
 	return SUCCESS;
 }
 
-PHP_FUNCTION(telldus_dev_turn_on)
+PHP_FUNCTION(tdTurnOn)
 {
 	long id;
 
@@ -71,10 +71,10 @@ PHP_FUNCTION(telldus_dev_turn_on)
 		RETURN_NULL();
 	}
 
-	RETURN_BOOL( devTurnOn( id ) );
+	RETURN_BOOL( tdTurnOn( id ) );
 }
 
-PHP_FUNCTION(telldus_dev_turn_off)
+PHP_FUNCTION(tdTurnOff)
 {
 	long id;
 
@@ -82,10 +82,10 @@ PHP_FUNCTION(telldus_dev_turn_off)
 		RETURN_NULL();
 	}
 
-	RETURN_BOOL( devTurnOff( id ) );
+	RETURN_BOOL( tdTurnOff( id ) );
 }
 
-PHP_FUNCTION(telldus_dev_bell)
+PHP_FUNCTION(tdBell)
 {
 	long id;
 
@@ -93,10 +93,10 @@ PHP_FUNCTION(telldus_dev_bell)
 		RETURN_NULL();
 	}
 
-	RETURN_BOOL( devBell( id ) );
+	RETURN_BOOL( tdBell( id ) );
 }
 
-PHP_FUNCTION(telldus_dev_dim)
+PHP_FUNCTION(tdDim)
 {
 	long id;
 	long level;
@@ -108,30 +108,31 @@ PHP_FUNCTION(telldus_dev_dim)
 		RETURN_NULL();
 	}
 
-	RETURN_BOOL( devDim( id, level ) );
+	RETURN_BOOL( tdDim( id, level ) );
 }
 
 
-PHP_FUNCTION(telldus_dev_methods)
+PHP_FUNCTION(tdMethods)
 {
 	long id;
+	long supportedMethods;
 	long methods;
 
-	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "l", &id) == FAILURE) {
+	if (zend_parse_parameters(ZEND_NUM_ARGS() TSRMLS_CC, "ll", &id, &supportedMethods) == FAILURE) {
 		RETURN_NULL();
 	}
 
-	methods = devMethods( id );
+	methods = tdMethods( id, supportedMethods );
 	RETURN_LONG(methods);
 }
 
-PHP_FUNCTION(telldus_get_number_of_devices)
+PHP_FUNCTION(tdGetNumberOfDevices)
 {
-	int nbr = devGetNumberOfDevices();
+	int nbr = tdGetNumberOfDevices();
 	RETURN_LONG(nbr);
 }
 
-PHP_FUNCTION(telldus_get_device_id)
+PHP_FUNCTION(tdGetDeviceId)
 {
 	long index;
 
@@ -139,10 +140,10 @@ PHP_FUNCTION(telldus_get_device_id)
 		RETURN_LONG(0);
 	}
 
-	RETURN_LONG( devGetDeviceId( index ) );
+	RETURN_LONG( tdGetDeviceId( index ) );
 }
 
-PHP_FUNCTION(telldus_get_name)
+PHP_FUNCTION(tdGetName)
 {
 	long id;
 	char *name;
@@ -151,6 +152,7 @@ PHP_FUNCTION(telldus_get_name)
 		RETURN_NULL();
 	}
 
-	name = devGetName( id );
+	name = tdGetName( id );
 	RETURN_STRING( name, 1 );
 }
+
