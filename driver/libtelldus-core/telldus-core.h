@@ -24,6 +24,10 @@
 typedef void (WINAPI *deviceEvent)(int deviceId, int method, const char *data, int callbackId, void *context);
 typedef void (WINAPI *rawDeviceEvent)(const char *data, int callbackId, void *context);
 
+#ifndef __cplusplus 
+	#define bool char 
+#endif 
+
 #ifdef __cplusplus
 extern "C" {
 #endif
