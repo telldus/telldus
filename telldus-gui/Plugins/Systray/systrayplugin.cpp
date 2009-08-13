@@ -21,7 +21,7 @@ SystrayPlugin::~SystrayPlugin() {
 
 void SystrayPlugin::initialize ( const QString & key, QScriptEngine * engine ) {
 	if (key == "com.telldus.systray") {
-		d->icon = new SystrayObject(this);
+		d->icon = new SystrayObject(engine, this);
 
 		QScriptValue value = engine->newQObject(d->icon);
 		engine->globalObject().property("com").property("telldus").setProperty("systray", value);
