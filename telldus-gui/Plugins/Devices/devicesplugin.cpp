@@ -1,27 +1,40 @@
 #include <QtCore>
 #include <QLabel>
 #include <QApplication>
+#include <QScriptEngine>
 #include "devicesplugin.h"
 
 #include "../../TelldusGui/telldusgui.h"
+#include "../../TelldusCenter/tellduscenterapplication.h"
 
-QIcon DevicesPlugin::iconForPage( const QString &page ) const {
-	return QIcon(":/images/devices.png");
+DevicesPlugin::DevicesPlugin( QObject * parent )
+	:QScriptExtensionPlugin( parent )
+{
 }
 
-QString DevicesPlugin::pluginName() const {
-	return "Devices";
+DevicesPlugin::~DevicesPlugin() {
 }
 
-QWidget *DevicesPlugin::widget( const QString &page, QWidget *parent ) const {
-	QWidget *deviceWidget = tdDeviceWidget(parent);
-	connect(deviceWidget, SIGNAL(showMessage(const QString &, const QString &, const QString &)), qApp, SIGNAL(showMessage(const QString &, const QString &, const QString &)));
-	connect(deviceWidget, SIGNAL(eventTriggered(const QString &, const QString &)), qApp, SLOT(eventTriggered(const QString &, const QString &)));
-	return deviceWidget;
+void DevicesPlugin::initialize ( const QString & key, QScriptEngine * engine ) {
+	if (key == "com.telldus.gui") {
+		qDebug() << "TelldusGui initiating";
+		TelldusCenterApplication *app = TelldusCenterApplication::instance();
+		
+		QWidget *deviceWidget = tdDeviceWidget(0);
+		connect(deviceWidget, SIGNAL(showMessage(const QString &, const QString &, const QString &)), qApp, SIGNAL(showMessage(const QString &, const QString &, const QString &)));
+		connect(deviceWidget, SIGNAL(eventTriggered(const QString &, const QString &)), qApp, SLOT(eventTriggered(const QString &, const QString &)));
+
+		QScriptValue value = engine->newQObject(deviceWidget);
+		engine->globalObject().property("com").property("telldus").setProperty("gui", value);
+
+		app->addWidget("devices.default", QIcon(":/images/devices.png"), deviceWidget);
+	}
 }
 
-QStringList DevicesPlugin::widgets() const {
-	return QStringList() << "devices.default";
+QStringList DevicesPlugin::keys () const {
+	return QStringList() << "com.telldus.gui";
 }
 
 Q_EXPORT_PLUGIN2(DevicesInterface, DevicesPlugin)
+
+

@@ -1,20 +1,15 @@
 #ifndef DEVICESPLUGIN_H
 #define DEVICESPLUGIN_H
 
-#include <QtCore/QObject>
-#include <QIcon>
-#include "../../TelldusCenter/tellduscenterplugin.h"
+#include <QScriptExtensionPlugin>
 
-class DevicesPlugin : public QObject, public TelldusCenterPlugin
-{
-	Q_OBJECT
-	Q_INTERFACES(TelldusCenterPlugin)
+class DevicesPlugin : public QScriptExtensionPlugin {
 public:
-	virtual QIcon iconForPage( const QString &page ) const;
-	virtual QString pluginName() const;
+	DevicesPlugin ( QObject * parent = 0 );
+	~DevicesPlugin ();
 
-	virtual QWidget *widget( const QString &page, QWidget *parent ) const;
-	virtual QStringList widgets() const;
+	virtual void initialize ( const QString & key, QScriptEngine * engine );
+	virtual QStringList keys () const;
 
 };
 
