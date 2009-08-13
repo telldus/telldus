@@ -75,9 +75,6 @@ Device *Manager::getDevice(int intDeviceId){
 
 	try{
 		std::string protocol = settings.getProtocol(intDeviceId);
-		if (protocol.length() == 0) {
-			return NULL;
-		}
 		std::string strModel = settings.getModel(intDeviceId);
 		std::string strName = settings.getName(intDeviceId);
 
@@ -126,7 +123,7 @@ Device *Manager::getDevice(int intDeviceId){
 			((DeviceX10*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "unit"));
 		
 		} else {
-			//This is a dummy device needed when the parameters isn't setup correclty.
+			//This is a dummy device needed when the parameters isn't setup correctly.
 			dev = new DeviceUndefined(intDeviceId, strModel, strName);
 		}
 
