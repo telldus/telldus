@@ -8,13 +8,14 @@
 
 bool storeGlobal(privateVars *d);
 
+const int intMaxRegValueLength = 1000;
+
 class privateVars {
 public:
 	HKEY hk;
 	HKEY rootKey;
 	std::string strRegPathDevice;
-	std::string strRegPath;
-	int intMaxRegValueLength;
+	std::string strRegPath;	
 };
 
 /*
@@ -25,7 +26,6 @@ Settings::Settings(void)
 	d = new privateVars();
 	d->strRegPathDevice = "SOFTWARE\\Telldus\\Devices\\";
 	d->strRegPath = "SOFTWARE\\Telldus\\";
-	d->intMaxRegValueLength = 1000;
 	if (storeGlobal(d)) {
 		d->rootKey = HKEY_LOCAL_MACHINE;
 	} else {
@@ -41,7 +41,6 @@ Settings::~Settings(void)
 	//RegCloseKey(hk);	//close all, if still open //TODO: Need some way to know if open or closed
 	d->strRegPath = "";
 	d->strRegPathDevice = "";
-	d->intMaxRegValueLength = -1;
 
 }
 
@@ -86,7 +85,7 @@ int Settings::getDeviceId(int intDeviceIndex) const {
 				
 		if(lnExists == ERROR_SUCCESS){
 		
-			char* Buff = new char[d->intMaxRegValueLength];
+			char* Buff = new char[intMaxRegValueLength];
 			DWORD size;
 			if (RegEnumKeyEx(d->hk, intDeviceIndex, (LPSTR)Buff, &size, NULL, NULL, NULL, NULL) == ERROR_SUCCESS) {
 				intReturn = (int)_atoi64(Buff);
@@ -162,7 +161,7 @@ int Settings::getNextDeviceId() const {
 		if(lnExists == ERROR_SUCCESS){
 			
 			DWORD dwLength;
-			char* Buff = new char[d->intMaxRegValueLength];
+			char* Buff = new char[intMaxRegValueLength];
 
 			long lngStatus = RegQueryValueEx(d->hk, "LastUsedId", NULL, NULL, (LPBYTE)Buff, &dwLength);
 
@@ -230,7 +229,7 @@ std::string Settings::getStringSetting(int intDeviceId, const std::string &name,
 				
 		if(lnExists == ERROR_SUCCESS){
 			DWORD dwLength;
-			char* Buff = new char[d->intMaxRegValueLength];
+			char* Buff = new char[intMaxRegValueLength];
 
 			long lngStatus = RegQueryValueEx(d->hk, name.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
 			if(lngStatus == ERROR_MORE_DATA){
@@ -263,8 +262,8 @@ bool Settings::setStringSetting(int intDeviceId, const std::string &name, const 
 		long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_WRITE, &d->hk);
 				
 		if(lnExists == ERROR_SUCCESS){
-			d->intMaxRegValueLength = (int)value.length();
-			RegSetValueEx(d->hk, name.c_str(), 0, REG_SZ, (LPBYTE)value.c_str(), d->intMaxRegValueLength);
+			int length = (int)value.length();
+			RegSetValueEx(d->hk, name.c_str(), 0, REG_SZ, (LPBYTE)value.c_str(), length);
 		}
 		else{
 			throw std::exception();	//couldn't open reg key
@@ -316,7 +315,7 @@ bool storeGlobal(privateVars *d) {
 		if(lnExists == ERROR_SUCCESS){
 			
 			DWORD dwLength;
-			char* Buff = new char[d->intMaxRegValueLength];
+			char* Buff = new char[intMaxRegValueLength];
 
 			long lngStatus = RegQueryValueEx(d->hk, "SharedDevices", NULL, NULL, (LPBYTE)Buff, &dwLength);
 
