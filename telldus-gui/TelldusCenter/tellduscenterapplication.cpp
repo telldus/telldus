@@ -157,7 +157,7 @@ void TelldusCenterApplication::loadToolbar() {
 		foreach( TelldusCenterPlugin *plugin, d->plugins ) {
 			QStringList widgets = plugin->widgets();
 			foreach( QString widget, widgets ) {
-				d->mainWindow->addWidget( widget, plugin->iconForPage( PluginTree::page(widget) ), plugin->widget(widget, d->mainWindow, &d->scriptEngine) );
+				d->mainWindow->addWidget( widget, plugin->iconForPage( PluginTree::page(widget) ), plugin->widget(widget, d->mainWindow) );
 			}
 		}
 	}
