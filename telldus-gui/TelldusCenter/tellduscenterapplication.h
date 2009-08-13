@@ -31,7 +31,6 @@ public:
 
 	static TelldusCenterApplication *instance();
 	
-	void addWidget( const QString &page, const QIcon &icon, QWidget *widget );
 
 signals:
 	void allDoneLoading();
@@ -39,6 +38,8 @@ signals:
 	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
 
 public slots:
+	void addWidget( const QString &page, const QString &icon, QWidget *widget );
+	void addWidget( const QString &page, const QIcon &icon, QWidget *widget );
 	void eventTriggered( const QString &name, const QString &title );
 	bool isMainWindowShown();
 	QScriptValue mainWindow();

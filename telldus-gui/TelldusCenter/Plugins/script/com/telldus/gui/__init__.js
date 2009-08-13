@@ -6,6 +6,7 @@ __postInit__ = function() {
 	com.telldus.gui.deviceChange.connect(com.telldus.core.deviceChange);
 	com.telldus.core.deviceChange.connect(deviceChange);
 	application.allDoneLoading.connect( allDone );
+	application.addWidget("devices.default", ":/images/devices.png", com.telldus.gui);
 }
 
 function allDone() {

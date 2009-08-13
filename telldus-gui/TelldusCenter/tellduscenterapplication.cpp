@@ -163,6 +163,10 @@ void TelldusCenterApplication::loadToolbar() {
 	}
 }
 
+void TelldusCenterApplication::addWidget( const QString &page, const QString &icon, QWidget *widget ) {
+	d->mainWindow->addWidget(page, QIcon(icon), widget);
+}
+
 void TelldusCenterApplication::addWidget( const QString &page, const QIcon &icon, QWidget *widget ) {
 	d->mainWindow->addWidget(page, icon, widget);
 }
