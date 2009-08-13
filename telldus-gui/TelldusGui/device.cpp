@@ -45,6 +45,10 @@ Device::~Device() {
 	delete d;
 }
 
+int Device::deviceId() const {
+	return d->id;
+}
+
 void Device::setModel( const QString &model ) {
 	d->model = model;
 	d->modelChanged = true;

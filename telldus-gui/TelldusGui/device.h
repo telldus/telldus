@@ -21,6 +21,8 @@ public:
 	static Device *newDevice( );
 	static bool deviceLoaded( int id );
 
+	int deviceId() const;
+
 	void setModel( const QString &model );
 	QString model() const;
 
