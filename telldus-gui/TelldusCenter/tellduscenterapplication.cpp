@@ -37,6 +37,7 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 	tdInit();
 	tdRegisterDeviceEvent( &TelldusCenterApplication::deviceEvent, 0 );
 
+	emit allDoneLoading();
 }
 
 TelldusCenterApplication::~TelldusCenterApplication() {
@@ -50,6 +51,11 @@ PluginList TelldusCenterApplication::plugins() const {
 		return PluginList();
 	}
 	return d->plugins;
+}
+
+QScriptValue TelldusCenterApplication::mainWindow() {
+	QScriptValue value = d->scriptEngine.newQObject(d->mainWindow);
+	return value;
 }
 
 void TelldusCenterApplication::showMainWindow() {
@@ -132,11 +138,16 @@ void TelldusCenterApplication::loadPlugin(QObject *plugin) {
 
 void TelldusCenterApplication::loadScripts() {
 	foreach (QString extension, d->scriptEngine.availableExtensions()) {
+		if (extension.startsWith("...")) {
+			continue;
+		}
+		qDebug() << "Loading extension:" << extension;
 		d->scriptEngine.importExtension( extension );
 		if (d->scriptEngine.hasUncaughtException()) {
 			qDebug() << QString("Error in %1:%2:").arg(extension).arg(d->scriptEngine.uncaughtExceptionLineNumber())
 					<< d->scriptEngine.uncaughtException().toString();
 		}
+		d->scriptEngine.clearExceptions();
 	}
 }
 
@@ -146,10 +157,14 @@ void TelldusCenterApplication::loadToolbar() {
 		foreach( TelldusCenterPlugin *plugin, d->plugins ) {
 			QStringList widgets = plugin->widgets();
 			foreach( QString widget, widgets ) {
-				d->mainWindow->addWidget( widget, plugin->iconForPage( PluginTree::page(widget) ), plugin->widget(widget, d->mainWindow) );
+				d->mainWindow->addWidget( widget, plugin->iconForPage( PluginTree::page(widget) ), plugin->widget(widget, d->mainWindow, &d->scriptEngine) );
 			}
 		}
 	}
+}
+
+void TelldusCenterApplication::addWidget( const QString &page, const QIcon &icon, QWidget *widget ) {
+	d->mainWindow->addWidget(page, icon, widget);
 }
 
 void TelldusCenterApplication::deviceEvent(int deviceId, int method, const QString &/*data*/) {

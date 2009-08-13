@@ -3,7 +3,7 @@
 
 #include <QApplication>
 #include <QPointer>
-//#incldue
+#include <QScriptValue>
 
 #include "mainwindow.h"
 
@@ -30,14 +30,18 @@ public:
 	void loadToolbar();
 
 	static TelldusCenterApplication *instance();
+	
+	void addWidget( const QString &page, const QIcon &icon, QWidget *widget );
 
 signals:
+	void allDoneLoading();
 	void sigDeviceEvent(int deviceId, int method, const QString &data);
 	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
 
 public slots:
 	void eventTriggered( const QString &name, const QString &title );
 	bool isMainWindowShown();
+	QScriptValue mainWindow();
 	void showMainWindow();
 
 private slots:
