@@ -18,7 +18,6 @@ DevicesPlugin::~DevicesPlugin() {
 void DevicesPlugin::initialize ( const QString & key, QScriptEngine * engine ) {
 	if (key == "com.telldus.gui") {
 		qDebug() << "TelldusGui initiating";
-		TelldusCenterApplication *app = TelldusCenterApplication::instance();
 		
 		QWidget *deviceWidget = tdDeviceWidget(0);
 		connect(deviceWidget, SIGNAL(showMessage(const QString &, const QString &, const QString &)), qApp, SIGNAL(showMessage(const QString &, const QString &, const QString &)));
@@ -26,8 +25,6 @@ void DevicesPlugin::initialize ( const QString & key, QScriptEngine * engine ) {
 
 		QScriptValue value = engine->newQObject(deviceWidget);
 		engine->globalObject().property("com").property("telldus").setProperty("gui", value);
-
-		app->addWidget("devices.default", QIcon(":/images/devices.png"), deviceWidget);
 	}
 }
 
