@@ -8,6 +8,7 @@
 
 #ifdef _WINDOWS
 #define strcasecmp _stricmp
+#define strncasecmp _strnicmp
 #endif
 
 using namespace TelldusCore;
