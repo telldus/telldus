@@ -19,6 +19,8 @@ signals:
 	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
 	void eventTriggered( const QString &name, const QString &title );
 
+	void deviceChange( int deviceId, int eventType );
+
 protected:
 	virtual void changeEvent(QEvent *e);
 

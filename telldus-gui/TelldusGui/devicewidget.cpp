@@ -8,6 +8,7 @@
 #include <QHeaderView>
 #include <QMenu>
 
+#include "telldusgui.h"
 #include "editdevicedialog.h"
 #include "editgroupdialog.h"
 #include "methodwidget.h"
@@ -132,6 +133,7 @@ void DeviceWidget::editDevice() {
 	}
 	if (dialog->exec() == QDialog::Accepted) {
 		device->save();
+		emit deviceChange(device->deviceId(), TELLSTICK_DEVICE_CHANGED);
 	}
 
 	delete dialog;
