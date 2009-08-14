@@ -11,7 +11,6 @@ __postInit__ = function() {
 	com.telldus.core.deviceChange.connect(deviceChange);
 	application.allDoneLoading.connect( allDone );
 	application.addWidget("devices.default", ":/images/devices.png", com.telldus.gui);
-	//allDone();
 }
 
 function turnOn() {
@@ -40,7 +39,6 @@ function allDone() {
 
 			devices.push(obj);
 
-			com.telldus.systray.addMenuItem( "Ett", com.telldus.systray.addMenuItem( "Två", obj.menuId ) );
 			addMethodsSubmenu(obj);
 		}
 
@@ -49,19 +47,34 @@ function allDone() {
 }
 
 function deviceChange( deviceId, eventType ) {
-	if (eventType == com.telldus.gui.TELLSTICK_DEVICE_CHANGED) {
-		for (var i=0; i < devices.length; ++i) {
+	if (eventType == com.telldus.gui.TELLSTICK_DEVICE_ADDED) {
+		print("Device added");
+		return;
+	}
+	
+	var index = -1;
+	//Find the device
+	for (var i=0; i < devices.length; ++i) {
 			if (devices[i].id == deviceId) {
-				var name = com.telldus.core.getName(deviceId);
-				var menuItem = com.telldus.systray.menuItem( devices[i].menuId );
-				if (menuItem) {
-					menuItem.text = name;
-					com.telldus.systray.clear( devices[i].menuId );
-					addMethodsSubmenu( devices[i] );
-				}
+				index = i;
 				break;
 			}
+	}
+	//Device not found, return
+	if (index < 0) {
+		return;
+	}
+	
+if (eventType == com.telldus.gui.TELLSTICK_DEVICE_CHANGED) {
+		var name = com.telldus.core.getName(deviceId);
+		var menuItem = com.telldus.systray.menuItem( devices[index].menuId );
+		if (menuItem) {
+			menuItem.text = name;
+			com.telldus.systray.clear( devices[index].menuId );
+			addMethodsSubmenu( devices[index] );
 		}
+	} else if (eventType == com.telldus.gui.TELLSTICK_DEVICE_REMOVED) {
+		com.telldus.systray.removeMenuItem( devices[index].menuId );
 	}
 }
 
