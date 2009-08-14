@@ -20,6 +20,7 @@ signals:
 public slots:
 	int addMenuItem( const QString &name, int parent = -1 );
 	void addSeparator( int parent = -1 );
+	void clear( int parent = -1 );
 	QScriptValue menuItem( int id );
 	
 	void showMessage ( const QString & title, const QString & message, QSystemTrayIcon::MessageIcon icon = QSystemTrayIcon::Information, int millisecondsTimeoutHint = 10000 );

@@ -7,14 +7,16 @@ public:
 //	SystrayIcon *icon;
 	QSystemTrayIcon *i;
 	QAction *menu;
-	QList<QAction *> menuItems;
+	QHash<int, QAction *> menuItems;
 	QScriptEngine *engine;
+	int lastMenuId;
 };
 
 SystrayObject::SystrayObject( QScriptEngine *engine, QObject * parent )
 		: QObject(parent)
 {
 	d = new SystrayObjectPrivate;
+	d->lastMenuId = 0;
 	d->engine = engine;
 	//d->icon = new SystrayIcon();
 	d->menu = new QAction(0);
@@ -42,9 +44,9 @@ int SystrayObject::addMenuItem( const QString &name, int parent ) {
 		return -1;
 	}
 	QAction *item = menu->addAction( name );
-	int index = d->menuItems.count();
-	d->menuItems.append( item );
-	return index;
+	int id = ++d->lastMenuId;
+	d->menuItems[id]= item;
+	return id;
 }
 
 void SystrayObject::addSeparator( int parent ) {
@@ -53,6 +55,25 @@ void SystrayObject::addSeparator( int parent ) {
 		return;
 	}
 	menu->addSeparator();
+}
+
+void SystrayObject::clear(int parent) {
+	QAction *parentA = menuAction( parent );
+	if (!parentA) {
+		return;
+	}
+	QMenu *menu = parentA->menu();
+	if (!menu) { //Has no children
+		return;
+	}
+	foreach( QAction *action, menu->actions() ) {
+		int key = d->menuItems.key(action, -1);
+		if (key >= 0) {
+			clear(key);
+			d->menuItems.remove(key);
+		}
+	}
+	menu->clear();
 }
 
 QScriptValue SystrayObject::menuItem( int id ) {
@@ -77,7 +98,7 @@ QAction *SystrayObject::menuAction( int index ) {
 	if (index < 0) {
 		return d->menu;
 	}
-	return d->menuItems.at(index);
+	return d->menuItems[index];
 }
 
 QMenu *SystrayObject::parentMenu( int parentIndex ) {
@@ -92,3 +113,4 @@ QMenu *SystrayObject::parentMenu( int parentIndex ) {
 	}
 	return menu;
 }
+
