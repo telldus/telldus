@@ -48,7 +48,12 @@ function allDone() {
 
 function deviceChange( deviceId, eventType ) {
 	if (eventType == com.telldus.gui.TELLSTICK_DEVICE_ADDED) {
-		print("Device added");
+		var lastIndex = devices.length-1;
+		var obj = { id: deviceId };
+		var name = com.telldus.core.getName(obj.id);
+		obj.menuId = com.telldus.systray.addMenuItemAfter( name, devices[lastIndex].menuId );
+		devices.push(obj);
+		addMethodsSubmenu(obj);
 		return;
 	}
 	
@@ -64,8 +69,8 @@ function deviceChange( deviceId, eventType ) {
 	if (index < 0) {
 		return;
 	}
-	
-if (eventType == com.telldus.gui.TELLSTICK_DEVICE_CHANGED) {
+
+	if (eventType == com.telldus.gui.TELLSTICK_DEVICE_CHANGED) {
 		var name = com.telldus.core.getName(deviceId);
 		var menuItem = com.telldus.systray.menuItem( devices[index].menuId );
 		if (menuItem) {
@@ -75,6 +80,7 @@ if (eventType == com.telldus.gui.TELLSTICK_DEVICE_CHANGED) {
 		}
 	} else if (eventType == com.telldus.gui.TELLSTICK_DEVICE_REMOVED) {
 		com.telldus.systray.removeMenuItem( devices[index].menuId );
+		devices.splice(index, 1);
 	}
 }
 
