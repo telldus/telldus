@@ -19,6 +19,7 @@ signals:
 
 public slots:
 	int addMenuItem( const QString &name, int parent = -1 );
+	int addMenuItemAfter( const QString &name, int id );
 	void addSeparator( int parent = -1 );
 	void clear( int parent = -1 );
 	QScriptValue menuItem( int id );

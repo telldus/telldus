@@ -46,6 +46,32 @@ int SystrayObject::addMenuItem( const QString &name, int parent ) {
 	return id;
 }
 
+int SystrayObject::addMenuItemAfter(const QString & name, int id) {
+	QAction *parent = menuAction(id);
+	QMenu *menu = qobject_cast<QMenu *>(parent->parentWidget());
+	if (!menu) {
+		return -1;
+	}
+	
+	QAction *before = 0;
+	bool found = false;
+	foreach(QAction *action, menu->actions()) {
+		if (found) {
+			before = action;
+			break;
+		}
+		if (action == parent) {
+			found = true;
+			continue;
+		}
+	}
+	QAction *item = new QAction( name, menu );
+	menu->insertAction( before, item );
+	int newId = ++d->lastMenuId;
+	d->menuItems[newId] = item;
+	return newId;
+}
+
 void SystrayObject::addSeparator( int parent ) {
 	QMenu *menu = parentMenu(parent);
 	if (!menu) {
