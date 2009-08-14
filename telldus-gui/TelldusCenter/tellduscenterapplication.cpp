@@ -27,6 +27,8 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 {
 	d = new TelldusCenterApplicationPrivate;
 	d->mainWindow = new MainWindow( );
+	
+	connect(&d->scriptEngine, SIGNAL(signalHandlerException(const QScriptValue &)), this, SLOT(scriptException(const QScriptValue&)));
 
 	loadPlugins();
 	loadScripts();
@@ -195,4 +197,14 @@ void TelldusCenterApplication::deviceEvent(int deviceId, int method, const QStri
 
 TelldusCenterApplication *TelldusCenterApplication::instance() {
 	return (static_cast<TelldusCenterApplication *>(QCoreApplication::instance()));
+}
+
+
+void TelldusCenterApplication::scriptException(const QScriptValue & exception) {
+	qDebug() << "ScriptException:" << d->scriptEngine.uncaughtExceptionLineNumber() << exception.toString();
+	qDebug() << "Backtrace:";
+	foreach( QString row, d->scriptEngine.uncaughtExceptionBacktrace() ) {
+		qDebug() << row;
+	}
+	d->scriptEngine.clearExceptions();
 }

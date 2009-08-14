@@ -47,6 +47,7 @@ public slots:
 
 private slots:
 	void deviceEvent(int deviceId, int method, const QString &data);
+	void scriptException( const QScriptValue &exception );
 
 private:
 	static void deviceEvent(int deviceId, int method, const char *data, int callbackId, void *context);
