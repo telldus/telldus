@@ -4,7 +4,6 @@
 
 class SystrayObjectPrivate {
 public:
-//	SystrayIcon *icon;
 	QSystemTrayIcon *i;
 	QAction *menu;
 	QHash<int, QAction *> menuItems;
@@ -18,7 +17,6 @@ SystrayObject::SystrayObject( QScriptEngine *engine, QObject * parent )
 	d = new SystrayObjectPrivate;
 	d->lastMenuId = 0;
 	d->engine = engine;
-	//d->icon = new SystrayIcon();
 	d->menu = new QAction(0);
 	d->menu->setMenu( new QMenu() );
 	
@@ -27,7 +25,6 @@ SystrayObject::SystrayObject( QScriptEngine *engine, QObject * parent )
 	d->i->setContextMenu(d->menu->menu());
 	d->i->show();
 	
-	//connect(d->icon, SIGNAL(showEventMessage(QString,QString,QString)), qApp, SIGNAL(showMessage(QString,QString,QString)));
 	connect(d->i, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(activated(QSystemTrayIcon::ActivationReason)));
 	connect(qApp, SIGNAL(aboutToQuit()), d->i, SLOT(hide()));
 }
@@ -81,6 +78,19 @@ QScriptValue SystrayObject::menuItem( int id ) {
 	return value;
 }
 
+void SystrayObject::removeMenuItem(int id) {
+	//First we clear the item from submenus
+	clear(id);
+	
+	QAction *action = menuAction( id );
+	if (!action) {
+		return;
+	}
+	d->menuItems.remove(id);
+	delete action;
+}
+
+
 void SystrayObject::showMessage ( const QString & title, const QString & message, QSystemTrayIcon::MessageIcon i, int millisecondsTimeoutHint ) {
 	d->i->showMessage( title, message, i, millisecondsTimeoutHint );
 }
@@ -113,4 +123,3 @@ QMenu *SystrayObject::parentMenu( int parentIndex ) {
 	}
 	return menu;
 }
-

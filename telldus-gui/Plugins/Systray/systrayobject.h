@@ -22,6 +22,7 @@ public slots:
 	void addSeparator( int parent = -1 );
 	void clear( int parent = -1 );
 	QScriptValue menuItem( int id );
+	void removeMenuItem( int id );
 	
 	void showMessage ( const QString & title, const QString & message, QSystemTrayIcon::MessageIcon icon = QSystemTrayIcon::Information, int millisecondsTimeoutHint = 10000 );
 
