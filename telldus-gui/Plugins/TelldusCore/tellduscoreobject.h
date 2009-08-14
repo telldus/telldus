@@ -12,6 +12,7 @@ public:
 	
 signals:
 	void deviceChange( int deviceId, int eventId );
+	void errorOccurred( int deviceId, int errorId, const QString &errorString );
 
 public slots:
 	int bell( int deviceId );
@@ -23,6 +24,9 @@ public slots:
 	
 	int turnOn( int deviceId );
 	int turnOff( int deviceId );
+	
+private:
+	void triggerError( int, int );
 };
 
 #endif // TELLDUSCOREOBJECT_H

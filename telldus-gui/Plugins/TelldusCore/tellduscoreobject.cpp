@@ -11,11 +11,19 @@ TelldusCoreObject::~TelldusCoreObject() {
 }
 
 int TelldusCoreObject::bell(int deviceId) {
-	return tdBell( deviceId );
+	int retval = tdBell( deviceId );
+	if (retval != TELLSTICK_SUCCESS) {
+		triggerError(deviceId, retval);
+	}
+	return retval;
 }
 
 int TelldusCoreObject::dim(int deviceId, char level) {
-	return tdDim( deviceId, level );
+	int retval = tdDim( deviceId, level );
+	if (retval != TELLSTICK_SUCCESS) {
+		triggerError(deviceId, retval);
+	}
+	return retval;
 }
 
 int TelldusCoreObject::getNumberOfDevices() const {
@@ -38,10 +46,25 @@ int TelldusCoreObject::methods(int deviceId, int methodsSupported) {
 }
 
 int TelldusCoreObject::turnOn(int deviceId) {
-	return tdTurnOn( deviceId );
+	int retval = tdTurnOn( deviceId );
+	if (retval != TELLSTICK_SUCCESS) {
+		triggerError(deviceId, retval);
+	}
+	return retval;
 }
 
 int TelldusCoreObject::turnOff(int deviceId) {
-	return tdTurnOff( deviceId );
+	int retval = tdTurnOff( deviceId );
+	if (retval != TELLSTICK_SUCCESS) {
+		triggerError(deviceId, retval);
+	}
+	return retval;
+}
+
+void TelldusCoreObject::triggerError(int deviceId, int errorId) {
+	char *errorString = tdGetErrorString( errorId );
+	QString message = QString::fromLocal8Bit( errorString );
+	free(errorString);
+	emit errorOccurred(deviceId, errorId, message);
 }
 
