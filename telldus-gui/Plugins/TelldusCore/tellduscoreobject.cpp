@@ -10,6 +10,14 @@ TelldusCoreObject::TelldusCoreObject( QObject * parent )
 TelldusCoreObject::~TelldusCoreObject() {
 }
 
+int TelldusCoreObject::bell(int deviceId) {
+	return tdBell( deviceId );
+}
+
+int TelldusCoreObject::dim(int deviceId, char level) {
+	return tdDim( deviceId, level );
+}
+
 int TelldusCoreObject::getNumberOfDevices() const {
 	return tdGetNumberOfDevices();
 }
@@ -24,3 +32,16 @@ QString TelldusCoreObject::getName(int deviceId) const {
 	free(name);
 	return strName;
 }
+
+int TelldusCoreObject::methods(int deviceId, int methodsSupported) {
+	return tdMethods( deviceId, methodsSupported );
+}
+
+int TelldusCoreObject::turnOn(int deviceId) {
+	return tdTurnOn( deviceId );
+}
+
+int TelldusCoreObject::turnOff(int deviceId) {
+	return tdTurnOff( deviceId );
+}
+
