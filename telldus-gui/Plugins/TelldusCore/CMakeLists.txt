@@ -1,4 +1,4 @@
-SET( Plugin_NAME "TelldusCore" )
+SET( Plugin_NAME "TelldusCorePlugin" )
 
 SET( Plugin_SRCS
 	tellduscoreplugin.cpp
