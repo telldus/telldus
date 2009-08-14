@@ -27,6 +27,7 @@ SystrayObject::SystrayObject( QScriptEngine *engine, QObject * parent )
 	
 	//connect(d->icon, SIGNAL(showEventMessage(QString,QString,QString)), qApp, SIGNAL(showMessage(QString,QString,QString)));
 	connect(d->i, SIGNAL(activated(QSystemTrayIcon::ActivationReason)), this, SLOT(activated(QSystemTrayIcon::ActivationReason)));
+	connect(qApp, SIGNAL(aboutToQuit()), d->i, SLOT(hide()));
 }
 
 SystrayObject::~SystrayObject() {
