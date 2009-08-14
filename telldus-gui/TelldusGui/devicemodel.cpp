@@ -1,4 +1,5 @@
 #include "devicemodel.h"
+#include "telldusgui.h"
 #include <telldus-core.h>
 #include <QQueue>
 #include <QIcon>
@@ -99,7 +100,9 @@ bool DeviceModel::removeRows ( int row, int count, const QModelIndex & parent ) 
 	}
 
 	while(!idList.isEmpty()) {
-		tdRemoveDevice( idList.dequeue() );
+		int id = idList.dequeue();
+		tdRemoveDevice( id );
+		emit deviceChange(id, TELLSTICK_DEVICE_REMOVED);
 	}
 	indexToId.clear(); //Clear the index-to-id cache
 
@@ -129,6 +132,8 @@ void DeviceModel::deviceAdded( int id ) {
 	int deviceCount = tdGetNumberOfDevices();
 	beginInsertRows( QModelIndex(), deviceCount, deviceCount );
 	endInsertRows();
+	emit deviceChange(id, TELLSTICK_DEVICE_ADDED);
+
 }
 
 void DeviceModel::deviceStateChanged( int deviceId, int /*newState*/ ) {

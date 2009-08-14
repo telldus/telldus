@@ -26,6 +26,8 @@ DeviceWidget::DeviceWidget(QWidget *parent) :
 	connect( &deviceView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(listActivated(const QModelIndex &)) );
 	connect(&model, SIGNAL(showMessage(const QString &, const QString &, const QString &)), this, SIGNAL(showMessage(const QString &, const QString &, const QString &)));
 	connect(&model, SIGNAL(eventTriggered(const QString &, const QString &)), this, SIGNAL(eventTriggered(const QString &, const QString &)));
+	connect(&model, SIGNAL(deviceChange(int,int)), this, SIGNAL(deviceChange(int,int)));
+	
 
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	layout->addWidget(&deviceView);
