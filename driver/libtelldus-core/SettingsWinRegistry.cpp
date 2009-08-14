@@ -86,7 +86,7 @@ int Settings::getDeviceId(int intDeviceIndex) const {
 		if(lnExists == ERROR_SUCCESS){
 		
 			char* Buff = new char[intMaxRegValueLength];
-			DWORD size;
+			DWORD size = intMaxRegValueLength;
 			if (RegEnumKeyEx(d->hk, intDeviceIndex, (LPSTR)Buff, &size, NULL, NULL, NULL, NULL) == ERROR_SUCCESS) {
 				intReturn = (int)_atoi64(Buff);
 			}
@@ -94,8 +94,7 @@ int Settings::getDeviceId(int intDeviceIndex) const {
 			delete Buff;
 
 			RegCloseKey(d->hk);
-		}
-		else{
+		} else {
 			throw std::exception();	//couldn't open reg key
 		}
 	}
