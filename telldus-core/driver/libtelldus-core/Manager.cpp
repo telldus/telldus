@@ -36,6 +36,10 @@
 #define strcasecmp _stricmp
 #endif
 
+//Defined in telldus-core.cpp
+extern char *wrapStdString( const std::string &string);
+
+
 using namespace TelldusCore;
 
 Manager *Manager::instance = 0;
@@ -178,7 +182,12 @@ bool Manager::setDeviceModel(int intDeviceId, const std::string &strModel) {
 
 bool Manager::setDeviceState( int intDeviceId, int intDeviceState, const std::string &strDeviceStateValue ) {
 	if (intDeviceState != TELLSTICK_BELL) {
-		return settings.setDeviceState(intDeviceId, intDeviceState, strDeviceStateValue);
+		bool retval = settings.setDeviceState(intDeviceId, intDeviceState, strDeviceStateValue);
+		for(CallbackList::const_iterator callback_it = callbacks.begin(); callback_it != callbacks.end(); ++callback_it) {
+			(*callback_it).event(intDeviceId, intDeviceState, wrapStdString(strDeviceStateValue), (*callback_it).id, (*callback_it).context);
+		}
+		
+		return retval;
 	}
 	return true;
 }
@@ -239,11 +248,8 @@ void Manager::parseMessage( const std::string &message ) {
 			}
 		}
 		if (found) {
-			//First save the last sent command
+			//First save the last sent command, this also triggers the callback to the client
 			setDeviceState(it->first, method, "");
-			for(CallbackList::const_iterator callback_it = callbacks.begin(); callback_it != callbacks.end(); ++callback_it) {
-				(*callback_it).event(it->first, method, message.c_str(), (*callback_it).id, (*callback_it).context);
-			}
 		}
 	}
 
