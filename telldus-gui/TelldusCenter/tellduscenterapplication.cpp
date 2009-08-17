@@ -179,7 +179,7 @@ void TelldusCenterApplication::addWidget( const QString &page, const QIcon &icon
 	d->mainWindow->addWidget(page, icon, widget);
 }
 
-void TelldusCenterApplication::deviceEvent(int deviceId, int method, const QString &/*data*/) {
+void TelldusCenterApplication::deviceEventSlot(int deviceId, int method, const QString &/*data*/) {
 	char *name = tdGetName(deviceId);
 	QString deviceName(name);
 	free(name);

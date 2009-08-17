@@ -48,7 +48,7 @@ public slots:
 	void showMainWindow();
 
 private slots:
-	void deviceEvent(int deviceId, int method, const QString &data);
+	void deviceEventSlot(int deviceId, int method, const QString &data);
 	void scriptException( const QScriptValue &exception );
 
 private:
