@@ -61,7 +61,7 @@ private:
 
 	DevicePrivate *d;
 	static QHash<int, Device *> devices;
-	static void deviceEvent(int deviceId, int, const char *, int, void *);
+	static void WINAPI deviceEvent(int deviceId, int, const char *, int, void *);
 
 	static int callbackId;
 };

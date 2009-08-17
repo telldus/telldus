@@ -2,7 +2,8 @@
 #include <stdlib.h>
 
 QHash<int, Device *> Device::devices;
-int Device::callbackId = tdRegisterDeviceEvent( &Device::deviceEvent, 0);
+
+int Device::callbackId = tdRegisterDeviceEvent( reinterpret_cast<TDDeviceEvent>(&Device::deviceEvent), 0);
 
 class DevicePrivate {
 public:
@@ -210,7 +211,7 @@ void Device::triggerEvent( int messageId ) {
 	}
 }
 
-void Device::deviceEvent(int deviceId, int, const char *, int, void *) {
+void WINAPI Device::deviceEvent(int deviceId, int, const char *, int, void *) {
 	if (Device::deviceLoaded( deviceId )) {
 		Device *device = Device::getDevice( deviceId );
 		if (device) {

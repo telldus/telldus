@@ -5,6 +5,8 @@
 #include <QPointer>
 #include <QScriptValue>
 
+#include <telldus-core.h>
+
 #include "mainwindow.h"
 
 class TelldusCenterPlugin;
@@ -50,7 +52,7 @@ private slots:
 	void scriptException( const QScriptValue &exception );
 
 private:
-	static void deviceEvent(int deviceId, int method, const char *data, int callbackId, void *context);
+	static void WINAPI deviceEvent(int deviceId, int method, const char *data, int callbackId, void *context);
 	void loadPlugin(QObject *plugin);
 
 	TelldusCenterApplicationPrivate *d;

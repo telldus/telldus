@@ -6,7 +6,6 @@
 #include <QScriptEngine>
 
 #include <QDebug>
-#include <telldus-core.h>
 #include "tellduscenterplugin.h"
 #include "plugintree.h"
 
@@ -37,7 +36,7 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 	//We use queued connection since it is called from another thread
 	connect(this, SIGNAL(sigDeviceEvent(int, int, const QString &)), this, SLOT(deviceEvent(int, int, const QString &)), Qt::QueuedConnection);
 	tdInit();
-	tdRegisterDeviceEvent( &TelldusCenterApplication::deviceEvent, 0 );
+	tdRegisterDeviceEvent( reinterpret_cast<TDDeviceEvent>(&TelldusCenterApplication::deviceEvent), 0 );
 
 	emit allDoneLoading();
 }
@@ -87,7 +86,7 @@ void TelldusCenterApplication::eventTriggered( const QString &name, const QStrin
 	qDebug() << "Systray - eventTriggered:" << name << title;
 }
 
-void TelldusCenterApplication::deviceEvent(int deviceId, int method, const char *data, int /*callbackId*/, void */*context*/) {
+void WINAPI TelldusCenterApplication::deviceEvent(int deviceId, int method, const char *data, int /*callbackId*/, void * /*context*/) {
 	TelldusCenterApplication *app = TelldusCenterApplication::instance();
 	emit app->sigDeviceEvent(deviceId, method, data);
 }
@@ -96,8 +95,10 @@ void TelldusCenterApplication::loadPlugins() {
 	QDir pluginsDir = QDir(qApp->applicationDirPath());
 
 #if defined(Q_OS_WIN)
-	if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release")
-		pluginsDir.cdUp();
+	bool inBuildDir = false;
+	if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release") {
+		inBuildDir = true;
+	}
 #elif defined(Q_OS_MAC)
 	if (pluginsDir.dirName() == "MacOS") {
 		pluginsDir.cdUp();
@@ -106,6 +107,12 @@ void TelldusCenterApplication::loadPlugins() {
 	if (!pluginsDir.cd("Plugins")) {
 		return;
 	}
+#if defined(Q_OS_WIN)
+	if (inBuildDir) {
+		pluginsDir.cdUp();
+	}
+#endif
+
 	this->setLibraryPaths( QStringList(pluginsDir.absolutePath()) );
 
 	QScriptValue object = d->scriptEngine.newQObject(this);
@@ -113,7 +120,6 @@ void TelldusCenterApplication::loadPlugins() {
 
 	QScriptValue mainWindowObject = d->scriptEngine.newQObject(d->mainWindow);
 	d->scriptEngine.globalObject().property("application").setProperty("mainwindow", mainWindowObject);
-
 
 	foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
 		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
