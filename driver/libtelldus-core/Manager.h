@@ -21,12 +21,12 @@ namespace TelldusCore {
 	class Controller;
 
 	struct CallbackStruct {
-		deviceEvent event;
+		TDDeviceEvent event;
 		int id;
 		void *context;
 	};
 	struct RawCallbackStruct {
-		rawDeviceEvent event;
+		TDRawDeviceEvent event;
 		int id;
 		void *context;
 	};
@@ -64,8 +64,8 @@ namespace TelldusCore {
 		static Manager *getInstance();
 		static void close();
 		
-		int registerDeviceEvent( deviceEvent eventFunction, void *context );
-		int registerRawDeviceEvent( rawDeviceEvent eventFunction, void *context );
+		int registerDeviceEvent( TDDeviceEvent eventFunction, void *context );
+		int registerRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context );
 		void parseMessage( const std::string &message );
 	
 	protected:

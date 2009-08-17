@@ -258,14 +258,14 @@ void Manager::parseMessage( const std::string &message ) {
 	}
 }
 
-int Manager::registerDeviceEvent( deviceEvent eventFunction, void *context ) {
+int Manager::registerDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
 	int id = ++lastCallbackId;
 	CallbackStruct callback = {eventFunction, id, context};
 	callbacks.push_back(callback);
 	return id;
 }
 
-int Manager::registerRawDeviceEvent( rawDeviceEvent eventFunction, void *context ) {
+int Manager::registerRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context ) {
 	int id = ++lastCallbackId;
 	RawCallbackStruct callback = {eventFunction, id, context};
 	rawCallbacks.push_back(callback);
