@@ -76,12 +76,12 @@ void WINAPI tdInit(void) {
 	Manager::getInstance(); //Create the manager-object
 }
 
-int WINAPI tdRegisterDeviceEvent( deviceEvent eventFunction, void *context ) {
+int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
 	Manager *manager = Manager::getInstance();
 	return manager->registerDeviceEvent( eventFunction, context );
 }
 
-int WINAPI tdRegisterRawDeviceEvent( rawDeviceEvent eventFunction, void *context ) {
+int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context ) {
 	Manager *manager = Manager::getInstance();
 	return manager->registerRawDeviceEvent( eventFunction, context );
 }
