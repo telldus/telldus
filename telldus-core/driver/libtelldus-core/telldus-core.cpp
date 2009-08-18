@@ -244,6 +244,17 @@ int WINAPI tdLastSentCommand( int intDeviceId ) {
 }
 
 /**
+ * If the last sent command it TELLSTICK_DIM this returns the dimmed value.
+ * @param intDeviceId The device id to query
+ * @returns the the value as a human readable string, example "128" for 50%
+ */
+char * WINAPI tdLastSentValue( int intDeviceId ) {
+	Manager *manager = Manager::getInstance();
+	std::string strReturn = manager->getDeviceStateValue( intDeviceId );
+	return wrapStdString(strReturn);
+}
+
+/**
  * This function returns the number of devices configured
  * @returns an integer of the total number of devices configured
  */

@@ -192,6 +192,18 @@ int Settings::getDeviceState( int intDeviceId ) const {
 }
 
 std::string Settings::getDeviceStateValue( int intDeviceId ) const {
+	if (d->var_cfg == 0) {
+		return false;
+	}
+	cfg_t *cfg_device;
+	for (int i = 0; i < cfg_size(d->var_cfg, "device"); ++i) {
+		cfg_device = cfg_getnsec(d->var_cfg, "device", i);
+		int deviceId = atoi(cfg_title(cfg_device));
+		if (deviceId == intDeviceId)  {
+			char *value = cfg_getstr(cfg_device, "stateValue");
+			return value;
+		}
+	}
 	return "";
 }
 
