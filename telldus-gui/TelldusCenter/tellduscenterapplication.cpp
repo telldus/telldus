@@ -34,7 +34,7 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 	loadToolbar();
 
 	//We use queued connection since it is called from another thread
-	connect(this, SIGNAL(sigDeviceEvent(int, int, const QString &)), this, SLOT(deviceEvent(int, int, const QString &)), Qt::QueuedConnection);
+	connect(this, SIGNAL(sigDeviceEvent(int, int, const QString &)), this, SLOT(deviceEventSlot(int, int, const QString &)), Qt::QueuedConnection);
 	tdInit();
 	tdRegisterDeviceEvent( reinterpret_cast<TDDeviceEvent>(&TelldusCenterApplication::deviceEvent), 0 );
 
