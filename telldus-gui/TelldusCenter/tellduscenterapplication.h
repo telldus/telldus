@@ -36,7 +36,6 @@ public:
 
 signals:
 	void allDoneLoading();
-	void sigDeviceEvent(int deviceId, int method, const QString &data);
 	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
 
 public slots:
@@ -48,11 +47,9 @@ public slots:
 	void showMainWindow();
 
 private slots:
-	void deviceEventSlot(int deviceId, int method, const QString &data);
 	void scriptException( const QScriptValue &exception );
 
 private:
-	static void WINAPI deviceEvent(int deviceId, int method, const char *data, int callbackId, void *context);
 	void loadPlugin(QObject *plugin);
 
 	TelldusCenterApplicationPrivate *d;

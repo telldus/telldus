@@ -33,10 +33,7 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 	loadScripts();
 	loadToolbar();
 
-	//We use queued connection since it is called from another thread
-	connect(this, SIGNAL(sigDeviceEvent(int, int, const QString &)), this, SLOT(deviceEventSlot(int, int, const QString &)), Qt::QueuedConnection);
 	tdInit();
-	tdRegisterDeviceEvent( reinterpret_cast<TDDeviceEvent>(&TelldusCenterApplication::deviceEvent), 0 );
 
 	emit allDoneLoading();
 }
@@ -84,11 +81,6 @@ bool TelldusCenterApplication::event(QEvent *event)
 
 void TelldusCenterApplication::eventTriggered( const QString &name, const QString &title ) {
 	qDebug() << "Systray - eventTriggered:" << name << title;
-}
-
-void WINAPI TelldusCenterApplication::deviceEvent(int deviceId, int method, const char *data, int /*callbackId*/, void * /*context*/) {
-	TelldusCenterApplication *app = TelldusCenterApplication::instance();
-	emit app->sigDeviceEvent(deviceId, method, data);
 }
 
 void TelldusCenterApplication::loadPlugins() {
@@ -177,28 +169,6 @@ void TelldusCenterApplication::addWidget( const QString &page, const QString &ic
 
 void TelldusCenterApplication::addWidget( const QString &page, const QIcon &icon, QWidget *widget ) {
 	d->mainWindow->addWidget(page, icon, widget);
-}
-
-void TelldusCenterApplication::deviceEventSlot(int deviceId, int method, const QString &/*data*/) {
-	char *name = tdGetName(deviceId);
-	QString deviceName(name);
-	free(name);
-	QString methodName;
-	switch( method ) {
-	case TELLSTICK_TURNON:
-		methodName = "turned on";
-		break;
-	case TELLSTICK_TURNOFF:
-		methodName = "turned off";
-		break;
-	case TELLSTICK_BELL:
-		methodName = "belled";
-		break;
-	case TELLSTICK_DIM:
-		methodName = "dimmed to level x%";
-		break;
-	}
-	showMessage("", QString("%1 %2").arg(deviceName).arg(methodName), "");
 }
 
 TelldusCenterApplication *TelldusCenterApplication::instance() {
