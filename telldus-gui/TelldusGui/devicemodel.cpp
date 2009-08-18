@@ -3,6 +3,7 @@
 #include <telldus-core.h>
 #include <QQueue>
 #include <QIcon>
+#include <math.h>
 #include <QDebug>
 
 DeviceModel::DeviceModel(QObject *parent)
@@ -37,7 +38,8 @@ QVariant DeviceModel::data(const QModelIndex &index, int role) const {
 				case TELLSTICK_TURNOFF:
 					return tr("off");
 				case TELLSTICK_DIM:
-					return tr("dimmed");
+					int value = (int)round(device->lastSentValue().toFloat()/255*100);
+					return tr("%1%").arg(value);
 			}
 			return tr("unknown %1").arg(device->lastSentCommand());
 		} else if (role == Qt::DecorationRole) {

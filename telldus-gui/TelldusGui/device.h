@@ -37,6 +37,7 @@ public:
 
 	int deviceType() const;
 	int lastSentCommand() const;
+	QString lastSentValue() const;
 
 	int methods() const;
 

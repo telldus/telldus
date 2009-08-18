@@ -8,7 +8,7 @@ int Device::callbackId = tdRegisterDeviceEvent( reinterpret_cast<TDDeviceEvent>(
 class DevicePrivate {
 public:
 	int id, state;
-	QString name, protocol, model;
+	QString name, protocol, model, stateValue;
 	bool modelChanged, nameChanged, protocolChanged;
 	mutable int methods;
 	mutable QHash<QString, QString> settings;
@@ -181,6 +181,10 @@ int Device::lastSentCommand() const {
 	return d->state;
 }
 
+QString Device::lastSentValue() const {
+	return d->stateValue;
+}
+
 void Device::updateMethods() {
 	int methods = tdMethods(d->id, TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL | TELLSTICK_DIM);
 	if (d->methods != methods) {
@@ -194,8 +198,13 @@ void Device::updateMethods() {
 
 void Device::updateState() {
 	int lastSentCommand = tdLastSentCommand( d->id );
-	if (lastSentCommand != d->state) {
+	char *value = tdLastSentValue( d->id );
+	QString stateValue = QString::fromLocal8Bit( value );
+	free(value);
+	
+	if (lastSentCommand != d->state || stateValue != d->stateValue) {
 		d->state = lastSentCommand;
+		d->stateValue = stateValue;
 		emit stateChanged(d->id, d->state);
 	}
 }
@@ -219,3 +228,4 @@ void WINAPI Device::deviceEvent(int deviceId, int, const char *, int, void *) {
 		}
 	}
 }
+
