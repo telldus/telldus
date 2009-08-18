@@ -29,6 +29,10 @@ SET( telldus-center_MOC_HDRS
 	message.h
 )
 
+SET( telldus-center_RESOURCES
+	TelldusCenter.icns
+)
+
 QT4_WRAP_CPP(  telldus-center_MOC_SRCS  ${telldus-center_MOC_HDRS} )
 QT4_AUTOMOC (  ${telldus-center_SRCS} )
 QT4_ADD_RESOURCES  (telldus-center_RSRCS     resource.qrc         )
@@ -72,17 +76,19 @@ ENDIF (APPLE)
 
 ######## Configuring  ########
 
-ADD_EXECUTABLE(${telldus-center_TARGET}
+ADD_EXECUTABLE(${telldus-center_TARGET} MACOSX_BUNDLE
 	${telldus-center_SRCS}
 	${telldus-center_MOC_SRCS}
 	${telldus-center_RSRCS}
+	${telldus-center_RESOURCES}
 )
+SET_SOURCE_FILES_PROPERTIES(${telldus-center_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
 TARGET_LINK_LIBRARIES( ${telldus-center_TARGET}	${telldus-center_LIBRARIES} )
 
-SET_PROPERTY(TARGET ${telldus-center_TARGET}
-	PROPERTY VERSION ${PACKAGE_VERSION}
-)
-SET_PROPERTY(TARGET ${telldus-center_TARGET}
-  PROPERTY SOVERSION ${PACKAGE_SOVERSION}
+SET_TARGET_PROPERTIES(${telldus-center_TARGET} PROPERTIES
+	MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist
+	RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
+	SOVERSION ${PACKAGE_SOVERSION}
+	VERSION ${PACKAGE_VERSION}
 )
