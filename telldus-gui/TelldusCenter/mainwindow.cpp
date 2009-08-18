@@ -73,12 +73,13 @@ void MainWindow::closeEvent( QCloseEvent *event ) {
 	event->ignore();
 }
 
-void MainWindow::setupMenu()
-{
+void MainWindow::setupMenu() {
 	menuBar()->clear();
 
 	// File
-//	QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
+	QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
+	fileMenu->addAction(tr("&Quit"), qApp, SLOT(quit()));
+
 	// Help
 	QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addSeparator();
