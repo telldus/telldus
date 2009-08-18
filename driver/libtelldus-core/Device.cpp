@@ -1,6 +1,7 @@
 #include "Device.h"
 #include "Manager.h"
 #include <stdlib.h>
+#include <sstream>
 
 using namespace TelldusCore;
 /*
@@ -21,6 +22,8 @@ Device::~Device(void) {
 
 int Device::switchState( int newState, const std::string &value ) {
 	int retVal = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+	std::string stateValue = "";
+	
 	switch (newState) {
 		case TELLSTICK_TURNON:
 			retVal = turnOn();
@@ -32,12 +35,18 @@ int Device::switchState( int newState, const std::string &value ) {
 			retVal = bell();
 			break;
 		case TELLSTICK_DIM:
-			retVal = dim( value[0] );
+			//Convert value to string
+			unsigned char v = value[0];
+			std::stringstream st;
+			st << (int)v;
+			stateValue = st.str();
+			
+			retVal = dim( v );
 			break;
 	}
 	if (retVal == TELLSTICK_SUCCESS) {
 		Manager *manager = Manager::getInstance();
-		manager->setDeviceState(deviceId, newState, "");
+		manager->setDeviceState(deviceId, newState, stateValue);
 	}
 	return retVal;
 }
