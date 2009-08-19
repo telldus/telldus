@@ -37,11 +37,8 @@ QT4_WRAP_CPP(  telldus-center_MOC_SRCS  ${telldus-center_MOC_HDRS} )
 QT4_AUTOMOC (  ${telldus-center_SRCS} )
 QT4_ADD_RESOURCES  (telldus-center_RSRCS     resource.qrc         )
 
-FIND_LIBRARY( TELLDUSCORE_LIBRARY telldus-core )
-
 SET( telldus-center_LIBRARIES
 	${QT_LIBRARIES}
-	${TELLDUSCORE_LIBRARY}
 )
 
 ######## Configurable options for the platform  ########

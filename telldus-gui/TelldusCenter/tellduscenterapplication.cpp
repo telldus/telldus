@@ -33,15 +33,12 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 	loadScripts();
 	loadToolbar();
 
-	tdInit();
-
 	emit allDoneLoading();
 }
 
 TelldusCenterApplication::~TelldusCenterApplication() {
 	qDeleteAll(d->plugins);
 	delete d;
-	tdClose();
 }
 
 PluginList TelldusCenterApplication::plugins() const {

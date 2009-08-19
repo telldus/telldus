@@ -5,8 +5,6 @@
 #include <QPointer>
 #include <QScriptValue>
 
-#include <telldus-core.h>
-
 #include "mainwindow.h"
 
 class TelldusCenterPlugin;
