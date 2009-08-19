@@ -5,6 +5,8 @@ QHash<int, Device *> Device::devices;
 
 int Device::callbackId = tdRegisterDeviceEvent( reinterpret_cast<TDDeviceEvent>(&Device::deviceEvent), 0);
 
+const int SUPPORTED_METHODS = TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL | TELLSTICK_DIM;
+
 class DevicePrivate {
 public:
 	int id, state;
@@ -186,7 +188,7 @@ QString Device::lastSentValue() const {
 }
 
 void Device::updateMethods() {
-	int methods = tdMethods(d->id, TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL | TELLSTICK_DIM);
+	int methods = tdMethods(d->id, SUPPORTED_METHODS);
 	if (d->methods != methods) {
 		bool doEmit = (d->methods > 0);
 		d->methods = methods;
@@ -197,7 +199,7 @@ void Device::updateMethods() {
 }
 
 void Device::updateState() {
-	int lastSentCommand = tdLastSentCommand( d->id );
+	int lastSentCommand = tdLastSentCommand( d->id, SUPPORTED_METHODS );
 	char *value = tdLastSentValue( d->id );
 	QString stateValue = QString::fromLocal8Bit( value );
 	free(value);
