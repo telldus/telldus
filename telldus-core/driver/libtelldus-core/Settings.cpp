@@ -69,7 +69,7 @@ int Settings::getDeviceState( int intDeviceId ) const {
 }
 
 std::string Settings::getDeviceStateValue( int intDeviceId ) const {
-	return getStringSetting( intDeviceId, "state", true );
+	return getStringSetting( intDeviceId, "stateValue", true );
 }
 
 #endif

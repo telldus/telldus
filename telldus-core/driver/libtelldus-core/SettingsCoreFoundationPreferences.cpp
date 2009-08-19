@@ -209,11 +209,15 @@ int Settings::getIntSetting(int intDeviceId, const std::string &name, bool param
 
 	// If the preference exists, use it.
 	if (cfvalue) {
-	    // Numbers come out of preferences as CFNumber objects.
-	    if (!CFNumberGetValue(cfvalue, kCFNumberIntType, &retval)) {
-	        retval = 0;
-	    }
-	    CFRelease(cfvalue);
+		try {
+			// Numbers come out of preferences as CFNumber objects.
+			if (!CFNumberGetValue(cfvalue, kCFNumberIntType, &retval)) {
+				retval = 0;
+			}
+			CFRelease(cfvalue);
+		} catch (std::exception e) {
+			retval = 0;
+		}
 	}
 	
 	return retval;

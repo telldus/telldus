@@ -1,6 +1,6 @@
 /*++
 
-Copyright (c) 2001-2005  Future Technology Devices International Ltd.
+Copyright (c) 2001-2003  Future Technology Devices International Ltd.
 
 Module Name:
 
@@ -8,7 +8,7 @@ Module Name:
 
 Abstract:
 
-    Native USB device driver for FTDI FT8U232/245
+    Native USB interface for FTDI FT8U232/245/2232C
     FTD2XX library definitions
 
 Environment:
@@ -17,28 +17,26 @@ Environment:
 
 Revision History:
 
-    13/03/01    awm     Created.
+    	13/03/01    	awm     	Created.
 	13/01/03	awm		Added device information support.
 	19/03/03	awm		Added FT_W32_CancelIo.
 	12/06/03	awm		Added FT_StopInTask and FT_RestartInTask.
 	18/09/03	awm		Added FT_SetResetPipeRetryCount.
 	10/10/03	awm		Added FT_ResetPort.
-	23/01/04	awm		Added support for open-by-location.
-	16/03/04	awm		Added support for FT2232C.
-	23/09/04	awm		Added support for FT232R.
-	20/10/04	awm		Added FT_CyclePort.
-	18/01/05	awm		Added FT_DEVICE_LIST_INFO_NODE type.
-	11/02/05	awm		Added LocId to FT_DEVICE_LIST_INFO_NODE.
-	25/08/05	awm		Added FT_SetDeadmanTimeout.
-	02/12/05	awm		Removed obsolete references.
-	05/12/05	awm		Added FT_GetVersion, FT_GetVersionEx.
-	
+	  /03/04	st		modified for linux users
+	12/10/04	st		added FT_SetVIDPID
+
 	
 --*/
 
 
 #ifndef FTD2XX_H
 #define FTD2XX_H
+
+#ifndef _WINDOWS
+#include <pthread.h>
+#define WINAPI
+#endif
 
 // The following ifdef block is the standard way of creating macros
 // which make exporting from a DLL simpler.  All files within this DLL
@@ -54,29 +52,45 @@ Revision History:
 #define FTD2XX_API __declspec(dllimport)
 #endif
 
+#ifndef _WINDOWS
+#include "WinTypes.h"
 
-typedef PVOID	FT_HANDLE;
-typedef ULONG	FT_STATUS;
+#ifdef FTD2XX_API
+#undef FTD2XX_API
+#define FTD2XX_API
+#endif
+#endif
+typedef struct _EVENT_HANDLE{
+	pthread_cond_t eCondVar;
+	pthread_mutex_t eMutex;
+	int iVar;
+} EVENT_HANDLE;
+
+typedef DWORD		 	*FT_HANDLE;
+//typedef unsigned int		 FT_HANDLE;
+//typedef struct ftdi_device *	FT_HANDLE;
+
+typedef ULONG			 FT_STATUS;
 
 //
 // Device status
 //
 enum {
-    FT_OK,
-    FT_INVALID_HANDLE,
-    FT_DEVICE_NOT_FOUND,
-    FT_DEVICE_NOT_OPENED,
-    FT_IO_ERROR,
-    FT_INSUFFICIENT_RESOURCES,
-    FT_INVALID_PARAMETER,
-    FT_INVALID_BAUD_RATE,
+	FT_OK,
+	FT_INVALID_HANDLE,
+	FT_DEVICE_NOT_FOUND,
+	FT_DEVICE_NOT_OPENED,
+	FT_IO_ERROR,
+	FT_INSUFFICIENT_RESOURCES,
+	FT_INVALID_PARAMETER,
+	FT_INVALID_BAUD_RATE,	//7
 
-    FT_DEVICE_NOT_OPENED_FOR_ERASE,
-    FT_DEVICE_NOT_OPENED_FOR_WRITE,
-    FT_FAILED_TO_WRITE_DEVICE,
-    FT_EEPROM_READ_FAILED,
-    FT_EEPROM_WRITE_FAILED,
-    FT_EEPROM_ERASE_FAILED,
+	FT_DEVICE_NOT_OPENED_FOR_ERASE,
+	FT_DEVICE_NOT_OPENED_FOR_WRITE,
+	FT_FAILED_TO_WRITE_DEVICE,
+	FT_EEPROM_READ_FAILED,
+	FT_EEPROM_WRITE_FAILED,
+	FT_EEPROM_ERASE_FAILED,
 	FT_EEPROM_NOT_PRESENT,
 	FT_EEPROM_NOT_PROGRAMMED,
 	FT_INVALID_ARGS,
@@ -93,7 +107,6 @@ enum {
 
 #define FT_OPEN_BY_SERIAL_NUMBER    1
 #define FT_OPEN_BY_DESCRIPTION      2
-#define FT_OPEN_BY_LOCATION			4
 
 //
 // FT_ListDevices Flags (used in conjunction with FT_OpenEx Flags
@@ -101,7 +114,7 @@ enum {
 
 #define FT_LIST_NUMBER_ONLY			0x80000000
 #define FT_LIST_BY_INDEX			0x40000000
-#define FT_LIST_ALL					0x20000000
+#define FT_LIST_ALL				0x20000000
 
 #define FT_LIST_MASK (FT_LIST_NUMBER_ONLY|FT_LIST_BY_INDEX|FT_LIST_ALL)
 
@@ -193,16 +206,15 @@ enum {
     FT_DEVICE_AM,
     FT_DEVICE_100AX,
     FT_DEVICE_UNKNOWN,
-    FT_DEVICE_2232C,
-    FT_DEVICE_232R
-};
+	FT_DEVICE_2232C,
+	FT_DEVICE_232R
+ };
 
 
 #ifdef __cplusplus
 extern "C" {
 #endif
-
-
+	
 FTD2XX_API
 FT_STATUS WINAPI FT_Open(
 	int deviceNumber,
@@ -221,6 +233,18 @@ FT_STATUS WINAPI FT_ListDevices(
 	PVOID pArg1,
 	PVOID pArg2,
 	DWORD Flags
+	);
+
+FTD2XX_API
+FT_STATUS FT_SetVIDPID(
+	DWORD dwVID, 
+	DWORD dwPID
+	);
+	
+FTD2XX_API
+FT_STATUS FT_GetVIDPID(
+	DWORD * pdwVID, 
+	DWORD * pdwPID
 	);
 
 FTD2XX_API
@@ -404,7 +428,7 @@ FTD2XX_API
 FT_STATUS WINAPI FT_EraseEE(
     FT_HANDLE ftHandle
 	);
-
+	
 //
 // structure to hold program data for FT_Program function
 //
@@ -484,9 +508,10 @@ typedef struct ft_program_data {
 	UCHAR Cbus3;				// Cbus Mux control
 	UCHAR Cbus4;				// Cbus Mux control
 
-	UCHAR RIsVCP;				// non-zero if using VCP drivers
+	UCHAR RIsVCP;				// zero if using VCP drivers
 
 } FT_PROGRAM_DATA, *PFT_PROGRAM_DATA;
+
 
 FTD2XX_API
 FT_STATUS WINAPI FT_EE_Program(
@@ -497,13 +522,13 @@ FT_STATUS WINAPI FT_EE_Program(
 FTD2XX_API
 FT_STATUS WINAPI FT_EE_ProgramEx(
     FT_HANDLE ftHandle,
-	PFT_PROGRAM_DATA pData,
+	PFT_PROGRAM_DATA lpData,
 	char *Manufacturer,
 	char *ManufacturerId,
 	char *Description,
 	char *SerialNumber
 	);
-
+	
 FTD2XX_API
 FT_STATUS WINAPI FT_EE_Read(
     FT_HANDLE ftHandle,
@@ -513,13 +538,13 @@ FT_STATUS WINAPI FT_EE_Read(
 FTD2XX_API
 FT_STATUS WINAPI FT_EE_ReadEx(
     FT_HANDLE ftHandle,
-	PFT_PROGRAM_DATA pData,
+	PFT_PROGRAM_DATA lpData,
 	char *Manufacturer,
 	char *ManufacturerId,
 	char *Description,
 	char *SerialNumber
 	);
-
+	
 FTD2XX_API
 FT_STATUS WINAPI FT_EE_UASize(
     FT_HANDLE ftHandle,
@@ -571,12 +596,6 @@ FT_STATUS WINAPI FT_SetUSBParameters(
     FT_HANDLE ftHandle,
     ULONG ulInTransferSize,
     ULONG ulOutTransferSize
-	);
-
-FTD2XX_API
-FT_STATUS WINAPI FT_SetDeadmanTimeout(
-    FT_HANDLE ftHandle,
-	ULONG ulDeadmanTimeout
     );
 
 FTD2XX_API
@@ -607,11 +626,6 @@ FT_STATUS WINAPI FT_SetResetPipeRetryCount(
 
 FTD2XX_API
 FT_STATUS WINAPI FT_ResetPort(
-    FT_HANDLE ftHandle
-    );
-
-FTD2XX_API
-FT_STATUS WINAPI FT_CyclePort(
     FT_HANDLE ftHandle
     );
 
@@ -808,7 +822,6 @@ BOOL WINAPI FT_W32_WaitCommEvent(
 	LPOVERLAPPED lpOverlapped
     );
 
-
 //
 // Device information
 //
@@ -822,7 +835,6 @@ typedef struct _ft_device_list_info_node {
 	char Description[64];
 	FT_HANDLE ftHandle;
 } FT_DEVICE_LIST_INFO_NODE;
-
 
 FTD2XX_API
 FT_STATUS WINAPI FT_CreateDeviceInfoList(
@@ -847,24 +859,56 @@ FT_STATUS WINAPI FT_GetDeviceInfoDetail(
 	FT_HANDLE *pftHandle
 	);
 
-
-//
-// Version information
-//
-
 FTD2XX_API
 FT_STATUS WINAPI FT_GetDriverVersion(
     FT_HANDLE ftHandle,
-	LPDWORD lpdwVersion
+	LPDWORD	lpdwVersion
 	);
 
 FTD2XX_API
 FT_STATUS WINAPI FT_GetLibraryVersion(
-	LPDWORD lpdwVersion
-	);
+	LPDWORD	lpdwVersion
+	);		
 
+//
+// Events
+//
 
+#define EV_RXCHAR           0x0001  // Any Character received
+#define EV_RXFLAG           0x0002  // Received certain character
+#define EV_TXEMPTY          0x0004  // Transmitt Queue Empty
+#define EV_CTS              0x0008  // CTS changed state
+#define EV_DSR              0x0010  // DSR changed state
+#define EV_RLSD             0x0020  // RLSD changed state
+#define EV_BREAK            0x0040  // BREAK received
+#define EV_ERR              0x0080  // Line status error occurred
+#define EV_RING             0x0100  // Ring signal detected
+#define EV_PERR             0x0200  // Printer error occured
+#define EV_RX80FULL         0x0400  // Receive buffer is 80 percent full
+#define EV_EVENT1           0x0800  // Provider specific event 1
+#define EV_EVENT2           0x1000  // Provider specific event 2
 
+//
+// Escape Functions
+//
+
+#define SETXOFF             1       // Simulate XOFF received
+#define SETXON              2       // Simulate XON received
+#define SETRTS              3       // Set RTS high
+#define CLRRTS              4       // Set RTS low
+#define SETDTR              5       // Set DTR high
+#define CLRDTR              6       // Set DTR low
+#define RESETDEV            7       // Reset device if possible
+#define SETBREAK            8       // Set the device break line.
+#define CLRBREAK            9       // Clear the device break line.
+
+//
+// PURGE function flags.
+//
+#define PURGE_TXABORT       0x0001  // Kill the pending/current writes to the comm port.
+#define PURGE_RXABORT       0x0002  // Kill the pending/current reads to the comm port.
+#define PURGE_TXCLEAR       0x0004  // Kill the transmit queue if there.
+#define PURGE_RXCLEAR       0x0008  // Kill the typeahead buffer if there.
 
 #ifdef __cplusplus
 }
@@ -872,4 +916,9 @@ FT_STATUS WINAPI FT_GetLibraryVersion(
 
 
 #endif  /* FTD2XX_H */
+
+
+
+
+
 
