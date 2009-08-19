@@ -6,12 +6,6 @@
 
 namespace TelldusCore {
 
-	const int ALL_METHODS =
-			TELLSTICK_TURNON |
-			TELLSTICK_TURNOFF |
-			TELLSTICK_BELL |
-			TELLSTICK_DIM;
-
 	class Device
 	{
 	public:
@@ -19,7 +13,7 @@ namespace TelldusCore {
 		virtual ~Device(void);
 		
 		int switchState( int newState, const std::string &value = "" );
-		virtual int methods(int methodsSupported) = 0;
+		virtual int methods() = 0;
 		virtual std::string getProtocol() const = 0;
 		virtual bool parameterMatches( const std::string &name, const std::string &value ) const = 0;
 		bool setParameter(const std::string &strName, const std::string &strValue);
@@ -30,6 +24,7 @@ namespace TelldusCore {
 		bool setName( const std::string &newName );
 		
 		static int methodId( const std::string &methodName );
+		static int maskUnsupportedMethods( int methods, int supportedMethods );
 		
 	#ifdef _LINUX
 		void setDevice(const std::string &device);

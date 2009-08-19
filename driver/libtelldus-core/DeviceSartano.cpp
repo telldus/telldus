@@ -77,7 +77,7 @@ bool DeviceSartano::parameterMatches( const std::string &name, const std::string
 /*
 * Has the device got the method?
 */
-int DeviceSartano::methods(int){
+int DeviceSartano::methods(){
 	return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
 }
 

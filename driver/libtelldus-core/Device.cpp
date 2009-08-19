@@ -22,6 +22,9 @@ Device::~Device(void) {
 
 int Device::switchState( int newState, const std::string &value ) {
 	int retVal = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+	if (!Device::maskUnsupportedMethods(this->methods(), newState)) {
+		return retVal;
+	}
 	std::string stateValue = "";
 	
 	switch (newState) {
@@ -127,4 +130,13 @@ bool Device::setName(const std::string & newName) {
 		return true;
 	}
 	return false;
+}
+
+int TelldusCore::Device::maskUnsupportedMethods(int methods, int supportedMethods) {
+	// Bell -> On
+	if ((methods & TELLSTICK_BELL) && !(supportedMethods & TELLSTICK_BELL)) {
+		methods |= TELLSTICK_TURNON;
+	}
+	//Cut of the rest of the unsupported methods we donät have a fallback for
+	return methods & supportedMethods;
 }

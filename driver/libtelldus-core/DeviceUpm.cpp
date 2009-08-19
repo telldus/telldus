@@ -102,7 +102,7 @@ bool DeviceUpm::parameterMatches( const std::string &name, const std::string &va
 /*
 * Has the device got the method?
 */
-int DeviceUpm::methods(int){
+int DeviceUpm::methods(){
 	return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
 }
 

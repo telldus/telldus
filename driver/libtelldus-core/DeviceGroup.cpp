@@ -57,7 +57,7 @@ int DeviceGroup::turnOn(void) {
 	int retVal = TELLSTICK_ERROR_UNKNOWN;
 	
 	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
-		int methods = (*it)->methods(ALL_METHODS);
+		int methods = (*it)->methods();
 		if (methods & TELLSTICK_TURNON) {
 			int success = (*it)->switchState( TELLSTICK_TURNON );
 			if (retVal != TELLSTICK_SUCCESS) {
@@ -75,7 +75,7 @@ int DeviceGroup::turnOff(void) {
 	int retVal = TELLSTICK_ERROR_UNKNOWN;
 	
 	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
-		int methods = (*it)->methods(ALL_METHODS);
+		int methods = (*it)->methods();
 		if (methods & TELLSTICK_TURNOFF) {
 			int success = (*it)->switchState( TELLSTICK_TURNOFF );
 			if (retVal != TELLSTICK_SUCCESS) {
@@ -93,7 +93,7 @@ int DeviceGroup::bell(void){
 	int retVal = TELLSTICK_ERROR_UNKNOWN;
 	
 	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
-		int methods = (*it)->methods(ALL_METHODS);
+		int methods = (*it)->methods();
 		if (methods & TELLSTICK_BELL) {
 			int success = (*it)->switchState( TELLSTICK_BELL );
 			if (retVal != TELLSTICK_SUCCESS) {
@@ -111,7 +111,7 @@ int DeviceGroup::dim(unsigned char level){
 	int retVal = TELLSTICK_ERROR_UNKNOWN;
 	
 	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
-		int methods = (*it)->methods(ALL_METHODS);
+		int methods = (*it)->methods();
 		if (methods & TELLSTICK_DIM) {
 			int success = (*it)->switchState( TELLSTICK_DIM, (char*)&level);
 			if (retVal != TELLSTICK_SUCCESS) {
@@ -129,11 +129,11 @@ bool DeviceGroup::parameterMatches( const std::string &name, const std::string &
 /*
 * Has the device got the method?
 */
-int DeviceGroup::methods(int supportedMethods){
+int DeviceGroup::methods(){
 	int retVal = 0;
 	
 	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
-		retVal = retVal | (*it)->methods(supportedMethods);
+		retVal = retVal | (*it)->methods();
 	}
 	
 	return retVal;

@@ -237,7 +237,7 @@ void Manager::parseMessage( const std::string &message ) {
 		if (it->second->getProtocol().compare(protocol) != 0) {
 			continue;
 		}
-		if (! (it->second->methods(ALL_METHODS) & method)) {
+		if (! (it->second->methods() & method)) {
 			continue;
 		}
 		bool found = true;

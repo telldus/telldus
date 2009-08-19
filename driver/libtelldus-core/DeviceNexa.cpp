@@ -63,7 +63,9 @@ bool DeviceNexa::setDeviceParameter(const std::string &strName, const std::strin
 * Turn on this device
 */
 int DeviceNexa::turnOn(void){
-
+	if (strcasecmp(this->getModel().c_str(), "bell") == 0) {
+		return bell();
+	}
 	try{
 		std::string strCode = "";
 		if (isDimmer()) {
@@ -243,7 +245,7 @@ bool DeviceNexa::parameterMatches( const std::string &name, const std::string &v
 /*
 * Has the device got the method?
 */
-int DeviceNexa::methods(int methodsSupported){
+int DeviceNexa::methods(){
 	std::string strModel = this->getModel();
 	
 	if ( strcasecmp(strModel.c_str(), "codeswitch") == 0
@@ -254,11 +256,7 @@ int DeviceNexa::methods(int methodsSupported){
 		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_DIM);
 		
 	} else if (strcasecmp(strModel.c_str(), "bell") == 0) {
-		if (methodsSupported & TELLSTICK_BELL) {
-			return TELLSTICK_BELL;
-		} else if (methodsSupported & TELLSTICK_TURNON) {
-			return TELLSTICK_TURNON;
-		}
+		return TELLSTICK_BELL;
 	}
 	return 0;
 }
