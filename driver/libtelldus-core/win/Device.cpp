@@ -7,10 +7,9 @@
 
 #ifdef _WINDOWS
 #include "..\StdAfx.h"
-#else
-#include "WinTypes.h"
 #endif
-#include "ftd2xx.h"
+
+#include "../ftd2xx.h"
 
 int getDongleIndex();
 
