@@ -6,6 +6,12 @@
 #include <math.h>
 #include <QDebug>
 
+#ifdef _WINDOWS
+inline double round(double x) {
+	return floor(x + 0.5);
+}
+#endif
+
 DeviceModel::DeviceModel(QObject *parent)
 		:QAbstractTableModel(parent)
 {
