@@ -5,9 +5,11 @@
 TelldusCoreObject::TelldusCoreObject( QObject * parent )
 		: QObject(parent)
 {
+	tdInit();
 }
 
 TelldusCoreObject::~TelldusCoreObject() {
+	tdClose();
 }
 
 int TelldusCoreObject::bell(int deviceId) {
