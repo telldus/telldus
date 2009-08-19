@@ -33,6 +33,14 @@ SET( telldus-center_RESOURCES
 	TelldusCenter.icns
 )
 
+SET( telldus-center_TS
+	telldus-center_sv.ts
+)
+
+SET( telldus-center_QM
+	telldus-center_sv.qm
+)
+
 QT4_WRAP_CPP(  telldus-center_MOC_SRCS  ${telldus-center_MOC_HDRS} )
 QT4_AUTOMOC (  ${telldus-center_SRCS} )
 QT4_ADD_RESOURCES  (telldus-center_RSRCS     resource.qrc         )
@@ -72,6 +80,14 @@ ENDIF (APPLE)
 
 
 ######## Configuring  ########
+
+# Compile translation files
+ADD_CUSTOM_COMMAND(TARGET ${telldus-center_TARGET}
+	PRE_BUILD
+	COMMAND lupdate
+	ARGS ${telldus-center_SRCS} -ts ${telldus-center_TS}
+	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+)
 
 ADD_EXECUTABLE(${telldus-center_TARGET} MACOSX_BUNDLE
 	${telldus-center_SRCS}
