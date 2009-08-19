@@ -12,6 +12,7 @@
 #include "Manager.h"
 #include "Device.h"
 #include "DeviceGroup.h"
+#include "DeviceUndefined.h"
 #ifdef TELLSTICK_DUO
   #include "TellStickDuo.h"
 #endif
@@ -518,8 +519,20 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
  * @returns TELLSTICK_SUCCESS on success or one of the errorcodes on failure
  */
 int WINAPI tdSendRawCommand(const char *command, int reserved) {
-	//TODO: to be implemented
-	return TELLSTICK_SUCCESS;
+	try{
+		Manager *manager = Manager::getInstance();
+		Device* dev = manager->getDevice(0);
+		DeviceUndefined *udev = dynamic_cast<DeviceUndefined *>(dev);
+		if(udev){
+			return udev->sendRawCommand(command);
+		} else{
+			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+		}
+	}
+	catch(exception e){
+		handleException(e);
+	}
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 //********

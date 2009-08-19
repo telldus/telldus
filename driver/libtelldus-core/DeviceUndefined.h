@@ -12,6 +12,9 @@ namespace TelldusCore {
 		virtual std::string getProtocol() const;
 		virtual bool parameterMatches( const std::string &name, const std::string &value ) const;
 		
+		int sendRawCommand(const std::string &strMessage);
+
+		
 	public:
 		~DeviceUndefined(void);
 	

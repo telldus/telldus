@@ -140,7 +140,9 @@ Device *Manager::getDevice(int intDeviceId){
 		throw;
 	}
 	
-	devices[intDeviceId] = dev;
+	if (intDeviceId > 0) {
+		devices[intDeviceId] = dev;
+	}
 	return dev;
 }
 
