@@ -12,6 +12,7 @@ class QLabel;
 class QLineEdit;
 class QStackedLayout;
 class QItemSelectionModel;
+class QTreeView;
 
 class EditDeviceDialog : public QDialog
 {
@@ -26,6 +27,7 @@ private slots:
 	void cancelClicked();
 
 private:
+	void expandNodes(QTreeView *deviceView);
 	VendorDeviceModel *model;
 	Device *device;
 	QStackedLayout *settingsLayout;

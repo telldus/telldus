@@ -74,6 +74,10 @@ bool VendorDeviceTreeItem::isDevice() const {
 	return model.length() > 0;
 }
 
+bool VendorDeviceTreeItem::isExpanded() const {
+	return expanded;
+}
+
 QString VendorDeviceTreeItem::deviceModel() const {
 	return model;
 }
@@ -142,6 +146,7 @@ bool VendorDeviceTreeItem::parseXml( const QString &filename ) {
 void VendorDeviceTreeItem::parseType( QXmlStreamReader *reader ) {
 	VendorDeviceTreeItem *item = new VendorDeviceTreeItem(this);
 	item->deviceName = reader->attributes().value("name").toString();
+	item->expanded = (reader->attributes().value("expanded").toString() == "true" ? true : false);
 	appendChild(item);
 
 	reader->readNext();

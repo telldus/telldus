@@ -110,6 +110,7 @@ foreach( DeviceSetting *s, deviceSettings ) {
 		settingsLayout->addWidget( s );
 	}
 
+	expandNodes(deviceView);
 	QModelIndex index = model->index( device );
 	if (index.isValid()) {
 		deviceView->expand( index.parent() );
@@ -188,4 +189,14 @@ void EditDeviceDialog::cancelClicked() {
 	}
 #endif
 	this->reject();
+}
+
+void EditDeviceDialog::expandNodes(QTreeView *deviceView) {
+	for( int i = 0; i < model->rowCount(QModelIndex()); ++i ) {
+		QModelIndex index = model->index(i, 0, QModelIndex());
+		VendorDeviceTreeItem *item = model->item(index);
+		if (item && item->isExpanded()) {
+			deviceView->expand(index);
+		}
+	}
 }

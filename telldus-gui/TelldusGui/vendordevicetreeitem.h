@@ -26,6 +26,7 @@ public:
 	QPixmap image() const;
 	int widget() const;
 	bool isDevice() const;
+	bool isExpanded() const;
 	QString deviceModel() const;
 	const QString &deviceProtocol() const;
 
@@ -40,6 +41,7 @@ private:
 	QList<VendorDeviceTreeItem *> childItems;
 
 	int settingsWidget;
+	bool expanded;
 	QString deviceName, protocol, model;
 	QString img;
 	VendorDeviceTreeItem *parentItem;
