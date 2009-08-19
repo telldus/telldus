@@ -4,6 +4,12 @@
 #include <string.h>
 #include "../driver/libtelldus-core/telldus-core.h"
 
+const int SUPPORTED_METHODS =
+	TELLSTICK_TURNON |
+	TELLSTICK_TURNOFF |
+	TELLSTICK_BELL |
+	TELLSTICK_DIM;
+
 void print_usage( char *name ) {
 	printf("\"tdtool\" is a command line utility to control a Telldus TellStick\n");
 	printf("\n");
@@ -59,8 +65,26 @@ void print_version() {
 void print_device( int index ) {
 	int intId = tdGetDeviceId(index);
 	char *name = tdGetName(intId);
-	printf("%i\t%s\n", intId, name);
+	printf("%i\t%s\t", intId, name);
 	free(name);
+	int lastSentCommand = tdLastSentCommand(intId, SUPPORTED_METHODS);
+	char *level = 0;
+	switch(lastSentCommand) {
+		case TELLSTICK_TURNON:
+			printf("ON");
+			break;
+		case TELLSTICK_TURNOFF:
+			printf("OFF");
+			break;
+		case TELLSTICK_DIM:
+			level = tdLastSentValue(intId);
+			printf("DIMMED:%s\%", level);
+			free(level);
+			break;
+		default:
+			printf("Unknown state");
+	}
+	printf("\n");
 }
 
 void list_devices() {
