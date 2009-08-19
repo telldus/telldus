@@ -106,17 +106,7 @@ int WINAPI tdTurnOn(int intDeviceId){
 		Manager *manager = Manager::getInstance();
 		Device* dev = manager->getDevice(intDeviceId);
 		if(dev != NULL){
-			int methods = dev->methods( TELLSTICK_TURNON );
-			
-			int retval = 0;
-			
-			if ( !(methods & TELLSTICK_TURNON) ) {
-				retval = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
-			} else {
-				retval = dev->switchState(TELLSTICK_TURNON);
-			}
-
-			return retval;
+			return dev->switchState(TELLSTICK_TURNON);
 		} else{
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
@@ -139,18 +129,8 @@ int WINAPI tdTurnOff(int intDeviceId){
 		Manager *manager = Manager::getInstance();
 		Device* dev = manager->getDevice(intDeviceId);
 		if(dev != NULL){
-			int methods = dev->methods( TELLSTICK_TURNOFF );
-			int retval = 0;
-
-			if ( !(methods & TELLSTICK_TURNOFF) ) {
-				retval = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
-			} else {
-				retval = dev->switchState(TELLSTICK_TURNOFF);
-			}
-
-			return retval;
-		}
-		else{
+			return dev->switchState(TELLSTICK_TURNOFF);
+		} else {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
 	}
@@ -171,19 +151,9 @@ int WINAPI tdBell(int intDeviceId){
 	try{
 		Manager *manager = Manager::getInstance();
 		Device* dev = manager->getDevice(intDeviceId);
-		if(dev != NULL){
-			int methods = dev->methods( TELLSTICK_BELL );
-			int retval = 0;
-
-			if ( !(methods & TELLSTICK_BELL) ) {
-				retval = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
-			} else {
-				retval = dev->switchState( TELLSTICK_BELL );
-			}
-
-			return retval;
-		}
-		else{
+		if (dev != NULL){
+			return dev->switchState( TELLSTICK_BELL );
+		} else {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
 	}
@@ -205,24 +175,17 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
 		Manager *manager = Manager::getInstance();
 		Device* dev = manager->getDevice(intDeviceId);
 		if(dev != NULL){
-			int methods = dev->methods( TELLSTICK_DIM );
 			int retval = 0;
 
-			if ( !(methods & TELLSTICK_DIM) ) {
-				retval = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+			if (level == 0) {
+				retval = dev->switchState( TELLSTICK_TURNOFF );
+			} else if (level == 255) {
+				retval = dev->switchState( TELLSTICK_TURNON );
 			} else {
-				if (level == 0) {
-					retval = dev->switchState( TELLSTICK_TURNOFF );
-				} else if (level == 255) {
-					retval = dev->switchState( TELLSTICK_TURNON );
-				} else {
-					retval = dev->switchState( TELLSTICK_DIM, (char *)&level);
-				}
+				retval = dev->switchState( TELLSTICK_DIM, (char *)&level);
 			}
-
 			return retval;
-		}
-		else{
+		} else {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
 	}
@@ -235,12 +198,21 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
 /**
  * Returns the last sent command to a specific device
  * @param intDeviceId The device id to query
+ * @param methodsSupported The methods supported by the client. See tdMethods() for more information.
  * @returns the last sent command as integer, example TELLSTICK_TURNON or TELLSTICK_TURNOFF
  */
-int WINAPI tdLastSentCommand( int intDeviceId ) {
+int WINAPI tdLastSentCommand( int intDeviceId, int methodsSupported ) {
 	Manager *manager = Manager::getInstance();
-	int lastSentCommand = manager->getDeviceState( intDeviceId );
-	return (lastSentCommand > 0 ? lastSentCommand : TELLSTICK_TURNOFF );
+	int lastSentCommand = Device::maskUnsupportedMethods(manager->getDeviceState( intDeviceId ), methodsSupported);
+	
+	if (lastSentCommand == TELLSTICK_BELL) {
+		//Bell is not a state
+		lastSentCommand = TELLSTICK_TURNOFF;
+	}
+	if (lastSentCommand == 0) {
+		lastSentCommand = TELLSTICK_TURNOFF;
+	}
+	return lastSentCommand;
 }
 
 /**
@@ -496,14 +468,14 @@ int WINAPI tdMethods(int id, int methodsSupported){
 		Manager *manager = Manager::getInstance();
 		Device* dev = manager->getDevice(id);
 		if (dev != NULL) {
-			intMethods = dev->methods(methodsSupported);
+			intMethods = dev->methods();
 		}
 	}
 	catch(exception e){
 		intMethods = 0;
 		handleException(e);
 	}
-	intMethods = intMethods & methodsSupported; //Strip the methods not supported by client.
+	intMethods = Device::maskUnsupportedMethods(intMethods, methodsSupported); //Strip the methods not supported by client.
 	return intMethods;
 }
 

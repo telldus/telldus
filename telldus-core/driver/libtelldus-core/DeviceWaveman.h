@@ -8,7 +8,7 @@ namespace TelldusCore {
 	{
 	public:
 		DeviceWaveman(int id, const std::string &model, const std::string &name);
-		virtual int methods(int methodsSupported);
+		virtual int methods();
 		
 	protected:
 		virtual int turnOff(void);

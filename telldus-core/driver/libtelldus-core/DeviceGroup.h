@@ -15,7 +15,7 @@ namespace TelldusCore {
 		DeviceGroup(int id, const std::string &model, const std::string &name);
 		~DeviceGroup(void);
 
-		virtual int methods(int methodsSupported);
+		virtual int methods();
 		virtual std::string getProtocol() const;
 		virtual bool parameterMatches( const std::string &name, const std::string &value ) const;
 		

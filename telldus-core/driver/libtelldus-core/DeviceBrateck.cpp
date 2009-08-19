@@ -87,7 +87,7 @@ bool DeviceBrateck::parameterMatches( const std::string &name, const std::string
 /*
 * Has the device got the method?
 */
-int DeviceBrateck::methods(int){
+int DeviceBrateck::methods(){
 	return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
 }
 

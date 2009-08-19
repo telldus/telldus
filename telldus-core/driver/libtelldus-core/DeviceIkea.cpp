@@ -224,7 +224,7 @@ bool DeviceIkea::parameterMatches( const std::string &name, const std::string &v
 /*
 * Has the device got the method?
 */
-int DeviceIkea::methods(int){
+int DeviceIkea::methods(){
 	return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_DIM);
 }
 

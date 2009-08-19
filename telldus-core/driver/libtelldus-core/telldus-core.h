@@ -40,7 +40,7 @@ extern "C" {
 	TELLSTICK_API int WINAPI tdBell(int intDeviceId);
 	TELLSTICK_API int WINAPI tdDim(int intDeviceId, unsigned char level);
 	TELLSTICK_API int WINAPI tdMethods(int id, int methodsSupported);
-	TELLSTICK_API int WINAPI tdLastSentCommand( int intDeviceId );
+	TELLSTICK_API int WINAPI tdLastSentCommand( int intDeviceId, int methodsSupported );
 	TELLSTICK_API char *WINAPI tdLastSentValue( int intDeviceId );
 	
 	TELLSTICK_API int WINAPI tdGetNumberOfDevices();

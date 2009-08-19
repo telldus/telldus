@@ -27,7 +27,7 @@ bool DeviceUndefined::parameterMatches( const std::string &name, const std::stri
 /*
 * Has the device got the method?
 */
-int DeviceUndefined::methods(int methodsSupported){
+int DeviceUndefined::methods(){
 	return 0;
 }
 

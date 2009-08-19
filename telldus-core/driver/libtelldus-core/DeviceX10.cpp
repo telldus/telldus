@@ -193,7 +193,7 @@ bool DeviceX10::parameterMatches( const std::string &name, const std::string &va
 /*
 * Has the device got the method?
 */
-int DeviceX10::methods(int methodsSupported){
+int DeviceX10::methods(){
 	return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
 }
 

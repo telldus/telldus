@@ -39,6 +39,6 @@ int DeviceWaveman::turnOff(void){
 /*
 * Has the device got the method?
 */
-int DeviceWaveman::methods(int){
+int DeviceWaveman::methods(){
 	return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
 }

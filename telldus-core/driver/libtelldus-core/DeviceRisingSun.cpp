@@ -127,7 +127,7 @@ bool DeviceRisingSun::parameterMatches( const std::string &name, const std::stri
 /*
 * Has the device got the method?
 */
-int DeviceRisingSun::methods(int methodsSupported){
+int DeviceRisingSun::methods(){
 	return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
 }
 

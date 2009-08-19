@@ -10,7 +10,7 @@ namespace TelldusCore {
 		DeviceSartano(int id, const std::string &model, const std::string &name);
 		virtual ~DeviceSartano(void);
 		
-		virtual int methods(int methodsSupported);
+		virtual int methods();
 		virtual std::string getProtocol() const;
 		virtual bool parameterMatches( const std::string &name, const std::string &value ) const;
 	
