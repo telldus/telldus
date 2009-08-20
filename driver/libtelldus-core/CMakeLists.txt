@@ -163,15 +163,15 @@ SET_PROPERTY(TARGET ${telldus-core_TARGET}
 
 
 INSTALL(TARGETS ${telldus-core_TARGET}
-	DESTINATION lib
-#	PUBLIC_HEADER       DESTINATION         ${HEADER_DIR}
-	)
+	LIBRARY         DESTINATION   lib
+	PUBLIC_HEADER   DESTINATION   include
+)
 
 SET(SYSCONF_INSTALL_DIR
 	"/etc"
 	CACHE PATH "The ${APPLICATION_NAME} sysconfig install dir (default prefix/etc)"
 	FORCE
-	)
+)
 
 IF (UNIX)
 	INSTALL(FILES
