@@ -13,8 +13,14 @@ INCLUDE_DIRECTORIES(
   ${CMAKE_SOURCE_DIR}/driver
 )
 
-TARGET_LINK_LIBRARIES(tdtool
-  telldus-core
-)
+IF (APPLE)
+	TARGET_LINK_LIBRARIES(tdtool
+		TelldusCore
+	)
+ELSE (APPLE)
+	TARGET_LINK_LIBRARIES(tdtool
+		telldus-core
+	)
+ENDIF (APPLE)
 
 INSTALL(TARGETS tdtool RUNTIME DESTINATION bin)
