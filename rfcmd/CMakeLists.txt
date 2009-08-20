@@ -44,6 +44,18 @@ ENDIF (BUILD_RFCMD_WITH_LIBFTDI)
 
 INSTALL(TARGETS rfcmd RUNTIME DESTINATION bin)
 
+IF (UNIX)
+	ADD_CUSTOM_COMMAND(
+		TARGET rfcmd
+		POST_BUILD
+		COMMAND help2man ./rfcmd | bzip2 -c > rfcmd.1.bz2
+		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+		COMMENT "Generating man file rfcmd.1.bz2"
+	)
+ENDIF (UNIX)
+
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rfcmd.1.bz2 DESTINATION share/man/man1)
+
 
 #### Project: find_telldus ####
 

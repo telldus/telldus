@@ -66,6 +66,7 @@ int createIkeaString(const char * pSystemStr, const char * pChannelStr,
                      char * pStrReturn);
 
 void printUsage(void);
+void printVersion(void);
 
 #ifdef LIBFTDI
 int usbWriteFtdi(char *cmdstr);
@@ -105,6 +106,9 @@ int main( int argc, char **argv )
 			exit(1);
 		}
 		/* else - a send cmd string was created */
+	} else if ( (argc >= 2) && (strcmp(*(argv+1),"--version")==0) ) {
+		printVersion();
+		exit(1);
 	} else { /* protocol or parameters not recognized */
 		printUsage();
 		exit(1);
@@ -429,20 +433,35 @@ int createIkeaString( const char * pSystemStr, const char * pChannelStr, const c
 
 void printUsage(void)
 {
-	printf("%s v%s - Send RF remote commands\n", PROG_NAME, PROG_VERSION);
+	printf("Sends RF remote commands through a Telldus TellStick\n");
+	printf("\n");
 	printf("Usage: rfcmd DEVICE PROTOCOL [PROTOCOL_ARGUMENTS] \n");
+	printf("\n");
 #ifdef LIBFTDI
 	printf("\t DEVICE: /dev/ttyUSB[0..n] | LIBUSB\n" );
 #else
 	printf("\t DEVICE: /dev/ttyUSB[0..n]\n" );
 #endif
 	printf("\t PROTOCOLS: NEXA, SARTANO, WAVEMAN, IKEA\n" );
+	printf("\n");
 	printf("\t PROTOCOL ARGUMENTS - NEXA, WAVEMAN:\n");
 	printf("\t\tHOUSE_CODE: A..P\n\t\tCHANNEL: 1..16\n\t\tOFF_ON: 0..1\n" );
+	printf("\n");
 	printf("\t PROTOCOL ARGUMENTS - SARTANO:\n");
 	printf("\t\tCHANNEL: 0000000000..1111111111\n\t\tOFF_ON: 0..1\n" );
+	printf("\n");
 	printf("\t PROTOCOL ARGUMENTS - IKEA:\n");
 	printf("\t\tSYSTEM: 1..16\n\t\tDEVICE: 1..10\n");
 	printf("\t\tDIM_LEVEL: 0..10\n\t\tDIM_STYLE: 0..1\n" );
-	printf("Copyright(C) Tord Andersson 2007\r\n");
+	printf("\n");
+	printf("Report bugs to <info.tech@telldus.se>\n");
 }
+
+void printVersion(void) {
+	printf("%s v%s\n", PROG_NAME, PROG_VERSION);
+	printf("\n");
+	printf("Copyright (C) Tord Andersson 2007\n");
+	printf("\n");
+	printf("Written by Tord Andersson, Micke Prag, Gudmund Berggren and Tapani Rintala\n");
+}
+
