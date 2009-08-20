@@ -27,6 +27,7 @@
 #ifdef TELLSTICK_DUO
 #include "TellStickDuo.h"
 #endif
+#include "common.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -35,9 +36,6 @@
 #ifdef _WINDOWS
 #define strcasecmp _stricmp
 #endif
-
-//Defined in telldus-core.cpp
-extern char *wrapStdString( const std::string &string);
 
 
 using namespace TelldusCore;
