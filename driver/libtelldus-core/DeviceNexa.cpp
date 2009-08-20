@@ -13,7 +13,7 @@
 
 using namespace TelldusCore;
 
-const char START[] = {'T',119,255,24,1,0};
+const char START[] = {'R',5,'T',119,255,24,1,0};
 
 /*
 * Constructor
