@@ -44,6 +44,7 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 
 	QTreeView *deviceView = new QTreeView(this);
 	deviceView->setModel( model );
+	deviceView->setMinimumSize( QSize(200, 200) );
 
 	selection = deviceView->selectionModel();
 	connect( selection, SIGNAL( currentChanged(const QModelIndex, const QModelIndex &) ), this, SLOT(selectionChanged( const QModelIndex & ) ));
