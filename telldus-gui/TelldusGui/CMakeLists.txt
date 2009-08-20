@@ -39,7 +39,6 @@ SET( telldus-gui_MOC_HDRS
 	editdevicedialog.h
 	editgroupdialog.h
 	vendordevicemodel.h
-	vendordevicetreeitem.h
 	devicesettingarctechselflearning.h
 	devicesettingbrateck.h
 	devicesettingikea.h
