@@ -16,8 +16,7 @@
 #include <QMutex>
 
 #include "Controller.h"
-#include "win/WinTypes.h"
-#include "win/ftd2xx.h"
+#include "ftd2xx.h"
 
 /**
 	@author Micke Prag <micke.prag@telldus.se>
