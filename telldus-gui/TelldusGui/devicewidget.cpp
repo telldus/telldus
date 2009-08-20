@@ -44,9 +44,9 @@ DeviceWidget::DeviceWidget(QWidget *parent) :
 	addToolButton.setIcon( QIcon( ":/images/list-add.png" ) );
 	addToolButton.setText( tr("New") );
 	addToolButton.setToolButtonStyle( Qt::ToolButtonTextBesideIcon );
-	addToolButton.setPopupMode( QToolButton::MenuButtonPopup );
-	addToolButton.setMenu( newMenu );
-	connect(&addToolButton, SIGNAL(clicked()), this, SLOT(addGroup()));
+	//addToolButton.setPopupMode( QToolButton::MenuButtonPopup );
+	//addToolButton.setMenu( newMenu );
+	connect(&addToolButton, SIGNAL(clicked()), this, SLOT(addDevice()));
 	buttonLayout->addWidget( &addToolButton );
 
 	buttonLayout->addSpacing( 10 );
