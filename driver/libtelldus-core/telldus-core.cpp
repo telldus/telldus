@@ -16,6 +16,7 @@
 #ifdef TELLSTICK_DUO
   #include "TellStickDuo.h"
 #endif
+#include "common.h"
 #include <vector>
 #include <iostream>
 #include <fstream>
@@ -26,7 +27,6 @@ void handleException(std::exception e);
 using namespace std;
 using namespace TelldusCore;
 
-inline char *wrapStdString( const std::string &string);
 
 /**
  * @def TELLSTICK_TURNON
@@ -550,17 +550,6 @@ void handleException(exception e){
 			errorfile.close();
 		}
 	}
-}
-
-inline char *wrapStdString( const std::string &string) {
-	char *returnVal;
-#ifdef _WINDOWS
-	returnVal = (char *)SysAllocStringByteLen(string.c_str(), string.size());
-#else
-	returnVal = (char *)malloc(sizeof(char) * (string.size()+1));
-	strcpy(returnVal, string.c_str());
-#endif
-	return returnVal;
 }
 
 /*\@}*/
