@@ -51,15 +51,15 @@ void print_usage( char *name ) {
 	printf("             either be an integer of the device-id, or the name of the device.\n");
 	printf("             Both device-id and name is outputed with the --list option\n");
 	printf("\n");
-	printf("Written by Micke Prag <micke.prag@telldus.se>\n");
-	printf("\n");
-	printf("Copyright (C) 2008 Telldus Technologies AB\n");
+	printf("Report bugs to <info.tech@telldus.se>\n");
 }
 
 void print_version() {
 	printf("tdtool " VERSION "\n");
 	printf("\n");
-	printf("Report bugs to <info.tech@telldus.se>\n");
+	printf("Copyright (C) 2009 Telldus Technologies AB\n");
+	printf("\n");
+	printf("Written by Micke Prag <micke.prag@telldus.se>\n");
 }
 
 void print_device( int index ) {
