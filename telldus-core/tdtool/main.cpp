@@ -57,7 +57,7 @@ void print_usage( char *name ) {
 }
 
 void print_version() {
-	printf("tdtool 2.0\n");
+	printf("tdtool " VERSION "\n");
 	printf("\n");
 	printf("Report bugs to <info.tech@telldus.se>\n");
 }
