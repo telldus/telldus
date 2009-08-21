@@ -54,7 +54,7 @@ IF (UNIX)
 	)
 ENDIF (UNIX)
 
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rfcmd.1.bz2 DESTINATION share/man/man1)
+INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rfcmd.1 DESTINATION share/man/man1)
 
 
 #### Project: find_telldus ####
