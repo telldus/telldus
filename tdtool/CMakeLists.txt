@@ -32,9 +32,9 @@ IF (UNIX)
 	ADD_CUSTOM_COMMAND(
 		TARGET tdtool
 		POST_BUILD
-		COMMAND help2man ./tdtool | bzip2 -c > tdtool.1.bz2
+		COMMAND help2man ./tdtool > tdtool.1
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		COMMENT "Generating man file tdtool.1.bz2"
+		COMMENT "Generating man file tdtool.1"
 	)
 ENDIF (UNIX)
 
