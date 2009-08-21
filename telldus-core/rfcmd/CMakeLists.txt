@@ -48,9 +48,9 @@ IF (UNIX)
 	ADD_CUSTOM_COMMAND(
 		TARGET rfcmd
 		POST_BUILD
-		COMMAND help2man ./rfcmd | bzip2 -c > rfcmd.1.bz2
+		COMMAND help2man ./rfcmd > rfcmd.1
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		COMMENT "Generating man file rfcmd.1.bz2"
+		COMMENT "Generating man file rfcmd.1"
 	)
 ENDIF (UNIX)
 
