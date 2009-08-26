@@ -5,6 +5,10 @@
 //
 //
 
+#ifdef _WINDOWS
+	#include "stdafx.h"
+	#include <ole2.h>
+#endif
 #include <stdlib.h>
 
 inline char *wrapStdString( const std::string &string) {

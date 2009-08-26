@@ -4,10 +4,6 @@
  * @{
  */
 
-#ifdef _WINDOWS
-	#include "stdafx.h"
-	#include <ole2.h>
-#endif
 #include "telldus-core.h"
 #include "Manager.h"
 #include "Device.h"
