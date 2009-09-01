@@ -181,7 +181,9 @@ bool Manager::setDeviceModel(int intDeviceId, const std::string &strModel) {
 }
 
 bool Manager::setDeviceState( int intDeviceId, int intDeviceState, const std::string &strDeviceStateValue ) {
-	if (intDeviceState != TELLSTICK_BELL) {
+	if (intDeviceState != TELLSTICK_BELL &&
+	    intDeviceState != TELLSTICK_LEARN
+		 ) {
 		bool retval = settings.setDeviceState(intDeviceId, intDeviceState, strDeviceStateValue);
 		for(CallbackList::const_iterator callback_it = callbacks.begin(); callback_it != callbacks.end(); ++callback_it) {
 			(*callback_it).event(intDeviceId, intDeviceState, wrapStdString(strDeviceStateValue), (*callback_it).id, (*callback_it).context);

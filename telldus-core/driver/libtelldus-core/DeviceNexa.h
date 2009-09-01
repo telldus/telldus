@@ -24,6 +24,7 @@ namespace TelldusCore {
 		virtual int turnOff(void);
 		virtual int dim(unsigned char level);
 		virtual int bell(void);
+		virtual int learn(void);
 		
 		bool isSelflearning() const;
 		bool isDimmer() const;

@@ -38,6 +38,7 @@ namespace TelldusCore {
 		virtual int turnOff(void);
 		virtual int bell(void);
 		virtual int dim(unsigned char level);
+		virtual int learn(void);
 		int send(const std::string &strMessage);
 	
 	private:

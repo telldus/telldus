@@ -13,7 +13,7 @@
 
 using namespace TelldusCore;
 
-const char START[] = {'R',5,'T',119,255,24,1,0};
+const char START[] = {'T',127,255,24,1,0};
 
 /*
 * Constructor
@@ -71,6 +71,8 @@ int DeviceNexa::turnOn(void){
 		if (isDimmer()) {
 			return dim(255);
 		} else if (isSelflearning()) {
+			strCode.append( 1, 'R' );
+			strCode.append( 1, 5 );
 			strCode.append(getStringSelflearning(false, 255));
 		} else {
 			strCode.append("S");
@@ -95,6 +97,8 @@ int DeviceNexa::turnOff(void){
 	try{
 		std::string strCode = "";
 		if (isSelflearning()) {
+			strCode.append( 1, 'R' );
+			strCode.append( 1, 5 );
 			strCode.append(getStringSelflearning(false, 0));
 		} else {
 			strCode.append("S");
@@ -116,8 +120,10 @@ int DeviceNexa::turnOff(void){
 */
 int DeviceNexa::dim(unsigned char level) {
 	try{
-		std::string strMessage = getStringSelflearning(true, level);
-// 		return TELLSTICK_SUCCESS;
+		std::string strMessage = "";
+		strMessage.append( 1, 'R' );
+		strMessage.append( 1, 5 );
+		strMessage.append(getStringSelflearning(true, level));
 		return Device::send(strMessage);
 	}
 	catch(...){
@@ -145,6 +151,23 @@ int DeviceNexa::bell(void){
 		throw;
 	}
 	return TELLSTICK_ERROR_UNKNOWN;
+}
+
+int DeviceNexa::learn(void){
+	std::string strCode = "";
+	strCode.append( 1, 'R' );
+	strCode.append( 1, 2 );
+	strCode.append(getStringSelflearning(false, 255));
+	
+	int retVal = 0;
+	for (int i = 0; i < 5; ++i) {
+		retVal = Device::send(strCode);
+		if (retVal != TELLSTICK_SUCCESS) {
+			return retVal;
+		}
+		usleep(200000);
+	}
+	return retVal;
 }
 
 /*
@@ -248,12 +271,14 @@ bool DeviceNexa::parameterMatches( const std::string &name, const std::string &v
 int DeviceNexa::methods(){
 	std::string strModel = this->getModel();
 	
-	if ( strcasecmp(strModel.c_str(), "codeswitch") == 0
-	  || strcasecmp(strModel.c_str(), "selflearning-switch") == 0)	{
+	if ( strcasecmp(strModel.c_str(), "codeswitch") == 0 ) {
 		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
 		
+	} else if (strcasecmp(strModel.c_str(), "selflearning-switch") == 0) {
+		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN);
+		
 	} else if (strcasecmp(strModel.c_str(), "selflearning-dimmer") == 0) {
-		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_DIM);
+		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_DIM | TELLSTICK_LEARN);
 		
 	} else if (strcasecmp(strModel.c_str(), "bell") == 0) {
 		return TELLSTICK_BELL;
