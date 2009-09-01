@@ -5,7 +5,7 @@ QHash<int, Device *> Device::devices;
 
 int Device::callbackId = tdRegisterDeviceEvent( reinterpret_cast<TDDeviceEvent>(&Device::deviceEvent), 0);
 
-const int SUPPORTED_METHODS = TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL | TELLSTICK_DIM;
+const int SUPPORTED_METHODS = TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL | TELLSTICK_DIM | TELLSTICK_LEARN;
 
 class DevicePrivate {
 public:
@@ -177,6 +177,10 @@ void Device::turnOn() {
 
 void Device::bell() {
 	triggerEvent( tdBell( d->id ) );
+}
+
+void Device::learn() {
+	triggerEvent( tdLearn( d->id ) );
 }
 
 int Device::lastSentCommand() const {

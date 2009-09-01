@@ -17,7 +17,7 @@ private slots:
 
 private:
 	Device *device;
-	QToolButton *turnOff, *turnOn, *bell;
+	QToolButton *turnOff, *turnOn, *bell, *learn;
 };
 
 #endif // METHODWIDGET_H

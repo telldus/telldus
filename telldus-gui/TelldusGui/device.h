@@ -46,6 +46,7 @@ public slots:
 	void turnOff();
 	void turnOn();
 	void bell();
+	void learn();
 
 signals:
 	void deviceAdded( int id );
