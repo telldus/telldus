@@ -33,3 +33,5 @@ EXPORTS
 
 	tdSendRawCommand @24
 	tdRegisterRawDeviceEvent @25
+	
+	tdLearn @26

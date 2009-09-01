@@ -6,10 +6,21 @@
 //
 
 #ifdef _WINDOWS
-	#include "stdafx.h"
-	#include <ole2.h>
+#include "stdafx.h"
+#include <ole2.h>
+#define strcasecmp _stricmp
+#define strncasecmp _strnicmp
+
 #endif
 #include <stdlib.h>
+
+inline void msleep( const int msec) {
+#ifdef _WINDOWS
+	Sleep(msec);
+#else
+	usleep(msec*1000);
+#endif
+}
 
 inline char *wrapStdString( const std::string &string) {
 	char *returnVal;
