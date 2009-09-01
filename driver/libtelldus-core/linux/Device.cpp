@@ -13,6 +13,7 @@ using namespace TelldusCore;
 int Device::send(const std::string &strMessage) {
 	int fd = -1;
 	struct termios tio;
+	char in;
 
 	if( 0 > ( fd = open( strDevice.c_str(), O_RDWR ) ) ) {
 		if (errno == ENOENT) {
@@ -31,11 +32,20 @@ int Device::send(const std::string &strMessage) {
 	tcflush(fd, TCIFLUSH);
 	tcsetattr(fd,TCSANOW,&tio);
 
- 	write(fd, strMessage.c_str(), strMessage.length());
+	write(fd, strMessage.c_str(), strMessage.length());
+	
+	ssize_t bytes = 0;
+	bool c = true;
+	while(c) {
+		bytes = read(fd, &in, 1);
+		if (bytes > 0) {
+			if (in == '\n') {
+				c = false;
+			}
+		}
+	}
 
 	close(fd);
-	
-	sleep(1);
 	
 	return TELLSTICK_SUCCESS;
 }
