@@ -5,11 +5,7 @@
 #include <bitset>
 #include <iostream>
 #include <fstream>
-
-#ifdef _WINDOWS
-#define strcasecmp _stricmp
-#define strncasecmp _strnicmp
-#endif
+#include "common.h"
 
 using namespace TelldusCore;
 
@@ -165,7 +161,7 @@ int DeviceNexa::learn(void){
 		if (retVal != TELLSTICK_SUCCESS) {
 			return retVal;
 		}
-		usleep(200000);
+		msleep(200);
 	}
 	return retVal;
 }
@@ -230,7 +226,7 @@ std::string DeviceNexa::getStringSelflearning(bool dim, unsigned char level) {
 	m.append("0"); 
 	
 	unsigned char code = 9; //b1001, startcode
-	for (int i = 0; i < m.length(); ++i) {
+	for (unsigned int i = 0; i < m.length(); ++i) {
 		code <<= 4;
 		int v = 0;
 		if (m[i] == '1') {

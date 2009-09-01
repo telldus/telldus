@@ -5,10 +5,6 @@
 #include <iostream>
 #include <fstream>
 
-#ifdef _WINDOWS
-#include "..\StdAfx.h"
-#endif
-
 #include "../ftd2xx.h"
 
 int getDongleIndex();
@@ -23,6 +19,7 @@ int Device::send(const std::string &strMessage){
 	try{
 		FT_STATUS ftStatus = FT_OK;
 		FT_HANDLE fthHandle = 0;
+		char in;
 		
 		int intDongleIndex = getDongleIndex();
 		if (intDongleIndex < 0) {
@@ -32,12 +29,25 @@ int Device::send(const std::string &strMessage){
 		ftStatus = FT_Open(intDongleIndex, &fthHandle);
 		int intBaudRate = 4800;	//always 4800
 		ftStatus = FT_SetBaudRate(fthHandle, intBaudRate);
-		ULONG bytesWritten;
+		ULONG bytesWritten, bytesRead;
 
 		char *tempMessage = (char *)malloc(sizeof(char) * (strMessage.size()+1));
 		strcpy(tempMessage, strMessage.c_str());
 		ftStatus = FT_Write(fthHandle, tempMessage, (DWORD)strMessage.length(), &bytesWritten);
 		free(tempMessage);
+
+		bool c = true;
+		while(c) {
+			ftStatus = FT_Read(fthHandle,&in,1,&bytesRead);
+			if (ftStatus == FT_OK) {
+				if (in == '\n') {
+					c = false;
+				}
+			} else {
+				//Timeout or error
+				c = false;
+			}
+		}
   
 		ftStatus = FT_Close(fthHandle);
 	}

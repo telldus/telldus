@@ -1,4 +1,5 @@
 #ifdef _WINDOWS
+	#include "stdafx.h"
 	#include "win\ftd2xx.h"
 #else
 	#include "osx/WinTypes.h"
