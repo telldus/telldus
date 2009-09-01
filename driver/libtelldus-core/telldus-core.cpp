@@ -192,6 +192,23 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
 	return TELLSTICK_ERROR_UNKNOWN;
 }
 
+int WINAPI tdLearn(int intDeviceId) {
+
+	try{
+		Manager *manager = Manager::getInstance();
+		Device* dev = manager->getDevice(intDeviceId);
+		if(dev != NULL){
+			return dev->switchState(TELLSTICK_LEARN);
+		} else{
+			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+		}
+	}
+	catch(exception e){
+		handleException(e);
+	}
+	return TELLSTICK_ERROR_UNKNOWN;
+}
+
 /**
  * Returns the last sent command to a specific device
  * @param intDeviceId The device id to query

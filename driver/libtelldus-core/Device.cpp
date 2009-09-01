@@ -37,6 +37,9 @@ int Device::switchState( int newState, const std::string &value ) {
 		case TELLSTICK_BELL:
 			retVal = bell();
 			break;
+		case TELLSTICK_LEARN:
+			retVal = learn();
+			break;
 		case TELLSTICK_DIM:
 			//Convert value to string
 			unsigned char v = value[0];
@@ -103,6 +106,10 @@ int Device::dim(unsigned char level){
 	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 }
 
+int Device::learn(void) {
+	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+}
+
 int Device::methodId( const std::string &methodName ) {
 	if (methodName.compare("turnon") == 0) {
 		return TELLSTICK_TURNON;
@@ -137,6 +144,6 @@ int TelldusCore::Device::maskUnsupportedMethods(int methods, int supportedMethod
 	if ((methods & TELLSTICK_BELL) && !(supportedMethods & TELLSTICK_BELL)) {
 		methods |= TELLSTICK_TURNON;
 	}
-	//Cut of the rest of the unsupported methods we donät have a fallback for
+	//Cut of the rest of the unsupported methods we don't have a fallback for
 	return methods & supportedMethods;
 }
