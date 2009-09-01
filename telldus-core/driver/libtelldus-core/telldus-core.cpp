@@ -40,6 +40,9 @@ using namespace TelldusCore;
  * @def TELLSTICK_DIM
  * Device-flag for devices supporting the tdDim() call.
  * 
+ * @def TELLSTICK_LEARN
+ * Device-flag for devices supporting the tdLearn() call.
+ * 
  * @def TELLSTICK_TYPE_DEVICE
  * Device type of a single device.
  * 
@@ -192,6 +195,13 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
 	return TELLSTICK_ERROR_UNKNOWN;
 }
 
+/**
+ * Sends a special learn command to some devices that need a special learn-command
+ * to be used from TellStick
+ * Make sure the device supports this by calling tdMethods() before any
+ * call to this function.
+ * @param intDeviceId The device id to learn.
+ */
 int WINAPI tdLearn(int intDeviceId) {
 
 	try{
