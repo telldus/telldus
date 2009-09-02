@@ -35,3 +35,4 @@ EXPORTS
 	tdRegisterRawDeviceEvent @25
 	
 	tdLearn @26
+	tdLastSentValue @27
