@@ -42,3 +42,7 @@ int DeviceWaveman::turnOff(void){
 int DeviceWaveman::methods(){
 	return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
 }
+
+std::string DeviceWaveman::getProtocol() const {
+	return "waveman";
+}
