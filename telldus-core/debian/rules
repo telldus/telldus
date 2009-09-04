@@ -40,6 +40,7 @@ configure-stamp:
         -DUSE_QT_SETTINGS_BACKEND=0 \
         -DCMAKE_INSTALL_PREFIX=/usr                 \
         -DCMAKE_BUILD_TYPE=Release \
+        -DCMAKE_CXX_FLAGS="-Wl,--as-needed" \
 	      ..
 
 	touch configure-stamp
