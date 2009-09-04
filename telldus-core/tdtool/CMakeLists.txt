@@ -2,6 +2,9 @@ PROJECT(tdtool)
 
 cmake_policy(SET CMP0005 NEW)
 
+SET (tdtool_DESCRIPTION
+	"a command line utility to control a Telldus TellStick"
+)
 
 SET(tdtool_SRCS
   main.cpp
@@ -37,7 +40,7 @@ IF (UNIX)
 	ADD_CUSTOM_COMMAND(
 		TARGET tdtool
 		POST_BUILD
-		COMMAND help2man ./tdtool > tdtool.1
+		COMMAND help2man -n ${tdtool_DESCRIPTION} ./tdtool > tdtool.1
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 		COMMENT "Generating man file tdtool.1"
 	)
