@@ -8,6 +8,10 @@ INCLUDE_DIRECTORIES(
 
 PROJECT(rfcmd)
 
+SET(rfcmd_DESCRIPTION
+	"Sends RF remote commands through a Telldus TellStick"
+)
+
 SET(rfcmd_SRCS
   rfcmd.c
 )
@@ -48,7 +52,7 @@ IF (UNIX)
 	ADD_CUSTOM_COMMAND(
 		TARGET rfcmd
 		POST_BUILD
-		COMMAND help2man ./rfcmd > rfcmd.1
+		COMMAND help2man -n ${rfcmd_DESCRIPTION} ./rfcmd > rfcmd.1
 		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 		COMMENT "Generating man file rfcmd.1"
 	)

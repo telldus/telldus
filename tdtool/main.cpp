@@ -11,8 +11,6 @@ const int SUPPORTED_METHODS =
 	TELLSTICK_DIM;
 
 void print_usage( char *name ) {
-	printf("\"tdtool\" is a command line utility to control a Telldus TellStick\n");
-	printf("\n");
 	printf("Usage: %s [ options ]\n", name);
 	printf("\n");
 	printf("Options:\n");

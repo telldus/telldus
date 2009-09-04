@@ -433,8 +433,6 @@ int createIkeaString( const char * pSystemStr, const char * pChannelStr, const c
 
 void printUsage(void)
 {
-	printf("Sends RF remote commands through a Telldus TellStick\n");
-	printf("\n");
 	printf("Usage: rfcmd DEVICE PROTOCOL [PROTOCOL_ARGUMENTS] \n");
 	printf("\n");
 #ifdef LIBFTDI
