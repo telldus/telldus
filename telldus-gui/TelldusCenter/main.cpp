@@ -13,10 +13,18 @@ int main(int argc, char *argv[])
 	QCoreApplication::setOrganizationDomain("www.telldus.se");
 	QCoreApplication::setApplicationName("Telldus Center");
 
+	bool showMinimized = false;
+	for( int i = 1; i < argc; ++i ) {
+		if (QString(argv[i]) == "--minimized") {
+			showMinimized = true;
+		}
+	}
 
 	TelldusCenterApplication application(argc, argv);
-
-	application.showMainWindow();
+	
+	if (!showMinimized) {
+		application.showMainWindow();
+	}
 
 #ifdef Q_WS_MAC
 /*	AutoUpdater* updater = 0;
