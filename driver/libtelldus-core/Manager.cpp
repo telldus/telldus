@@ -79,6 +79,12 @@ Device *Manager::getDevice(int intDeviceId){
 		std::string protocol = settings.getProtocol(intDeviceId);
 		std::string strModel = settings.getModel(intDeviceId);
 		std::string strName = settings.getName(intDeviceId);
+		
+		//Strip anything after : if it is found
+		size_t pos = strModel.find(":");
+		if (pos != std::string::npos) {	
+			strModel = strModel.substr(0, pos);
+		}
 
 		//each new brand must be added here
 		if (strcasecmp(protocol.c_str(), "arctech") == 0){
