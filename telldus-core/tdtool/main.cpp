@@ -14,9 +14,10 @@ void print_usage( char *name ) {
 	printf("Usage: %s [ options ]\n", name);
 	printf("\n");
 	printf("Options:\n");
-	printf("         -[bdfhlnv] [ --list ] [ --help ]\n");
-	printf("                    [ --on device ] [ --off device ] [ --bell device ]\n");
-	printf("                    [ --dimlevel level --dim device ]\n");
+	printf("         -[bdefhlnv] [ --list ] [ --help ]\n");
+	printf("                     [ --on device ] [ --off device ] [ --bell device ]\n");
+	printf("                     [ --learn device ]\n");
+	printf("                     [ --dimlevel level --dim device ]\n");
 	printf("\n");
 	printf("       --list (-l short option)\n");
 	printf("             List currently configured devices.\n");
@@ -47,6 +48,12 @@ void print_usage( char *name ) {
 	printf("       --bell device (-b short option)\n");
 	printf("             Sends bell command to devices supporting this. 'device' could\n");
 	printf("             either be an integer of the device-id, or the name of the device.\n");
+	printf("             Both device-id and name is outputed with the --list option\n");
+	printf("\n");
+	printf("       --learn device (-e short option)\n");
+	printf("             Sends a special learn command to devices supporting this. This is normaly\n");
+	printf("             devices of 'selflearning' type. 'device' could either be an integer\n");
+	printf("             of the device-id, or the name of the device.\n");
 	printf("             Both device-id and name is outputed with the --list option\n");
 	printf("\n");
 	printf("Report bugs to <info.tech@telldus.se>\n");
@@ -168,14 +175,29 @@ void bell_device( char *device ) {
 	int retval = tdBell( deviceId );
 	char *errorString = tdGetErrorString(retval);
 	printf("Sending bell to: %i %s - %s\n", deviceId, name, errorString);
- 	free(name);
+	free(name);
+	free(errorString);
+}
+
+void learn_device( char *device ) {
+	int deviceId = find_device( device );
+	if (deviceId == 0) {
+		printf("Device '%s', not found!\n", device);
+		return;
+	}
+
+	char *name = tdGetName( deviceId );
+	int retval = tdLearn( deviceId );
+	char *errorString = tdGetErrorString(retval);
+	printf("Learning device: %i %s - %s\n", deviceId, name, errorString);
+	free(name);
 	free(errorString);
 }
 
 int main(int argc, char **argv)
 {
 	int optch, longindex;
-	static char optstring[] = "ln:f:d:b:v:hi";
+	static char optstring[] = "ln:f:d:b:v:e:hi";
 	static struct option long_opts[] = {
 		{ "list", 0, 0, 'l' },
 		{ "on", 1, 0, 'n' },
@@ -183,6 +205,7 @@ int main(int argc, char **argv)
 		{ "dim", 1, 0, 'd' },
 		{ "bell", 1, 0, 'b' },
 		{ "dimlevel", 1, 0, 'v' },
+		{ "learn", 1, 0, 'e' },
 		{ "help", 0, 0, 'h' },
 		{ "version", 0, 0, 'i'},
 		{ 0, 0, 0, 0}
@@ -218,6 +241,9 @@ int main(int argc, char **argv)
 				break;
 			case 'n' :
 				switch_device(true, &optarg[0]);
+				break;
+			case 'e' :
+				learn_device(&optarg[0]);
 				break;
 			case 'v' :
 				level = atoi( &optarg[0] );
