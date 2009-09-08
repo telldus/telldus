@@ -1,5 +1,6 @@
 FIND_PACKAGE( Qt4 REQUIRED )
-SET(QT_USE_QTSCRIPT 1)
+SET(QT_USE_QTSCRIPT TRUE)
+SET(QT_USE_QTNETWORK TRUE)
 INCLUDE( ${QT_USE_FILE} )
 
 if(COMMAND cmake_policy)
@@ -78,6 +79,13 @@ ELSE (APPLE) #### Linux ####
 
 ENDIF (APPLE)
 
+######## QtSingleApplication ########
+
+INCLUDE( ../3rdparty/qtsingleapplication.cmake NO_POLICY_SCOPE )
+SET( telldus-center_SRCS
+	${telldus-center_SRCS}
+	${qtsingleapplication_SRCS}
+)
 
 ######## Configuring  ########
 

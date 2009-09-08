@@ -22,6 +22,12 @@ int main(int argc, char *argv[])
 
 	TelldusCenterApplication application(argc, argv);
 	
+	if (application.sendMessage("Wake up!")) {
+		return 0;
+	}
+	
+	application.initialize();
+	
 	if (!showMinimized) {
 		application.showMainWindow();
 	}

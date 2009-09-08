@@ -22,10 +22,21 @@ public:
 };
 
 TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
-		:QApplication(argc, argv)
+		:QtSingleApplication(argc, argv)
 {
 	d = new TelldusCenterApplicationPrivate;
+	connect(this, SIGNAL(messageReceived(const QString &)), this, SLOT(msgReceived(const QString &)));
+}
+
+TelldusCenterApplication::~TelldusCenterApplication() {
+	qDeleteAll(d->plugins);
+	delete d;
+}
+
+void TelldusCenterApplication::initialize() {
 	d->mainWindow = new MainWindow( );
+	
+	this->setActivationWindow(d->mainWindow, false);
 	
 	connect(&d->scriptEngine, SIGNAL(signalHandlerException(const QScriptValue &)), this, SLOT(scriptException(const QScriptValue&)));
 
@@ -34,11 +45,6 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 	loadToolbar();
 
 	emit allDoneLoading();
-}
-
-TelldusCenterApplication::~TelldusCenterApplication() {
-	qDeleteAll(d->plugins);
-	delete d;
 }
 
 PluginList TelldusCenterApplication::plugins() const {
@@ -180,4 +186,8 @@ void TelldusCenterApplication::scriptException(const QScriptValue & exception) {
 		qDebug() << row;
 	}
 	d->scriptEngine.clearExceptions();
+}
+
+void TelldusCenterApplication::msgReceived(const QString & message) {
+	this->showMainWindow();
 }

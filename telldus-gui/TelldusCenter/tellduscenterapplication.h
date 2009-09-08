@@ -1,7 +1,7 @@
 #ifndef TELLDUSCENTERAPPLICATION_H
 #define TELLDUSCENTERAPPLICATION_H
 
-#include <QApplication>
+#include <QtSingleApplication>
 #include <QPointer>
 #include <QScriptValue>
 
@@ -12,12 +12,14 @@ class TelldusCenterApplicationPrivate;
 
 typedef QList<TelldusCenterPlugin *> PluginList;
 
-class TelldusCenterApplication : public QApplication
+class TelldusCenterApplication : public QtSingleApplication
 {
 	Q_OBJECT
 public:
 	TelldusCenterApplication(int &argc, char **argv);
 	virtual ~TelldusCenterApplication();
+	
+	void initialize();
 
 #if defined(Q_WS_MAC)
 	bool event(QEvent *event);
@@ -46,6 +48,7 @@ public slots:
 
 private slots:
 	void scriptException( const QScriptValue &exception );
+	void msgReceived ( const QString & message );
 
 private:
 	void loadPlugin(QObject *plugin);
