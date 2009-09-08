@@ -35,17 +35,22 @@ int Device::send(const std::string &strMessage) {
 	write(fd, strMessage.c_str(), strMessage.length());
 	
 	ssize_t bytes = 0;
-	bool c = true;
-	while(c) {
+	int c = 5000;
+	while(--c) {
 		bytes = read(fd, &in, 1);
 		if (bytes > 0) {
 			if (in == '\n') {
-				c = false;
+				break;
 			}
 		}
+		usleep(1000); //Don't eat 100% cpu
 	}
 
 	close(fd);
+	
+	if (c == 0) {
+		return TELLSTICK_ERROR_NOT_FOUND;
+	}
 	
 	return TELLSTICK_SUCCESS;
 }
