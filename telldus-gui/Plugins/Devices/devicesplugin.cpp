@@ -5,7 +5,6 @@
 #include "devicesplugin.h"
 
 #include "../../TelldusGui/telldusgui.h"
-#include "../../TelldusCenter/tellduscenterapplication.h"
 
 DevicesPlugin::DevicesPlugin( QObject * parent )
 	:QScriptExtensionPlugin( parent )
