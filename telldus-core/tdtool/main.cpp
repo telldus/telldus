@@ -14,10 +14,11 @@ void print_usage( char *name ) {
 	printf("Usage: %s [ options ]\n", name);
 	printf("\n");
 	printf("Options:\n");
-	printf("         -[bdefhlnv] [ --list ] [ --help ]\n");
-	printf("                     [ --on device ] [ --off device ] [ --bell device ]\n");
-	printf("                     [ --learn device ]\n");
-	printf("                     [ --dimlevel level --dim device ]\n");
+	printf("         -[bdefhlnrv] [ --list ] [ --help ]\n");
+	printf("                      [ --on device ] [ --off device ] [ --bell device ]\n");
+	printf("                      [ --learn device ]\n");
+	printf("                      [ --dimlevel level --dim device ]\n");
+	printf("                      [ --raw input ]\n");
 	printf("\n");
 	printf("       --list (-l short option)\n");
 	printf("             List currently configured devices.\n");
@@ -55,6 +56,14 @@ void print_usage( char *name ) {
 	printf("             devices of 'selflearning' type. 'device' could either be an integer\n");
 	printf("             of the device-id, or the name of the device.\n");
 	printf("             Both device-id and name is outputed with the --list option\n");
+	printf("\n");
+	printf("       --raw input (-r short option)\n");
+	printf("             This command sends a raw command to TellStick.\n");
+	printf("             input can be either - or a filename. If input is - the data is\n");
+	printf("             taken from stdin, otherwise the data is taken from the supplied filename.\n");
+	printf("\n");
+	printf("             Example to turn on an ArcTech codeswitch A1:\n");
+	printf("             echo 'S$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$kk$$kk$$kk$$}+' | tdtool --raw -\n");
 	printf("\n");
 	printf("Report bugs to <info.tech@telldus.se>\n");
 }
@@ -194,10 +203,33 @@ void learn_device( char *device ) {
 	free(errorString);
 }
 
+void send_raw_command( char *command ) {
+	const int MAX_LENGTH = 100;
+	char msg[MAX_LENGTH];
+	
+	if (strcmp(command, "-") == 0) {
+		fgets(msg, MAX_LENGTH, stdin);
+	} else {
+		FILE *fd;
+		
+		fd = fopen(command, "r");
+		if (fd == NULL) {
+			printf("Error opening file %s\n", command);
+			return;
+		}
+		fgets(msg, MAX_LENGTH, fd);
+	}
+	
+	int retval = tdSendRawCommand( msg, 0 );	
+	char *errorString = tdGetErrorString(retval);
+	printf("Sending raw command: %s\n", errorString);
+	free(errorString);
+}
+
 int main(int argc, char **argv)
 {
 	int optch, longindex;
-	static char optstring[] = "ln:f:d:b:v:e:hi";
+	static char optstring[] = "ln:f:d:b:v:e:r:hi";
 	static struct option long_opts[] = {
 		{ "list", 0, 0, 'l' },
 		{ "on", 1, 0, 'n' },
@@ -206,6 +238,7 @@ int main(int argc, char **argv)
 		{ "bell", 1, 0, 'b' },
 		{ "dimlevel", 1, 0, 'v' },
 		{ "learn", 1, 0, 'e' },
+		{ "raw", 1, 0, 'r' },
 		{ "help", 0, 0, 'h' },
 		{ "version", 0, 0, 'i'},
 		{ 0, 0, 0, 0}
@@ -244,6 +277,9 @@ int main(int argc, char **argv)
 				break;
 			case 'e' :
 				learn_device(&optarg[0]);
+				break;
+			case 'r' :
+				send_raw_command(&optarg[0]);
 				break;
 			case 'v' :
 				level = atoi( &optarg[0] );
