@@ -1,42 +1,42 @@
 <?xml version="1.0" encoding="utf-8"?>
 <!DOCTYPE TS>
-<TS version="2.0">
+<TS version="2.0" language="sv_SE">
 <context>
     <name>DeviceModel</name>
     <message>
         <location filename="devicemodel.cpp" line="43"/>
         <source>on</source>
-        <translation type="unfinished"></translation>
+        <translation>på</translation>
     </message>
     <message>
         <location filename="devicemodel.cpp" line="45"/>
         <source>off</source>
-        <translation type="unfinished"></translation>
+        <translation>av</translation>
     </message>
     <message>
         <location filename="devicemodel.cpp" line="48"/>
         <source>%1%</source>
-        <translation type="unfinished"></translation>
+        <translation></translation>
     </message>
     <message>
         <location filename="devicemodel.cpp" line="50"/>
         <source>unknown %1</source>
-        <translation type="unfinished"></translation>
+        <translation>okänd %1</translation>
     </message>
     <message>
         <location filename="devicemodel.cpp" line="92"/>
         <source>State</source>
-        <translation type="unfinished"></translation>
+        <translation>Läge</translation>
     </message>
     <message>
         <location filename="devicemodel.cpp" line="94"/>
         <source>Device name</source>
-        <translation type="unfinished"></translation>
+        <translation>Enhetsnamn</translation>
     </message>
     <message>
         <location filename="devicemodel.cpp" line="96"/>
         <source>Action</source>
-        <translation type="unfinished"></translation>
+        <translation>Styr</translation>
     </message>
 </context>
 <context>
@@ -44,12 +44,12 @@
     <message>
         <location filename="devicesettingarctechselflearning.cpp" line="31"/>
         <source>Remote code</source>
-        <translation type="unfinished"></translation>
+        <translation>Fjärrkontrollskod</translation>
     </message>
     <message>
         <location filename="devicesettingarctechselflearning.cpp" line="37"/>
         <source>Unitcode</source>
-        <translation type="unfinished"></translation>
+        <translation>Enhetskod</translation>
     </message>
 </context>
 <context>
@@ -57,27 +57,27 @@
     <message>
         <location filename="devicesettingikea.cpp" line="25"/>
         <source>System</source>
-        <translation type="unfinished"></translation>
+        <translation>System</translation>
     </message>
     <message>
         <location filename="devicesettingikea.cpp" line="35"/>
         <source>Units</source>
-        <translation type="unfinished"></translation>
+        <translation>Enheter</translation>
     </message>
     <message>
         <location filename="devicesettingikea.cpp" line="53"/>
         <source>Fade</source>
-        <translation type="unfinished"></translation>
+        <translation>Tona</translation>
     </message>
     <message>
         <location filename="devicesettingikea.cpp" line="58"/>
         <source>Smooth</source>
-        <translation type="unfinished"></translation>
+        <translation>Långsamt</translation>
     </message>
     <message>
         <location filename="devicesettingikea.cpp" line="60"/>
         <source>Instant</source>
-        <translation type="unfinished"></translation>
+        <translation>Snabbt</translation>
     </message>
 </context>
 <context>
@@ -85,12 +85,12 @@
     <message>
         <location filename="devicesettingnexa.cpp" line="33"/>
         <source>Housecode</source>
-        <translation type="unfinished"></translation>
+        <translation>Huskod</translation>
     </message>
     <message>
         <location filename="devicesettingnexa.cpp" line="39"/>
         <source>Unitcode</source>
-        <translation type="unfinished"></translation>
+        <translation>Enhetskod</translation>
     </message>
 </context>
 <context>
@@ -98,7 +98,7 @@
     <message>
         <location filename="devicesettingnexabell.cpp" line="29"/>
         <source>Housecode</source>
-        <translation type="unfinished"></translation>
+        <translation>Huskod</translation>
     </message>
 </context>
 <context>
@@ -106,17 +106,17 @@
     <message>
         <location filename="devicesettingupm.cpp" line="27"/>
         <source>House</source>
-        <translation type="unfinished"></translation>
+        <translation>Hus</translation>
     </message>
     <message>
         <location filename="devicesettingupm.cpp" line="35"/>
         <source>Button</source>
-        <translation type="unfinished"></translation>
+        <translation>Knapp</translation>
     </message>
     <message>
         <location filename="devicesettingupm.cpp" line="42"/>
         <source>Button %1</source>
-        <translation type="unfinished"></translation>
+        <translation>Knapp %1</translation>
     </message>
 </context>
 <context>
@@ -124,37 +124,37 @@
     <message>
         <location filename="devicewidget.cpp" line="39"/>
         <source>New device...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ny enhet...</translation>
     </message>
     <message>
         <location filename="devicewidget.cpp" line="41"/>
         <source>New group...</source>
-        <translation type="unfinished"></translation>
+        <translation>Ny grupp...</translation>
     </message>
     <message>
         <location filename="devicewidget.cpp" line="45"/>
         <source>New</source>
-        <translation type="unfinished"></translation>
+        <translation>Ny</translation>
     </message>
     <message>
         <location filename="devicewidget.cpp" line="55"/>
         <source>Edit</source>
-        <translation type="unfinished"></translation>
+        <translation>Editera</translation>
     </message>
     <message>
         <location filename="devicewidget.cpp" line="63"/>
         <source>Remove</source>
-        <translation type="unfinished"></translation>
+        <translation>Ta bort</translation>
     </message>
     <message>
         <location filename="devicewidget.cpp" line="116"/>
         <source>Are you sure you want to remove the selected device?</source>
-        <translation type="unfinished"></translation>
+        <translation>Är du säker på att du vill ta bort den valda enheten?</translation>
     </message>
     <message>
         <location filename="devicewidget.cpp" line="117"/>
         <source>The device will be removed permanently from this application as well as all other applications.</source>
-        <translation type="unfinished"></translation>
+        <translation>Enheten kommer att permanent tas bort från detta och alla andra program.</translation>
     </message>
 </context>
 <context>
@@ -162,42 +162,42 @@
     <message>
         <location filename="editdevicedialog.cpp" line="61"/>
         <source>Device</source>
-        <translation type="unfinished"></translation>
+        <translation>Enhet</translation>
     </message>
     <message>
         <location filename="editdevicedialog.cpp" line="74"/>
         <source>&amp;Name:</source>
-        <translation type="unfinished"></translation>
+        <translation>&amp;Namn:</translation>
     </message>
     <message>
         <location filename="editdevicedialog.cpp" line="82"/>
         <source>Choose a device above</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj en enhet ovan</translation>
     </message>
     <message>
         <location filename="editdevicedialog.cpp" line="88"/>
         <source>Addresscode</source>
-        <translation type="unfinished"></translation>
+        <translation>Adresskod</translation>
     </message>
     <message>
         <location filename="editdevicedialog.cpp" line="147"/>
         <source>You must choose a device</source>
-        <translation type="unfinished"></translation>
+        <translation>Du måste välja en enhet</translation>
     </message>
     <message>
         <location filename="editdevicedialog.cpp" line="148"/>
         <source>Please select the device you have.</source>
-        <translation type="unfinished"></translation>
+        <translation>Välj den enhet du har.</translation>
     </message>
     <message>
         <location filename="editdevicedialog.cpp" line="164"/>
         <source>The device must have a name.</source>
-        <translation type="unfinished"></translation>
+        <translation>Enheten måste ha ett namn.</translation>
     </message>
     <message>
         <location filename="editdevicedialog.cpp" line="165"/>
         <source>Please fill in a name in the field under &apos;Name&apos;</source>
-        <translation type="unfinished"></translation>
+        <translation>Fyll i ett namn i rutan &apos;Namn&apos;</translation>
     </message>
 </context>
 <context>
@@ -205,7 +205,7 @@
     <message>
         <location filename="methodwidget.cpp" line="34"/>
         <source>Learn</source>
-        <translation type="unfinished"></translation>
+        <translation>Lär upp</translation>
     </message>
 </context>
 <context>
@@ -213,7 +213,7 @@
     <message>
         <location filename="vendordevicetreeitem.cpp" line="123"/>
         <source>Not a Telldus device-file</source>
-        <translation type="unfinished"></translation>
+        <translation>Inte en Telldus-enhets-fil</translation>
     </message>
 </context>
 <context>
@@ -221,7 +221,7 @@
     <message>
         <location filename="vendordevicemodel.cpp" line="52"/>
         <source>Name</source>
-        <translation type="unfinished"></translation>
+        <translation>Namn</translation>
     </message>
 </context>
 </TS>
