@@ -19,6 +19,7 @@ namespace TelldusCore {
 		bool setParameter(const std::string &strName, const std::string &strValue);
 
 		std::string getModel() const;
+		std::string getFullModel() const;
 		bool setModel( const std::string & strModel );
 		std::string getName() const;
 		bool setName( const std::string &newName );

@@ -58,6 +58,17 @@ int Device::switchState( int newState, const std::string &value ) {
 }
 
 std::string Device::getModel() const {
+	std::string strModel = model;
+	//Strip anything after : if it is found
+	size_t pos = strModel.find(":");
+	if (pos != std::string::npos) {	
+		strModel = strModel.substr(0, pos);
+	}
+
+	return strModel;
+}
+
+std::string Device::getFullModel() const {
 	return model;
 }
 
