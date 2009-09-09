@@ -385,7 +385,7 @@ char* WINAPI tdGetModel(int intDeviceId){
 		Manager *manager = Manager::getInstance();
 		Device* dev = manager->getDevice(intDeviceId);
 		if (dev != NULL) {
-			strReturn = dev->getModel();
+			strReturn = dev->getFullModel();
 		}
 	}
 	catch(exception e){
