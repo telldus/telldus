@@ -34,12 +34,8 @@ SET( telldus-center_RESOURCES
 	TelldusCenter.icns
 )
 
-SET( telldus-center_TS
-	telldus-center_sv.ts
-)
-
-SET( telldus-center_QM
-	telldus-center_sv.qm
+SET( telldus-center_LANGS
+	sv
 )
 
 QT4_WRAP_CPP(  telldus-center_MOC_SRCS  ${telldus-center_MOC_HDRS} )
@@ -89,19 +85,26 @@ SET( telldus-center_SRCS
 
 ######## Configuring  ########
 
-# Compile translation files
-ADD_CUSTOM_COMMAND(TARGET ${telldus-center_TARGET}
-	PRE_BUILD
-	COMMAND lupdate
-	ARGS ${telldus-center_SRCS} -ts ${telldus-center_TS}
-	WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
-)
+####### i18n ########
+FOREACH(lang ${telldus-center_LANGS})
+	LIST(APPEND telldus-center_TS "${telldus-center_TARGET}_${lang}.ts")
+ENDFOREACH(lang)
+OPTION (UPDATE_TRANSLATIONS "Update source translation translations/*.ts files (WARNING: make clean will delete the source .ts files! Danger!)")
+IF (UPDATE_TRANSLATIONS)
+	QT4_CREATE_TRANSLATION( QM_FILES ${telldus-center_SRCS} ${telldus-center_TS} )
+ELSE (UPDATE_TRANSLATIONS)
+	QT4_ADD_TRANSLATION(QM_FILES ${telldus-center_TS})
+ENDIF (UPDATE_TRANSLATIONS) 
+ADD_CUSTOM_TARGET (translations_target DEPENDS ${QM_FILES})
+
+
 
 ADD_EXECUTABLE(${telldus-center_TARGET} MACOSX_BUNDLE
 	${telldus-center_SRCS}
 	${telldus-center_MOC_SRCS}
 	${telldus-center_RSRCS}
 	${telldus-center_RESOURCES}
+	${telldus-center_TS}
 )
 SET_SOURCE_FILES_PROPERTIES(${telldus-center_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
