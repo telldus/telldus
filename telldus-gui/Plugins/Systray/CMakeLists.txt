@@ -13,4 +13,6 @@ SET( Plugin_MOC_HDRS
 	systrayobject.h
 )
 
+SET( Plugin_PATH "com.telldus.systray" )
+
 INCLUDE( ../TelldusCenterPlugin.cmake NO_POLICY_SCOPE )

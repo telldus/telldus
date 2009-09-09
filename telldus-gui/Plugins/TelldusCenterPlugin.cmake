@@ -26,8 +26,17 @@ ADD_DEFINITIONS(-DQT_SHARED)
 FOREACH(lang ${LANGUAGES})
 	LIST(APPEND Plugin_TS "${Plugin_NAME}_${lang}.ts")
 ENDFOREACH(lang)
+SET(translation_sources ${Plugin_SRCS})
+IF(Plugin_PATH)
+	STRING(REPLACE "." "/"
+		path ${Plugin_PATH}
+	)
+	LIST(APPEND translation_sources
+		"${CMAKE_SOURCE_DIR}/TelldusCenter/Plugins/script/${path}/__init__.js"
+	)
+ENDIF(Plugin_PATH)
 IF (UPDATE_TRANSLATIONS)
-	QT4_CREATE_TRANSLATION( QM_FILES ${Plugin_SRCS} ${Plugin_TS} )
+	QT4_CREATE_TRANSLATION( QM_FILES ${Plugin_SRCS} ${translation_sources} ${Plugin_TS} )
 ELSE (UPDATE_TRANSLATIONS)
 	QT4_ADD_TRANSLATION(QM_FILES ${Plugin_TS})
 ENDIF (UPDATE_TRANSLATIONS) 

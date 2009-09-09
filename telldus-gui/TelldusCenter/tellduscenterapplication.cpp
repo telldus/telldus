@@ -39,6 +39,7 @@ void TelldusCenterApplication::initialize() {
 	this->setActivationWindow(d->mainWindow, false);
 	
 	connect(&d->scriptEngine, SIGNAL(signalHandlerException(const QScriptValue &)), this, SLOT(scriptException(const QScriptValue&)));
+	d->scriptEngine.installTranslatorFunctions();
 
 	loadPlugins();
 	loadScripts();
@@ -144,7 +145,7 @@ void TelldusCenterApplication::loadScripts() {
 		if (extension.startsWith("...")) {
 			continue;
 		}
-		qDebug() << "Loading extension:" << extension;
+// 		qDebug() << "Loading extension:" << extension;
 		d->scriptEngine.importExtension( extension );
 		if (d->scriptEngine.hasUncaughtException()) {
 			qDebug() << QString("Error in %1:%2:").arg(extension).arg(d->scriptEngine.uncaughtExceptionLineNumber())
