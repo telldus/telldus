@@ -87,7 +87,7 @@ function deviceChange( deviceId, eventType ) {
 function addMethodsSubmenu( obj ) {
 	var methods = com.telldus.core.methods( obj.id, methodsSupported );
 	if (methods & com.telldus.core.TELLSTICK_TURNON) {
-		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( "On", obj.menuId )).triggered.connect( obj, turnOn );
+		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( qsTr("On"), obj.menuId )).triggered.connect( obj, turnOn );
 	}
 	if (methods & com.telldus.core.TELLSTICK_DIM) {
 		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( "90%", obj.menuId )).triggered.connect( {id: obj.id, value: 230}, dim );
@@ -101,10 +101,10 @@ function addMethodsSubmenu( obj ) {
 		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( "10%", obj.menuId )).triggered.connect( {id: obj.id, value: 25}, dim );
 	}
 	if (methods & com.telldus.core.TELLSTICK_TURNOFF) {
-		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( "Off", obj.menuId )).triggered.connect( obj, turnOff );
+		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( qsTr("Off"), obj.menuId )).triggered.connect( obj, turnOff );
 	}
 	if (methods & com.telldus.core.TELLSTICK_BELL) {
-		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( "Bell", obj.menuId )).triggered.connect( obj, bell );
+		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( qsTr("Bell"), obj.menuId )).triggered.connect( obj, bell );
 	}
 }
 

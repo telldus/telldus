@@ -10,7 +10,7 @@ __postInit__ = function() {
 }
 
 function allDone() {
-	var exit = com.telldus.systray.addMenuItem("&Quit");
+	var exit = com.telldus.systray.addMenuItem( qsTr("&Quit") );
 	com.telldus.systray.menuItem(exit).triggered.connect(application.quit);
 }
 
