@@ -1,84 +1,88 @@
 <?xml version="1.0" encoding="utf8" ?>
 <devices>
 	<type name="Remote Switches - Type 1" expanded="true">
-<!-- 		<text></text> -->
+		<!--<text></text> -->
 		<vendor name="Chacon" image="chacon">
 			<!--<text></text>-->
-			<device model="codeswitch" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
-			<device model="selflearning-switch" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
-			<device model="selflearning-dimmer" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
-			<device model="bell" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
+			<device model="codeswitch:chacon" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
+			<device model="selflearning-switch:chacon" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
+			<device model="selflearning-dimmer:chacon" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
+			<device model="bell:chacon" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
 		</vendor>
 		<vendor name="CoCo Technologies" image="coco">
 			<!--<text>http://www.coco-technology.com/index_EN.htm</text>-->
-			<device model="codeswitch" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
-			<device model="selflearning-switch" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
-			<device model="selflearning-dimmer" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
-			<device model="bell" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
+			<device model="codeswitch:coco" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
+			<device model="selflearning-switch:coco" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
+			<device model="selflearning-dimmer:coco" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
+			<device model="bell:coco" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
+		</vendor>
+		<vendor name="GAO" image="gao">
+		  <!--<text>http://www.everflourish.com.cn/</text> -->
+			<device model="codeswitch:gao" protocol="risingsun" widget="5" image="gao_cs" name="Code Switch">Code Switch</device>
 		</vendor>
 		<vendor name="HomeEasy" image="homeeasy">
 			<!--<text>http://www.homeeasy.eu/home.php</text>-->
-			<device model="codeswitch" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
-			<device model="selflearning-switch" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
-			<device model="selflearning-dimmer" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
+			<device model="codeswitch:homeeasy" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
+			<device model="selflearning-switch:homeeasy" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
+			<device model="selflearning-dimmer:homeeasy" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
 		</vendor>
 		<vendor name="Intertechno" image="intertechno">
-<!-- 			<text>http://www.intertechno.at/</text> -->
-			<device model="codeswitch" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
-			<device model="selflearning-switch" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
-			<device model="selflearning-dimmer" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
-			<device model="bell" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
+			<!--<text>http://www.intertechno.at/</text> -->
+			<device model="codeswitch:homeeasy" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
+			<device model="selflearning-switch:homeeasy" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
+			<device model="selflearning-dimmer:homeeasy" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
+			<device model="bell:homeeasy" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
 		</vendor>
 		<vendor name="Kjell o Company" image="kjelloco">
-<!-- 			<text>http://www.kjell.com/</text> -->
-			<device model="codeswitch" protocol="risingsun" widget="5" image="risingsun_cs" name="Code Switch">Code Switch</device>
+			<!--<text>http://www.kjell.com/</text> -->
+			<device model="codeswitch:kjelloco" protocol="risingsun" widget="5" image="risingsun_cs" name="Code Switch">Code Switch</device>
 		</vendor>
 		<vendor name="KlikAanKlikUit" image="klikaanklikuit">
-<!-- 			<text>http://www.klikaanklikuit.nl/producten.asp</text> -->
-			<device model="codeswitch" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
-			<device model="selflearning-switch" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
-			<device model="selflearning-dimmer" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
-			<device model="bell" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
+			<!--<text>http://www.klikaanklikuit.nl/producten.asp</text> -->
+			<device model="codeswitch:klikaanklikuit" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
+			<device model="selflearning-switch:klikaanklikuit" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
+			<device model="selflearning-dimmer:klikaanklikuit" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
+			<device model="bell:klikaanklikuit" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
 		</vendor>
 		<vendor name="Nexa" image="nexa">
-<!-- 			<text>http://www.nexa.se/</text> -->
-			<device model="codeswitch" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
-			<device model="selflearning-switch" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
-			<device model="selflearning-dimmer" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
-			<device model="bell" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
+			<!--<text>http://www.nexa.se/</text> -->
+			<device model="codeswitch:nexa" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
+			<device model="selflearning-switch:nexa" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
+			<device model="selflearning-dimmer:nexa" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
+			<device model="bell:nexa" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
 		</vendor>
 		<vendor name="Proove" image="proove">
-<!-- 			<text>http://www.proove.se/</text> -->
-			<device model="codeswitch" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
-			<device model="selflearning-switch" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
-			<device model="selflearning-dimmer" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
-			<device model="bell" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
+			<!--<text>http://www.proove.se/</text> -->
+			<device model="codeswitch:proove" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
+			<device model="selflearning-switch:proove" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
+			<device model="selflearning-dimmer:proove" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
+			<device model="bell:proove" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
 		</vendor>
 		<vendor name="Waveman" image="waveman">
-<!-- 			<text></text> -->
-			<device model="codeswitch" protocol="waveman" widget="1" image="waveman_cs" name="Code Switch">Code Switch</device>
+			<!--<text></text> -->
+			<device model="codeswitch:waveman" protocol="waveman" widget="1" image="waveman_cs" name="Code Switch">Code Switch</device>
 		</vendor>
 	</type>
 	<type name="Remote Switches - Type 2" expanded="true">
-<!-- 		<text></text> -->
+		<!--<text></text> -->
 		<vendor name="Elro" image="elro">
-<!-- 			<text>http://www.elro-nl.com/elro-en-05/home.htm</text> -->
-			<device model="codeswitch" protocol="sartano" widget="2" image="elro" name="Code Switch">Code Switch</device>
+			<!--<text>http://www.elro-nl.com/elro-en-05/home.htm</text> -->
+			<device model="codeswitch:elro" protocol="sartano" widget="2" image="elro" name="Code Switch">Code Switch</device>
 		</vendor>
 		<vendor name="Sartano" image="sartano">
-<!-- 			<text></text> -->
-			<device model="codeswitch" protocol="sartano" widget="2" image="sartano" name="Code Switch">Code Switch</device>
+			<!--<text></text> -->
+			<device model="codeswitch:sartano" protocol="sartano" widget="2" image="sartano" name="Code Switch">Code Switch</device>
 		</vendor>
 	</type>
 	<type name="Remote Switches - Type 3" expanded="true">
-<!-- 		<text></text> -->
+		<!--<text></text> -->
 		<vendor name="IKEA" image="ikea">
-			<device model="selflearning" protocol="ikea" widget="3" image="koppla">Koppla</device>
+			<device model="selflearning:ikea" protocol="ikea" widget="3" image="koppla">Koppla</device>
 		</vendor>
 	</type>
 	<type name="Projector screens" expanded="true">
 		<vendor name="Roxcore" image="roxcore">
-			<device model="codeswitch" protocol="brateck" widget="6" image="projectorscreen">Projector screen</device>
+			<device model="codeswitch:roxcore" protocol="brateck" widget="6" image="projectorscreen">Projector screen</device>
 		</vendor>
 	</type>
 </devices>
