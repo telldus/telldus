@@ -86,10 +86,9 @@ SET( telldus-center_SRCS
 ######## Configuring  ########
 
 ####### i18n ########
-FOREACH(lang ${telldus-center_LANGS})
+FOREACH(lang ${LANGUAGES})
 	LIST(APPEND telldus-center_TS "${telldus-center_TARGET}_${lang}.ts")
 ENDFOREACH(lang)
-OPTION (UPDATE_TRANSLATIONS "Update source translation translations/*.ts files (WARNING: make clean will delete the source .ts files! Danger!)")
 IF (UPDATE_TRANSLATIONS)
 	QT4_CREATE_TRANSLATION( QM_FILES ${telldus-center_SRCS} ${telldus-center_TS} )
 ELSE (UPDATE_TRANSLATIONS)

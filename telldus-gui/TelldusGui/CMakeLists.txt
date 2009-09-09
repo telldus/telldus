@@ -97,14 +97,25 @@ ELSE (APPLE)
 	)
 ENDIF (APPLE)
 
-
 ######## Configuring  ########
+
+####### i18n ########
+FOREACH(lang ${LANGUAGES})
+	LIST(APPEND telldus-gui_TS "${telldus-gui_TARGET}_${lang}.ts")
+ENDFOREACH(lang)
+IF (UPDATE_TRANSLATIONS)
+	QT4_CREATE_TRANSLATION( QM_FILES ${telldus-gui_SRCS} ${telldus-gui_TS} )
+ELSE (UPDATE_TRANSLATIONS)
+	QT4_ADD_TRANSLATION(QM_FILES ${telldus-gui_TS})
+ENDIF (UPDATE_TRANSLATIONS) 
+ADD_CUSTOM_TARGET (telldus-gui_translations_target DEPENDS ${QM_FILES})
 
 ADD_LIBRARY(${telldus-gui_TARGET} SHARED
 	${telldus-gui_SRCS}
 	${telldus-gui_HDRS}
 	${telldus-gui_MOC_SRCS}
 	${telldus-gui_RSRCS}
+	${telldus-gui_TS}
 )
 
 TARGET_LINK_LIBRARIES( ${telldus-gui_TARGET}	${telldus-gui_LIBRARIES} )

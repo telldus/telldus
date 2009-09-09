@@ -9,6 +9,9 @@ endif(COMMAND cmake_policy)
 SET(PACKAGE_VERSION 2)
 SET(PACKAGE_SOVERSION 2.0.0)
 
+SET(UPDATE_TRANSLATIONS FALSE CACHE BOOL "Update source translation files (WARNING: make clean will delete the source .ts files! Danger!)")
+SET(LANGUAGES sv)
+
 SET(BUILD_LIBTELLDUS-GUI	TRUE	CACHE BOOL "Build libtelldus-gui")
 SET(BUILD_TELLDUS-CENTER TRUE CACHE BOOL "Build TelldusCenter")
 
