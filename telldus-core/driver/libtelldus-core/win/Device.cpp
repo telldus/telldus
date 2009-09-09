@@ -29,6 +29,7 @@ int Device::send(const std::string &strMessage){
 		ftStatus = FT_Open(intDongleIndex, &fthHandle);
 		int intBaudRate = 4800;	//always 4800
 		ftStatus = FT_SetBaudRate(fthHandle, intBaudRate);
+		FT_SetTimeouts(fthHandle,5000,0);
 		ULONG bytesWritten, bytesRead;
 
 		char *tempMessage = (char *)malloc(sizeof(char) * (strMessage.size()+1));
@@ -40,16 +41,23 @@ int Device::send(const std::string &strMessage){
 		while(c) {
 			ftStatus = FT_Read(fthHandle,&in,1,&bytesRead);
 			if (ftStatus == FT_OK) {
-				if (in == '\n') {
+				if (bytesRead == 1) {
+					if (in == '\n') {
+						break;
+					}
+				} else { //Timeout
 					c = false;
 				}
-			} else {
-				//Timeout or error
+			} else { //Error
 				c = false;
 			}
 		}
   
 		ftStatus = FT_Close(fthHandle);
+
+		if (!c) {
+			return TELLSTICK_ERROR_NOT_FOUND;
+		}
 	}
 	catch(...){
 		throw;
