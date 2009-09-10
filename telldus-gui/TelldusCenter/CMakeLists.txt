@@ -2,7 +2,7 @@ FIND_PACKAGE( Qt4 REQUIRED )
 SET(QT_USE_QTSCRIPT TRUE)
 SET(QT_USE_QTNETWORK TRUE)
 INCLUDE( ${QT_USE_FILE} )
-
+ 
 if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)

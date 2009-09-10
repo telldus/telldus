@@ -45,8 +45,9 @@
     </message>
     <message>
         <location filename="mainwindow.cpp" line="123"/>
-        <source>&lt;center&gt;&lt;img src=&apos;:/images/TelldusCenter_128.png&apos; width=128 height=128 /&gt;&lt;h2&gt;Telldus Center 2.0.0_beta1&lt;/h2&gt;&lt;p&gt;Copyright &amp;copy; 2009 Telldus Technologies AB&lt;p&gt;&lt;/center&gt;</source>
-        <translation></translation>
+        <source>&lt;center&gt;&lt;img src=&apos;:/images/TelldusCenter_128.png&apos; width=128 height=128 /&gt;&lt;h2&gt;Telldus Center 2.0.0_beta2&lt;/h2&gt;&lt;p&gt;Copyright &amp;copy; 2009 Telldus Technologies AB&lt;p&gt;&lt;/center&gt;</source>
+        <oldsource>&lt;center&gt;&lt;img src=&apos;:/images/TelldusCenter_128.png&apos; width=128 height=128 /&gt;&lt;h2&gt;Telldus Center 2.0.0_beta1&lt;/h2&gt;&lt;p&gt;Copyright &amp;copy; 2009 Telldus Technologies AB&lt;p&gt;&lt;/center&gt;</oldsource>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 </TS>
