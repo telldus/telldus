@@ -158,7 +158,7 @@ namespace DeviceScheduler
             {
                 ListViewItem item = lvwCommon.Items.Add(dev.Name,2);
                 item.SubItems.Add(dev.ID.ToString());
-                item.SubItems.Add(dev.Vendor);
+                item.SubItems.Add(dev.Protocol);
                 item.Tag = dev;
             }
         }
@@ -214,7 +214,7 @@ namespace DeviceScheduler
             Cursor = Cursors.WaitCursor;
 
             System.Diagnostics.Process proc = new System.Diagnostics.Process();
-            string filename = System.IO.Path.Combine(path, "TelldusSetup.exe");
+            string filename = System.IO.Path.Combine(path, "TelldusCenter.exe");
             proc.StartInfo.FileName = filename;
             proc.StartInfo.WorkingDirectory = path;
             proc.Start();

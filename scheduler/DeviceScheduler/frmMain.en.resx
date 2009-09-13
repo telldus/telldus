@@ -345,7 +345,7 @@
     <value>Name</value>
   </data>
   <data name="columnHeader3.Text" xml:space="preserve">
-    <value>Manufacturer</value>
+    <value>Protocol</value>
   </data>
   <data name="cmdTurnOn.Image" type="System.Drawing.Bitmap, System.Drawing" mimetype="application/x-microsoft.net.object.bytearray.base64">
     <value>

@@ -11,23 +11,29 @@ namespace DeviceHandler
 
 
         #region Unmanaged Code
-            [DllImport("TellUsbD101.dll")]
-            private static extern bool devTurnOn(int value);
+        [DllImport("TelldusCore.dll")]
+        private static extern bool tdTurnOn(int value);
 
-            [DllImport("TellUsbD101.dll")]
-            private static extern bool devTurnOff(int value);
+        [DllImport("TelldusCore.dll")]
+        private static extern bool tdTurnOff(int value);
 
-            [DllImport("TellUsbD101.dll")]
-            private static extern int devGetDeviceId(int value);
+        [DllImport("TelldusCore.dll")]
+        private static extern bool tdBell(int value);
 
-            [DllImport("TellUsbD101.dll")]
-            private static extern string devGetName(int value);
+        [DllImport("TelldusCore.dll")]
+        private static extern int tdGetDeviceId(int value);
 
-            [DllImport("TellUsbD101.dll")]
-            private static extern string devGetVendor(int value);
+        [DllImport("TelldusCore.dll")]
+        private static extern string tdGetName(int value);
 
-            [DllImport("TellUsbD101.dll")]
-            private static extern int devGetNumberOfDevices();
+        [DllImport("TelldusCore.dll")]
+        private static extern string tdGetProtocol(int value);
+
+        [DllImport("TelldusCore.dll")]
+        private static extern int tdGetNumberOfDevices();
+
+        [DllImport("TelldusCore.dll")]
+        private static extern int tdClose();
         #endregion
 
         private List<Device> m_Devices = new List<Device>();
@@ -50,12 +56,12 @@ namespace DeviceHandler
         /// <returns>True if the command was successfull and false if not.</returns>
         public bool TurnOff(Device item)
         {
-            return devTurnOff(item.ID);
+            return tdTurnOff(item.ID);
         }
 
         public bool TurnOffWithDelay(Device item)
         {
-            bool result = devTurnOff(item.ID);
+            bool result = tdTurnOff(item.ID);
             System.Threading.Thread.Sleep(1000);
             return result;
         }
@@ -67,14 +73,33 @@ namespace DeviceHandler
         /// <returns>True if the command was successfull.</returns>
         public bool TurnOn(Device item)
         {
-            return devTurnOn(item.ID);
+            return tdTurnOn(item.ID);
         }
 
 
         public bool TurnOnWithDelay(Device item)
         {
             //Makesure that we halt for 1 second so that the Telldus stick have time to send the signal.
-            bool result = devTurnOn(item.ID);
+            bool result = tdTurnOn(item.ID);
+            System.Threading.Thread.Sleep(1000);
+            return result;
+        }
+
+
+        /// <summary>
+        /// Sends the bell signal.
+        /// </summary>
+        /// <param name="item">The device in question.</param>
+        /// <returns>True if the command was successfull.</returns>
+        public bool Bell(Device item)
+        {
+            return tdBell(item.ID);
+        }
+
+        public bool BellWithDelay(Device item)
+        {
+            //Makesure that we halt for 1 second so that the Telldus stick have time to send the signal.
+            bool result = tdBell(item.ID);
             System.Threading.Thread.Sleep(1000);
             return result;
         }
@@ -89,15 +114,15 @@ namespace DeviceHandler
             {
                 m_Devices.Clear();
 
-                int count = devGetNumberOfDevices() - 1;
+                int count = tdGetNumberOfDevices() - 1;
                 for (int i = 0; i <= count; i++)
                 {
                     //Collect information from the driver.
-                    int deviceID = devGetDeviceId(i);
-                    string deviceName = devGetName(deviceID);
-                    string deviceVendor = devGetVendor(deviceID);
+                    int deviceID = tdGetDeviceId(i);
+                    string deviceName = tdGetName(deviceID);
+                    string deviceProtocol = tdGetProtocol(deviceID);
 
-                    m_Devices.Add(new Device(deviceID, deviceName, deviceVendor));
+                    m_Devices.Add(new Device(deviceID, deviceName, deviceProtocol));
                 }
 
                 return true;
@@ -127,18 +152,18 @@ namespace DeviceHandler
     {
         private int m_ID = -1;
         private string m_Name = "";
-        private string m_Vendor = "";
+        private string m_Protocol = "";
 
         public Device(SerializationInfo info,StreamingContext cntx)
         { 
             
         }
 
-        public Device(int id, string name,string vendor)
+        public Device(int id, string name,string protocol)
         {
             m_ID = id;
             m_Name = name;
-            m_Vendor = vendor;
+            m_Protocol = protocol;
         }
 
         public int ID
@@ -153,10 +178,10 @@ namespace DeviceHandler
             set { m_Name = value; }
         }
 
-        public string Vendor
+        public string Protocol
         {
-            get { return m_Vendor; }
-            set { m_Vendor = value; }
+            get { return m_Protocol; }
+            set { m_Protocol = value; }
         }
 
         public override string ToString()

@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Telldus Technologies")]
 [assembly: AssemblyProduct("DeviceScheduler")]
-[assembly: AssemblyCopyright("Copyright © Telldus Technologies 2007")]
+[assembly: AssemblyCopyright("Copyright © Telldus Technologies 2009")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
@@ -29,5 +29,5 @@ using System.Runtime.InteropServices;
 //      Build Number
 //      Revision
 //
-[assembly: AssemblyVersion("2007.1.1.2")]
-[assembly: AssemblyFileVersion("2007.1.1.2")]
+[assembly: AssemblyVersion("2009.2.0.0")]
+[assembly: AssemblyFileVersion("2009.2.0.0")]
