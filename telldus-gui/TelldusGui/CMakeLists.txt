@@ -106,9 +106,8 @@ ENDFOREACH(lang)
 IF (UPDATE_TRANSLATIONS)
 	QT4_CREATE_TRANSLATION( QM_FILES ${telldus-gui_SRCS} ${telldus-gui_TS} )
 ELSE (UPDATE_TRANSLATIONS)
-	QT4_ADD_TRANSLATION(QM_FILES ${telldus-gui_TS})
-ENDIF (UPDATE_TRANSLATIONS) 
-ADD_CUSTOM_TARGET (telldus-gui_translations_target DEPENDS ${QM_FILES})
+	QT4_ADD_TRANSLATION(telldus-gui_QM ${telldus-gui_TS})
+ENDIF (UPDATE_TRANSLATIONS)
 
 ADD_LIBRARY(${telldus-gui_TARGET} SHARED
 	${telldus-gui_SRCS}
@@ -116,6 +115,7 @@ ADD_LIBRARY(${telldus-gui_TARGET} SHARED
 	${telldus-gui_MOC_SRCS}
 	${telldus-gui_RSRCS}
 	${telldus-gui_TS}
+	${telldus-gui_QM}
 )
 
 TARGET_LINK_LIBRARIES( ${telldus-gui_TARGET}	${telldus-gui_LIBRARIES} )

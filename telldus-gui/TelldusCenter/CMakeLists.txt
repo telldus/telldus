@@ -92,9 +92,8 @@ ENDFOREACH(lang)
 IF (UPDATE_TRANSLATIONS)
 	QT4_CREATE_TRANSLATION( QM_FILES ${telldus-center_SRCS} ${telldus-center_TS} )
 ELSE (UPDATE_TRANSLATIONS)
-	QT4_ADD_TRANSLATION(QM_FILES ${telldus-center_TS})
+	QT4_ADD_TRANSLATION(telldus-center_QM ${telldus-center_TS})
 ENDIF (UPDATE_TRANSLATIONS) 
-ADD_CUSTOM_TARGET (translations_target DEPENDS ${QM_FILES})
 
 
 
@@ -104,6 +103,7 @@ ADD_EXECUTABLE(${telldus-center_TARGET} MACOSX_BUNDLE
 	${telldus-center_RSRCS}
 	${telldus-center_RESOURCES}
 	${telldus-center_TS}
+	${telldus-center_QM}
 )
 SET_SOURCE_FILES_PROPERTIES(${telldus-center_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
