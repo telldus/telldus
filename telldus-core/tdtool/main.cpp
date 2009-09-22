@@ -92,7 +92,7 @@ void print_device( int index ) {
 			break;
 		case TELLSTICK_DIM:
 			level = tdLastSentValue(intId);
-			printf("DIMMED:%s\%", level);
+			printf("DIMMED:%s", level);
 			free(level);
 			break;
 		default:
