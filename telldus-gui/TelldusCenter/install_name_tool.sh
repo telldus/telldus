@@ -8,6 +8,10 @@ copy_framework() {
 	cp -R /Library/Frameworks/$1.framework/ TelldusCenter.app/Contents/Frameworks/$1.framework/
 }
 
+copy_plugin_translations() {
+	cp Plugins/script/$1/*.qm TelldusCenter.app/Contents/Plugins/script/$1/
+}
+
 strip_qt_development_files() {
         # Strip development-files
         rm -r ${2}/${1}_debug.dSYM
@@ -121,3 +125,10 @@ for plugin in $PLUGINS; do
 		install_name_tool -change $TPATH @executable_path/../Frameworks/TelldusGui.framework/Versions/2/TelldusGui $PLUGIN_PATH
 	fi
 done
+
+### I18N ###
+
+echo "Copy translation files"
+copy_plugin_translations com/telldus/gui
+copy_plugin_translations com/telldus/systray
+
