@@ -2,6 +2,7 @@
 #include <QTranslator>
 #include <QLocale>
 #include <QLibraryInfo>
+#include <QDir>
 #include <QDebug>
 
 #ifdef Q_WS_MAC
@@ -30,12 +31,23 @@ int main(int argc, char *argv[])
 		return 0;
 	}
 
-	QTranslator qtTranslator;
-	qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
-	application.installTranslator(&qtTranslator);
-
-	QTranslator tellduscenterTranslator;
+	QTranslator qtTranslator, tellduscenterTranslator;
+#if defined(Q_OS_WIN)
+	qtTranslator.load("qt_" + QLocale::system().name());
 	tellduscenterTranslator.load("TelldusCenter_" + QLocale::system().name());
+#elif defined(Q_OS_MAC)
+	QDir resDir = QDir(qApp->applicationDirPath());
+	if (resDir.dirName() == "MacOS") {
+		resDir.cdUp();
+		resDir.cd("resources");
+	}
+	qtTranslator.load("qt_" + QLocale::system().name(), resDir.absolutePath());
+	tellduscenterTranslator.load("TelldusCenter_" + QLocale::system().name(), resDir.absolutePath());
+#else
+	qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
+	tellduscenterTranslator.load("TelldusCenter_" + QLocale::system().name());
+#endif
+	application.installTranslator(&qtTranslator);
 	application.installTranslator(&tellduscenterTranslator);
 	
 	application.initialize();
