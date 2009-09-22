@@ -1,5 +1,3 @@
-SET(QT_USE_QTSCRIPT TRUE)
-
 SET( Plugin_NAME "Devices" )
 
 SET( Plugin_SRCS
@@ -13,6 +11,7 @@ SET( Plugin_MOC_HDRS
 	devicesplugin.h
 )
 
+SET( Plugin_PATH "com.telldus.gui" )
 
 FIND_LIBRARY( TELLDUSGUI_LIBRARY telldus-gui )
 
