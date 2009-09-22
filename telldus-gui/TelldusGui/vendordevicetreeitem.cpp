@@ -60,7 +60,7 @@ QPixmap VendorDeviceTreeItem::image() const {
 	}
 	QPixmap image = QPixmap(filename);
 	if (image.isNull()) {
-		image = QPixmap( 96, 96 );
+		image = QPixmap( 150, 150 );
 		image.fill( Qt::transparent );
 	}
 	return image;
