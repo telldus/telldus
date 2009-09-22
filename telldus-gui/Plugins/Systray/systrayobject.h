@@ -3,9 +3,10 @@
 
 #include <QObject>
 #include <QScriptEngine>
-#include "systrayicon.h"
+#include <QSystemTrayIcon>
 
 class SystrayObjectPrivate;
+class QAction;
 
 class SystrayObject : public QObject
 {

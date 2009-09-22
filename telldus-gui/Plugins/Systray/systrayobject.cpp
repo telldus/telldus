@@ -1,5 +1,6 @@
 #include "systrayobject.h"
 #include <QApplication>
+#include <QMenu>
 #include <QDebug>
 
 class SystrayObjectPrivate {
