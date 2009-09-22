@@ -1,6 +1,7 @@
 #include "tellduscenterapplication.h"
 #include <QTranslator>
 #include <QLocale>
+#include <QLibraryInfo>
 #include <QDebug>
 
 #ifdef Q_WS_MAC
@@ -30,7 +31,7 @@ int main(int argc, char *argv[])
 	}
 
 	QTranslator qtTranslator;
-	qtTranslator.load("qt_" + QLocale::system().name());
+	qtTranslator.load("qt_" + QLocale::system().name(), QLibraryInfo::location(QLibraryInfo::TranslationsPath));
 	application.installTranslator(&qtTranslator);
 
 	QTranslator tellduscenterTranslator;
