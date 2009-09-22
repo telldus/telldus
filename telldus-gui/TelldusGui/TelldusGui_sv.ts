@@ -72,12 +72,12 @@
     <message>
         <location filename="devicesettingikea.cpp" line="58"/>
         <source>Smooth</source>
-        <translation>Långsamt</translation>
+        <translation>Mjukt</translation>
     </message>
     <message>
         <location filename="devicesettingikea.cpp" line="60"/>
         <source>Instant</source>
-        <translation>Snabbt</translation>
+        <translation>Direkt</translation>
     </message>
 </context>
 <context>
@@ -139,7 +139,7 @@
     <message>
         <location filename="devicewidget.cpp" line="55"/>
         <source>Edit</source>
-        <translation>Editera</translation>
+        <translation>Redigera</translation>
     </message>
     <message>
         <location filename="devicewidget.cpp" line="63"/>
