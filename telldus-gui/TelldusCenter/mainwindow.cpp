@@ -78,13 +78,16 @@ void MainWindow::setupMenu() {
 
 	// File
 	QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
-	fileMenu->addAction(tr("&Quit"), qApp, SLOT(quit()));
+	QAction *quit = fileMenu->addAction(tr("&Quit"), qApp, SLOT(quit()));
+	quit->setMenuRole( QAction::QuitRole );
 
 	// Help
 	QMenu *helpMenu = menuBar()->addMenu(tr("&Help"));
 	helpMenu->addSeparator();
-	helpMenu->addAction(tr("About &Qt"), qApp, SLOT(aboutQt()));
-	helpMenu->addAction(tr("About &Telldus Center"), this, SLOT(slotAboutApplication()));
+	QAction *aboutQt = helpMenu->addAction(tr("About &Qt"), qApp, SLOT(aboutQt()));
+	aboutQt->setMenuRole( QAction::AboutQtRole );
+	QAction *aboutTelldusCenter = helpMenu->addAction(tr("About &Telldus Center"), this, SLOT(slotAboutApplication()));
+	aboutTelldusCenter->setMenuRole( QAction::AboutRole );
 }
 
 void MainWindow::setupToolBar()
