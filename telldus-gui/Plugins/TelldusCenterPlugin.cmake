@@ -36,7 +36,7 @@ IF(Plugin_PATH)
 	)
 	IF (APPLE)
 		SET_SOURCE_FILES_PROPERTIES(${Plugin_TS} PROPERTIES
-			OUTPUT_LOCATION "${CMAKE_BINARY_DIR}/TelldusCenter.app/Contents/Plugins/script/${path}"
+			OUTPUT_LOCATION "${CMAKE_SOURCE_DIR}/TelldusCenter/Plugins/script/${path}"
 		)
 	ELSE (APPLE)
 		SET_SOURCE_FILES_PROPERTIES(${Plugin_TS} PROPERTIES
