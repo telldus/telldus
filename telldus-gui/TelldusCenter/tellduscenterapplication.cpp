@@ -4,6 +4,7 @@
 #include <QIcon>
 #include <QPluginLoader>
 #include <QScriptEngine>
+#include <QTranslator>
 
 #include <QDebug>
 #include "tellduscenterplugin.h"
@@ -146,6 +147,21 @@ void TelldusCenterApplication::loadScripts() {
 			continue;
 		}
 // 		qDebug() << "Loading extension:" << extension;
+		foreach(QDir dir, this->libraryPaths()) {
+			dir.cd("script");
+			QString path = extension;
+			path.replace('.', '/');
+			if (!dir.cd(path)) {
+				continue;
+			}
+			QTranslator *translator = new QTranslator(this);
+			if (!translator->load("translation_" + QLocale::system().name(), dir.absolutePath())) {
+				delete translator;
+				continue;
+			}
+			this->installTranslator(translator);
+		}
+		
 		d->scriptEngine.importExtension( extension );
 		if (d->scriptEngine.hasUncaughtException()) {
 			qDebug() << QString("Error in %1:%2:").arg(extension).arg(d->scriptEngine.uncaughtExceptionLineNumber())

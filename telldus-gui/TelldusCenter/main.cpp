@@ -1,4 +1,7 @@
 #include "tellduscenterapplication.h"
+#include <QTranslator>
+#include <QLocale>
+#include <QDebug>
 
 #ifdef Q_WS_MAC
 #include "CocoaInitializer.h"
@@ -12,7 +15,7 @@ int main(int argc, char *argv[])
 	QCoreApplication::setOrganizationName("Telldus");
 	QCoreApplication::setOrganizationDomain("www.telldus.se");
 	QCoreApplication::setApplicationName("Telldus Center");
-
+	
 	bool showMinimized = false;
 	for( int i = 1; i < argc; ++i ) {
 		if (QString(argv[i]) == "--minimized") {
@@ -25,6 +28,14 @@ int main(int argc, char *argv[])
 	if (application.sendMessage("Wake up!")) {
 		return 0;
 	}
+
+	QTranslator qtTranslator;
+	qtTranslator.load("qt_" + QLocale::system().name());
+	application.installTranslator(&qtTranslator);
+
+	QTranslator tellduscenterTranslator;
+	tellduscenterTranslator.load("TelldusCenter_" + QLocale::system().name());
+	application.installTranslator(&tellduscenterTranslator);
 	
 	application.initialize();
 	
