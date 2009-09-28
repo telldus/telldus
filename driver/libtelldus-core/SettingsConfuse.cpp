@@ -43,8 +43,12 @@ Settings::Settings(void)
 */
 Settings::~Settings(void)
 {
-	if (d->cfg > 0)
+	if (d->cfg > 0) {
 		cfg_free(d->cfg);
+	}
+	if (d->var_cfg > 0) {
+		cfg_free(d->var_cfg);
+	}
 	delete d;
 }
 
