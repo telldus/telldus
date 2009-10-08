@@ -58,6 +58,9 @@
 			<device model="selflearning-dimmer:proove" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
 			<device model="bell:proove" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
 		</vendor>
+		<vendor name="UPM" image="upm">
+			<device model="selflearning:upm" protocol="upm" widget="9" image="upm_sl" name="Selflearning">Selflerning</device>
+		</vendor>
 		<vendor name="Waveman" image="waveman">
 			<!--<text></text> -->
 			<device model="codeswitch:waveman" protocol="waveman" widget="1" image="waveman_cs" name="Code Switch">Code Switch</device>
