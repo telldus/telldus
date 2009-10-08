@@ -29,6 +29,9 @@ public:
 
 	virtual ~DeviceSettingArctechSelflearning();
 
+	virtual void setRemoteMinMax(int min, int max);
+	virtual void setUnitMinMax(int min, int max);
+
 public slots:
 	virtual void saveParameters();
 

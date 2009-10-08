@@ -66,3 +66,14 @@ void DeviceSettingArctechSelflearning::saveParameters() {
  	p_device->setParameter( "unit", QString::number(spinUnitcode->value()) );
 
 }
+
+
+void DeviceSettingArctechSelflearning::setRemoteMinMax(int min, int max) {
+	spinRemotecode->setMinimum(min);
+	spinRemotecode->setMaximum(max);
+}
+
+void DeviceSettingArctechSelflearning::setUnitMinMax(int min, int max) {
+	spinUnitcode->setMinimum(min);
+	spinUnitcode->setMaximum(max);
+}
