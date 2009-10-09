@@ -41,7 +41,7 @@ Settings::~Settings(void)
 	//RegCloseKey(hk);	//close all, if still open //TODO: Need some way to know if open or closed
 	d->strRegPath = "";
 	d->strRegPathDevice = "";
-
+	delete d;
 }
 
 /*
@@ -165,8 +165,8 @@ int Settings::getNextDeviceId() const {
 			long lngStatus = RegQueryValueEx(d->hk, "LastUsedId", NULL, NULL, (LPBYTE)Buff, &dwLength);
 
 			if(lngStatus == ERROR_MORE_DATA){
-
-
+				//The buffer is to small, recreate it
+				delete Buff;
 				Buff = new char[dwLength];
 				lngStatus = RegQueryValueEx(d->hk, "LastUsedId", NULL, NULL, (LPBYTE)Buff, &dwLength);
 			}
@@ -232,12 +232,15 @@ std::string Settings::getStringSetting(int intDeviceId, const std::string &name,
 
 			long lngStatus = RegQueryValueEx(d->hk, name.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
 			if(lngStatus == ERROR_MORE_DATA){
+				//The buffer is to small, recreate it
+				delete Buff;
 				Buff = new char[dwLength];
 				lngStatus = RegQueryValueEx(d->hk, name.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
 			}
 			if (lngStatus == ERROR_SUCCESS) {
 				strReturn = Buff;
 			}
+			delete Buff;
 		}
 		else{
 			throw std::exception();	//couldn't open reg key
@@ -319,9 +322,10 @@ bool storeGlobal(privateVars *d) {
 			long lngStatus = RegQueryValueEx(d->hk, "SharedDevices", NULL, NULL, (LPBYTE)Buff, &dwLength);
 
 			if(lngStatus == ERROR_MORE_DATA){
-
-
+				//The buffer is to small, recreate it
+				delete Buff;
 				Buff = new char[dwLength];
+
 				lngStatus = RegQueryValueEx(d->hk, "SharedDevices", NULL, NULL, (LPBYTE)Buff, &dwLength);
 			}
 
