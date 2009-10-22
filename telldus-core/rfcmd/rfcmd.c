@@ -43,6 +43,19 @@
  *  access from several processes (typically cron jobs). Note! Need rt lib. 
  ******************************************************************************/
 
+/*******************************************************************************
+ * Modifications from rfcmd.c ver 2.1.0 done by Leo
+ *  Added support for RISINGSUN
+ * Note:
+ * 1. Command line syntax:
+ *    /usr/local/bin/rfcmd  /dev/ttyUSB0  RISINGSUN 4 1 0" 
+ *    Arg 1: device
+ *    Arg 2: protocol
+ *    Arg 3: code 
+ *    Arg 4: device number
+ *    Arg 5: Level (0=off, 1 = on)
+ ******************************************************************************/
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -64,6 +77,8 @@ int createSartanoString(const char * pChannelStr, const char * pOn_offStr,
 int createIkeaString(const char * pSystemStr, const char * pChannelStr,
                      const char * pLevelStr, const char *pDimStyle,
                      char * pStrReturn);
+int createRisingSunString(const char * pCodeStr, const char* pUnitStr, const char * pOn_offStr,
+                        char * pTxStr);
 
 void printUsage(void);
 void printVersion(void);
@@ -106,6 +121,13 @@ int main( int argc, char **argv )
 			exit(1);
 		}
 		/* else - a send cmd string was created */
+	} else if ( (argc == 6) && (strcmp(*(argv+2),"RISINGSUN")==0) ) {
+	//                    Code,   Unit,    Power
+		if ( createRisingSunString(*(argv+3), *(argv+4), *(argv+5), txStr) == 0 ) {
+			printUsage();
+			exit(1);
+			}
+			/* else - a send cmd string was created */
 	} else if ( (argc >= 2) && (strcmp(*(argv+1),"--version")==0) ) {
 		printVersion();
 		exit(1);
@@ -430,6 +452,54 @@ int createIkeaString( const char * pSystemStr, const char * pChannelStr, const c
 	return strlen(pStrReturn);
 }
 
+int createRisingSunString(const char * pCodeStr, const char * pUnitStr, const char * pOn_offStr,
+                        char * pTxStr)
+{
+	* pTxStr = '\0'; /* Make sure tx string is empty */
+	int on_offCode;
+	int unit;
+	int code;
+	int i;
+
+	on_offCode =  atoi(pOn_offStr);	        /* ON/OFF 0..1 */
+	code = atoi (pCodeStr);
+	unit = atoi (pUnitStr);
+
+#ifdef RFCMD_DEBUG
+	printf("Code: %s, unit: %s, on_off: %d\n", pCodeStr, pUnitStr, on_offCode);
+#endif
+
+	/* check converted parameters for validity */
+	if((code < 1) || (code > 4) ||
+	   (unit < 1) || (unit > 4) ||
+	   (on_offCode < 0) || (on_offCode > 1)) {
+	} else {
+		strcat(pTxStr,"S.e");
+		for (i = 1; i <= 4; ++i) {
+			if (i == code) {
+				strcat (pTxStr, ".e.e");
+			} else {
+				strcat (pTxStr, "e..e");
+			}
+		}
+		for (i = 1; i <= 4; ++i) {
+			if (i == unit) {
+				strcat (pTxStr, ".e.e");
+			} else {
+				strcat (pTxStr, "e..e");
+			}
+		}
+
+		if (on_offCode >= 1) {
+			strcat(pTxStr,"e..ee..ee..ee..e+"); //the "turn on"-code
+		} else {
+			strcat(pTxStr,"e..ee..ee..e.e.e+"); //the "turn off"-code
+		}
+	}
+
+	return strlen(pTxStr);
+}
+
 
 void printUsage(void)
 {
@@ -440,7 +510,7 @@ void printUsage(void)
 #else
 	printf("\t DEVICE: /dev/ttyUSB[0..n]\n" );
 #endif
-	printf("\t PROTOCOLS: NEXA, SARTANO, WAVEMAN, IKEA\n" );
+	printf("\t PROTOCOLS: NEXA, SARTANO, WAVEMAN, IKEA, RISINGSUN\n" );
 	printf("\n");
 	printf("\t PROTOCOL ARGUMENTS - NEXA, WAVEMAN:\n");
 	printf("\t\tHOUSE_CODE: A..P\n\t\tCHANNEL: 1..16\n\t\tOFF_ON: 0..1\n" );
@@ -451,6 +521,10 @@ void printUsage(void)
 	printf("\t PROTOCOL ARGUMENTS - IKEA:\n");
 	printf("\t\tSYSTEM: 1..16\n\t\tDEVICE: 1..10\n");
 	printf("\t\tDIM_LEVEL: 0..10\n\t\tDIM_STYLE: 0..1\n" );
+	printf("\n");
+	printf("\t PROTOCOL ARGUMENTS - RISINGSUN:\n");
+	printf("\t\tCODE: 1..4\n\t\tDEVICE: 1..4\n");
+	printf("\t\tOFF_ON: 0..1\n" );
 	printf("\n");
 	printf("Report bugs to <info.tech@telldus.se>\n");
 }
