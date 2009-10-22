@@ -1,0 +1,126 @@
+/**
+ * @page TellStick TellStick protocol
+ *
+ * \section Introduction
+ *
+ * Telldus TellStick protocol looks like:<br>
+ * <tt>[prefix[prefix parameters]][command][parameter 1]..[parameter n]['+']</tt>
+ *
+ * Each value in <tt>[</tt> and <tt>]</tt> is representing one byte.
+ *
+ * Command is one ascii character. Not all commands have parameters which
+ * makes it optional. Prefix is always optional.
+ * Note: Due to memory limitations, the parameters is limited in length to 79
+ * bytes.
+ *
+ * An example command to turn on a ArcTech codeswitch A1 may look like:
+ * <tt>S$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$kk$$kk$$kk$$}+</tt>
+ *
+ * TellStick returns to a known command like this:<br>
+ * <tt>['+'][command][parameters][13][10]</tt>
+ *
+ * <tt>[13]</tt> and <tt>[10]</tt> are the ascii characters 10 and 13.
+ *
+ * An example to query a TellStick on its firmware version:<br>
+ * Command:<br>
+ * <tt>V+</tt><br>
+ * Response:<br>
+ * <tt>+V2</tt><br>
+ * The TellStick in the example has the firmware version 2.
+ *
+ * \section Commands
+ *
+ * \subsection sec_bootloader B - Bootloader
+ * This command makes the TellStick go into the bootloader.
+ * Not all devices supports this.
+ *
+ * \subsection sec_send S - Send command
+ * This command tells TellStick to send a command. The parameters to this
+ * command is the data-packet to send.
+ *
+ * Each of the characters in the parameters makes the antenna alternate
+ * high/low/high etc. The time before the alternation is 10 us timer the ASCII
+ * value. For example, $ has the ascii-value 36 and k has 107. The command:
+ * <tt>['S']['$']['k']['$']['k']['$']['+']</tt> makes the following wavepattern on the antenna:
+ * <pre>
+ *  _____                 _____                 _____
+ * |     |               |     |               |     |
+ * |     |               |     |               |     |
+ * |     |_______________|     |_______________|     |
+ *
+ * |<===>|<=============>|<===>|<=============>|<===>|
+ *  360us      1070us     360us      1070us     360us
+ * </pre>
+ * 
+ *
+ * \subsection sec_send_extended T - Send command, extended
+ *
+ * The extended command was developed to overcome the limitations och the
+ * length of the data to 79 bytes.
+ * The idea is to have four fixed times on the pulses so the information about
+ * what to send only needs 2 bits instead of 8 in the command <tt>S</tt>
+ *
+ * The parameters to the command is:<br>
+ * <tt>[t0][t1][t2][t3][length][d1]..[dn]</tt>
+ *
+ * <tt>t0-t3</tt>: Times 1 to 4. The times are in the same form as <tt>S</tt>.
+ * Each time is multiplied with the factor of 10.
+ *
+ * <tt>length</tt>: How many pulses to send. Since the data sent to TellStick
+ * is sent in groups of four pulses (one byte) and the actual data might not
+ * have pulses even divided with four.
+ *
+ * <tt>d1..dn</tt>: Each byte is the description for four pulses.
+ *
+ * Example:<br>
+ * <tt>['T'][127][255][24][1][6][98][80]['+']</tt>
+ *
+ * <tt>T</tt>: Send extended.
+ *
+ * <tt>127,255,24,1</tt>: Times 1270 us, 2550 us, 24 us and 10 us
+ *
+ * <tt>6</tt>: Six pulses to send.
+ *
+ * <tt>98,80</tt>: The data in binary is <tt>10011000</tt>,<tt>10000000</tt>. If
+ * we group it in groups of two bits we get <tt>10 01 10 00 10 00 00 00</tt>.
+ * Since the length is only six pulses the last two pulses is discarded, giving:
+ * <tt>10 01 10 00 10 00</tt>.
+ *
+ * Matching those bits to the times gives the following times:<br>
+ * <tt>10 => 2 => t2 => 240 us</tt><br>
+ * <tt>01 => 1 => t1 => 2550 us</tt><br>
+ * <tt>10 => 2 => t2 => 240 us</tt><br>
+ * <tt>00 => 0 => t0 => 1270 us</tt><br>
+ * <tt>10 => 2 => t2 => 240 us</tt><br>
+ * <tt>00 => 0 => t0 => 1270 us</tt><br>
+ *
+ * This is equal if you used <tt>S</tt>:<br>
+ * <tt>['S'][24][255][24][127][24][127]['+']</tt>
+ *
+ * \subsection sec_version V - Firmware version
+ * This command queries the TellStick on its firmware version.
+ *
+ * Example:<br>
+ * <tt>» V+</tt><br>
+ * <tt>« +V2</tt><br>
+ * \section Prefixes
+ * The prefixes are commands that can be prepended before some of the commands
+ * and cannot be used standalone. They are used to alter the behavior of the
+ * command.
+ *
+ * \subsection sec_debug D - Debug
+ * \subsection sec_pause P - Pause
+ * The pause is how low TellStick will wait between two packets. The value is
+ * in ms.
+ *
+ * Example, % has the ascii-value 37. The following packet will be sent with a
+ * pause of 37 ms between the packets:<br>
+ * <tt>» P\%S$k$k$+</tt>
+ *
+ * \subsection sec_repeat R - Repeat
+ * This tells TellStick how many times to send the packet.
+ *
+ * Example, ! has the ascii-value 33. The following packet will be sent 33
+ * times:<br>
+ * <tt>» R!S$k$k$+</tt>
+ */
