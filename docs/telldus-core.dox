@@ -1,39 +1,39 @@
 /**
- * @page telldus_core Telldus Core API
+ * @mainpage Telldus Core API
  *
  * \section Introduction
  *
  * This is the guide to Telldus TellStick SDK. Even though all examples are
- * written in C/C++ most of the code has an direct eqvivalent function in the
+ * written in C/C++ most of the code has a direct eqvivalent function in the
  * other languages. See \ref sec_other_languages how to use the library in one
  * of the supported languages by Telldus.
  *
  * \section Idea
- * 
+ *
  * All of the devices used by TellStick must be predefined before they can be
  * used in any software. Under all platforms this can be done with the
- * software TelldusSetup but under Linux this can also be done by editing the
+ * software TelldusCenter but under Linux this can also be done by editing the
  * file <tt>/etc/tellstick.conf</tt> with your favorite text editor.
  *
  * Having the devices preconfigured is an advantage to both the developer and
  * the end user.
  *
- * \li The end user might use more then one program for controling his/hers
- * TellStick. By having the devices preconfigured he/she doesn't have to
- * reconfigure the same devices twice. If some settings changes in one of the
+ * \li The end user might use more then one program for controlling his/her
+ * TellStick. By having the devices preconfigured he/she does not have to
+ * reconfigure the same devices twice. If some settings change in one of the
  * devices, this change will affect all softwares using Telldus TellStick SDK.
- * \li Telldus is adding support for new devices constantly. If every software
- * defines it's own devices it will also mean that the developer has to keep
- * it's software up to date with all the new devices and settings Telldus
- * implements. By querying Telldus Tellstick SDK all the new devices will be
- * available automaticly to the end user.
+ * \li Telldus continuously adds support for new devices. If a software
+ * defines it's own devices, the developer will have to keep the software
+ * up to date with new devices and settings implemented by Telldus. By querying
+ * Telldus Tellstick SDK all the new devices will be available automaticly to
+ * the end user.
  *
  * \section sec_basic_usage Basic usage (telldus-core)
- * 
+ *
  * Telldus provides a non-gui library to list, query and control the devices
  * called telldus-core.
  * To initiate the library a call to tdInit() must be made. This call will
- * open up all controllers (e.g. a TellStick) and start listen for events from
+ * open up all controllers (e.g. a TellStick) and start listening for events from
  * them.
  * When you are done with telldus-core, call tdClose() to allow the library to
  * clean up after itself.
@@ -54,33 +54,34 @@
  * First, we call tdGetNumberOfDevices(). This returnes the total number of
  * devices configured. We then iterate over all of the devices with the index
  * in the variable \c i.
- * Since the devices could change between run of the program we could not be
- * sure that the index points to the same device between two run of the
- * program. That is why every device has an own unique id that is safe to
- * store in a configuration file. Two different devices could never share the
+ * Since the devices could change between runs of the program we can not be
+ * sure that the index points to the same device between two runs of the
+ * program. That is why every device has it's own unique id that is safe to
+ * store in a configuration file. Two different devices can never share the
  * same device id.
  *
  * The call to tdGetDeviceId() returns the id for a specific index. This
  * function should only be called in a loop iterating over all of the devices.
  * After we have found the id for a device it is safe to store this or use it
- * the rest of the program.
+ * in the rest of the program.
  *
  * The next two lines of code queries the device for it's name with a call to
  * tdGetName() and then displays it to stdout. Since telldus-core gives up the
  * ownership of the string we must manualy free up the resource after we are
- * done with it. 
+ * done with it.
  *
  * \subsection sec_bu_sending Sending commands to TellStick
  *
  * \subsubsection sec_bu_sending_features Device features
  *
- * TellStick can control many different types of devices and they
- * all support different features. For example, a bell doesn't support turning
- * on and not all lamp switches support dimming.
- * To find out what a specific device support call tdMethods():
+ * TellStick can control many different types of devices that
+ * support different features. For example, a bell does not support turning
+ * the on-signal and not all lamp switches support dimming.
+ * Call tdMethods() to find out what a specific device supports:
  * \code
  * function checkFeatures( int id ) {
- *   int methods = tdMethods( id );
+ *   int supportedMethods = TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL;
+ *   int methods = tdMethods( id, supportedMethods );
  *   if ( methods & TELLSTICK_TURNON ) {
  *     printf( "The device %d support tdTurnOn()\n", id );
  *   }
@@ -92,16 +93,25 @@
  *   }
  * }
  * \endcode
- * 
- * When you know which fetures a device support it is safe to call the
+ *
+ * By supplying the methods the application supports, the library can be backwards
+ * compatible. Let's say that the client application only supports turning on and
+ * off. The call to query a device for it's methods should be:
+ * \code
+ * int methods = tdMethods( id, TELLSTICK_TURNON | TELLSTICK_TURNOFF );
+ * \endcode
+ * If the device in the above example is a device only supporing TELLSTICK_BELL,
+ * the library will instead return TELLSTICK_TURNON, making the client application
+ * still able to control the device.
+ * When you know which features a device supports it is safe to call the
  * controlling functions described in \ref sec_bu_controlling_functions.
  *
  * \subsubsection sec_bu_controlling_functions Controlling functions
  *
- * TellStick has a couple of functions for controlling the devices. Each of
+ * TellStick has a couple of functions for controlling devices. Each of
  * them should only be called if the device support the feature.
  *
- * These functions all returns zero if the call was successfull and non-zero
+ * These functions all return zero if the call was successful and non-zero
  * otherwise.
  *
  * \paragraph tdTurnOn tdTurnOn()
@@ -113,12 +123,12 @@
  * \paragraph tdDim tdDim()
  * Devices supporting \c TELLSTICK_DIM. This is a quite unusual feature for
  * dimmers. Many dimmers on the market that are dimmable have no way for sending
- * a specific level which means it doesn't support this feature.
+ * a specific level which means it does not support this feature.
  * \paragraph tdBell tdBell()
  * Devices supporting \c TELLSTICK_BELL. This is mostly wireless doorbells.
  *
  * \subsubsection sec_bu_error_codes Error codes
- * 
+ *
  * If any of the calls in \ref sec_bu_controlling_functions fails it returns
  * a non-zero error code. This values is one of the \c TELLSTICK_ERROR_* defines.
  * To translate the error code to a human readable string call the function
@@ -129,23 +139,41 @@
  *
  * int retval = tdTurnOn( deviceID );
  * if (retval != TELLSTICK_SUCCESS ) {
- *   printf("Error: %s\n", tdGetErrorString( retval ) );
+ *   char *errorString = tdGetErrorString( retval );
+ *   printf("Error: %s\n", errorString );
+ *   free(errorString);
  * }
+ * \endcode
+ *
+ * \subsection sec_bu_device_state Device states
+ *
+ * Since TellStick only has a transmitter and not a receiver the communation is
+ * one-way. This means that telldus-core will never know for sure which
+ * state a reciever has. Instead, the library remembers which command was last
+ * sent. In this way it "emulates" a two-way communication.
+ *
+ * To query the device state, use the function tdLastSentCommand()
+ *
+ * Example:
+ * \code
+ * char *name = tdGetName( id );
+ * int state = tdLastSentCommand( id );
+ * if (state == TELLSTICK_TURNON) {
+ *   printf("%s is on\n", name);
+ * } else if (state == TELLSTICK_TURNOFF) {
+ *   printf("%s is off\n", name);
+ * } else {
+ *   printf("%s is in an unknown state\n", name);
+ * }
+ * free(name);
  * \endcode
  *
  * \section sec_other_languages Notes using other languages than C/C++
  *
- * \subsection sec_ol_java Java
- * \subsection sec_ol_net .Net
- * \subsection sec_ol_php PHP
  * \subsection sec_ol_pyhon Python
  *
- * There is no native Python support for TellStick yet. If you are developing in
- * Windows you can load the TellStick ActiveX and then access the Telldus
- * TellStick SDK.
+ * There is no native Python support for TellStick yet. To use telldus-core in Python,
+ * please have look at the <tt>ctypes</tt> library. It contains <tt>cdll</tt> and
+ * <tt>windll</tt> to load any dynamic link libraries.
  *
- * \subsection sec_ol_visualbasic Visual Basic
- * 
- * Include the file \c TellStick.bas to your project and all of the functions
- * will be available.
  */
