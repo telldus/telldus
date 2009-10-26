@@ -155,7 +155,7 @@ std::string DeviceX10::getStringCode(bool on){
 			strComplement.append(B0);
 		}
 		
-		if (intCode >> 1 & 1) { //Bit 1 of intCode
+		if (intCode & 1) { //Bit 0 of intCode
 			strReturn.append(B1);
 			strComplement.append(B0);
 		} else {
@@ -163,7 +163,7 @@ std::string DeviceX10::getStringCode(bool on){
 			strComplement.append(B1);
 		}
 		
-		if (intCode & 1) { //Bit 0 of intCode
+		if (intCode >> 1 & 1) { //Bit 1 of intCode
 			strReturn.append(B1);
 			strComplement.append(B0);
 		} else {
