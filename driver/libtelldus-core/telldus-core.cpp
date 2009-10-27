@@ -98,6 +98,15 @@ void WINAPI tdClose(void) {
 }
 
 /**
+ * This method releases resources allocated by telldus-core.
+ * It should be called on the returned value from all functions return <tt>char *</tt>
+ **/
+void WINAPI tdReleaseString(char *string) {
+	free(string);
+}
+
+
+/**
  * Turns a device on.
  * Make sure the device supports this by calling tdMethods() before any
  * call to this function.
