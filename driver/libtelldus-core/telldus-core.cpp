@@ -66,6 +66,9 @@ using namespace TelldusCore;
  * Error code. The requested method is not supported by the device.
  * This should be avoided by a call to tdMethods().
  * 
+ * @def TELLSTICK_ERROR_COMMUNICATION
+ * Error code. An error occurred when communicating with TellStick
+ * 
  * @def TELLSTICK_ERROR_UNKNOWN
  * Error code. An unkown error has occurred.
  */
@@ -516,13 +519,14 @@ int WINAPI tdMethods(int id, int methodsSupported){
  * @sa TELLSTICK_ERROR_UNKNOWN
  */
 char * WINAPI tdGetErrorString(int intErrorNo) {
-	const int numResponses = 5;
+	const int numResponses = 6;
 	const char *responses[numResponses] = {
 		"Success",
 		"TellStick not found",
 		"Permission denied",
 		"Device not found",
-		"The method you tried to use is not supported by the device"
+		"The method you tried to use is not supported by the device",
+		"An error occurred when communication with TellStick"
 	};
 	std::string strReturn;
 	intErrorNo = abs(intErrorNo); //We don't use negative values here.
