@@ -49,7 +49,7 @@ int Device::send(const std::string &strMessage) {
 	close(fd);
 	
 	if (c == 0) {
-		return TELLSTICK_ERROR_NOT_FOUND;
+		return TELLSTICK_ERROR_COMMUNICATION;
 	}
 	
 	return TELLSTICK_SUCCESS;

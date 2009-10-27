@@ -56,7 +56,7 @@ int Device::send(const std::string &strMessage){
 		ftStatus = FT_Close(fthHandle);
 
 		if (!c) {
-			return TELLSTICK_ERROR_NOT_FOUND;
+			return TELLSTICK_ERROR_COMMUNICATION;
 		}
 	}
 	catch(...){
