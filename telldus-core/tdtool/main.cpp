@@ -80,7 +80,7 @@ void print_device( int index ) {
 	int intId = tdGetDeviceId(index);
 	char *name = tdGetName(intId);
 	printf("%i\t%s\t", intId, name);
-	free(name);
+	tdReleaseString(name);
 	int lastSentCommand = tdLastSentCommand(intId, SUPPORTED_METHODS);
 	char *level = 0;
 	switch(lastSentCommand) {
@@ -93,7 +93,7 @@ void print_device( int index ) {
 		case TELLSTICK_DIM:
 			level = tdLastSentValue(intId);
 			printf("DIMMED:%s", level);
-			free(level);
+			tdReleaseString(level);
 			break;
 		default:
 			printf("Unknown state");
@@ -121,10 +121,10 @@ int find_device( char *device ) {
 			char *name = tdGetName( id );
 			if (strcasecmp(name, device) == 0) {
 				deviceId = id;
- 				free(name);
+ 				tdReleaseString(name);
 				break;
 			}
- 			free(name);
+			tdReleaseString(name);
 			index++;
 		}
 	}
@@ -145,13 +145,13 @@ void switch_device( bool turnOn, char *device ) {
 					(deviceType == TELLSTICK_TYPE_DEVICE ? "device" : "group"),
 					deviceId,
 					name);
-	free(name);
+	tdReleaseString(name);
 
 	int retval = (turnOn ? tdTurnOn( deviceId ) : tdTurnOff( deviceId ));
 	char *errorString = tdGetErrorString(retval);
 	
 	printf(" - %s\n", errorString);
-	free(errorString);
+	tdReleaseString(errorString);
 }
 
 void dim_device( char *device, int level ) {
@@ -169,8 +169,8 @@ void dim_device( char *device, int level ) {
 	int retval = tdDim( deviceId, (unsigned char)level );
 	char *errorString = tdGetErrorString(retval);
 	printf("Dimming device: %i %s to %i - %s\n", deviceId, name, level, errorString);
-	free(name);
-	free(errorString);
+	tdReleaseString(name);
+	tdReleaseString(errorString);
 }
 
 void bell_device( char *device ) {
@@ -184,8 +184,8 @@ void bell_device( char *device ) {
 	int retval = tdBell( deviceId );
 	char *errorString = tdGetErrorString(retval);
 	printf("Sending bell to: %i %s - %s\n", deviceId, name, errorString);
-	free(name);
-	free(errorString);
+	tdReleaseString(name);
+	tdReleaseString(errorString);
 }
 
 void learn_device( char *device ) {
@@ -199,8 +199,8 @@ void learn_device( char *device ) {
 	int retval = tdLearn( deviceId );
 	char *errorString = tdGetErrorString(retval);
 	printf("Learning device: %i %s - %s\n", deviceId, name, errorString);
-	free(name);
-	free(errorString);
+	tdReleaseString(name);
+	tdReleaseString(errorString);
 }
 
 void send_raw_command( char *command ) {
@@ -223,7 +223,7 @@ void send_raw_command( char *command ) {
 	int retval = tdSendRawCommand( msg, 0 );	
 	char *errorString = tdGetErrorString(retval);
 	printf("Sending raw command: %s\n", errorString);
-	free(errorString);
+	tdReleaseString(errorString);
 }
 
 int main(int argc, char **argv)

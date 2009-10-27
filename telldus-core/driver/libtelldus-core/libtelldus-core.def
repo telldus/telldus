@@ -36,3 +36,5 @@ EXPORTS
 	
 	tdLearn @26
 	tdLastSentValue @27
+	
+	tdReleaseString @28

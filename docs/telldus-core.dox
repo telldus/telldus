@@ -47,7 +47,7 @@
  *   int id = tdGetDeviceId( index );
  *   char *name = tdGetName( id );
  *   printf("%d\t%s\n", id, name);
- *   free(name);
+ *   tdReleaseString(name);
  * }
  * \endcode
  *
@@ -66,9 +66,9 @@
  * in the rest of the program.
  *
  * The next two lines of code queries the device for it's name with a call to
- * tdGetName() and then displays it to stdout. Since telldus-core gives up the
- * ownership of the string we must manualy free up the resource after we are
- * done with it.
+ * tdGetName() and then displays it to stdout. Finally we must relase the
+ * resource after we are done with it by calling tdReleaseString() on any
+ * \c char pointer returned by telldus-core..
  *
  * \subsection sec_bu_sending Sending commands to TellStick
  *
@@ -141,7 +141,7 @@
  * if (retval != TELLSTICK_SUCCESS ) {
  *   char *errorString = tdGetErrorString( retval );
  *   printf("Error: %s\n", errorString );
- *   free(errorString);
+ *   tdReleaseString(errorString);
  * }
  * \endcode
  *
@@ -165,7 +165,7 @@
  * } else {
  *   printf("%s is in an unknown state\n", name);
  * }
- * free(name);
+ * tdReleaseString(name);
  * \endcode
  *
  * \section sec_other_languages Notes using other languages than C/C++
