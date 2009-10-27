@@ -68,7 +68,7 @@
  * The next two lines of code queries the device for it's name with a call to
  * tdGetName() and then displays it to stdout. Finally we must relase the
  * resource after we are done with it by calling tdReleaseString() on any
- * \c char pointer returned by telldus-core..
+ * \c char pointer returned by telldus-core.
  *
  * \subsection sec_bu_sending Sending commands to TellStick
  *
