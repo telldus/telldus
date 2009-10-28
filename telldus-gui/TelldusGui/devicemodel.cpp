@@ -139,6 +139,8 @@ void DeviceModel::deviceAdded( int id ) {
 	Q_UNUSED(id);
 	int deviceCount = tdGetNumberOfDevices();
 	beginInsertRows( QModelIndex(), deviceCount, deviceCount );
+	//Add the index to the cache
+	indexToId[deviceCount-1] = id;
 	endInsertRows();
 	emit deviceChange(id, TELLSTICK_DEVICE_ADDED);
 
