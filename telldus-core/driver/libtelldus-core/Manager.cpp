@@ -25,7 +25,7 @@
 
 #include "Controller.h"
 #ifdef TELLSTICK_DUO
-#include "TellStickDuo.h"
+#include "TellStick.h"
 #endif
 #include "common.h"
 
@@ -46,8 +46,10 @@ Manager::Manager()
 	: lastCallbackId(0)
 {
 #ifdef TELLSTICK_DUO
-	Controller *controller = new TellStickDuo("TSQVB5HU");
-	controllers[1] = controller;
+/*	Controller *controller = TellStick::findFirstDevice();
+	if (controller) {
+		controllers[1] = controller;
+	}*/
 #endif
 }
 
