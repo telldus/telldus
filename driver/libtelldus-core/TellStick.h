@@ -1,5 +1,5 @@
 //
-// C++ Interface: controller
+// C++ Interface: TellStick
 //
 // Description: 
 //
@@ -9,25 +9,26 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef CONTROLLER_H
-#define CONTROLLER_H
+#ifndef TELLSTICK_H
+#define TELLSTICK_H
 
-#include <string>
-#include <QObject>
+#include "controller.h"
 
 /**
 	@author Micke Prag <micke.prag@telldus.se>
 */
 namespace TelldusCore {
-	class Controller {
+	class TellStick : public Controller {
 	public:	
-		virtual ~Controller();
+		virtual ~TellStick();
 		
-		virtual int firmwareVersion() = 0;
-		virtual int send( const std::string &message ) = 0;
+		static int findFirstDevice();
 		
 	protected:
-		Controller();
+		TellStick();
+		
+	private:
+		static std::string findByVIDPID( int vid, int pid );
 	};
 }
 
