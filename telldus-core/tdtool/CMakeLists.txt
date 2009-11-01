@@ -37,13 +37,15 @@ ELSE (WIN32)
 ENDIF (WIN32)
 
 IF (UNIX)
-	ADD_CUSTOM_COMMAND(
-		TARGET tdtool
-		POST_BUILD
-		COMMAND help2man -n ${tdtool_DESCRIPTION} ./tdtool > tdtool.1
-		WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
-		COMMENT "Generating man file tdtool.1"
-	)
+	IF (GENERATE_MAN)
+		ADD_CUSTOM_COMMAND(
+			TARGET tdtool
+			POST_BUILD
+			COMMAND help2man -n ${tdtool_DESCRIPTION} ./tdtool > tdtool.1
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+			COMMENT "Generating man file tdtool.1"
+		)
+	ENDIF (GENERATE_MAN)
 ENDIF (UNIX)
 
 INSTALL(TARGETS tdtool RUNTIME DESTINATION bin)
