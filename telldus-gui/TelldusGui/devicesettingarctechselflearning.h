@@ -35,6 +35,9 @@ public:
 public slots:
 	virtual void saveParameters();
 
+protected slots:
+	void randomizeCode();
+	
 protected:
 	QSpinBox *spinRemotecode;
 	QSpinBox *spinUnitcode;

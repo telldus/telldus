@@ -14,6 +14,7 @@
 #include <QGridLayout>
 #include <QSpinBox>
 #include <QLabel>
+#include <QPushButton>
 
 DeviceSettingArctechSelflearning::DeviceSettingArctechSelflearning(Device *device, QWidget *parent)
  : DeviceSetting(device, parent)
@@ -54,6 +55,13 @@ DeviceSettingArctechSelflearning::DeviceSettingArctechSelflearning(Device *devic
  	spinRemotecode->setValue( device->parameter("house", "1").toInt() );
  	spinUnitcode->setValue( device->parameter("unit", "1").toInt() );
 
+	QPushButton *randomButton = new QPushButton( tr("Randomize"), this);
+	connect(randomButton, SIGNAL(clicked()), this, SLOT(randomizeCode()));
+	gridLayout->addWidget( randomButton, 3, 0 );
+	
+	//Seed the random number generator at widget creation
+	srand( (unsigned int)time( NULL ) );
+
 }
 
 
@@ -76,4 +84,10 @@ void DeviceSettingArctechSelflearning::setRemoteMinMax(int min, int max) {
 void DeviceSettingArctechSelflearning::setUnitMinMax(int min, int max) {
 	spinUnitcode->setMinimum(min);
 	spinUnitcode->setMaximum(max);
+}
+
+void DeviceSettingArctechSelflearning::randomizeCode() {
+	int randomNumber = rand() % spinRemotecode->maximum() + spinRemotecode->minimum(); //Generate ranom number between min and max
+
+	spinRemotecode->setValue(randomNumber);
 }
