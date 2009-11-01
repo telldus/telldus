@@ -9,8 +9,8 @@ using namespace TelldusCore;
 */
 Device::Device(int id, const std::string m, const std::string &name)
 	: deviceId(id),
-		model(m),
-		deviceName(name)
+		deviceName(name),
+		model(m)
 {
 }
 
