@@ -91,6 +91,9 @@ void DeviceWidget::addDevice() {
 	EditDeviceDialog *dialog = new EditDeviceDialog(device);
 	if (dialog->exec() == QDialog::Accepted) {
 		device->save();
+		//Select the new row
+		QModelIndex index = model.index(model.rowCount()-1, 0, QModelIndex());
+		deviceView.setCurrentIndex(index);
 	} else {
 		delete device;
 	}
