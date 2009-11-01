@@ -27,6 +27,8 @@ SET(BUILD_RFCMD		TRUE	CACHE BOOL "Build rfcmd")
 SET(BUILD_RFCMD_WITH_LIBFTDI	FALSE	CACHE	BOOL "Enable support for using rfcmd with libftdi (does not need kernel-driver)")
 SET(BUILD_TDTOOL	TRUE	CACHE BOOL "Build tdtool")
 
+SET(GENERATE_MAN	FALSE	CACHE	BOOL "Enable generation of man-files")
+
 ADD_SUBDIRECTORY(driver)
 
 if(BUILD_TDTOOL)
