@@ -58,14 +58,14 @@ bool DeviceNexa::setDeviceParameter(const std::string &strName, const std::strin
 /*
 * Turn on this device
 */
-int DeviceNexa::turnOn(void){
+int DeviceNexa::turnOn(Controller *controller){
 	if (strcasecmp(this->getModel().c_str(), "bell") == 0) {
-		return bell();
+		return bell(controller);
 	}
 	try{
 		std::string strCode = "";
 		if (isDimmer()) {
-			return dim(255);
+			return dim(255, controller);
 		} else if (isSelflearning()) {
 			strCode.append( 1, 'R' );
 			strCode.append( 1, 5 );
@@ -77,7 +77,7 @@ int DeviceNexa::turnOn(void){
 			strCode.append("$k$k$kk$$kk$$kk$$k+");	//the "turn on"-code, keeps it like this, doesn't have to be regenerated each time
 		}
 
-		return Device::send(strCode);
+		return controller->send(strCode);
 	}
 	catch(...){
 		throw;
@@ -88,7 +88,7 @@ int DeviceNexa::turnOn(void){
 /*
 * Turn off this device
 */
-int DeviceNexa::turnOff(void){
+int DeviceNexa::turnOff(Controller *controller){
 
 	try{
 		std::string strCode = "";
@@ -114,13 +114,13 @@ int DeviceNexa::turnOff(void){
 /*
 * Dim this device
 */
-int DeviceNexa::dim(unsigned char level) {
+int DeviceNexa::dim(unsigned char level, Controller *controller) {
 	try{
 		std::string strMessage = "";
 		strMessage.append( 1, 'R' );
 		strMessage.append( 1, 5 );
 		strMessage.append(getStringSelflearning(true, level));
-		return Device::send(strMessage);
+		return controller->send(strMessage);
 	}
 	catch(...){
 		throw;
@@ -132,7 +132,7 @@ int DeviceNexa::dim(unsigned char level) {
 /*
 * Send a bell
 */
-int DeviceNexa::bell(void){
+int DeviceNexa::bell(Controller *controller){
 
 	try{
 		std::string strCode = getStringCodeSwitch(intHouse);
@@ -149,7 +149,7 @@ int DeviceNexa::bell(void){
 	return TELLSTICK_ERROR_UNKNOWN;
 }
 
-int DeviceNexa::learn(void){
+int DeviceNexa::learn(Controller *controller){
 	std::string strCode = "";
 	strCode.append( 1, 'R' );
 	strCode.append( 1, 2 );

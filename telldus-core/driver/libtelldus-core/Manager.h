@@ -58,6 +58,8 @@ namespace TelldusCore {
 		int getDeviceState( int intDeviceId ) const;
 		std::string getDeviceStateValue( int intDeviceId ) const;
 		
+		int switchState( int DeviceId, int newState, const std::string &value = "" );
+		
 		int addDevice();
 		bool removeDevice(int intDeviceId);
 		

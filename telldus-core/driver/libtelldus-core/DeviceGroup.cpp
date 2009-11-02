@@ -56,7 +56,7 @@ bool DeviceGroup::setDevices(const std::string &newDevices) {
 int DeviceGroup::turnOn(void) {
 	int retVal = TELLSTICK_ERROR_UNKNOWN;
 	
-	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
+	/*for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
 		int methods = (*it)->methods();
 		if (methods & TELLSTICK_TURNON) {
 			int success = (*it)->switchState( TELLSTICK_TURNON );
@@ -64,7 +64,7 @@ int DeviceGroup::turnOn(void) {
 				retVal = success;
 			}
 		}
-	}
+	}*/
 	return retVal;
 }
 
@@ -74,7 +74,7 @@ int DeviceGroup::turnOn(void) {
 int DeviceGroup::turnOff(void) {
 	int retVal = TELLSTICK_ERROR_UNKNOWN;
 	
-	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
+/*	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
 		int methods = (*it)->methods();
 		if (methods & TELLSTICK_TURNOFF) {
 			int success = (*it)->switchState( TELLSTICK_TURNOFF );
@@ -82,7 +82,7 @@ int DeviceGroup::turnOff(void) {
 				retVal = success;
 			}
 		}
-	}
+	}*/
 	return retVal;
 }
 
@@ -92,7 +92,7 @@ int DeviceGroup::turnOff(void) {
 int DeviceGroup::bell(void){
 	int retVal = TELLSTICK_ERROR_UNKNOWN;
 	
-	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
+/*	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
 		int methods = (*it)->methods();
 		if (methods & TELLSTICK_BELL) {
 			int success = (*it)->switchState( TELLSTICK_BELL );
@@ -100,7 +100,7 @@ int DeviceGroup::bell(void){
 				retVal = success;
 			}
 		}
-	}
+	}*/
 	return retVal;
 }
 
@@ -110,7 +110,7 @@ int DeviceGroup::bell(void){
 int DeviceGroup::dim(unsigned char level){
 	int retVal = TELLSTICK_ERROR_UNKNOWN;
 	
-	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
+/*	for (DeviceList::const_iterator it = deviceList.begin(); it != deviceList.end(); ++it) {
 		int methods = (*it)->methods();
 		if (methods & TELLSTICK_DIM) {
 			int success = (*it)->switchState( TELLSTICK_DIM, (char*)&level);
@@ -118,7 +118,7 @@ int DeviceGroup::dim(unsigned char level){
 				retVal = success;
 			}
 		}
-	}
+	}*/
 	return retVal;
 }
 

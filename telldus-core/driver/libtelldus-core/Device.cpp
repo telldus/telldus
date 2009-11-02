@@ -1,7 +1,6 @@
 #include "Device.h"
 #include "Manager.h"
 #include <stdlib.h>
-#include <sstream>
 
 using namespace TelldusCore;
 /*
@@ -18,43 +17,6 @@ Device::Device(int id, const std::string m, const std::string &name)
 * Destructor
 */
 Device::~Device(void) {
-}
-
-int Device::switchState( int newState, const std::string &value ) {
-	int retVal = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
-	if (!Device::maskUnsupportedMethods(this->methods(), newState)) {
-		return retVal;
-	}
-	std::string stateValue = "";
-	
-	switch (newState) {
-		case TELLSTICK_TURNON:
-			retVal = turnOn();
-			break;
-		case TELLSTICK_TURNOFF:
-			retVal = turnOff();
-			break;
-		case TELLSTICK_BELL:
-			retVal = bell();
-			break;
-		case TELLSTICK_LEARN:
-			retVal = learn();
-			break;
-		case TELLSTICK_DIM:
-			//Convert value to string
-			unsigned char v = value[0];
-			std::stringstream st;
-			st << (int)v;
-			stateValue = st.str();
-			
-			retVal = dim( v );
-			break;
-	}
-	if (retVal == TELLSTICK_SUCCESS) {
-		Manager *manager = Manager::getInstance();
-		manager->setDeviceState(deviceId, newState, stateValue);
-	}
-	return retVal;
 }
 
 std::string Device::getModel() const {
@@ -92,32 +54,32 @@ bool Device::setParameter(const std::string &strName, const std::string &strValu
 /*
 * Turn on, virtual
 */
-int Device::turnOn(void){
+int Device::turnOn(Controller *){
 	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 }
 
 /*
 * Turn off, virtual
 */
-int Device::turnOff(void){
+int Device::turnOff(Controller *){
 	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 }
 
 /*
 * Bell, virtual
 */
-int Device::bell(void){
+int Device::bell(Controller *){
 	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 }
 
 /*
 * Dim, virtual
 */
-int Device::dim(unsigned char level){
+int Device::dim(unsigned char level, Controller *){
 	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 }
 
-int Device::learn(void) {
+int Device::learn(Controller *controller) {
 	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 }
 

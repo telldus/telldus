@@ -32,6 +32,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <sstream>
 
 #ifdef _WINDOWS
 #define strcasecmp _stricmp
@@ -46,10 +47,10 @@ Manager::Manager()
 	: lastCallbackId(0)
 {
 #ifdef TELLSTICK_DUO
-/*	Controller *controller = TellStick::findFirstDevice();
+	Controller *controller = TellStick::findFirstDevice();
 	if (controller) {
 		controllers[1] = controller;
-	}*/
+	}
 #endif
 }
 
@@ -317,5 +318,51 @@ bool TelldusCore::Manager::removeDevice(int intDeviceId) {
 
 bool TelldusCore::Manager::setDeviceName(int intDeviceId, const std::string & strNewName) {
 	return settings.setName(intDeviceId, strNewName);
+}
+
+int TelldusCore::Manager::switchState(int deviceId, int newState, const std::string & value) {
+	Device *dev = this->getDevice(deviceId);
+	if (dynamic_cast<DeviceUndefined *>(dev)) {
+		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+	}
+	
+	int retVal = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+	if (!Device::maskUnsupportedMethods(dev->methods(), newState)) {
+		return retVal;
+	}
+	if (controllers.size() == 0) {
+		return TELLSTICK_ERROR_NOT_FOUND;
+	}
+	Controller *controller = controllers.begin()->second;
+	
+	std::string stateValue = "";
+	
+	switch (newState) {
+		case TELLSTICK_TURNON:
+			retVal = dev->turnOn(controller);
+			break;
+		case TELLSTICK_TURNOFF:
+			retVal = dev->turnOff(controller);
+			break;
+		case TELLSTICK_BELL:
+			retVal = dev->bell(controller);
+			break;
+		case TELLSTICK_LEARN:
+			retVal = dev->learn(controller);
+			break;
+		case TELLSTICK_DIM:
+			//Convert value to string
+			unsigned char v = value[0];
+			std::stringstream st;
+			st << (int)v;
+			stateValue = st.str();
+				
+			retVal = dev->dim( v, controller );
+			break;
+	}
+	if (retVal == TELLSTICK_SUCCESS) {
+		this->setDeviceState(deviceId, newState, stateValue);
+	}
+	return retVal;
 }
 

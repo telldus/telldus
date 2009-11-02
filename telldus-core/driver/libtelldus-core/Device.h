@@ -1,6 +1,7 @@
 #pragma once
 
 #include "telldus-core.h"
+#include "Controller.h"
 #include <string>
 //#include <QMutex>
 
@@ -12,7 +13,7 @@ namespace TelldusCore {
 		Device(int id, const std::string model, const std::string &name);
 		virtual ~Device(void);
 		
-		int switchState( int newState, const std::string &value = "" );
+// 		int switchState( int newState, const std::string &value = "" );
 		virtual int methods() = 0;
 		virtual std::string getProtocol() const = 0;
 		virtual bool parameterMatches( const std::string &name, const std::string &value ) const = 0;
@@ -27,6 +28,12 @@ namespace TelldusCore {
 		static int methodId( const std::string &methodName );
 		static int maskUnsupportedMethods( int methods, int supportedMethods );
 		
+		virtual int turnOn(Controller *controller);
+		virtual int turnOff(Controller *controller);
+		virtual int bell(Controller *controller);
+		virtual int dim(unsigned char level, Controller *controller);
+		virtual int learn(Controller *controller);
+
 	#ifdef _LINUX
 		void setDevice(const std::string &device);
 	protected:
@@ -35,11 +42,6 @@ namespace TelldusCore {
 	
 	protected:
 		virtual bool setDeviceParameter(const std::string &strName, const std::string &strValue) = 0;
-		virtual int turnOn(void);
-		virtual int turnOff(void);
-		virtual int bell(void);
-		virtual int dim(unsigned char level);
-		virtual int learn(void);
 		int send(const std::string &strMessage);
 	
 	private:

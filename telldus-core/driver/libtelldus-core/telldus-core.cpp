@@ -116,12 +116,7 @@ int WINAPI tdTurnOn(int intDeviceId){
 
 	try{
 		Manager *manager = Manager::getInstance();
-		Device* dev = manager->getDevice(intDeviceId);
-		if(dev != NULL){
-			return dev->switchState(TELLSTICK_TURNON);
-		} else{
-			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
+		return manager->switchState(intDeviceId, TELLSTICK_TURNON);
 	}
 	catch(exception e){
 		handleException(e);
@@ -139,12 +134,7 @@ int WINAPI tdTurnOff(int intDeviceId){
 
 	try{
 		Manager *manager = Manager::getInstance();
-		Device* dev = manager->getDevice(intDeviceId);
-		if(dev != NULL){
-			return dev->switchState(TELLSTICK_TURNOFF);
-		} else {
-			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
+		return manager->switchState(intDeviceId, TELLSTICK_TURNOFF);
 	}
 	catch(exception e){
 		handleException(e);
@@ -162,12 +152,7 @@ int WINAPI tdBell(int intDeviceId){
 
 	try{
 		Manager *manager = Manager::getInstance();
-		Device* dev = manager->getDevice(intDeviceId);
-		if (dev != NULL){
-			return dev->switchState( TELLSTICK_BELL );
-		} else {
-			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
+		return manager->switchState( intDeviceId, TELLSTICK_BELL );
 	}
 	catch(exception e){
 		handleException(e);
@@ -185,20 +170,13 @@ int WINAPI tdBell(int intDeviceId){
 int WINAPI tdDim(int intDeviceId, unsigned char level){
 	try{
 		Manager *manager = Manager::getInstance();
-		Device* dev = manager->getDevice(intDeviceId);
-		if(dev != NULL){
-			int retval = 0;
 
-			if (level == 0) {
-				retval = dev->switchState( TELLSTICK_TURNOFF );
-			} else if (level == 255) {
-				retval = dev->switchState( TELLSTICK_TURNON );
-			} else {
-				retval = dev->switchState( TELLSTICK_DIM, (char *)&level);
-			}
-			return retval;
+		if (level == 0) {
+			return manager->switchState( intDeviceId, TELLSTICK_TURNOFF );
+		} else if (level == 255) {
+			return manager->switchState( intDeviceId, TELLSTICK_TURNON );
 		} else {
-			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+			return manager->switchState( intDeviceId, TELLSTICK_DIM, (char *)&level);
 		}
 	}
 	catch(exception e){
@@ -218,12 +196,7 @@ int WINAPI tdLearn(int intDeviceId) {
 
 	try{
 		Manager *manager = Manager::getInstance();
-		Device* dev = manager->getDevice(intDeviceId);
-		if(dev != NULL){
-			return dev->switchState(TELLSTICK_LEARN);
-		} else{
-			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
+		return manager->switchState(intDeviceId, TELLSTICK_LEARN);
 	}
 	catch(exception e){
 		handleException(e);
