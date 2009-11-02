@@ -18,17 +18,24 @@
 	@author Micke Prag <micke.prag@telldus.se>
 */
 namespace TelldusCore {
+	class PrivateVars;
+	
 	class TellStick : public Controller {
 	public:	
 		virtual ~TellStick();
 		
-		static int findFirstDevice();
+		virtual int firmwareVersion();
+		virtual int send( const std::string &message );
+
+		static TellStick *findFirstDevice();
 		
 	protected:
-		TellStick();
+		TellStick(int vid, int pid );
 		
 	private:
 		static std::string findByVIDPID( int vid, int pid );
+		
+		PrivateVars *d;
 	};
 }
 
