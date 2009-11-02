@@ -14,6 +14,10 @@
 #include <unistd.h>
 #include <stdlib.h>
 
+#ifdef _WINDOWS
+typedef HANDLE EVENT_HANDLE;
+#endif
+
 using namespace TelldusCore;
 
 namespace TelldusCore {

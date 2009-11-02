@@ -55,6 +55,13 @@ ENDIF (SUPPORT_USB)
 
 #### TellStickDuo ####
 IF (SUPPORT_TELLSTICK_DUO)
+	#Only build library agains libftdi for TellStick Duo
+	FIND_LIBRARY(FTDI_LIBRARY ftdi)
+	SET( telldus-core_LIBRARIES
+		${telldus-core_LIBRARIES}
+		${FTDI_LIBRARY}
+	)
+
 	ADD_DEFINITIONS( -DTELLSTICK_DUO )
 	SET( telldus-core_SRCS
 		${telldus-core_SRCS}
