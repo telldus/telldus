@@ -12,7 +12,7 @@
 #ifndef TELLSTICK_H
 #define TELLSTICK_H
 
-#include "controller.h"
+#include "Controller.h"
 
 /**
 	@author Micke Prag <micke.prag@telldus.se>

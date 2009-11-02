@@ -39,6 +39,22 @@ int TellStick::findFirstDevice() {
 }
 
 std::string TellStick::findByVIDPID( int vid, int pid ) {
+	std::string retval = "";
+	
+#ifdef _LINUX
+	ftdi_context ftdic;
+	ftdi_init(&ftdic);
+	
+	int ret = ftdi_usb_open(&ftdic, vid, pid);
+	if (ret == 0) {
+		retval = "1";
+	
+		ftdi_usb_close(&ftdic);
+	}
+	
+	ftdi_deinit(&ftdic);
+	
+#else
 	FT_HANDLE fthHandle = 0;
 	FT_STATUS ftStatus = FT_OK;
 	
@@ -71,7 +87,8 @@ std::string TellStick::findByVIDPID( int vid, int pid ) {
 				if(ftStatus == FT_OK){
 					if(pData.VendorId == vid && pData.ProductId == pid){
 						ftStatus = FT_Close(fthHandle);
-						return pData.SerialNumber;
+						retval = pData.SerialNumber;
+						break;
 					}
 				}
 				ftStatus = FT_Close(fthHandle);
@@ -81,5 +98,6 @@ std::string TellStick::findByVIDPID( int vid, int pid ) {
 	catch(...){
 		throw;
 	}
-	return "";
+#endif
+	return retval;
 }
