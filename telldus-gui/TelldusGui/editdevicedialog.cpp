@@ -5,6 +5,7 @@
 
 #include "devicesettingarctechselflearning.h"
 #include "devicesettingbrateck.h"
+#include "devicesettinggao.h"
 #include "devicesettingikea.h"
 #include "devicesettingnexa.h"
 #include "devicesettingnexabell.h"
@@ -110,6 +111,7 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 	deviceSettings[9] = new DeviceSettingArctechSelflearning(device, this);
 	((DeviceSettingArctechSelflearning *)deviceSettings[9])->setRemoteMinMax(0,4095);
 	((DeviceSettingArctechSelflearning *)deviceSettings[9])->setUnitMinMax(1,4);
+	deviceSettings[10] = new DeviceSettingGAO(device, this);
 
 	foreach( DeviceSetting *s, deviceSettings ) {
 		settingsLayout->addWidget( s );

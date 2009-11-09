@@ -18,7 +18,7 @@
 		</vendor>
 		<vendor name="GAO" image="gao">
 		  <!--<text>http://www.everflourish.com.cn/</text> -->
-			<device model="codeswitch:gao" protocol="risingsun" widget="5" image="gao_cs" name="Code Switch">Code Switch</device>
+			<device model="codeswitch:gao" protocol="risingsun" widget="10" image="gao_cs" name="Code Switch">Code Switch</device>
 		</vendor>
 		<vendor name="HomeEasy" image="homeeasy">
 			<!--<text>http://www.homeeasy.eu/home.php</text>-->

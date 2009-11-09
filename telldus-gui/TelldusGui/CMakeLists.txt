@@ -17,6 +17,7 @@ SET( telldus-gui_SRCS
 	vendordevicetreeitem.cpp
 	devicesettingarctechselflearning.cpp
 	devicesettingbrateck.cpp
+	devicesettinggao.cpp
 	devicesettingikea.cpp
 	devicesettingnexa.cpp
 	devicesettingnexabell.cpp
@@ -41,6 +42,7 @@ SET( telldus-gui_MOC_HDRS
 	vendordevicemodel.h
 	devicesettingarctechselflearning.h
 	devicesettingbrateck.h
+	devicesettinggao.h
 	devicesettingikea.h
 	devicesettingnexa.h
 	devicesettingnexabell.h
