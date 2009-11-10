@@ -15,6 +15,7 @@
 #include <QSpinBox>
 #include <QLabel>
 #include <QPushButton>
+#include <time.h>
 
 DeviceSettingArctechSelflearning::DeviceSettingArctechSelflearning(Device *device, QWidget *parent)
  : DeviceSetting(device, parent)
