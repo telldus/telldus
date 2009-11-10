@@ -22,7 +22,6 @@ SET( telldus-core_SRCS
 	Controller.cpp
 	Manager.cpp
 	Settings.cpp
-	TellStick.cpp
 	telldus-core.cpp
 	)
 
