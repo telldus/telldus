@@ -123,7 +123,7 @@ void MainWindow::addWidget( const QString &page, const QIcon &icon, QWidget *wid
 
 void MainWindow::slotAboutApplication() {
 	QMessageBox::about(this, tr("About Telldus Center"),
-					   tr("<center><img src=':/images/TelldusCenter_128.png' width=128 height=128 /><h2>Telldus Center 2.0.0</h2>"
+					   tr("<center><img src=':/images/TelldusCenter_128.png' width=128 height=128 /><h2>Telldus Center 2.0.1</h2>"
 						  "<p>Copyright &copy; 2009 Telldus Technologies AB<p></center>"));
 }
 
