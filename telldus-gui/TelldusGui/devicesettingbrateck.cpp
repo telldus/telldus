@@ -78,7 +78,7 @@ void DeviceSettingBrateck::sliderChanged( int value ) {
 		v = '0';
 	} else if (value == 1) {
 		v = '-';
-	} else if (value == 2) {
+	} else {
 		v = '1';
 	}
 	label[index]->setText( v );
