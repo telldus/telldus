@@ -31,6 +31,7 @@ namespace TelldusCore {
 		
 	protected:
 		TellStick(int vid, int pid );
+		void setBaud( int baud );
 		
 	private:
 		static std::string findByVIDPID( int vid, int pid );

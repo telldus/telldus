@@ -39,16 +39,17 @@ namespace TelldusCore {
 	};
 }
 
-TellStickDuo::TellStickDuo(const std::string &serial)
-	: Controller(),
+TellStickDuo::TellStickDuo(int vid, int pid)
+	: TellStick(vid, pid),
 	ftHandle(0),
 	open(false),
 	listener(0),
 	fwVersion(0)
 {
-	FT_STATUS ftStatus = FT_OK;
+	setBaud(9600);
+//	FT_STATUS ftStatus = FT_OK;
 	
-	char *tempSerial = new char[serial.size()+1];
+/*	char *tempSerial = new char[serial.size()+1];
 #ifdef _WINDOWS
 	strcpy_s(tempSerial, serial.size()+1, serial.c_str());
 #else
@@ -72,7 +73,7 @@ TellStickDuo::TellStickDuo(const std::string &serial)
 		FT_Write(ftHandle, message, sizeof(message), &bytesWritten);
 	} else {	
 		printf("Open: %d - %d\n", (int)ftStatus, connected());
-	}
+	}*/
 }
 
 
@@ -90,9 +91,9 @@ int TellStickDuo::firmwareVersion() {
 	return fwVersion;
 }
 
-int TellStickDuo::send( const std::string &message ) {
+/*int TellStickDuo::send( const std::string &message ) {
 	return TELLSTICK_SUCCESS;
-}
+}*/
 
 bool TellStickDuo::connected() const {
 	return open;

@@ -15,7 +15,7 @@
 #include <QThread>
 #include <QMutex>
 
-#include "Controller.h"
+#include "TellStick.h"
 #include "ftd2xx.h"
 
 /**
@@ -24,18 +24,20 @@
 namespace TelldusCore {
 	class PrivateTellStickDuoListener;
 	
-	class TellStickDuo : public Controller {
+	class TellStickDuo : public TellStick {
 		friend class PrivateTellStickDuoListener;
+ 		friend class TellStick;
 
 	public:
-		TellStickDuo(const std::string &serial);
-	
 		~TellStickDuo();
 		
 		virtual int firmwareVersion();
-		virtual int send( const std::string &message );
+//		virtual int send( const std::string &message );
 		
 		bool connected() const;
+		
+	protected:
+		TellStickDuo(int vid, int pid );
 		
 	private:
 		
