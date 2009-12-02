@@ -11,7 +11,7 @@ const char L = 'V';
 const char B1[] = {L,S,L,S,0};
 const char BX[] = {S,L,L,S,0};
 const char B0[] = {S,L,S,L,0};
-const char BUP[] = {L,S,L,S,S,L,S,L,S,L,S,L,S,L,S,L,S,0};
+const char BUP[]   = {L,S,L,S,S,L,S,L,S,L,S,L,S,L,S,L,S,0};
 const char BSTOP[] = {S,L,S,L,L,S,L,S,S,L,S,L,S,L,S,L,S,0};
 const char BDOWN[] = {S,L,S,L,S,L,S,L,S,L,S,L,L,S,L,S,S,0};
 
