@@ -530,13 +530,7 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
 int WINAPI tdSendRawCommand(const char *command, int reserved) {
 	try{
 		Manager *manager = Manager::getInstance();
-		Device* dev = manager->getDevice(0);
-		DeviceUndefined *udev = dynamic_cast<DeviceUndefined *>(dev);
-		if(udev){
-			return udev->sendRawCommand(command);
-		} else{
-			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
+		return manager->sendRawCommand(command);
 	}
 	catch(exception e){
 		handleException(e);

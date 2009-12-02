@@ -34,8 +34,3 @@ int DeviceUndefined::methods(){
 std::string DeviceUndefined::getProtocol() const {
 	return "undefined";
 }
-
-
-int TelldusCore::DeviceUndefined::sendRawCommand(const std::string & strMessage) {
-	return send(strMessage);
-}

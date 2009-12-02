@@ -24,9 +24,7 @@
 #include "DeviceX10.h"
 
 #include "Controller.h"
-#ifdef TELLSTICK_DUO
 #include "TellStick.h"
-#endif
 #include "common.h"
 
 #include <stdio.h>
@@ -46,12 +44,10 @@ Manager *Manager::instance = 0;
 Manager::Manager()
 	: lastCallbackId(0)
 {
-#ifdef TELLSTICK_DUO
 	Controller *controller = TellStick::findFirstDevice();
 	if (controller) {
 		controllers[1] = controller;
 	}
-#endif
 }
 
 Manager::~Manager() {
@@ -366,3 +362,11 @@ int TelldusCore::Manager::switchState(int deviceId, int newState, const std::str
 	return retVal;
 }
 
+int TelldusCore::Manager::sendRawCommand(const std::string &strMessage) {
+	if (controllers.size() == 0) {
+		return TELLSTICK_ERROR_NOT_FOUND;
+	}
+	Controller *controller = controllers.begin()->second;
+	
+	return controller->send(strMessage);
+}
