@@ -37,7 +37,7 @@ namespace TelldusCore {
 		bool connected() const;
 		
 	protected:
-		TellStickDuo(int vid, int pid );
+		TellStickDuo(const TellStickDescriptor &d);
 		
 	private:
 		

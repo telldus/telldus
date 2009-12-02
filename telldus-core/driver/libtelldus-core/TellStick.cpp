@@ -11,13 +11,17 @@
 //
 #include "TellStick.h"
 #include "TellStickDuo.h"
-#include "ftd2xx.h"
 #include "telldus-core.h"
 #include <string>
 
 #undef _LINUX
 #ifdef _LINUX
   #define LIBFTDI
+#endif
+
+#ifdef LIBFTDI
+#else
+	#include "ftd2xx.h"
 #endif
 
 using namespace TelldusCore;
@@ -32,13 +36,24 @@ class TelldusCore::PrivateVars {
 #endif
 };
 
-TellStick::TellStick( int vid, int pid ) {
+class TelldusCore::TellStickDescriptor {
+public:
+	bool found;
+#ifdef LIBFTDI
+	int vid, pid;
+#else
+	std::string serial;
+#endif
+	
+};
+
+TellStick::TellStick( const TellStickDescriptor &td ) {
 	d = new PrivateVars;
 	d->open = false;
 #ifdef LIBFTDI
 	ftdi_init(&d->ftdic);
 	
-	int ret = ftdi_usb_open_desc(&d->ftdic, vid, pid, NULL, NULL);
+	int ret = ftdi_usb_open_desc(&d->ftdic, td.vid, td.pid, NULL, NULL);
 	if (ret < 0) {
 		ftdi_deinit(&d->ftdic);
 		return;
@@ -46,14 +61,12 @@ TellStick::TellStick( int vid, int pid ) {
 	d->open = true;
 	ftdi_usb_reset( &d->ftdic );
 #else
-	
-	std::string serial = findByVIDPID(vid, pid);
-	
-	char *tempSerial = new char[serial.size()+1];
+		
+	char *tempSerial = new char[td.serial.size()+1];
 #ifdef _WINDOWS
-	strcpy_s(tempSerial, serial.size()+1, serial.c_str());
+	strcpy_s(tempSerial, td.serial.size()+1, td.serial.c_str());
 #else
-	strcpy(tempSerial, serial.c_str());
+	strcpy(tempSerial, td.serial.c_str());
 #endif
 	FT_STATUS ftStatus = FT_OpenEx(tempSerial, FT_OPEN_BY_SERIAL_NUMBER, &d->ftHandle);
 	delete tempSerial;
@@ -85,20 +98,24 @@ TellStick::~TellStick() {
 
 TellStick *TellStick::findFirstDevice() {
 	//TellStick
-	std::string serial = findByVIDPID(0x1781, 0x0C30);
-	if (serial.length() > 0) {
-		return new TellStick(0x1781, 0x0C30);
+	TellStickDescriptor d = findByVIDPID(0x1781, 0x0C30);
+	if (d.found) {
+		return new TellStick(d);
 	}
+#ifdef TELLSTICK_DUO
 	//TellStick Duo
-	serial = findByVIDPID(0x1781, 0x0C31);
-	if (serial.length() > 0) {
-		return new TellStickDuo(0x1781, 0x0C31);
+	d = findByVIDPID(0x1781, 0x0C31);
+	if (d.found) {
+		return new TellStickDuo(d);
 	}
+#endif
 	return 0;
 }
 
-std::string TellStick::findByVIDPID( int vid, int pid ) {
-	std::string retval = "";
+TellStickDescriptor TellStick::findByVIDPID( int vid, int pid ) {
+	TellStickDescriptor retval;
+	retval.found = false;
+	
 #ifdef LIBFTDI
 	return "e";
 /*	ftdi_context ftdic;
@@ -146,7 +163,8 @@ std::string TellStick::findByVIDPID( int vid, int pid ) {
 				if(ftStatus == FT_OK){
 					if(pData.VendorId == vid && pData.ProductId == pid){
 						ftStatus = FT_Close(fthHandle);
-						retval = pData.SerialNumber;
+						retval.found = true;
+						retval.serial = pData.SerialNumber;
 						break;
 					}
 				}

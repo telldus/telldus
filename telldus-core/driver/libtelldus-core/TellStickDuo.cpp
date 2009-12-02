@@ -39,8 +39,8 @@ namespace TelldusCore {
 	};
 }
 
-TellStickDuo::TellStickDuo(int vid, int pid)
-	: TellStick(vid, pid),
+TellStickDuo::TellStickDuo(const TellStickDescriptor &d)
+	: TellStick(d),
 	ftHandle(0),
 	open(false),
 	listener(0),

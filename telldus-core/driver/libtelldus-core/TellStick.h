@@ -19,6 +19,7 @@
 */
 namespace TelldusCore {
 	class PrivateVars;
+	class TellStickDescriptor;
 	
 	class TellStick : public Controller {
 	public:	
@@ -30,11 +31,11 @@ namespace TelldusCore {
 		static TellStick *findFirstDevice();
 		
 	protected:
-		TellStick(int vid, int pid );
+		TellStick(const TellStickDescriptor &d);
 		void setBaud( int baud );
 		
 	private:
-		static std::string findByVIDPID( int vid, int pid );
+		static TellStickDescriptor findByVIDPID( int vid, int pid );
 		
 		PrivateVars *d;
 	};
