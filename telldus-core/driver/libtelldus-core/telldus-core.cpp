@@ -508,7 +508,7 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
 		"Permission denied",
 		"Device not found",
 		"The method you tried to use is not supported by the device",
-		"An error occurred when communication with TellStick"
+		"An error occurred when communicating with TellStick"
 	};
 	std::string strReturn;
 	intErrorNo = abs(intErrorNo); //We don't use negative values here.
