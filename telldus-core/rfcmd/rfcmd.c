@@ -56,6 +56,22 @@
  *    Arg 5: Level (0=off, 1 = on)
  ******************************************************************************/
 
+/*******************************************************************************
+ * Modifications from rfcmd ver 2.1.1 done by Johan Ström
+ *  Default disabled semaphores for FreeBSD.
+ *  Added status readback in ftdi.c, instead of wasting time in sleep.
+ *
+ * FreeBSD does not have support in the GENERIC kernel semaphore.
+ * To enable usage of them, you'll have have the following option in your
+ * kernel configuration:
+ *
+ *   options P1003_1B_SEMAPHORES
+ *
+ * However, on FreeBSD only libftdi seems to be working (at least on my system),
+ * since the device is not identified as a ucom device. And as we're accessing it
+ * via libftdi, libftdi makes sure simultaneous access is impossible.
+ ******************************************************************************/
+
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -63,10 +79,13 @@
 #include <fcntl.h>
 #include <unistd.h>
 #include <termios.h>
+
+#ifndef NO_SEMAPHORES
 #include <semaphore.h>
+#endif
 
 #define PROG_NAME "rfcmd"
-#define PROG_VERSION "2.1.0"
+#define PROG_VERSION "2.1.1"
 /* #define RFCMD_DEBUG */ 
 
 /* Local function declarations */
@@ -91,8 +110,10 @@ int main( int argc, char **argv )
 {
 	struct termios tio;
 	int fd = -1;
+#ifndef NO_SEMAPHORES
 	sem_t * portMutex;
 	char SEM_NAME[]= "RFCMD_SEM"; /* Semaphore for multiple access ctrl */
+#endif
 
 
 	char txStr[100];
@@ -142,35 +163,40 @@ int main( int argc, char **argv )
 #endif
 
 	if(strlen(txStr) > 0) {
+#ifndef NO_SEMAPHORES
 		/* create the semaphore - will reuse an existing one if it exists */
 		portMutex = sem_open(SEM_NAME,O_CREAT,0644,1);
-    		if(portMutex == SEM_FAILED)
-    		{
+		if( portMutex == SEM_FAILED) {
 			fprintf(stderr,  "%s - Error creating port semaphore\n", PROG_NAME);
 			perror("Semaphore open error");
-                        sem_unlink(SEM_NAME);
-      			exit(1);
+			sem_unlink(SEM_NAME);
+			exit(1);
 		}
 
 		/* lock semaphore to protect port from multiple access */
-    		if(sem_wait(portMutex) != 0)
-		{
-                        fprintf(stderr,  "%s - Error aquiring port semaphore\n", PROG_NAME);
-                        sem_unlink(SEM_NAME);
-                        sem_close(portMutex);
-                        exit(1); 
+		if(sem_wait(portMutex) != 0) {
+			fprintf(stderr,  "%s - Error aquiring port semaphore\n", PROG_NAME);
+			sem_unlink(SEM_NAME);
+			sem_close(portMutex);
+			exit(1); 
 		}
+#endif
 
 
 		if (strcmp(*(argv+1), "LIBUSB") != 0) {
 			if( 0 > ( fd = open( *(argv+1), O_RDWR ) ) ) {
+#ifdef __FreeBSD__
+				fprintf(stderr,  "%s - Error opening %s; You're on a FreeBSD system, you should probably use LIBUSB.\n", PROG_NAME, *(argv+1));
+#else
 				fprintf(stderr,  "%s - Error opening %s\n", PROG_NAME, *(argv+1));
-                		if(sem_post(portMutex) != 0)
-                		{
-                        		fprintf(stderr,  "%s - Error releasing port semaphore\n", PROG_NAME);
+#endif
+#ifndef NO_SEMAPHORES
+				if(sem_post(portMutex) != 0) {
+					fprintf(stderr,  "%s - Error releasing port semaphore\n", PROG_NAME);
 				}
-                        	sem_unlink(SEM_NAME);
-                        	sem_close(portMutex);
+				sem_unlink(SEM_NAME);
+				sem_close(portMutex);
+#endif
 				exit(1);
 			}
 
@@ -195,19 +221,18 @@ int main( int argc, char **argv )
 			fprintf(stderr,  "%s - Support for libftdi is not compiled in, please recompile rfcmd with support for libftdi\n", PROG_NAME);
 #endif
 		}
+#ifndef NO_SEMAPHORES
 		/* Unlock semaphore */
-    		if(sem_post(portMutex) != 0)
-    		{
-                        fprintf(stderr,  "%s - Error releasing port semaphore\n", PROG_NAME);
-                        sem_unlink(SEM_NAME);
-			sem_close(portMutex);          
-        		exit(1);
-    		}
-		else
-		{
-                        sem_unlink(SEM_NAME);
+		if (sem_post(portMutex) != 0) {
+			fprintf(stderr,  "%s - Error releasing port semaphore\n", PROG_NAME);
+			sem_unlink(SEM_NAME);
+			sem_close(portMutex);
+			exit(1);
+		} else {
+			sem_unlink(SEM_NAME);
 			sem_close(portMutex);	
 		}
+#endif
 	}
   exit(0);
 }
@@ -534,6 +559,8 @@ void printVersion(void) {
 	printf("\n");
 	printf("Copyright (C) Tord Andersson 2007\n");
 	printf("\n");
-	printf("Written by Tord Andersson, Micke Prag, Gudmund Berggren and Tapani Rintala\n");
+	printf("Written by:\n");
+	printf("Tord Andersson, Micke Prag, Gudmund Berggren, Tapani Rintala\n");
+	printf("and Johan Ström\n");
 }
 

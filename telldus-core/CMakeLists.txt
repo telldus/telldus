@@ -2,6 +2,11 @@ PROJECT( telldus-core )
 
 CMAKE_MINIMUM_REQUIRED( VERSION 2.6.0 )
 
+IF (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+	INCLUDE_DIRECTORIES(/usr/local/include)
+	LINK_DIRECTORIES(/usr/local/lib)
+ENDIF (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+
 cmake_policy(SET CMP0003 NEW)
 
 SET(PACKAGE_VERSION 2.0.0)
@@ -24,7 +29,13 @@ ENDIF(UNIX)
 SET(USE_QT_SETTINGS_BACKEND FALSE CACHE BOOL "Use QT as settings backend instead of the native one")
 
 SET(BUILD_RFCMD		TRUE	CACHE BOOL "Build rfcmd")
-SET(BUILD_RFCMD_WITH_LIBFTDI	FALSE	CACHE	BOOL "Enable support for using rfcmd with libftdi (does not need kernel-driver)")
+IF (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+	SET(BUILD_RFCMD_WITH_LIBFTDI	TRUE CACHE	BOOL "Enable support for using rfcmd with libftdi (does not need kernel-driver)")
+	SET(BUILD_RFCMD_WITH_SEMAPHORES	FALSE CACHE	BOOL "Enable support for using rfcmd with semaphores (Requires special kernel-config)")
+ELSE(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+	SET(BUILD_RFCMD_WITH_LIBFTDI	FALSE CACHE	BOOL "Enable support for using rfcmd with libftdi (does not need kernel-driver)")
+	SET(BUILD_RFCMD_WITH_SEMAPHORES	TRUE CACHE	BOOL "Enable support for using rfcmd with semaphores")
+ENDIF(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
 SET(BUILD_TDTOOL	TRUE	CACHE BOOL "Build tdtool")
 
 SET(GENERATE_MAN	FALSE	CACHE	BOOL "Enable generation of man-files")
