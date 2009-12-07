@@ -20,11 +20,7 @@ using namespace TelldusCore;
 class TelldusCore::PrivateVars {
 	public:
 		bool open;
-#ifdef LIBFTDI
-		ftdi_context ftdic;
-#else
-		FT_HANDLE ftHandle;
-#endif
+		TellStickHandle ftHandle;
 };
 
 class TelldusCore::TellStickDescriptor {
@@ -42,16 +38,16 @@ TellStick::TellStick( const TellStickDescriptor &td ) {
 	d = new PrivateVars;
 	d->open = false;
 #ifdef LIBFTDI
-	ftdi_init(&d->ftdic);
+	ftdi_init(&d->ftHandle);
 	
-	int ret = ftdi_usb_open_desc(&d->ftdic, td.vid, td.pid, NULL, NULL);
+	int ret = ftdi_usb_open_desc(&d->ftHandle, td.vid, td.pid, NULL, NULL);
 	if (ret < 0) {
-		ftdi_deinit(&d->ftdic);
+		ftdi_deinit(&d->ftHandle);
 		return;
 	}
 	d->open = true;
-	ftdi_usb_reset( &d->ftdic );
-	ftdi_disable_bitbang( &d->ftdic );
+	ftdi_usb_reset( &d->ftHandle );
+	ftdi_disable_bitbang( &d->ftHandle );
 #else
 		
 	char *tempSerial = new char[td.serial.size()+1];
@@ -77,8 +73,8 @@ TellStick::TellStick( const TellStickDescriptor &td ) {
 TellStick::~TellStick() {
 	if (d->open) {
 #ifdef LIBFTDI
-		ftdi_usb_close(&d->ftdic);
-		ftdi_deinit(&d->ftdic);
+		ftdi_usb_close(&d->ftHandle);
+		ftdi_deinit(&d->ftHandle);
 #else
 		FT_Close(d->ftHandle);
 #endif
@@ -185,20 +181,20 @@ int TelldusCore::TellStick::send(const std::string & strMessage) {
  	memcpy(tempMessage, strMessage.c_str(), strMessage.size());
 
 	int ret;
-	ret = ftdi_write_data( &d->ftdic, tempMessage, strMessage.length() ) ;
+	ret = ftdi_write_data( &d->ftHandle, tempMessage, strMessage.length() ) ;
 	if(ret < 0) {
 		c = false;
 	} else if(ret != strMessage.length()) {
 		fprintf(stderr, "wierd send length? retval %i instead of %d\n",
-				ret, strMessage.length());
+				ret, (int)strMessage.length());
 	}
 
 	delete[] tempMessage;
 
-	int retrycnt = 5000;
+	int retrycnt = 500;
 	unsigned char in;
-	while(c && retrycnt--) {
-		ret = ftdi_read_data( &d->ftdic, &in, 1);
+	while(c && --retrycnt) {
+		ret = ftdi_read_data( &d->ftHandle, &in, 1);
 		if (ret > 0) {
 			if (in == '\n') {
 				break;
@@ -208,6 +204,9 @@ int TelldusCore::TellStick::send(const std::string & strMessage) {
 		} else { //Error
 			c = false;
 		}
+	}
+	if (!retrycnt) {
+		c = false;
 	}
 #else
 	char *tempMessage = (char *)malloc(sizeof(char) * (strMessage.size()+1));
@@ -242,7 +241,7 @@ int TelldusCore::TellStick::send(const std::string & strMessage) {
 
 void TelldusCore::TellStick::setBaud(int baud) {
 #ifdef LIBFTDI
-	int ret = ftdi_set_baudrate(&d->ftdic, baud);
+	int ret = ftdi_set_baudrate(&d->ftHandle, baud);
 	if(ret != 0) {
 		fprintf(stderr, "set Baud failed, retval %i\n", ret);
 	}
@@ -251,6 +250,6 @@ void TelldusCore::TellStick::setBaud(int baud) {
 #endif
 }
 
-FT_HANDLE TelldusCore::TellStick::handle() const {
+TellStickHandle TelldusCore::TellStick::handle() const {
 	return d->ftHandle;
 }
