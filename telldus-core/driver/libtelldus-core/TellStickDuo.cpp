@@ -14,8 +14,14 @@
 #include <unistd.h>
 #include <stdlib.h>
 
-#ifdef _WINDOWS
+#if defined(_WINDOWS) && defined(LIBFTD2XX)
 typedef HANDLE EVENT_HANDLE;
+#elif defined(LIBFTDI)
+	typedef struct _EVENT_HANDLE {
+		pthread_cond_t eCondVar;
+		pthread_mutex_t eMutex;
+	} EVENT_HANDLE;
+	typedef int DWORD;
 #endif
 
 using namespace TelldusCore;
