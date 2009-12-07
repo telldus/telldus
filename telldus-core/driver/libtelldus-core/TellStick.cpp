@@ -13,15 +13,7 @@
 #include "TellStickDuo.h"
 #include "telldus-core.h"
 #include <string>
-
-#undef _LINUX
-#if defined(_LINUX ) || defined(__FreeBSD__)
-  #define LIBFTDI
-#endif
-
-#ifndef LIBFTDI
-	#include "ftd2xx.h"
-#endif
+#include <stdlib.h>
 
 using namespace TelldusCore;
 
@@ -82,7 +74,6 @@ TellStick::TellStick( const TellStickDescriptor &td ) {
 	}
 }
 
-
 TellStick::~TellStick() {
 	if (d->open) {
 #ifdef LIBFTDI
@@ -94,7 +85,6 @@ TellStick::~TellStick() {
 	}
 	delete d;
 }
-
 
 TellStick *TellStick::findFirstDevice() {
 	//TellStick
@@ -259,4 +249,8 @@ void TelldusCore::TellStick::setBaud(int baud) {
 #else
 	FT_SetBaudRate(d->ftHandle, baud);
 #endif
+}
+
+FT_HANDLE TelldusCore::TellStick::handle() const {
+	return d->ftHandle;
 }

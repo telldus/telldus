@@ -14,6 +14,15 @@
 
 #include "Controller.h"
 
+#undef _LINUX
+#if defined(_LINUX ) || defined(__FreeBSD__)
+#define LIBFTDI
+#endif
+
+#ifndef LIBFTDI
+#include "ftd2xx.h"
+#endif
+
 /**
 	@author Micke Prag <micke.prag@telldus.se>
 */
@@ -33,6 +42,7 @@ namespace TelldusCore {
 	protected:
 		TellStick(const TellStickDescriptor &d);
 		void setBaud( int baud );
+		FT_HANDLE handle() const;
 		
 	private:
 		static TellStickDescriptor findByVIDPID( int vid, int pid );
