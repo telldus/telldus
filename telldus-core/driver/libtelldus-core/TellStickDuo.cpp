@@ -134,19 +134,25 @@ void PrivateTellStickDuoListener::run() {
 	}
 
 	while(running) {
+#ifndef LIBFTDI
 		FT_SetEventNotification(parent->handle(), FT_EVENT_RXCHAR, (PVOID)&eh);
+#endif
 		pthread_mutex_lock(&eh.eMutex);
 		pthread_cond_wait(&eh.eCondVar, &eh.eMutex);
 		pthread_mutex_unlock(&eh.eMutex);
 		
+#ifndef LIBFTDI
 		FT_GetQueueStatus(parent->handle(), &dwBytesInQueue);
+#endif
 		if (dwBytesInQueue <= 1) {
 			continue;
 		}
 		
 		buf = (char*)malloc(sizeof(buf) * (dwBytesInQueue+1));
 		memset(buf, 0, dwBytesInQueue+1);
+#ifndef LIBFTDI
 		FT_Read(parent->handle(), buf, dwBytesInQueue, &dwBytesRead);
+#endif
 		processData( buf );
 		free(buf);
 	}
