@@ -23,6 +23,7 @@
 */
 namespace TelldusCore {
 	class PrivateTellStickDuoListener;
+	class TellStickDuoPrivate;
 	
 	class TellStickDuo : public TellStick {
 		friend class PrivateTellStickDuoListener;
@@ -31,7 +32,7 @@ namespace TelldusCore {
 	public:
 		~TellStickDuo();
 		
-		virtual int firmwareVersion();
+// 		virtual int firmwareVersion();
 //		virtual int send( const std::string &message );
 		
 		bool connected() const;
@@ -40,11 +41,7 @@ namespace TelldusCore {
 		TellStickDuo(const TellStickDescriptor &d);
 		
 	private:
-		
-		FT_HANDLE ftHandle;
-		bool open;
-		PrivateTellStickDuoListener *listener;
-		int fwVersion;
+		TellStickDuoPrivate *d;
 	};
 }
 

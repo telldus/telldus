@@ -21,7 +21,20 @@ typedef HANDLE EVENT_HANDLE;
 using namespace TelldusCore;
 
 namespace TelldusCore {
-	class PrivateTellStickDuoListener: public QThread {
+	class Thread {
+		public:
+			void start();
+			bool wait();
+			
+		protected:
+			virtual void run() = 0;
+		
+		private:
+			static void* exec( void *ptr );
+			pthread_t thread;
+	};
+	
+	class PrivateTellStickDuoListener: public Thread {
 		public:
 			PrivateTellStickDuoListener( TellStickDuo *parent );
 			~PrivateTellStickDuoListener();
@@ -37,70 +50,53 @@ namespace TelldusCore {
 			QMutex mutex;
 			std::string message;
 	};
+	
+	class TellStickDuoPrivate {
+		public:
+			PrivateTellStickDuoListener *listener;
+	};
 }
 
-TellStickDuo::TellStickDuo(const TellStickDescriptor &d)
-	: TellStick(d),
-	ftHandle(0),
-	open(false),
-	listener(0),
-	fwVersion(0)
+TellStickDuo::TellStickDuo(const TellStickDescriptor &td)
+	: TellStick(td)
 {
-	setBaud(9600);
-//	FT_STATUS ftStatus = FT_OK;
+	d = new TellStickDuoPrivate;
 	
-/*	char *tempSerial = new char[serial.size()+1];
-#ifdef _WINDOWS
-	strcpy_s(tempSerial, serial.size()+1, serial.c_str());
-#else
-	strcpy(tempSerial, serial.c_str());
-#endif
-
-	ftStatus = FT_OpenEx(tempSerial, FT_OPEN_BY_SERIAL_NUMBER, &ftHandle);
-	delete tempSerial;
+	this->setBaud(9600);
 	
-
-	if (ftStatus == FT_OK) {
-		open = true;
-		FT_SetBaudRate(ftHandle, 9600);
-		FT_SetFlowControl(ftHandle, FT_FLOW_NONE, 0, 0);
-		
-		listener = new PrivateTellStickDuoListener(this);
-		listener->start();
-		
-		char message[] = "V+";
-		DWORD bytesWritten;
-		FT_Write(ftHandle, message, sizeof(message), &bytesWritten);
-	} else {	
-		printf("Open: %d - %d\n", (int)ftStatus, connected());
-	}*/
+	d->listener = new PrivateTellStickDuoListener(this);
+	d->listener->start();
 }
 
 
 TellStickDuo::~TellStickDuo() {
-	if (listener) {
-		listener->stop();
-		delete listener;
-	}
-	if (connected()) {
-		FT_Close(ftHandle);
+	if (d->listener) {
+		d->listener->stop();
+		delete d->listener;
 	}
 }
-
-int TellStickDuo::firmwareVersion() {
-	return fwVersion;
-}
-
-/*int TellStickDuo::send( const std::string &message ) {
-	return TELLSTICK_SUCCESS;
-}*/
 
 bool TellStickDuo::connected() const {
-	return open;
+	return true;
+}
+
+void Thread::start() {
+	pthread_create(&thread, NULL, &Thread::exec, this );
+}
+
+bool Thread::wait() {
+	pthread_join(thread, 0);
+}
+
+void *Thread::exec( void *ptr ) {
+	Thread *t = reinterpret_cast<Thread *>(ptr);
+	if (t) {
+		t->run();
+	}
 }
 
 PrivateTellStickDuoListener::PrivateTellStickDuoListener( TellStickDuo *p )
-	: QThread(),
+	: Thread(),
 	parent(p),
 	running(false)
 {
@@ -114,12 +110,14 @@ PrivateTellStickDuoListener::~PrivateTellStickDuoListener() {
 
 void PrivateTellStickDuoListener::stop() {
 	if (running) {
-		QMutexLocker locker(&mutex);
-		running = false;
+		{
+			QMutexLocker locker(&mutex);
+			running = false;
+		}
 		//Unlock the wait-condition
 		pthread_cond_broadcast(&eh.eCondVar);
 	}
-	wait();
+	this->wait();
 }
 
 void PrivateTellStickDuoListener::run() {
@@ -136,19 +134,19 @@ void PrivateTellStickDuoListener::run() {
 	}
 
 	while(running) {
-		FT_SetEventNotification(parent->ftHandle, FT_EVENT_RXCHAR, (PVOID)&eh);
+		FT_SetEventNotification(parent->handle(), FT_EVENT_RXCHAR, (PVOID)&eh);
 		pthread_mutex_lock(&eh.eMutex);
 		pthread_cond_wait(&eh.eCondVar, &eh.eMutex);
 		pthread_mutex_unlock(&eh.eMutex);
 		
-		FT_GetQueueStatus(parent->ftHandle, &dwBytesInQueue);
+		FT_GetQueueStatus(parent->handle(), &dwBytesInQueue);
 		if (dwBytesInQueue <= 1) {
 			continue;
 		}
 		
 		buf = (char*)malloc(sizeof(buf) * (dwBytesInQueue+1));
 		memset(buf, 0, dwBytesInQueue+1);
-		FT_Read(parent->ftHandle, buf, dwBytesInQueue, &dwBytesRead);
+		FT_Read(parent->handle(), buf, dwBytesInQueue, &dwBytesRead);
 		processData( buf );
 		free(buf);
 	}
@@ -160,7 +158,8 @@ void PrivateTellStickDuoListener::processData( const std::string &data ) {
 			continue;
 		} else if (data[i] == 10) { // \n found
 			if (message.substr(0,2).compare("+V") == 0) {
-				parent->fwVersion = atoi(message.substr(2).c_str());
+				//parent->fwVersion = atoi(message.substr(2).c_str());
+				printf("Firmware version: %s\n", message.substr(2).c_str());
 			} else if (message.substr(0,2).compare("+R") == 0) {
 				Manager *manager = Manager::getInstance();
 				manager->parseMessage(message.substr(2));
