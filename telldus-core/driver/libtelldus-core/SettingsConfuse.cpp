@@ -13,6 +13,7 @@
 #include <confuse.h>
 #include <stdlib.h>
 #include <string.h>
+#include <errno.h>
 
 using namespace std;
 
@@ -26,7 +27,11 @@ bool readConfig(cfg_t **cfg);
 bool readVarConfig(cfg_t **cfg);
 
 const char* CONFIG_FILE = "/etc/tellstick.conf";
+#ifdef __FreeBSD__
+const char* VAR_CONFIG_FILE = "/var/spool/telldus-core.conf";
+#else
 const char* VAR_CONFIG_FILE = "/var/state/telldus-core.conf";
+#endif
 
 /*
 * Constructor
@@ -169,6 +174,12 @@ bool Settings::setDeviceState( int intDeviceId, int intDeviceState, const std::s
 	}
 	// The device is not found in the file, we must create it manualy...
 	FILE *fp = fopen(VAR_CONFIG_FILE, "w");
+	if(!fp) {
+		fprintf(stderr, "Failed to write state to %s: %s\n",
+				VAR_CONFIG_FILE, strerror(errno));
+		return false;
+	}
+
 	cfg_print(d->var_cfg, fp); //Print the config-file
 	fprintf(fp, "device %d {\n}\n", intDeviceId); //Print the new device
 	fclose(fp);
