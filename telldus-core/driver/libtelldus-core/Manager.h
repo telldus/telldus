@@ -73,6 +73,7 @@ namespace TelldusCore {
 	
 	protected:
 		void loadAllDevices();
+		void loadControllers();
 		
 	private:
 		Manager();

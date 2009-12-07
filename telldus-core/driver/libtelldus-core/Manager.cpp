@@ -44,10 +44,7 @@ Manager *Manager::instance = 0;
 Manager::Manager()
 	: lastCallbackId(0)
 {
-	Controller *controller = TellStick::findFirstDevice();
-	if (controller) {
-		controllers[1] = controller;
-	}
+	this->loadControllers();
 }
 
 Manager::~Manager() {
@@ -326,7 +323,9 @@ int TelldusCore::Manager::switchState(int deviceId, int newState, const std::str
 	if (!Device::maskUnsupportedMethods(dev->methods(), newState)) {
 		return retVal;
 	}
+	loadControllers(); //Load unloaded controllers
 	if (controllers.size() == 0) {
+		
 		return TELLSTICK_ERROR_NOT_FOUND;
 	}
 	Controller *controller = controllers.begin()->second;
@@ -369,4 +368,14 @@ int TelldusCore::Manager::sendRawCommand(const std::string &strMessage) {
 	Controller *controller = controllers.begin()->second;
 	
 	return controller->send(strMessage);
+}
+
+void TelldusCore::Manager::loadControllers() {
+	if (controllers.size()) {
+		return;
+	}
+	Controller *controller = TellStick::findFirstDevice();
+	if (controller) {
+		controllers[1] = controller;
+	}
 }
