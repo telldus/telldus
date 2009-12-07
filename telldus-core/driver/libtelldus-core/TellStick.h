@@ -14,16 +14,10 @@
 
 #include "Controller.h"
 
-// #undef _LINUX
-#if defined(_LINUX ) || defined(__FreeBSD__)
-#define LIBFTDI
-#endif
-
+#include "ftd2xx.h"
 #ifdef LIBFTDI
-	#include "ftdi.h"
 	typedef ftdi_context TellStickHandle;
 #else
-	#include "ftd2xx.h"
 	typedef FT_HANDLE TellStickHandle;
 #endif
 
