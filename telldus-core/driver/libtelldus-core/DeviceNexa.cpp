@@ -103,7 +103,7 @@ int DeviceNexa::turnOff(Controller *controller){
 			strCode.append("$k$k$kk$$kk$$k$k$k+");	//the "turn off"-code, keeps it like this, doesn't have to be regenerated each time
 		}
 
-		return Device::send(strCode);
+		return controller->send(strCode);
 	}
 	catch(...){
 		throw;
@@ -141,7 +141,7 @@ int DeviceNexa::bell(Controller *controller){
 		strCode.insert(0, "S");
 		strCode.append("$kk$$kk$$kk$$kk$$k+");	//the "bell"-code, keeps it like this, doesn't have to be regenerated each time
 
-		return Device::send(strCode);
+		return controller->send(strCode);
 	}
 	catch(...){
 		throw;
@@ -157,7 +157,7 @@ int DeviceNexa::learn(Controller *controller){
 	
 	int retVal = 0;
 	for (int i = 0; i < 5; ++i) {
-		retVal = Device::send(strCode);
+		retVal = controller->send(strCode);
 		if (retVal != TELLSTICK_SUCCESS) {
 			return retVal;
 		}
