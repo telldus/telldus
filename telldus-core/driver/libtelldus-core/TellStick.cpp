@@ -15,12 +15,11 @@
 #include <string>
 
 #undef _LINUX
-#ifdef _LINUX
+#if defined(_LINUX ) || defined(__FreeBSD__)
   #define LIBFTDI
 #endif
 
-#ifdef LIBFTDI
-#else
+#ifndef LIBFTDI
 	#include "ftd2xx.h"
 #endif
 
@@ -60,6 +59,7 @@ TellStick::TellStick( const TellStickDescriptor &td ) {
 	}
 	d->open = true;
 	ftdi_usb_reset( &d->ftdic );
+	ftdi_disable_bitbang( &d->ftdic );
 #else
 		
 	char *tempSerial = new char[td.serial.size()+1];
@@ -117,19 +117,19 @@ TellStickDescriptor TellStick::findByVIDPID( int vid, int pid ) {
 	retval.found = false;
 	
 #ifdef LIBFTDI
-	return "e";
-/*	ftdi_context ftdic;
+	ftdi_context ftdic;
 	ftdi_init(&ftdic);
 	
 	int ret = ftdi_usb_open(&ftdic, vid, pid);
 	if (ret == 0) {
-		retval = "1";
+		retval.found = true;
+		retval.vid = vid;
+		retval.pid = pid;
 	
 		ftdi_usb_close(&ftdic);
 	}
 	
 	ftdi_deinit(&ftdic);
-	*/
 #else
 	FT_HANDLE fthHandle = 0;
 	FT_STATUS ftStatus = FT_OK;
@@ -188,29 +188,45 @@ int TelldusCore::TellStick::send(const std::string & strMessage) {
 		return TELLSTICK_ERROR_NOT_FOUND;
 	}
 	
-#ifdef LIBFTDI
-	unsigned char *tmp = new unsigned char[strMessage.size()];
- 	memcpy(tmp, strMessage.c_str(), strMessage.size());
-	unsigned char t[] = {'S','$','k','$','k','$','k','$','k','$','k','$','k','$','k','$','k','$','k','$','k','$','k','$','k','k','$','k','$','k','$','k','$','k','$','k','$','k','$','k','$','$','k','k','$','$','k','k','$','$','k','+',0};
-	
-	int ret = ftdi_write_data( &d->ftdic, t, 52 );	
-	sleep(3);
-// 	ftdi_usb_purge_tx_buffer(&d->ftdic);
-// 	ftdi_usb_purge_rx_buffer(&d->ftdic);
-	printf(" %i (%i), %s\n", ret, (int)message.size(), t);
-
-	delete[] tmp;
-#else
-	FT_STATUS ftStatus;
-	ULONG bytesWritten, bytesRead;
-	char in;
-	
-	char *tempMessage = (char *)malloc(sizeof(char) * (strMessage.size()+1));
-	strcpy(tempMessage, strMessage.c_str());
-	ftStatus = FT_Write(d->ftHandle, tempMessage, (DWORD)strMessage.length(), &bytesWritten);
-	free(tempMessage);
 	
 	bool c = true;
+#ifdef LIBFTDI
+	unsigned char *tempMessage = new unsigned char[strMessage.size()];
+ 	memcpy(tempMessage, strMessage.c_str(), strMessage.size());
+
+	int ret;
+	ret = ftdi_write_data( &d->ftdic, tempMessage, strMessage.length() ) ;
+	if(ret < 0) {
+		c = false;
+	} else if(ret != strMessage.length()) {
+		fprintf(stderr, "wierd send length? retval %i instead of %d\n",
+				ret, strMessage.length());
+	}
+
+	delete[] tempMessage;
+
+	int retrycnt = 5000;
+	unsigned char in;
+	while(c && retrycnt--) {
+		ret = ftdi_read_data( &d->ftdic, &in, 1);
+		if (ret > 0) {
+			if (in == '\n') {
+				break;
+			}
+		} else if(ret == 0) { // No data available
+			usleep(100);
+		} else { //Error
+			c = false;
+		}
+	}
+#else
+	char *tempMessage = (char *)malloc(sizeof(char) * (strMessage.size()+1));
+	strcpy(tempMessage, strMessage.c_str());
+	ULONG bytesWritten, bytesRead;
+	char in;
+	FT_STATUS ftStatus;
+	ftStatus = FT_Write(d->ftHandle, tempMessage, (DWORD)strMessage.length(), &bytesWritten);
+	free(tempMessage);
 	
 	while(c) {
 		ftStatus = FT_Read(d->ftHandle,&in,1,&bytesRead);
@@ -226,17 +242,20 @@ int TelldusCore::TellStick::send(const std::string & strMessage) {
 			c = false;
 		}
 	}
+#endif
 	
 	if (!c) {
 		return TELLSTICK_ERROR_COMMUNICATION;
 	}
-#endif
 	return TELLSTICK_SUCCESS;
 }
 
 void TelldusCore::TellStick::setBaud(int baud) {
 #ifdef LIBFTDI
-	printf("Baud %i\n", ftdi_set_baudrate(&d->ftdic, baud));
+	int ret = ftdi_set_baudrate(&d->ftdic, baud);
+	if(ret != 0) {
+		fprintf(stderr, "set Baud failed, retval %i\n", ret);
+	}
 #else
 	FT_SetBaudRate(d->ftHandle, baud);
 #endif
