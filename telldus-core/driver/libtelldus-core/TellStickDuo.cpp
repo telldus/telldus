@@ -127,9 +127,15 @@ void PrivateTellStickDuoListener::stop() {
 }
 
 void PrivateTellStickDuoListener::run() {
+#ifdef LIBFTD2XX
 	DWORD dwBytesInQueue = 0;
 	DWORD dwBytesRead = 0;
 	char *buf = 0;
+#else
+	int dwBytesRead = 0;
+	unsigned char buf[100];// = 0;
+	TellStickHandle h = parent->handle();
+#endif
 	
 	pthread_mutex_init(&eh.eMutex, NULL);
 	pthread_cond_init(&eh.eCondVar, NULL);
@@ -140,27 +146,30 @@ void PrivateTellStickDuoListener::run() {
 	}
 
 	while(running) {
-#ifndef LIBFTDI
+#ifdef LIBFTD2XX
 		FT_SetEventNotification(parent->handle(), FT_EVENT_RXCHAR, (PVOID)&eh);
-#endif
 		pthread_mutex_lock(&eh.eMutex);
 		pthread_cond_wait(&eh.eCondVar, &eh.eMutex);
 		pthread_mutex_unlock(&eh.eMutex);
 		
-#ifndef LIBFTDI
 		FT_GetQueueStatus(parent->handle(), &dwBytesInQueue);
-#endif
-		if (dwBytesInQueue <= 1) {
+		if (dwBytesInQueue < 1) {
 			continue;
 		}
 		
 		buf = (char*)malloc(sizeof(buf) * (dwBytesInQueue+1));
 		memset(buf, 0, dwBytesInQueue+1);
-#ifndef LIBFTDI
 		FT_Read(parent->handle(), buf, dwBytesInQueue, &dwBytesRead);
-#endif
 		processData( buf );
 		free(buf);
+#else
+		usleep(1000);
+		dwBytesRead = ftdi_read_data(&h, buf, 100);
+		if (dwBytesRead < 1) {
+			continue;
+		}
+		processData( reinterpret_cast<char *>(&buf) );
+#endif
 	}
 }
 
