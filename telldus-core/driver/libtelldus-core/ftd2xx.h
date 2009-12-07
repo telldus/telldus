@@ -1,11 +1,21 @@
-#ifdef _WINDOWS
-	#include "stdafx.h"
-	#include "win\ftd2xx.h"
+
+#if defined(_LINUX ) || defined(__FreeBSD__)
+	#define LIBFTDI
 #else
-	#include "osx/WinTypes.h"
-	#include "osx/ftd2xx.h"
+	#define LIBFTD2XX
 #endif
 
-#ifdef _LINUX
-#include <ftdi.h>
+
+#ifdef LIBFTD2XX
+	#ifdef _WINDOWS
+		#include "stdafx.h"
+		#include "win\ftd2xx.h"
+	#else
+		#include "osx/WinTypes.h"
+		#include "osx/ftd2xx.h"
+	#endif
+#endif
+
+#ifdef LIBFTDI
+	#include <ftdi.h>
 #endif
