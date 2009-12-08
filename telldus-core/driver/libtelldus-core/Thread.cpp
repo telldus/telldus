@@ -11,11 +11,6 @@
 //
 
 #include "Thread.h"
-#ifdef _WINDOWS
-	#include <windows.h>
-#else
-	#include <pthread.h>
-#endif
 
 using namespace TelldusCore;
 
@@ -26,14 +21,35 @@ public:
 	DWORD threadId;
 #else
 	pthread_t thread;
+	pthread_cond_t noEvent, noWait;
+	pthread_mutex_t mutex;
+	
+	//Must be locked by the mutex!
+	bool hasEvent;
+	std::string message;
 #endif
 };
 
 Thread::Thread() {
 	d = new ThreadPrivate;
+#ifndef _WINDOWS
+	initMutex(&d->mutex);
+	
+	lockMutex(&d->mutex);
+	d->hasEvent = false;
+	unlockMutex(&d->mutex);
+	
+	pthread_cond_init(&d->noEvent, NULL);
+	pthread_cond_init(&d->noWait, NULL);
+#endif
 }
 
 Thread::~Thread() {
+#ifndef _WINDOWS
+	destroyMutex(&d->mutex);
+	pthread_cond_destroy(&d->noEvent);
+	pthread_cond_destroy(&d->noWait);
+#endif
 	delete d;
 }
 
@@ -61,4 +77,70 @@ void *Thread::exec( void *ptr ) {
 		t->run();
 	}
 	return 0;
+}
+
+std::string Thread::waitForEvent() {
+	std::string message;
+	lockMutex(&d->mutex);
+	while(!d->hasEvent) {
+#ifndef _WINDOWS
+		pthread_cond_wait(&d->noWait, &d->mutex);
+#endif
+	}
+	d->hasEvent = false;
+	message = d->message;
+	unlockMutex(&d->mutex);
+#ifndef _WINDOWS
+	pthread_cond_broadcast(&d->noEvent);
+#endif
+	return message;
+}
+
+void Thread::sendEvent(const std::string &message) {
+	lockMutex(&d->mutex);
+	while (d->hasEvent) { //We have an unprocessed event
+#ifndef _WINDOWS
+		pthread_cond_wait(&d->noEvent, &d->mutex);
+#endif
+	}
+	d->hasEvent = true;
+	d->message = message;
+	unlockMutex(&d->mutex);
+#ifndef _WINDOWS
+	pthread_cond_broadcast(&d->noWait);
+#endif
+}
+
+void Thread::initMutex(MUTEX * m) {
+#ifndef _WINDOWS
+	pthread_mutex_init(m, NULL);
+#endif
+}
+
+void Thread::destroyMutex(MUTEX * m) {
+#ifndef _WINDOWS
+	pthread_mutex_destroy(m);
+#endif
+}
+
+void Thread::unlockMutex(MUTEX * m) {
+#ifndef _WINDOWS
+	pthread_mutex_unlock(m);
+#endif
+}
+
+void Thread::lockMutex(MUTEX * m) {
+#ifndef _WINDOWS
+	pthread_mutex_lock(m);
+#endif
+}
+
+
+MutexLocker::MutexLocker(MUTEX *m)
+	:mutex(m) {
+	Thread::lockMutex(mutex);
+}
+
+MutexLocker::~MutexLocker() {
+	Thread::unlockMutex(mutex);
 }

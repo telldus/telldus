@@ -12,6 +12,15 @@
 #ifndef THREAD_H
 #define THREAD_H
 
+#include <string>
+
+#ifdef _WINDOWS
+	#include <windows.h>
+#else
+	#include <pthread.h>
+	typedef pthread_mutex_t MUTEX;
+#endif
+
 namespace TelldusCore {
 	class ThreadPrivate;
 	class Thread {
@@ -21,12 +30,28 @@ namespace TelldusCore {
 			void start();
 			bool wait();
 			
+			void sendEvent(const std::string &string);
+			
+			static void initMutex(MUTEX *m);
+			static void destroyMutex(MUTEX *m);
+			static void lockMutex(MUTEX *m);
+			static void unlockMutex(MUTEX *m);
+						
 		protected:
 			virtual void run() = 0;
+			std::string waitForEvent();
 		
 		private:
 			static void* exec( void *ptr );
 			ThreadPrivate *d;
+	};
+	
+	class MutexLocker {
+	public:
+		MutexLocker(MUTEX *m);
+		~MutexLocker();
+	private:
+		MUTEX *mutex;
 	};
 }
 
