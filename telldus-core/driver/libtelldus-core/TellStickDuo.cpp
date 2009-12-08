@@ -11,12 +11,12 @@
 //
 #include "TellStickDuo.h"
 #include "Manager.h"
-#include <unistd.h>
 #include <stdlib.h>
 
 #if defined(_WINDOWS) && defined(LIBFTD2XX)
 typedef HANDLE EVENT_HANDLE;
 #elif defined(LIBFTDI)
+	#include <unistd.h>
 	typedef struct _EVENT_HANDLE {
 		pthread_cond_t eCondVar;
 		pthread_mutex_t eMutex;
@@ -37,7 +37,9 @@ namespace TelldusCore {
 		
 		private:
 			static void* exec( void *ptr );
+#ifndef _WINDOWS
 			pthread_t thread;
+#endif
 	};
 	
 	class PrivateTellStickDuoListener: public Thread {
@@ -87,11 +89,16 @@ bool TellStickDuo::connected() const {
 }
 
 void Thread::start() {
+#ifndef _WINDOWS
 	pthread_create(&thread, NULL, &Thread::exec, this );
+#endif
 }
 
 bool Thread::wait() {
+#ifndef _WINDOWS
 	pthread_join(thread, 0);
+#endif
+	return true;
 }
 
 void *Thread::exec( void *ptr ) {
@@ -99,6 +106,7 @@ void *Thread::exec( void *ptr ) {
 	if (t) {
 		t->run();
 	}
+	return 0;
 }
 
 PrivateTellStickDuoListener::PrivateTellStickDuoListener( TellStickDuo *p )
@@ -121,7 +129,9 @@ void PrivateTellStickDuoListener::stop() {
 			running = false;
 		}
 		//Unlock the wait-condition
+#ifndef _WINDOWS
 		pthread_cond_broadcast(&eh.eCondVar);
+#endif
 	}
 	this->wait();
 }
@@ -137,9 +147,11 @@ void PrivateTellStickDuoListener::run() {
 	TellStickHandle h = parent->handle();
 #endif
 	
+#ifndef _WINDOWS
 	pthread_mutex_init(&eh.eMutex, NULL);
 	pthread_cond_init(&eh.eCondVar, NULL);
-	
+#endif
+
 	{
 		QMutexLocker locker(&mutex);
 		running = true;
@@ -147,11 +159,13 @@ void PrivateTellStickDuoListener::run() {
 
 	while(running) {
 #ifdef LIBFTD2XX
+#ifndef _WINDOWS
 		FT_SetEventNotification(parent->handle(), FT_EVENT_RXCHAR, (PVOID)&eh);
 		pthread_mutex_lock(&eh.eMutex);
 		pthread_cond_wait(&eh.eCondVar, &eh.eMutex);
 		pthread_mutex_unlock(&eh.eMutex);
-		
+#endif
+
 		FT_GetQueueStatus(parent->handle(), &dwBytesInQueue);
 		if (dwBytesInQueue < 1) {
 			continue;
