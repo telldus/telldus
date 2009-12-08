@@ -11,6 +11,7 @@
 //
 
 #include "Thread.h"
+#include <pthread.h>
 
 using namespace TelldusCore;
 
@@ -32,13 +33,13 @@ Thread::~Thread() {
 
 void Thread::start() {
 #ifndef _WINDOWS
-	pthread_create(&thread, NULL, &Thread::exec, this );
+	pthread_create(&d->thread, NULL, &Thread::exec, this );
 #endif
 }
 
 bool Thread::wait() {
 #ifndef _WINDOWS
-	pthread_join(thread, 0);
+	pthread_join(d->thread, 0);
 #endif
 	return true;
 }
