@@ -33,7 +33,7 @@ int Device::send(const std::string &strMessage){
 		ULONG bytesWritten, bytesRead;
 
 		char *tempMessage = (char *)malloc(sizeof(char) * (strMessage.size()+1));
-		strcpy(tempMessage, strMessage.c_str());
+		memcpy(tempMessage, strMessage.data(), strMessage.length());
 		ftStatus = FT_Write(fthHandle, tempMessage, (DWORD)strMessage.length(), &bytesWritten);
 		free(tempMessage);
 
