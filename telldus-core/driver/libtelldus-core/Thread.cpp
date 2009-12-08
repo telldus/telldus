@@ -11,7 +11,9 @@
 //
 
 #include "Thread.h"
-#ifndef _WINDOWS
+#ifdef _WINDOWS
+	#include <windows.h>
+#else
 	#include <pthread.h>
 #endif
 
@@ -20,6 +22,8 @@ using namespace TelldusCore;
 class TelldusCore::ThreadPrivate {
 public:
 #ifdef _WINDOWS
+	HANDLE thread;
+	DWORD threadId;
 #else
 	pthread_t thread;
 #endif
@@ -34,13 +38,18 @@ Thread::~Thread() {
 }
 
 void Thread::start() {
-#ifndef _WINDOWS
+#ifdef _WINDOWS
+	d->thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)&Thread::exec, this, 0, &d->threadId);
+#else
 	pthread_create(&d->thread, NULL, &Thread::exec, this );
 #endif
 }
 
 bool Thread::wait() {
-#ifndef _WINDOWS
+#ifdef _WINDOWS
+	WaitForSingleObject(d->thread, INFINITE);
+	CloseHandle(d->thread);
+#else
 	pthread_join(d->thread, 0);
 #endif
 	return true;
