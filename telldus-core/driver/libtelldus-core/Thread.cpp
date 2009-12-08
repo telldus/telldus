@@ -11,7 +11,9 @@
 //
 
 #include "Thread.h"
-#include <pthread.h>
+#ifndef _WINDOWS
+	#include <pthread.h>
+#endif
 
 using namespace TelldusCore;
 
