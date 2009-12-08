@@ -166,7 +166,7 @@ TellStickDescriptor TellStick::findByVIDPID( int vid, int pid ) {
 }
 
 int TelldusCore::TellStick::firmwareVersion() {
-	1;
+	return 1;
 }
 
 int TelldusCore::TellStick::send(const std::string & strMessage) {
