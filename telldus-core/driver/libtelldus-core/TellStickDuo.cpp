@@ -10,6 +10,7 @@
 //
 //
 #include "TellStickDuo.h"
+#include "Thread.h"
 #include "Manager.h"
 #include <stdlib.h>
 
@@ -27,20 +28,6 @@ typedef HANDLE EVENT_HANDLE;
 using namespace TelldusCore;
 
 namespace TelldusCore {
-	class Thread {
-		public:
-			void start();
-			bool wait();
-			
-		protected:
-			virtual void run() = 0;
-		
-		private:
-			static void* exec( void *ptr );
-#ifndef _WINDOWS
-			pthread_t thread;
-#endif
-	};
 	
 	class PrivateTellStickDuoListener: public Thread {
 		public:
@@ -86,27 +73,6 @@ TellStickDuo::~TellStickDuo() {
 
 bool TellStickDuo::connected() const {
 	return true;
-}
-
-void Thread::start() {
-#ifndef _WINDOWS
-	pthread_create(&thread, NULL, &Thread::exec, this );
-#endif
-}
-
-bool Thread::wait() {
-#ifndef _WINDOWS
-	pthread_join(thread, 0);
-#endif
-	return true;
-}
-
-void *Thread::exec( void *ptr ) {
-	Thread *t = reinterpret_cast<Thread *>(ptr);
-	if (t) {
-		t->run();
-	}
-	return 0;
 }
 
 PrivateTellStickDuoListener::PrivateTellStickDuoListener( TellStickDuo *p )

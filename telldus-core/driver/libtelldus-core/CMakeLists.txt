@@ -23,6 +23,7 @@ SET( telldus-core_SRCS
 	Manager.cpp
 	Settings.cpp
 	TellStick.cpp
+	Thread.cpp
 	telldus-core.cpp
 	)
 
