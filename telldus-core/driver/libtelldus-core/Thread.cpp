@@ -19,34 +19,41 @@ public:
 #ifdef _WINDOWS
 	HANDLE thread;
 	DWORD threadId;
+	HANDLE noEvent, noWait;
 #else
 	pthread_t thread;
 	pthread_cond_t noEvent, noWait;
-	pthread_mutex_t mutex;
+#endif
+	MUTEX mutex;
 	
 	//Must be locked by the mutex!
 	bool hasEvent;
 	std::string message;
-#endif
 };
 
 Thread::Thread() {
 	d = new ThreadPrivate;
-#ifndef _WINDOWS
 	initMutex(&d->mutex);
 	
 	lockMutex(&d->mutex);
 	d->hasEvent = false;
 	unlockMutex(&d->mutex);
 	
+#ifdef _WINDOWS
+	d->noEvent = CreateEvent(0, FALSE, FALSE, 0);
+	d->noWait = CreateEvent(0, FALSE, FALSE, 0);
+#else
 	pthread_cond_init(&d->noEvent, NULL);
 	pthread_cond_init(&d->noWait, NULL);
 #endif
 }
 
 Thread::~Thread() {
-#ifndef _WINDOWS
 	destroyMutex(&d->mutex);
+#ifdef _WINDOWS
+	CloseHandle(d->noEvent);
+	CloseHandle(d->noWait);
+#else
 	pthread_cond_destroy(&d->noEvent);
 	pthread_cond_destroy(&d->noWait);
 #endif
@@ -83,14 +90,20 @@ std::string Thread::waitForEvent() {
 	std::string message;
 	lockMutex(&d->mutex);
 	while(!d->hasEvent) {
-#ifndef _WINDOWS
+#ifdef _WINDOWS
+		unlockMutex(&d->mutex);
+		WaitForSingleObject(d->noWait, INFINITE);
+		lockMutex(&d->mutex);
+#else
 		pthread_cond_wait(&d->noWait, &d->mutex);
 #endif
 	}
 	d->hasEvent = false;
 	message = d->message;
 	unlockMutex(&d->mutex);
-#ifndef _WINDOWS
+#ifdef _WINDOWS
+	SetEvent(d->noEvent);
+#else
 	pthread_cond_broadcast(&d->noEvent);
 #endif
 	return message;
@@ -99,38 +112,52 @@ std::string Thread::waitForEvent() {
 void Thread::sendEvent(const std::string &message) {
 	lockMutex(&d->mutex);
 	while (d->hasEvent) { //We have an unprocessed event
-#ifndef _WINDOWS
+#ifdef _WINDOWS
+		unlockMutex(&d->mutex);
+		WaitForSingleObject(d->noEvent, INFINITE);
+		lockMutex(&d->mutex);
+#else
 		pthread_cond_wait(&d->noEvent, &d->mutex);
 #endif
 	}
 	d->hasEvent = true;
 	d->message = message;
 	unlockMutex(&d->mutex);
-#ifndef _WINDOWS
+#ifdef _WINDOWS
+	SetEvent(d->noWait);
+#else
 	pthread_cond_broadcast(&d->noWait);
 #endif
 }
 
 void Thread::initMutex(MUTEX * m) {
-#ifndef _WINDOWS
+#ifdef _WINDOWS
+	InitializeCriticalSection(m);
+#else
 	pthread_mutex_init(m, NULL);
 #endif
 }
 
 void Thread::destroyMutex(MUTEX * m) {
-#ifndef _WINDOWS
+#ifdef _WINDOWS
+	DeleteCriticalSection(m);
+#else
 	pthread_mutex_destroy(m);
 #endif
 }
 
 void Thread::unlockMutex(MUTEX * m) {
-#ifndef _WINDOWS
+#ifdef _WINDOWS
+	LeaveCriticalSection(m);
+#else
 	pthread_mutex_unlock(m);
 #endif
 }
 
 void Thread::lockMutex(MUTEX * m) {
-#ifndef _WINDOWS
+#ifdef _WINDOWS
+	EnterCriticalSection(m);
+#else
 	pthread_mutex_lock(m);
 #endif
 }

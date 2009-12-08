@@ -16,6 +16,7 @@
 
 #ifdef _WINDOWS
 	#include <windows.h>
+	typedef CRITICAL_SECTION MUTEX;
 #else
 	#include <pthread.h>
 	typedef pthread_mutex_t MUTEX;
