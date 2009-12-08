@@ -14,6 +14,7 @@
 
 #include <QtCore/QObject>
 #include "Settings.h"
+#include "Thread.h"
 #include <map>
 
 namespace TelldusCore {
@@ -39,7 +40,7 @@ namespace TelldusCore {
 	/**
 		@author Micke Prag <micke.prag@telldus.se>
 	*/
-	class Manager {
+	class Manager : private Thread {
 	public:
 		~Manager();
 		
@@ -75,14 +76,19 @@ namespace TelldusCore {
 		void loadAllDevices();
 		void loadControllers();
 		
+		virtual void run();
+		
 	private:
 		Manager();
+		void processMessage( const std::string &message );
 		
 		Settings settings;
 		DeviceMap devices;
 		ControllerMap controllers;
 		CallbackList callbacks;
 		RawCallbackList rawCallbacks;
+		
+		mutable MUTEX mutex;
 		
 		int lastCallbackId;
 		

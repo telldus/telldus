@@ -44,6 +44,9 @@ Manager *Manager::instance = 0;
 Manager::Manager()
 	: lastCallbackId(0)
 {
+	Thread::initMutex(&mutex);
+	//Create and start our worker-thread
+	this->start();
 	this->loadControllers();
 }
 
@@ -56,6 +59,7 @@ Manager::~Manager() {
 	for (ControllerMap::iterator it = controllers.begin(); it != controllers.end(); ++it) {
 		delete( it->second );
 	}
+	Thread::destroyMutex(&mutex);
 }
 
 /**
@@ -66,9 +70,12 @@ Manager::~Manager() {
 Device *Manager::getDevice(int intDeviceId){
 	Device* dev = NULL;
 	
-	DeviceMap::iterator iterator = devices.find(intDeviceId);
-	if (iterator != devices.end()) {
-		return iterator->second;
+	{
+		MutexLocker locker(&mutex);
+		DeviceMap::iterator iterator = devices.find(intDeviceId);
+		if (iterator != devices.end()) {
+			return iterator->second;
+		}
 	}
 
 	try{
@@ -135,6 +142,7 @@ Device *Manager::getDevice(int intDeviceId){
 	}
 	
 	if (intDeviceId > 0) {
+		MutexLocker locker(&mutex);
 		devices[intDeviceId] = dev;
 	}
 	return dev;
@@ -161,6 +169,7 @@ void Manager::loadAllDevices() {
 bool Manager::setDeviceProtocol(int intDeviceId, const std::string &strProtocol) {
 	bool retval = settings.setProtocol( intDeviceId, strProtocol );
 	
+	MutexLocker locker(&mutex);
 	// Delete the device to reload it when the protocol changes
 	DeviceMap::iterator iterator = devices.find(intDeviceId);
 	if (iterator != devices.end()) {
@@ -180,6 +189,7 @@ bool Manager::setDeviceState( int intDeviceId, int intDeviceState, const std::st
 	if (intDeviceState != TELLSTICK_BELL &&
 	    intDeviceState != TELLSTICK_LEARN
 		 ) {
+		MutexLocker locker(&mutex);
 		bool retval = settings.setDeviceState(intDeviceId, intDeviceState, strDeviceStateValue);
 		for(CallbackList::const_iterator callback_it = callbacks.begin(); callback_it != callbacks.end(); ++callback_it) {
 			(*callback_it).event(intDeviceId, intDeviceState, wrapStdString(strDeviceStateValue), (*callback_it).id, (*callback_it).context);
@@ -199,6 +209,7 @@ std::string Manager::getDeviceStateValue( int intDeviceId ) const {
 }
 
 bool Manager::deviceLoaded(int deviceId) const {
+	MutexLocker locker(&mutex);
 	DeviceMap::const_iterator iterator = devices.find(deviceId);
 	if (iterator == devices.end()) {
 		return false;
@@ -207,53 +218,8 @@ bool Manager::deviceLoaded(int deviceId) const {
 }
 
 void Manager::parseMessage( const std::string &message ) {
-	loadAllDevices(); //Make sure all devices is loaded before we iterator the list.
-	
-	std::map<std::string, std::string> parameters;
-	std::string protocol;
-	int method = 0;
-	
-	size_t prevPos = 0;
-	size_t pos = message.find(";");
-	while(pos != std::string::npos) {
-		std::string param = message.substr(prevPos, pos-prevPos);
-		prevPos = pos+1;
-		size_t delim = param.find(":");
-		if (delim == std::string::npos) {
-			break;
-		}
-		if (param.substr(0, delim).compare("protocol") == 0) {
-			protocol = param.substr(delim+1, param.length()-delim);
-		} else if (param.substr(0, delim).compare("method") == 0) {
-			method = Device::methodId(param.substr(delim+1, param.length()-delim));
-		} else {
-			parameters[param.substr(0, delim)] = param.substr(delim+1, param.length()-delim);
-		}
-		pos = message.find(";", pos+1);
-	}
-	for (DeviceMap::const_iterator it = devices.begin(); it != devices.end(); ++it) {
-		if (it->second->getProtocol().compare(protocol) != 0) {
-			continue;
-		}
-		if (! (it->second->methods() & method)) {
-			continue;
-		}
-		bool found = true;
-		for (std::map<std::string, std::string>::const_iterator p_it = parameters.begin(); p_it != parameters.end(); ++p_it) {
-			if (!it->second->parameterMatches(p_it->first, p_it->second)) {
-				found = false;
-				break;
-			}
-		}
-		if (found) {
-			//First save the last sent command, this also triggers the callback to the client
-			setDeviceState(it->first, method, "");
-		}
-	}
-
-	for(RawCallbackList::const_iterator it = rawCallbacks.begin(); it != rawCallbacks.end(); ++it) {
-		(*it).event(message.c_str(), (*it).id, (*it).context);
-	}
+	//Pass the message to our worker-thread!
+	this->sendEvent(message);
 }
 
 int Manager::registerDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
@@ -378,4 +344,65 @@ void TelldusCore::Manager::loadControllers() {
 	if (controller) {
 		controllers[1] = controller;
 	}
+}
+
+void TelldusCore::Manager::run() {
+	//Our worker-thread has started
+	while(1) {
+		std::string m = this->waitForEvent();
+		this->processMessage(m);
+	}
+}
+
+void TelldusCore::Manager::processMessage(const std::string & message) {
+	loadAllDevices(); //Make sure all devices is loaded before we iterator the list.
+	
+	std::map<std::string, std::string> parameters;
+	std::string protocol;
+	int method = 0;
+	
+	//Process our message into bits
+	size_t prevPos = 0;
+	size_t pos = message.find(";");
+	while(pos != std::string::npos) {
+		std::string param = message.substr(prevPos, pos-prevPos);
+		prevPos = pos+1;
+		size_t delim = param.find(":");
+		if (delim == std::string::npos) {
+			break;
+		}
+		if (param.substr(0, delim).compare("protocol") == 0) {
+			protocol = param.substr(delim+1, param.length()-delim);
+		} else if (param.substr(0, delim).compare("method") == 0) {
+			method = Device::methodId(param.substr(delim+1, param.length()-delim));
+		} else {
+			parameters[param.substr(0, delim)] = param.substr(delim+1, param.length()-delim);
+		}
+		pos = message.find(";", pos+1);
+	}
+	
+	for (DeviceMap::const_iterator it = devices.begin(); it != devices.end(); ++it) {
+		if (it->second->getProtocol().compare(protocol) != 0) {
+			continue;
+		}
+		if (! (it->second->methods() & method)) {
+			continue;
+		}
+		bool found = true;
+		for (std::map<std::string, std::string>::const_iterator p_it = parameters.begin(); p_it != parameters.end(); ++p_it) {
+			if (!it->second->parameterMatches(p_it->first, p_it->second)) {
+				found = false;
+				break;
+			}
+		}
+		if (found) {
+			//First save the last sent command, this also triggers the callback to the client
+			setDeviceState(it->first, method, "");
+		}
+	}
+
+	for(RawCallbackList::const_iterator it = rawCallbacks.begin(); it != rawCallbacks.end(); ++it) {
+		(*it).event(message.c_str(), (*it).id, (*it).context);
+	}
+
 }
