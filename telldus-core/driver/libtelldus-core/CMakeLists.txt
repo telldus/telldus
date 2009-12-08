@@ -42,16 +42,19 @@ SET( telldus-core_LIBRARIES
 )
 
 IF (SUPPORT_USB)
-	IF (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
-		FIND_LIBRARY(FTD2XX_LIBRARY ftdi)
-	ELSE(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+	IF (APPLE OR WIN32)
 		FIND_LIBRARY(FTD2XX_LIBRARY ftd2xx)
-	ENDIF(CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
-
-	SET( telldus-core_LIBRARIES
-		${telldus-core_LIBRARIES}
-		${FTD2XX_LIBRARY}
-	)
+		SET( telldus-core_LIBRARIES
+			${telldus-core_LIBRARIES}
+			${FTD2XX_LIBRARY}
+		)
+	ELSE (APPLE OR WIN32)
+		FIND_LIBRARY(FTDI_LIBRARY ftdi)
+		SET( telldus-core_LIBRARIES
+			${telldus-core_LIBRARIES}
+			${FTDI_LIBRARY}
+		)
+	ENDIF (APPLE OR WIN32)
 ENDIF (SUPPORT_USB)
 
 
@@ -59,13 +62,6 @@ ENDIF (SUPPORT_USB)
 
 #### TellStickDuo ####
 IF (SUPPORT_TELLSTICK_DUO)
-	#Only build library agains libftdi for TellStick Duo
-	FIND_LIBRARY(FTDI_LIBRARY ftdi)
-	SET( telldus-core_LIBRARIES
-		${telldus-core_LIBRARIES}
-		${FTDI_LIBRARY}
-	)
-
 	ADD_DEFINITIONS( -DTELLSTICK_DUO )
 	SET( telldus-core_SRCS
 		${telldus-core_SRCS}
