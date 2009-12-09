@@ -10,6 +10,7 @@
 using namespace TelldusCore;
 
 const char START[] = {'T',127,255,24,1,0};
+//const char START[] = {'T',130,255,26,24,0};
 
 /*
 * Constructor
@@ -232,7 +233,8 @@ std::string DeviceNexa::getStringSelflearning(bool dim, unsigned char level) {
 		if (m[i] == '1') {
 			code |= 8; //b1000
 		} else {
-			code |= 10; //b1010;
+			code |= 10; //b1010
+//			code |= 11; //b1011
 		}
 		if (i % 2 == 0) {
 			strMessage.append(1,code);
@@ -252,11 +254,17 @@ bool DeviceNexa::parameterMatches( const std::string &name, const std::string &v
 	if (value.length() == 0) {
 		return false;
 	}
-	
-	if (name.compare("arctech_house") == 0) {
+	if (name.compare("house") == 0) {
+		if (isSelflearning()) {
+			return intHouse == atoi(value.c_str());
+		}
 		return intHouse == value[0] - 'A';
-	} else if (name.compare("arctech_unit") == 0) {
+	} else if (name.compare("unit") == 0) {
 		return intCode == atoi(value.c_str()) - 1;
+	} else if (name.compare("type") == 0) {
+		if (isSelflearning()) {
+			return (value.compare("selflearning") == 0);
+		}
 	}
 	return true;
 }
