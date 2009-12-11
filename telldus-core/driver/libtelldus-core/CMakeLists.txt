@@ -122,11 +122,23 @@ IF (APPLE)
 	)
 ELSEIF (WIN32)
 	#### Windows ####
-	SET( telldus-core_TARGET	TelldusCore )
+	IF(BUILD_LIBTELLDUS-CORE_AS_SERVICE)
+		SET( telldus-core_TARGET	TelldusCoreLib )
+		SET( telldus-core_SRCS
+			${telldus-core_SRCS}
+			libtelldus-core_service.def
+		)
+	ELSE(BUILD_LIBTELLDUS-CORE_AS_SERVICE)
+		SET( telldus-core_TARGET	TelldusCore )
+		SET( telldus-core_SRCS
+			${telldus-core_SRCS}
+			libtelldus-core.def
+		)
+	ENDIF(BUILD_LIBTELLDUS-CORE_AS_SERVICE)
+
 	SET( telldus-core_SRCS
 		${telldus-core_SRCS}
 		win/Device.cpp
-		libtelldus-core.def
 	)
 	ADD_DEFINITIONS(
 		-D_WINDOWS

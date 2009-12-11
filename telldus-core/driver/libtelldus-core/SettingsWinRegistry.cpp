@@ -26,11 +26,11 @@ Settings::Settings(void)
 	d = new privateVars();
 	d->strRegPathDevice = "SOFTWARE\\Telldus\\Devices\\";
 	d->strRegPath = "SOFTWARE\\Telldus\\";
-	if (storeGlobal(d)) {
-		d->rootKey = HKEY_LOCAL_MACHINE;
-	} else {
-		d->rootKey = HKEY_CURRENT_USER;
-	}
+	//if (storeGlobal(d)) {
+	d->rootKey = HKEY_LOCAL_MACHINE;
+	//} else {
+	//	d->rootKey = HKEY_CURRENT_USER;
+	//}
 }
 
 /*
