@@ -16,6 +16,9 @@ protected:
 	virtual void run();
 	QVariant parseMessage(const QByteArray &message);
 
+signals:
+	void done();
+
 private:
 	ManagerPrivate *d;
 };

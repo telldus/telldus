@@ -1,8 +1,11 @@
 
 #include <QLocalSocket>
+#include <QMutex>
 #include <libtelldus-core/telldus-core.h>
 #include "Manager.h"
 #include "Message.h"
+
+#include "TelldusCore.h"
 
 class ManagerPrivate {
 public:
@@ -14,20 +17,27 @@ Manager::Manager(QLocalSocket *s, QObject *parent)
 {
 	d = new ManagerPrivate;
 	d->s = s;
+	TelldusCore::logMessage("  Manager created");
 	this->start();
 }
 
 Manager::~Manager(void) {
 	delete d;
+	TelldusCore::logMessage("  Manager destroyed");
 }
 
 void Manager::run() {
-	while(1) {
+	TelldusCore::logMessage("  Started loop");
+	while(d->s->state() == QLocalSocket::ConnectedState) {
 		if (d->s->waitForReadyRead()) {
 			QVariant response(this->parseMessage(d->s->readLine()));
-			d->s->write(response.toByteArray());
+			Message msg;
+			msg.addArgument(response);
+			msg.append("\n");
+			d->s->write(msg);
 		}
 	}
+	TelldusCore::logMessage("  loop ended");
 }
 
 QVariant Manager::parseMessage(const QByteArray &message) {
