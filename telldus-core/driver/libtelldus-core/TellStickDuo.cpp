@@ -32,7 +32,7 @@ namespace TelldusCore {
 	class PrivateTellStickDuoListener: public Thread {
 		public:
 			PrivateTellStickDuoListener( TellStickDuo *parent );
-			~PrivateTellStickDuoListener();
+			virtual ~PrivateTellStickDuoListener();
 			void stop();
 		protected:
 			void run();

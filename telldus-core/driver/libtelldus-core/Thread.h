@@ -27,7 +27,7 @@ namespace TelldusCore {
 	class Thread {
 		public:
 			Thread();
-			~Thread();
+			virtual ~Thread();
 			void start();
 			bool wait();
 			

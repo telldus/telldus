@@ -42,7 +42,7 @@ namespace TelldusCore {
 	*/
 	class Manager : private Thread {
 	public:
-		~Manager();
+		virtual ~Manager();
 		
 		Device *getDevice(int deviceId);
 		
