@@ -229,7 +229,6 @@ std::string DeviceNexa::getStringSelflearning(bool dim, unsigned char level) {
 	unsigned char code = 9; //b1001, startcode
 	for (unsigned int i = 0; i < m.length(); ++i) {
 		code <<= 4;
-		int v = 0;
 		if (m[i] == '1') {
 			code |= 8; //b1000
 		} else {
