@@ -14,7 +14,7 @@ SET( telldus-client_SRCS
 )
 
 SET( telldus-client_HDRS
-	../common/Message.h
+	${CMAKE_SOURCE_DIR}/driver/libtelldus-core/telldus-core.h
 )
 
 SET( telldus-client_MOC_HDRS
@@ -25,6 +25,11 @@ SET( telldus-client_LIBRARIES
 	${QT_LIBRARIES}
 )
 
+INCLUDE_DIRECTORIES(
+	${CMAKE_SOURCE_DIR}/driver
+	${CMAKE_CURRENT_SOURCE_DIR}/../common
+)
+
 QT4_WRAP_CPP(  telldus-client_MOC_SRCS  ${telldus-client_MOC_HDRS} )
 QT4_AUTOMOC (  ${telldus-client_SRCS} )
 
@@ -33,13 +38,12 @@ QT4_AUTOMOC (  ${telldus-client_SRCS} )
 
 ######## Platforms-specific, non configurable  ########
 
-SET( telldus-client_TARGET	TelldusClient )
+SET( telldus-client_TARGET	TelldusCore )
 
 IF (APPLE) #### Mac OS X ####
 
 ELSEIF (WIN32) #### Windows ####
 #### Windows ####
-	SET( telldus-client_TARGET	TelldusCore )
 	SET( telldus-client_SRCS
 		${telldus-client_SRCS}
 		../../driver/libtelldus-core/libtelldus-core.def
@@ -72,6 +76,21 @@ ADD_LIBRARY(${telldus-client_TARGET} SHARED
 	${telldus-client_MOC_SRCS}
 )
 SET_SOURCE_FILES_PROPERTIES(${telldus-service_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+
+SET_PROPERTY(TARGET ${telldus-client_TARGET}
+	PROPERTY FRAMEWORK TRUE	
+)
+SET_PROPERTY(TARGET ${telldus-client_TARGET}
+	PROPERTY PUBLIC_HEADER ${telldus-client_HDRS}
+)
+
+SET_PROPERTY(TARGET ${telldus-client_TARGET}
+	PROPERTY VERSION ${PACKAGE_VERSION}
+)
+SET_PROPERTY(TARGET ${telldus-client_TARGET}
+  PROPERTY SOVERSION ${PACKAGE_SOVERSION}
+)
+
 
 TARGET_LINK_LIBRARIES( ${telldus-client_TARGET}	${telldus-client_LIBRARIES} )
 

@@ -1,6 +1,6 @@
 
 #include <QLocalSocket>
-#include "Manager.h"
+#include "Manager.H"
 #include "Message.h"
 
 #include <QFile>
@@ -76,11 +76,11 @@ void Manager::dataReceived() {
 	logMessage("Data-received");
 }
 
-QVariant Manager::send(const Message &message, const QVariant &default) {
+QVariant Manager::send(const Message &message, const QVariant &defaultValue) {
 	logMessage(QString("%1:").arg(QString(message)));
 	if (d->s.state() != QLocalSocket::ConnectedState) {
 		logMessage("[default]");
-		return default;
+		return defaultValue;
 	}
 	d->s.write(message);
 	if (d->s.waitForReadyRead(5000)) {
@@ -90,7 +90,7 @@ QVariant Manager::send(const Message &message, const QVariant &default) {
 		return retval;
 	}
 	logMessage("[No return]");
-	return default;
+	return defaultValue;
 
 }
 

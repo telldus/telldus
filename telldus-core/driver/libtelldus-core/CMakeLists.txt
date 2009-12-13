@@ -112,7 +112,11 @@ ENDIF(USE_QT_SETTINGS_BACKEND)
 
 IF (APPLE)
 	#### Mac OS X ####
-	SET( telldus-core_TARGET	TelldusCore )
+	IF(BUILD_LIBTELLDUS-CORE_AS_SERVICE)
+		SET( telldus-core_TARGET	TelldusCoreLib )
+	ELSE(BUILD_LIBTELLDUS-CORE_AS_SERVICE)
+		SET( telldus-core_TARGET	TelldusCore )
+	ENDIF(BUILD_LIBTELLDUS-CORE_AS_SERVICE)
 	SET( telldus-core_SRCS
 		${telldus-core_SRCS}
 		win/Device.cpp
