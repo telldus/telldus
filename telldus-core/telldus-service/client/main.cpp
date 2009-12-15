@@ -11,15 +11,13 @@ void WINAPI tdInit(void) {
 }
 
 int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
-/*	Manager *manager = Manager::getInstance();
-	return manager->registerDeviceEvent( eventFunction, context );*/
-	return 1;
+	Manager *manager = Manager::getInstance();
+	return manager->registerDeviceEvent( eventFunction, context );
 }
 
 int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context ) {
-/*	Manager *manager = Manager::getInstance();
-	return manager->registerRawDeviceEvent( eventFunction, context );*/
-	return 1;
+	Manager *manager = Manager::getInstance();
+	return manager->registerRawDeviceEvent( eventFunction, context );
 }
 
 void WINAPI tdClose(void) {
