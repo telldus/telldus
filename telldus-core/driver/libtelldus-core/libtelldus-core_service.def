@@ -38,3 +38,6 @@ EXPORTS
 	tdLastSentValue @27
 	
 	tdReleaseString @28
+
+	tdConnectTellStickController @29
+	tdDisconnectTellStickController @30

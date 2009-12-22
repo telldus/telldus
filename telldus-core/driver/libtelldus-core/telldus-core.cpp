@@ -538,6 +538,13 @@ int WINAPI tdSendRawCommand(const char *command, int reserved) {
 	return TELLSTICK_ERROR_UNKNOWN;
 }
 
+
+void WINAPI tdConnectTellStickController(int vid, int pid, const char *serial) {
+}
+
+void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial) {
+}
+
 //********
 //* Error management, set strLogName to "" to turn off
 //*
