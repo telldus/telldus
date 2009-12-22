@@ -49,13 +49,6 @@ ELSEIF (WIN32) #### Windows ####
 		${telldus-service_LIBRARIES}
 		${LIBRARY_OUTPUT_PATH}/Release/TelldusCoreLib.lib
 	)
-	SET(telldus-service_SRCS
-		${telldus-service_SRCS}
-		${QTSERVICE_PATH}/src/qtservice_win.cpp
-		${CMAKE_CURRENT_BINARY_DIR}/qtservice.moc
-		${CMAKE_CURRENT_BINARY_DIR}/qtservice_win.moc
-	)
-	QT4_GENERATE_MOC( ${QTSERVICE_PATH}/src/qtservice_win.cpp ${CMAKE_CURRENT_BINARY_DIR}/qtservice_win.moc )
 
 ELSE (APPLE) #### Linux ####
 

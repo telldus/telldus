@@ -24,8 +24,13 @@ IF (UNIX)
 		${CMAKE_CURRENT_BINARY_DIR}/qtservice_unix.moc
 		${qtservice_MOC_SRCS}
 	)
-	
-	
+ELSEIF (WIN32)
+	QT4_GENERATE_MOC( ${CMAKE_HOME_DIRECTORY}/3rdparty/qtservice-2.6-opensource/src/qtservice_win.cpp ${CMAKE_CURRENT_BINARY_DIR}/qtservice_win.moc )	
+	SET(qtservice_SRCS
+		${qtservice_SRCS}
+		${CMAKE_HOME_DIRECTORY}/3rdparty/qtservice-2.6-opensource/src/qtservice_win.cpp
+		${CMAKE_CURRENT_BINARY_DIR}/qtservice_win.moc
+	)
 ENDIF (UNIX)
 
 INCLUDE_DIRECTORIES(
