@@ -11,12 +11,14 @@ SET( telldus-service_SRCS
 	main.cpp
 	TelldusCore.cpp
 	Manager.cpp
+	MessageReceiver.cpp
 	../common/Message.cpp
 )
 
 SET( telldus-service_MOC_HDRS
 	TelldusCore.h
 	Manager.h
+	MessageReceiver.h
 )
 	
 SET( telldus-service_LIBRARIES
@@ -42,6 +44,7 @@ IF (APPLE) #### Mac OS X ####
 	)
 ELSEIF (WIN32) #### Windows ####
 	ADD_DEFINITIONS( -DUNICODE )
+	ADD_DEFINITIONS( /Zc:wchar_t- ) # Treat wchar_t as Built-in Type' = No
 	SET(CMAKE_EXE_LINKER_FLAGS
 		"${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE"
 	)

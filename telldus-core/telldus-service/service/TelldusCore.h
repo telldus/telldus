@@ -13,12 +13,16 @@ public:
 	~TelldusCore(void);
 
 	static void logMessage( const QString &message);
+	static void logMessage( int message);
+	static void logWinError( int errorNo);
 
 private slots:
 	void newConnection();
 	void newEventConnection();
 	void disconnected();
 	void deviceEventSlot(int, int, const char *);
+	void deviceInserted(int, int, const QString &);
+	void deviceRemoved(int, int, const QString &);
 	void managerDone();
 
 signals:

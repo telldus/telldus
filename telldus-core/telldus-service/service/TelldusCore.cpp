@@ -1,14 +1,20 @@
 #include "TelldusCore.h"
 #include "Manager.h"
 #include "Message.h"
+#include "MessageReceiver.h"
 #include <QLocalServer>
 #include <QLocalSocket>
+
+//Debug
 #include <QDebug>
+#include <QFile>
+#include <QTime>
 
 class TelldusCorePrivate {
 public:
 	QLocalServer server, eventServer;
 	QList<QLocalSocket *> eventSockets;
+	MessageReceiver *messageReceiver;
 };
 
 TelldusCore::TelldusCore(void)
@@ -25,7 +31,15 @@ TelldusCore::TelldusCore(void)
 	connect(&d->eventServer, SIGNAL(newConnection()), this, SLOT(newEventConnection()));
 	d->eventServer.listen("TelldusCoreEvents");
 
+	d->messageReceiver = new MessageReceiver(this);
+	connect(d->messageReceiver, SIGNAL(deviceInserted(int,int,const QString &)), this, SLOT(deviceInserted(int,int,const QString &)));
+	connect(d->messageReceiver, SIGNAL(deviceRemoved(int,int,const QString &)), this, SLOT(deviceRemoved(int,int,const QString &)));
+
 	tdRegisterDeviceEvent( reinterpret_cast<TDDeviceEvent>(&deviceEvent), this);
+
+	QFile file("C:/log.txt");
+	file.open(QIODevice::WriteOnly);
+	file.close();
 }
 
 TelldusCore::~TelldusCore(void) {
@@ -66,6 +80,22 @@ void TelldusCore::disconnected() {
 	}
 }
 
+void TelldusCore::deviceInserted(int vid, int pid, const QString &serial) {
+	if (vid != 0x1781) {
+		return;
+	}
+	if (pid == 0x0c30) {
+		logMessage("TellStick Uno found " + serial);
+	} else if (pid == 0x0c31) {
+		logMessage("TellStick Duo found " + serial);
+	}
+}
+
+void TelldusCore::deviceRemoved(int, int, const QString &serial) {
+	logMessage(" Device disconnection");
+}
+
+
 void TelldusCore::deviceEventSlot(int deviceId, int method, const char *data) {
 	Message msg("TDDeviceEvent");
 	msg.addArgument(deviceId);
@@ -77,16 +107,36 @@ void TelldusCore::deviceEventSlot(int deviceId, int method, const char *data) {
 	}
 }
 
-#include <QFile>
-#include <QTime>
-
 void TelldusCore::logMessage( const QString &message) {
 	QFile file("C:/log.txt");
 	file.open(QIODevice::Append | QIODevice::Text);
 	QTextStream out(&file);
-	//out << QTime::currentTime().toString() << ": " << message << "\n";
+	out << QTime::currentTime().toString() << ": " << message << "\n";
 	file.close();
 }
+
+void TelldusCore::logMessage( int message) {
+	logMessage( QString::number(message) );
+}
+
+void TelldusCore::logWinError( int errorNo) {
+	logMessage("WinError:");
+	logMessage(errorNo);
+	/*LPVOID lpMsgBuf;
+
+    FormatMessage(
+        FORMAT_MESSAGE_ALLOCATE_BUFFER | 
+        FORMAT_MESSAGE_FROM_SYSTEM |
+        FORMAT_MESSAGE_IGNORE_INSERTS,
+        NULL,
+        errorNo,
+        MAKELANGID(LANG_NEUTRAL, SUBLANG_DEFAULT),
+        (LPTSTR) &lpMsgBuf,
+        0, NULL );
+	logMessage( QString(reinterpret_cast<char *>(lpMsgBuf)) );*/
+}
+
+
 
 void WINAPI TelldusCore::deviceEvent(int deviceId, int method, const char *data, int, void *context) {
 	TelldusCore *tc = reinterpret_cast<TelldusCore *>(context);

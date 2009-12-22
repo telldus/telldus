@@ -27,12 +27,10 @@ TelldusService::TelldusService(int argc, char **argv)
 	tc(0)
 {
     setServiceDescription("A Telldus service for managing TellStick Duo.");
-	TelldusCore::logMessage("Contruct");
 }
 
 TelldusService::~TelldusService()
 {
-	TelldusCore::logMessage("Destruct");
 }
 
 void TelldusService::start() {
@@ -41,7 +39,6 @@ void TelldusService::start() {
 	tc = new TelldusCore();
 
 	logMessage("TService started", QtServiceBase::Error);
-	TelldusCore::logMessage("Started");
 	//app->quit();
 
 }
@@ -49,15 +46,12 @@ void TelldusService::start() {
 void TelldusService::stop() {
 	delete tc;
 	tc = 0;
-	TelldusCore::logMessage("Stopped");
 }
 
 void TelldusService::pause() {
-	TelldusCore::logMessage("Pause");
 }
 
 void TelldusService::resume() {
-	TelldusCore::logMessage("Resume");
 }
 
 void TelldusService::processCommand(int code) {
@@ -65,6 +59,5 @@ void TelldusService::processCommand(int code) {
 
 int main(int argc, char **argv) {
     TelldusService service(argc, argv);
-	TelldusCore::logMessage("Main");
     return service.exec();
 }
