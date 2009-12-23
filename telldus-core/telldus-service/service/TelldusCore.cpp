@@ -89,10 +89,16 @@ void TelldusCore::deviceInserted(int vid, int pid, const QString &serial) {
 	} else if (pid == 0x0c31) {
 		logMessage("TellStick Duo found " + serial);
 	}
+	tdConnectTellStickController(vid, pid, serial.toLocal8Bit());
 }
 
-void TelldusCore::deviceRemoved(int, int, const QString &serial) {
-	logMessage(" Device disconnection");
+void TelldusCore::deviceRemoved(int vid, int pid, const QString &serial) {
+	if (pid == 0x0c30) {
+		logMessage("TellStick Uno disconnected " + serial);
+	} else if (pid == 0x0c31) {
+		logMessage("TellStick Duo disconnected " + serial);
+	}
+	tdDisconnectTellStickController(vid, pid, serial.toLocal8Bit());
 }
 
 

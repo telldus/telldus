@@ -2,7 +2,7 @@
 #define TELLDUS_CORE_H
 
 #include <QObject>
-#include <libtelldus-core/telldus-core.h>
+#include <libtelldus-core/telldus-core-service.h>
 
 class TelldusCorePrivate;
 
