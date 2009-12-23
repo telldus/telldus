@@ -3,16 +3,6 @@
 #include "Manager.H"
 #include "Message.h"
 
-#include <QFile>
-#include <QTime>
-void logMessage( const QString &message) {
-	QFile file("C:/log.txt");
-	file.open(QIODevice::Append | QIODevice::Text);
-	QTextStream out(&file);
-	out << QTime::currentTime().toString() << ": " << message << "\n";
-	file.close();
-}
-
 typedef std::list<CallbackStruct> CallbackList;
 typedef std::list<RawCallbackStruct> RawCallbackList;
 
@@ -106,19 +96,15 @@ void Manager::dataReceived() {
 }
 
 QVariant Manager::send(const Message &message, const QVariant &defaultValue) {
-	logMessage(QString("%1:").arg(QString(message)));
 	if (d->s.state() != QLocalSocket::ConnectedState) {
-		logMessage("[default]");
 		return defaultValue;
 	}
 	d->s.write(message);
 	if (d->s.waitForReadyRead(5000)) {
 		QByteArray response(d->s.readLine());
 		QVariant retval = Message::takeFirst(&response);
-		logMessage(retval.toString());
 		return retval;
 	}
-	logMessage("[No return]");
 	return defaultValue;
 
 }
