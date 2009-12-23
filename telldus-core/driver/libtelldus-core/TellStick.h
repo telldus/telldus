@@ -35,7 +35,12 @@ namespace TelldusCore {
 		virtual int firmwareVersion();
 		virtual int send( const std::string &message );
 
+		int vid() const;
+		int pid() const;
+		std::string serial() const;
+
 		static TellStick *findFirstDevice();
+		static TellStick *loadBy(int vid, int pid, const std::string &serial);
 		
 	protected:
 		TellStick(const TellStickDescriptor &d);

@@ -67,6 +67,9 @@ extern "C" {
 	
 	TELLSTICK_API int WINAPI tdSendRawCommand(const char *command, int reserved);
 
+	TELLSTICK_API void WINAPI tdConnectTellStickController(int vid, int pid, const char *serial);
+	TELLSTICK_API void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial);
+
 #ifdef __cplusplus
 }
 #endif

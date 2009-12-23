@@ -17,30 +17,29 @@
 
 using namespace TelldusCore;
 
-class TelldusCore::PrivateVars {
-	public:
-		bool open;
-		TellStickHandle ftHandle;
-};
-
 class TelldusCore::TellStickDescriptor {
 public:
 	bool found;
-#ifdef LIBFTDI
-	int vid, pid;
-#else
 	std::string serial;
-#endif
-	
+	int vid, pid;
+};
+
+class TelldusCore::PrivateVars {
+public:
+	bool open;
+	TellStickHandle ftHandle;
+	TellStickDescriptor descriptor;
 };
 
 TellStick::TellStick( const TellStickDescriptor &td ) {
 	d = new PrivateVars;
 	d->open = false;
+	d->descriptor = td;
+
 #ifdef LIBFTDI
 	ftdi_init(&d->ftHandle);
 	
-	int ret = ftdi_usb_open_desc(&d->ftHandle, td.vid, td.pid, NULL, NULL);
+	int ret = ftdi_usb_open_desc(&d->ftHandle, td.vid, td.pid, NULL, td.serial.c_str());
 	if (ret < 0) {
 		ftdi_deinit(&d->ftHandle);
 		return;
@@ -82,6 +81,18 @@ TellStick::~TellStick() {
 	delete d;
 }
 
+int TellStick::vid() const {
+	return d->descriptor.vid;
+}
+
+int TellStick::pid() const {
+	return d->descriptor.pid;
+}
+
+std::string TellStick::serial() const {
+	return d->descriptor.serial;
+}
+
 TellStick *TellStick::findFirstDevice() {
 	//TellStick
 	TellStickDescriptor d = findByVIDPID(0x1781, 0x0C30);
@@ -98,9 +109,30 @@ TellStick *TellStick::findFirstDevice() {
 	return 0;
 }
 
+TellStick *TellStick::loadBy(int vid, int pid, const std::string &serial) {
+	if (vid != 0x1781) {
+		return 0;
+	}
+	TellStickDescriptor d;
+	d.vid = vid;
+	d.pid = pid;
+	d.serial = serial;
+
+	if (pid == 0x0C30) {
+		return new TellStick(d);
+#ifdef TELLSTICK_DUO
+	} else if (pid == 0x0C31) {
+		return new TellStickDuo(d);
+#endif
+	}
+	return 0;
+}
+
 TellStickDescriptor TellStick::findByVIDPID( int vid, int pid ) {
 	TellStickDescriptor retval;
 	retval.found = false;
+	retval.vid = vid;
+	retval.pid = pid;
 	
 #ifdef LIBFTDI
 	ftdi_context ftdic;
@@ -109,9 +141,6 @@ TellStickDescriptor TellStick::findByVIDPID( int vid, int pid ) {
 	int ret = ftdi_usb_open(&ftdic, vid, pid);
 	if (ret == 0) {
 		retval.found = true;
-		retval.vid = vid;
-		retval.pid = pid;
-	
 		ftdi_usb_close(&ftdic);
 	}
 	
@@ -210,7 +239,11 @@ int TelldusCore::TellStick::send(const std::string & strMessage) {
 	}
 #else
 	char *tempMessage = (char *)malloc(sizeof(char) * (strMessage.size()+1));
+#ifdef _WINDOWS
+	strcpy_s(tempMessage, strMessage.size()+1, strMessage.c_str());
+#else
 	strcpy(tempMessage, strMessage.c_str());
+#endif
 	ULONG bytesWritten, bytesRead;
 	char in;
 	FT_STATUS ftStatus;

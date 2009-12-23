@@ -540,9 +540,13 @@ int WINAPI tdSendRawCommand(const char *command, int reserved) {
 
 
 void WINAPI tdConnectTellStickController(int vid, int pid, const char *serial) {
+	Manager *manager = Manager::getInstance();
+	manager->connectTellStickController(vid, pid, serial);
 }
 
 void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial) {
+	Manager *manager = Manager::getInstance();
+	manager->disconnectTellStickController(vid, pid, serial);
 }
 
 //********

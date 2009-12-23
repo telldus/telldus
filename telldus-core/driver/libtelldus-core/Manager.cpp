@@ -42,7 +42,8 @@ using namespace TelldusCore;
 Manager *Manager::instance = 0;
 
 Manager::Manager()
-	: lastCallbackId(0)
+	: lastCallbackId(0),
+	lastControllerId(0)
 {
 	Thread::initMutex(&mutex);
 	//Create and start our worker-thread
@@ -275,6 +276,32 @@ bool TelldusCore::Manager::removeDevice(int intDeviceId) {
 	return settings.removeDevice(intDeviceId);
 }
 
+void TelldusCore::Manager::connectTellStickController(int vid, int pid, const std::string &serial) {
+	TellStick *tellstick = TellStick::loadBy(vid, pid, serial);
+	if (!tellstick) {
+		return;
+	}
+	lastControllerId--;
+	controllers[lastControllerId] = tellstick;
+}
+
+void TelldusCore::Manager::disconnectTellStickController(int vid, int pid, const std::string &serial) {
+	for(ControllerMap::iterator it = controllers.begin(); it != controllers.end(); ++it) {
+		TellStick *tellstick = reinterpret_cast<TellStick *>(it->second);
+		if (!tellstick) { //No TellStick controller
+			continue;
+		}
+		if (tellstick->vid() != vid || tellstick->pid() != pid) {
+			continue;
+		}
+		if (tellstick->serial().compare(serial) == 0) { //Found the controller
+			controllers.erase(it);
+			delete tellstick;
+			break;
+		}
+	}
+}
+
 bool TelldusCore::Manager::setDeviceName(int intDeviceId, const std::string & strNewName) {
 	return settings.setName(intDeviceId, strNewName);
 }
@@ -289,9 +316,7 @@ int TelldusCore::Manager::switchState(int deviceId, int newState, const std::str
 	if (!Device::maskUnsupportedMethods(dev->methods(), newState)) {
 		return retVal;
 	}
-	loadControllers(); //Load unloaded controllers
-	if (controllers.size() == 0) {
-		
+	if (controllers.size() == 0) {		
 		return TELLSTICK_ERROR_NOT_FOUND;
 	}
 	Controller *controller = controllers.begin()->second;
@@ -342,7 +367,8 @@ void TelldusCore::Manager::loadControllers() {
 	}
 	Controller *controller = TellStick::findFirstDevice();
 	if (controller) {
-		controllers[1] = controller;
+		lastControllerId--;
+		controllers[lastControllerId] = controller;
 	}
 }
 

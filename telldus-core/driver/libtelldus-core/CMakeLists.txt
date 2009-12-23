@@ -29,6 +29,7 @@ SET( telldus-core_SRCS
 
 SET( telldus-core_HDRS
 	telldus-core.h
+	telldus-core-service.h
 )
 
 SET( telldus-core_MOC_HDRS

@@ -64,6 +64,9 @@ namespace TelldusCore {
 		
 		int addDevice();
 		bool removeDevice(int intDeviceId);
+
+		void connectTellStickController(int vid, int pid, const std::string &serial);
+		void disconnectTellStickController(int vid, int pid, const std::string &serial);
 		
 		static Manager *getInstance();
 		static void close();
@@ -91,6 +94,7 @@ namespace TelldusCore {
 		mutable MUTEX mutex;
 		
 		int lastCallbackId;
+		int lastControllerId;
 		
 		static Manager *instance;
 	};

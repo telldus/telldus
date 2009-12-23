@@ -95,7 +95,9 @@ void PrivateTellStickDuoListener::stop() {
 			running = false;
 		}
 		//Unlock the wait-condition
-#ifndef _WINDOWS
+#ifdef _WINDOWS
+		SetEvent(eh);
+#else
 		pthread_cond_broadcast(&eh.eCondVar);
 #endif
 	}
@@ -113,7 +115,9 @@ void PrivateTellStickDuoListener::run() {
 	TellStickHandle h = parent->handle();
 #endif
 	
-#ifndef _WINDOWS
+#ifdef _WINDOWS
+	eh = CreateEvent( NULL, false, false, "" );
+#else
 	pthread_mutex_init(&eh.eMutex, NULL);
 	pthread_cond_init(&eh.eCondVar, NULL);
 #endif
@@ -123,14 +127,23 @@ void PrivateTellStickDuoListener::run() {
 		running = true;
 	}
 
-	while(running) {
+	while(1) {
 #ifdef LIBFTD2XX
-#ifndef _WINDOWS
+#ifdef _WINDOWS
+		FT_SetEventNotification(parent->handle(), FT_EVENT_RXCHAR, eh);
+		WaitForSingleObject(eh,INFINITE);
+#else
 		FT_SetEventNotification(parent->handle(), FT_EVENT_RXCHAR, (PVOID)&eh);
 		pthread_mutex_lock(&eh.eMutex);
 		pthread_cond_wait(&eh.eCondVar, &eh.eMutex);
 		pthread_mutex_unlock(&eh.eMutex);
 #endif
+		{
+			QMutexLocker locker(&mutex);
+			if (!running) {
+				break;
+			}
+		}
 
 		FT_GetQueueStatus(parent->handle(), &dwBytesInQueue);
 		if (dwBytesInQueue < 1) {
