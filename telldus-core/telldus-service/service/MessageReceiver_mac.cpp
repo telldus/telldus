@@ -8,6 +8,8 @@ MessageReceiver::MessageReceiver(QObject *parent)
 {
 	
 	d = new MessageReceiverPrivate(this);
+	connect(d, SIGNAL(deviceInserted(int, int, const QString &)), this, SIGNAL(deviceInserted(int, int, const QString &)));
+	connect(d, SIGNAL(deviceRemoved(int, int, const QString &)), this, SIGNAL(deviceRemoved(int, int, const QString &)));
 	TelldusCore::logMessage("MessageReceiver");
 }
 

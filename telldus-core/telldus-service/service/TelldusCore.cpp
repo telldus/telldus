@@ -56,7 +56,6 @@ void TelldusCore::newConnection() {
 	logMessage(" New normal Connection");
 	QLocalSocket *s = d->server.nextPendingConnection();
 	Manager *m = new Manager(s, this);
-	//connect(m, SIGNAL(finished()), this, SLOT(managerDone()));
 	connect(m, SIGNAL(done()), this, SLOT(managerDone()));
 }
 
@@ -87,7 +86,7 @@ void TelldusCore::deviceInserted(int vid, int pid, const QString &serial) {
 	} else if (pid == 0x0c31) {
 		logMessage("TellStick Duo found " + serial);
 	}
-	//tdConnectTellStickController(vid, pid, serial.toLocal8Bit());
+	tdConnectTellStickController(vid, pid, serial.toLocal8Bit());
 }
 
 void TelldusCore::deviceRemoved(int vid, int pid, const QString &serial) {
@@ -96,7 +95,7 @@ void TelldusCore::deviceRemoved(int vid, int pid, const QString &serial) {
 	} else if (pid == 0x0c31) {
 		logMessage("TellStick Duo disconnected " + serial);
 	}
-	//tdDisconnectTellStickController(vid, pid, serial.toLocal8Bit());
+	tdDisconnectTellStickController(vid, pid, serial.toLocal8Bit());
 }
 
 
