@@ -1,11 +1,12 @@
 
 #include <QLocalSocket>
-#include <QMutex>
 #include <libtelldus-core/telldus-core.h>
 #include "Manager.h"
 #include "Message.h"
 
 #include "TelldusCore.h"
+
+#include <QDebug>
 
 class ManagerPrivate {
 public:
@@ -13,31 +14,19 @@ public:
 };
 
 Manager::Manager(QLocalSocket *s, QObject *parent)
-	:QThread(parent)
+	:QObject(parent)
 {
+	//connect(this, SIGNAL(send(const Message &)), this, SLOT(sendMessage()));
 	d = new ManagerPrivate;
 	d->s = s;
+	connect(d->s, SIGNAL(disconnected()), this, SIGNAL(done()));
+	connect(d->s, SIGNAL(readyRead()), this, SLOT(dataArrived()));
 	TelldusCore::logMessage("  Manager created");
-	this->start();
 }
 
 Manager::~Manager(void) {
 	delete d;
 	TelldusCore::logMessage("  Manager destroyed");
-}
-
-void Manager::run() {
-	TelldusCore::logMessage("  Started loop");
-	while(d->s->state() == QLocalSocket::ConnectedState) {
-		if (d->s->waitForReadyRead()) {
-			QVariant response(this->parseMessage(d->s->readLine()));
-			Message msg;
-			msg.addArgument(response);
-			msg.append("\n");
-			d->s->write(msg);
-		}
-	}
-	TelldusCore::logMessage("  loop ended");
 }
 
 QVariant Manager::parseMessage(const QByteArray &message) {
@@ -165,4 +154,12 @@ QVariant Manager::parseMessage(const QByteArray &message) {
 	}
 
 	return 0;
+}
+
+void Manager::dataArrived() {
+	QVariant response(this->parseMessage(d->s->readLine()));
+	Message msg;
+	msg.addArgument(response);
+	msg.append("\n");
+	d->s->write(msg);
 }
