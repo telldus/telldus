@@ -2,7 +2,10 @@
 #define MESSAGERECEIVER_H
 
 #include <QObject>
+
+#ifdef _WINDOWS
 #include "Windows.h"
+#endif
 
 class MessageReceiverPrivate;
 
@@ -12,7 +15,9 @@ public:
 	MessageReceiver(QObject *parent);
 	~MessageReceiver(void);
 
+#ifdef _WINDOWS
 	static LRESULT MyWindowProc(HWND, UINT, WPARAM, LPARAM);
+#endif
 
 signals:
 	void deviceInserted(int vid, int pid, const QString &serial);
@@ -20,7 +25,9 @@ signals:
 
 private:
 	MessageReceiverPrivate *d;
+#ifdef _WINDOWS
 	static MessageReceiver *instance;
+#endif
 };
 
 #endif //MESSAGERECEIVER_H
