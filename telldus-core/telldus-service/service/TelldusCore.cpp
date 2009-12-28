@@ -36,14 +36,11 @@ TelldusCore::TelldusCore(void)
 	connect(d->messageReceiver, SIGNAL(deviceRemoved(int,int,const QString &)), this, SLOT(deviceRemoved(int,int,const QString &)));
 
 	tdRegisterDeviceEvent( reinterpret_cast<TDDeviceEvent>(&deviceEvent), this);
-
-	QFile file("C:/log.txt");
-	file.open(QIODevice::WriteOnly);
-	file.close();
 }
 
 TelldusCore::~TelldusCore(void) {
 	tdClose();
+	logMessage("Shutting down");
 	delete d;
 }
 
@@ -59,7 +56,8 @@ void TelldusCore::newConnection() {
 	logMessage(" New normal Connection");
 	QLocalSocket *s = d->server.nextPendingConnection();
 	Manager *m = new Manager(s, this);
-	connect(m, SIGNAL(finished()), this, SLOT(managerDone()));
+	//connect(m, SIGNAL(finished()), this, SLOT(managerDone()));
+	connect(m, SIGNAL(done()), this, SLOT(managerDone()));
 }
 
 void TelldusCore::newEventConnection() {
@@ -89,7 +87,7 @@ void TelldusCore::deviceInserted(int vid, int pid, const QString &serial) {
 	} else if (pid == 0x0c31) {
 		logMessage("TellStick Duo found " + serial);
 	}
-	tdConnectTellStickController(vid, pid, serial.toLocal8Bit());
+	//tdConnectTellStickController(vid, pid, serial.toLocal8Bit());
 }
 
 void TelldusCore::deviceRemoved(int vid, int pid, const QString &serial) {
@@ -98,7 +96,7 @@ void TelldusCore::deviceRemoved(int vid, int pid, const QString &serial) {
 	} else if (pid == 0x0c31) {
 		logMessage("TellStick Duo disconnected " + serial);
 	}
-	tdDisconnectTellStickController(vid, pid, serial.toLocal8Bit());
+	//tdDisconnectTellStickController(vid, pid, serial.toLocal8Bit());
 }
 
 
@@ -114,11 +112,15 @@ void TelldusCore::deviceEventSlot(int deviceId, int method, const char *data) {
 }
 
 void TelldusCore::logMessage( const QString &message) {
+#ifdef _WINDOWS
 	QFile file("C:/log.txt");
 	file.open(QIODevice::Append | QIODevice::Text);
 	QTextStream out(&file);
 	out << QTime::currentTime().toString() << ": " << message << "\n";
 	file.close();
+#else
+	qDebug() << message;
+#endif
 }
 
 void TelldusCore::logMessage( int message) {

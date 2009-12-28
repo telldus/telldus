@@ -8,13 +8,12 @@ ENDIF(COMMAND cmake_policy)
 
 ######## Non configurable options  ########
 SET( telldus-service_SRCS
-	main.cpp
 	TelldusCore.cpp
 	Manager.cpp
-	MessageReceiver.cpp
 	../common/Message.cpp
 )
-
+SET( telldus-service_HDRS
+)
 SET( telldus-service_MOC_HDRS
 	TelldusCore.h
 	Manager.h
@@ -38,10 +37,26 @@ INCLUDE_DIRECTORIES(
 SET( telldus-service_TARGET	TelldusService )
 
 IF (APPLE) #### Mac OS X ####
+	FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
+	FIND_LIBRARY(IOKIT_LIBRARY IOKit)
+	
 	SET( telldus-service_LIBRARIES
 		${telldus-service_LIBRARIES}
+		${COREFOUNDATION_LIBRARY}
+		${IOKIT_LIBRARY}
 		TelldusCoreLib
 	)
+	SET( telldus-service_SRCS
+		${telldus-service_SRCS}
+		main_unix.cpp
+		MessageReceiver_mac.cpp
+		MessageReceiverPrivate_mac.cpp
+	)
+	SET( telldus-service_MOC_HDRS
+		${telldus-service_MOC_HDRS}
+		MessageReceiverPrivate_mac.h
+	)
+	
 ELSEIF (WIN32) #### Windows ####
 	ADD_DEFINITIONS( -DUNICODE )
 	ADD_DEFINITIONS( /Zc:wchar_t- ) # Treat wchar_t as Built-in Type' = No
@@ -52,18 +67,28 @@ ELSEIF (WIN32) #### Windows ####
 		${telldus-service_LIBRARIES}
 		${LIBRARY_OUTPUT_PATH}/Release/TelldusCoreLib.lib
 	)
+	SET( telldus-service_SRCS
+		${telldus-service_SRCS}
+		MessageReceiver_win.cpp
+		main_win.cpp
+	)
 
 ELSE (APPLE) #### Linux ####
-
+	SET( telldus-service_SRCS
+		${telldus-service_SRCS}
+		main_unix.cpp
+	)
 ENDIF (APPLE)
 
 ######## QtService ########
 
-INCLUDE( ../../3rdparty/qtservice.cmake NO_POLICY_SCOPE )
-SET( telldus-service_SRCS
-	${telldus-service_SRCS}
-	${qtservice_SRCS}
-)
+IF (WIN32)
+	INCLUDE( ../../3rdparty/qtservice.cmake NO_POLICY_SCOPE )
+	SET( telldus-service_SRCS
+		${telldus-service_SRCS}
+		${qtservice_SRCS}
+	)
+ENDIF(WIN32)
 
 ######## Configuring  ########
 
@@ -72,6 +97,7 @@ QT4_WRAP_CPP(  telldus-service_MOC_SRCS  ${telldus-service_MOC_HDRS} )
 ADD_EXECUTABLE(${telldus-service_TARGET}
 	${telldus-service_SRCS}
 	${telldus-service_MOC_SRCS}
+	${telldus-service_MOC_HDRS}
 )
 SET_SOURCE_FILES_PROPERTIES(${telldus-service_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
