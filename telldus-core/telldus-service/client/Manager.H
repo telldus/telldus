@@ -29,7 +29,7 @@ public:
 	static Manager *getInstance();
 	static void close();
 
-	QVariant send(const Message &, const QVariant &);
+	QVariant send(const Message &msg, bool *success);
 
 	int numberOfDevices();
 	QString deviceName(int deviceId);

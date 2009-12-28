@@ -48,18 +48,24 @@ void Manager::close() {
 }
 
 int Manager::numberOfDevices() {
+	bool ok;
 	if (d->numberOfDevices >= 0) {
 		return d->numberOfDevices;
 	}
 	Message message("tdGetNumberOfDevices");
-	d->numberOfDevices = this->send(message, 0).toInt();
+	d->numberOfDevices = this->send(message, &ok).toInt();
 	return d->numberOfDevices;
 }
 
 QString Manager::deviceName(int deviceId) {
+	bool ok;
 	Message message("tdGetName");
 	message.addArgument(deviceId);
-	return this->send(message, "").toString();
+	QString retval = this->send(message, &ok).toString();
+	if (!ok) {
+		retval = "";
+	}
+	return retval;
 }
 
 int Manager::registerDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
@@ -95,17 +101,19 @@ void Manager::dataReceived() {
 	}
 }
 
-QVariant Manager::send(const Message &message, const QVariant &defaultValue) {
+QVariant Manager::send(const Message &message, bool *success) {
+	(*success) = false;
 	if (d->s.state() != QLocalSocket::ConnectedState) {
-		return defaultValue;
+		return TELLSTICK_ERROR_CONNECTING_SERVICE;
 	}
 	d->s.write(message);
-	if (d->s.waitForReadyRead(5000)) {
+	if (d->s.waitForReadyRead(7000)) {
 		QByteArray response(d->s.readLine());
 		QVariant retval = Message::takeFirst(&response);
+		(*success) = true;
 		return retval;
 	}
-	return defaultValue;
+	return TELLSTICK_ERROR_UNKNOWN_RESPONSE;
 
 }
 
