@@ -38,6 +38,7 @@ namespace TelldusCore {
 		int vid() const;
 		int pid() const;
 		std::string serial() const;
+		bool open() const;
 
 		static TellStick *findFirstDevice();
 		static TellStick *loadBy(int vid, int pid, const std::string &serial);

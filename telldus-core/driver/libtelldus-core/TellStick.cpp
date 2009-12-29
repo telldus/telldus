@@ -54,6 +54,7 @@ TellStick::TellStick( const TellStickDescriptor &td ) {
 	strcpy_s(tempSerial, td.serial.size()+1, td.serial.c_str());
 #else
 	strcpy(tempSerial, td.serial.c_str());
+	FT_SetVIDPID(td.vid, td.pid);
 #endif
 	FT_STATUS ftStatus = FT_OpenEx(tempSerial, FT_OPEN_BY_SERIAL_NUMBER, &d->ftHandle);
 	delete tempSerial;
@@ -93,6 +94,10 @@ std::string TellStick::serial() const {
 	return d->descriptor.serial;
 }
 
+bool TellStick::open() const {
+	return d->open;
+}
+
 TellStick *TellStick::findFirstDevice() {
 	//TellStick
 	TellStickDescriptor d = findByVIDPID(0x1781, 0x0C30);
@@ -118,13 +123,18 @@ TellStick *TellStick::loadBy(int vid, int pid, const std::string &serial) {
 	d.pid = pid;
 	d.serial = serial;
 
+	TellStick *tellstick = 0;
 	if (pid == 0x0C30) {
-		return new TellStick(d);
+		 tellstick = new TellStick(d);
 #ifdef TELLSTICK_DUO
 	} else if (pid == 0x0C31) {
-		return new TellStickDuo(d);
+		tellstick = new TellStickDuo(d);
 #endif
 	}
+	if (tellstick->open()) {
+		return tellstick;
+	}
+	delete tellstick;
 	return 0;
 }
 
