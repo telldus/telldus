@@ -84,6 +84,7 @@ namespace TelldusCore {
 	private:
 		Manager();
 		void processMessage( const std::string &message );
+		int findTellStickController(int vid, int pid, const std::string &serial);
 		
 		Settings settings;
 		DeviceMap devices;

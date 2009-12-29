@@ -277,6 +277,11 @@ bool TelldusCore::Manager::removeDevice(int intDeviceId) {
 }
 
 void TelldusCore::Manager::connectTellStickController(int vid, int pid, const std::string &serial) {
+	//First check that it is not already loaded
+	int id = findTellStickController(vid, pid, serial);
+	if (id != 0) {
+		return;
+	}
 	TellStick *tellstick = TellStick::loadBy(vid, pid, serial);
 	if (!tellstick) {
 		return;
@@ -286,20 +291,16 @@ void TelldusCore::Manager::connectTellStickController(int vid, int pid, const st
 }
 
 void TelldusCore::Manager::disconnectTellStickController(int vid, int pid, const std::string &serial) {
-	for(ControllerMap::iterator it = controllers.begin(); it != controllers.end(); ++it) {
-		TellStick *tellstick = reinterpret_cast<TellStick *>(it->second);
-		if (!tellstick) { //No TellStick controller
-			continue;
-		}
-		if (tellstick->vid() != vid || tellstick->pid() != pid) {
-			continue;
-		}
-		if (tellstick->serial().compare(serial) == 0) { //Found the controller
-			controllers.erase(it);
-			delete tellstick;
-			break;
-		}
+	int id = findTellStickController(vid, pid, serial);
+	if (id == 0) {
+		return;
 	}
+	TellStick *tellstick = reinterpret_cast<TellStick *>(controllers[id]);
+	if (!tellstick) {
+		return;
+	}
+	controllers.erase(id);
+	delete tellstick;
 }
 
 bool TelldusCore::Manager::setDeviceName(int intDeviceId, const std::string & strNewName) {
@@ -316,7 +317,7 @@ int TelldusCore::Manager::switchState(int deviceId, int newState, const std::str
 	if (!Device::maskUnsupportedMethods(dev->methods(), newState)) {
 		return retVal;
 	}
-	if (controllers.size() == 0) {		
+	if (controllers.size() == 0) {	
 		return TELLSTICK_ERROR_NOT_FOUND;
 	}
 	Controller *controller = controllers.begin()->second;
@@ -431,4 +432,20 @@ void TelldusCore::Manager::processMessage(const std::string & message) {
 		(*it).event(message.c_str(), (*it).id, (*it).context);
 	}
 
+}
+
+int TelldusCore::Manager::findTellStickController(int vid, int pid, const std::string &serial) {
+	for(ControllerMap::iterator it = controllers.begin(); it != controllers.end(); ++it) {
+		TellStick *tellstick = reinterpret_cast<TellStick *>(it->second);
+		if (!tellstick) { //No TellStick controller
+			continue;
+		}
+		if (tellstick->vid() != vid || tellstick->pid() != pid) {
+			continue;
+		}
+		if (tellstick->serial().compare(serial) == 0) { //Found the controller
+			return it->first;
+		}
+	}
+	return 0;
 }
