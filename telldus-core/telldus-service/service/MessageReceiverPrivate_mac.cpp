@@ -140,8 +140,9 @@ void MessageReceiverPrivate::DeviceAdded(void *refCon, io_iterator_t iterator) {
 		CFStringGetCString(serialNumberAsCFString, s, size+1, kCFStringEncodingASCII);
 		QString serial(s); //Copy the string to the stack
 		delete[] s;
-		emit parent->deviceInserted(tsd->vid, tsd->pid, serial );
 		
 		kr = IOObjectRelease(usbDevice);
+		
+		emit parent->deviceInserted(tsd->vid, tsd->pid, serial );
 	}
 }
