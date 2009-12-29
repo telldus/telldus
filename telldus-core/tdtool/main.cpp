@@ -103,6 +103,12 @@ void print_device( int index ) {
 
 void list_devices() {
 	int intNum = tdGetNumberOfDevices();
+	if (intNum < 0) {
+		char *errorString = tdGetErrorString(intNum);
+		fprintf(stderr, "Error fetching devices: %s\n", errorString);
+		tdReleaseString(errorString);
+		return;
+	}
 	printf("Number of devices: %i\n", intNum);
 	int i = 0;
 	while (i < intNum) {
