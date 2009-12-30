@@ -26,6 +26,11 @@ namespace TelldusCore {
 		int id;
 		void *context;
 	};
+	struct DeviceChangeCallbackStruct {
+		TDDeviceChangeEvent event;
+		int id;
+		void *context;
+	};
 	struct RawCallbackStruct {
 		TDRawDeviceEvent event;
 		int id;
@@ -35,6 +40,7 @@ namespace TelldusCore {
 	typedef std::map<int, Device *> DeviceMap;
 	typedef std::map<int, Controller *> ControllerMap;
 	typedef std::list<CallbackStruct> CallbackList;
+	typedef std::list<DeviceChangeCallbackStruct> DeviceChangeCallbackList;
 	typedef std::list<RawCallbackStruct> RawCallbackList;
 
 	/**
@@ -72,12 +78,14 @@ namespace TelldusCore {
 		static void close();
 		
 		int registerDeviceEvent( TDDeviceEvent eventFunction, void *context );
+		int registerDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context );
 		int registerRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context );
 		void parseMessage( const std::string &message );
 	
 	protected:
 		void loadAllDevices();
 		void loadControllers();
+		void emitDeviceChange( int deviceId, int event, int change );
 		
 		virtual void run();
 		
@@ -90,6 +98,7 @@ namespace TelldusCore {
 		DeviceMap devices;
 		ControllerMap controllers;
 		CallbackList callbacks;
+		DeviceChangeCallbackList deviceChangeCallbacks;
 		RawCallbackList rawCallbacks;
 		
 		mutable MUTEX mutex;

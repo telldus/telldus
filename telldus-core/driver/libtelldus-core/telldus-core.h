@@ -22,17 +22,19 @@
 #endif
 
 typedef void (WINAPI *TDDeviceEvent)(int deviceId, int method, const char *data, int callbackId, void *context);
+typedef void (WINAPI *TDDeviceChangeEvent)(int deviceId, int changeEvent, int changeType, int callbackId, void *context); 
 typedef void (WINAPI *TDRawDeviceEvent)(const char *data, int callbackId, void *context);
 
 #ifndef __cplusplus 
 	#define bool char 
-#endif 
+#endif
 
 #ifdef __cplusplus
 extern "C" {
 #endif
 	TELLSTICK_API void WINAPI tdInit(void);
 	TELLSTICK_API int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context );
+	TELLSTICK_API int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context);
 	TELLSTICK_API int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context );
 	TELLSTICK_API void WINAPI tdClose(void);
 	TELLSTICK_API void WINAPI tdReleaseString(char *string);
@@ -96,6 +98,15 @@ extern "C" {
 //Device typedef
 #define TELLSTICK_TYPE_DEVICE	1
 #define TELLSTICK_TYPE_GROUP	2
+
+//Device changes
+#define TELLSTICK_DEVICE_ADDED			1
+#define TELLSTICK_DEVICE_CHANGED		2
+#define TELLSTICK_DEVICE_REMOVED		3
+#define TELLSTICK_DEVICE_STATE_CHANGED	4
+
+//Change types
+#define TELLSTICK_CHANGE_NAME			1
 
 //Protocol Nexa
 #define TELLSTICK_DEVICE_YCR3500	1

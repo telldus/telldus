@@ -97,6 +97,12 @@ int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *conte
 	return manager->registerRawDeviceEvent( eventFunction, context );
 }
 
+int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context) {
+	Manager *manager = Manager::getInstance();
+	return manager->registerDeviceChangeEvent( eventFunction, context );
+}
+
+
 /**
  * Close the library and clean up the cache it uses.
  * This should be called when the library is not supposed to be used anymore

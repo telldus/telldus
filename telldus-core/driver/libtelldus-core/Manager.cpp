@@ -230,6 +230,13 @@ int Manager::registerDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
 	return id;
 }
 
+int Manager::registerDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context ) {
+	int id = ++lastCallbackId;
+	DeviceChangeCallbackStruct callback = {eventFunction, id, context};
+	deviceChangeCallbacks.push_back(callback);
+	return id;
+}
+
 int Manager::registerRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context ) {
 	int id = ++lastCallbackId;
 	RawCallbackStruct callback = {eventFunction, id, context};
@@ -304,7 +311,11 @@ void TelldusCore::Manager::disconnectTellStickController(int vid, int pid, const
 }
 
 bool TelldusCore::Manager::setDeviceName(int intDeviceId, const std::string & strNewName) {
-	return settings.setName(intDeviceId, strNewName);
+	if (settings.setName(intDeviceId, strNewName)) {
+		emitDeviceChange(intDeviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_NAME);
+		return true;
+	}
+	return false;
 }
 
 int TelldusCore::Manager::switchState(int deviceId, int newState, const std::string & value) {
@@ -371,6 +382,13 @@ void TelldusCore::Manager::loadControllers() {
 		lastControllerId--;
 		controllers[lastControllerId] = controller;
 	}
+}
+
+void TelldusCore::Manager::emitDeviceChange( int deviceId, int event, int change ) {
+	for(DeviceChangeCallbackList::const_iterator callback_it = deviceChangeCallbacks.begin(); callback_it != deviceChangeCallbacks.end(); ++callback_it) {
+		(*callback_it).event(deviceId, event, change, (*callback_it).id, (*callback_it).context);
+	}
+	
 }
 
 void TelldusCore::Manager::run() {
