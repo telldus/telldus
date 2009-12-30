@@ -65,7 +65,7 @@ bool DeviceX10::setDeviceParameter(const std::string &strName, const std::string
 /*
 * Turn on this device
 */
-int DeviceX10::turnOn(void){
+int DeviceX10::turnOn(Controller *controller){
 
 	try{
 		std::string strCode = getStringCode(true);
@@ -73,7 +73,7 @@ int DeviceX10::turnOn(void){
 		strCode.insert(0, "S");
 		strCode.append("+");	
 
-		return Device::send(strCode);
+		return controller->send(strCode);
 	}
 	catch(...){
 		throw;
@@ -84,7 +84,7 @@ int DeviceX10::turnOn(void){
 /*
 * Turn off this device
 */
-int DeviceX10::turnOff(void){
+int DeviceX10::turnOff(Controller *controller){
 
 	try{
 		std::string strCode = getStringCode(false);
@@ -92,7 +92,7 @@ int DeviceX10::turnOff(void){
 		strCode.insert(0, "S");
 		strCode.append("+");	
 
-		return Device::send(strCode);
+		return controller->send(strCode);
 	}
 	catch(...){
 		throw;
