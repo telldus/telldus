@@ -26,11 +26,23 @@ TelldusCore::TelldusCore(void)
 	tdInit();
 
 	connect(&d->server, SIGNAL(newConnection()), this, SLOT(newConnection()));
+#ifdef WINDOWS
 	d->server.listen("TelldusCoreClient");
-
+#else
+	d->server.listen("/tmp/TelldusCoreClient");
+	QFile socket(d->server.fullServerName());
+	socket.setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup | QFile::WriteGroup | QFile::ReadOther | QFile::WriteOther);
+#endif
+	
 	connect(&d->eventServer, SIGNAL(newConnection()), this, SLOT(newEventConnection()));
+#ifdef WINDOWS
 	d->eventServer.listen("TelldusCoreEvents");
-
+#else
+	d->eventServer.listen("/tmp/TelldusCoreEvents");
+	QFile eventSocket(d->eventServer.fullServerName());
+	eventSocket.setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup | QFile::WriteGroup | QFile::ReadOther | QFile::WriteOther);
+#endif
+	
 	d->messageReceiver = new MessageReceiver(this);
 	connect(d->messageReceiver, SIGNAL(deviceInserted(int,int,const QString &)), this, SLOT(deviceInserted(int,int,const QString &)));
 	connect(d->messageReceiver, SIGNAL(deviceRemoved(int,int,const QString &)), this, SLOT(deviceRemoved(int,int,const QString &)));
