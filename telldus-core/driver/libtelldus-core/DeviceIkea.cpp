@@ -87,11 +87,11 @@ bool DeviceIkea::setDeviceParameter(const std::string &strName, const std::strin
 /*
 * Turn on this device
 */
-int DeviceIkea::turnOn(void){
+int DeviceIkea::turnOn(Controller *controller){
 	try{
 		std::string strMessage = getStringCode(255);
 
-		return Device::send(strMessage);
+		return controller->send(strMessage);
 	}
 	catch(...){
 		throw;
@@ -102,11 +102,11 @@ int DeviceIkea::turnOn(void){
 /*
 * Turn off this device
 */
-int DeviceIkea::turnOff(void){
+int DeviceIkea::turnOff(Controller *controller){
 	try{
 		std::string strMessage = getStringCode(0);
 
-		return Device::send(strMessage);
+		return controller->send(strMessage);
 	}
 	catch(...){
 		throw;
@@ -117,11 +117,11 @@ int DeviceIkea::turnOff(void){
 /*
 * Turn off this device
 */
-int DeviceIkea::dim(unsigned char level){
+int DeviceIkea::dim(unsigned char level, Controller *controller){
 	try{
 		std::string strMessage = getStringCode(level);
 
-		return Device::send(strMessage);
+		return controller->send(strMessage);
 	}
 	catch(...){
 		throw;
