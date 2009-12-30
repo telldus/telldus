@@ -60,7 +60,7 @@ bool DeviceUpm::setDeviceParameter(const std::string &strName, const std::string
 /*
 * Turn on this device
 */
-int DeviceUpm::turnOn(void){
+int DeviceUpm::turnOn(Controller *controller){
 
 	try{
 		std::string strCode = getStringCode(true);
@@ -68,7 +68,7 @@ int DeviceUpm::turnOn(void){
 		strCode.insert(0, "S");
 		strCode.append("+");	//the "turn on"-code!
 		
-		return Device::send(strCode);
+		return controller->send(strCode);
 	}
 	catch(...){
 		throw;
@@ -79,7 +79,7 @@ int DeviceUpm::turnOn(void){
 /*
 * Turn off this device
 */
-int DeviceUpm::turnOff(void){
+int DeviceUpm::turnOff(Controller *controller){
 	
 	try{
 		std::string strCode = getStringCode(false);
@@ -87,7 +87,7 @@ int DeviceUpm::turnOff(void){
 		strCode.insert(0, "S");
 		strCode.append("+");	//the "turn off"-code!
 		
-		return Device::send(strCode);
+		return controller->send(strCode);
 	}
 	catch(...){
 		throw;
