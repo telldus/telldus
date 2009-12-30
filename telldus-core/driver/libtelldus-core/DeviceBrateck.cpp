@@ -43,7 +43,7 @@ bool DeviceBrateck::setDeviceParameter(const std::string &strName, const std::st
 /*
 * Turn on this device
 */
-int DeviceBrateck::turnOn(void){
+int DeviceBrateck::turnOn(Controller *controller){
 
 	try{
 		std::string strCode = getStringCode();
@@ -52,7 +52,7 @@ int DeviceBrateck::turnOn(void){
 		strCode.append(BUP);
 		strCode.append("+");	//the "turn on"-code!
 		
-		return Device::send(strCode);
+		return controller->send(strCode);
 	}
 	catch(...){
 		throw;
@@ -63,7 +63,7 @@ int DeviceBrateck::turnOn(void){
 /*
 * Turn off this device
 */
-int DeviceBrateck::turnOff(void){
+int DeviceBrateck::turnOff(Controller *controller){
 	
 	try{
 		std::string strCode = getStringCode();
@@ -72,7 +72,7 @@ int DeviceBrateck::turnOff(void){
 		strCode.append(BDOWN);
 		strCode.append("+");	//the "turn off"-code!
 		
-		return Device::send(strCode);
+		return controller->send(strCode);
 	}
 	catch(...){
 		throw;
