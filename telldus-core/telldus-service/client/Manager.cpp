@@ -4,6 +4,7 @@
 #include "Message.h"
 
 typedef std::list<CallbackStruct> CallbackList;
+typedef std::list<DeviceChangeCallbackStruct> DeviceChangeCallbackList;
 typedef std::list<RawCallbackStruct> RawCallbackList;
 
 class ManagerPrivate {
@@ -12,6 +13,7 @@ public:
 	int lastCallbackId;
 	QLocalSocket s, eventSocket;
 	CallbackList callbacks;
+	DeviceChangeCallbackList deviceChangeCallbacks;
 	RawCallbackList rawCallbacks;
 };
 
@@ -80,6 +82,13 @@ int Manager::registerDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
 	return id;
 }
 
+int Manager::registerDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context ) {
+	int id = ++d->lastCallbackId;
+	DeviceChangeCallbackStruct callback = {eventFunction, id, context};
+	d->deviceChangeCallbacks.push_back(callback);
+	return id;
+}
+
 int Manager::registerRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context ) {
 	int id = ++d->lastCallbackId;
 	RawCallbackStruct callback = {eventFunction, id, context};
@@ -101,6 +110,13 @@ void Manager::dataReceived() {
 			QString strDeviceStateValue = Message::takeFirst(&msg).toString();
 			for(CallbackList::const_iterator callback_it = d->callbacks.begin(); callback_it != d->callbacks.end(); ++callback_it) {
 				(*callback_it).event(intDeviceId, intDeviceState, strDeviceStateValue.toLocal8Bit(), (*callback_it).id, (*callback_it).context);
+			}
+		} else if (funcName == "TDDeviceChangeEvent") {
+			int intDeviceId = Message::takeFirst(&msg).toInt();
+			int intEvent = Message::takeFirst(&msg).toInt();
+			int intChange = Message::takeFirst(&msg).toInt();
+			for(DeviceChangeCallbackList::const_iterator callback_it = d->deviceChangeCallbacks.begin(); callback_it != d->deviceChangeCallbacks.end(); ++callback_it) {
+				(*callback_it).event(intDeviceId, intEvent, intChange, (*callback_it).id, (*callback_it).context);
 			}
 		}
 	}

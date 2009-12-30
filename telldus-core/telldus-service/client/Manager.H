@@ -14,6 +14,11 @@ struct CallbackStruct {
 	int id;
 	void *context;
 };
+struct DeviceChangeCallbackStruct {
+	TDDeviceChangeEvent event;
+	int id;
+	void *context;
+};
 struct RawCallbackStruct {
 	TDRawDeviceEvent event;
 	int id;
@@ -35,6 +40,7 @@ public:
 	QString deviceName(int deviceId);
 
 	int registerDeviceEvent( TDDeviceEvent eventFunction, void *context );
+	int registerDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context );
 	int registerRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context );
 
 private slots:
