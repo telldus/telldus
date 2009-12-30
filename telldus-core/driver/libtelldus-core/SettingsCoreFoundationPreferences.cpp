@@ -19,6 +19,8 @@ using namespace std;
 class privateVars {
 public:
 	CFStringRef app_ID;
+	CFStringRef userName;
+	CFStringRef hostName;
 };
 
 	
@@ -29,6 +31,8 @@ Settings::Settings(void)
 {
 	d = new privateVars();
 	d->app_ID = CFSTR( "com.telldus.core" );
+	d->userName = kCFPreferencesAnyUser;
+	d->hostName = kCFPreferencesCurrentHost;
 }
 
 /*
@@ -36,6 +40,7 @@ Settings::Settings(void)
 */
 Settings::~Settings(void)
 {
+	delete d;
 }
 
 /*
@@ -49,7 +54,7 @@ std::string Settings::getSetting(const std::string &strName) const {
 * Return the number of stored devices
 */
 int Settings::getNumberOfDevices(void) const {
-	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost );
+	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, d->userName, d->hostName );
 	if (!cfarray) return 0;
 	CFIndex size = CFArrayGetCount( cfarray );
 	int devices = 0;
@@ -64,7 +69,7 @@ int Settings::getNumberOfDevices(void) const {
 }
 
 int Settings::getDeviceId(int intDeviceIndex) const {
-	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost );
+	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, d->userName, d->hostName );
 	if (!cfarray) return 0;
 	CFIndex size = CFArrayGetCount( cfarray );
 	int index = 0;
@@ -136,17 +141,17 @@ int Settings::getNextDeviceId() const {
 bool Settings::removeDevice(int intDeviceId){
 	CFStringRef filterKey = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d."), intDeviceId); // The key to search for
 
-	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost );
+	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, d->userName, d->hostName );
 	if (!cfarray) return 0;
 	CFIndex size = CFArrayGetCount( cfarray );
 	for (CFIndex k = 0; k < size; ++k) {
 		CFStringRef key = (CFStringRef) CFArrayGetValueAtIndex(cfarray, k);
 		if (CFStringHasPrefix( key, filterKey ) ) {
-			CFPreferencesSetAppValue( key, NULL, d->app_ID ); //Remove the key
+			CFPreferencesSetValue( key, NULL, d->app_ID, d->userName, d->hostName ); //Remove the key
 		}
 	}
 	
-	CFPreferencesAppSynchronize( d->app_ID );
+	CFPreferencesSynchronize( d->app_ID, d->userName, d->hostName );
 	return true;
 }
 
@@ -162,7 +167,7 @@ std::string Settings::getStringSetting(int intDeviceId, const std::string &name,
 	
 	CFStringRef value;
 	
-	value = (CFStringRef)CFPreferencesCopyAppValue(key, d->app_ID);
+	value = (CFStringRef)CFPreferencesCopyValue(key, d->app_ID, d->userName, d->hostName);
 	if (!value) {
 		return "";
 	}
@@ -188,8 +193,8 @@ bool Settings::setStringSetting(int intDeviceId, const std::string &name, const 
 		key = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d.%@"), intDeviceId, cfname);		
 	}
 
-	CFPreferencesSetAppValue( key, cfvalue, d->app_ID );
-	CFPreferencesAppSynchronize( d->app_ID );
+	CFPreferencesSetValue( key, cfvalue, d->app_ID, d->userName, d->hostName );
+	CFPreferencesSynchronize( d->app_ID, d->userName, d->hostName );
 	return true;
 }
 
@@ -205,7 +210,7 @@ int Settings::getIntSetting(int intDeviceId, const std::string &name, bool param
 		key = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d.%@"), intDeviceId, cfname);		
 	}
 	
-	cfvalue = (CFNumberRef)CFPreferencesCopyAppValue(key, d->app_ID);
+	cfvalue = (CFNumberRef)CFPreferencesCopyValue(key, d->app_ID, d->userName, d->hostName);
 
 	// If the preference exists, use it.
 	if (cfvalue) {
@@ -234,7 +239,7 @@ bool Settings::setIntSetting(int intDeviceId, const std::string &name, int value
 		key = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d.%@"), intDeviceId, cfname);		
 	}
 	
-	CFPreferencesSetAppValue( key, cfvalue, d->app_ID );
-	CFPreferencesAppSynchronize( d->app_ID );
+	CFPreferencesSetValue( key, cfvalue, d->app_ID, d->userName, d->hostName );
+	CFPreferencesSynchronize( d->app_ID, d->userName, d->hostName );
 	return true;	
 }
