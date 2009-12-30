@@ -19,8 +19,8 @@ namespace TelldusCore {
 	protected:
 		virtual bool setDeviceParameter(const std::string &strName, const std::string &strValue);
 		
-		virtual int turnOn(void);
-		virtual int turnOff(void);
+		virtual int turnOn(Controller *controller);
+		virtual int turnOff(Controller *controller);
 
 		std::string getStringCode(void);
 		std::string strCode;

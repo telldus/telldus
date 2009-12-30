@@ -35,7 +35,7 @@ bool DeviceSartano::setDeviceParameter(const std::string &strName, const std::st
 /*
 * Turn on this device
 */
-int DeviceSartano::turnOn(void){
+int DeviceSartano::turnOn(Controller *controller){
 
 	try{
 		std::string strCode = getStringCode();
@@ -43,7 +43,7 @@ int DeviceSartano::turnOn(void){
 		strCode.insert(0, "S");
 		strCode.append("$k$k$kk$$k+");	//the "turn on"-code, keeps it like this, doesn't have to be regenerated each time
 		
-		return Device::send(strCode);
+		return controller->send(strCode);
 	}
 	catch(...){
 		throw;
@@ -54,7 +54,7 @@ int DeviceSartano::turnOn(void){
 /*
 * Turn off this device
 */
-int DeviceSartano::turnOff(void){
+int DeviceSartano::turnOff(Controller *controller){
 	
 	try{
 		std::string strCode = getStringCode();
@@ -62,7 +62,7 @@ int DeviceSartano::turnOff(void){
 		strCode.insert(0, "S");
 		strCode.append("$kk$$k$k$k+");	//the "turn off"-code, keeps it like this, doesn't have to be regenerated each time
 		
-		return Device::send(strCode);
+		return controller->send(strCode);
 	}
 	catch(...){
 		throw;
