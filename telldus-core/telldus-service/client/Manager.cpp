@@ -23,8 +23,13 @@ Manager::Manager(void) {
 	d->lastCallbackId = 0;
 	connect(&d->eventSocket, SIGNAL(readyRead()), this, SLOT(dataReceived()));
 
+#ifdef _WINDOWS
 	d->s.connectToServer( "TelldusCoreClient" );
 	d->eventSocket.connectToServer( "TelldusCoreEvents" );
+#else
+	d->s.connectToServer( "/tmp/TelldusCoreClient" );
+	d->eventSocket.connectToServer( "/tmp/TelldusCoreEvents" );
+#endif
 
 	d->s.waitForConnected();
 }
