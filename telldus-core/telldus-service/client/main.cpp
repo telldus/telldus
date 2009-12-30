@@ -215,18 +215,20 @@ int WINAPI tdAddDevice(){
 	return manager->send(message, &ok).toInt();
 }
 
-bool WINAPI tdRemoveDevice(int intDeviceId){
+bool WINAPI tdRemoveDevice(int intDeviceId) {
+	bool ok;
 	Manager *manager = Manager::getInstance();
 	Message message("tdRemoveDevice");
-	return manager->send(message, 0).toBool();
+	return manager->send(message, &ok).toBool();
 }
 
-int WINAPI tdMethods(int id, int methodsSupported){
+int WINAPI tdMethods(int id, int methodsSupported) {
+	bool ok;
 	Manager *manager = Manager::getInstance();
 	Message message("tdMethods");
 	message.addArgument(id);
 	message.addArgument(methodsSupported);
-	return manager->send(message, 0).toInt();
+	return manager->send(message, &ok).toInt();
 }
 
 char * WINAPI tdGetErrorString(int intErrorNo) {
