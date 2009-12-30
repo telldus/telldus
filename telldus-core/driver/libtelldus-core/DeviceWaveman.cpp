@@ -18,7 +18,7 @@ DeviceWaveman::DeviceWaveman(int id, const std::string &model, const std::string
 /*
 * Turn off this device
 */
-int DeviceWaveman::turnOff(void){
+int DeviceWaveman::turnOff(Controller *controller){
 	
 	try{
 		std::string strCode = getStringCodeSwitch(intHouse);
@@ -28,7 +28,7 @@ int DeviceWaveman::turnOff(void){
 		strCode.insert(0, "S");
 		strCode.append("$k$k$k$k$k$k$k$k$k+");	//the "turn off"-code, keeps it like this, doesn't have to be regenerated each time
 		
-		return Device::send(strCode);
+		return controller->send(strCode);
 	}
 	catch(...){
 		throw;

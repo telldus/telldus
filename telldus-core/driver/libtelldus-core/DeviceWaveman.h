@@ -12,7 +12,7 @@ namespace TelldusCore {
 		virtual std::string getProtocol() const;
 		
 	protected:
-		virtual int turnOff(void);
+		virtual int turnOff(Controller *controller);
 	};
 
 }
