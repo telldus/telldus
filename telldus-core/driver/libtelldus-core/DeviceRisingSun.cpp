@@ -54,7 +54,7 @@ bool DeviceRisingSun::setDeviceParameter(const std::string &strName, const std::
 /*
 * Turn on this device
 */
-int DeviceRisingSun::turnOn(void){
+int DeviceRisingSun::turnOn(Controller *controller){
 
 	try{
 		std::string strCode = getStringCode(intHouse);
@@ -64,7 +64,7 @@ int DeviceRisingSun::turnOn(void){
 		strCode.insert(0, "S.e");
 		strCode.append("e..ee..ee..ee..e+");	//the "turn on"-code, keeps it like this, doesn't have to be regenerated each time
 
-		return Device::send(strCode);
+		return controller->send(strCode);
 	}
 	catch(...){
 		throw;
@@ -75,7 +75,7 @@ int DeviceRisingSun::turnOn(void){
 /*
 * Turn off this device
 */
-int DeviceRisingSun::turnOff(void){
+int DeviceRisingSun::turnOff(Controller *controller){
 
 	try{
 		std::string strCode = getStringCode(intHouse);
@@ -85,7 +85,7 @@ int DeviceRisingSun::turnOff(void){
 		strCode.insert(0, "S.e");
 		strCode.append("e..ee..ee..e.e.e+");	//the "turn off"-code, keeps it like this, doesn't have to be regenerated each time
 
-		return Device::send(strCode);
+		return controller->send(strCode);
 	}
 	catch(...){
 		throw;
