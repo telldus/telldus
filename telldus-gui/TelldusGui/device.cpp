@@ -4,6 +4,7 @@
 QHash<int, Device *> Device::devices;
 
 int Device::callbackId = tdRegisterDeviceEvent( reinterpret_cast<TDDeviceEvent>(&Device::deviceEvent), 0);
+int Device::deviceChangeCallbackId = tdRegisterDeviceChangeEvent( reinterpret_cast<TDDeviceChangeEvent>(&Device::deviceChangeEvent), 0);
 
 const int SUPPORTED_METHODS = TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL | TELLSTICK_DIM | TELLSTICK_LEARN;
 
@@ -42,6 +43,8 @@ Device::Device(int id)
 
 		updateState();
 	}
+	
+	connect(this, SIGNAL(deviceChanged(int,int,int)), this, SLOT(deviceChangedSlot(int,int,int)));
 }
 
 Device::~Device() {
@@ -215,6 +218,22 @@ void Device::updateState() {
 	}
 }
 
+void Device::deviceChangedSlot(int deviceId, int eventId, int changeType) {
+	if (eventId != TELLSTICK_DEVICE_CHANGED) {
+		return;
+	}
+	switch( changeType ) {
+		case TELLSTICK_CHANGE_NAME:
+			if (d->nameChanged) {
+				break;
+			}
+			char *name = tdGetName(d->id);
+			d->name = QString::fromLocal8Bit( name );
+			free( name );
+			break;			
+	}
+}
+
 void Device::triggerEvent( int messageId ) {
 	if (messageId == TELLSTICK_SUCCESS) {
 		//Update the last sent command
@@ -231,6 +250,15 @@ void WINAPI Device::deviceEvent(int deviceId, int, const char *, int, void *) {
 		Device *device = Device::getDevice( deviceId );
 		if (device) {
 			device->updateState();
+		}
+	}
+}
+
+void WINAPI Device::deviceChangeEvent(int deviceId, int eventId, int changeType, int, void *) {
+	if (Device::deviceLoaded( deviceId )) {
+		Device *device = Device::getDevice( deviceId );
+		if (device) {
+			emit device->deviceChanged(deviceId, eventId, changeType);
 		}
 	}
 }

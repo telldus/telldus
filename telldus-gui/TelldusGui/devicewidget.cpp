@@ -8,6 +8,8 @@
 #include <QHeaderView>
 #include <QMenu>
 
+#include <QDebug>
+
 #include "telldusgui.h"
 #include "editdevicedialog.h"
 #include "editgroupdialog.h"
@@ -26,9 +28,7 @@ DeviceWidget::DeviceWidget(QWidget *parent) :
 	connect( &deviceView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(listActivated(const QModelIndex &)) );
 	connect(&model, SIGNAL(showMessage(const QString &, const QString &, const QString &)), this, SIGNAL(showMessage(const QString &, const QString &, const QString &)));
 	connect(&model, SIGNAL(eventTriggered(const QString &, const QString &)), this, SIGNAL(eventTriggered(const QString &, const QString &)));
-	connect(&model, SIGNAL(deviceChange(int,int)), this, SIGNAL(deviceChange(int,int)));
 	
-
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	layout->addWidget(&deviceView);
 
@@ -138,7 +138,6 @@ void DeviceWidget::editDevice() {
 	}
 	if (dialog->exec() == QDialog::Accepted) {
 		device->save();
-		emit deviceChange(device->deviceId(), TELLSTICK_DEVICE_CHANGED);
 	}
 
 	delete dialog;

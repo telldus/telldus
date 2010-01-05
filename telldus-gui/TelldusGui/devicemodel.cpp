@@ -110,7 +110,6 @@ bool DeviceModel::removeRows ( int row, int count, const QModelIndex & parent ) 
 	while(!idList.isEmpty()) {
 		int id = idList.dequeue();
 		tdRemoveDevice( id );
-		emit deviceChange(id, TELLSTICK_DEVICE_REMOVED);
 	}
 	indexToId.clear(); //Clear the index-to-id cache
 
@@ -142,16 +141,19 @@ void DeviceModel::deviceAdded( int id ) {
 	//Add the index to the cache
 	indexToId[deviceCount-1] = id;
 	endInsertRows();
-	emit deviceChange(id, TELLSTICK_DEVICE_ADDED);
+}
 
+void DeviceModel::deviceChanged( int deviceId, int eventId, int changeType ) {
+	this->deviceStateChanged(deviceId, 0); //This function does the same
 }
 
 void DeviceModel::deviceStateChanged( int deviceId, int /*newState*/ ) {
 	int deviceCount = rowCount();
 	for (int i = 0; i < deviceCount; ++i) {
 		if (this->deviceId(i) == deviceId) {
-			QModelIndex index = this->index(i, 0);
-			emit dataChanged( index, index );
+			QModelIndex topLeftIndex = this->index(i, 0);
+			QModelIndex bottomRightIndex = this->index(i, 1);
+			emit dataChanged( topLeftIndex, bottomRightIndex );
 			break;
 		}
 	}
@@ -178,4 +180,5 @@ void DeviceModel::connectDeviceSignals( Device *device ) const {
 	connect(device, SIGNAL(showMessage(const QString &, const QString &, const QString &)), this, SIGNAL(showMessage(const QString &, const QString &, const QString &)));
 	connect(device, SIGNAL(eventTriggered(const QString &, const QString &)), this, SIGNAL(eventTriggered(const QString &, const QString &)));
 	connect(device, SIGNAL(stateChanged(int, int)), this, SLOT(deviceStateChanged(int,int)));
+	connect(device, SIGNAL(deviceChanged(int,int,int)), this, SLOT(deviceChanged(int,int,int)));
 }

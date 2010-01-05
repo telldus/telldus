@@ -50,10 +50,14 @@ public slots:
 
 signals:
 	void deviceAdded( int id );
+	void deviceChanged( int deviceId, int eventId, int changeType );
 	void methodsChanged( int newMethods );
 	void stateChanged( int deviceId, int newState );
 	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
 	void eventTriggered( const QString &name, const QString &title );
+	
+private slots:
+	void deviceChangedSlot(int deviceId, int eventId, int changeType);
 
 private:
 	Device(int id);
@@ -64,8 +68,9 @@ private:
 	DevicePrivate *d;
 	static QHash<int, Device *> devices;
 	static void WINAPI deviceEvent(int deviceId, int, const char *, int, void *);
+	static void WINAPI deviceChangeEvent(int deviceId, int, int, int, void *);
 
-	static int callbackId;
+	static int callbackId, deviceChangeCallbackId;
 };
 
 #endif // DEVICE_H

@@ -28,10 +28,10 @@ public:
 signals:
 	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
 	void eventTriggered( const QString &name, const QString &title );
-	void deviceChange( int deviceId, int eventType );
 
 private slots:
 	void deviceAdded( int id );
+	void deviceChanged( int, int, int );
 	void deviceStateChanged( int deviceId, int newState );
 
 private:

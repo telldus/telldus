@@ -42,14 +42,27 @@
 <context>
     <name>DeviceSettingArctechSelflearning</name>
     <message>
-        <location filename="devicesettingarctechselflearning.cpp" line="31"/>
+        <location filename="devicesettingarctechselflearning.cpp" line="32"/>
         <source>Remote code</source>
         <translation>Fjärrkontrollskod</translation>
     </message>
     <message>
-        <location filename="devicesettingarctechselflearning.cpp" line="37"/>
+        <location filename="devicesettingarctechselflearning.cpp" line="38"/>
         <source>Unitcode</source>
         <translation>Enhetskod</translation>
+    </message>
+    <message>
+        <location filename="devicesettingarctechselflearning.cpp" line="58"/>
+        <source>Randomize</source>
+        <translation type="unfinished"></translation>
+    </message>
+</context>
+<context>
+    <name>DeviceSettingGAO</name>
+    <message>
+        <location filename="devicesettinggao.cpp" line="28"/>
+        <source>Unitcode</source>
+        <translation type="unfinished"></translation>
     </message>
 </context>
 <context>
@@ -147,12 +160,12 @@
         <translation>Ta bort</translation>
     </message>
     <message>
-        <location filename="devicewidget.cpp" line="116"/>
+        <location filename="devicewidget.cpp" line="119"/>
         <source>Are you sure you want to remove the selected device?</source>
         <translation>Är du säker på att du vill ta bort den valda enheten?</translation>
     </message>
     <message>
-        <location filename="devicewidget.cpp" line="117"/>
+        <location filename="devicewidget.cpp" line="120"/>
         <source>The device will be removed permanently from this application as well as all other applications.</source>
         <translation>Enheten kommer att permanent tas bort från detta och alla andra program.</translation>
     </message>
@@ -160,42 +173,42 @@
 <context>
     <name>EditDeviceDialog</name>
     <message>
-        <location filename="editdevicedialog.cpp" line="61"/>
+        <location filename="editdevicedialog.cpp" line="62"/>
         <source>Device</source>
         <translation>Enhet</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="74"/>
+        <location filename="editdevicedialog.cpp" line="75"/>
         <source>&amp;Name:</source>
         <translation>&amp;Namn:</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="82"/>
+        <location filename="editdevicedialog.cpp" line="83"/>
         <source>Choose a device above</source>
         <translation>Välj en enhet ovan</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="88"/>
+        <location filename="editdevicedialog.cpp" line="89"/>
         <source>Addresscode</source>
         <translation>Adresskod</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="147"/>
+        <location filename="editdevicedialog.cpp" line="153"/>
         <source>You must choose a device</source>
         <translation>Du måste välja en enhet</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="148"/>
+        <location filename="editdevicedialog.cpp" line="154"/>
         <source>Please select the device you have.</source>
         <translation>Välj den enhet du har.</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="164"/>
+        <location filename="editdevicedialog.cpp" line="170"/>
         <source>The device must have a name.</source>
         <translation>Enheten måste ha ett namn.</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="165"/>
+        <location filename="editdevicedialog.cpp" line="171"/>
         <source>Please fill in a name in the field under &apos;Name&apos;</source>
         <translation>Fyll i ett namn i rutan &apos;Namn&apos;</translation>
     </message>
