@@ -27,6 +27,11 @@ public slots:
 	
 private:
 	void triggerError( int, int );
+	
+	static void deviceChangeEvent(int deviceId, int eventId, int changeType, int callbackId, void *object);
+	
+	int deviceChangeEventId;
+	
 };
 
 #endif // TELLDUSCOREOBJECT_H
