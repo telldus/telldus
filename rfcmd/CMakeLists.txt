@@ -57,11 +57,9 @@ IF (UNIX)
 			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
 			COMMENT "Generating man file rfcmd.1"
 		)
+		INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rfcmd.1 DESTINATION share/man/man1)
 	ENDIF (GENERATE_MAN)
 ENDIF (UNIX)
-
-INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rfcmd.1 DESTINATION share/man/man1)
-
 
 #### Project: find_telldus ####
 
