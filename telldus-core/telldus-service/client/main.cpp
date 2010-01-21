@@ -62,6 +62,7 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
 	Manager *manager = Manager::getInstance();
 	Message message("tdDim");
 	message.addArgument(intDeviceId);
+	message.addArgument(level);
 	return manager->send(message, &ok).toInt();
 }
 
