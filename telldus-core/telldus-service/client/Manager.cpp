@@ -115,6 +115,8 @@ void Manager::dataReceived() {
 			int intDeviceId = Message::takeFirst(&msg).toInt();
 			int intEvent = Message::takeFirst(&msg).toInt();
 			int intChange = Message::takeFirst(&msg).toInt();
+			//Clear the cache
+			d->numberOfDevices = -1;
 			for(DeviceChangeCallbackList::const_iterator callback_it = d->deviceChangeCallbacks.begin(); callback_it != d->deviceChangeCallbacks.end(); ++callback_it) {
 				(*callback_it).event(intDeviceId, intEvent, intChange, (*callback_it).id, (*callback_it).context);
 			}
