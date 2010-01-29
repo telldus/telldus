@@ -1,5 +1,6 @@
 
 #include "Message.h"
+using namespace TelldusService;
 
 /*class MesssagePrivate {
 public:

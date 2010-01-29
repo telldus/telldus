@@ -5,21 +5,22 @@
 #include <QVariant>
 
 //class MessagePrivate;
-
-class Message : public QByteArray {
-public:
-	Message();
-	Message(const QByteArray &);
-	~Message(void);
-
-	void addArgument(const QByteArray &);
-	void addArgument(int);
-	void addArgument(const QVariant &);
-	void addArgument(const char *);
-
-	static QVariant takeFirst(QByteArray *);
-
-	//MessagePrivate *d;
-};
+namespace TelldusService {
+	class Message : public QByteArray {
+	public:
+		Message();
+		Message(const QByteArray &);
+		~Message(void);
+	
+		void addArgument(const QByteArray &);
+		void addArgument(int);
+		void addArgument(const QVariant &);
+		void addArgument(const char *);
+	
+		static QVariant takeFirst(QByteArray *);
+	
+		//MessagePrivate *d;
+	};
+}
 
 #endif //MESSAGE_H

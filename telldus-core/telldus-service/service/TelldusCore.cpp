@@ -10,6 +10,8 @@
 #include <QFile>
 #include <QTime>
 
+using namespace TelldusService;
+
 class TelldusCorePrivate {
 public:
 	QLocalServer server, eventServer;

@@ -6,6 +6,8 @@
 
 #include "Manager.h"
 
+using namespace TelldusService;
+
 void WINAPI tdInit(void) {
 	Manager::getInstance(); //Create the manager-object
 }

@@ -8,6 +8,8 @@
 
 #include <QDebug>
 
+using namespace TelldusService;
+
 class ManagerPrivate {
 public:
 	QLocalSocket *s;

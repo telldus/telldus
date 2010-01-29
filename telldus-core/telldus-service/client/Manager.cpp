@@ -1,7 +1,9 @@
 
 #include <QLocalSocket>
-#include "Manager.H"
+#include "Manager.h"
 #include "Message.h"
+
+using namespace TelldusService;
 
 typedef std::list<CallbackStruct> CallbackList;
 typedef std::list<DeviceChangeCallbackStruct> DeviceChangeCallbackList;
@@ -137,6 +139,5 @@ QVariant Manager::send(const Message &message, bool *success) {
 		return retval;
 	}
 	return TELLSTICK_ERROR_UNKNOWN_RESPONSE;
-
 }
 
