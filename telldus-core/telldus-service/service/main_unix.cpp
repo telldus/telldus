@@ -3,6 +3,7 @@
 #include <QDebug>
 
 #include "TelldusCore.h"
+#include <signal.h>
 
 void shutdownHandler(int onSignal) {
 	qApp->quit();
