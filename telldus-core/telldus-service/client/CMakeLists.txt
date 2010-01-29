@@ -38,12 +38,12 @@ QT4_AUTOMOC (  ${telldus-client_SRCS} )
 
 ######## Platforms-specific, non configurable  ########
 
-SET( telldus-client_TARGET	TelldusCore )
-
 IF (APPLE) #### Mac OS X ####
+	SET( telldus-client_TARGET	TelldusCore )
 
 ELSEIF (WIN32) #### Windows ####
-#### Windows ####
+	SET( telldus-client_TARGET	TelldusCore )
+
 	SET( telldus-client_SRCS
 		${telldus-client_SRCS}
 		../../driver/libtelldus-core/libtelldus-core.def
@@ -62,6 +62,7 @@ ELSEIF (WIN32) #### Windows ####
 	)
 
 ELSE (APPLE) #### Linux ####
+	SET( telldus-client_TARGET	telldus-core )
 
 ENDIF (APPLE)
 
