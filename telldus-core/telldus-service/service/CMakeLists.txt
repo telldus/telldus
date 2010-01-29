@@ -76,7 +76,12 @@ ELSEIF (WIN32) #### Windows ####
 ELSE (APPLE) #### Linux ####
 	SET( telldus-service_SRCS
 		${telldus-service_SRCS}
+		MessageReceiver_unix.cpp
 		main_unix.cpp
+	)
+	SET( telldus-service_LIBRARIES
+		${telldus-service_LIBRARIES}
+		telldus-core-lib
 	)
 ENDIF (APPLE)
 
