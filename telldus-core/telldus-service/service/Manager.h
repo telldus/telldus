@@ -1,7 +1,7 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include "message.h"
+#include "Message.h"
 
 class ManagerPrivate;
 class QLocalSocket;
@@ -25,4 +25,4 @@ private:
 	ManagerPrivate *d;
 };
 
-#endif MANAGER_H
+#endif //MANAGER_H
