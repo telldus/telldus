@@ -112,7 +112,10 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 	((DeviceSettingArctechSelflearning *)deviceSettings[9])->setRemoteMinMax(0,4095);
 	((DeviceSettingArctechSelflearning *)deviceSettings[9])->setUnitMinMax(1,4);
 	deviceSettings[10] = new DeviceSettingGAO(device, this);
-
+	deviceSettings[11] = new DeviceSettingArctechSelflearning(device, this);
+	((DeviceSettingArctechSelflearning *)deviceSettings[11])->setRemoteMinMax(0,16383);
+	((DeviceSettingArctechSelflearning *)deviceSettings[11])->setUnitMinMax(1,4);
+	
 	foreach( DeviceSetting *s, deviceSettings ) {
 		settingsLayout->addWidget( s );
 	}
