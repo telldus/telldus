@@ -146,14 +146,24 @@ TellStickDescriptor TellStick::findByVIDPID( int vid, int pid ) {
 	
 #ifdef LIBFTDI
 	ftdi_context ftdic;
+	struct ftdi_device_list *devlist, *curdev;
+	char serialBuffer[10];
 	ftdi_init(&ftdic);
 	
-	int ret = ftdi_usb_open(&ftdic, vid, pid);
-	if (ret == 0) {
+	int ret = ftdi_usb_find_all(&ftdic, &devlist, vid, pid);
+	if (ret > 0) {
+		for (curdev = devlist; curdev != NULL; curdev = curdev->next) {
+			ret = ftdi_usb_get_strings(&ftdic, curdev->dev, NULL, 0, NULL, 0, serialBuffer, 10);
+			if (ret != 0) {
+				continue;
+			}
+			retval.serial = serialBuffer;
+			break;
+		}
 		retval.found = true;
-		ftdi_usb_close(&ftdic);
 	}
 	
+	ftdi_list_free(&devlist);
 	ftdi_deinit(&ftdic);
 #else
 	FT_HANDLE fthHandle = 0;
