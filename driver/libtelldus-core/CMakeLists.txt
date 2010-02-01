@@ -10,6 +10,7 @@ endif(COMMAND cmake_policy)
 SET( telldus-core_SRCS
 	Device.cpp
 	DeviceBrateck.cpp
+	DeviceEverflourish.cpp
 	DeviceGroup.cpp
 	DeviceIkea.cpp
 	DeviceNexa.cpp
