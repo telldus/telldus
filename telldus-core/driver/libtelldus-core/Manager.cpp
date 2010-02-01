@@ -13,6 +13,7 @@
 #include "Device.h"
 
 #include "DeviceBrateck.h"
+#include "DeviceEverflourish.h"
 #include "DeviceGroup.h"
 #include "DeviceNexa.h"
 #include "DeviceRisingSun.h"
@@ -93,6 +94,11 @@ Device *Manager::getDevice(int intDeviceId){
 		} else if (strcasecmp(protocol.c_str(), "brateck") == 0) {
 			dev = new DeviceBrateck(intDeviceId, strModel, strName);
 			((DeviceBrateck*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "house"));
+
+		} else if (strcasecmp(protocol.c_str(), "everflourish") == 0){
+			dev = new DeviceEverflourish(intDeviceId, strModel, strName);
+			((DeviceEverflourish*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "house"));
+			((DeviceEverflourish*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "unit"));
 
 		} else if (strcasecmp(protocol.c_str(), "group") == 0) {
 			dev = new DeviceGroup(intDeviceId, strModel, strName);

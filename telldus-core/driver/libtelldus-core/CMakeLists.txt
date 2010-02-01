@@ -10,6 +10,7 @@ endif(COMMAND cmake_policy)
 SET( telldus-core_SRCS
 	Device.cpp
 	DeviceBrateck.cpp
+	DeviceEverflourish.cpp
 	DeviceGroup.cpp
 	DeviceIkea.cpp
 	DeviceNexa.cpp
@@ -151,7 +152,11 @@ ELSEIF (WIN32)
 	)
 ELSE (APPLE)
 	#### Linux ####
-	SET( telldus-core_TARGET	telldus-core )
+	IF(BUILD_LIBTELLDUS-CORE_AS_SERVICE)
+		SET( telldus-core_TARGET	telldus-core-lib )
+	ELSE(BUILD_LIBTELLDUS-CORE_AS_SERVICE)
+		SET( telldus-core_TARGET	telldus-core )
+	ENDIF(BUILD_LIBTELLDUS-CORE_AS_SERVICE)
 	SET( telldus-core_SRCS
 		${telldus-core_SRCS}
 		linux/Device.cpp
