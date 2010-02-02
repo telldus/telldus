@@ -1,0 +1,38 @@
+<RCC>
+    <qresource prefix="/" >
+        <file>data/devices.xml</file>
+        <file>images/bell.png</file>
+        <file>images/devices/arctech_cs.png</file>
+        <file>images/devices/arctech_sl.png</file>
+        <file>images/devices/bell.png</file>
+        <file>images/devices/elro.png</file>
+        <file>images/devices/gao_cs.png</file>
+        <file>images/devices/koppla.png</file>
+        <file>images/devices/projectorscreen.png</file>
+        <file>images/devices/risingsun_cs.png</file>
+        <file>images/devices/sartano.png</file>
+        <file>images/devices/upm_sl.png</file>
+        <file>images/devices/waveman_cs.png</file>
+        <file>images/list-add.png</file>
+        <file>images/list-edit.png</file>
+        <file>images/list-remove.png</file>
+        <file>images/vendors/chacon.png</file>
+        <file>images/vendors/coco.png</file>
+        <file>images/vendors/elro.png</file>
+        <file>images/vendors/gao.png</file>
+        <file>images/vendors/homeeasy.png</file>
+        <file>images/vendors/ikea.png</file>
+        <file>images/vendors/intertechno.png</file>
+        <file>images/vendors/kjelloco.png</file>
+        <file>images/vendors/klikaanklikuit.png</file>
+        <file>images/vendors/nexa.png</file>
+        <file>images/vendors/proove.png</file>
+        <file>images/vendors/roxcore.png</file>
+        <file>images/vendors/sartano.png</file>
+        <file>images/vendors/upm.png</file>
+        <file>images/vendors/waveman.png</file>
+        <file>images/state_1.png</file>
+        <file>images/state_2.png</file>
+        <file>images/state_16.png</file>
+    </qresource>
+</RCC>
