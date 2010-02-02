@@ -39,7 +39,7 @@ int TelldusCoreObject::getDeviceId(int index) const {
 QString TelldusCoreObject::getName(int deviceId) const {
 	char *name = tdGetName(deviceId);
 	QString strName = QString::fromLocal8Bit(name);
-	free(name);
+	tdReleaseString(name);
 	return strName;
 }
 

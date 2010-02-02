@@ -131,7 +131,6 @@ void SystrayObject::activated( QSystemTrayIcon::ActivationReason reason ) {
 }
 
 QAction *SystrayObject::menuAction( int index ) {
-	QAction *parentItem;
 	if (index < 0) {
 		return d->menu;
 	}

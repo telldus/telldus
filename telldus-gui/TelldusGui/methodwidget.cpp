@@ -18,7 +18,7 @@ MethodWidget::MethodWidget( Device *device, QWidget *parent )
 	QHBoxLayout *layout = new QHBoxLayout(this);
 	layout->setMargin(0);
 	layout->setSpacing(0);
-
+	
 	turnOff->setIcon( QIcon(":/images/state_2.png") );
 	turnOff->setVisible( false );
 	layout->addWidget( turnOff );
@@ -26,14 +26,18 @@ MethodWidget::MethodWidget( Device *device, QWidget *parent )
 	turnOn->setIcon( QIcon(":/images/state_1.png") );
 	turnOn->setVisible( false );
 	layout->addWidget( turnOn );
-
+	
 	bell->setIcon( QIcon(":/images/bell.png") );
 	bell->setVisible( false );
 	layout->addWidget( bell );
 	
+	layout->addStretch();
+
 	learn->setText( tr("Learn") );
 	learn->setVisible( false );
 	layout->addWidget( learn );
+	
+	layout->addStretch();
 
 	connect(device, SIGNAL(methodsChanged(int)), this, SLOT(updateMethods(int)));
 	connect(turnOff, SIGNAL(clicked()), device, SLOT(turnOff()));
