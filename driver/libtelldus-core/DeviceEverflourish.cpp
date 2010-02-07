@@ -63,10 +63,10 @@ bool DeviceEverflourish::setDeviceParameter(const std::string &strName, const st
 /*
 * Turn on this device
 */
-int DeviceEverflourish::turnOn(Controller *controller){
+int DeviceEverflourish::turnOn(void){
 	try{
 		std::string strCode = getCode(ON);
-		return controller->send(strCode);
+		return Device::send(§strCode);
 	}
 	catch(...){
 		throw;
@@ -77,10 +77,10 @@ int DeviceEverflourish::turnOn(Controller *controller){
 /*
 * Turn off this device
 */
-int DeviceEverflourish::turnOff(Controller *controller){
+int DeviceEverflourish::turnOff(void){
 	try{
 		std::string strCode = getCode(OFF);
-		return controller->send(strCode);
+		return Device::send(strCode);
 	}
 	catch(...){
 		throw;
@@ -88,10 +88,10 @@ int DeviceEverflourish::turnOff(Controller *controller){
 	return TELLSTICK_ERROR_UNKNOWN;
 }
 
-int DeviceEverflourish::learn(Controller *controller){
+int DeviceEverflourish::learn(void){
 	try{
 		std::string strCode = getCode(LEARN);
-		return controller->send(strCode);
+		return Device::send(strCode);
 	}
 	catch(...){
 		throw;
