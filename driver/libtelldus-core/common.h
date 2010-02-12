@@ -13,6 +13,7 @@
 
 #endif
 #include <stdlib.h>
+#include <string.h>
 
 inline void msleep( const int msec) {
 #ifdef _WINDOWS
