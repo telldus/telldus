@@ -38,6 +38,7 @@ configure-stamp:
         -DSUPPORT_TELLSTICK_DUO=0 \
         -DSUPPORT_USB=0 \
         -DUSE_QT_SETTINGS_BACKEND=0 \
+        -DGENERATE_MAN=1 \
         -DCMAKE_INSTALL_PREFIX=/usr                 \
         -DCMAKE_BUILD_TYPE=Release \
         -DCMAKE_CXX_FLAGS="-Wl,--as-needed" \
