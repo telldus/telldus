@@ -15,7 +15,7 @@
 
 
 # shared library versions, option 1
-version=2.0.0
+version=2.0.2
 major=2
 # option 2, assuming the library is created as src/.libs/libfoo.so.2.0.5 or so
 #version=`ls src/.libs/lib*.so.* | \
