@@ -66,7 +66,7 @@ bool DeviceEverflourish::setDeviceParameter(const std::string &strName, const st
 int DeviceEverflourish::turnOn(void){
 	try{
 		std::string strCode = getCode(ON);
-		return Device::send(§strCode);
+		return Device::send(strCode);
 	}
 	catch(...){
 		throw;
