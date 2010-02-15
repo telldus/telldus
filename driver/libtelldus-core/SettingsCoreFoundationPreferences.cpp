@@ -55,7 +55,7 @@ int Settings::getNumberOfDevices(void) const {
 	int devices = 0;
 	for (CFIndex k = 0; k < size; ++k) {
 		CFStringRef key = (CFStringRef) CFArrayGetValueAtIndex(cfarray, k);
-		if (CFStringHasPrefix( key, CFSTR("device.") ) &&
+		if (CFStringHasPrefix( key, CFSTR("devices.") ) &&
 			CFStringHasSuffix( key, CFSTR(".name") ) ) {
 			devices++;
 		}
@@ -71,7 +71,7 @@ int Settings::getDeviceId(int intDeviceIndex) const {
 	int id = 0;
 	for (CFIndex k = 0; k < size; ++k) {
 		CFStringRef key = (CFStringRef) CFArrayGetValueAtIndex(cfarray, k);
-		if (CFStringHasPrefix( key, CFSTR("device.") ) &&
+		if (CFStringHasPrefix( key, CFSTR("devices.") ) &&
 			CFStringHasSuffix( key, CFSTR(".name") ) ) {
 			
 			if (index == intDeviceIndex) {			 
@@ -134,7 +134,7 @@ int Settings::getNextDeviceId() const {
 * Remove a device
 */
 bool Settings::removeDevice(int intDeviceId){
-	CFStringRef filterKey = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d."), intDeviceId); // The key to search for
+	CFStringRef filterKey = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d."), intDeviceId); // The key to search for
 
 	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, kCFPreferencesCurrentUser, kCFPreferencesAnyHost );
 	if (!cfarray) return 0;
@@ -155,9 +155,9 @@ std::string Settings::getStringSetting(int intDeviceId, const std::string &name,
 	
 	CFStringRef key;
 	if (parameter) {
-		key = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d.parameters.%@"), intDeviceId, cfname);
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d.parameters.%@"), intDeviceId, cfname);
 	} else {
-		key = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d.%@"), intDeviceId, cfname);		
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d.%@"), intDeviceId, cfname);		
 	}
 	
 	CFStringRef value;
@@ -183,9 +183,9 @@ bool Settings::setStringSetting(int intDeviceId, const std::string &name, const 
 	
 	CFStringRef key;
 	if (parameter) {
-		key = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d.parameters.%@"), intDeviceId, cfname);
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d.parameters.%@"), intDeviceId, cfname);
 	} else {
-		key = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d.%@"), intDeviceId, cfname);		
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d.%@"), intDeviceId, cfname);		
 	}
 
 	CFPreferencesSetAppValue( key, cfvalue, d->app_ID );
@@ -200,9 +200,9 @@ int Settings::getIntSetting(int intDeviceId, const std::string &name, bool param
 	
 	CFStringRef key;
 	if (parameter) {
-		key = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d.parameters.%@"), intDeviceId, cfname);
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d.parameters.%@"), intDeviceId, cfname);
 	} else {
-		key = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d.%@"), intDeviceId, cfname);		
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d.%@"), intDeviceId, cfname);		
 	}
 	
 	cfvalue = (CFNumberRef)CFPreferencesCopyAppValue(key, d->app_ID);
@@ -229,9 +229,9 @@ bool Settings::setIntSetting(int intDeviceId, const std::string &name, int value
 	
 	CFStringRef key;
 	if (parameter) {
-		key = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d.parameters.%@"), intDeviceId, cfname);
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d.parameters.%@"), intDeviceId, cfname);
 	} else {
-		key = CFStringCreateWithFormat(0, NULL, CFSTR("device.%d.%@"), intDeviceId, cfname);		
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d.%@"), intDeviceId, cfname);		
 	}
 	
 	CFPreferencesSetAppValue( key, cfvalue, d->app_ID );
