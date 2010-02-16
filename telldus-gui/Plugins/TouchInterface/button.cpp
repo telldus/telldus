@@ -21,7 +21,7 @@ Button::Button(const QRectF &rect, const QBrush &brush, QObject *parent)
 	d->buttonFace = true;
 	d->brush = brush;
 
-	d->timer = new QTimeLine(400, this);
+	d->timer = new QTimeLine(600, this);
 	d->timer->setFrameRange(0, 100);
 	connect(d->timer, SIGNAL(frameChanged(int)), this, SLOT(updateFrame(int)));
 
@@ -52,7 +52,7 @@ void Button::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 		painter->setFont(font);
 		painter->setBrush(Qt::black);
 		painter->setPen(Qt::black);
-		painter->drawText( rect().adjusted( 10, 10, -10, -10 ), d->text);
+		painter->drawText( rect().adjusted( 10, 10, -10, -10 ), flags, d->text);
 	} else {
 		painter->setPen(Qt::NoPen);
 		painter->setBrush(QColor(0, 0, 0, 128));
@@ -62,6 +62,9 @@ void Button::paint(QPainter *painter, const QStyleOptionGraphicsItem *, QWidget 
 }
 
 void Button::open( QRectF to ) {
+	if (d->timer->state() == QTimeLine::Running) {
+		return;
+	}
 	if (!d->buttonFace) {
 		return;
 	}
@@ -69,6 +72,7 @@ void Button::open( QRectF to ) {
 	d->from = scenePos();
 	this->setZValue(1);
 	d->timer->setFrameRange(0, 100);
+	d->timer->setDirection(QTimeLine::Forward);
 	d->timer->start();
 }
 
@@ -77,8 +81,10 @@ void Button::close() {
 		return;
 	}
 	this->setZValue(0);
-	d->timer->setFrameRange(100, 0);
-	d->timer->start();
+	d->timer->setDirection(QTimeLine::Backward);
+	if (d->timer->state() != QTimeLine::Running) {
+		d->timer->start();
+	}
 }
 
 void Button::setText( const QString &text ) {

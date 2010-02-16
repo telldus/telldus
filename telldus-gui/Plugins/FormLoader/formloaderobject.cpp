@@ -16,7 +16,8 @@ FormLoaderObject::FormLoaderObject( QScriptEngine *e, QObject * parent )
 FormLoaderObject::~FormLoaderObject() {
 }
 
-void FormLoaderObject::load( const QString &name ) {
+QWidget *FormLoaderObject::load( const QString &name ) {
+
 	foreach( QString path, qApp->libraryPaths() ) {
 		QDir dir(path);
 		if (!dir.cd("Forms")) {
@@ -49,9 +50,9 @@ void FormLoaderObject::load( const QString &name ) {
 		QScriptValue scriptUi = engine->newQObject(ui, QScriptEngine::ScriptOwnership);
 		QScriptValue calc = ctor.construct(QScriptValueList() << scriptUi);
 
-		ui->show();
-		return;
+		return ui;
 	}
 	qDebug() << "Form" << name << "not found!";
+	return 0;
 }
 

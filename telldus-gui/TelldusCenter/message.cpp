@@ -2,12 +2,13 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QTimer>
+#include <QDebug>
 
 Message::Message(QWidget *parent)
-		:QWidget(parent),
-		p_label( new QLabel(this) ),
-		p_timer( new QTimer(this) )
+		:QWidget(parent)
 {
+	p_label = new QLabel(this);
+	p_timer = new QTimer(this);
 	p_timer->setInterval( 3000 );
 	p_timer->setSingleShot(true);
 	connect(p_timer, SIGNAL(timeout()), this, SLOT(hideMessage()));
@@ -16,6 +17,10 @@ Message::Message(QWidget *parent)
 
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	layout->addWidget(p_label);
+}
+
+Message::~Message() {
+	qDebug() << "Why am I dying?";
 }
 
 void Message::showMessage( const QString &title, const QString &message, const QString &detailedMessage ) {

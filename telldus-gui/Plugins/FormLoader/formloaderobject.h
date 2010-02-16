@@ -3,6 +3,8 @@
 
 #include <QObject>
 
+class QWidget;
+
 class QScriptEngine;
 
 class FormLoaderObject : public QObject
@@ -13,7 +15,7 @@ public:
 	virtual ~FormLoaderObject();
 
 public slots:
-	void load( const QString &name );
+	QWidget *load( const QString &name );
 
 private:
 	QScriptEngine *engine;

@@ -30,10 +30,10 @@ MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
 {
 	d = new MainWindowPrivate;
 	d->pagesActionGroup = new QActionGroup( this );
-	d->message = new Message(this);
+	d->message = new Message();
 	connect(qApp, SIGNAL(showMessage(QString,QString,QString)), d->message, SLOT(showMessage(QString,QString,QString)));
 
-	setAttribute(Qt::WA_DeleteOnClose, true);
+	//setAttribute(Qt::WA_DeleteOnClose, true);
 
 	// Restore size and position
 	QSettings settings;

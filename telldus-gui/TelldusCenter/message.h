@@ -11,6 +11,7 @@ class Message : public QWidget
 	Q_OBJECT
 public:
 	Message( QWidget *parent = 0 );
+	virtual ~Message();
 
 public slots:
 	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
