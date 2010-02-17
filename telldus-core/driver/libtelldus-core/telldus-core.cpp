@@ -334,6 +334,13 @@ char * WINAPI tdGetName(int intDeviceId){
 	return wrapStdString(strReturn);
 }
 
+/**
+ * Sets a new name for a device. The devices are global for all application, changing 
+ * this will change the name for other applications aswell.
+ * @param intDeviceId The device id to change the name for
+ * @param strNewName The new name for the devices
+ * @returns \c true on success, \c false otherwise.
+ */
 bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
 	bool blnSuccess = false;
 	try{
@@ -350,6 +357,10 @@ bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
 	return blnSuccess;
 }
 
+/**
+ * @returns the protocol used by a specific device.
+ * @param intDeviceId The device id to query.
+ */
 char* WINAPI tdGetProtocol(int intDeviceId){
 	std::string strReturn = "";
 	try{
@@ -365,6 +376,15 @@ char* WINAPI tdGetProtocol(int intDeviceId){
 	return wrapStdString(strReturn);
 }
 
+/**
+ * This changes the current protocol used by a device. After changing the protocol,
+ * setting new parameters is required.
+ * @param intDeviceId The device to change.
+ * @param strProtocol The new protocol to use.
+ * @returns \c true on success, \c false otherwise.
+ * @sa tdSetModel()
+ * @sa tdSetDeviceParameter()
+ */
 bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
 	bool blnSuccess = false;
 	try{
@@ -378,6 +398,10 @@ bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
 	return blnSuccess;
 }
 
+/**
+ * @returns the model for a device. Not all protocols uses this.
+ * @param intDeviceId The device to query.
+ */
 char* WINAPI tdGetModel(int intDeviceId){
 	std::string strReturn = "";
 	try{
@@ -393,6 +417,13 @@ char* WINAPI tdGetModel(int intDeviceId){
 	return wrapStdString(strReturn);
 }
 
+/**
+ * Sets a new model for a device. Which model to set depends on the
+ * current protocol.
+ * @param intDeviceId The device to change
+ * @param strModel The new model
+ * @returns \c true on success, \c false otherwise.
+ */
 bool WINAPI tdSetModel(int intDeviceId, const char *strModel){
 	bool blnSuccess = false;
 	try{
@@ -409,6 +440,14 @@ bool WINAPI tdSetModel(int intDeviceId, const char *strModel){
 	return blnSuccess;
 }
 
+/**
+ * Sets a new protocol specific parameter. Please see the documentation of the protocols
+ * before setting any parameter.
+ * @param intDeviceId The device to change.
+ * @param strName The parameter to change.
+ * @param strValue The new value for the parameter.
+ * @returns \c true on success, \c false otherwise.
+ */
 bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const char *strValue){
 
 	try{
@@ -424,6 +463,12 @@ bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const cha
 	return false;
 }
 
+/**
+ * @returns any protocol specific parameter specified by \c strName
+ * @param intDeviceId The device to query.
+ * @param strName The name of the parameter to query.
+ * @param defaultValue A defaultValue to return if the current parameter hasn't previously been set.
+ */
 char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const char *defaultValue){
 	std::string strReturn = "";
 	try{
@@ -439,6 +484,12 @@ char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const c
 	return wrapStdString(strReturn);
 }
 
+/**
+ * Add a new device to the global database of devices. This function must be called first before
+ * any call to tdSetName(), tdSetProtocol() and similar functions.
+ * @returns the new device id for the newly created device. If the creation fails it returnes a 
+ * negative value.
+ */
 int WINAPI tdAddDevice(){
 	int intNewDeviceId = -1;
 	try{
@@ -452,6 +503,10 @@ int WINAPI tdAddDevice(){
 	return intNewDeviceId;
 }
 
+/**
+ * Removes a device.
+ * @returns \c true on success, \c false otherwise.
+ */
 bool WINAPI tdRemoveDevice(int intDeviceId){
 	bool blnSuccess = false;
 	try{
