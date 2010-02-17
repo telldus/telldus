@@ -46,7 +46,7 @@ bool DeviceEverflourish::setUnit(const std::string &newUnit) {
 	if (intCode < 0) {
 		intCode = 0;
 	} else if (intCode > 3) {
-		intHouse = 3;
+		intCode = 3;
 	}
 	return true;
 }
