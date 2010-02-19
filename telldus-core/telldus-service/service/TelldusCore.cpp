@@ -29,7 +29,7 @@ TelldusCore::TelldusCore(void)
 	tdInit();
 
 	connect(&d->server, SIGNAL(newConnection()), this, SLOT(newConnection()));
-#ifdef WINDOWS
+#ifdef _WINDOWS
 	d->server.listen("TelldusCoreClient");
 #else
 	d->server.listen("/tmp/TelldusCoreClient");
@@ -38,7 +38,7 @@ TelldusCore::TelldusCore(void)
 #endif
 	
 	connect(&d->eventServer, SIGNAL(newConnection()), this, SLOT(newEventConnection()));
-#ifdef WINDOWS
+#ifdef _WINDOWS
 	d->eventServer.listen("TelldusCoreEvents");
 #else
 	d->eventServer.listen("/tmp/TelldusCoreEvents");
