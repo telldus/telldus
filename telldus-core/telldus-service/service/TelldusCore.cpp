@@ -14,7 +14,8 @@ using namespace TelldusService;
 
 class TelldusCorePrivate {
 public:
-	QLocalServer server, eventServer;
+	QLocalServer eventServer;
+	Pipe server;
 	QList<QLocalSocket *> eventSockets;
 	MessageReceiver *messageReceiver;
 };
@@ -28,13 +29,11 @@ TelldusCore::TelldusCore(void)
 
 	tdInit();
 
-	connect(&d->server, SIGNAL(newConnection()), this, SLOT(newConnection()));
+	connect(&d->server, SIGNAL(newConnection(SOCKET_T)), this, SLOT(newConnection(SOCKET_T)));
 #ifdef _WINDOWS
 	d->server.listen("TelldusCoreClient");
 #else
 	d->server.listen("/tmp/TelldusCoreClient");
-	QFile socket(d->server.fullServerName());
-	socket.setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup | QFile::WriteGroup | QFile::ReadOther | QFile::WriteOther);
 #endif
 	
 	connect(&d->eventServer, SIGNAL(newConnection()), this, SLOT(newEventConnection()));
@@ -68,11 +67,11 @@ void TelldusCore::managerDone() {
 	}
 }
 
-void TelldusCore::newConnection() {
+void TelldusCore::newConnection(SOCKET_T socket) {
 	logMessage(" New normal Connection");
-	QLocalSocket *s = d->server.nextPendingConnection();
+	/*QLocalSocket *s = d->server.nextPendingConnection();
 	Manager *m = new Manager(s, this);
-	connect(m, SIGNAL(done()), this, SLOT(managerDone()));
+	connect(m, SIGNAL(done()), this, SLOT(managerDone()));*/
 }
 
 void TelldusCore::newEventConnection() {

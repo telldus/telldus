@@ -18,6 +18,7 @@ SET( telldus-service_MOC_HDRS
 	TelldusCore.h
 	Manager.h
 	MessageReceiver.h
+	Pipe.h
 )
 	
 SET( telldus-service_LIBRARIES
@@ -70,6 +71,7 @@ ELSEIF (WIN32) #### Windows ####
 	SET( telldus-service_SRCS
 		${telldus-service_SRCS}
 		MessageReceiver_win.cpp
+		Pipe_win.cpp
 		main_win.cpp
 	)
 

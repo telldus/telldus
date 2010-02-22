@@ -1,6 +1,7 @@
 
 #include <QtCore/QCoreApplication>
 #include <QDebug>
+#include <QFile>
 #include "qtservice.h"
 
 #include "TelldusCore.h"
@@ -35,6 +36,10 @@ TelldusService::~TelldusService()
 
 void TelldusService::start() {
 	QCoreApplication *app = application();
+
+	QFile file("C:/log.txt");
+	file.open(QIODevice::Text | QIODevice::WriteOnly);
+	file.close();
 
 	tc = new TelldusCore();
 

@@ -2,6 +2,7 @@
 #define TELLDUS_CORE_H
 
 #include <QObject>
+#include "Pipe.h"
 #include <libtelldus-core/telldus-core-service.h>
 
 class TelldusCorePrivate;
@@ -17,7 +18,7 @@ public:
 	static void logWinError( int errorNo);
 
 private slots:
-	void newConnection();
+	void newConnection(SOCKET_T socket);
 	void newEventConnection();
 	void disconnected();
 	void deviceEventSlot(int, int, const char *);
