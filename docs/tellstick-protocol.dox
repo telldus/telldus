@@ -30,10 +30,6 @@
  *
  * \section Commands
  *
- * \subsection sec_bootloader B - Bootloader
- * This command makes the TellStick go into the bootloader.
- * Not all devices supports this.
- *
  * \subsection sec_send S - Send command
  * This command tells TellStick to send a command. The parameters to this
  * command is the data-packet to send.
