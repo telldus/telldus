@@ -106,6 +106,24 @@
  * When you know which features a device supports it is safe to call the
  * controlling functions described in \ref sec_bu_controlling_functions.
  *
+ * When calling tdMethods() all of the supported methods should be passed in one
+ * call. Do not call tdMethods() for each of the supported methods. Look at the
+ * following example:
+ * \code
+ * //Correct
+ * int methods = tdMethods( id, TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL );
+ *
+ * //Wrong
+ * int turnOn = tdMethods( id, TELLSTICK_TURNON );
+ * int turnOff = tdMethods( id, TELLSTICK_TURNOFF );
+ * int bell = tdMethods( id, TELLSTICK_BELL );
+ * \endcode
+ *
+ * Another thing to note is if you are developing a library intended for
+ * thirdparty use. You should not hardcode which methods are supported by the
+ * library. It is always up to the application implementing the methods to
+ * supply the methods it supports.
+ *
  * \subsubsection sec_bu_controlling_functions Controlling functions
  *
  * TellStick has a couple of functions for controlling devices. Each of
