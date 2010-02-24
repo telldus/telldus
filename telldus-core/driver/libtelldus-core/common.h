@@ -24,12 +24,11 @@ inline void msleep( const int msec) {
 }
 
 inline char *wrapStdString( const std::string &string) {
-	char *returnVal;
 #ifdef _WINDOWS
-	returnVal = (char *)SysAllocStringByteLen(string.c_str(), string.size());
+	return (char *)SysAllocStringByteLen(string.c_str(), (unsigned int)string.size());
 #else
-	returnVal = (char *)malloc(sizeof(char) * (string.size()+1));
+	char *returnVal = (char *)malloc(sizeof(char) * (string.size()+1));
 	strcpy(returnVal, string.c_str());
-#endif
 	return returnVal;
+#endif
 }
