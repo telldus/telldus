@@ -33,13 +33,13 @@ Device::Device(int id)
 	if (d->id > 0) {
 		char *name = tdGetName(id);
 		d->name = QString::fromLocal8Bit( name );
-		free( name );
+		tdReleaseString( name );
 
 		d->model = tdGetModel(id);
 
 		char *protocol = tdGetProtocol(id);
 		d->protocol = QString::fromLocal8Bit( protocol );
-		free( protocol );
+		tdReleaseString( protocol );
 
 		updateState();
 	}
@@ -84,7 +84,7 @@ QString Device::parameter( const QString &name, const QString &defaultValue ) co
 	if (!d->settings.contains(name)) {
 		char *p = tdGetDeviceParameter(d->id, name.toLocal8Bit(), defaultValue.toLocal8Bit());
 		d->settings[name] = p;
-		free(p);
+		tdReleaseString(p);
 	}
 	return d->settings[name];
 }
@@ -209,7 +209,7 @@ void Device::updateState() {
 	int lastSentCommand = tdLastSentCommand( d->id, SUPPORTED_METHODS );
 	char *value = tdLastSentValue( d->id );
 	QString stateValue = QString::fromLocal8Bit( value );
-	free(value);
+	tdReleaseString(value);
 	
 	if (lastSentCommand != d->state || stateValue != d->stateValue) {
 		d->state = lastSentCommand;
@@ -229,7 +229,7 @@ void Device::deviceChangedSlot(int deviceId, int eventId, int changeType) {
 			}
 			char *name = tdGetName(d->id);
 			d->name = QString::fromLocal8Bit( name );
-			free( name );
+			tdReleaseString( name );
 			break;			
 	}
 }
@@ -241,7 +241,7 @@ void Device::triggerEvent( int messageId ) {
 	} else {
 		char *message = tdGetErrorString( messageId );
 		emit showMessage( "", message, "" );
-		free( message );
+		tdReleaseString( message );
 	}
 }
 
