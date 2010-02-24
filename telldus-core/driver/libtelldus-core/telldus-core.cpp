@@ -116,7 +116,11 @@ void WINAPI tdClose(void) {
  * It should be called on the returned value from all functions return <tt>char *</tt>
  **/
 void WINAPI tdReleaseString(char *string) {
+#ifdef _WINDOWS
+	SysFreeString((BSTR)string);
+#else
 	free(string);
+#endif
 }
 
 

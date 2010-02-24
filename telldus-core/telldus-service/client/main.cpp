@@ -32,7 +32,11 @@ void WINAPI tdClose(void) {
 }
 
 void WINAPI tdReleaseString(char *string) {
+#ifdef _WINDOWS
+	SysFreeString((BSTR)string);
+#else
 	free(string);
+#endif
 }
 
 int WINAPI tdTurnOn(int intDeviceId){
