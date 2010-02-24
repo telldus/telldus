@@ -72,6 +72,7 @@ ELSEIF (WIN32) #### Windows ####
 		${telldus-service_SRCS}
 		MessageReceiver_win.cpp
 		Pipe_win.cpp
+		Socket_win.cpp
 		main_win.cpp
 	)
 

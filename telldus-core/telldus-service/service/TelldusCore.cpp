@@ -29,7 +29,11 @@ TelldusCore::TelldusCore(void)
 
 	tdInit();
 
-	connect(&d->server, SIGNAL(newConnection(SOCKET_T)), this, SLOT(newConnection(SOCKET_T)));
+	if (connect(&d->server, SIGNAL(newConnection(Socket *)), this, SLOT(newConnection(Socket *)))) {
+		logMessage("Connected signal");
+	} else {
+		logMessage("Could not connect signal");
+	}
 #ifdef _WINDOWS
 	d->server.listen("TelldusCoreClient");
 #else
@@ -67,11 +71,11 @@ void TelldusCore::managerDone() {
 	}
 }
 
-void TelldusCore::newConnection(SOCKET_T socket) {
+void TelldusCore::newConnection(Socket *socket) {
 	logMessage(" New normal Connection");
-	/*QLocalSocket *s = d->server.nextPendingConnection();
-	Manager *m = new Manager(s, this);
-	connect(m, SIGNAL(done()), this, SLOT(managerDone()));*/
+	//QLocalSocket *s = d->server.nextPendingConnection();
+	Manager *m = new Manager(socket, this);
+	connect(m, SIGNAL(done()), this, SLOT(managerDone()));
 }
 
 void TelldusCore::newEventConnection() {

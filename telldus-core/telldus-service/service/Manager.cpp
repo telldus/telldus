@@ -1,8 +1,8 @@
-
 #include <QLocalSocket>
 #include <libtelldus-core/telldus-core.h>
 #include "Manager.h"
 #include "Message.h"
+#include "Socket.h"
 
 #include "TelldusCore.h"
 
@@ -12,24 +12,35 @@ using namespace TelldusService;
 
 class ManagerPrivate {
 public:
-	QLocalSocket *s;
+	Socket *s;
+	bool running;
 };
 
-Manager::Manager(QLocalSocket *s, QObject *parent)
-	:QObject(parent)
+Manager::Manager(Socket *s, QObject *parent)
+	:QThread(parent)
 {
 	//connect(this, SIGNAL(send(const Message &)), this, SLOT(sendMessage()));
 	d = new ManagerPrivate;
 	d->s = s;
-	connect(d->s, SIGNAL(disconnected()), this, SIGNAL(done()));
-	connect(d->s, SIGNAL(readyRead()), this, SLOT(dataArrived()));
+	d->running = true;
+	connect(this, SIGNAL(finished()), this, SIGNAL(done()));
+//	connect(d->s, SIGNAL(dataArrived(const QByteArray &)), this, SLOT(dataArrived(const QByteArray &)));
 	TelldusCore::logMessage("  Manager created");
+	this->start();
 }
 
 Manager::~Manager(void) {
+	TelldusCore::logMessage("  Destroying Manager");
+	delete d->s;
 	delete d;
 	TelldusCore::logMessage("  Manager destroyed");
 }
+
+/*void Manager::run() {
+	while(1) {
+		TelldusCore::logMessage(d->s->readLine());
+	}
+}*/
 
 QVariant Manager::parseMessage(const QByteArray &message) {
 	QByteArray msg = message; //Copy
@@ -158,10 +169,20 @@ QVariant Manager::parseMessage(const QByteArray &message) {
 	return 0;
 }
 
-void Manager::dataArrived() {
-	QVariant response(this->parseMessage(d->s->readLine()));
-	Message msg;
-	msg.addArgument(response);
-	msg.append("\n");
-	d->s->write(msg);
+void Manager::run() {
+	while(1) {
+		QByteArray data(d->s->read());
+		if (data.length() == 0) {
+			if (!d->s->connected()) {
+				return;
+			}
+			continue;
+		}
+		TelldusCore::logMessage(QString(data));
+		QVariant response(this->parseMessage(data));
+		Message msg;
+		msg.addArgument(response);
+		msg.append("\n");
+		d->s->write(msg);
+	}
 }

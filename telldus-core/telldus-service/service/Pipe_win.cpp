@@ -1,4 +1,5 @@
 #include "Pipe.h"
+#include "Socket.h"
 #include "TelldusCore.h"
 
 #include <windows.h>
@@ -6,8 +7,6 @@
 #include <Aclapi.h>
 
 //using namespace TelldusService;
-#define BUFSIZE 512
-
 
 class PipePrivate {
 public:
@@ -126,7 +125,7 @@ void Pipe::run() {
 			continue;
 		}
 		TelldusCore::logMessage("Connected");
-		emit newConnection(d->hPipe);
+		emit newConnection(new Socket(d->hPipe));
 	}
 	LocalFree(pSD);
 	FreeSid(pEveryoneSID);

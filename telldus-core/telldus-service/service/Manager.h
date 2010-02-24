@@ -2,24 +2,23 @@
 #define MANAGER_H
 
 #include "Message.h"
+#include <QThread>
 
 class ManagerPrivate;
-class QLocalSocket;
+class Socket;
 
-class Manager : public QObject {
+class Manager : public QThread {
 	Q_OBJECT
 public:
-	Manager(QLocalSocket *s, QObject *parent);
+	Manager(Socket *s, QObject *parent);
 	~Manager(void);
 
 protected:
 	QVariant parseMessage(const QByteArray &message);
+	void run();
 
 signals:
 	void done();
-
-private slots:
-	void dataArrived();
 	
 private:
 	ManagerPrivate *d;

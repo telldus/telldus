@@ -3,11 +3,7 @@
 
 #include <QThread>
 class PipePrivate;
-
-#ifdef _WINDOWS
-	#include <windows.h>
-	typedef HANDLE SOCKET_T;
-#endif
+class Socket;
 
 class Pipe : public QThread {
 	Q_OBJECT
@@ -18,7 +14,7 @@ public:
 	void listen(const QString &name);
 
 signals:
-	void newConnection(SOCKET_T socket);
+	void newConnection(Socket *);
 	
 protected:
 	void run();

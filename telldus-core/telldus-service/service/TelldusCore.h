@@ -6,6 +6,7 @@
 #include <libtelldus-core/telldus-core-service.h>
 
 class TelldusCorePrivate;
+class Socket;
 
 class TelldusCore :	public QObject {
 	Q_OBJECT
@@ -18,7 +19,7 @@ public:
 	static void logWinError( int errorNo);
 
 private slots:
-	void newConnection(SOCKET_T socket);
+	void newConnection(Socket *);
 	void newEventConnection();
 	void disconnected();
 	void deviceEventSlot(int, int, const char *);
