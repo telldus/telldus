@@ -18,14 +18,16 @@ public:
 	static void logMessage( int message);
 	static void logWinError( int errorNo);
 
+public slots:
+	void deviceInserted(int, int, const QString &);
+	void deviceRemoved(int, int, const QString &);
+
 private slots:
 	void newConnection(Socket *);
 	void newEventConnection();
 	void disconnected();
 	void deviceEventSlot(int, int, const char *);
 	void deviceChangeEventSlot(int, int, int);
-	void deviceInserted(int, int, const QString &);
-	void deviceRemoved(int, int, const QString &);
 	void managerDone();
 
 signals:
