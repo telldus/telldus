@@ -19,6 +19,7 @@ SET( telldus-service_MOC_HDRS
 	Manager.h
 	MessageReceiver.h
 	Pipe.h
+	Socket.h
 )
 	
 SET( telldus-service_LIBRARIES

@@ -31,9 +31,14 @@ Socket::~Socket(void) {
 void Socket::write(const TelldusService::Message &msg) {
 	DWORD bytesWritten = 0;
 	TelldusCore::logMessage(QString("Sending: %1").arg(QString(msg)));
-	WriteFile(d->hPipe, msg.data(), msg.length(), &bytesWritten, NULL);
-	TelldusCore::logMessage(QString("Done sending"));
-	FlushFileBuffers(d->hPipe);
+	if (WriteFile(d->hPipe, msg.data(), msg.length(), &bytesWritten, NULL)) {
+		TelldusCore::logMessage(QString("Done sending"));
+		FlushFileBuffers(d->hPipe);
+	} else {
+		TelldusCore::logMessage("Pipe disconnected");
+		d->connected = false;
+		emit disconnected();
+	}
 }
 
 QByteArray Socket::read() {
@@ -69,6 +74,7 @@ QByteArray Socket::read() {
 		}
 		TelldusCore::logMessage(QString("= Failed read %1").arg(GetLastError()));
 		d->connected = false;
+		emit disconnected();
 	}
 	return "";
 }

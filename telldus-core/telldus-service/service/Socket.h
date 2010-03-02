@@ -11,7 +11,8 @@ class SocketPrivate;
 #endif
 
 
-class Socket {
+class Socket : public QObject {
+	Q_OBJECT
 public:
 	Socket(SOCKET_T socket);
 	~Socket(void);
@@ -20,6 +21,9 @@ public:
 	QByteArray read();
 
 	bool connected() const;
+
+signals:
+	void disconnected();
 
 private:
 	SocketPrivate *d;
