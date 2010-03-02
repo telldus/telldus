@@ -326,3 +326,39 @@ void TelldusCore::TellStick::setBaud(int baud) {
 TellStickHandle TelldusCore::TellStick::handle() const {
 	return d->ftHandle;
 }
+
+bool TelldusCore::TellStick::stillConnected() const {
+	std::string serial = this->serial();
+#ifdef LIBFTDI
+#error TelldusCore::TellStick::stillConnected() has not yet been implemented on this platform
+#else
+	FT_STATUS ftStatus;
+	DWORD numDevs;
+	// create the device information list
+	ftStatus = FT_CreateDeviceInfoList(&numDevs);
+	if (ftStatus != FT_OK) {
+		return false;
+	}
+	if (numDevs <= 0) {
+		return false;
+	}
+	for (int i = 0; i < (int)numDevs; i++) {
+		FT_HANDLE ftHandleTemp;
+		DWORD flags;
+		DWORD id;
+		DWORD type;
+		DWORD locId;
+		char serialNumber[16];
+		char description[64];
+		// get information for device 0
+		ftStatus = FT_GetDeviceInfoDetail(i, &flags, &type, &id, &locId, serialNumber, description, &ftHandleTemp);
+		if (ftStatus != FT_OK) {
+			continue;
+		}
+		if (serial.compare(serialNumber) == 0) {
+			return true;
+		}
+	}
+#endif
+	return false;
+}
