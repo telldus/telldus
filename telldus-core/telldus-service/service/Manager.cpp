@@ -36,12 +36,6 @@ Manager::~Manager(void) {
 	TelldusCore::logMessage("  Manager destroyed");
 }
 
-/*void Manager::run() {
-	while(1) {
-		TelldusCore::logMessage(d->s->readLine());
-	}
-}*/
-
 QVariant Manager::parseMessage(const QByteArray &message) {
 	QByteArray msg = message; //Copy
 	QVariant function(Message::takeFirst(&msg));
