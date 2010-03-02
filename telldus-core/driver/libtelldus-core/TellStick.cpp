@@ -98,19 +98,30 @@ bool TellStick::open() const {
 	return d->open;
 }
 
-TellStick *TellStick::findFirstDevice() {
-	//TellStick
-	TellStickDescriptor d = findByVIDPID(0x1781, 0x0C30);
+TellStick *TellStick::findFirstDevice(int vid, int pid) {
+	TellStick *tellstick = 0;
+
+	if (vid == 0 && pid == 0) {
+		tellstick = findFirstDevice(0x1781, 0x0C30);
+		if (tellstick) {
+			return tellstick;
+		}
+#ifdef TELLSTICK_DUO
+		tellstick = findFirstDevice(0x1781, 0x0C31);
+#endif
+		return tellstick;
+
+	}
+
+	TellStickDescriptor d = findByVIDPID(vid, pid);
 	if (d.found) {
+#ifdef TELLSTICK_DUO
+		if (pid == 0x0C31) {
+			return new TellStickDuo(d);
+		}
+#endif
 		return new TellStick(d);
 	}
-#ifdef TELLSTICK_DUO
-	//TellStick Duo
-	d = findByVIDPID(0x1781, 0x0C31);
-	if (d.found) {
-		return new TellStickDuo(d);
-	}
-#endif
 	return 0;
 }
 
@@ -118,18 +129,27 @@ TellStick *TellStick::loadBy(int vid, int pid, const std::string &serial) {
 	if (vid != 0x1781) {
 		return 0;
 	}
-	TellStickDescriptor d;
-	d.vid = vid;
-	d.pid = pid;
-	d.serial = serial;
 
 	TellStick *tellstick = 0;
-	if (pid == 0x0C30) {
-		 tellstick = new TellStick(d);
+
+	if (serial.length() == 0) {
+		tellstick = TellStick::findFirstDevice();
+	} else {
+		TellStickDescriptor d;
+		d.vid = vid;
+		d.pid = pid;
+		d.serial = serial;
+
+		if (pid == 0x0C30) {
+			tellstick = new TellStick(d);
 #ifdef TELLSTICK_DUO
-	} else if (pid == 0x0C31) {
-		tellstick = new TellStickDuo(d);
+		} else if (pid == 0x0C31) {
+			tellstick = new TellStickDuo(d);
 #endif
+		}
+	}
+	if (!tellstick) {
+		return 0;
 	}
 	if (tellstick->open()) {
 		return tellstick;
