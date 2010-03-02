@@ -24,7 +24,7 @@ public slots:
 
 private slots:
 	void newConnection(Socket *);
-	void newEventConnection();
+	void newEventConnection(Socket *);
 	void disconnected();
 	void deviceEventSlot(int, int, const char *);
 	void deviceChangeEventSlot(int, int, int);

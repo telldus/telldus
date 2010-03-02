@@ -2,6 +2,7 @@
 #include "Manager.h"
 #include "Message.h"
 #include "MessageReceiver.h"
+#include "Socket.h"
 #include <QLocalServer>
 #include <QLocalSocket>
 
@@ -14,9 +15,8 @@ using namespace TelldusService;
 
 class TelldusCorePrivate {
 public:
-	QLocalServer eventServer;
-	Pipe server;
-	QList<QLocalSocket *> eventSockets;
+	Pipe server, eventServer;
+	QList<Socket *> eventSockets;
 	MessageReceiver *messageReceiver;
 };
 
@@ -32,19 +32,14 @@ TelldusCore::TelldusCore(void)
 	connect(&d->server, SIGNAL(newConnection(Socket *)), this, SLOT(newConnection(Socket *)));
 	d->server.listen("TelldusCoreClient");
 	
-	/*
-	connect(&d->eventServer, SIGNAL(newConnection()), this, SLOT(newEventConnection()));
-#ifdef _WINDOWS
+	connect(&d->eventServer, SIGNAL(newConnection(Socket *)), this, SLOT(newEventConnection(Socket *)));
 	d->eventServer.listen("TelldusCoreEvents");
-#else
-	d->eventServer.listen("/tmp/TelldusCoreEvents");
-	QFile eventSocket(d->eventServer.fullServerName());
-	eventSocket.setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup | QFile::WriteGroup | QFile::ReadOther | QFile::WriteOther);
-#endif
-	*/
+
+#ifndef _WINDOWS //Handled differently on Windows
 	d->messageReceiver = new MessageReceiver(this);
 	connect(d->messageReceiver, SIGNAL(deviceInserted(int,int,const QString &)), this, SLOT(deviceInserted(int,int,const QString &)));
 	connect(d->messageReceiver, SIGNAL(deviceRemoved(int,int,const QString &)), this, SLOT(deviceRemoved(int,int,const QString &)));
+#endif
 
 	tdRegisterDeviceEvent( reinterpret_cast<TDDeviceEvent>(&deviceEvent), this);
 	tdRegisterDeviceChangeEvent(reinterpret_cast<TDDeviceChangeEvent>(&deviceChangeEvent), this);
@@ -71,16 +66,17 @@ void TelldusCore::newConnection(Socket *socket) {
 	connect(m, SIGNAL(done()), this, SLOT(managerDone()));
 }
 
-void TelldusCore::newEventConnection() {
+void TelldusCore::newEventConnection(Socket *socket) {
 	logMessage(" New eventConnection");
-	QLocalSocket *s = d->eventServer.nextPendingConnection();
-	connect(s, SIGNAL(disconnected()), this, SLOT(disconnected()));
-	d->eventSockets.append(s);
+//	QLocalSocket *s = d->eventServer.nextPendingConnection();
+	connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected()));
+	d->eventSockets.append(socket);
 }
 
 void TelldusCore::disconnected() {
 	logMessage(" Event disconnection");
-	QLocalSocket *s = qobject_cast<QLocalSocket *>(sender());
+	Socket *s = qobject_cast<Socket *>(sender());
+//	Socket *s = reinterpret_cast<Socket *>(sender());
 	if (s) {
 		d->eventSockets.removeOne(s);
 		//if (d->eventServer.isListening()) {
@@ -116,7 +112,7 @@ void TelldusCore::deviceEventSlot(int deviceId, int method, const char *data) {
 	msg.addArgument(deviceId);
 	msg.addArgument(method);
 	msg.addArgument(data);
-	foreach(QLocalSocket *s, d->eventSockets) {
+	foreach(Socket *s, d->eventSockets) {
 		logMessage(" Sending deviceEvent");
 		s->write(msg);
 	}
@@ -127,7 +123,7 @@ void TelldusCore::deviceChangeEventSlot(int deviceId, int eventId, int changeTyp
 	msg.addArgument(deviceId);
 	msg.addArgument(eventId);
 	msg.addArgument(changeType);
-	foreach(QLocalSocket *s, d->eventSockets) {
+	foreach(Socket *s, d->eventSockets) {
 		s->write(msg);
 	}
 }
