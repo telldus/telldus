@@ -290,20 +290,40 @@ bool TelldusCore::Manager::removeDevice(int intDeviceId) {
 }
 
 void TelldusCore::Manager::connectTellStickController(int vid, int pid, const std::string &serial) {
-	//First check that it is not already loaded
-	int id = findTellStickController(vid, pid, serial);
-	if (id != 0) {
-		return;
+	if (serial.length() > 0) { //If we specify which TellStick to connect
+		//First check that it is not already loaded
+		int id = findTellStickController(vid, pid, serial);
+		if (id != 0) {
+			return;
+		}
 	}
 	TellStick *tellstick = TellStick::loadBy(vid, pid, serial);
 	if (!tellstick) {
 		return;
 	}
-	lastControllerId--;
+	lastControllerId--; //Negative since preconfigured controllers should have positive ids
 	controllers[lastControllerId] = tellstick;
 }
 
 void TelldusCore::Manager::disconnectTellStickController(int vid, int pid, const std::string &serial) {
+	if (serial == "") {
+		//We must loop all devices to see if they are still connected
+		for(ControllerMap::iterator it = controllers.begin(); it != controllers.end(); ++it) {
+			TellStick *tellstick = reinterpret_cast<TellStick *>(it->second);
+			if (!tellstick) { //No TellStick controller
+				continue;
+			}
+			if (tellstick->vid() != vid || tellstick->pid() != pid) {
+				continue;
+			}
+			if (!tellstick->stillConnected()) {
+				controllers.erase(it);
+				delete tellstick;
+				return;
+			}
+		}
+		return;
+	}
 	int id = findTellStickController(vid, pid, serial);
 	if (id == 0) {
 		return;
@@ -383,8 +403,26 @@ void TelldusCore::Manager::loadControllers() {
 	if (controllers.size()) {
 		return;
 	}
-	Controller *controller = TellStick::findFirstDevice();
-	if (controller) {
+	while(1) {
+		TellStick *controller = TellStick::findFirstDevice();
+		if (!controller) {
+			break; //All TellStick loaded
+		}
+		//Make sure this isn't already loaded
+		bool found = false;
+		for(ControllerMap::iterator it = controllers.begin(); it != controllers.end(); ++it) {
+			TellStick *tellstick = reinterpret_cast<TellStick *>(it->second);
+			if (!tellstick) { //No TellStick controller
+				continue;
+			}
+			if (tellstick->serial().compare(controller->serial()) == 0) { //Found a duplicate
+				found = true;
+				break;
+			}
+		}
+		if (found) {
+			break;
+		}
 		lastControllerId--;
 		controllers[lastControllerId] = controller;
 	}
