@@ -29,17 +29,10 @@ TelldusCore::TelldusCore(void)
 
 	tdInit();
 
-	if (connect(&d->server, SIGNAL(newConnection(Socket *)), this, SLOT(newConnection(Socket *)))) {
-		logMessage("Connected signal");
-	} else {
-		logMessage("Could not connect signal");
-	}
-#ifdef _WINDOWS
+	connect(&d->server, SIGNAL(newConnection(Socket *)), this, SLOT(newConnection(Socket *)));
 	d->server.listen("TelldusCoreClient");
-#else
-	d->server.listen("/tmp/TelldusCoreClient");
-#endif
 	
+	/*
 	connect(&d->eventServer, SIGNAL(newConnection()), this, SLOT(newEventConnection()));
 #ifdef _WINDOWS
 	d->eventServer.listen("TelldusCoreEvents");
@@ -48,7 +41,7 @@ TelldusCore::TelldusCore(void)
 	QFile eventSocket(d->eventServer.fullServerName());
 	eventSocket.setPermissions(QFile::ReadOwner | QFile::WriteOwner | QFile::ReadGroup | QFile::WriteGroup | QFile::ReadOther | QFile::WriteOther);
 #endif
-	
+	*/
 	d->messageReceiver = new MessageReceiver(this);
 	connect(d->messageReceiver, SIGNAL(deviceInserted(int,int,const QString &)), this, SLOT(deviceInserted(int,int,const QString &)));
 	connect(d->messageReceiver, SIGNAL(deviceRemoved(int,int,const QString &)), this, SLOT(deviceRemoved(int,int,const QString &)));
