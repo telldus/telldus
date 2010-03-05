@@ -74,7 +74,7 @@ DWORD WINAPI TelldusService::serviceControlHandler( DWORD controlCode, DWORD dwE
 			TelldusCore::logMessage(QString::fromWCharArray(pDevInf->dbcc_name));
 
 			//QRegExp rx("USB#VID_([0-9A-Fa-f]+)&PID_([0-9A-Fa-f]+)#(\\.+)#");
-			QRegExp rx("USB#VID_([0-9A-Fa-f]+)&PID_([0-9A-Fa-f]+)");
+			QRegExp rx("USB#VID_([0-9A-Fa-f]+)&PID_([0-9A-Fa-f]+)", Qt::CaseInsensitive);
 			if (rx.indexIn(QString::fromWCharArray(pDevInf->dbcc_name)) < 0) {
 				TelldusCore::logMessage("No match");
 				return 0;
