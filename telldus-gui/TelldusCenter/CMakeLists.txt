@@ -46,6 +46,8 @@ SET( telldus-center_LIBRARIES
 	${QT_LIBRARIES}
 )
 
+ADD_DEFINITIONS( -DVERSION="${DISPLAYED_VERSION}" )
+
 ######## Configurable options for the platform  ########
 
 

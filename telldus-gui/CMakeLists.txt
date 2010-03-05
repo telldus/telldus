@@ -6,8 +6,9 @@ if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
 
-SET(PACKAGE_VERSION 2)
-SET(PACKAGE_SOVERSION 2.0.0)
+SET(PACKAGE_VERSION 2.0.900)
+SET(PACKAGE_SOVERSION 2)
+SET(DISPLAYED_VERSION ${PACKAGE_VERSION})
 
 SET(UPDATE_TRANSLATIONS FALSE CACHE BOOL "Update source translation files (WARNING: make clean will delete the source .ts files! Danger!)")
 SET(LANGUAGES sv)

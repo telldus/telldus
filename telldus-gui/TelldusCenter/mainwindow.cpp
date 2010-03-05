@@ -16,6 +16,9 @@
 #include "message.h"
 #include "plugintree.h"
 
+#define VERSION_STRING_HELPER(X) #X
+#define VERSION_STRING(X) VERSION_STRING_HELPER(X)
+
 class MainWindowPrivate {
 public:
 	QToolBar *pagesBar;
@@ -123,8 +126,8 @@ void MainWindow::addWidget( const QString &page, const QIcon &icon, QWidget *wid
 
 void MainWindow::slotAboutApplication() {
 	QMessageBox::about(this, tr("About Telldus Center"),
-					   tr("<center><img src=':/images/TelldusCenter_128.png' width=128 height=128 /><h2>Telldus Center 2.0.1</h2>"
-						  "<p>Copyright &copy; 2009 Telldus Technologies AB<p></center>"));
+					   tr("<center><img src=':/images/TelldusCenter_128.png' width=128 height=128 /><h2>Telldus Center %1</h2>"
+						  "<p>Copyright &copy; 2010 Telldus Technologies AB<p></center>").arg(VERSION_STRING(VERSION)));
 }
 
 void MainWindow::slotPagesClick() {
