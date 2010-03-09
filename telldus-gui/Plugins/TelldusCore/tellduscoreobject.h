@@ -20,6 +20,8 @@ public slots:
 	QString getName( int deviceId ) const;
 	int getNumberOfDevices() const;
 	int getDeviceId( int index ) const;
+	int lastSentCommand( int deviceId, int methodsSupported );
+	QString lastSentValue( int deviceId );
 	int methods( int deviceId, int methodsSupported );
 	
 	int turnOn( int deviceId );

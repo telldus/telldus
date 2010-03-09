@@ -44,6 +44,17 @@ QString TelldusCoreObject::getName(int deviceId) const {
 	return strName;
 }
 
+int TelldusCoreObject::lastSentCommand( int deviceId, int methodsSupported ) {
+	return tdLastSentCommand(deviceId, methodsSupported);
+}
+
+QString TelldusCoreObject::lastSentValue( int deviceId ) {
+	char *value = tdLastSentValue(deviceId);
+	QString strValue = QString::fromLocal8Bit(value);
+	tdReleaseString(value);
+	return strValue;
+}
+
 int TelldusCoreObject::methods(int deviceId, int methodsSupported) {
 	return tdMethods( deviceId, methodsSupported );
 }
