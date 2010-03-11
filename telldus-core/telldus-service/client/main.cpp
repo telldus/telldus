@@ -231,6 +231,7 @@ bool WINAPI tdRemoveDevice(int intDeviceId) {
 	bool ok;
 	Manager *manager = Manager::getInstance();
 	Message message("tdRemoveDevice");
+	message.addArgument(intDeviceId);
 	return manager->send(message, &ok).toBool();
 }
 
