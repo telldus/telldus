@@ -313,8 +313,12 @@ bool TelldusCore::Manager::removeDevice(int intDeviceId) {
 		devices.erase(iterator);
 		delete dev;
 	}
-	
-	return settings.removeDevice(intDeviceId);
+
+	bool ok = settings.removeDevice(intDeviceId);
+	if (ok) {
+		emitDeviceChange(intDeviceId, TELLSTICK_DEVICE_REMOVED, 0);
+	}
+	return ok;
 }
 
 void TelldusCore::Manager::connectTellStickController(int vid, int pid, const std::string &serial) {
