@@ -14,6 +14,42 @@ com.telldus.xpl.lighting = function() {
 		msg.setMessageSchemeIdentifier("lighting.gateway");
 		msg.addBodyItem("report", "gateway-ready");
 		instance.sendMessage(msg);
+		com.telldus.core.deviceChange.connect(deviceChangeEvent);
+		com.telldus.core.deviceEvent.connect(deviceEvent);
+	}
+
+	function deviceChangeEvent( deviceId, eventType ) {
+		var msg = new xPLMessage(xPLMessage.xpltrig);
+		msg.setMessageSchemeIdentifier("lighting.gateway");
+		msg.addBodyItem("report", "gateway-changed");
+		instance.sendMessage(msg);
+	}
+
+	function deviceEvent(deviceId, method, data) {
+		var msg = new xPLMessage(xPLMessage.xpltrig);
+		msg.setMessageSchemeIdentifier("lighting.device");
+		msg.addBodyItem("network", "1");
+		msg.addBodyItem("device", deviceId);
+		msg.addBodyItem("channel", "1");
+		var level = 0;
+		if (method == com.telldus.core.TELLSTICK_TURNOFF) {
+			msg.addBodyItem("state", "off");
+		} else {
+			//Even a dimmed device is considered on
+			msg.addBodyItem("state", "on");
+			level = 100;
+			if (method == com.telldus.core.TELLSTICK_DIM) {
+				level = parseFloat(data);
+				level = Math.round(level / 255.0 * 100.0);
+				if (level > 100) {
+					level = 100;
+				} else if (level < 0) {
+					level = 0;
+				}
+			}
+		}
+		msg.addBodyItem("level", level);
+		instance.sendMessage(msg);
 	}
 
 	function handleLightingRequest(msg) {
@@ -48,15 +84,8 @@ com.telldus.xpl.lighting = function() {
 		}
 
 		var deviceId = msg.bodyItem("device")
-		var deviceCount = com.telldus.core.getNumberOfDevices();
-		var found = false;
-		for( var i = 0; i < deviceCount; ++i ) {
-			if (com.telldus.core.getDeviceId(i) == deviceId) {
-				found = true;
-				break;
-			}
-		}
-		if (found == false) {
+		var device = com.telldus.core.deviceList.getDevice(deviceId);
+		if (device == false) {
 			return;
 		}
 		
@@ -95,14 +124,7 @@ com.telldus.xpl.lighting = function() {
 
 	function sendDevInfo(msg) {
 		var deviceId = msg.bodyItem("device")
-		var deviceCount = com.telldus.core.getNumberOfDevices();
-		var found = false;
-		for( var i = 0; i < deviceCount; ++i ) {
-			if (com.telldus.core.getDeviceId(i) == deviceId) {
-				found = true;
-				break;
-			}
-		}
+		var device = com.telldus.core.deviceList.getDevice(deviceId);
 
 		var message = new xPLMessage(xPLMessage.xplstat);
 		message.setMessageSchemeIdentifier("lighting.devinfo");
@@ -111,7 +133,7 @@ com.telldus.xpl.lighting = function() {
 		message.addBodyItem("network", network);
 		message.addBodyItem("device", deviceId);
 
-		if (network == "1" && found == true) {
+		if (network == "1" && device != false) {
 			var lastSentCommand = com.telldus.core.lastSentCommand(deviceId, com.telldus.core.TELLSTICK_TURNON | com.telldus.core.TELLSTICK_TURNOFF | com.telldus.core.TELLSTICK_DIM);
 			var level = 0;
 			if (lastSentCommand == com.telldus.core.TELLSTICK_TURNON) {
@@ -128,10 +150,9 @@ com.telldus.xpl.lighting = function() {
 				level = 0;
 			}
 			var methods = com.telldus.core.methods(deviceId, com.telldus.core.TELLSTICK_TURNON | com.telldus.core.TELLSTICK_TURNOFF | com.telldus.core.TELLSTICK_DIM);
-			var name = com.telldus.core.getName(deviceId);
 			var channel = "1," + (methods & com.telldus.core.TELLSTICK_DIM ? "true" : "false") + ",0," + level;
 			message.addBodyItem("status", "ok");
-			message.addBodyItem("name", name );
+			message.addBodyItem("name", device.name );
 			message.addBodyItem("report-on-manual", "false" );
 			message.addBodyItem("channel-count", "1" );
 			message.addBodyItem("primary-channel", "1" );
@@ -154,16 +175,16 @@ com.telldus.xpl.lighting = function() {
 
 		if (network == "1") {
 			message.addBodyItem("status", "ok");
-			var count = com.telldus.core.getNumberOfDevices();
-			var deviceList = "";
-			for( var i = 0; i < count; ++i ) {
+			var strDevices = "";
+			var deviceList = com.telldus.core.deviceList.getList();
+			for( i in deviceList ) {
 				if (i > 0) {
-					deviceList += ",";
+					strDevices += ",";
 				}
-				deviceList += com.telldus.core.getDeviceId(i);
+				strDevices += deviceList[i].id;
 			}
-			message.addBodyItem("device-count", count);
-			message.addBodyItem("device", deviceList );
+			message.addBodyItem("device-count", deviceList.length);
+			message.addBodyItem("device", strDevices );
 		} else {
 			message.addBodyItem("status", "not-found");
 		}
@@ -200,7 +221,7 @@ com.telldus.xpl.lighting = function() {
 		if (network == "1") {
 			message.addBodyItem("status", "ok");
 			message.addBodyItem("name", "TelldusCenter" ); //TODO: Find a nice name
-			message.addBodyItem("device-count", com.telldus.core.getNumberOfDevices() );
+			message.addBodyItem("device-count", com.telldus.core.deviceList.count() );
 			message.addBodyItem("scene-count", "0" );
 		} else {
 			message.addBodyItem("status", "not-found");
