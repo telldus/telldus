@@ -6,7 +6,8 @@ TelldusCoreObject::TelldusCoreObject( QObject * parent )
 		: QObject(parent)
 {
 	tdInit();
-	tdRegisterDeviceChangeEvent(reinterpret_cast<TDDeviceChangeEvent>(deviceChangeEvent), this);
+	tdRegisterDeviceChangeEvent(reinterpret_cast<TDDeviceChangeEvent>(deviceChangeEventCallback), this);
+	tdRegisterDeviceEvent(reinterpret_cast<TDDeviceEvent>(deviceEventCallback), this);
 }
 
 TelldusCoreObject::~TelldusCoreObject() {
@@ -83,12 +84,17 @@ void TelldusCoreObject::triggerError(int deviceId, int errorId) {
 }
 
 
-void TelldusCoreObject::deviceChangeEvent(int deviceId, int eventId, int changeType, int callbackId, void *object) {
-	TelldusCoreObject *parent = static_cast<TelldusCoreObject *>(object);
+void TelldusCoreObject::deviceChangeEventCallback(int deviceId, int eventId, int changeType, int callbackId, void *context) {
+	TelldusCoreObject *parent = static_cast<TelldusCoreObject *>(context);
 	if (parent) {
 		emit parent->deviceChange(deviceId, eventId);
 	}
 }
 
-
+void TelldusCoreObject::deviceEventCallback(int deviceId, int method, const char *data, int callbackId, void *context) {
+	TelldusCoreObject *parent = static_cast<TelldusCoreObject *>(context);
+	if (parent) {
+		emit parent->deviceEvent(deviceId, method, QString::fromLocal8Bit(data));
+	}
+}
 

@@ -12,6 +12,7 @@ public:
 	
 signals:
 	void deviceChange( int deviceId, int eventId );
+	void deviceEvent( int deviceId, int method, const QString &data );
 	void errorOccurred( int deviceId, int errorId, const QString &errorString );
 
 public slots:
@@ -30,7 +31,8 @@ public slots:
 private:
 	void triggerError( int, int );
 	
-	static void deviceChangeEvent(int deviceId, int eventId, int changeType, int callbackId, void *object);
+	static void deviceChangeEventCallback(int deviceId, int eventId, int changeType, int callbackId, void *context);
+	static void deviceEventCallback(int deviceId, int method, const char *data, int callbackId, void *context);
 	
 	int deviceChangeEventId;
 	
