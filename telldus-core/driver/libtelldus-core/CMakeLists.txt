@@ -170,7 +170,12 @@ ENDIF (APPLE)
 
 ######## Configuring  ########
 
-ADD_LIBRARY(${telldus-core_TARGET} SHARED
+SET(TYPE "SHARED")
+IF (BUILD_LIBTELLDUS-CORE_AS_SERVICE)
+	SET(TYPE "STATIC")
+ENDIF (BUILD_LIBTELLDUS-CORE_AS_SERVICE)
+
+ADD_LIBRARY(${telldus-core_TARGET} ${TYPE}
 	${telldus-core_SRCS}
 	${telldus-core_HDRS}
 	${telldus-core_MOC_SRCS}
@@ -199,6 +204,7 @@ ENDIF (NOT LIBRARY_DIR)
 IF (UNIX)
 	INSTALL(TARGETS ${telldus-core_TARGET}
 		LIBRARY         DESTINATION   ${LIBRARY_DIR}
+		ARCHIVE         DESTINATION   ${LIBRARY_DIR}
 		FRAMEWORK       DESTINATION   "/Library/Frameworks"
 		PUBLIC_HEADER   DESTINATION   include
 	)
