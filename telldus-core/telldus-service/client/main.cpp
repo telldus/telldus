@@ -268,3 +268,23 @@ int WINAPI tdSendRawCommand(const char *command, int reserved) {
 	message.addArgument(reserved);
 	return manager->send(message, &ok).toInt();
 }
+
+void WINAPI tdConnectTellStickController(int vid, int pid, const char *serial) {
+	bool ok;
+	Manager *manager = Manager::getInstance();
+	Message message("tdConnectTellStickController");
+	message.addArgument(vid);
+	message.addArgument(pid);
+	message.addArgument(serial);
+	manager->send(message, &ok);
+}
+
+void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial) {
+	bool ok;
+	Manager *manager = Manager::getInstance();
+	Message message("tdDisconnectTellStickController");
+	message.addArgument(vid);
+	message.addArgument(pid);
+	message.addArgument(serial);
+	manager->send(message, &ok);
+}
