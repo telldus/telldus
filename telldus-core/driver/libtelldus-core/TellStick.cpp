@@ -329,8 +329,31 @@ TellStickHandle TelldusCore::TellStick::handle() const {
 
 bool TelldusCore::TellStick::stillConnected() const {
 	std::string serial = this->serial();
+	
 #ifdef LIBFTDI
-#error TelldusCore::TellStick::stillConnected() has not yet been implemented on this platform
+	ftdi_context ftdic;
+	struct ftdi_device_list *devlist, *curdev;
+	char serialBuffer[10];
+	ftdi_init(&ftdic);
+	bool found = false;
+
+	int ret = ftdi_usb_find_all(&ftdic, &devlist, this->vid(), this->pid());
+	if (ret > 0) {
+		for (curdev = devlist; curdev != NULL; curdev = curdev->next) {
+			ret = ftdi_usb_get_strings(&ftdic, curdev->dev, NULL, 0, NULL, 0, serialBuffer, 10);
+			if (ret != 0) {
+				continue;
+			}
+			if (serial.compare(serialBuffer) == 0) {
+				found = true;
+				break;
+			}
+		}
+	}
+
+	ftdi_list_free(&devlist);
+	ftdi_deinit(&ftdic);
+	return found;
 #else
 	FT_STATUS ftStatus;
 	DWORD numDevs;
@@ -359,6 +382,6 @@ bool TelldusCore::TellStick::stillConnected() const {
 			return true;
 		}
 	}
-#endif
 	return false;
+#endif
 }
