@@ -300,7 +300,11 @@ std::string TelldusCore::Manager::getDeviceParameter(int intDeviceId, const std:
 }
 
 int TelldusCore::Manager::addDevice() {
-	return settings.addDevice();
+	int intDeviceId = settings.addDevice();
+	if (intDeviceId > 0) { //Success
+		emitDeviceChange(intDeviceId, TELLSTICK_DEVICE_ADDED, 0);
+	}
+	return intDeviceId;
 }
 
 bool TelldusCore::Manager::removeDevice(int intDeviceId) {
