@@ -1,10 +1,4 @@
 
-#if defined(_LINUX ) || defined(__FreeBSD__)
-	#define LIBFTDI
-#else
-	#define LIBFTD2XX
-#endif
-
 
 #ifdef LIBFTD2XX
 	#ifdef _WINDOWS
