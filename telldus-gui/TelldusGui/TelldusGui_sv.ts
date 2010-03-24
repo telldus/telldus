@@ -42,17 +42,17 @@
 <context>
     <name>DeviceSettingArctechSelflearning</name>
     <message>
-        <location filename="devicesettingarctechselflearning.cpp" line="32"/>
+        <location filename="devicesettingarctechselflearning.cpp" line="33"/>
         <source>Remote code</source>
         <translation>Fjärrkontrollskod</translation>
     </message>
     <message>
-        <location filename="devicesettingarctechselflearning.cpp" line="38"/>
+        <location filename="devicesettingarctechselflearning.cpp" line="39"/>
         <source>Unitcode</source>
         <translation>Enhetskod</translation>
     </message>
     <message>
-        <location filename="devicesettingarctechselflearning.cpp" line="58"/>
+        <location filename="devicesettingarctechselflearning.cpp" line="59"/>
         <source>Randomize</source>
         <translation type="unfinished"></translation>
     </message>
@@ -62,7 +62,7 @@
     <message>
         <location filename="devicesettinggao.cpp" line="28"/>
         <source>Unitcode</source>
-        <translation type="unfinished"></translation>
+        <translation type="unfinished">Enhetskod</translation>
     </message>
 </context>
 <context>
@@ -193,22 +193,22 @@
         <translation>Adresskod</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="153"/>
+        <location filename="editdevicedialog.cpp" line="156"/>
         <source>You must choose a device</source>
         <translation>Du måste välja en enhet</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="154"/>
+        <location filename="editdevicedialog.cpp" line="157"/>
         <source>Please select the device you have.</source>
         <translation>Välj den enhet du har.</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="170"/>
+        <location filename="editdevicedialog.cpp" line="173"/>
         <source>The device must have a name.</source>
         <translation>Enheten måste ha ett namn.</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="171"/>
+        <location filename="editdevicedialog.cpp" line="174"/>
         <source>Please fill in a name in the field under &apos;Name&apos;</source>
         <translation>Fyll i ett namn i rutan &apos;Namn&apos;</translation>
     </message>
@@ -216,7 +216,7 @@
 <context>
     <name>MethodWidget</name>
     <message>
-        <location filename="methodwidget.cpp" line="34"/>
+        <location filename="methodwidget.cpp" line="36"/>
         <source>Learn</source>
         <translation>Lär upp</translation>
     </message>
