@@ -3,11 +3,7 @@
 
 #include <telldus-core.h>
 
-#include <QHash>
-#include <QPointer>
-#include <QString>
-
-class DevicePrivate;
+#include <QObject>
 
 class Device : public QObject
 {
@@ -15,13 +11,11 @@ class Device : public QObject
 	Q_DISABLE_COPY(Device)
 
 public:
+	Device(int id, int methodsSupported, QObject *parent = 0);
+
 	~Device();
 
-	static Device *getDevice( int id );
-	static Device *newDevice( );
-	static bool deviceLoaded( int id );
-
-	int deviceId() const;
+	int id() const;
 
 	void setModel( const QString &model );
 	QString model() const;
@@ -39,9 +33,12 @@ public:
 	int lastSentCommand() const;
 	QString lastSentValue() const;
 
-	int methods() const;
+ 	int methods() const;
+
+	static void remove(int deviceId);
 
 public slots:
+	void remove();
 	void save();
 	void turnOff();
 	void turnOn();
@@ -49,27 +46,24 @@ public slots:
 	void learn();
 
 signals:
-	void deviceAdded( int id );
 	void deviceChanged( int deviceId, int eventId, int changeType );
-	void methodsChanged( int newMethods );
-	void stateChanged( int deviceId, int newState );
-	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
-	void eventTriggered( const QString &name, const QString &title );
+	void deviceRemoved( int deviceId );
+	void nameChanged( int deviceId, const QString &newName );
+	void methodsChanged( int deviceId );
+	void stateChanged( int deviceId );
+// 	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
+// 	void eventTriggered( const QString &name, const QString &title );
 	
 private slots:
 	void deviceChangedSlot(int deviceId, int eventId, int changeType);
 
 private:
-	Device(int id);
-	void updateMethods();
-	void updateState();
-	void triggerEvent( int message );
-
-	DevicePrivate *d;
-	static QHash<int, Device *> devices;
 	static void WINAPI deviceEvent(int deviceId, int, const char *, int, void *);
 	static void WINAPI deviceChangeEvent(int deviceId, int, int, int, void *);
+	void triggerEvent( int message );
 
+	class DevicePrivate;
+	DevicePrivate *d;
 	static int callbackId, deviceChangeCallbackId;
 };
 

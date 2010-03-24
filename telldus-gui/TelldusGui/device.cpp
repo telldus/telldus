@@ -1,57 +1,61 @@
 #include "device.h"
-#include <stdlib.h>
+// #include <stdlib.h>
 
-QHash<int, Device *> Device::devices;
+#include <QHash>
+#include <QDebug>
 
-int Device::callbackId = tdRegisterDeviceEvent( reinterpret_cast<TDDeviceEvent>(&Device::deviceEvent), 0);
-int Device::deviceChangeCallbackId = tdRegisterDeviceChangeEvent( reinterpret_cast<TDDeviceChangeEvent>(&Device::deviceChangeEvent), 0);
-
-const int SUPPORTED_METHODS = TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL | TELLSTICK_DIM | TELLSTICK_LEARN;
-
-class DevicePrivate {
+class Device::DevicePrivate {
 public:
-	int id, state;
+	int id, state, supportedMethods;
 	QString name, protocol, model, stateValue;
 	bool modelChanged, nameChanged, protocolChanged;
 	mutable int methods;
 	mutable QHash<QString, QString> settings;
+	int callbackId, deviceChangeCallbackId;
 };
 
-Device::Device(int id)
+Device::Device(int id, int supportedMethods, QObject *parent)
+	: QObject(parent)
 {
 	d = new DevicePrivate;
 	d->id = id;
-	d->model = "";
-	d->state = 0;
-	d->name = "";
-	d->protocol = "";
+	d->supportedMethods = supportedMethods;
 	d->modelChanged = false;
 	d->nameChanged = false;
 	d->protocolChanged = false;
-	d->methods = 0;
 
-	if (d->id > 0) {
+	d->callbackId = tdRegisterDeviceEvent(reinterpret_cast<TDDeviceEvent>(&Device::deviceEvent), this);
+	d->deviceChangeCallbackId = tdRegisterDeviceChangeEvent( reinterpret_cast<TDDeviceChangeEvent>(&Device::deviceChangeEvent), this);
+
+	if (id > 0) {
+		d->state = tdLastSentCommand(id, supportedMethods);
+		char *value = tdLastSentValue(id);
+		d->stateValue = QString::fromLocal8Bit(value);
+		tdReleaseString(value);
+
 		char *name = tdGetName(id);
 		d->name = QString::fromLocal8Bit( name );
 		tdReleaseString( name );
+
+		d->methods = tdMethods(id, supportedMethods);
 
 		d->model = tdGetModel(id);
 
 		char *protocol = tdGetProtocol(id);
 		d->protocol = QString::fromLocal8Bit( protocol );
 		tdReleaseString( protocol );
-
-		updateState();
 	}
-	
+
 	connect(this, SIGNAL(deviceChanged(int,int,int)), this, SLOT(deviceChangedSlot(int,int,int)));
 }
 
 Device::~Device() {
+	tdUnregisterCallback(d->callbackId);
+	tdUnregisterCallback(d->deviceChangeCallbackId);
 	delete d;
 }
 
-int Device::deviceId() const {
+int Device::id() const {
 	return d->id;
 }
 
@@ -102,9 +106,6 @@ QString &Device::protocol() const {
 }
 
 int Device::methods() const {
-	if (d->methods == 0) {
-		const_cast<Device*>(this)->updateMethods();
-	}
 	return d->methods;
 }
 
@@ -112,45 +113,28 @@ int Device::deviceType() const {
 	return tdGetDeviceType(d->id);
 }
 
-Device *Device::getDevice( int id ) {
-
-	if (devices.contains(id)) {
-		return devices[id];
-	}
-	Device *device = new Device(id);
-	devices[id] = device;
-	return device;
-}
-
-Device *Device::newDevice( ) {
-	return new Device(0);
-}
-
-bool Device::deviceLoaded( int id ) {
-	return devices.contains(id);
-}
-
 void Device::save() {
-	bool deviceIsAdded = false, methodsChanged = false;
+	bool deviceIsAdded = false;
 	if (d->id == 0) { //This is a new device
 		d->id = tdAddDevice();
+		if (d->id < 0) {
+			return;
+		}
 		deviceIsAdded = true;
 	}
 
 	if (d->nameChanged || deviceIsAdded) {
-		tdSetName(d->id, d->name.toLocal8Bit());
 		d->nameChanged = false;
+		tdSetName(d->id, d->name.toLocal8Bit());
 	}
 
 	if (d->modelChanged || deviceIsAdded) {
 		tdSetModel(d->id, d->model.toLocal8Bit());
-		methodsChanged = true;
 		d->modelChanged = false;
 	}
 
 	if (d->protocolChanged || deviceIsAdded) {
 		tdSetProtocol(d->id, d->protocol.toLocal8Bit());
-		methodsChanged = true;
 		d->protocolChanged = false;
 	}
 
@@ -160,14 +144,7 @@ void Device::save() {
 		QByteArray value(it.value().toLocal8Bit() );
 		tdSetDeviceParameter(d->id, name.constData(), value.constData());
 	}
-
-	if (methodsChanged) {
-		updateMethods();
-	}
-
-	if (deviceIsAdded) {
-		emit deviceAdded(d->id);
-	}
+	d->settings.clear();
 }
 
 void Device::turnOff() {
@@ -194,72 +171,73 @@ QString Device::lastSentValue() const {
 	return d->stateValue;
 }
 
-void Device::updateMethods() {
-	int methods = tdMethods(d->id, SUPPORTED_METHODS);
-	if (d->methods != methods) {
-		bool doEmit = (d->methods > 0);
-		d->methods = methods;
-		if (doEmit) {
-			emit methodsChanged( d->methods );
-		}
-	}
+void Device::remove(int deviceId) {
+	tdRemoveDevice(deviceId);
 }
 
-void Device::updateState() {
-	int lastSentCommand = tdLastSentCommand( d->id, SUPPORTED_METHODS );
-	char *value = tdLastSentValue( d->id );
-	QString stateValue = QString::fromLocal8Bit( value );
-	tdReleaseString(value);
-	
-	if (lastSentCommand != d->state || stateValue != d->stateValue) {
-		d->state = lastSentCommand;
-		d->stateValue = stateValue;
-		emit stateChanged(d->id, d->state);
-	}
+void Device::remove() {
+	Device::remove(d->id);
 }
 
 void Device::deviceChangedSlot(int deviceId, int eventId, int changeType) {
+	if (eventId == TELLSTICK_DEVICE_REMOVED) {
+		emit deviceRemoved(deviceId);
+	}
 	if (eventId != TELLSTICK_DEVICE_CHANGED) {
 		return;
 	}
 	switch( changeType ) {
-		case TELLSTICK_CHANGE_NAME:
+		case TELLSTICK_CHANGE_NAME: {
 			if (d->nameChanged) {
 				break;
 			}
 			char *name = tdGetName(d->id);
 			d->name = QString::fromLocal8Bit( name );
 			tdReleaseString( name );
-			break;			
+			emit nameChanged( d->id, d->name );
+			break;
+		}
+
+		case TELLSTICK_CHANGE_PROTOCOL:
+		case TELLSTICK_CHANGE_MODEL:
+			int methods = tdMethods(d->id, d->supportedMethods);
+			if (methods != d->methods) {
+				d->methods = methods;
+				emit methodsChanged( d->methods );
+			}
+			break;
 	}
 }
 
 void Device::triggerEvent( int messageId ) {
-	if (messageId == TELLSTICK_SUCCESS) {
-		//Update the last sent command
-		updateState();
-	} else {
-		char *message = tdGetErrorString( messageId );
-		emit showMessage( "", message, "" );
-		tdReleaseString( message );
+	if (messageId != TELLSTICK_SUCCESS) {
+// 		char *message = tdGetErrorString( messageId );
+// 		emit showMessage( "", message, "" );
+// 		tdReleaseString( message );
 	}
 }
 
-void WINAPI Device::deviceEvent(int deviceId, int, const char *, int, void *) {
-	if (Device::deviceLoaded( deviceId )) {
-		Device *device = Device::getDevice( deviceId );
-		if (device) {
-			device->updateState();
-		}
+void WINAPI Device::deviceEvent(int deviceId, int method, const char *data, int, void *context) {
+	Device *device = reinterpret_cast<Device *>(context);
+	if (!device) {
+		return;
 	}
+	if (device->id() != deviceId) {
+		return;
+	}
+	device->d->state = method;
+	device->d->stateValue = data;
+	emit device->stateChanged(deviceId);
 }
 
-void WINAPI Device::deviceChangeEvent(int deviceId, int eventId, int changeType, int, void *) {
-	if (Device::deviceLoaded( deviceId )) {
-		Device *device = Device::getDevice( deviceId );
-		if (device) {
-			emit device->deviceChanged(deviceId, eventId, changeType);
-		}
+void WINAPI Device::deviceChangeEvent(int deviceId, int eventId, int changeType, int, void *context) {
+	Device *device = reinterpret_cast<Device *>(context);
+	if (!device) {
+		return;
 	}
+	if (device->id() != deviceId) {
+		return;
+	}
+	emit device->deviceChanged(deviceId, eventId, changeType);
 }
 
