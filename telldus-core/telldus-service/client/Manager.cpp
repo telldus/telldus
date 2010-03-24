@@ -98,6 +98,33 @@ int Manager::registerRawDeviceEvent( TDRawDeviceEvent eventFunction, void *conte
 	return id;
 }
 
+bool Manager::unregisterCallback( int callbackId ) {
+	for(CallbackList::iterator callback_it = d->callbacks.begin(); callback_it != d->callbacks.end(); ++callback_it) {
+		if ( (*callback_it).id != callbackId ) {
+			continue;
+		}
+		d->callbacks.erase(callback_it);
+		return true;
+	}
+
+	for(DeviceChangeCallbackList::iterator callback_it = d->deviceChangeCallbacks.begin(); callback_it != d->deviceChangeCallbacks.end(); ++callback_it) {
+		if ( (*callback_it).id != callbackId ) {
+			continue;
+		}
+		d->deviceChangeCallbacks.erase(callback_it);
+		return true;
+	}
+
+	for(RawCallbackList::iterator callback_it = d->rawCallbacks.begin(); callback_it != d->rawCallbacks.end(); ++callback_it) {
+		if ( (*callback_it).id != callbackId ) {
+			continue;
+		}
+		d->rawCallbacks.erase(callback_it);
+		return true;
+	}
+
+	return false;
+}
 
 void Manager::dataReceived() {
 	while(1) {

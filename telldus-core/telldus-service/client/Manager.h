@@ -42,6 +42,8 @@ public:
 	int registerDeviceEvent( TDDeviceEvent eventFunction, void *context );
 	int registerDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context );
 	int registerRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context );
+	bool unregisterCallback( int callbackId );
+
 
 private slots:
 	void dataReceived();

@@ -27,6 +27,11 @@ int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *conte
 	return manager->registerRawDeviceEvent( eventFunction, context );
 }
 
+int WINAPI tdUnregisterCallback( int callbackId ) {
+	Manager *manager = Manager::getInstance();
+	return manager->unregisterCallback( callbackId );
+}
+
 void WINAPI tdClose(void) {
 	Manager::close();
 }
