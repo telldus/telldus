@@ -108,5 +108,7 @@ extern "C" {
 
 //Change types
 #define TELLSTICK_CHANGE_NAME			1
+#define TELLSTICK_CHANGE_PROTOCOL		2
+#define TELLSTICK_CHANGE_MODEL			3
 
 #endif

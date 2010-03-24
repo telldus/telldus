@@ -184,12 +184,20 @@ bool Manager::setDeviceProtocol(int intDeviceId, const std::string &strProtocol)
 		devices.erase( iterator );
 		delete device;
 	}
+
+	if (retval) {
+		emitDeviceChange(intDeviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_PROTOCOL);
+	}
 	
 	return retval;
 }
 
 bool Manager::setDeviceModel(int intDeviceId, const std::string &strModel) {
-	return settings.setModel(intDeviceId, strModel);
+	if (settings.setModel(intDeviceId, strModel)) {
+		emitDeviceChange(intDeviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_MODEL);
+		return true;
+	}
+	return false;
 }
 
 bool Manager::setDeviceState( int intDeviceId, int intDeviceState, const std::string &strDeviceStateValue ) {
