@@ -12,18 +12,33 @@ inline double round(double x) {
 }
 #endif
 
+const int SUPPORTED_METHODS = TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL /* | TELLSTICK_DIM */ | TELLSTICK_LEARN;
+
+
 DeviceModel::DeviceModel(QObject *parent)
 		:QAbstractTableModel(parent)
 {
+	connect(this, SIGNAL(deviceChange(int,int,int)), this, SLOT(deviceChanged(int,int,int)));
+	int numberOfDevices = tdGetNumberOfDevices();
+	for( int i = 0; i < numberOfDevices; ++i ) {
+		int id = tdGetDeviceId(i);
+		Device *device = new Device(id, SUPPORTED_METHODS, this);
+		devices.append(device);
+		connect(device, SIGNAL(stateChanged(int)), this, SLOT(deviceStateChanged(int)));
+		connect(device, SIGNAL(nameChanged(int,QString)), this, SLOT(nameChanged(int,QString)));
+	}
+	
+	deviceChangeCallbackId = tdRegisterDeviceChangeEvent( reinterpret_cast<TDDeviceChangeEvent>(&DeviceModel::deviceChangeEvent), this);
 }
 
 
 DeviceModel::~DeviceModel()
 {
+	tdUnregisterCallback(deviceChangeCallbackId);
 }
 
 int DeviceModel::rowCount(const QModelIndex &) const {
-	return tdGetNumberOfDevices();
+	return devices.size();
 }
 
 int DeviceModel::columnCount(const QModelIndex &) const {
@@ -35,9 +50,14 @@ QVariant DeviceModel::data(const QModelIndex &index, int role) const {
 		return QVariant();
 	}
 
+	if (index.row() >= devices.size()) {
+		return QVariant();
+	}
+
+
 	if (index.column() == 0) {
 		if (role == Qt::DisplayRole) {
-			Device *device = this->device( index );
+			Device *device = devices[index.row()];
 			switch( device->lastSentCommand() ) {
 				case TELLSTICK_TURNON:
 					return tr("on");
@@ -49,34 +69,24 @@ QVariant DeviceModel::data(const QModelIndex &index, int role) const {
 			}
 			return tr("unknown %1").arg(device->lastSentCommand());
 		} else if (role == Qt::DecorationRole) {
-			Device *device = this->device( index );
+			Device *device = devices[index.row()];
 			int lastSentCommand = device->lastSentCommand();
 			return QIcon( QString(":/images/state_%1.png").arg(lastSentCommand) );
-		} else if (role == Qt::TextAlignmentRole) {
-			return Qt::AlignCenter;
-		}
+ 		} else if (role == Qt::TextAlignmentRole) {
+ 			return Qt::AlignCenter;
+ 		}
 	} else if (index.column() == 1) {
 		if (role == Qt::DisplayRole) {
-			Device *device = this->device( index );
-			return device->name();
+			return devices[index.row()]->name();
 		}
-	} else if (index.column() == 2) {
-//		if (role == Qt::DisplayRole) {
-//			Device *device = this->device( index );
-//			return device->methods();
-//		}
+// 	} else if (index.column() == 2) {
+// 		if (role == Qt::DisplayRole) {
+// 			return devices[index.row()]->methods();
+// 		}
 	}
 
 	return QVariant();
 }
-
-/*Qt::ItemFlags DeviceModel::flags ( const QModelIndex & index ) const {
-	if (!index.isValid()) {
-		 return Qt::ItemIsEnabled;
-	}
-
-	return QAbstractItemModel::flags(index) | Qt::ItemIsEditable;
-}*/
 
 QVariant DeviceModel::headerData ( int section, Qt::Orientation orientation, int role ) const {
 	if (orientation != Qt::Horizontal) {
@@ -99,86 +109,82 @@ QVariant DeviceModel::headerData ( int section, Qt::Orientation orientation, int
 	return QVariant();
 }
 
-bool DeviceModel::removeRows ( int row, int count, const QModelIndex & parent ) {
-	beginRemoveRows( parent, row, row + count - 1 );
-
-	QQueue<int> idList;
-	for ( int i = row; i < row + count; ++i ) {
-		idList.enqueue( deviceId(i) );
+Device *DeviceModel::device( const QModelIndex &index ) {
+	if (index.row() >= devices.size()) {
+		return 0;
 	}
+	return devices[index.row()];
+}
 
-	while(!idList.isEmpty()) {
-		int id = idList.dequeue();
-		tdRemoveDevice( id );
+int DeviceModel::deviceId( const QModelIndex &index ) {
+	if (index.row() >= devices.size()) {
+		return 0;
 	}
-	indexToId.clear(); //Clear the index-to-id cache
-
-	endRemoveRows();
-	return true;
+	return devices[index.row()]->id();
 }
 
-Device *DeviceModel::device( const QModelIndex &index ) const {
-	int id = deviceId( index );
-	bool loaded = Device::deviceLoaded( id );
-	Device *device = Device::getDevice( id );
-	if (!loaded) {
-		connectDeviceSignals( device );
+void DeviceModel::deviceStateChanged( int deviceId ) {
+	int row = rowForId(deviceId);
+	if (row >= 0) {
+		triggerCellUpdate(row, 0);
 	}
-	return device;
 }
 
-Device *DeviceModel::newDevice() const {
-	Device *device = Device::newDevice();
-	connect(device, SIGNAL(deviceAdded(int)), this, SLOT(deviceAdded(int)));
-	connectDeviceSignals(device);
-	return device;
-}
+void DeviceModel::deviceChanged( int deviceId, int eventType, int changeType ) {
+	if (eventType == TELLSTICK_DEVICE_ADDED) {
+		int deviceCount = devices.size();
+		beginInsertRows( QModelIndex(), deviceCount, deviceCount );
+		Device *device = new Device(deviceId, SUPPORTED_METHODS, this);
+		devices.append(device);
+		connect(device, SIGNAL(stateChanged(int)), this, SLOT(deviceStateChanged(int)));
+		connect(device, SIGNAL(nameChanged(int,QString)), this, SLOT(nameChanged(int,QString)));
+		endInsertRows();
 
-void DeviceModel::deviceAdded( int id ) {
-	Q_UNUSED(id);
-	int deviceCount = tdGetNumberOfDevices();
-	beginInsertRows( QModelIndex(), deviceCount, deviceCount );
-	//Add the index to the cache
-	indexToId[deviceCount-1] = id;
-	endInsertRows();
-}
-
-void DeviceModel::deviceChanged( int deviceId, int eventId, int changeType ) {
-	this->deviceStateChanged(deviceId, 0); //This function does the same
-}
-
-void DeviceModel::deviceStateChanged( int deviceId, int /*newState*/ ) {
-	int deviceCount = rowCount();
-	for (int i = 0; i < deviceCount; ++i) {
-		if (this->deviceId(i) == deviceId) {
-			QModelIndex topLeftIndex = this->index(i, 0);
-			QModelIndex bottomRightIndex = this->index(i, 1);
-			emit dataChanged( topLeftIndex, bottomRightIndex );
-			break;
+	} else if (eventType == TELLSTICK_DEVICE_REMOVED) {
+		int row = rowForId(deviceId);
+		if (row >= 0) {
+			beginRemoveRows( QModelIndex(), row, row );
+			Device *d = devices.takeAt(row);
+			delete d;
+			endRemoveRows();
 		}
 	}
+	
 }
 
-int DeviceModel::deviceId( const QModelIndex &index ) const {
-	return deviceId( index.row() );
-}
-
-int DeviceModel::deviceId( int index ) const {
-	if (indexToId.contains(index)) {
-		return indexToId[index];
+void DeviceModel::nameChanged(int deviceId, const QString &) {
+	int row = rowForId(deviceId);
+	if (row >= 0) {
+		triggerCellUpdate(row, 1);
 	}
-	int id = tdGetDeviceId( index );
-	indexToId[index] = id;
-	return id;
 }
 
-void DeviceModel::deviceEvent(int /*deviceId*/, int /*method*/, const char */*data*/, int /*callbackId*/, void */*context*/) {
-	//TODO:
+void DeviceModel::triggerCellUpdate(int row, int column) {
+	QModelIndex index = this->index(row, column);
+	emit dataChanged( index, index );
 }
 
-void DeviceModel::connectDeviceSignals( Device *device ) const {
+int DeviceModel::rowForId( int deviceId ) const {
+	for (int i = 0; i < devices.size(); ++i) {
+		if (devices.at(i)->id() == deviceId) {
+			return i;
+		}
+	}
+	return -1;
+}
+
+
+void DeviceModel::deviceChangeEvent(int deviceId, int eventId, int changeType, int, void *context) {
+	DeviceModel *model = reinterpret_cast<DeviceModel *>(context);
+	if (!model) {
+		return;
+	}
+	emit model->deviceChanged(deviceId, eventId, changeType);
+}
+
+/*void DeviceModel::connectDeviceSignals( Device *device ) const {
 	connect(device, SIGNAL(showMessage(const QString &, const QString &, const QString &)), this, SIGNAL(showMessage(const QString &, const QString &, const QString &)));
 	connect(device, SIGNAL(eventTriggered(const QString &, const QString &)), this, SIGNAL(eventTriggered(const QString &, const QString &)));
 	connect(device, SIGNAL(stateChanged(int, int)), this, SLOT(deviceStateChanged(int,int)));
 	connect(device, SIGNAL(deviceChanged(int,int,int)), this, SLOT(deviceChanged(int,int,int)));
-}
+}*/

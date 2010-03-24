@@ -16,32 +16,35 @@ public:
 	virtual int columnCount(const QModelIndex &parent = QModelIndex()) const;
 
 	virtual QVariant data(const QModelIndex &index, int role = Qt::DisplayRole) const;
-//	virtual Qt::ItemFlags flags ( const QModelIndex & index ) const;
-
-	virtual bool removeRows ( int row, int count, const QModelIndex & parent = QModelIndex() );
 
 	virtual QVariant headerData ( int section, Qt::Orientation orientation, int role = Qt::DisplayRole ) const;
 
-	Device *newDevice() const;
-	Device *device( const QModelIndex & ) const;
+	Device *device( const QModelIndex & );
+	int deviceId( const QModelIndex & );
 
 signals:
+	void deviceChange(int deviceId, int, int);
 	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
 	void eventTriggered( const QString &name, const QString &title );
 
 private slots:
-	void deviceAdded( int id );
-	void deviceChanged( int, int, int );
-	void deviceStateChanged( int deviceId, int newState );
+	void deviceStateChanged( int deviceId );
+	void deviceChanged( int deviceId, int, int );
+	void nameChanged ( int, const QString& );
 
 private:
-	static void deviceEvent(int deviceId, int method, const char *data, int callbackId, void *context);
+	void triggerCellUpdate(int row, int column);
+	int rowForId( int deviceId ) const;
+// 	static void deviceEvent(int deviceId, int method, const char *data, int callbackId, void *context);
+	static void WINAPI deviceChangeEvent(int deviceId, int, int, int, void *);
+	
+// 	void connectDeviceSignals( Device *device ) const;
+// 	int deviceId( const QModelIndex &index ) const;
+// 	int deviceId( int index ) const;
 
-	void connectDeviceSignals( Device *device ) const;
-	int deviceId( const QModelIndex &index ) const;
-	int deviceId( int index ) const;
-
-	mutable QHash<int, int> indexToId;
+// 	mutable QHash<int, int> indexToId;
+	QList<Device *> devices;
+	int deviceChangeCallbackId;
 };
 
 #endif // DEVICEMODEL_H
