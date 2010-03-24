@@ -86,23 +86,21 @@ void DeviceWidget::changeEvent(QEvent *e)
 }
 
 void DeviceWidget::addDevice() {
-	Device *device = model.newDevice();
+	Device device(0, 0);
 
-	EditDeviceDialog *dialog = new EditDeviceDialog(device);
+	EditDeviceDialog *dialog = new EditDeviceDialog(&device);
 	if (dialog->exec() == QDialog::Accepted) {
-		device->save();
+		device.save();
 		//Select the new row
-		QModelIndex index = model.index(model.rowCount()-1, 0, QModelIndex());
-		deviceView.setCurrentIndex(index);
-	} else {
-		delete device;
+// 		QModelIndex index = model.index(model.rowCount()-1, 0, QModelIndex());
+// 		deviceView.setCurrentIndex(index);
 	}
 
 	delete dialog;
 }
 
 void DeviceWidget::addGroup() {
-	Device *device = model.newDevice();
+	/*Device *device = model.newDevice();
 
 	EditGroupDialog *dialog = new EditGroupDialog(device, &model);
 	if (dialog->exec() == QDialog::Accepted) {
@@ -111,7 +109,7 @@ void DeviceWidget::addGroup() {
 		delete device;
 	}
 
-	delete dialog;
+	delete dialog;*/
 }
 
 void DeviceWidget::deleteDevice() {
@@ -123,21 +121,25 @@ void DeviceWidget::deleteDevice() {
 	msgBox.setDefaultButton( QMessageBox::No );
 	if ( msgBox.exec() ==  QMessageBox::Yes) {
 		QModelIndex index = deviceView.currentIndex();
-		model.removeRow(index.row());
+		Device *device = model.device(index);
+		if (device) {
+			device->remove();
+		}
 	}
 }
 
 void DeviceWidget::editDevice() {
-	Device *device = model.device( deviceView.currentIndex() );
+	QModelIndex index = deviceView.currentIndex();
+	Device device( model.deviceId(index), 0 );
 
 	QDialog *dialog;
-	if (device->deviceType() == TELLSTICK_TYPE_GROUP) {
-		dialog = new EditGroupDialog( device, &model );
+	if (device.deviceType() == TELLSTICK_TYPE_GROUP) {
+		dialog = new EditGroupDialog( &device, &model );
 	} else {
-		dialog = new EditDeviceDialog( device );
+		dialog = new EditDeviceDialog( &device );
 	}
 	if (dialog->exec() == QDialog::Accepted) {
-		device->save();
+		device.save();
 	}
 
 	delete dialog;
