@@ -21,8 +21,8 @@ QScriptValue xPLInstanceCtor(QScriptContext *context, QScriptEngine *engine)
 		xPLInstance *instance = new xPLInstance(context->argument(0).toString(), context->argument(1).toString());
 		QScriptValue instanceValue = engine->newQObject(instance);
 		context->setThisObject( instanceValue );
-		return engine->undefinedValue();
 	}
+	return engine->undefinedValue();
 }
 
 QScriptValue xPLMessageCtor(QScriptContext *context, QScriptEngine *engine)
@@ -43,8 +43,8 @@ QScriptValue xPLMessageCtor(QScriptContext *context, QScriptEngine *engine)
 		}
 		QScriptValue msgValue = engine->newQObject(msg, QScriptEngine::ScriptOwnership);
 		context->setThisObject( msgValue );
-		return engine->undefinedValue();
 	}
+	return engine->undefinedValue();
 }
 
 
