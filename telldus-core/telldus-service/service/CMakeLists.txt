@@ -67,7 +67,7 @@ ELSEIF (WIN32) #### Windows ####
 	)
 	SET( telldus-service_LIBRARIES
 		${telldus-service_LIBRARIES}
-		${LIBRARY_OUTPUT_PATH}/Release/TelldusCoreLib.lib
+		${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/TelldusCoreLib.lib
 	)
 	SET( telldus-service_SRCS
 		${telldus-service_SRCS}
