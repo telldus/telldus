@@ -12,6 +12,12 @@ SET( Plugin_HDRS
 
 FIND_LIBRARY( QTXPL_LIBRARY qtxpl )
 
+SET(QTXPL_INCLUDE_DIR	""	CACHE PATH "Path to the directory which contains header files for qtxpl")
+
+INCLUDE_DIRECTORIES(
+	${QTXPL_INCLUDE_DIR}
+)
+
 SET( Plugin_LIBRARIES
 	${QTXPL_LIBRARY}
 )
