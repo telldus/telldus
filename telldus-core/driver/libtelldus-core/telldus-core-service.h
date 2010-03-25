@@ -1,6 +1,7 @@
 #ifndef TELLDUSCORESERVICE_H
 #define TELLDUSCORESERVICE_H
 
+#define TELLDUSCORE_STATIC
 #include "telldus-core.h"
 
 #ifdef __cplusplus
