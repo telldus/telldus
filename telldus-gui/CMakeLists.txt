@@ -18,7 +18,6 @@ SET(BUILD_TELLDUS-CENTER TRUE CACHE BOOL "Build TelldusCenter")
 
 IF (WIN32)
 	SET(TELLDUSCORE_INCLUDE_DIR	""	CACHE PATH "Path to the directory which contains telldus-core.h")
-	SET(TELLDUSCORE_LIBRARY	""	CACHE FILEPATH "Path to TelldusCore.lib")
 ENDIF (WIN32)
 
 if(BUILD_LIBTELLDUS-GUI)
