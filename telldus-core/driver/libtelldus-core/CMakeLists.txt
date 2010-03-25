@@ -135,7 +135,7 @@ ELSEIF (WIN32)
 		SET( telldus-core_TARGET	TelldusCoreLib )
 		SET( telldus-core_SRCS
 			${telldus-core_SRCS}
-			libtelldus-core_service.def
+			${FTD2XX_LIBRARY}
 		)
 	ELSE(BUILD_LIBTELLDUS-CORE_AS_SERVICE)
 		SET( telldus-core_TARGET	TelldusCore )
