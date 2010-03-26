@@ -58,11 +58,12 @@ QT4_WRAP_CPP(  telldus-gui_MOC_SRCS  ${telldus-gui_MOC_HDRS} )
 QT4_AUTOMOC (  ${telldus-gui_SRCS} )
 QT4_ADD_RESOURCES  (telldus-gui_RSRCS     telldusgui.qrc         )
 
-
 SET( telldus-gui_LIBRARIES
 	${QT_LIBRARIES}
-	${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/TelldusCore.lib 
 )
+
+FIND_PACKAGE(TelldusCore REQUIRED)
+list(APPEND telldus-gui_LIBRARIES ${TELLDUSCORE_LIBRARY} )
 
 ######## Configurable options for the platform  ########
 
@@ -76,6 +77,10 @@ IF (APPLE)
 	ADD_DEFINITIONS(
 		-D_MACOSX
 	)
+	INCLUDE_DIRECTORIES(
+		/usr/local/include
+	)
+
 ELSEIF (WIN32)
 	#### Windows ####
 	SET( telldus-gui_TARGET	TelldusGui )
