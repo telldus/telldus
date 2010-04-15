@@ -1,12 +1,9 @@
-This README explains how to use tellstickControllerTdtool and
+This Readme explains how to use tellstickControllerTdtool and
 tellstickControllerRfcmd programs to control a tellstick. 
 
 The tellstickController shell script can be used as a wrapper help
 for old users.
  
-The example directory contains a number of shell scripts that can be 
-used as a starting point for how to use tellstickController.
-
 The two configuration files can also be used as a starting point on
 how to control receiver devices when running tellstickController in
 daemon mode.
@@ -17,6 +14,9 @@ be used for actual confiuration of receiver devices.
 
 tellstickControllerRfcmd.conf shows how the configuration file can
 be written when using rfcmd.
+
+The example directory contains a number of shell scripts that can be 
+used as a starting point for how to use tellstickController.
 
 ######################################################################
 
