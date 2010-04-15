@@ -12,4 +12,5 @@ tellstickController --set livingroom_uplight off
 tellstickController --set livingroom_wall_north off
 tellstickController --set livingroom_wall_east off
 tellstickController --set livingroom_window off
+tellstickController --set study_window off
 

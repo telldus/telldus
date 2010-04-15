@@ -12,4 +12,5 @@ tellstickController --set livingroom_uplight on
 tellstickController --set livingroom_wall_north on
 tellstickController --set livingroom_wall_east on
 tellstickController --set Livingroom_window on
+tellstickController --set study_window on
 

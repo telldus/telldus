@@ -1,20 +1,120 @@
+This README explains how to use tellstickControllerTdtool and
+tellstickControllerRfcmd programs to control a tellstick. 
+
+The tellstickController shell script can be used as a wrapper help
+for old users.
+ 
+The example directory contains a number of shell scripts that can be 
+used as a starting point for how to use tellstickController.
+
+The two configuration files can also be used as a starting point on
+how to control receiver devices when running tellstickController in
+daemon mode.
+
+tellstickControllerTdtool.conf shows how the configuration file can
+be written when using tdtool. Remember that tellstick.conf needs to
+be used for actual confiuration of receiver devices.
+
+tellstickControllerRfcmd.conf shows how the configuration file can
+be written when using rfcmd.
+
+######################################################################
 
  NAME
-   tellstickController
+   tellstickControllerTdtool
 
  SYNOPSIS
-   tellstickController [options] 
+   tellstickControllerTdtool [options] 
 
  DESCRIPTION
-   tellstickController is used for controlling wireless recevier
-   devices from a TellStick transmitter. This version uses the
-   rfcmd software for actual device control but this can be changed
-   to any other optional software. tellstickController can be used
-   for manual control of devices, or used as a daemon that is
-   controlled by a number of configuration file rules.
-   A small database is used for keeping track of device states
-   between every execution of tellstickController.
+   tellstickController is used for controlling wireless recevier devices from
+   a TellStick transmitter. This version uses the tdtool software to perform
+   the actual device control. tellstickController can be used for manual
+   control of devices, or used as a daemon that is controlled by a number of
+   configuration file rules.
+   Devices and groups can be accessed by either name or id.
+   States can be set to ON, OFF or an integer between 0-255 for dimmer.
     
+   -h, --help          Show this help text.
+   -v, --verbose       Show extra information.
+   -d, --daemon        Starts in daemon mode.
+   -f, --file F        Set configfile to file F.
+   -c, --check         Check content of configuration file.
+   -t, --test          Test mode, no real devices will used.
+   -a, --aliases       List of aliases for devices/groups.
+   -l, --list          List states for all devices/groups.
+   -s, --set D S       Set device D to state S
+   -g, --get D         Get state for device/group D.
+   -w, --swapfirst G   Swap states for group G based on first device state.
+   -x, --swap D        Swap state for device/group D.
+
+ EXAMPLES
+   tellstickControllerTdtool -l
+   tellstickControllerTdtool --set device_alias on
+   tellstickControllerTdtool --swap device_alias
+   tellstickControllerTdtool -d -f myConfigFile.conf
+
+ DEPENDENCIES
+   The following Perl modules needs to be installed:
+   DateTime and DateTime::Event::Sunrise
+
+ FILES
+   tellstickController.conf
+   tellstickController.log
+   tellstickController.pid
+
+ CONFIGURATION
+   The configuration file consists of a number of settings 'Set', a number of
+   group aliases 'Group', and a number of device rules 'Rules'.
+  
+   The settings controls sunrise/sunset, logfile, pidfile, etc.
+  
+   The groups configures a list of devices and a delay time.
+
+   The rules can be written as a string containing two parts.
+   The first part is optional and ends with an '/'. It can contain one or more
+   of these keywords 'Weekend', 'Workweek', 'Monday', 'Tuesday', 'Wednesday',
+   'Thursday', 'Friday', 'Saturday' and 'Sunday'. A specified date like
+   '2008-03-18', '2008-03-##', '####-03-##' or '####-##-15' is also allowed.
+   The second part is mandatory and is either a expression or the keyword 'No'.
+   The expression can contain a micture of these keywords 'Sunrise', 'Sunset',
+   'Random(HH:MM)', 'HH:MM' and 'Dimmer(HH:MM,startlevel,stoplevel,steplevel)'.
+   A Dimmer can be controlled to change dim level from startlevel to stoplevel
+   by adding/subtracting steplevel value every HH:MM time period.
+
+   Example rule: Weekend/07:15
+   Example rule: Monday+Sunday/07:15
+   Example rule: 2008-03-##/12:10
+   Example rule: 07:15+Random(02:00)
+   Example rule: Sunset-00:30
+   Example rule: Workweek/07:00+Dimmer(00:01,5,255,25)
+
+ AUTHOR
+   Original version written by Rickard Andersson
+
+ LICENSE
+   Copyright (C) 2008-2010 Rickard Andersson. Version 2.0.0
+   This program comes with ABSOLUTELY NO WARRANTY.
+   This is free software, and you are welcome to redistribute it under certain
+   conditions; See license file for details.
+
+######################################################################
+
+ NAME
+   tellstickControllerRfcmd
+
+ SYNOPSIS
+   tellstickControllerRfcmd [options] 
+
+ DESCRIPTION
+   tellstickController is used for controlling wireless recevier devices from
+   a TellStick transmitter. This version uses the rfcmd software to perform
+   the actual device control. tellstickController can be used for manual
+   control of devices, or used as a daemon that is controlled by a number of
+   configuration file rules.
+   A small database is used for keeping track of device states between every
+   execution of tellstickController.
+
    -h, --help          Show this help text.
    -v, --verbose       Show extra information.
    -d, --daemon        Starts in daemon mode.
@@ -29,26 +129,24 @@
    -x, --swap D        Swap state for device/group D.
 
  EXAMPLES
-   tellstickController -l
-   tellstickController --set device_alias on
-   tellstickController --swap device_alias
-   tellstickController -d -f myConfigFile.conf
+   tellstickControllerRfcmd -l
+   tellstickControllerRfcmd --set device_alias on
+   tellstickControllerRfcmd --swap device_alias
+   tellstickControllerRfcmd -d -f myConfigFile.conf
 
  DEPENDENCIES
    The following Perl modules needs to be installed:
    DB_File, DateTime and DateTime::Event::Sunrise
 
  FILES
-   tellstickController
    tellstickController.conf
    tellstickController.db
    tellstickController.log
    tellstickController.pid
 
  CONFIGURATION
-   The configuration file consists of a number of settings 'Set',
-   a number of device aliases 'Alias', and a number of device
-   rules 'Rules'.
+   The configuration file consists of a number of settings 'Set', a number of
+   device aliases 'Alias', and a number of device rules 'Rules'.
   
    The settings controls sunrise/sunset, logfile, pidfile, etc.
 
@@ -57,29 +155,27 @@
    The groups configures a list of devices and a delay time.
  
    The rules can be written as a string containing two parts.
-   The first part is optional and ends with an '/'. It can contain
-   one or more of these keywords 'Weekend', 'Workweek', 'Monday',
-   'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday' and
-   'Sunday'. A specified date like '2008-03-18', '2008-03-##',
-   '####-03-##' or '####-##-15' is also allowed.
-   The second part is mandatory and is either a expression or the
-   keyword 'No'. The expression can contain one or more of these
-   keywords 'Sunrise', 'Sunset', 'Random(HH:MM)' and 'HH:MM'.
+   The first part is optional and ends with an '/'. It can contain one or more
+   of these keywords 'Weekend', 'Workweek', 'Monday', 'Tuesday', 'Wednesday',
+   'Thursday', 'Friday', 'Saturday' and 'Sunday'. A specified date like
+   '2008-03-18', '2008-03-##', '####-03-##' or '####-##-15' is also allowed.
+   The second part is mandatory and is either a expression or the keyword 'No'.
+   The expression can contain a micture of these keywords 'Sunrise', 'Sunset',
+   'Random(HH:MM)' and 'HH:MM'.
+
    Example rule: Weekend/07:15
    Example rule: Monday+Sunday/07:15
-   Example rule: 2008-03-15/18:45
    Example rule: 2008-03-##/12:10
    Example rule: 07:15+Random(02:00)
    Example rule: Sunset-00:30
-   Example rule: No
 
  AUTHOR
    Original version written by Rickard Andersson
 
  LICENSE
-   Copyright (C) 2008 Rickard Andersson
-   Version 1.5.0
+   Copyright (C) 2008-2010 Rickard Andersson. Version 2.0.0
    This program comes with ABSOLUTELY NO WARRANTY.
    This is free software, and you are welcome to redistribute it
    under certain conditions; See license file for details.
 
+######################################################################

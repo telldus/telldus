@@ -1,0 +1,1083 @@
+#!/usr/bin/perl
+######################################################################
+#
+# tellstickControllerRfcmd program
+#
+# Copyright (C) 2008-2010 Rickard Andersson (ran42ran@gmail.com)
+# Version 2.0.0
+#
+######################################################################
+#
+# This program is free software: you can redistribute it and/or modify
+# it under the terms of the GNU General Public License as published by
+# the Free Software Foundation, either version 3 of the License, or
+# (at your option) any later version.
+#
+# This program is distributed in the hope that it will be useful,
+# but WITHOUT ANY WARRANTY; without even the implied warranty of
+# MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+# GNU General Public License for more details.
+#
+# You should have received a copy of the GNU General Public License
+# along with this program. If not, see <http://www.gnu.org/licenses/>.
+#
+######################################################################
+
+
+use warnings;
+use strict;
+use sigtrap 'handler', \&daemon_exit, 'normal-signals';
+use sigtrap 'die', 'untrapped', 'normal-signals';
+use sigtrap 'stack-trace', 'any', 'error-signals';
+use POSIX 'setsid';
+
+
+use DB_File;
+use DateTime;
+use DateTime::Event::Sunrise;
+
+
+######################################################################
+
+# All these cfg settings can be altered from the configuration file.
+#
+my %cfg_set = (
+  "configfile" => "/etc/tellstickController.conf",
+  "dbfile" => "/var/lib/tellstickController.db",
+  "logfile" => "/var/log/tellstickController.log",
+  "pidfile" => "/var/run/tellstickController.pid",
+  "program" => "/usr/local/bin/rfcmd",
+  "altitude" => "-0.833",
+  "latitude" => "58.24",
+  "longitude" => "15.31",
+  "timezone" => "Europe/Stockholm",
+);
+my %cfg_group = ();
+my %cfg_alias = ();
+my %cfg_dimmer = ();
+my @cfg_rule = ();
+
+
+my %option = (
+  "aliases" => 0,
+  "check" => 0,
+  "daemon" => 0,
+  "list" => 0,
+  "device" => "",
+  "state" => "",
+  "swapfirst" => 0,
+  "swap" => 0,
+  "test" => 0,
+  "verbose" => 0,
+);
+my %device_state = ();
+my @device_on = ();
+my @device_off = ();
+
+
+######################################################################
+
+
+sub check_args(@) {
+  my (@args) = @_;
+ 
+  if (not @args) {
+    usage();
+    exit;
+  }
+  while (@args) {
+    if ($args[0] =~ /^-(h|-help)$/) {
+      usage();
+      exit;
+    } elsif ($args[0] =~ /^-(a|-aliases)$/) {
+      shift(@args);
+      $option{"aliases"} = 1;
+      next;
+    } elsif ($args[0] =~ /^-(c|-check)$/) {
+      shift(@args);
+      $option{"check"} = 1;
+      next;
+    } elsif ($args[0] =~ /^-(d|-daemon)$/) {
+      shift(@args);
+      $option{"daemon"} = 1;
+      next;
+    } elsif ($args[0] =~ /^-(f|-file)$/) {
+      shift(@args);
+      $cfg_set{"configfile"} = shift(@args);
+      next;
+    } elsif ($args[0] =~ /^-(g|-get)$/) {
+      shift(@args);
+      $option{"get"} = 1;
+      $option{"device"} = lc($args[0]);
+      shift(@args);
+      next;
+    } elsif ($args[0] =~ /^-(l|-list)$/) {
+      shift(@args);
+      $option{"list"} = 1;
+      next;
+    } elsif ($args[0] =~ /^-(s|-set)$/) {
+      shift(@args);
+      $option{"set"} = 1;
+      $option{"device"} = lc($args[0]);
+      shift(@args);
+      $option{"state"} = lc($args[0]);
+      shift(@args);
+      next;
+    } elsif ($args[0] =~ /^-(w|-swapfirst)$/) {
+      shift(@args);
+      $option{"swapfirst"} = 1;
+      $option{"device"} = lc($args[0]);
+      shift(@args);
+      next;
+    } elsif ($args[0] =~ /^-(x|-swap)$/) {
+      shift(@args);
+      $option{"swap"} = 1;
+      $option{"device"} = lc($args[0]);
+      shift(@args);
+      next;
+    } elsif ($args[0] =~ /^-(t|-test)$/) {
+      shift(@args);
+      $option{"test"} = 1;
+      next;
+    } elsif ($args[0] =~ /^-(v|-verbose)$/) {
+      shift(@args);
+      $option{"verbose"} = 1;
+      next;
+    }
+      
+    usage();
+    exit;
+  }
+}
+
+
+sub usage() {
+  while (<DATA>) {
+    if ($_ =~ /^#-(.*)/) {
+      print "$1\n";
+    }
+  }
+}
+
+
+sub println($) {
+  my ($text) = @_;
+
+  print "$text\n";
+}
+
+
+sub printlogger($) {
+  my ($text) = @_;
+
+  if ($option{"daemon"}) {
+    my $now = get_datetime_now();
+    my $logfile = $cfg_set{"logfile"};
+    my $output = "echo '$now $text' >> $logfile";
+    system ($output);
+  }
+}
+
+
+######################################################################
+
+
+sub daemon_init() {
+  chdir "/";
+  umask 0;
+  my $pid = fork;
+  exit if $pid;
+  die "Couldn't fork program" unless defined(\$pid);
+  setsid() or die "Couldn't start new program session"; 
+  open STDIN, '/dev/null' or die "Couldn't read /dev/null!";
+  open STDOUT, '>/dev/null' or die "Couldn't write to /dev/null!";
+  open STDERR, '>/dev/null' or die "Couldn't write to /dev/null!";
+
+  my $pidfile = $cfg_set{"pidfile"};
+  $0="tellstickControllerDaemon";
+  $pid = $$;
+  system("echo $pid > $pidfile") if (defined($pidfile));
+
+  printlogger "> Daemon started";
+}
+
+
+sub daemon_exit() {
+  printlogger "> Daemon stopped";
+
+  unlink $cfg_set{"pidfile"} if (defined($cfg_set{"pidfile"}));
+  my $pid = $$;
+  kill('TERM', $pid);
+  exit;
+}
+
+
+sub get_datetime_now() {
+  my $now = DateTime->now(time_zone => $cfg_set{"timezone"});
+
+  return $now;
+}
+
+
+sub get_datetime_sunrise($) {
+  my ($now) = @_;
+
+  my $sunrise = DateTime::Event::Sunrise->sunrise (
+    altitude => $cfg_set{"altitude"},
+    latitude => $cfg_set{"latitude"},
+    longitude => $cfg_set{"longitude"},
+    iteration => '2'
+  );
+  my $time = $sunrise->next($now);
+
+  return $time;
+}
+
+
+sub get_datetime_sunset($) {
+  my ($now) = @_;
+
+  my $sunset = DateTime::Event::Sunrise->sunset (
+    altitude => $cfg_set{"altitude"},
+    latitude => $cfg_set{"latitude"},
+    longitude => $cfg_set{"longitude"},
+    iteration => '2'
+  );
+  my $time = $sunset->next($now);
+
+  return $time;
+}
+
+  
+sub read_db($) {
+  my ($dbfile) = @_;
+
+  println "> Reading db started" if ($option{"verbose"});
+
+  tie %device_state, "DB_File", $dbfile, O_RDWR|O_CREAT, 0666, $DB_HASH
+    or die "Couldn't read dbfile '$dbfile'!\n";
+
+  foreach my $key (sort keys %cfg_alias) {
+    if (not $device_state{$key}) {
+      $device_state{$key} = "unknown";
+      println "Added device $key to db!" if ($option{"verbose"});
+    }
+  }
+    
+  foreach my $key (sort keys %device_state) {
+    if (not $cfg_alias{$key}) {
+      delete $device_state{$key};
+      println "Removed device $key from db!" if ($option{"verbose"});
+    }
+  }
+
+  println "> Reading db finished" if ($option{"verbose"});
+}
+
+
+sub write_db($) {
+  my ($dbfile) = @_;
+
+  println "> Writing db started" if ($option{"verbose"});
+
+  untie %device_state;
+
+  println "> Writing db finished" if ($option{"verbose"});
+}
+
+
+sub read_config($) {
+  my ($infile) = @_;
+
+  my $text = "> Reading configurationfile started";
+  println $text if ($option{"verbose"});
+  printlogger $text;
+
+  open(my $indata, $infile) or die "Couldn't read configfile '$infile'!";
+
+  while(my $line = <$indata>) {
+    chomp($line);
+    $line =~ s/\s+/ /g;
+
+    if ($line =~ /^Set\s+/i) {
+      #println $line if ($option{"verbose"});
+      my (undef, $key, $val, $suffix) = split(/\s+/, $line);
+      if (defined($suffix)) {
+        println "Wrong argument '$suffix' in line '$line'!";
+      } else {
+        if (defined($key)) {
+          if (defined($val)) {
+            $cfg_set{lc($key)} = $val;
+          } else {
+            println "Wrong value in line '$line'!";
+          }
+        } else {
+          println "Wrong key in line '$line'!";
+        }
+      }
+      next;
+    }	
+
+    if ($line =~ /^Alias\s+/i) {
+      #println $line if ($option{"verbose"});
+      my (undef, $name, $sender, $dimmer, $prot, $code, $addr, $suffix)
+        = split(/\s+/, $line);
+      if (defined($suffix)) {
+        println "Wrong argument '$suffix' in line '$line'!";
+println $addr;
+      } else {
+        $name = lc($name);
+        $sender = $sender;
+        $dimmer = lc($dimmer);
+        $prot = uc($prot);
+        $code = uc($code);
+        $addr = uc($addr);
+        if ($dimmer =~ /^no|yes$/) {
+          $cfg_dimmer{$name} = $dimmer;
+          if ($prot =~ /^NEXA|WAVEMAN$/) {
+            if ($code =~ /^[A-P]$/) {
+              if ($addr =~ /^[1-9]{1}|1{1}[0-6]{1}$/) {
+                $cfg_alias{$name} = "$sender $prot $code $addr";
+              } else {
+                println "Wrong channel '$addr' in line '$line'!";
+              }
+            } else {
+              println "Wrong housecode '$code' in line '$line'!";
+            }
+          } elsif ($prot =~ /^SARTANO$/) {
+            if ($code =~ /^[01]{10}$/) {
+              if ($addr eq "") {
+                $cfg_alias{$name} = "$sender $prot $code";
+              } else {
+                println "Wrong argument '$addr' in line '$line'!";
+              }
+            } else {
+              println "Wrong channel '$code' in line '$line'!";
+            }
+          } else {
+            println "Wrong protocol '$prot' in line '$line'!";
+          }
+        } else {
+          println "Wrong dimmer mode '$dimmer' in line '$line'!";
+        }
+      }
+      next;
+    }	
+
+    if ($line =~ /^Group\s+/i) {
+      println $line if ($option{"verbose"});
+      my (undef, $name, $delay, $aliases) = split(/\s+/, $line, 4);
+      $name = lc($name);
+      $delay = lc($delay);
+      if ($delay =~ /^\d+$/) {
+        my $error = 0;
+        $aliases = lc($aliases);
+        my @aliaslist = split(/\s+/, $aliases);
+        foreach my $alias (@aliaslist) {
+          if (! exists($cfg_alias{$alias})) {
+            println "Wrong alias '$alias' in line '$line'!";
+            $error += 1;
+          }	
+        }
+        if ($error == 0) {
+          $cfg_group{$name} = "$delay $aliases";
+        }
+      } else {
+        println "Wrong delay time '$delay' in line '$line'!";
+      }
+      next;
+    }	
+
+    if ($line =~ /^Rule\s+/i) {
+      #println $line if ($option{"verbose"});
+      my (undef, $alias, $on, $off, $suffix) = split(/\s+/, $line);
+      if (defined($suffix)) {
+        println "Wrong argument '$suffix' in line '$line'!";
+      } else {
+        $alias = lc($alias);
+        $on = lc($on);
+        $off = lc($off);
+        if ($on eq "") {
+          println "Wrong on time '$on' in line '$line'!";
+        } elsif ($off eq "") {
+          println "Wrong off time '$off' in line '$line'!";
+        } else {
+          if ($on !~ /[\w\/\+\-\:\$\(\)]+/) {
+            println "Wrong on time '$on' in line '$line'!";
+          } elsif ($off !~ /[\w\/\+\-\:\$\(\)]+/) {
+            println "Wrong off time '$off' in line '$line'!";
+          }
+        }
+        if (exists($cfg_alias{$alias})) {
+            push @cfg_rule, [$alias, $on, $off];
+        } elsif (exists($cfg_group{$alias})) {
+            push @cfg_rule, [$alias, $on, $off];
+        } else {
+          println "Wrong alias '$alias' in line '$line'!";
+        }
+      }
+      next;
+    }
+
+    if ($line =~ /^#/) {
+      next;
+    }
+
+    if ($line =~ /^\s*/) {
+      next;
+    }
+
+    println "Unhandled config line: '$line'!" if ($option{"check"});
+  }
+
+  close $indata;
+
+  $text = "=== Set ===";
+  println $text if ($option{"check"});
+  printlogger $text;
+  foreach my $key (sort keys %cfg_set) {
+    $text = "$key = $cfg_set{$key}";
+    println $text if ($option{"check"});
+    printlogger $text;
+  }
+  $text = "=== Alias ===";
+  println $text if ($option{"check"});
+  printlogger $text;
+  foreach my $key (sort keys %cfg_alias) {
+    $text = "$key = $cfg_alias{$key}";
+    println $text if ($option{"check"});
+    printlogger $text;
+  }
+  $text = "=== Group ===";
+  println $text if ($option{"check"});
+  printlogger $text;
+  foreach my $key (sort keys %cfg_group) {
+    my $val = $cfg_group{$key};
+    my ($delay, $aliases) = split(/\s+/, $val, 2);
+    $text = "$key =";
+    $text .= " delay time $delay seconds";
+    $text .= " between aliases ($aliases)";
+    println $text if ($option{"check"});
+    printlogger $text;
+  }
+  $text = "=== Rule ===";
+  println $text if ($option{"check"});
+  printlogger $text;
+  foreach my $rule (@cfg_rule) {
+    my ($alias, $on, $off) = @$rule;
+    $text = "$alias =";
+    $text .= " on at $on" if ($on !~ /no/);
+    $text .= " and" if (($on !~ /no/) && ($off !~ /no/));
+    $text .= " off at $off" if ($off !~ /no/);
+    println $text if ($option{"check"});
+    printlogger $text;
+  }
+
+  $text = "> Reading configurationfile finished";
+  println $text if ($option{"verbose"});
+  printlogger $text;
+}
+
+
+sub call_program($$) {
+  my ($device, $state) = @_;
+
+  if ($option{"test"}) {
+    my $text = "Test mode, no real device will be used";
+    println $text if ($option{"verbose"});
+    printlogger $text;
+  } else {
+    my $alias = $cfg_alias{$device};
+    my $mode = 0;
+    if ($state eq "on") {
+      $mode = 1;
+    }
+    my $prog = $cfg_set{"program"};
+    my $command = "$prog $alias $mode";
+    my $text = "Executing command: '$command'";
+    println $text if ($option{"verbose"});
+    system($command);
+  }
+}
+
+
+sub load_device_rules () {
+  my $text = "> Loading device rules started";
+  println $text if ($option{"verbose"});
+  printlogger $text;
+
+  my $now = get_datetime_now();
+  $text = "Time = $now";
+  println $text if ($option{"verbose"});
+  printlogger $text;
+  my $today = get_datetime_now();
+  $today->set( hour => 0, minute => 0, second => 0 );
+  $text = "Today = $today";
+  println $text if ($option{"verbose"});
+  printlogger $text;
+  my $sunrise = get_datetime_sunrise($today);
+  $text = "Sunrise = $sunrise";
+  println $text if ($option{"verbose"});
+  printlogger $text;
+  my $sunset = get_datetime_sunset($today);
+  $text = "Sunset = $sunset";
+  println $text if ($option{"verbose"});
+  printlogger $text;
+
+  foreach my $rule (@cfg_rule) {
+    my ($alias, $on, $off) = @$rule;
+    if (exists($cfg_alias{$alias})) {
+      my $time = get_rule_datetime($on, $today, $sunrise, $sunset);
+      push @device_on, [$time, $alias] if (defined($time) && ($now <= $time));
+      $time = get_rule_datetime($off, $today, $sunrise, $sunset);
+      push @device_off, [$time, $alias] if (defined($time) && ($now <= $time));
+    } else {
+      foreach my $val ($cfg_group{$alias}) {
+        my ($delay, $aliases) = split(/\s+/, $val, 2);
+        my $timedelay = 0;
+        my $ontime = get_rule_datetime($on, $today, $sunrise, $sunset);
+        my $offtime = get_rule_datetime($off, $today, $sunrise, $sunset);
+        my (@aliaslist) = split(/\s+/, $aliases);
+        foreach my $device (@aliaslist) {
+          if (defined($ontime)) {
+            my $time = $ontime->clone->add(seconds => $timedelay);
+            push @device_on, [$time, $device] if (defined($time) && ($now <= $time));
+          }
+          if (defined($offtime)) {
+            my $time = $offtime->clone->add(seconds => $timedelay);
+            push @device_off, [$time, $device] if (defined($time) && ($now <= $time));
+          }
+          $timedelay += $delay;
+        }
+      }
+    }
+  }
+
+  @device_on = sort { $a->[0] cmp $b->[0] } @device_on;
+  @device_off = sort { $a->[0] cmp $b->[0] } @device_off;
+
+  $text = "=== Device on ===";
+  println $text if ($option{"verbose"});
+  printlogger $text;
+  foreach my $rule (@device_on) {
+    my ($time, $alias) = @$rule;
+    $text = "$alias = $time";
+    println $text if ($option{"verbose"});
+    printlogger $text;
+  }
+  $text = "=== Device off ===";
+  println $text if ($option{"verbose"});
+  printlogger $text;
+  foreach my $rule (@device_off) {
+    my ($time, $alias) = @$rule;
+    $text = "$alias = $time";
+    println $text if ($option{"verbose"});
+    printlogger $text;
+  }
+  
+  $text = "> Loading device rules finished";
+  println $text if ($option{"verbose"});
+  printlogger $text;
+}
+
+
+sub get_rule_datetime($$$$) {
+  my ($rule, $now, $sunrise, $sunset) = @_;
+
+#println "Rule='$rule'";
+
+  my ($date, $time) = split(/\//, $rule);
+  if (not defined($time)) {
+    $time = $date;
+    $date = $now->ymd;
+  } else {
+    my $today = 0;
+    my $match = 0;
+    if ($date =~ /([\d#]{4})-([\d#]{2})-([\d#]{2})/) {
+      $match = 1;
+      $today = 1 if ((($1 =~ /####/) || ($now->year == $1))
+                    && (($2 =~ /##/) || ($now->month == $2))
+                    && (($3 =~ /##/) || ($now->day == $3)));
+    }
+    if ($date =~ /workweek/) {
+      $match = 1;
+      $today = 1 if ($now->day_of_week < 6);
+    }
+    if ($date =~ /weekend/) {
+      $match = 1;
+      $today = 1 if ($now->day_of_week > 5);
+    }
+    if ($date =~ /monday/) {
+      $match = 1;
+      $today = 1 if ($now->day_of_week == 1);
+    }
+    if ($date =~ /tuesday/) {
+      $match = 1;
+      $today = 1 if ($now->day_of_week == 2);
+    }
+    if ($date =~ /wednesday/) {
+      $match = 1;
+      $today = 1 if ($now->day_of_week == 3);
+    }
+    if ($date =~ /thursday/) {
+      $match = 1;
+      $today = 1 if ($now->day_of_week == 4);
+    }
+    if ($date =~ /friday/) {
+      $match = 1;
+      $today = 1 if ($now->day_of_week == 5);
+    }
+    if ($date =~ /saturday/) {
+      $match = 1;
+      $today = 1 if ($now->day_of_week == 6);
+    }
+    if ($date =~ /sunday/) {
+      $match = 1;
+      $today = 1 if ($now->day_of_week == 7);
+    }
+
+    if ($match) { 
+      if ($today) {
+        $date = $now->ymd;
+      } else {
+        $time = undef;
+      }
+    } else {
+      println "Wrong date '$date' for rule '$rule'!";
+      $time = undef;
+    }
+  }
+  
+  if (defined($time) && ($time !~ /^no$/)) {
+    my $days = 0;
+    my $hours = 0;
+    my $minutes = 0;
+    my $lastOp = "+";
+    my $expr = "";
+    my $op = "";
+    my $rest = "";
+    my $mins = 0;
+#println "rule='$time'";
+
+    while ($time ne "") {
+      $op = $lastOp;
+      if ($time =~ /(.+?)(\+|-)(.*)/) {
+        $expr = $1;
+        $lastOp = $2; 
+        $rest = $3; 
+        $time = $rest;
+      } elsif ($time =~ /(.+)/) {
+        $expr = $1;
+        $lastOp = "";
+        $rest = "";
+        $time = "";
+      }
+
+      if ($expr =~ /^sunrise$/) {
+        $expr = 0;
+        if ($sunrise->hms =~ /(\d\d):(\d\d):(\d\d)/) {
+          $expr = $1*60+$2;
+        }
+      } elsif ($expr =~ /^sunset$/) {
+        $expr = 0;
+        if ($sunset->hms =~ /(\d\d):(\d\d):(\d\d)/) {
+          $expr = $1*60+$2;
+        }
+      } elsif ($expr =~ /^random\((\d\d):(\d\d)\)$/) {
+        $expr = int rand($1*60+$2+1);
+      } elsif ($expr =~ /^(\d\d):(\d\d)$/) {
+        $expr = $1*60+$2;
+      } else {
+        println "Wrong time '$expr' for rule '$rule'!";
+        $expr = "";
+      }
+
+#println "expr='$expr', op='$op', rest='$rest'";
+      if ($op eq "+") {
+        $mins += $expr;
+      } elsif ($op eq "-") {
+        $mins -= $expr;
+      }
+#println "mins='$mins'";
+    }
+    if ($mins <= 0) {
+      $mins = $mins % (24*60);
+      $days = 1;
+    } elsif ($mins >= 24*60) {
+      $mins = $mins % (24*60);
+      $days = 1;
+    }
+
+    $hours = int $mins/60;
+    $minutes = int $mins%60;
+# UTC ?
+    $time = get_datetime_now();
+    $time->set(hour => 0, minute => 0, second => 0);
+    $time->add(hours => $hours+24*$days, minutes => $minutes, seconds => 0);
+#println "days='$days', hours='$hours', minutes='$minutes'";
+#println "time='$time'";
+  } else {
+    $time = undef;
+  }
+
+  return $time;
+}
+
+
+sub check_device_rules($) {
+  my ($now) = @_;
+  
+  println "Checking device rules '$now'" if ($option{verbose});
+
+  my $rule = $device_on[0];
+  while (defined(@$rule)) {
+    my ($time, $device) = @$rule;
+    if ($time <= $now) {
+      shift(@device_on);
+      change_device_state($device, 'off') if ($cfg_dimmer{$device} eq 'yes');
+      change_device_state($device, 'on');
+    } else {
+      last;
+    }
+    $rule = $device_on[0];
+  }
+
+  $rule = $device_off[0];
+  while (defined(@$rule)) {
+    my ($time, $device) = @$rule;
+    if ($time <= $now) {
+      shift(@device_off);
+      change_device_state($device, 'off');
+    } else {
+      last;
+    }
+    $rule = $device_off[0];
+  }
+
+}
+
+
+sub change_device_state($$) {
+  my ($device, $state) = @_;
+
+  $device_state{$device} = $state;
+  write_db($cfg_set{"dbfile"});
+  read_db($cfg_set{"dbfile"});
+  call_program($device, $state);
+  my $text = "Device $device = $state";
+  println $text if ($option{"verbose"});
+  printlogger $text;
+}
+
+
+######################################################################
+
+
+sub get_device_state() {
+  if ($option{"device"}) {
+    my $device = $option{"device"};
+    if ($device_state{$device}) {
+      my $state = $device_state{$device};
+      println "$state" if (not $option{"verbose"});
+      println "Device $device = $state" if ($option{"verbose"});
+    } elsif (exists($cfg_group{$device})) {
+      my $val = $cfg_group{$device};
+      my ($delay, $aliases) = split(/\s+/, $val, 2);
+      my $states = "";
+      my (@aliaslist) = split(/\s+/, $aliases);
+      foreach my $alias (@aliaslist) {
+        $states .= " $device_state{$alias}";
+      }
+      println "Group $device =$states";
+    } else {
+      println "No alias or group found with name '$device'!";
+    }
+  }
+}
+
+
+sub set_device_state() {
+  if ($option{"device"}) {
+    if ($option{"state"}) {
+      my $state = $option{"state"};
+      if ($state !~ /^(on|off)$/i) {
+        println "No state found with name '$state'!";
+      }
+      my $device = $option{"device"};
+      if ($device_state{$device}) {
+        change_device_state($device, $state);
+      } elsif (exists($cfg_group{$device})) {
+        my $val = $cfg_group{$device};
+        my ($delay, $aliases) = split(/\s+/, $val, 2);
+        my (@aliaslist) = split(/\s+/, $aliases);
+        foreach my $alias (@aliaslist) {
+          change_device_state($alias, $state);
+          sleep(1);
+        }
+      } else {
+        println "No alias or group found with name '$device'!";
+      }
+    }
+  }
+}
+
+
+sub swap_first_device_state() {
+  if ($option{"device"}) {
+    if ($option{"swapfirst"}) {
+      my $device = $option{"device"};
+      if ($device_state{$device}) {
+        my $state = $device_state{$device};
+        if ($state =~ /^off$/i) {
+          $state = 'on';
+        } else {
+          $state = 'off';
+        }
+        change_device_state($device, $state);
+      } elsif (exists($cfg_group{$device})) {
+        my $val = $cfg_group{$device};
+        my ($delay, $aliases) = split(/\s+/, $val, 2);
+        my ($alias) = split(/\s+/, $aliases);
+        my $state = $device_state{$alias};
+        if ($state =~ /^off$/i) {
+          $state = 'on';
+        } else {
+          $state = 'off';
+        }
+        my (@aliaslist) = split(/\s+/, $aliases);
+        foreach my $alias (@aliaslist) {
+          change_device_state($alias, $state);
+          sleep(1);
+        }
+      } else {
+        println "No alias or group found with name '$device'!";
+      }
+    }
+  }
+}
+
+
+sub swap_device_state() {
+  if ($option{"device"}) {
+    if ($option{"swap"}) {
+      my $device = $option{"device"};
+      if ($device_state{$device}) {
+        my $state = $device_state{$device};
+        if ($state =~ /^off$/i) {
+          $state = 'on';
+        } else {
+          $state = 'off';
+        }
+        change_device_state($device, $state);
+      } elsif (exists($cfg_group{$device})) {
+        my $val = $cfg_group{$device};
+        my ($delay, $aliases) = split(/\s+/, $val, 2);
+        my (@aliaslist) = split(/\s+/, $aliases);
+        foreach my $alias (@aliaslist) {
+          my $state = $device_state{$alias};
+          if ($state =~ /^off$/i) {
+            $state = 'on';
+          } else {
+            $state = 'off';
+          }
+          change_device_state($alias, $state);
+          sleep(1);
+        }
+      } else {
+        println "No alias or group found with name '$device'!";
+      }
+    }
+  }
+}
+
+
+sub list_all_devices() {
+  foreach my $key (sort keys %device_state) {
+    println "Device $key = $device_state{$key}";
+  }
+  foreach my $key (sort keys %cfg_group) {
+    my $val = $cfg_group{$key};
+    my ($delay, $aliases) = split(/\s+/, $val, 2);
+    my $states = "";
+    my (@aliaslist) = split(/\s+/, $aliases);
+    foreach my $device (@aliaslist) {
+      $states .= " $device_state{$device}";
+    }
+    println "Group $key =$states";
+  }
+}
+
+
+sub list_all_aliases {
+  foreach my $key (sort keys %cfg_alias) {
+    my $dimmer = "";
+    $dimmer = " dimmer" if $cfg_dimmer{$key} eq "yes";
+    println "Alias $key = receiver ($cfg_alias{$key}$dimmer)";
+  }
+  foreach my $key (sort keys %cfg_group) {
+    my $val = $cfg_group{$key};
+    my ($delay, $aliases) = split(/\s+/, $val, 2);
+    println "Group $key = delay $delay seconds, aliases ($aliases)";
+  }
+}
+
+
+sub daemon_loop() {
+  daemon_init();
+
+  while ($option{"daemon"}) {
+    my $now = get_datetime_now();
+    my $next_day = get_datetime_now();
+    $next_day->add( hours => 24 );
+    $next_day->set( hour => 0, minute => 0, second => 0 );
+    println "Next reload of device rules = $next_day" if ($option{"verbose"});
+
+    my $wait_time = 5;
+    my $loop = 1;
+
+    check_device_rules($now);
+
+    while ($loop) {
+      $now = get_datetime_now();
+      if ($now > $next_day) {
+        load_device_rules();
+        $next_day->add( hours => 24 );
+      }
+      check_device_rules($now);
+      sleep($wait_time);
+    } 
+  }
+
+  daemon_exit();
+}
+
+
+sub perform_action() {
+  if ($option{"aliases"}) {
+    list_all_aliases();
+  } elsif ($option{"get"}) {
+    get_device_state();
+  } elsif ($option{"set"}) {
+    set_device_state();
+  } elsif ($option{"swapfirst"}) {
+    swap_first_device_state();
+  } elsif ($option{"swap"}) {
+    swap_device_state();
+  } elsif ($option{"list"}) {
+    list_all_devices();
+  } elsif ($option{"daemon"}) {
+    daemon_loop();
+  }
+}
+
+
+######################################################################
+
+
+sub main() {
+  # check arguments
+  check_args(@ARGV);
+    
+  # read configuration file
+  read_config($cfg_set{"configfile"});
+
+  # read DB
+  read_db($cfg_set{"dbfile"});
+
+  # Load rules
+  load_device_rules(); 
+
+  # perform action
+  perform_action();
+
+  # write DB
+  write_db($cfg_set{"dbfile"});
+}
+
+
+main();
+
+
+######################################################################
+
+
+__DATA__
+#-
+#- NAME
+#-   tellstickControllerRfcmd
+#-
+#- SYNOPSIS
+#-   tellstickControllerRfcmd [options] 
+#-
+#- DESCRIPTION
+#-   tellstickController is used for controlling wireless recevier devices from
+#-   a TellStick transmitter. This version uses the rfcmd software to perform
+#-   the actual device control. tellstickController can be used for manual
+#-   control of devices, or used as a daemon that is controlled by a number of
+#-   configuration file rules.
+#-   A small database is used for keeping track of device states between every
+#-   execution of tellstickController.
+#-    
+#-   -h, --help          Show this help text.
+#-   -v, --verbose       Show extra information.
+#-   -d, --daemon        Starts in daemon mode.
+#-   -f, --file F        Set configfile to file F.
+#-   -c, --check         Check content of configuration file.
+#-   -t, --test          Test mode, no real devices will used.
+#-   -a, --aliases       List of aliases for devices/groups.
+#-   -l, --list          List states for all devices/groups.
+#-   -s, --set D S       Set device D to state S.
+#-   -g, --get D         Get state for device/group D.
+#-   -w, --swapfirst G   Swap states for group G based on first device state.
+#-   -x, --swap D        Swap state for device/group D.
+#-
+#- EXAMPLES
+#-   tellstickControllerRfcmd -l
+#-   tellstickControllerRfcmd --set device_alias on
+#-   tellstickControllerRfcmd --swap device_alias
+#-   tellstickControllerRfcmd -d -f myConfigFile.conf
+#-
+#- DEPENDENCIES
+#-   The following Perl modules needs to be installed:
+#-   DB_File, DateTime and DateTime::Event::Sunrise
+#-
+#- FILES
+#-   tellstickController.conf
+#-   tellstickController.db
+#-   tellstickController.log
+#-   tellstickController.pid
+#-
+#- CONFIGURATION
+#-   The configuration file consists of a number of settings 'Set', a number of
+#-   device aliases 'Alias', and a number of device rules 'Rules'.
+#-  
+#-   The settings controls sunrise/sunset, logfile, pidfile, etc.
+#-
+#-   The aliases configures device name, channel, code, etc.
+#- 
+#-   The groups configures a list of devices and a delay time.
+#- 
+#-   The rules can be written as a string containing two parts.
+#-   The first part is optional and ends with an '/'. It can contain one or more
+#-   of these keywords 'Weekend', 'Workweek', 'Monday', 'Tuesday', 'Wednesday',
+#-   'Thursday', 'Friday', 'Saturday' and 'Sunday'. A specified date like
+#-   '2008-03-18', '2008-03-##', '####-03-##' or '####-##-15' is also allowed.
+#-   The second part is mandatory and is either a expression or the keyword 'No'.
+#-   The expression can contain a micture of these keywords 'Sunrise', 'Sunset',
+#-   'Random(HH:MM)' and 'HH:MM'.
+#-
+#-   Example rule: Weekend/07:15
+#-   Example rule: Monday+Sunday/07:15
+#-   Example rule: 2008-03-##/12:10
+#-   Example rule: 07:15+Random(02:00)
+#-   Example rule: Sunset-00:30
+#-
+#- AUTHOR
+#-   Original version written by Rickard Andersson
+#-
+#- LICENSE
+#-   Copyright (C) 2008-2010 Rickard Andersson. Version 2.0.0
+#-   This program comes with ABSOLUTELY NO WARRANTY.
+#-   This is free software, and you are welcome to redistribute it
+#-   under certain conditions; See license file for details.
+#-

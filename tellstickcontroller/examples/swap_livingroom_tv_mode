@@ -1,0 +1,27 @@
+#!/bin/sh
+#
+# Swaps livingroom tv mode on/off
+#
+
+led_status=`tellstickController --get livingroom_mythtv_leds`
+#echo $led_status
+
+if [ "$led_status" != "on" ]; then
+#	echo on
+	tellstickController --set livingroom_cabinets on
+	tellstickController --set livingroom_mythtv_leds on
+	tellstickController --set livingroom_uplight off
+	tellstickController --set livingroom_wall_north on
+	tellstickController --set livingroom_wall_east off
+	tellstickController --set Livingroom_window on
+else
+#	echo off
+	tellstickController --set livingroom_cabinets on
+	tellstickController --set livingroom_mythtv_leds off
+	tellstickController --set livingroom_uplight off
+	tellstickController --set livingroom_wall_north on
+	tellstickController --set livingroom_wall_east on
+	tellstickController --set Livingroom_window on
+fi
+
+exit
