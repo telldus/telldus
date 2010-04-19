@@ -490,14 +490,14 @@ sub load_device_rules () {
       my $time = get_rule_datetime($on, $today, $sunrise, $sunset);
       my $value = 'on';
       if ($on =~ /dimmer\((.*)\)/i) {
-        load_dimmer_rules(''.@$rule, $alias, $time, $value, $on, $now, $today, $sunrise, $sunset);
+        load_dimmer_rules($alias, $time, $on, $now, $today, $sunrise, $sunset);
       } else {
         push @device, [$time, $alias, $value] if (defined($time) && ($now <= $time));
       }
       $time = get_rule_datetime($off, $today, $sunrise, $sunset);
       $value = 'off';
       if ($off =~ /dimmer\((.*)\)/i) {
-        load_dimmer_rules(''.@$rule, $alias, $time, $value, $off, $now, $today, $sunrise, $sunset);
+        load_dimmer_rules($alias, $time, $off, $now, $today, $sunrise, $sunset);
       } else {
         push @device, [$time, $alias, $value] if (defined($time) && ($now <= $time));
       }
@@ -513,7 +513,7 @@ sub load_device_rules () {
             my $time = $ontime->clone->add(seconds => $timedelay);
             my $value = 'on';
             if ($on =~ /dimmer\((.*)\)/i) {
-              load_dimmer_rules(''.@$rule, $device, $time, $value, $on, $now, $today, $sunrise, $sunset);
+              load_dimmer_rules($device, $time, $on, $now, $today, $sunrise, $sunset);
             } else {
               push @device, [$time, $device, $value] if (defined($time) && ($now <= $time));
             }
@@ -522,7 +522,7 @@ sub load_device_rules () {
             my $time = $offtime->clone->add(seconds => $timedelay);
             my $value = 'off';
             if ($off =~ /dimmer\((.*)\)/i) {
-              load_dimmer_rules(''.@$rule, $device, $time, $value, $off, $now, $today, $sunrise, $sunset);
+              load_dimmer_rules($device, $time, $off, $now, $today, $sunrise, $sunset);
             } else {
               push @device, [$time, $device, $value] if (defined($time) && ($now <= $time));
             }
@@ -696,8 +696,8 @@ sub get_rule_datetime($$$$) {
   return $time;
 }
 
-sub load_dimmer_rules($$$$) {
-  my ($rule, $alias, $time, $value, $expr, $now, $today, $sunrise, $sunset) = @_;
+sub load_dimmer_rules($$$$$$$$){
+  my ($alias, $time, $expr, $now, $today, $sunrise, $sunset) = @_;
 
   my $dimmer =$expr;
   if ($expr =~ /dimmer\((.*)\)/i) {
@@ -710,28 +710,32 @@ sub load_dimmer_rules($$$$) {
     $offset = '';
   }
   if ($offset !~ /^\d\d:\d\d$/) {
-    println "Wrong dimmer time offset '$offset' for rule '$rule'!";
+    println "Wrong dimmer time offset '$offset' for rule '$expr'!";
     next;
   }
   if (!defined($start)) {
     $start = '';
   }
   if (($start !~ /^(\d+)$/) || (($start < 0) || ($start > 255))) {
-    println "Wrong dimmer start level '$start' for rule '$rule'!";
+    println "Wrong dimmer start level '$start' for rule '$expr'!";
     next;
   }
   if (!defined($stop)) {
     $stop = '';
   }
   if (($stop !~ /^(\d+)$/) || (($stop < 0) || ($stop > 255))) {
-    println "Wrong dimmer stop level '$stop' for rule '$rule'!";
+    println "Wrong dimmer stop level '$stop' for rule '$expr'!";
     next;
   }
   if (!defined($step)) {
     $step = '';
   }
   if (($step !~ /^(\d+)$/) || (($step < 1) || ($step > 255))) {
-    println "Wrong dimmer step level '$step' for rule '$rule'!";
+    println "Wrong dimmer step level '$step' for rule '$expr'!";
+    next;
+  }
+
+  if (! defined($time)) {
     next;
   }
 
