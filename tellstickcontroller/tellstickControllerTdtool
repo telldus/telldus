@@ -229,7 +229,7 @@ sub get_datetime_sunrise($) {
     altitude => $cfg_set{"altitude"},
     latitude => $cfg_set{"latitude"},
     longitude => $cfg_set{"longitude"},
-    iteration => '2'
+    iteration => '4'
   );
   my $time = $sunrise->next($now);
 
@@ -736,7 +736,7 @@ sub load_dimmer_rules($$$$$$$$){
   }
 
   if (! defined($time)) {
-    next;
+    return;
   }
 
   my $dimtime = $time;
