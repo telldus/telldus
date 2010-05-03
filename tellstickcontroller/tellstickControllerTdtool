@@ -163,7 +163,7 @@ sub usage() {
 }
 
 
-sub println($) {
+sub printLine($) {
   my ($text) = @_;
 
   print "$text\n";
@@ -256,18 +256,14 @@ sub get_info_from_program() {
   my $prog = $cfg_set{"program"};
   my $command = "$prog --list";
   my $text = "Executing command: '$command'";
-  println $text if ($option{"verbose"});
+  printLine $text if ($option{"verbose"});
   my @result = qx($command);
-  $text = "Command result: '@result'";
 
-  #println $text if ($option{"verbose"});
-    
   foreach my $line (@result) {
     chomp($line);
     $line =~ s/\s+/ /g;
 
     if ($line =~ /^\d+/i) {
-      #println $line if ($option{"verbose"});
       my ($id, $name, $state) = split(/\s+/, $line);
       if (defined($name)) {
         $cfg_alias{lc($name)} = 'off';
@@ -288,7 +284,7 @@ sub read_config($) {
   my ($infile) = @_;
 
   my $text = "> Reading configurationfile started";
-  println $text if ($option{"verbose"});
+  printLine $text if ($option{"verbose"});
   printlogger $text;
 
   open(my $indata, $infile) or die "Couldn't read configfile '$infile'!";
@@ -298,19 +294,18 @@ sub read_config($) {
     $line =~ s/\s+/ /g;
 
     if ($line =~ /^Set\s+/i) {
-      #println $line if ($option{"verbose"});
       my (undef, $key, $val, $suffix) = split(/\s+/, $line);
       if (defined($suffix)) {
-        println "Wrong argument '$suffix' in line '$line'!";
+        printLine "Wrong argument '$suffix' in line '$line'!";
       } else {
         if (defined($key)) {
           if (defined($val)) {
             $cfg_set{lc($key)} = $val;
           } else {
-            println "Wrong value in line '$line'!";
+            printLine "Wrong value in line '$line'!";
           }
         } else {
-          println "Wrong key in line '$line'!";
+          printLine "Wrong key in line '$line'!";
         }
       }
       next;
@@ -328,7 +323,6 @@ sub read_config($) {
     $line =~ s/\s+/ /g;
 
     if ($line =~ /^Group\s+/i) {
-      #println $line if ($option{"verbose"});
       my (undef, $name, $id, $delay, $aliases) = split(/\s+/, $line, 5);
       $name = lc($name);
       $delay = lc($delay);
@@ -342,7 +336,7 @@ sub read_config($) {
         my @aliaslist = split(/\s+/, $aliases);
         foreach my $alias (@aliaslist) {
           if (! exists($cfg_alias{$alias})) {
-            println "Wrong alias '$alias' in line '$line'!";
+            printLine "Wrong alias '$alias' in line '$line'!";
             $error += 1;
           }	
         }
@@ -350,29 +344,28 @@ sub read_config($) {
           $cfg_group{$name} = "$delay $aliases";
         }
       } else {
-        println "Wrong delay time '$delay' in line '$line'!";
+        printLine "Wrong delay time '$delay' in line '$line'!";
       }
       next;
     }	
 
     if ($line =~ /^Rule\s+/i) {
-      #println $line if ($option{"verbose"});
       my (undef, $alias, $on, $off, $suffix) = split(/\s+/, $line);
       if (defined($suffix)) {
-        println "Wrong argument '$suffix' in line '$line'!";
+        printLine "Wrong argument '$suffix' in line '$line'!";
       } else {
         $alias = lc($alias);
         $on = lc($on);
         $off = lc($off);
         if ($on eq "") {
-          println "Wrong on time '$on' in line '$line'!";
+          printLine "Wrong on time '$on' in line '$line'!";
         } elsif ($off eq "") {
-          println "Wrong off time '$off' in line '$line'!";
+          printLine "Wrong off time '$off' in line '$line'!";
         } else {
           if ($on !~ /[\w\/\+\-\:\$\(\)]+/) {
-            println "Wrong on time '$on' in line '$line'!";
+            printLine "Wrong on time '$on' in line '$line'!";
           } elsif ($off !~ /[\w\/\+\-\:\$\(\)]+/) {
-            println "Wrong off time '$off' in line '$line'!";
+            printLine "Wrong off time '$off' in line '$line'!";
           }
         }
         if (exists($cfg_alias{$alias})) {
@@ -380,7 +373,7 @@ sub read_config($) {
         } elsif (exists($cfg_group{$alias})) {
             push @cfg_rule, [$alias, $on, $off];
         } else {
-          println "Wrong alias '$alias' in line '$line'!";
+          printLine "Wrong alias '$alias' in line '$line'!";
         }
       }
       next;
@@ -390,23 +383,23 @@ sub read_config($) {
   close $indata;
 
   $text = "=== Set ===";
-  println $text if ($option{"check"});
+  printLine $text if ($option{"check"});
   printlogger $text;
   foreach my $key (sort keys %cfg_set) {
     $text = "$key = $cfg_set{$key}";
-    println $text if ($option{"check"});
+    printLine $text if ($option{"check"});
     printlogger $text;
   }
   $text = "=== Alias ===";
-  println $text if ($option{"check"});
+  printLine $text if ($option{"check"});
   printlogger $text;
   foreach my $key (sort keys %cfg_alias) {
     $text = "$key($cfg_aliasId{$key}) = $cfg_alias{$key}";
-    println $text if ($option{"check"});
+    printLine $text if ($option{"check"});
     printlogger $text;
   }
   $text = "=== Group ===";
-  println $text if ($option{"check"});
+  printLine $text if ($option{"check"});
   printlogger $text;
   foreach my $key (sort keys %cfg_group) {
     my $val = $cfg_group{$key};
@@ -414,11 +407,11 @@ sub read_config($) {
     $text = "$key($cfg_groupId{$key}) =";
     $text .= " delay time $delay seconds";
     $text .= " between aliases ($aliases)";
-    println $text if ($option{"check"});
+    printLine $text if ($option{"check"});
     printlogger $text;
   }
   $text = "=== Rule ===";
-  println $text if ($option{"check"});
+  printLine $text if ($option{"check"});
   printlogger $text;
   foreach my $rule (@cfg_rule) {
     my ($alias, $on, $off) = @$rule;
@@ -426,12 +419,12 @@ sub read_config($) {
     $text .= " on at $on" if ($on !~ /no/);
     $text .= " and" if (($on !~ /no/) && ($off !~ /no/));
     $text .= " off at $off" if ($off !~ /no/);
-    println $text if ($option{"check"});
+    printLine $text if ($option{"check"});
     printlogger $text;
   }
 
   $text = "> Reading configurationfile finished";
-  println $text if ($option{"verbose"});
+  printLine $text if ($option{"verbose"});
   printlogger $text;
 }
 
@@ -441,7 +434,7 @@ sub call_program($$) {
 
   if ($option{"test"}) {
     my $text = "Test mode, no real device will be used";
-    println $text if ($option{"verbose"});
+    printLine $text if ($option{"verbose"});
     printlogger $text;
   } else {
     my $mode = "--off";
@@ -455,7 +448,7 @@ sub call_program($$) {
     my $prog = $cfg_set{"program"};
     my $command = "$prog $mode $device";
     my $text = "Executing command: '$command'";
-    println $text if ($option{"verbose"});
+    printLine $text if ($option{"verbose"});
     system($command);
   }
 }
@@ -463,25 +456,25 @@ sub call_program($$) {
 
 sub load_device_rules () {
   my $text = "> Loading device rules started";
-  println $text if ($option{"verbose"});
+  printLine $text if ($option{"verbose"});
   printlogger $text;
 
   my $now = get_datetime_now();
   $text = "Time = $now";
-  println $text if ($option{"verbose"});
+  printLine $text if ($option{"verbose"});
   printlogger $text;
   my $today = get_datetime_now();
   $today->set( hour => 0, minute => 0, second => 0 );
   $text = "Today = $today";
-  println $text if ($option{"verbose"});
+  printLine $text if ($option{"verbose"});
   printlogger $text;
   my $sunrise = get_datetime_sunrise($today);
   $text = "Sunrise = $sunrise";
-  println $text if ($option{"verbose"});
+  printLine $text if ($option{"verbose"});
   printlogger $text;
   my $sunset = get_datetime_sunset($today);
   $text = "Sunset = $sunset";
-  println $text if ($option{"verbose"});
+  printLine $text if ($option{"verbose"});
   printlogger $text;
 
   foreach my $rule (@cfg_rule) {
@@ -536,25 +529,23 @@ sub load_device_rules () {
   @device = sort { $a->[0] cmp $b->[0] } @device;
 
   $text = "=== Device ===";
-  println $text if ($option{"verbose"});
+  printLine $text if ($option{"verbose"});
   printlogger $text;
   foreach my $rule (@device) {
     my ($time, $alias, $value) = @$rule;
     $text = "$alias = $value at $time";
-    println $text if ($option{"verbose"});
+    printLine $text if ($option{"verbose"});
     printlogger $text;
   }
   
   $text = "> Loading device rules finished";
-  println $text if ($option{"verbose"});
+  printLine $text if ($option{"verbose"});
   printlogger $text;
 }
 
 
 sub get_rule_datetime($$$$) {
   my ($rule, $now, $sunrise, $sunset) = @_;
-
-#println "Rule='$rule'";
 
   my ($date, $time) = split(/\//, $rule);
   if (not defined($time)) {
@@ -613,7 +604,7 @@ sub get_rule_datetime($$$$) {
         $time = undef;
       }
     } else {
-      println "Wrong date '$date' for rule '$rule'!";
+      printLine "Wrong date '$date' for rule '$rule'!";
       $time = undef;
     }
   }
@@ -627,7 +618,6 @@ sub get_rule_datetime($$$$) {
     my $op = "";
     my $rest = "";
     my $mins = 0;
-#println "rule='$time'";
 
     while ($time ne "") {
       $op = $lastOp;
@@ -660,18 +650,16 @@ sub get_rule_datetime($$$$) {
       } elsif ($expr =~ /^(\d\d):(\d\d)$/) {
         $expr = $1*60+$2;
       } else {
-        println "Wrong time '$expr' for rule '$rule'!";
+        printLine "Wrong time '$expr' for rule '$rule'!";
         return;
         $expr = "";
       }
 
-#println "expr='$expr', op='$op', rest='$rest'";
       if ($op eq "+") {
         $mins += $expr;
       } elsif ($op eq "-") {
         $mins -= $expr;
       }
-#println "mins='$mins'";
     }
     if ($mins <= 0) {
       $mins = $mins % (24*60);
@@ -683,12 +671,10 @@ sub get_rule_datetime($$$$) {
 
     $hours = int $mins/60;
     $minutes = int $mins%60;
-# UTC ?
+    # Hopefully we will deal with UTC and daylightsavingtime in a decent fashion?
     $time = get_datetime_now();
     $time->set(hour => 0, minute => 0, second => 0);
     $time->add(hours => $hours+24*$days, minutes => $minutes, seconds => 0);
-#println "days='$days', hours='$hours', minutes='$minutes'";
-#println "time='$time'";
   } else {
     $time = undef;
   }
@@ -710,28 +696,28 @@ sub load_dimmer_rules($$$$$$$$){
     $offset = '';
   }
   if ($offset !~ /^\d\d:\d\d$/) {
-    println "Wrong dimmer time offset '$offset' for rule '$expr'!";
+    printLine "Wrong dimmer time offset '$offset' for rule '$expr'!";
     next;
   }
   if (!defined($start)) {
     $start = '';
   }
   if (($start !~ /^(\d+)$/) || (($start < 0) || ($start > 255))) {
-    println "Wrong dimmer start level '$start' for rule '$expr'!";
+    printLine "Wrong dimmer start level '$start' for rule '$expr'!";
     next;
   }
   if (!defined($stop)) {
     $stop = '';
   }
   if (($stop !~ /^(\d+)$/) || (($stop < 0) || ($stop > 255))) {
-    println "Wrong dimmer stop level '$stop' for rule '$expr'!";
+    printLine "Wrong dimmer stop level '$stop' for rule '$expr'!";
     next;
   }
   if (!defined($step)) {
     $step = '';
   }
   if (($step !~ /^(\d+)$/) || (($step < 1) || ($step > 255))) {
-    println "Wrong dimmer step level '$step' for rule '$expr'!";
+    printLine "Wrong dimmer step level '$step' for rule '$expr'!";
     next;
   }
 
@@ -771,7 +757,7 @@ sub load_dimmer_rules($$$$$$$$){
 sub check_device_rules($) {
   my ($now) = @_;
   
-  println "Checking device rules '$now'" if ($option{verbose});
+  printLine "Checking device rules '$now'" if ($option{verbose});
 
   my $rule = $device[0];
   while (defined(@$rule)) {
@@ -792,7 +778,7 @@ sub change_device_state($$) {
 
   call_program($device, $state);
   my $text = "Device $device = $state";
-  println $text if ($option{"verbose"});
+  printLine $text if ($option{"verbose"});
   printlogger $text;
 }
 
@@ -810,8 +796,8 @@ sub get_device_state() {
     }
     if ($cfg_alias{$device}) {
       my $state = $cfg_alias{$device};
-      println "$state" if (not $option{"verbose"});
-      println "Device $device = $state" if ($option{"verbose"});
+      printLine "$state" if (not $option{"verbose"});
+      printLine "Device $device = $state" if ($option{"verbose"});
       return;
     }
     if (defined($cfg_idGroup{$device})) {
@@ -825,10 +811,10 @@ sub get_device_state() {
       foreach my $alias (@aliaslist) {
         $states .= " $cfg_alias{$alias}";
       }
-      println "Group $device =$states";
+      printLine "Group $device =$states";
       return;
     }
-    println "No alias or group found with name/id '$device'!";
+    printLine "No alias or group found with name/id '$device'!";
   }
 }
 
@@ -840,11 +826,11 @@ sub set_device_state() {
     if (defined($option{"state"})) {
       my $state = $option{"state"};
       if ($state !~ /^(on|off|\d+)$/i) {
-        println "No state found with name '$state'!";
+        printLine "No state found with name '$state'!";
         return;
       }
       if (($state =~ /^(\d+)$/i) && (($state < 0) || ($state > 255))) {
-        println "State needs to be an integer between 0 and 255 for dimmers!";
+        printLine "State needs to be an integer between 0 and 255 for dimmers!";
         return;
       }
       my $device = $option{"device"};
@@ -868,7 +854,7 @@ sub set_device_state() {
         }
         return;
       }
-      println "No alias or group found with name '$device'!";
+      printLine "No alias or group found with name '$device'!";
     }
   }
 }
@@ -913,7 +899,7 @@ sub swap_first_device_state() {
         }
         return;
       }
-      println "No alias or group found with name '$device'!";
+      printLine "No alias or group found with name '$device'!";
     }
   }
 }
@@ -957,7 +943,7 @@ sub swap_device_state() {
         }
         return;
       }
-      println "No alias or group found with name '$device'!";
+      printLine "No alias or group found with name '$device'!";
     }
   }
 }
@@ -965,7 +951,7 @@ sub swap_device_state() {
 
 sub list_all_devices() {
   foreach my $key (sort keys %cfg_alias) {
-    println "Device $key($cfg_aliasId{$key}) = $cfg_alias{$key}";
+    printLine "Device $key($cfg_aliasId{$key}) = $cfg_alias{$key}";
   }
   foreach my $key (sort keys %cfg_group) {
     my $val = $cfg_group{$key};
@@ -975,19 +961,19 @@ sub list_all_devices() {
     foreach my $device (@aliaslist) {
       $states .= " $cfg_alias{$device}";
     }
-    println "Group $key($cfg_groupId{$key}) =$states";
+    printLine "Group $key($cfg_groupId{$key}) =$states";
   }
 }
 
 
 sub list_all_aliases {
   foreach my $key (sort keys %cfg_alias) {
-    println "Alias $key($cfg_aliasId{$key}) = receiver";
+    printLine "Alias $key($cfg_aliasId{$key}) = receiver";
   }
   foreach my $key (sort keys %cfg_group) {
     my $val = $cfg_group{$key};
     my ($delay, $aliases) = split(/\s+/, $val, 2);
-    println "Group $key($cfg_groupId{$key}) = delay $delay seconds, aliases ($aliases)";
+    printLine "Group $key($cfg_groupId{$key}) = delay $delay seconds, aliases ($aliases)";
   }
 }
 
@@ -1000,7 +986,7 @@ sub daemon_loop() {
     my $next_day = get_datetime_now();
     $next_day->add( hours => 24 );
     $next_day->set( hour => 0, minute => 0, second => 0 );
-    println "Next reload of device rules = $next_day" if ($option{"verbose"});
+    printLine "Next reload of device rules = $next_day" if ($option{"verbose"});
 
     my $wait_time = 5;
     my $loop = 1;
