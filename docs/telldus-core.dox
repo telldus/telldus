@@ -253,6 +253,10 @@
  * any preprocessing. This can be used to get events from devices not already
  * configured.
  *
+ * \subsection sec_events_example Example
+ *
+ * \example events/main.cpp
+ *
  * \section sec_other_languages Notes using other languages than C/C++
  *
  * \subsection sec_ol_pyhon Python
