@@ -186,6 +186,73 @@
  * tdReleaseString(name);
  * \endcode
  *
+ * \section sec_events Events
+ *
+ * To get events from either a TellStick Duo or if another software changes the
+ * status of a device you have to register for a callback.
+ *
+ * \subsection sec_events_registering Registering for callbacks
+ *
+ * For each callback there is a corresponding register function:
+ * \li tdRegisterDeviceEvent()
+ * \li tdRegisterDeviceChangeEvent()
+ * \li tdRegisterRawDeviceEvent()
+ *
+ * These all work in the same way. The first parameter is a function-pointer to
+ * the callback function. The second parameter is an optional void pointer. This
+ * can be anything and is dependent on the implementation. This object will be
+ * sent back to each call to the callback function. The functions return an
+ * integer which is an id to the specific callback. This is is sent as a
+ * parameter in each call and should also be used for unregister the callback.
+ *
+ * Please note that the callback will be called by another thread than the
+ * thread used by the application and some measures must be taken to synchronize
+ * it with the main thread.
+ *
+ * \subsection sec_events_callbacks Callbacks
+ *
+ * telldus-core currently implements three different callback function for
+ * different purposes.
+ *
+ * \subsubsection sec_events_callbacks_deviceevent DeviceEvent
+ *
+ * This event is fired when the state of a device changes. This can either
+ * occur via a remote control, but can as well occur via another software on the
+ * computer.
+ *
+ * Parameters:
+ * - int deviceId - The device id of the device that changed.
+ * - int method - The new state. Can be TELLSTICK_TURNON, TELLSTICK_TURNOFF
+ * etc.
+ * - const char *data - For some methods this contains data. For TELLSTICK_DIM
+ * this hold the current value.
+ *
+ * \subsubsection sec_events_callbacks_devicechangeevent DeviceChangeEvent
+ * This event is fired when the data around a device is changed. It can only be
+ * triggered by another software. Use this callback to keep your list of devices
+ * in sync.
+ *
+ * Parameters:
+ * - int deviceId - The device id of the device that changed.
+ * - int changeEvent - What was changed. This can be:
+ *   - TELLSTICK_DEVICE_ADDED - A new device was added. The parameter deviceId
+ *     holds the id of the new device.
+ *   - TELLSTICK_DEVICE_REMOVED - A device was removed, the parameter deviceId
+ *     holds the id of the removed device.
+ *   - TELLSTICK_DEVICE_CHANGED - The settings of a device changed. The next
+ *     parameter holds what was changed.
+ * - int changeType - If changeEvent is TELLSTICK_DEVICE_CHANGED this parameter
+ *   holds what was changed. It can be one of the following:
+ *   - TELLSTICK_CHANGE_NAME - Use tdGetName() to read the new name.
+ *   - TELLSTICK_CHANGE_PROTOCOL - Use tdGetProtocol() to read the new value.
+ *   - TELLSTICK_CHANGE_MODEL - Use tdGetModel() to read the new value.
+ *
+ * \subsubsection sec_events_callbacks_rawdeviceevent RawDeviceEvent
+ *
+ * Use this callback with caution. It outputs everything from the Duo without
+ * any preprocessing. This can be used to get events from devices not already
+ * configured.
+ *
  * \section sec_other_languages Notes using other languages than C/C++
  *
  * \subsection sec_ol_pyhon Python
