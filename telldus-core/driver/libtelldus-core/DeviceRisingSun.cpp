@@ -57,14 +57,19 @@ bool DeviceRisingSun::setDeviceParameter(const std::string &strName, const std::
 int DeviceRisingSun::turnOn(Controller *controller){
 
 	try{
-		std::string strCode = getStringCode(intHouse);
-		std::string strUnit = getStringCode(intCode);
-		strCode.append(strUnit);
+		if (isSelflearning()) {
+			return controller->send(getStringSelflearning(true));
 
-		strCode.insert(0, "S.e");
-		strCode.append("e..ee..ee..ee..e+");	//the "turn on"-code, keeps it like this, doesn't have to be regenerated each time
-
-		return controller->send(strCode);
+		} else {
+			std::string strCode = getStringCodeswitch(intHouse);
+			std::string strUnit = getStringCodeswitch(intCode);
+			strCode.append(strUnit);
+	
+			strCode.insert(0, "S.e");
+			strCode.append("e..ee..ee..ee..e+");	//the "turn on"-code, keeps it like this, doesn't have to be regenerated each time
+	
+			return controller->send(strCode);
+		}
 	}
 	catch(...){
 		throw;
@@ -78,14 +83,19 @@ int DeviceRisingSun::turnOn(Controller *controller){
 int DeviceRisingSun::turnOff(Controller *controller){
 
 	try{
-		std::string strCode = getStringCode(intHouse);
-		std::string strUnit = getStringCode(intCode);
-		strCode.append(strUnit);
+		if (isSelflearning()) {
+			return controller->send(getStringSelflearning(false));
 
-		strCode.insert(0, "S.e");
-		strCode.append("e..ee..ee..e.e.e+");	//the "turn off"-code, keeps it like this, doesn't have to be regenerated each time
-
-		return controller->send(strCode);
+		} else {
+			std::string strCode = getStringCodeswitch(intHouse);
+			std::string strUnit = getStringCodeswitch(intCode);
+			strCode.append(strUnit);
+	
+			strCode.insert(0, "S.e");
+			strCode.append("e..ee..ee..e.e.e+");	//the "turn off"-code, keeps it like this, doesn't have to be regenerated each time
+	
+			return controller->send(strCode);
+		}
 	}
 	catch(...){
 		throw;
@@ -93,10 +103,17 @@ int DeviceRisingSun::turnOff(Controller *controller){
 	return TELLSTICK_ERROR_UNKNOWN;
 }
 
+int DeviceRisingSun::learn(Controller *controller){
+	std::string strCode = "R";
+	strCode.append( 1, 50 );
+	strCode.append(getStringSelflearning(true));
+	return controller->send(strCode);
+}
+
 /*
 *	Convert an integer to byte string where 0 is represented by $k and 1 by k$, reversed and padded with 0's as needed
 */
-std::string DeviceRisingSun::getStringCode(int intToConvert){
+std::string DeviceRisingSun::getStringCodeswitch(int intToConvert){
 
 	std::string strReturn = "";
 
@@ -116,6 +133,61 @@ std::string DeviceRisingSun::getStringCode(int intToConvert){
 
 }
 
+std::string DeviceRisingSun::getStringSelflearning(bool on){
+	const char code_on[][7] = {
+		"110110", "001110", "100110", "010110",
+		"111001", "000101", "101001", "011001",
+		"110000", "001000", "100000", "010000",
+		"111100", "000010", "101100", "011100"
+	};
+	const char code_off[][7] = {
+		"111110", "000001", "101110", "011110",
+		"110101", "001101", "100101", "010101",
+		"111000", "000100", "101000", "011000",
+		"110010", "001010", "100010", "010010"
+	};
+	const char l = 120;
+	const char s = 51;
+
+	std::string strCode = "10";
+	int code = intCode;
+	code = (code < 0 ? 0 : code);
+	code = (code > 15 ? 15 : code);
+	if (on) {
+		strCode.append(code_on[code]);
+	} else {
+		strCode.append(code_off[code]);
+	}
+
+	int house = intHouse;
+	for(int i = 0; i < 25; ++i) {
+		if (house & 1) {
+			strCode.append(1, '1');
+		} else {
+			strCode.append(1, '0');
+		}
+		house >>= 1;
+	}
+
+	std::string strReturn;
+	for(int i = 0; i < strCode.length(); ++i) {
+		if (strCode[i] == '1') {
+			strReturn.append(1, l);
+			strReturn.append(1, s);
+		} else {
+			strReturn.append(1, s);
+			strReturn.append(1, l);
+		}
+	}
+
+	std::string prefix = "P";
+	prefix.append(1, 5);
+	prefix.append("S");
+	strReturn.insert(0, prefix);
+	strReturn.append(1, '+');
+	return strReturn;
+}
+
 bool DeviceRisingSun::parameterMatches( const std::string &name, const std::string &value ) const {
 	if (value.length() == 0) {
 		return false;
@@ -127,10 +199,20 @@ bool DeviceRisingSun::parameterMatches( const std::string &name, const std::stri
 /*
 * Has the device got the method?
 */
-int DeviceRisingSun::methods(){
+int DeviceRisingSun::methods() {
+	std::string strModel = this->getModel();
+
+	if (strcasecmp(strModel.c_str(), "selflearning") == 0) {
+		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN);
+	}
+	
 	return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
 }
 
 std::string DeviceRisingSun::getProtocol() const {
 	return "risingsun";
+}
+
+bool DeviceRisingSun::isSelflearning() const {
+	return (strcasecmp(getModel().c_str(), "selflearning") == 0);
 }
