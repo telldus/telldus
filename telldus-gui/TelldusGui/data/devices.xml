@@ -37,6 +37,13 @@
 			<device model="selflearning-dimmer:homeeasy" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
 			<device model="bell:homeeasy" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
 		</vendor>
+		<vendor name="Kappa" image="kappa">
+			<!--<text>http://www.kappak.sk</text> -->
+			<device model="codeswitch:kappa" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
+			<device model="selflearning-switch:kappa" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
+			<device model="selflearning-dimmer:kappa" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
+			<device model="bell:kappa" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
+		</vendor>
 		<vendor name="Kjell o Company" image="kjelloco">
 			<!--<text>http://www.kjell.com/</text> -->
 			<device model="codeswitch:kjelloco" protocol="risingsun" widget="5" image="risingsun_cs" name="Code Switch">Code Switch</device>
