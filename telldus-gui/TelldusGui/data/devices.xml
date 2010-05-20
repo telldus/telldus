@@ -69,6 +69,11 @@
 			<device model="selflearning-dimmer:proove" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
 			<device model="bell:proove" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
 		</vendor>
+		<vendor name="Rusta" image="rusta">
+			<!--<text>http://www.rusta.se/</text> -->
+			<device model="codeswitch:rusta" protocol="sartano" widget="2" image="zke-2603" name="Code Switch">Code Switch</device>
+			<device model="selflearning-dimmer:rusta" protocol="arctech" widget="8" image="fr004r" name="Self Learning dimmer">Self Learning dimmer</device>
+		</vendor>
 		<vendor name="UPM" image="upm">
 			<device model="selflearning:upm" protocol="upm" widget="9" image="upm_sl" name="Selflearning">Selflerning</device>
 		</vendor>
