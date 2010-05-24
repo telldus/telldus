@@ -93,7 +93,10 @@ void TelldusCenterApplication::loadPlugins() {
 
 #if defined(Q_OS_WIN)
 	bool inBuildDir = false;
-	if (pluginsDir.dirName().toLower() == "debug" || pluginsDir.dirName().toLower() == "release") {
+	if (pluginsDir.dirName().toLower() == "debug" || 
+		pluginsDir.dirName().toLower() == "release" ||
+		pluginsDir.dirName().toLower() == "relwithdebinfo")
+	{
 		inBuildDir = true;
 	}
 #elif defined(Q_OS_MAC)
