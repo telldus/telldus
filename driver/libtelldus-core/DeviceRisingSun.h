@@ -22,10 +22,14 @@ namespace TelldusCore {
 		virtual bool setDeviceParameter(const std::string &strName, const std::string &strValue);
 		virtual int turnOn(void);
 		virtual int turnOff(void);
+		virtual int learn(Controller *controller);
 
 		int intHouse;
 		int intCode;
-		std::string getStringCode(int);
+		bool isSelflearning() const;
+		
+		std::string getStringCodeswitch(int);
+		std::string getStringSelflearning(bool on);
 	};
 	
 }
