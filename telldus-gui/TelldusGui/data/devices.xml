@@ -16,8 +16,11 @@
 			<device model="selflearning-dimmer:coco" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
 			<device model="bell:coco" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
 		</vendor>
+		<vendor name="Conrad" image="conrad">
+			<device model="selflearning:conrad" protocol="risingsun" widget="5" image="conrad-rsl888" name="Self Learning">Self Learning</device>
+		</vendor>
 		<vendor name="GAO" image="gao">
-		  <!--<text>http://www.everflourish.com.cn/</text> -->
+			<!--<text>http://www.everflourish.com.cn/</text> -->
 			<device model="codeswitch:gao" protocol="risingsun" widget="10" image="gao_cs" name="Code Switch">Code Switch</device>
 			<device model="selflearning-switch:gao" protocol="everflourish" widget="11" image="gao_sl" name="Self Learning on/off">Self Learning on/off</device>
 		</vendor>
@@ -72,6 +75,7 @@
 		<vendor name="Elro" image="elro">
 			<!--<text>http://www.elro-nl.com/elro-en-05/home.htm</text> -->
 			<device model="codeswitch:elro" protocol="sartano" widget="2" image="elro" name="Code Switch">Code Switch</device>
+			<device model="codeswitch:elro-ab600" protocol="arctech" widget="8" image="elro-ab600" name="Code Switch - System AB600">Code Switch - System AB600</device>
 		</vendor>
 		<vendor name="Sartano" image="sartano">
 			<!--<text></text> -->

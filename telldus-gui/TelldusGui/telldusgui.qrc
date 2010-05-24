@@ -5,7 +5,9 @@
         <file>images/devices/arctech_cs.png</file>
         <file>images/devices/arctech_sl.png</file>
         <file>images/devices/bell.png</file>
+        <file>images/devices/conrad-rsl888.png</file>
         <file>images/devices/elro.png</file>
+        <file>images/devices/elro-ab600.png</file>
         <file>images/devices/gao_cs.png</file>
         <file>images/devices/gao_sl.png</file>
         <file>images/devices/koppla.png</file>
@@ -19,6 +21,7 @@
         <file>images/list-remove.png</file>
         <file>images/vendors/chacon.png</file>
         <file>images/vendors/coco.png</file>
+        <file>images/vendors/conrad.png</file>
         <file>images/vendors/elro.png</file>
         <file>images/vendors/gao.png</file>
         <file>images/vendors/homeeasy.png</file>
