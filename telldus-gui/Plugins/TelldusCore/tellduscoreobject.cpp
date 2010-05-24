@@ -66,7 +66,7 @@ int TelldusCoreObject::turnOff(int deviceId) {
 void TelldusCoreObject::triggerError(int deviceId, int errorId) {
 	char *errorString = tdGetErrorString( errorId );
 	QString message = QString::fromLocal8Bit( errorString );
-	free(errorString);
+	tdReleaseString(errorString);
 	emit errorOccurred(deviceId, errorId, message);
 }
 
