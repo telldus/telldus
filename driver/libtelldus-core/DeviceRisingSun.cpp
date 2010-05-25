@@ -5,6 +5,7 @@
 #include <bitset>
 #include <iostream>
 #include <fstream>
+#include "common.h"
 
 using namespace TelldusCore;
 
@@ -103,11 +104,11 @@ int DeviceRisingSun::turnOff(void){
 	return TELLSTICK_ERROR_UNKNOWN;
 }
 
-int DeviceRisingSun::learn(Controller *controller){
+int DeviceRisingSun::learn(void){
 	std::string strCode = "R";
 	strCode.append( 1, 50 );
 	strCode.append(getStringSelflearning(true));
-	return controller->send(strCode);
+	return Device::send(strCode);
 }
 
 /*
@@ -170,7 +171,7 @@ std::string DeviceRisingSun::getStringSelflearning(bool on){
 	}
 
 	std::string strReturn;
-	for(int i = 0; i < strCode.length(); ++i) {
+	for(unsigned int i = 0; i < strCode.length(); ++i) {
 		if (strCode[i] == '1') {
 			strReturn.append(1, l);
 			strReturn.append(1, s);
