@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="utf8" ?>
 <devices>
-	<type name="Remote Switches - Type 1" expanded="true">
+	<type name="Remote Switches" expanded="true">
 		<!--<text></text> -->
 		<vendor name="Chacon" image="chacon">
 			<!--<text></text>-->
@@ -17,7 +17,12 @@
 			<device model="bell:coco" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
 		</vendor>
 		<vendor name="Conrad" image="conrad">
-			<device model="selflearning:conrad" protocol="risingsun" widget="5" image="conrad-rsl888" name="Self Learning">Self Learning</device>
+			<device model="selflearning:conrad" protocol="risingsun" widget="12" image="conrad-rsl888" name="Self Learning">Self Learning</device>
+		</vendor>
+		<vendor name="Elro" image="elro">
+			<!--<text>http://www.elro-nl.com/elro-en-05/home.htm</text> -->
+			<device model="codeswitch:elro" protocol="sartano" widget="2" image="elro" name="Code Switch">Code Switch</device>
+			<device model="codeswitch:elro-ab600" protocol="arctech" widget="1" image="elro-ab600" name="Code Switch - System AB600">Code Switch - System AB600</device>
 		</vendor>
 		<vendor name="GAO" image="gao">
 			<!--<text>http://www.everflourish.com.cn/</text> -->
@@ -29,6 +34,9 @@
 			<device model="codeswitch:homeeasy" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
 			<device model="selflearning-switch:homeeasy" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
 			<device model="selflearning-dimmer:homeeasy" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
+		</vendor>
+		<vendor name="IKEA" image="ikea">
+			<device model="selflearning:ikea" protocol="ikea" widget="3" image="koppla">Koppla</device>
 		</vendor>
 		<vendor name="Intertechno" image="intertechno">
 			<!--<text>http://www.intertechno.at/</text> -->
@@ -74,30 +82,16 @@
 			<device model="codeswitch:rusta" protocol="sartano" widget="2" image="zke-2603" name="Code Switch">Code Switch</device>
 			<device model="selflearning-dimmer:rusta" protocol="arctech" widget="8" image="fr004r" name="Self Learning dimmer">Self Learning dimmer</device>
 		</vendor>
+		<vendor name="Sartano" image="sartano">
+			<!--<text></text> -->
+			<device model="codeswitch:sartano" protocol="sartano" widget="2" image="sartano" name="Code Switch">Code Switch</device>
+		</vendor>
 		<vendor name="UPM" image="upm">
 			<device model="selflearning:upm" protocol="upm" widget="9" image="upm_sl" name="Selflearning">Selflerning</device>
 		</vendor>
 		<vendor name="Waveman" image="waveman">
 			<!--<text></text> -->
 			<device model="codeswitch:waveman" protocol="waveman" widget="1" image="waveman_cs" name="Code Switch">Code Switch</device>
-		</vendor>
-	</type>
-	<type name="Remote Switches - Type 2" expanded="true">
-		<!--<text></text> -->
-		<vendor name="Elro" image="elro">
-			<!--<text>http://www.elro-nl.com/elro-en-05/home.htm</text> -->
-			<device model="codeswitch:elro" protocol="sartano" widget="2" image="elro" name="Code Switch">Code Switch</device>
-			<device model="codeswitch:elro-ab600" protocol="arctech" widget="8" image="elro-ab600" name="Code Switch - System AB600">Code Switch - System AB600</device>
-		</vendor>
-		<vendor name="Sartano" image="sartano">
-			<!--<text></text> -->
-			<device model="codeswitch:sartano" protocol="sartano" widget="2" image="sartano" name="Code Switch">Code Switch</device>
-		</vendor>
-	</type>
-	<type name="Remote Switches - Type 3" expanded="true">
-		<!--<text></text> -->
-		<vendor name="IKEA" image="ikea">
-			<device model="selflearning:ikea" protocol="ikea" widget="3" image="koppla">Koppla</device>
 		</vendor>
 	</type>
 	<type name="Projector screens" expanded="true">
