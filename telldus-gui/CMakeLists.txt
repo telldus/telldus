@@ -10,6 +10,8 @@ SET(PACKAGE_VERSION 2.0.100)
 SET(PACKAGE_SOVERSION 2)
 SET(DISPLAYED_VERSION ${PACKAGE_VERSION})
 
+SET(BRANDING "telldus" CACHE STRING "The brand to use")
+
 SET(UPDATE_TRANSLATIONS FALSE CACHE BOOL "Update source translation files (WARNING: make clean will delete the source .ts files! Danger!)")
 SET(LANGUAGES sv)
 
