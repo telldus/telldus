@@ -1,0 +1,16 @@
+<?xml version="1.0" encoding="utf8" ?>
+<devices>
+	<type name="Remote Switches" expanded="true">
+		<!--<text></text> -->
+		<vendor name="Elro" image="elro">
+			<!--<text>http://www.elro-nl.com/elro-en-05/home.htm</text> -->
+			<device model="codeswitch:elro" protocol="sartano" widget="2" image="elro" name="Code Switch">Code Switch</device>
+			<device model="codeswitch:elro-ab600" protocol="arctech" widget="1" image="elro-ab600" name="Code Switch - System AB600">Code Switch - System AB600</device>
+		</vendor>
+		<vendor name="HomeEasy" image="homeeasy">
+			<!--<text>http://www.homeeasy.eu/home.php</text>-->
+			<device model="codeswitch:homeeasy" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
+			<device model="selflearning-switch:homeeasy" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
+			<device model="selflearning-dimmer:homeeasy" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
+		</vendor>
+</devices>
