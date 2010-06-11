@@ -33,7 +33,7 @@ void Socket::write(const TelldusService::Message &msg) {
 	TelldusCore::logMessage(QString("Sending: %1").arg(QString(msg)));
 	if (WriteFile(d->hPipe, msg.data(), msg.length(), &bytesWritten, NULL)) {
 		TelldusCore::logMessage(QString("Done sending"));
-		FlushFileBuffers(d->hPipe);
+		//FlushFileBuffers(d->hPipe);
 	} else {
 		TelldusCore::logMessage("Pipe disconnected");
 		d->connected = false;
