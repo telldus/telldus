@@ -44,10 +44,16 @@ IF (APPLE) #### Mac OS X ####
 ELSEIF (WIN32) #### Windows ####
 	SET( telldus-client_TARGET	TelldusCore )
 
+	CONFIGURE_FILE(
+		${CMAKE_CURRENT_SOURCE_DIR}/telldus-core.rc.in
+		${CMAKE_CURRENT_BINARY_DIR}/telldus-core.rc
+	)
+
 	SET( telldus-client_SRCS
 		${telldus-client_SRCS}
 		../../driver/libtelldus-core/libtelldus-core.def
 		../common/Socket_win.cpp
+		${CMAKE_CURRENT_BINARY_DIR}/telldus-core.rc
 	)
 	ADD_DEFINITIONS(
 		-D_WINDOWS
