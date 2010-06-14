@@ -1,5 +1,4 @@
 
-#include <QLocalSocket>
 #include "Manager.h"
 #include "Message.h"
 #include "../common/Socket.h"
@@ -193,6 +192,7 @@ QVariant Manager::send(const Message &message, bool *success) {
 }
 
 #include <QFile>
+#include <QTextStream>
 #include <QTime>
 void Manager::logMessage( const QString &message) {
 	return;
