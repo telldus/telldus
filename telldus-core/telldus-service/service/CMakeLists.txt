@@ -19,7 +19,7 @@ SET( telldus-service_MOC_HDRS
 	Manager.h
 	MessageReceiver.h
 	Pipe.h
-	Socket.h
+	../common/Socket.h
 )
 	
 SET( telldus-service_LIBRARIES
@@ -73,7 +73,7 @@ ELSEIF (WIN32) #### Windows ####
 		${telldus-service_SRCS}
 		MessageReceiver_win.cpp
 		Pipe_win.cpp
-		Socket_win.cpp
+		../common/Socket_win.cpp
 		main_win.cpp
 		TelldusService_win.cpp
 	)

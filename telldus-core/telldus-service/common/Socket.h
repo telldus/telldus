@@ -15,9 +15,13 @@ class Socket : public QObject {
 	Q_OBJECT
 public:
 	Socket(SOCKET_T socket);
+	Socket();
 	~Socket(void);
 
+	void connectToServer(const QString &serverName);
+	void disconnect();
 	void write(const TelldusService::Message &msg);
+	QByteArray readOverlapped();
 	QByteArray read();
 
 	bool connected() const;
