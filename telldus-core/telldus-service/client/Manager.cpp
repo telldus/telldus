@@ -143,37 +143,32 @@ void Manager::run() {
 }
 
 void Manager::dataReceived(const QByteArray &message) {
-	//return;
-	//while(1) {
-		/*QByteArray msg(d->eventSocket.readLine());
-		if (msg.length() == 0) {
-			break;
-		}*/
-		QByteArray msg(message); //Copy
-		logMessage("Event");
-		QString funcName = Message::takeFirst(&msg).toString();
-		logMessage(funcName);
-		if (funcName == "TDDeviceEvent") {
-			int intDeviceId = Message::takeFirst(&msg).toInt();
-			int intDeviceState = Message::takeFirst(&msg).toInt();
-			QString strDeviceStateValue = Message::takeFirst(&msg).toString();
-			logMessage(QString("Sending %1 callbacks").arg(d->callbacks.size()));
-			for(CallbackList::const_iterator callback_it = d->callbacks.begin(); callback_it != d->callbacks.end(); ++callback_it) {
-				logMessage("StartSend");
-				(*callback_it).event(intDeviceId, intDeviceState, strDeviceStateValue.toLocal8Bit(), (*callback_it).id, (*callback_it).context);
-				logMessage("SendDone");
-			}
-		} else if (funcName == "TDDeviceChangeEvent") {
-			int intDeviceId = Message::takeFirst(&msg).toInt();
-			int intEvent = Message::takeFirst(&msg).toInt();
-			int intChange = Message::takeFirst(&msg).toInt();
-			//Clear the cache
-			d->numberOfDevices = -1;
-			for(DeviceChangeCallbackList::const_iterator callback_it = d->deviceChangeCallbacks.begin(); callback_it != d->deviceChangeCallbacks.end(); ++callback_it) {
-				(*callback_it).event(intDeviceId, intEvent, intChange, (*callback_it).id, (*callback_it).context);
-			}
+	QByteArray msg(message); //Copy
+	logMessage("Event");
+	logMessage(msg);
+	QString funcName = Message::takeFirst(&msg).toString();
+	logMessage(funcName);
+	if (funcName == "TDDeviceEvent") {
+		int intDeviceId = Message::takeFirst(&msg).toInt();
+		int intDeviceState = Message::takeFirst(&msg).toInt();
+		QString strDeviceStateValue = Message::takeFirst(&msg).toString();
+		logMessage(QString("Sending %1 callbacks").arg(d->callbacks.size()));
+		for(CallbackList::const_iterator callback_it = d->callbacks.begin(); callback_it != d->callbacks.end(); ++callback_it) {
+			logMessage("StartSend");
+			(*callback_it).event(intDeviceId, intDeviceState, strDeviceStateValue.toLocal8Bit(), (*callback_it).id, (*callback_it).context);
+			logMessage("SendDone");
 		}
-	//}
+	} else if (funcName == "TDDeviceChangeEvent") {
+		int intDeviceId = Message::takeFirst(&msg).toInt();
+		int intEvent = Message::takeFirst(&msg).toInt();
+		int intChange = Message::takeFirst(&msg).toInt();
+		//Clear the cache
+		d->numberOfDevices = -1;
+		logMessage(QString("Number of callbacks %1").arg(d->deviceChangeCallbacks.size()));
+		for(DeviceChangeCallbackList::const_iterator callback_it = d->deviceChangeCallbacks.begin(); callback_it != d->deviceChangeCallbacks.end(); ++callback_it) {
+			(*callback_it).event(intDeviceId, intEvent, intChange, (*callback_it).id, (*callback_it).context);
+		}
+	}
 }
 
 QVariant Manager::send(const Message &message, bool *success) {
@@ -181,8 +176,10 @@ QVariant Manager::send(const Message &message, bool *success) {
 	if (!d->s.connected()) {
 		return TELLSTICK_ERROR_CONNECTING_SERVICE;
 	}
-	d->s.write(message);
+	logMessage(QString("Sending: %1").arg(QString(message)));
+	d->s.writeOverlapped(message);
 	QByteArray response(d->s.readOverlapped());
+	logMessage(QString("Received: %1").arg(QString(response)));
 	if (response.length() > 0) {
 		QVariant retval = Message::takeFirst(&response);
 		(*success) = true;
@@ -195,10 +192,16 @@ QVariant Manager::send(const Message &message, bool *success) {
 #include <QTextStream>
 #include <QTime>
 void Manager::logMessage( const QString &message) {
-	return;
+	//return;
 #ifdef _WINDOWS
+	static bool firstRun = true;
 	QFile file("C:/log_client.txt");
-	file.open(QIODevice::Append | QIODevice::Text);
+	if (firstRun) {
+		file.open(QIODevice::WriteOnly | QIODevice::Text);
+		firstRun = false;
+	} else {
+		file.open(QIODevice::Append | QIODevice::Text);
+	}
 	QTextStream out(&file);
 	out << QTime::currentTime().toString() << ": " << message << "\n";
 	file.close();

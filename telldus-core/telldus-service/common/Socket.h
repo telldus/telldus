@@ -21,6 +21,7 @@ public:
 	void connectToServer(const QString &serverName);
 	void disconnect();
 	void write(const TelldusService::Message &msg);
+	void writeOverlapped(const TelldusService::Message &msg);
 	QByteArray readOverlapped();
 	QByteArray read();
 

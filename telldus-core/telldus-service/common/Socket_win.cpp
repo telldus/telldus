@@ -99,14 +99,34 @@ void Socket::disconnect() {
 
 void Socket::write(const TelldusService::Message &msg) {
 	DWORD bytesWritten = 0;
-	//TelldusCore::logMessage(QString("Sending: %1").arg(QString(msg)));
 	if (WriteFile(d->hPipe, msg.data(), msg.length(), &bytesWritten, NULL)) {
-		//TelldusCore::logMessage(QString("Done sending"));
 		//FlushFileBuffers(d->hPipe);
 	} else {
-		//TelldusCore::logMessage("Pipe disconnected");
 		d->connected = false;
 		emit disconnected();
+	}
+}
+
+void Socket::writeOverlapped(const TelldusService::Message &msg) {
+	OVERLAPPED oOverlap; 
+	DWORD bytesWritten = 0;
+	int result;
+	bool fSuccess;
+
+	oOverlap.hEvent = d->event;
+	WriteFile(d->hPipe, msg.data(), msg.length(), &bytesWritten, &oOverlap);
+
+	result = WaitForSingleObject(oOverlap.hEvent, 10000);
+	if (result == WAIT_TIMEOUT) {
+		d->connected = false;
+		emit disconnected();
+		return;
+	}
+	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &bytesWritten, false);
+	if (!fSuccess) {
+		d->connected = false;
+		emit disconnected();
+		return;
 	}
 }
 
@@ -126,7 +146,7 @@ QByteArray Socket::readOverlapped() {
 
 	ReadFile( d->hPipe, &buf, sizeof(char)*BUFSIZE, &cbBytesRead, &oOverlap);
 
-	result = WaitForSingleObject(oOverlap.hEvent, 10000);
+	result = WaitForSingleObject(oOverlap.hEvent, INFINITE);
 	if (result == WAIT_TIMEOUT) {
 		return "";
 	}
