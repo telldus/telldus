@@ -76,7 +76,6 @@ ENDIF (APPLE)
 
 ######## Configuring  ########
 
-
 ADD_LIBRARY(${telldus-client_TARGET} SHARED
 	${telldus-client_SRCS}
 	${telldus-client_HDRS}
@@ -84,6 +83,18 @@ ADD_LIBRARY(${telldus-client_TARGET} SHARED
 	${telldus-client_MOC_SRCS}
 )
 SET_SOURCE_FILES_PROPERTIES(${telldus-service_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
+
+IF (SIGN_FILE)
+	#This doesn't work for some reason
+	ADD_CUSTOM_COMMAND(TARGET ${telldus-client_TARGET}
+		POST_BUILD 
+		COMMAND signtool.exe
+		ARGS sign /a /t http://timestamp.verisign.com/scripts/timstamp.dll ${telldus-client_TARGET}.dll
+		WORKING_DIRECTORY ${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}
+		COMMENT "Signing file TelldusCore.dll"
+	)
+ENDIF (SIGN_FILE)
+
 
 SET_PROPERTY(TARGET ${telldus-client_TARGET}
 	PROPERTY FRAMEWORK TRUE	
@@ -101,6 +112,7 @@ SET_PROPERTY(TARGET ${telldus-client_TARGET}
 
 
 TARGET_LINK_LIBRARIES( ${telldus-client_TARGET}	${telldus-client_LIBRARIES} )
+
 
 SET_TARGET_PROPERTIES(${telldus-service_TARGET} PROPERTIES
 	MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist
