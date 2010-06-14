@@ -1,16 +1,17 @@
 #include "tellduscoreobject.h"
-#include <telldus-core.h>
 #include <QDebug>
 
 TelldusCoreObject::TelldusCoreObject( QObject * parent )
 		: QObject(parent)
 {
 	tdInit();
-	tdRegisterDeviceChangeEvent(reinterpret_cast<TDDeviceChangeEvent>(deviceChangeEventCallback), this);
-	tdRegisterDeviceEvent(reinterpret_cast<TDDeviceEvent>(deviceEventCallback), this);
+	deviceEventId = tdRegisterDeviceEvent(reinterpret_cast<TDDeviceEvent>(&TelldusCoreObject::deviceEventCallback), this);
+	deviceChangeEventId = tdRegisterDeviceChangeEvent(reinterpret_cast<TDDeviceChangeEvent>(&TelldusCoreObject::deviceChangeEventCallback), this);
 }
 
 TelldusCoreObject::~TelldusCoreObject() {
+	tdUnregisterCallback(deviceEventId);
+	tdUnregisterCallback(deviceChangeEventId);
 	tdClose();
 }
 
@@ -84,14 +85,14 @@ void TelldusCoreObject::triggerError(int deviceId, int errorId) {
 }
 
 
-void TelldusCoreObject::deviceChangeEventCallback(int deviceId, int eventId, int changeType, int callbackId, void *context) {
+void WINAPI TelldusCoreObject::deviceChangeEventCallback(int deviceId, int eventId, int changeType, int callbackId, void *context) {
 	TelldusCoreObject *parent = static_cast<TelldusCoreObject *>(context);
 	if (parent) {
 		emit parent->deviceChange(deviceId, eventId);
 	}
 }
 
-void TelldusCoreObject::deviceEventCallback(int deviceId, int method, const char *data, int callbackId, void *context) {
+void WINAPI TelldusCoreObject::deviceEventCallback(int deviceId, int method, const char *data, int callbackId, void *context) {
 	TelldusCoreObject *parent = static_cast<TelldusCoreObject *>(context);
 	if (parent) {
 		emit parent->deviceEvent(deviceId, method, QString::fromLocal8Bit(data));

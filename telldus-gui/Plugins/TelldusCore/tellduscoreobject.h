@@ -2,6 +2,7 @@
 #define TELLDUSCOREOBJECT_H
 
 #include <QObject>
+#include <telldus-core.h>
 
 class TelldusCoreObject : public QObject
 {
@@ -31,9 +32,10 @@ public slots:
 private:
 	void triggerError( int, int );
 	
-	static void deviceChangeEventCallback(int deviceId, int eventId, int changeType, int callbackId, void *context);
-	static void deviceEventCallback(int deviceId, int method, const char *data, int callbackId, void *context);
+	static void WINAPI deviceChangeEventCallback(int deviceId, int eventId, int changeType, int callbackId, void *context);
+	static void WINAPI deviceEventCallback(int deviceId, int method, const char *data, int callbackId, void *context);
 	
+	int deviceEventId;
 	int deviceChangeEventId;
 	
 };

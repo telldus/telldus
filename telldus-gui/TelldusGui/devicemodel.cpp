@@ -174,7 +174,7 @@ int DeviceModel::rowForId( int deviceId ) const {
 }
 
 
-void DeviceModel::deviceChangeEvent(int deviceId, int eventId, int changeType, int, void *context) {
+void WINAPI DeviceModel::deviceChangeEvent(int deviceId, int eventId, int changeType, int, void *context) {
 	DeviceModel *model = reinterpret_cast<DeviceModel *>(context);
 	if (!model) {
 		return;
