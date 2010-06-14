@@ -10,14 +10,16 @@ SET( telldus-client_SRCS
 	main.cpp
 	Manager.cpp
 	../common/Message.cpp
+	${CMAKE_SOURCE_DIR}/driver/libtelldus-core/Thread.cpp
 )
 
 SET( telldus-client_HDRS
 	${CMAKE_SOURCE_DIR}/driver/libtelldus-core/telldus-core.h
+	${CMAKE_SOURCE_DIR}/driver/libtelldus-core/Thread.h
 )
 
 SET( telldus-client_MOC_HDRS
-	Manager.h
+#	Manager.h
 	../common/Socket.h
 )
 	

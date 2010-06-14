@@ -1,10 +1,10 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include <QThread>
 #include <QByteArray>
 #include <QVariant>
 #include "Message.h"
+#include <libtelldus-core/Thread.h>
 #include <libtelldus-core/telldus-core.h>
 
 class ManagerPrivate;
@@ -26,8 +26,7 @@ struct RawCallbackStruct {
 };
 
 
-class Manager : public QThread {
-	Q_OBJECT
+class Manager : public TelldusCore::Thread {
 public:
 	~Manager(void);
 

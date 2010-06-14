@@ -21,11 +21,12 @@ public:
 
 Manager *Manager::instance = 0;
 
-Manager::Manager(void) {
+Manager::Manager(void)
+	:Thread()
+{
 	d = new ManagerPrivate;
 	d->numberOfDevices = -1;
 	d->lastCallbackId = 0;
-	connect(&d->eventSocket, SIGNAL(readyRead()), this, SLOT(dataReceived()));
 
 #ifdef _WINDOWS
 	d->s.connectToServer( "TelldusCoreClient" );
@@ -35,7 +36,6 @@ Manager::Manager(void) {
 	d->eventSocket.connectToServer( "/tmp/TelldusCoreEvents" );
 #endif
 
-	//d->s.waitForConnected();
 	start();
 }
 
@@ -179,12 +179,13 @@ QVariant Manager::send(const Message &message, bool *success) {
 	logMessage(QString("Sending: %1").arg(QString(message)));
 	d->s.writeOverlapped(message);
 	QByteArray response(d->s.readOverlapped());
-	logMessage(QString("Received: %1").arg(QString(response)));
 	if (response.length() > 0) {
+		logMessage(QString("Received: %1").arg(QString(response)));
 		QVariant retval = Message::takeFirst(&response);
 		(*success) = true;
 		return retval;
 	}
+	logMessage("Received: empty result");
 	return TELLSTICK_ERROR_UNKNOWN_RESPONSE;
 }
 
