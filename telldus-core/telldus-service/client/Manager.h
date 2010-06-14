@@ -1,7 +1,7 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include <QObject>
+#include <QThread>
 #include <QByteArray>
 #include <QVariant>
 #include "Message.h"
@@ -26,7 +26,7 @@ struct RawCallbackStruct {
 };
 
 
-class Manager : public QObject {
+class Manager : public QThread {
 	Q_OBJECT
 public:
 	~Manager(void);
@@ -44,9 +44,13 @@ public:
 	int registerRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context );
 	bool unregisterCallback( int callbackId );
 
+	static void logMessage( const QString &message);
+
+protected:
+	void run();
 
 private slots:
-	void dataReceived();
+	void dataReceived(const QByteArray &msg);
 
 private:
 	Manager(void);

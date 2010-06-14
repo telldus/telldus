@@ -19,6 +19,7 @@ SET( telldus-client_HDRS
 
 SET( telldus-client_MOC_HDRS
 	Manager.h
+	../common/Socket.h
 )
 	
 SET( telldus-client_LIBRARIES
@@ -47,6 +48,7 @@ ELSEIF (WIN32) #### Windows ####
 	SET( telldus-client_SRCS
 		${telldus-client_SRCS}
 		../../driver/libtelldus-core/libtelldus-core.def
+		../common/Socket_win.cpp
 	)
 	ADD_DEFINITIONS(
 		-D_WINDOWS

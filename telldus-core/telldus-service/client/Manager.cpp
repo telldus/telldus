@@ -2,6 +2,7 @@
 #include <QLocalSocket>
 #include "Manager.h"
 #include "Message.h"
+#include "../common/Socket.h"
 
 using namespace TelldusService;
 
@@ -13,7 +14,7 @@ class ManagerPrivate {
 public:
 	int numberOfDevices;
 	int lastCallbackId;
-	QLocalSocket s, eventSocket;
+	Socket s, eventSocket;
 	CallbackList callbacks;
 	DeviceChangeCallbackList deviceChangeCallbacks;
 	RawCallbackList rawCallbacks;
@@ -35,10 +36,13 @@ Manager::Manager(void) {
 	d->eventSocket.connectToServer( "/tmp/TelldusCoreEvents" );
 #endif
 
-	d->s.waitForConnected();
+	//d->s.waitForConnected();
+	start();
 }
 
 Manager::~Manager(void) {
+	d->eventSocket.disconnect();
+	this->wait();
 	delete d;
 }
 
@@ -126,19 +130,39 @@ bool Manager::unregisterCallback( int callbackId ) {
 	return false;
 }
 
-void Manager::dataReceived() {
-	while(1) {
-		QByteArray msg(d->eventSocket.readLine());
+void Manager::run() {
+	while( d->eventSocket.connected() ) {
+		logMessage("-- OVERLAPPED read");
+		QByteArray data(d->eventSocket.readOverlapped());
+		logMessage("-- OVERLAPPED result:");
+		logMessage(data);
+		if (data.length() == 0) {
+			continue;
+		}
+		this->dataReceived(data);
+	}
+}
+
+void Manager::dataReceived(const QByteArray &message) {
+	//return;
+	//while(1) {
+		/*QByteArray msg(d->eventSocket.readLine());
 		if (msg.length() == 0) {
 			break;
-		}
+		}*/
+		QByteArray msg(message); //Copy
+		logMessage("Event");
 		QString funcName = Message::takeFirst(&msg).toString();
+		logMessage(funcName);
 		if (funcName == "TDDeviceEvent") {
 			int intDeviceId = Message::takeFirst(&msg).toInt();
 			int intDeviceState = Message::takeFirst(&msg).toInt();
 			QString strDeviceStateValue = Message::takeFirst(&msg).toString();
+			logMessage(QString("Sending %1 callbacks").arg(d->callbacks.size()));
 			for(CallbackList::const_iterator callback_it = d->callbacks.begin(); callback_it != d->callbacks.end(); ++callback_it) {
+				logMessage("StartSend");
 				(*callback_it).event(intDeviceId, intDeviceState, strDeviceStateValue.toLocal8Bit(), (*callback_it).id, (*callback_it).context);
+				logMessage("SendDone");
 			}
 		} else if (funcName == "TDDeviceChangeEvent") {
 			int intDeviceId = Message::takeFirst(&msg).toInt();
@@ -150,17 +174,17 @@ void Manager::dataReceived() {
 				(*callback_it).event(intDeviceId, intEvent, intChange, (*callback_it).id, (*callback_it).context);
 			}
 		}
-	}
+	//}
 }
 
 QVariant Manager::send(const Message &message, bool *success) {
 	(*success) = false;
-	if (d->s.state() != QLocalSocket::ConnectedState) {
+	if (!d->s.connected()) {
 		return TELLSTICK_ERROR_CONNECTING_SERVICE;
 	}
 	d->s.write(message);
-	if (d->s.waitForReadyRead(7000)) {
-		QByteArray response(d->s.readLine());
+	QByteArray response(d->s.readOverlapped());
+	if (response.length() > 0) {
 		QVariant retval = Message::takeFirst(&response);
 		(*success) = true;
 		return retval;
@@ -168,3 +192,17 @@ QVariant Manager::send(const Message &message, bool *success) {
 	return TELLSTICK_ERROR_UNKNOWN_RESPONSE;
 }
 
+#include <QFile>
+#include <QTime>
+void Manager::logMessage( const QString &message) {
+	return;
+#ifdef _WINDOWS
+	QFile file("C:/log_client.txt");
+	file.open(QIODevice::Append | QIODevice::Text);
+	QTextStream out(&file);
+	out << QTime::currentTime().toString() << ": " << message << "\n";
+	file.close();
+#else
+	qDebug() << message;
+#endif
+}
