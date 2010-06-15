@@ -28,18 +28,34 @@
 
 #include <QDebug>
 
-EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
+class EditDeviceDialog::PrivateData {
+public:
+	VendorDeviceModel *model;
+	FilteredDeviceProxyModel *filteredModel;
+	Device *device;
+	QStackedLayout *settingsLayout;
+	QLabel *deviceImage;
+	QPushButton *scanButton, *stopScanButton;
+	QLineEdit *nameLineEdit;
+	QItemSelectionModel *selection;
+	QHash<int, DeviceSetting *> deviceSettings;
+	int rawDeviceEventId;
+	bool scanning;
+#ifdef Q_WS_HILDON
+	QStackedLayout *stacked_layout;
+#endif
+};
+
+EditDeviceDialog::EditDeviceDialog(Device *device, QWidget *parent, Qt::WFlags flags)
 		:QDialog(parent, flags),
-		model(new VendorDeviceModel(this)),
-		filteredModel(new FilteredDeviceProxyModel(this)),
-		device(d),
-		settingsLayout(0),
-		deviceImage(0),
-		nameLineEdit(0),
-		selection(0),
-		scanning(false)
+		d(new PrivateData)
+
 {
-	filteredModel->setSourceModel(model);
+	d->model = new VendorDeviceModel(this);
+	d->filteredModel = new FilteredDeviceProxyModel(this);
+	d->filteredModel->setSourceModel(d->model);
+	d->device = device;
+	d->scanning = false;
 
 	QVBoxLayout *layout = new QVBoxLayout(this);
 #ifdef Q_WS_HILDON
@@ -51,13 +67,13 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 	QLabel *scanLabel = new QLabel(tr("TellStick Duo found.<br>Press scan button to search for devices"), this);
 	scanLayout->addWidget(scanLabel);
 	scanLayout->addStretch();
-	scanButton = new QPushButton( tr("Scan"), this);
-	connect(scanButton, SIGNAL(clicked()), this, SLOT(scanClicked()));
-	scanLayout->addWidget(scanButton);
-	stopScanButton = new QPushButton( tr("Stop"), this);
-	stopScanButton->setEnabled(false);
-	connect(stopScanButton, SIGNAL(clicked()), this, SLOT(stopScanClicked()));
-	scanLayout->addWidget(stopScanButton);
+	d->scanButton = new QPushButton( tr("Scan"), this);
+	connect(d->scanButton, SIGNAL(clicked()), this, SLOT(scanClicked()));
+	scanLayout->addWidget(d->scanButton);
+	d->stopScanButton = new QPushButton( tr("Stop"), this);
+	d->stopScanButton->setEnabled(false);
+	connect(d->stopScanButton, SIGNAL(clicked()), this, SLOT(stopScanClicked()));
+	scanLayout->addWidget(d->stopScanButton);
 
 	QGroupBox *scanGroupBox = new QGroupBox(this);
 	scanGroupBox->setTitle( tr("Scan") );
@@ -67,16 +83,16 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 	QHBoxLayout *deviceLayout = new QHBoxLayout;
 
 	QTreeView *deviceView = new QTreeView(this);
-	deviceView->setModel( filteredModel );
+	deviceView->setModel( d->filteredModel );
 	deviceView->setMinimumSize( QSize(200, 200) );
 
-	selection = deviceView->selectionModel();
-	connect( selection, SIGNAL( currentChanged(const QModelIndex, const QModelIndex &) ), this, SLOT(selectionChanged( const QModelIndex & ) ));
+	d->selection = deviceView->selectionModel();
+	connect( d->selection, SIGNAL( currentChanged(const QModelIndex, const QModelIndex &) ), this, SLOT(selectionChanged( const QModelIndex & ) ));
 	deviceLayout->addWidget(deviceView);
 
 	QVBoxLayout *deviceInfoLayout = new QVBoxLayout;
-	deviceImage = new QLabel( this );
-	deviceInfoLayout->addWidget( deviceImage );
+	d->deviceImage = new QLabel( this );
+	deviceInfoLayout->addWidget( d->deviceImage );
 	deviceInfoLayout->addStretch();
 
 	deviceLayout->addLayout( deviceInfoLayout );
@@ -96,17 +112,17 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 
 	QLabel *nameLabel = new QLabel(this);
 	nameLabel->setText( tr("&Name:") );
-	nameLineEdit = new QLineEdit(device->name(),  this );
-	nameLabel->setBuddy(nameLineEdit);
+	d->nameLineEdit = new QLineEdit(device->name(),  this );
+	nameLabel->setBuddy(d->nameLineEdit);
 
-	nameLayout->addRow(nameLabel, nameLineEdit);
+	nameLayout->addRow(nameLabel, d->nameLineEdit);
 	addressLayout->addLayout( nameLayout );
 
-	settingsLayout = new QStackedLayout;
+	d->settingsLayout = new QStackedLayout;
 	QLabel *noDeviceLabel = new QLabel( tr("Choose a device above"), this );
 	noDeviceLabel->setAlignment( Qt::AlignCenter );
-	settingsLayout->addWidget( noDeviceLabel );
-	addressLayout->addLayout(settingsLayout);
+	d->settingsLayout->addWidget( noDeviceLabel );
+	addressLayout->addLayout(d->settingsLayout);
 
 	QGroupBox *settingsGroupBox = new QGroupBox(this);
 	settingsGroupBox->setTitle( tr("Addresscode") );
@@ -123,80 +139,79 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 	connect(buttonBox, SIGNAL(rejected()), this, SLOT(cancelClicked()));
 	layout->addWidget(buttonBox);
 
-	deviceSettings[1] = new DeviceSettingNexa(device, this);
-	deviceSettings[2] = new DeviceSettingSartano(device, this);
-	deviceSettings[3] = new DeviceSettingIkea(device, this);
-	deviceSettings[4] = new DeviceSettingNexaBell(device, this);
-	deviceSettings[5] = new DeviceSettingRisingSun(device, this);
-	deviceSettings[6] = new DeviceSettingBrateck(device, this);
-	deviceSettings[7] = new DeviceSettingUpm(device, this); //Not used?
-	deviceSettings[8] = new DeviceSettingArctechSelflearning(device, this);
-	deviceSettings[9] = new DeviceSettingArctechSelflearning(device, this);
-	((DeviceSettingArctechSelflearning *)deviceSettings[9])->setRemoteMinMax(0,4095);
-	((DeviceSettingArctechSelflearning *)deviceSettings[9])->setUnitMinMax(1,4);
-	deviceSettings[10] = new DeviceSettingGAO(device, this);
-	deviceSettings[11] = new DeviceSettingArctechSelflearning(device, this);
-	((DeviceSettingArctechSelflearning *)deviceSettings[11])->setRemoteMinMax(0,16383);
-	((DeviceSettingArctechSelflearning *)deviceSettings[11])->setUnitMinMax(1,4);
-	deviceSettings[12] = new DeviceSettingArctechSelflearning(device, this);
-	((DeviceSettingArctechSelflearning *)deviceSettings[12])->setRemoteMinMax(1,33554432);
-	((DeviceSettingArctechSelflearning *)deviceSettings[12])->setUnitMinMax(1,16);
-
+	d->deviceSettings[1] = new DeviceSettingNexa(device, this);
+	d->deviceSettings[2] = new DeviceSettingSartano(device, this);
+	d->deviceSettings[3] = new DeviceSettingIkea(device, this);
+	d->deviceSettings[4] = new DeviceSettingNexaBell(device, this);
+	d->deviceSettings[5] = new DeviceSettingRisingSun(device, this);
+	d->deviceSettings[6] = new DeviceSettingBrateck(device, this);
+	d->deviceSettings[7] = new DeviceSettingUpm(device, this); //Not used?
+	d->deviceSettings[8] = new DeviceSettingArctechSelflearning(device, this);
+	d->deviceSettings[9] = new DeviceSettingArctechSelflearning(device, this);
+	((DeviceSettingArctechSelflearning *)d->deviceSettings[9])->setRemoteMinMax(0,4095);
+	((DeviceSettingArctechSelflearning *)d->deviceSettings[9])->setUnitMinMax(1,4);
+	d->deviceSettings[10] = new DeviceSettingGAO(device, this);
+	d->deviceSettings[11] = new DeviceSettingArctechSelflearning(device, this);
+	((DeviceSettingArctechSelflearning *)d->deviceSettings[11])->setRemoteMinMax(0,16383);
+	((DeviceSettingArctechSelflearning *)d->deviceSettings[11])->setUnitMinMax(1,4);
+	d->deviceSettings[12] = new DeviceSettingArctechSelflearning(device, this);
+	((DeviceSettingArctechSelflearning *)d->deviceSettings[12])->setRemoteMinMax(1,33554432);
+	((DeviceSettingArctechSelflearning *)d->deviceSettings[12])->setUnitMinMax(1,16);
 	
-	foreach( DeviceSetting *s, deviceSettings ) {
-		connect(filteredModel, SIGNAL(setParameter(const QString&, const QString&)), s, SLOT(setValue(const QString&, const QString&)));
-		settingsLayout->addWidget( s );
+	foreach( DeviceSetting *s, d->deviceSettings ) {
+		connect(d->filteredModel, SIGNAL(setParameter(const QString&, const QString&)), s, SLOT(setValue(const QString&, const QString&)));
+		d->settingsLayout->addWidget( s );
 	}
 
 	expandNodes(deviceView);
-	QModelIndex index = filteredModel->mapFromSource(model->index( device ));
+	QModelIndex index = d->filteredModel->mapFromSource(d->model->index( device ));
 	if (index.isValid()) {
 		deviceView->expand( index.parent() );
-		selection->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect );
+		d->selection->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect );
 	}
 
 	connect(this, SIGNAL(rawDataReceived(const QString &)), this, SLOT(rawDataSlot(const QString &)));
-	rawDeviceEventId = tdRegisterRawDeviceEvent(reinterpret_cast<TDRawDeviceEvent>(&EditDeviceDialog::rawData), this);
+	d->rawDeviceEventId = tdRegisterRawDeviceEvent(reinterpret_cast<TDRawDeviceEvent>(&EditDeviceDialog::rawData), this);
 }
 
 EditDeviceDialog::~EditDeviceDialog() {
-	tdUnregisterCallback(rawDeviceEventId);
-//	qDeleteAll( deviceSettings );
+	tdUnregisterCallback(d->rawDeviceEventId);
+	delete d;
 }
 
 void EditDeviceDialog::selectionChanged( const QModelIndex & filteredIndex ) {
-	QModelIndex index = filteredModel->mapToSource( filteredIndex );
+	QModelIndex index = d->filteredModel->mapToSource( filteredIndex );
 
-	VendorDeviceTreeItem* const item = model->item(index);
+	VendorDeviceTreeItem* const item = d->model->item(index);
 	if (!item) {
 		return;
 	}
 
-	deviceImage->setPixmap( item->image() );
+	d->deviceImage->setPixmap( item->image() );
 
 	int widget = item->widget();
-	if (widget >= settingsLayout->count()) {
+	if (widget >= d->settingsLayout->count()) {
 		widget = 0;
 	}
-	settingsLayout->setCurrentIndex( widget );
+	d->settingsLayout->setCurrentIndex( widget );
 }
 
 void EditDeviceDialog::scanClicked() {
-	scanButton->setEnabled( false );
-	stopScanButton->setEnabled( true );
-	scanning = true;
+	d->scanButton->setEnabled( false );
+	d->stopScanButton->setEnabled( true );
+	d->scanning = true;
 }
 
 void EditDeviceDialog::stopScanClicked() {
-	scanButton->setEnabled( true );
-	stopScanButton->setEnabled( false );
-	scanning = false;
-	filteredModel->showAll();
+	d->scanButton->setEnabled( true );
+	d->stopScanButton->setEnabled( false );
+	d->scanning = false;
+	d->filteredModel->showAll();
 }
 
 void EditDeviceDialog::okClicked() {
 
-	VendorDeviceTreeItem* const item = model->item( filteredModel->mapToSource(selection->currentIndex()) );
+	VendorDeviceTreeItem* const item = d->model->item( d->filteredModel->mapToSource(d->selection->currentIndex()) );
 	if (!item || !item->isDevice()) {
 		QMessageBox msgBox;
 		msgBox.setText( tr("You must choose a device") );
@@ -214,22 +229,22 @@ void EditDeviceDialog::okClicked() {
 	}
 #endif
 
-	if (nameLineEdit->text().trimmed() == "") {
+	if (d->nameLineEdit->text().trimmed() == "") {
 		QMessageBox msgBox;
 		msgBox.setText( tr("The device must have a name.") );
 		msgBox.setInformativeText( tr("Please fill in a name in the field under 'Name'") );
 		msgBox.setIcon( QMessageBox::Critical );
 		msgBox.setStandardButtons( QMessageBox::Ok );
 		msgBox.exec();
-		nameLineEdit->setFocus();
+		d->nameLineEdit->setFocus();
 		return;
 	}
 
-	device->setName( nameLineEdit->text().trimmed() );
-	device->setModel( item->deviceModel() );
-	device->setProtocol( item->deviceProtocol() );
+	d->device->setName( d->nameLineEdit->text().trimmed() );
+	d->device->setModel( item->deviceModel() );
+	d->device->setProtocol( item->deviceProtocol() );
 
-	DeviceSetting *w = qobject_cast<DeviceSetting *>(settingsLayout->currentWidget());
+	DeviceSetting *w = qobject_cast<DeviceSetting *>(d->settingsLayout->currentWidget());
 	if (w) {
 		w->saveParameters();
 	}
@@ -248,20 +263,20 @@ void EditDeviceDialog::cancelClicked() {
 }
 
 void EditDeviceDialog::expandNodes(QTreeView *deviceView) {
-	for( int i = 0; i < model->rowCount(QModelIndex()); ++i ) {
-		QModelIndex index = model->index(i, 0, QModelIndex());
-		VendorDeviceTreeItem *item = model->item(index);
+	for( int i = 0; i < d->model->rowCount(QModelIndex()); ++i ) {
+		QModelIndex index = d->model->index(i, 0, QModelIndex());
+		VendorDeviceTreeItem *item = d->model->item(index);
 		if (item && item->isExpanded()) {
-			deviceView->expand(filteredModel->mapFromSource(index));
+			deviceView->expand(d->filteredModel->mapFromSource(index));
 		}
 	}
 }
 
 void EditDeviceDialog::rawDataSlot( const QString &data ) {
-	if (!scanning) {
+	if (!d->scanning) {
 		return;
 	}
-	filteredModel->setFilter(data);
+	d->filteredModel->setFilter(data);
 }
 
 void WINAPI EditDeviceDialog::rawData(const char *data, int callbackId, void *context) {

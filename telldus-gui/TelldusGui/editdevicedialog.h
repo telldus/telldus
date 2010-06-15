@@ -7,15 +7,7 @@
 
 #include <telldus-core.h>
 
-class FilteredDeviceProxyModel;
-class VendorDeviceModel;
-class DeviceSetting;
 class Device;
-class QLabel;
-class QPushButton;
-class QLineEdit;
-class QStackedLayout;
-class QItemSelectionModel;
 class QTreeView;
 
 class EditDeviceDialog : public QDialog
@@ -38,22 +30,10 @@ private slots:
 
 private:
 	static void WINAPI rawData(const char *data, int callbackId, void *context);
-
 	void expandNodes(QTreeView *deviceView);
-	VendorDeviceModel *model;
-	FilteredDeviceProxyModel *filteredModel;
-	Device *device;
-	QStackedLayout *settingsLayout;
-	QLabel *deviceImage;
-	QPushButton *scanButton, *stopScanButton;
-	QLineEdit *nameLineEdit;
-	QItemSelectionModel *selection;
-	QHash<int, DeviceSetting *> deviceSettings;
-	int rawDeviceEventId;
-	bool scanning;
-#ifdef Q_WS_HILDON
-	QStackedLayout *stacked_layout;
-#endif
+
+	class PrivateData;
+	PrivateData *d;
 };
 
 #endif // EDITDEVICEDIALOG_H
