@@ -28,17 +28,20 @@ private slots:
 	void disconnected();
 	void deviceEventSlot(int, int, const char *);
 	void deviceChangeEventSlot(int, int, int);
+	void rawDeviceEventSlot(const char *);
 	void managerDone();
 
 signals:
 	void deviceEventSignal(int, int, const char *);
 	void deviceChangeEventSignal(int, int, int);
+	void rawDeviceEventSignal(const char *);
 
 private:
 	TelldusCorePrivate * const d;
 
 	static void WINAPI deviceEvent(int deviceId, int, const char *, int, void *);
 	static void WINAPI deviceChangeEvent(int deviceId, int eventId, int changeType, int, void *);
+	static void WINAPI rawDeviceEvent(const char *data, int, void *);
 	static int callbackId;
 };
 

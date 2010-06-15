@@ -168,6 +168,11 @@ void Manager::dataReceived(const QByteArray &message) {
 		for(DeviceChangeCallbackList::const_iterator callback_it = d->deviceChangeCallbacks.begin(); callback_it != d->deviceChangeCallbacks.end(); ++callback_it) {
 			(*callback_it).event(intDeviceId, intEvent, intChange, (*callback_it).id, (*callback_it).context);
 		}
+	} else if (funcName == "TDRawDeviceEvent") {
+		QString strData = Message::takeFirst(&msg).toString();
+		for(RawCallbackList::const_iterator callback_it = d->rawCallbacks.begin(); callback_it != d->rawCallbacks.end(); ++callback_it) {
+			(*callback_it).event(strData.toLocal8Bit(), (*callback_it).id, (*callback_it).context);
+		}
 	}
 }
 

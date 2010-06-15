@@ -26,6 +26,7 @@ TelldusCore::TelldusCore(void)
 {
 	connect(this, SIGNAL(deviceEventSignal(int, int, const char *)), this, SLOT(deviceEventSlot(int, int, const char *)));
 	connect(this, SIGNAL(deviceChangeEventSignal(int, int, int)), this, SLOT(deviceChangeEventSlot(int, int, int)));
+	connect(this, SIGNAL(rawDeviceEventSignal(const char *)), this, SLOT(rawDeviceEventSlot(const char *)));
 
 	tdInit();
 
@@ -43,6 +44,7 @@ TelldusCore::TelldusCore(void)
 
 	tdRegisterDeviceEvent( reinterpret_cast<TDDeviceEvent>(&deviceEvent), this);
 	tdRegisterDeviceChangeEvent(reinterpret_cast<TDDeviceChangeEvent>(&deviceChangeEvent), this);
+	tdRegisterRawDeviceEvent(reinterpret_cast<TDRawDeviceEvent>(&rawDeviceEvent), this);
 }
 
 TelldusCore::~TelldusCore(void) {
@@ -128,6 +130,14 @@ void TelldusCore::deviceChangeEventSlot(int deviceId, int eventId, int changeTyp
 	}
 }
 
+void TelldusCore::rawDeviceEventSlot(const char *data) {
+	Message msg("TDRawDeviceEvent");
+	msg.addArgument(data);
+	foreach(Socket *s, d->eventSockets) {
+		s->write(msg);
+	}
+}
+
 void TelldusCore::logMessage( const QString &message) {
 #ifdef _WINDOWS
 	QFile file("C:/log.txt");
@@ -180,3 +190,9 @@ void WINAPI TelldusCore::deviceChangeEvent(int deviceId, int eventId, int change
 	}
 }
 
+void WINAPI TelldusCore::rawDeviceEvent(const char *data, int, void *context) {
+	TelldusCore *tc = reinterpret_cast<TelldusCore *>(context);
+	if (tc) {
+		emit tc->rawDeviceEventSignal(data);
+	}
+}
