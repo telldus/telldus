@@ -13,6 +13,7 @@ SET( telldus-gui_SRCS
 	device.cpp
 	editdevicedialog.cpp
 	editgroupdialog.cpp
+	filtereddeviceproxymodel.cpp
 	vendordevicemodel.cpp
 	vendordevicetreeitem.cpp
 	devicesettingarctechselflearning.cpp
@@ -39,6 +40,7 @@ SET( telldus-gui_MOC_HDRS
 	device.h
 	editdevicedialog.h
 	editgroupdialog.h
+	filtereddeviceproxymodel.h
 	vendordevicemodel.h
 	devicesettingarctechselflearning.h
 	devicesettingbrateck.h
