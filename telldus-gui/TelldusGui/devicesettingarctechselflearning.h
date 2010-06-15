@@ -34,6 +34,7 @@ public:
 
 public slots:
 	virtual void saveParameters();
+	virtual void setValue( const QString &name, const QString &value );
 
 protected slots:
 	void randomizeCode();

@@ -66,27 +66,9 @@ DeviceSettingIkea::DeviceSettingIkea(Device *device, QWidget *parent)
 	layout->addStretch( 1 );
 
 	//Restore the settings
-	spinBox->setValue( device->parameter("system", "1").toInt() );
-
-	QString setting = device->parameter("units", "");
-	if (setting != "") {
-		QStringList units = setting.split(",");
-		for(int i = 0; i < units.size(); ++i) {
-			int intUnit = units.at(i).toInt();
-			if (intUnit == 10) {
-				intUnit = 0;
-			} else if (intUnit > 10) {
-				continue;
-			}
-			unit[intUnit]->setChecked(true);
-		}
-	}
-
-	QString fade = device->parameter("fade", "false");
-	if (fade.compare("true", Qt::CaseInsensitive) == 0) {
-		smooth->setChecked( true );
-	}
-
+	this->setValue( "system", device->parameter("system", "1") );
+	this->setValue( "units", device->parameter("units", "") );
+	this->setValue( "fade", device->parameter("fade", "false") );
 }
 
 
@@ -110,4 +92,29 @@ void DeviceSettingIkea::saveParameters() {
 	p_device->setParameter( "units", units.join(",") );
 
 	p_device->setParameter( "fade", (smooth->isChecked() ? "true" : "false") );
+}
+
+void DeviceSettingIkea::setValue( const QString &name, const QString &value ) {
+	if (name == "system") {
+		spinBox->setValue( value.toInt() );
+	} else if (name == "units") {
+		if (value != "") {
+			QStringList units = value.split(",");
+			for(int i = 0; i < units.size(); ++i) {
+				int intUnit = units.at(i).toInt();
+				if (intUnit == 10) {
+					intUnit = 0;
+				} else if (intUnit > 10) {
+					continue;
+				}
+				unit[intUnit]->setChecked(true);
+			}
+		}
+	} else if (name == "fade") {
+		if (value.compare("true", Qt::CaseInsensitive) == 0) {
+			smooth->setChecked( true );
+		} else {
+			smooth->setChecked( false );
+		}
+	}
 }

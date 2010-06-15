@@ -46,9 +46,7 @@ DeviceSettingNexaBell::DeviceSettingNexaBell(Device *device, QWidget *parent)
 
 	connect( dialHouse, SIGNAL( valueChanged( int ) ), this, SLOT( houseChanged(int) ) );
 
-	QString strHouse = device->parameter("house", "A");
-	uint intHouse = strHouse[0].toAscii() - 'A';
-	dialHouse->setValue( intHouse );
+	this->setValue("house", device->parameter("house", "A"));
 }
 
 
@@ -58,6 +56,13 @@ DeviceSettingNexaBell::~DeviceSettingNexaBell()
 
 void DeviceSettingNexaBell::saveParameters() {
 	p_device->setParameter( "house", QString('A' + dialHouse->value()) );
+}
+
+void DeviceSettingNexaBell::setValue( const QString &name, const QString &value ) {
+	if (name == "house") {
+		uint intHouse = value[0].toUpper().toAscii() - 'A';
+		dialHouse->setValue( intHouse );
+	}
 }
 
 void DeviceSettingNexaBell::houseChanged( int house )

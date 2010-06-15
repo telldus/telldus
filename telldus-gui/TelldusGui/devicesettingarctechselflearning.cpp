@@ -76,6 +76,14 @@ void DeviceSettingArctechSelflearning::saveParameters() {
 
 }
 
+void DeviceSettingArctechSelflearning::setValue( const QString &name, const QString &value ) {
+	if (name == "house") {
+		spinRemotecode->setValue(value.toInt());
+	} else if (name == "unit") {
+		spinUnitcode->setValue( value.toInt() );
+	}
+}
+
 
 void DeviceSettingArctechSelflearning::setRemoteMinMax(int min, int max) {
 	spinRemotecode->setMinimum(min);

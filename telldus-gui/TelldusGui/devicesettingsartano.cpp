@@ -44,12 +44,7 @@ DeviceSettingSartano::DeviceSettingSartano(Device *device, QWidget *parent)
 	layout->addLayout( gl );
 	layout->addStretch( 1 );
 
-	QString setting = device->parameter("code", "0000000000");
-	for (int i = 0; i < 10; ++i) {
-		if (setting[i] == '0') {
-			button1[i]->setChecked(true);
-		}
-	}
+	this->setValue("code", device->parameter("code", "0000000000"));
 }
 
 DeviceSettingSartano::~DeviceSettingSartano() {
@@ -65,4 +60,14 @@ void DeviceSettingSartano::saveParameters() {
 		}
 	}
 	p_device->setParameter( "code", setting );
+}
+
+void DeviceSettingSartano::setValue( const QString &name, const QString &value ) {
+	if (name == "code") {
+		for (int i = 0; i < 10; ++i) {
+			if (value[i] == '0') {
+				button1[i]->setChecked(true);
+			}
+		}
+	}
 }

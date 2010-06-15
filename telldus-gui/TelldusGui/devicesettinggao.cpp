@@ -44,10 +44,8 @@ DeviceSettingGAO::DeviceSettingGAO(Device *device, QWidget *parent)
 	labelCode->setText( "A1" );
 	gridLayout->addWidget(labelCode, 2, 0, 1, 1);
 	
-	uint intValue = device->parameter("house", "A").toInt() - 1;
-	intValue *= 3;
-	intValue += device->parameter("unit", "1").toInt() - 1;
-	dialCode->setValue(intValue);
+	this->setValue( "house", device->parameter("house", "A") );
+	this->setValue( "unit", device->parameter("unit", "1") );
 }
 
 
@@ -57,6 +55,20 @@ DeviceSettingGAO::~DeviceSettingGAO() {
 void DeviceSettingGAO::saveParameters() {
 	p_device->setParameter( "house", QString::number(this->house()) );
 	p_device->setParameter( "unit", QString::number(this->unit()) );
+}
+
+void DeviceSettingGAO::setValue( const QString &name, const QString &value ) {
+	if (name == "house") {
+		uint intValue = value.toInt() - 1;
+		intValue *= 3;
+		intValue += this->unit() - 1;
+		dialCode->setValue(intValue);
+	} else if (name == "unit") {
+		uint intValue = this->house() - 1;
+		intValue *= 3;
+		intValue += value.toInt() - 1;
+		dialCode->setValue(intValue);
+	}
 }
 
 void DeviceSettingGAO::codeChanged(int code) {

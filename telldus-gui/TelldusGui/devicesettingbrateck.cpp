@@ -44,17 +44,7 @@ DeviceSettingBrateck::DeviceSettingBrateck(Device *device, QWidget *parent)
 	layout->addLayout( gl );
 	layout->addSpacerItem( new QSpacerItem(20, 109, QSizePolicy::Minimum, QSizePolicy::Expanding) );
 
-	setting = device->parameter("house", "00000000");
-	setting.truncate(8); //Make sure it is the correct length
-	for (int i = 0; i < 8; ++i) {
-		if (setting[i] == '0') {
-			slider[i]->setValue(0);
-		} else if (setting[i] == '-') {
-			slider[i]->setValue(1);
-		} else if (setting[i] == '1') {
-			slider[i]->setValue(2);
-		}
-	}
+	this->setValue( "house", device->parameter("house", "00000000") );
 }
 
 DeviceSettingBrateck::~DeviceSettingBrateck() {
@@ -62,6 +52,22 @@ DeviceSettingBrateck::~DeviceSettingBrateck() {
 
 void DeviceSettingBrateck::saveParameters() {
 	p_device->setParameter( "house", setting );
+}
+
+void DeviceSettingBrateck::setValue( const QString &name, const QString &value ) {
+	if (name == "house") {
+		setting = value;
+		setting.truncate(8); //Make sure it is the correct length
+		for (int i = 0; i < 8; ++i) {
+			if (setting[i] == '0') {
+				slider[i]->setValue(0);
+			} else if (setting[i] == '-') {
+				slider[i]->setValue(1);
+			} else if (setting[i] == '1') {
+				slider[i]->setValue(2);
+			}
+		}
+	}
 }
 
 void DeviceSettingBrateck::sliderChanged( int value ) {

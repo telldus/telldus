@@ -72,11 +72,8 @@ DeviceSettingNexa::DeviceSettingNexa(Device *device, QWidget *parent)
 	connect( dialHouse, SIGNAL( valueChanged( int ) ), this, SLOT( houseChanged(int) ) );
 	connect( dialUnit, SIGNAL(valueChanged(int)), labelUnit, SLOT(setNum(int)) );
 
-	QString strHouse = device->parameter("house", "A");
-	uint intHouse = strHouse[0].toAscii() - 'A';
-	dialHouse->setValue( intHouse );
-
-	dialUnit->setValue( device->parameter("unit", "1").toInt() );
+	this->setValue( "house", device->parameter("house", "A"));
+	this->setValue( "unit", device->parameter("unit", "1") );
 }
 
 
@@ -87,6 +84,15 @@ DeviceSettingNexa::~DeviceSettingNexa()
 void DeviceSettingNexa::saveParameters() {
 	p_device->setParameter( "house", QString('A' + dialHouse->value()) );
 	p_device->setParameter( "unit", QString::number(dialUnit->value()) );
+}
+
+void DeviceSettingNexa::setValue( const QString &name, const QString &value ) {
+	if (name == "") {
+		uint intHouse = value[0].toUpper().toAscii() - 'A';
+		dialHouse->setValue( intHouse );
+	} else if (name == "") {
+		dialUnit->setValue( value.toInt() );
+	}
 }
 
 void DeviceSettingNexa::houseChanged( int house )

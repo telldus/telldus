@@ -29,6 +29,7 @@ public:
 
 public slots:
 	virtual void saveParameters() = 0;
+	virtual void setValue( const QString &name, const QString &value ) = 0;
 
 protected:
 	Device *p_device;

@@ -59,3 +59,7 @@ DeviceSettingUpm::~DeviceSettingUpm() {
 void DeviceSettingUpm::saveParameters() {
 	p_device->setParameter( "house", QString::number(house.value()) );
 }
+
+void DeviceSettingUpm::setValue( const QString &name, const QString &value ) {
+	//TODO!
+}

@@ -104,8 +104,8 @@ DeviceSettingRisingSun::DeviceSettingRisingSun(Device *device, QWidget *parent)
 	dialUnit->setWrapping(true);
 	gridLayoutRight->addWidget(dialUnit, 1, 1, 1, 2);
 
-	dialHouse->setValue( device->parameter("house", "1").toInt() );
-	dialUnit->setValue( device->parameter("unit", "1").toInt() );
+	this->setValue("house", device->parameter("house", "1"));
+	this->setValue("unit", device->parameter("unit", "1"));
 }
 
 
@@ -120,3 +120,10 @@ void DeviceSettingRisingSun::saveParameters() {
 	p_device->setParameter( "unit", QString::number(unit) );
 }
 
+void DeviceSettingRisingSun::setValue( const QString &name, const QString &value ) {
+	if (name == "house") {
+		dialHouse->setValue( value.toInt() );
+	} else if (name == "unit") {
+		dialUnit->setValue( value.toInt() );
+	}
+}
