@@ -1,4 +1,5 @@
 #include "editdevicedialog.h"
+#include "filtereddeviceproxymodel.h"
 #include "vendordevicemodel.h"
 #include "vendordevicetreeitem.h"
 #include "device.h"
@@ -17,6 +18,7 @@
 #include <QHBoxLayout>
 #include <QStackedLayout>
 #include <QFormLayout>
+#include <QPushButton>
 #include <QTreeView>
 #include <QGroupBox>
 #include <QLabel>
@@ -29,22 +31,43 @@
 EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 		:QDialog(parent, flags),
 		model(new VendorDeviceModel(this)),
+		filteredModel(new FilteredDeviceProxyModel(this)),
 		device(d),
 		settingsLayout(0),
 		deviceImage(0),
 		nameLineEdit(0),
-		selection(0)
+		selection(0),
+		scanning(false)
 {
+	filteredModel->setSourceModel(model);
+
 	QVBoxLayout *layout = new QVBoxLayout(this);
 #ifdef Q_WS_HILDON
 	stacked_layout = new QStackedLayout;
 	layout->addLayout(stacked_layout);
 #endif
 
+	QHBoxLayout *scanLayout = new QHBoxLayout;
+	QLabel *scanLabel = new QLabel(tr("TellStick Duo found.<br>Press scan button to search for devices"), this);
+	scanLayout->addWidget(scanLabel);
+	scanLayout->addStretch();
+	scanButton = new QPushButton( tr("Scan"), this);
+	connect(scanButton, SIGNAL(clicked()), this, SLOT(scanClicked()));
+	scanLayout->addWidget(scanButton);
+	stopScanButton = new QPushButton( tr("Stop"), this);
+	stopScanButton->setEnabled(false);
+	connect(stopScanButton, SIGNAL(clicked()), this, SLOT(stopScanClicked()));
+	scanLayout->addWidget(stopScanButton);
+
+	QGroupBox *scanGroupBox = new QGroupBox(this);
+	scanGroupBox->setTitle( tr("Scan") );
+	scanGroupBox->setLayout(scanLayout);
+	layout->addWidget(scanGroupBox);
+
 	QHBoxLayout *deviceLayout = new QHBoxLayout;
 
 	QTreeView *deviceView = new QTreeView(this);
-	deviceView->setModel( model );
+	deviceView->setModel( filteredModel );
 	deviceView->setMinimumSize( QSize(200, 200) );
 
 	selection = deviceView->selectionModel();
@@ -106,7 +129,7 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 	deviceSettings[4] = new DeviceSettingNexaBell(device, this);
 	deviceSettings[5] = new DeviceSettingRisingSun(device, this);
 	deviceSettings[6] = new DeviceSettingBrateck(device, this);
-	deviceSettings[7] = new DeviceSettingUpm(device, this);
+	deviceSettings[7] = new DeviceSettingUpm(device, this); //Not used?
 	deviceSettings[8] = new DeviceSettingArctechSelflearning(device, this);
 	deviceSettings[9] = new DeviceSettingArctechSelflearning(device, this);
 	((DeviceSettingArctechSelflearning *)deviceSettings[9])->setRemoteMinMax(0,4095);
@@ -121,23 +144,29 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 
 	
 	foreach( DeviceSetting *s, deviceSettings ) {
+		connect(filteredModel, SIGNAL(setParameter(const QString&, const QString&)), s, SLOT(setValue(const QString&, const QString&)));
 		settingsLayout->addWidget( s );
 	}
 
 	expandNodes(deviceView);
-	QModelIndex index = model->index( device );
+	QModelIndex index = filteredModel->mapFromSource(model->index( device ));
 	if (index.isValid()) {
 		deviceView->expand( index.parent() );
 		selection->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect );
 	}
 
+	connect(this, SIGNAL(rawDataReceived(const QString &)), this, SLOT(rawDataSlot(const QString &)));
+	rawDeviceEventId = tdRegisterRawDeviceEvent(reinterpret_cast<TDRawDeviceEvent>(&EditDeviceDialog::rawData), this);
 }
 
 EditDeviceDialog::~EditDeviceDialog() {
+	tdUnregisterCallback(rawDeviceEventId);
 //	qDeleteAll( deviceSettings );
 }
 
-void EditDeviceDialog::selectionChanged( const QModelIndex & index ) {
+void EditDeviceDialog::selectionChanged( const QModelIndex & filteredIndex ) {
+	QModelIndex index = filteredModel->mapToSource( filteredIndex );
+
 	VendorDeviceTreeItem* const item = model->item(index);
 	if (!item) {
 		return;
@@ -152,9 +181,22 @@ void EditDeviceDialog::selectionChanged( const QModelIndex & index ) {
 	settingsLayout->setCurrentIndex( widget );
 }
 
+void EditDeviceDialog::scanClicked() {
+	scanButton->setEnabled( false );
+	stopScanButton->setEnabled( true );
+	scanning = true;
+}
+
+void EditDeviceDialog::stopScanClicked() {
+	scanButton->setEnabled( true );
+	stopScanButton->setEnabled( false );
+	scanning = false;
+	filteredModel->showAll();
+}
+
 void EditDeviceDialog::okClicked() {
 
-	VendorDeviceTreeItem* const item = model->item( selection->currentIndex() );
+	VendorDeviceTreeItem* const item = model->item( filteredModel->mapToSource(selection->currentIndex()) );
 	if (!item || !item->isDevice()) {
 		QMessageBox msgBox;
 		msgBox.setText( tr("You must choose a device") );
@@ -210,7 +252,21 @@ void EditDeviceDialog::expandNodes(QTreeView *deviceView) {
 		QModelIndex index = model->index(i, 0, QModelIndex());
 		VendorDeviceTreeItem *item = model->item(index);
 		if (item && item->isExpanded()) {
-			deviceView->expand(index);
+			deviceView->expand(filteredModel->mapFromSource(index));
 		}
+	}
+}
+
+void EditDeviceDialog::rawDataSlot( const QString &data ) {
+	if (!scanning) {
+		return;
+	}
+	filteredModel->setFilter(data);
+}
+
+void WINAPI EditDeviceDialog::rawData(const char *data, int callbackId, void *context) {
+	EditDeviceDialog *dialog = reinterpret_cast<EditDeviceDialog *>(context);
+	if (dialog) {
+		emit dialog->rawDataReceived(data);
 	}
 }
