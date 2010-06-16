@@ -14,6 +14,7 @@ public:
 	int numberOfDevices;
 	int lastCallbackId;
 	Socket s, eventSocket;
+	MUTEX sMutex;
 	CallbackList callbacks;
 	DeviceChangeCallbackList deviceChangeCallbacks;
 	RawCallbackList rawCallbacks;
@@ -25,6 +26,7 @@ Manager::Manager(void)
 	:Thread()
 {
 	d = new ManagerPrivate;
+	Thread::initMutex(&d->sMutex);
 	d->numberOfDevices = -1;
 	d->lastCallbackId = 0;
 
@@ -42,6 +44,7 @@ Manager::Manager(void)
 Manager::~Manager(void) {
 	d->eventSocket.disconnect();
 	this->wait();
+	Thread::destroyMutex(&d->sMutex);
 	delete d;
 }
 
@@ -131,10 +134,9 @@ bool Manager::unregisterCallback( int callbackId ) {
 
 void Manager::run() {
 	while( d->eventSocket.connected() ) {
-		logMessage("-- OVERLAPPED read");
+		logMessage("-> OVERLAPPED read");
 		QByteArray data(d->eventSocket.readOverlapped());
-		logMessage("-- OVERLAPPED result:");
-		logMessage(data);
+		logMessage(QString("<- OVERLAPPED result: %1").arg(QString(data)));
 		if (data.length() == 0) {
 			continue;
 		}
@@ -144,7 +146,6 @@ void Manager::run() {
 
 void Manager::dataReceived(const QByteArray &message) {
 	QByteArray msg(message); //Copy
-	logMessage("Event");
 	logMessage(msg);
 	QString funcName = Message::takeFirst(&msg).toString();
 	logMessage(funcName);
@@ -181,11 +182,15 @@ QVariant Manager::send(const Message &message, bool *success) {
 	if (!d->s.connected()) {
 		return TELLSTICK_ERROR_CONNECTING_SERVICE;
 	}
-	logMessage(QString("Sending: %1").arg(QString(message)));
-	d->s.writeOverlapped(message);
-	QByteArray response(d->s.readOverlapped());
+	QByteArray response;
+	{
+		TelldusCore::MutexLocker l(&d->sMutex);
+		logMessage(QString("Sending: %1").arg(QString(message)));
+		d->s.writeOverlapped(message);
+		response = d->s.readOverlapped();
+	}
 	if (response.length() > 0) {
-		logMessage(QString("Received: %1").arg(QString(response)));
+		logMessage(QString("Received: %1 from: %2").arg(QString(response).trimmed()).arg(QString(message)));
 		QVariant retval = Message::takeFirst(&response);
 		(*success) = true;
 		return retval;

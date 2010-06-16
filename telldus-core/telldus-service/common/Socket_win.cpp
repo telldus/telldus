@@ -1,6 +1,5 @@
 #include "Socket.h"
 //#include "TelldusCore.h"
-#include <QMutex>
 
 class SocketPrivate {
 public:
