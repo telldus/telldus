@@ -37,6 +37,10 @@ void DeviceView::rowsUpdated ( const QModelIndex & /*parent*/, int start, int en
 		return;
 	}
 
+	if (end >= model->rowCount()) {
+		end = model->rowCount() - 1;
+	}
+
 	for (int i = start; i <= end; ++i) {
 		QModelIndex index = model->index( i, 2, QModelIndex() );
 		this->openPersistentEditor(index);
