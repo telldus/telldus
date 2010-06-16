@@ -1,0 +1,20 @@
+#include <winresrc.h>
+
+IDI_ICON1 ICON DISCARDABLE "${CMAKE_CURRENT_SOURCE_DIR}/images/TelldusCenter_logo.ico"
+VS_VERSION_INFO VERSIONINFO
+  FILEVERSION ${PACKAGE_MAJOR_VERSION},${PACKAGE_MINOR_VERSION},${PACKAGE_PATCH_VERSION},0
+BEGIN
+  BLOCK "StringFileInfo"
+  BEGIN
+    BLOCK "04090000"
+    BEGIN
+      VALUE "CompanyName", "Telldus Technologies AB"
+      VALUE "FileDescription", "The home automation control center"
+      VALUE "FileVersion", "${PACKAGE_VERSION}"
+      VALUE "LegalCopyright", "Copyright (C) 2010 Telldus Technologies AB"
+      VALUE "OriginalFilename", "TelldusCenter.exe"
+      VALUE "ProductName", "TelldusCenter"
+      VALUE "ProductVersion", "${PACKAGE_MAJOR_VERSION}.${PACKAGE_MINOR_VERSION}"
+    END
+  END
+END

@@ -60,6 +60,11 @@ IF (APPLE) #### Mac OS X ####
 
 ELSEIF (WIN32) #### Windows ####
 	ADD_DEFINITIONS( -DUNICODE )
+	
+	CONFIGURE_FILE(
+		${CMAKE_CURRENT_SOURCE_DIR}/TelldusCenter.rc.in
+		${CMAKE_CURRENT_BINARY_DIR}/TelldusCenter.rc
+	)
 
 	INCLUDE_DIRECTORIES(
 		${TELLDUSCORE_INCLUDE_DIR}
@@ -73,7 +78,7 @@ ELSEIF (WIN32) #### Windows ####
 	)
 	SET(telldus-center_SRCS
 		${telldus-center_SRCS}
-		resource.rc
+		${CMAKE_CURRENT_BINARY_DIR}/TelldusCenter.rc
 	)
 ELSE (APPLE) #### Linux ####
 
