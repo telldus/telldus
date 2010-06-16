@@ -14,6 +14,7 @@ public:
 
 private slots:
 	void updateMethods(int newMethods);
+	void dim();
 
 private:
 	class PrivateData;
