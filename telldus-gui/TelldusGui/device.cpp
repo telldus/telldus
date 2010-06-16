@@ -159,6 +159,11 @@ void Device::bell() {
 	triggerEvent( tdBell( d->id ) );
 }
 
+void Device::dim(unsigned char level) {
+	triggerEvent( tdDim( d->id, level ) );
+}
+
+
 void Device::learn() {
 	triggerEvent( tdLearn( d->id ) );
 }
