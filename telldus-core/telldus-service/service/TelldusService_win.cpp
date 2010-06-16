@@ -1,7 +1,6 @@
 #include "TelldusService_win.h"
 #include "TelldusCore.h"
 #include <QCoreApplication>
-#include <QFile>
 #include <QRegExp>
 
 #include <Dbt.h>
@@ -24,11 +23,6 @@ TelldusService::~TelldusService() {
 }
 
 void TelldusService::start() {
-
-	QFile file("C:/log.txt");
-	file.open(QIODevice::Text | QIODevice::WriteOnly);
-	file.close();
-
 	tc = new TelldusCore();
 
 	connect(this, SIGNAL(deviceInserted(int,int,const QString &)), tc, SLOT(deviceInserted(int,int,const QString &)));

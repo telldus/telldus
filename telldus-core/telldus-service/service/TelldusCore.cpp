@@ -140,8 +140,15 @@ void TelldusCore::rawDeviceEventSlot(const char *data) {
 
 void TelldusCore::logMessage( const QString &message) {
 #ifdef _WINDOWS
+	return;
+	static bool firstRun = true;
 	QFile file("C:/log.txt");
-	file.open(QIODevice::Append | QIODevice::Text);
+	if (firstRun) {
+		file.open(QIODevice::WriteOnly | QIODevice::Text);
+		firstRun = false;
+	} else {
+		file.open(QIODevice::Append | QIODevice::Text);
+	}
 	QTextStream out(&file);
 	out << QTime::currentTime().toString() << ": " << message << "\n";
 	file.close();

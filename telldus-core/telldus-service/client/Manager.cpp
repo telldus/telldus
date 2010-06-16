@@ -203,7 +203,7 @@ QVariant Manager::send(const Message &message, bool *success) {
 #include <QTextStream>
 #include <QTime>
 void Manager::logMessage( const QString &message) {
-	//return;
+	return;
 #ifdef _WINDOWS
 	static bool firstRun = true;
 	QFile file("C:/log_client.txt");
