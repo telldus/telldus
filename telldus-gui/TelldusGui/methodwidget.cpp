@@ -63,8 +63,6 @@ MethodWidget::MethodWidget( Device *device, QWidget *parent )
 	d->learn->setText( tr("Learn") );
 	d->learn->setVisible( false );
 	layout->addWidget( d->learn );
-	
-	layout->addStretch();
 
 	connect(device, SIGNAL(methodsChanged(int)), this, SLOT(updateMethods(int)));
 	connect(d->turnOff, SIGNAL(clicked()), device, SLOT(turnOff()));
