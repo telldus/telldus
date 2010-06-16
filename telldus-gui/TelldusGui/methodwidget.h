@@ -4,20 +4,20 @@
 #include <QWidget>
 
 class Device;
-class QToolButton;
 
 class MethodWidget : public QWidget
 {
 	Q_OBJECT
 public:
 	MethodWidget( Device *device, QWidget *parent = 0 );
+	~MethodWidget();
 
 private slots:
 	void updateMethods(int newMethods);
 
 private:
-	Device *device;
-	QToolButton *turnOff, *turnOn, *bell, *learn;
+	class PrivateData;
+	PrivateData *d;
 };
 
 #endif // METHODWIDGET_H
