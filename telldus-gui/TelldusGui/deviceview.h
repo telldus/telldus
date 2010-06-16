@@ -11,7 +11,7 @@ public:
 	virtual void setModel ( QAbstractItemModel * model );
 
 private slots:
-	void rowsInserted ( const QModelIndex & parent, int start, int end );
+	void rowsUpdated ( const QModelIndex & parent, int start, int end );
 };
 
 #endif // DEVICEVIEW_H
