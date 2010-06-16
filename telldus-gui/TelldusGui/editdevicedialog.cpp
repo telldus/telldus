@@ -34,7 +34,7 @@ public:
 	FilteredDeviceProxyModel *filteredModel;
 	Device *device;
 	QStackedLayout *settingsLayout;
-	QLabel *deviceImage;
+	QLabel *deviceImage, *scanLabel;
 	QPushButton *scanButton, *stopScanButton;
 	QLineEdit *nameLineEdit;
 	QItemSelectionModel *selection;
@@ -64,8 +64,8 @@ EditDeviceDialog::EditDeviceDialog(Device *device, QWidget *parent, Qt::WFlags f
 #endif
 
 	QHBoxLayout *scanLayout = new QHBoxLayout;
-	QLabel *scanLabel = new QLabel(tr("TellStick Duo found.<br>Press scan button to search for devices"), this);
-	scanLayout->addWidget(scanLabel);
+	d->scanLabel = new QLabel(this);
+	scanLayout->addWidget(d->scanLabel);
 	scanLayout->addStretch();
 	d->scanButton = new QPushButton( tr("Scan"), this);
 	connect(d->scanButton, SIGNAL(clicked()), this, SLOT(scanClicked()));
@@ -172,6 +172,8 @@ EditDeviceDialog::EditDeviceDialog(Device *device, QWidget *parent, Qt::WFlags f
 
 	connect(this, SIGNAL(rawDataReceived(const QString &)), this, SLOT(rawDataSlot(const QString &)));
 	d->rawDeviceEventId = tdRegisterRawDeviceEvent(reinterpret_cast<TDRawDeviceEvent>(&EditDeviceDialog::rawData), this);
+
+	stopScanClicked();
 }
 
 EditDeviceDialog::~EditDeviceDialog() {
@@ -197,12 +199,14 @@ void EditDeviceDialog::selectionChanged( const QModelIndex & filteredIndex ) {
 }
 
 void EditDeviceDialog::scanClicked() {
+	d->scanLabel->setText(tr("Please press a button on your remote"));
 	d->scanButton->setEnabled( false );
 	d->stopScanButton->setEnabled( true );
 	d->scanning = true;
 }
 
 void EditDeviceDialog::stopScanClicked() {
+	d->scanLabel->setText(tr("If you have a TellStick Duo connected,<br>you can use it to scan the code of the remote control"));
 	d->scanButton->setEnabled( true );
 	d->stopScanButton->setEnabled( false );
 	d->scanning = false;
