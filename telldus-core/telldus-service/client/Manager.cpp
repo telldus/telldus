@@ -203,10 +203,10 @@ QVariant Manager::send(const Message &message, bool *success) {
 #include <QTextStream>
 #include <QTime>
 void Manager::logMessage( const QString &message) {
-	return;
 #ifdef _WINDOWS
-	static bool firstRun = true;
 	QFile file("C:/log_client.txt");
+	return;
+	static bool firstRun = true;
 	if (firstRun) {
 		file.open(QIODevice::WriteOnly | QIODevice::Text);
 		firstRun = false;
