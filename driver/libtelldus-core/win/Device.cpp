@@ -27,7 +27,7 @@ int Device::send(const std::string &strMessage){
 		}
 
 		ftStatus = FT_Open(intDongleIndex, &fthHandle);
-		int intBaudRate = 4800;	//always 4800
+		int intBaudRate = 9600;	//always 9600
 		ftStatus = FT_SetBaudRate(fthHandle, intBaudRate);
 		FT_SetTimeouts(fthHandle,5000,0);
 		ULONG bytesWritten, bytesRead;
