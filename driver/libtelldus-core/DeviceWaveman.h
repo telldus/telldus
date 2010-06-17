@@ -12,6 +12,7 @@ namespace TelldusCore {
 		virtual std::string getProtocol() const;
 		
 	protected:
+		std::string getStringCodeSwitch(int intToConvert);
 		virtual int turnOff(void);
 	};
 

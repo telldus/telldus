@@ -36,6 +36,28 @@ int DeviceWaveman::turnOff(void){
 	return TELLSTICK_ERROR_UNKNOWN;
 }
 
+std::string DeviceWaveman::getStringCodeSwitch(int intToConvert){
+
+	std::string strReturn = "";
+
+	try{
+		for( int i = 0; i < 4; ++i ) {
+			if (intToConvert & 1) { //Convert 1
+				strReturn.append("$kk$");
+			} else { //Convert 0
+				strReturn.append("$k$k");
+			}
+			intToConvert >>= 1;
+			
+		}
+	}
+	catch(...){
+		throw;
+	}
+	return strReturn;
+
+}
+
 /*
 * Has the device got the method?
 */
