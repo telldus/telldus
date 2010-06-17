@@ -1,0 +1,18 @@
+
+#define BRANDING "${BRANDING}"
+#define BRANDING_${BRANDING}
+
+#ifdef BRANDING_chacon
+	#define PROTOCOL_ARCTECH
+#else
+	#define PROTOCOL_ARCTECH
+	#define PROTOCOL_BRATECK
+	#define PROTOCOL_EVERFLOURISH
+	#define PROTOCOL_GROUP
+	#define PROTOCOL_RISINGSUN
+	#define PROTOCOL_WAVEMAN
+	#define PROTOCOL_SARTANO
+	#define PROTOCOL_IKEA
+	#define PROTOCOL_UPM
+	#define PROTOCOL_X10
+#endif

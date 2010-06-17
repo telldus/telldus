@@ -29,6 +29,7 @@
 #include "TellStick.h"
 #endif
 #include "common.h"
+#include "config.h"
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -84,54 +85,65 @@ Device *Manager::getDevice(int intDeviceId){
 		std::string strName = settings.getName(intDeviceId);
 		
 		//each new brand must be added here
-		if (strcasecmp(protocol.c_str(), "arctech") == 0){
+		if (0) {
+#ifdef PROTOCOL_ARCTECH
+		} else if (strcasecmp(protocol.c_str(), "arctech") == 0){
 			dev = new DeviceNexa(intDeviceId, strModel, strName);
 			((DeviceNexa*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "house"));
 			((DeviceNexa*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "unit"));
-	
+#endif
+#ifdef PROTOCOL_BRATECK
 		} else if (strcasecmp(protocol.c_str(), "brateck") == 0) {
 			dev = new DeviceBrateck(intDeviceId, strModel, strName);
 			((DeviceBrateck*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "house"));
-
+#endif
+#ifdef PROTOCOL_EVERFLOURISH
 		} else if (strcasecmp(protocol.c_str(), "everflourish") == 0){
 			dev = new DeviceEverflourish(intDeviceId, strModel, strName);
 			((DeviceEverflourish*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "house"));
 			((DeviceEverflourish*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "unit"));
-
+#endif
+#ifdef PROTOCOL_GROUP
 		} else if (strcasecmp(protocol.c_str(), "group") == 0) {
 			dev = new DeviceGroup(intDeviceId, strModel, strName);
 			((DeviceGroup*)dev)->setDevices(settings.getDeviceParameter(intDeviceId, "devices"));
-			
+#endif
+#ifdef PROTOCOL_RISINGSUN
 		} else if (strcasecmp(protocol.c_str(), "risingsun") == 0) {
 			dev = new DeviceRisingSun(intDeviceId, strModel, strName);
 			((DeviceRisingSun*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "house"));
 			((DeviceRisingSun*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "unit"));
-
+#endif
+#ifdef PROTOCOL_WAVEMAN
 		} else if (strcasecmp(protocol.c_str(), "Waveman") == 0) {
 			dev = new DeviceWaveman(intDeviceId, strModel, strName);
 			((DeviceWaveman*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "house"));
 			((DeviceWaveman*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "unit"));
-
+#endif
+#ifdef PROTOCOL_SARTANO
 		} else if (strcasecmp(protocol.c_str(), "Sartano") == 0) {
 			dev = new DeviceSartano(intDeviceId, strModel, strName);
 			((DeviceSartano*)dev)->setCode(settings.getDeviceParameter(intDeviceId, "code"));
-
+#endif
+#ifdef PROTOCOL_IKEA
 		} else if (strcasecmp(protocol.c_str(), "Ikea") == 0) {
 			dev = new DeviceIkea(intDeviceId, strModel, strName);
 			((DeviceIkea*)dev)->setSystem(settings.getDeviceParameter(intDeviceId, "system"));
 			((DeviceIkea*)dev)->setUnits(settings.getDeviceParameter(intDeviceId, "units"));
 			((DeviceIkea*)dev)->setFade(settings.getDeviceParameter(intDeviceId, "fade"));
-
+#endif
+#ifdef PROTOCOL_UPM
 		} else if (strcasecmp(protocol.c_str(), "upm") == 0) {
 			dev = new DeviceUpm(intDeviceId, strModel, strName);
 			((DeviceUpm*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "house"));
 			((DeviceUpm*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "unit"));
-		
+#endif
+#ifdef PROTOCOL_X10
 		} else if (strcasecmp(protocol.c_str(), "x10") == 0) {
 			dev = new DeviceX10(intDeviceId, strModel, strName);
 			((DeviceX10*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "house"));
 			((DeviceX10*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "unit"));
-		
+#endif		
 		} else {
 			//This is a dummy device needed when the parameters isn't setup correctly.
 			dev = new DeviceUndefined(intDeviceId, strModel, strName);

@@ -28,6 +28,7 @@ SET( telldus-core_SRCS
 
 SET( telldus-core_HDRS
 	telldus-core.h
+	${CMAKE_CURRENT_BINARY_DIR}/include/config.h
 )
 
 SET( telldus-core_MOC_HDRS
@@ -50,6 +51,11 @@ IF (SUPPORT_USB)
 	)
 ENDIF (SUPPORT_USB)
 
+CONFIGURE_FILE(
+	${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
+	${CMAKE_CURRENT_BINARY_DIR}/include/config.h
+)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR}/include)
 
 ######## Configurable options for the platform  ########
 

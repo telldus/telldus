@@ -28,6 +28,7 @@ SET(BUILD_RFCMD_WITH_LIBFTDI	FALSE	CACHE	BOOL "Enable support for using rfcmd wi
 SET(BUILD_TDTOOL	TRUE	CACHE BOOL "Build tdtool")
 
 SET(GENERATE_MAN	FALSE	CACHE	BOOL "Enable generation of man-files")
+SET(BRANDING "telldus" CACHE STRING "The brand to use")
 
 ADD_SUBDIRECTORY(driver)
 
