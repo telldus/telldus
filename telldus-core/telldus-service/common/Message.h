@@ -1,23 +1,26 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-#include <QByteArray>
-#include <QVariant>
+#include <string>
 
 //class MessagePrivate;
 namespace TelldusService {
-	class Message : public QByteArray {
+	class Message : public std::string {
 	public:
 		Message();
-		Message(const QByteArray &);
+		Message(const std::string &);
 		~Message(void);
 	
-		void addArgument(const QByteArray &);
+		void addArgument(const std::string &);
 		void addArgument(int);
-		void addArgument(const QVariant &);
+		//void addArgument(const QVariant &);
 		void addArgument(const char *);
 	
-		static QVariant takeFirst(QByteArray *);
+		static bool Message::nextIsInt(const std::string &);
+		static bool Message::nextIsString(const std::string &);
+
+		static std::string takeString(std::string *);
+		static int takeInt(std::string *);
 	
 		//MessagePrivate *d;
 	};

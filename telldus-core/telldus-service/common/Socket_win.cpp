@@ -99,7 +99,7 @@ void Socket::disconnect() {
 void Socket::write(const TelldusService::Message &msg) {
 	DWORD bytesWritten = 0;
 	if (WriteFile(d->hPipe, msg.data(), msg.length(), &bytesWritten, NULL)) {
-		//FlushFileBuffers(d->hPipe);
+		FlushFileBuffers(d->hPipe);
 	} else {
 		d->connected = false;
 		emit disconnected();
@@ -129,7 +129,7 @@ void Socket::writeOverlapped(const TelldusService::Message &msg) {
 	}
 }
 
-QByteArray Socket::readOverlapped() {
+std::string Socket::readOverlapped() {
 	char buf[BUFSIZE];
 	int result;
 	DWORD cbBytesRead = 0;
@@ -145,7 +145,7 @@ QByteArray Socket::readOverlapped() {
 
 	ReadFile( d->hPipe, &buf, sizeof(char)*BUFSIZE, &cbBytesRead, &oOverlap);
 
-	result = WaitForSingleObject(oOverlap.hEvent, INFINITE);
+	result = WaitForSingleObject(oOverlap.hEvent, 10000);
 	if (result == WAIT_TIMEOUT) {
 		return "";
 	}
@@ -156,7 +156,7 @@ QByteArray Socket::readOverlapped() {
 	return buf;
 }
 
-QByteArray Socket::read() {
+std::string Socket::read() {
 	char buf[BUFSIZE];
 	DWORD cbBytesRead = 0;
 	bool fSuccess = false;

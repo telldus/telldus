@@ -157,6 +157,14 @@ void TelldusCore::logMessage( const QString &message) {
 #endif
 }
 
+void TelldusCore::logMessage( const std::string &message) {
+	logMessage( QString::fromStdString( message ) );
+}
+
+void TelldusCore::logMessage( const char *message) {
+	logMessage( QString(message) );
+}
+
 void TelldusCore::logMessage( int message) {
 	logMessage( QString::number(message) );
 }

@@ -135,8 +135,8 @@ bool Manager::unregisterCallback( int callbackId ) {
 void Manager::run() {
 	while( d->eventSocket.connected() ) {
 		logMessage("-> OVERLAPPED read");
-		QByteArray data(d->eventSocket.readOverlapped());
-		logMessage(QString("<- OVERLAPPED result: %1").arg(QString(data)));
+		std::string data(d->eventSocket.readOverlapped());
+		logMessage(QString("<- OVERLAPPED result: %1").arg(QString::fromStdString(data)));
 		if (data.length() == 0) {
 			continue;
 		}
@@ -144,25 +144,25 @@ void Manager::run() {
 	}
 }
 
-void Manager::dataReceived(const QByteArray &message) {
-	QByteArray msg(message); //Copy
-	logMessage(msg);
-	QString funcName = Message::takeFirst(&msg).toString();
-	logMessage(funcName);
+void Manager::dataReceived(const std::string &message) {
+	Message msg(message); //Copy
+	logMessage(QString::fromStdString(msg));
+	std::string funcName = Message::takeString(&msg);
+	logMessage(QString::fromStdString(funcName));
 	if (funcName == "TDDeviceEvent") {
-		int intDeviceId = Message::takeFirst(&msg).toInt();
-		int intDeviceState = Message::takeFirst(&msg).toInt();
-		QString strDeviceStateValue = Message::takeFirst(&msg).toString();
+		int intDeviceId = Message::takeInt(&msg);
+		int intDeviceState = Message::takeInt(&msg);
+		std::string strDeviceStateValue = Message::takeString(&msg);
 		logMessage(QString("Sending %1 callbacks").arg(d->callbacks.size()));
 		for(CallbackList::const_iterator callback_it = d->callbacks.begin(); callback_it != d->callbacks.end(); ++callback_it) {
 			logMessage("StartSend");
-			(*callback_it).event(intDeviceId, intDeviceState, strDeviceStateValue.toLocal8Bit(), (*callback_it).id, (*callback_it).context);
+			(*callback_it).event(intDeviceId, intDeviceState, strDeviceStateValue.c_str(), (*callback_it).id, (*callback_it).context);
 			logMessage("SendDone");
 		}
 	} else if (funcName == "TDDeviceChangeEvent") {
-		int intDeviceId = Message::takeFirst(&msg).toInt();
-		int intEvent = Message::takeFirst(&msg).toInt();
-		int intChange = Message::takeFirst(&msg).toInt();
+		int intDeviceId = Message::takeInt(&msg);
+		int intEvent = Message::takeInt(&msg);
+		int intChange = Message::takeInt(&msg);
 		//Clear the cache
 		d->numberOfDevices = -1;
 		logMessage(QString("Number of callbacks %1").arg(d->deviceChangeCallbacks.size()));
@@ -170,9 +170,9 @@ void Manager::dataReceived(const QByteArray &message) {
 			(*callback_it).event(intDeviceId, intEvent, intChange, (*callback_it).id, (*callback_it).context);
 		}
 	} else if (funcName == "TDRawDeviceEvent") {
-		QString strData = Message::takeFirst(&msg).toString();
+		std::string strData = Message::takeString(&msg);
 		for(RawCallbackList::const_iterator callback_it = d->rawCallbacks.begin(); callback_it != d->rawCallbacks.end(); ++callback_it) {
-			(*callback_it).event(strData.toLocal8Bit(), (*callback_it).id, (*callback_it).context);
+			(*callback_it).event(strData.c_str(), (*callback_it).id, (*callback_it).context);
 		}
 	}
 }
@@ -182,18 +182,20 @@ QVariant Manager::send(const Message &message, bool *success) {
 	if (!d->s.connected()) {
 		return TELLSTICK_ERROR_CONNECTING_SERVICE;
 	}
-	QByteArray response;
+	std::string response;
 	{
 		TelldusCore::MutexLocker l(&d->sMutex);
-		logMessage(QString("Sending: %1").arg(QString(message)));
+		logMessage(QString("Sending: %1").arg(QString::fromStdString(message)));
 		d->s.writeOverlapped(message);
 		response = d->s.readOverlapped();
 	}
 	if (response.length() > 0) {
-		logMessage(QString("Received: %1 from: %2").arg(QString(response).trimmed()).arg(QString(message)));
-		QVariant retval = Message::takeFirst(&response);
+		logMessage(QString("Received: %1 from: %2").arg(QString::fromStdString(response).trimmed()).arg(QString::fromStdString(message)));
 		(*success) = true;
-		return retval;
+		if (Message::nextIsInt(response)) {
+			return Message::takeInt(&response);
+		}
+		return QString::fromStdString(Message::takeString(&response));
 	}
 	logMessage("Received: empty result");
 	return TELLSTICK_ERROR_UNKNOWN_RESPONSE;

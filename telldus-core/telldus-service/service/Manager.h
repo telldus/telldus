@@ -3,6 +3,7 @@
 
 #include "Message.h"
 #include <QThread>
+#include <QVariant>
 
 class ManagerPrivate;
 class Socket;
@@ -14,7 +15,7 @@ public:
 	~Manager(void);
 
 protected:
-	QVariant parseMessage(const QByteArray &message);
+	QVariant parseMessage(const std::string &message);
 	void run();
 
 signals:

@@ -1,18 +1,20 @@
 
 #include "Message.h"
 using namespace TelldusService;
+#include <sstream>
+#include <ctype.h>
 
 /*class MesssagePrivate {
 public:
 };*/
 
 Message::Message()
-	:QByteArray()
+	: std::string()
 {
 }
 
-Message::Message(const QByteArray &functionName)
-	:QByteArray()
+Message::Message(const std::string &functionName)
+	:std::string()
 {
 	this->addArgument(functionName);
 }
@@ -21,49 +23,65 @@ Message::~Message(void) {
 	//delete d;
 }
 
-void Message::addArgument(const QByteArray &value) {
-	this->append(QByteArray::number(value.length()));
+void Message::addArgument(const std::string &value) {
+	std::stringstream st;
+	st << (int)value.size();
+	this->append(st.str());
 	this->append(":");
 	this->append(value);
 }
 
 void Message::addArgument(int value) {
+	std::stringstream st;
+	st << (int)value;
 	this->append("i");
-	this->append(QByteArray::number(value));
+	this->append(st.str());
 	this->append("e");
 }
 
-void Message::addArgument(const QVariant &value) {
+/*void Message::addArgument(const QVariant &value) {
 	if (value.type() == QVariant::Int) {
 		this->addArgument(value.toInt());
 	} else {
 		this->addArgument(value.toByteArray());
 	}
-}
+}*/
 
 void Message::addArgument(const char *value) {
-	this->addArgument(QByteArray(value));
+	this->addArgument(std::string(value));
 }
 
+bool Message::nextIsInt(const std::string &message) {
+	if (message.length() == 0) {
+		return false;
+	}
+	return (message.at(0) == 'i');
+}
 
+bool Message::nextIsString(const std::string &message) {
+	if (message.length() == 0) {
+		return false;
+	}
+	return (isdigit(message.at(0)) != 0);
+}
 
-QVariant Message::takeFirst(QByteArray *message) {
-	if (message->length() == 0) {
-		return QVariant();
+std::string Message::takeString(std::string *message) {
+	if (!Message::nextIsString(*message)) {
+		return "";
 	}
-	QChar first = message->at(0);
-	if (first.isDigit()) { //String
-		int index = message->indexOf(':');
-		int length = message->left(index).toInt();
-		QByteArray retval(message->mid(index+1, length));
-		message->remove(0, index+length+1);
-		return retval;
+	int index = message->find(':');
+	int length = atoi(message->substr(0, index).c_str());
+	std::string retval(message->substr(index+1, length));
+	message->erase(0, index+length+1);
+	return retval;
+}
+
+int Message::takeInt(std::string *message) {
+	if (!Message::nextIsInt(*message)) {
+		return 0;
 	}
-	if (first == 'i') {
-		int index = message->indexOf('e');
-		int value = message->mid(1, index - 1).toInt();
-		message->remove(0, index+1);
-		return value;
-	}
-	return QVariant();
+	int index = message->find('e');
+	int value = atoi(message->substr(1, index - 1).c_str());
+	message->erase(0, index+1);
+	return value;
 }

@@ -15,6 +15,8 @@ public:
 	~TelldusCore(void);
 
 	static void logMessage( const QString &message);
+	static void logMessage( const std::string &message);
+	static void logMessage( const char *message);
 	static void logMessage( int message);
 	static void logWinError( int errorNo);
 

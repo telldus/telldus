@@ -2,6 +2,7 @@
 #define SOCKET_H
 
 #include "Message.h"
+#include <QObject>
 class SocketPrivate;
 
 #ifdef _WINDOWS
@@ -9,7 +10,6 @@ class SocketPrivate;
 	typedef HANDLE SOCKET_T;
 	#define BUFSIZE 512
 #endif
-
 
 class Socket : public QObject {
 	Q_OBJECT
@@ -22,8 +22,8 @@ public:
 	void disconnect();
 	void write(const TelldusService::Message &msg);
 	void writeOverlapped(const TelldusService::Message &msg);
-	QByteArray readOverlapped();
-	QByteArray read();
+	std::string readOverlapped();
+	std::string read();
 
 	bool connected() const;
 

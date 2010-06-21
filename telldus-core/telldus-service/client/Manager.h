@@ -49,7 +49,7 @@ protected:
 	void run();
 
 private slots:
-	void dataReceived(const QByteArray &msg);
+	void dataReceived(const std::string &msg);
 
 private:
 	Manager(void);
