@@ -3,6 +3,5 @@
 	<type name="Remote Switches" expanded="true">
 		<vendor name="Chacon" image="chacon">
 			<device model="selflearning-switch:chacon" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
-			<device model="selflearning-dimmer:chacon" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
 		</vendor>
 </devices>
