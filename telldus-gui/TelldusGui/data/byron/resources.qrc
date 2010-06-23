@@ -1,0 +1,12 @@
+<RCC>
+    <qresource prefix="/" >
+        <file alias="data/devices.xml">devices.xml</file>
+        <file>../../images/devices/arctech_cs.png</file>
+        <file>../../images/devices/arctech_sl.png</file>
+        <file>../../images/devices/bell.png</file>
+        <file>../../images/devices/elro.png</file>
+        <file>../../images/devices/elro-ab600.png</file>
+        <file>../../images/vendors/elro.png</file>
+        <file>../../images/vendors/homeeasy.png</file>
+    </qresource>
+</RCC>
