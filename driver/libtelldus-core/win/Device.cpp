@@ -15,52 +15,50 @@ using namespace TelldusCore;
 * Send message to the USB dongle
 */
 int Device::send(const std::string &strMessage){
+	std::string msgBack;
+	ULONG bytesWritten, bytesRead;
+	char *tempMessage;
+	int intDongleIndex;
+	char in;
 
-	try{
-		FT_STATUS ftStatus = FT_OK;
-		FT_HANDLE fthHandle = 0;
-		char in;
+	FT_STATUS ftStatus = FT_OK;
+	FT_HANDLE fthHandle = 0;
 		
-		int intDongleIndex = getDongleIndex();
-		if (intDongleIndex < 0) {
-			return TELLSTICK_ERROR_NOT_FOUND;
-		}
+	intDongleIndex = getDongleIndex();
+	if (intDongleIndex < 0) {
+		return TELLSTICK_ERROR_NOT_FOUND;
+	}
 
-		ftStatus = FT_Open(intDongleIndex, &fthHandle);
-		int intBaudRate = 9600;	//always 9600
-		ftStatus = FT_SetBaudRate(fthHandle, intBaudRate);
-		FT_SetTimeouts(fthHandle,5000,0);
-		ULONG bytesWritten, bytesRead;
+	ftStatus = FT_Open(intDongleIndex, &fthHandle);
+	ftStatus = FT_SetBaudRate(fthHandle, 9600);	//always 9600
+	FT_SetTimeouts(fthHandle,5000,0);
 
-		char *tempMessage = (char *)malloc(sizeof(char) * (strMessage.size()+1));
-		strcpy(tempMessage, strMessage.c_str());
-		ftStatus = FT_Write(fthHandle, tempMessage, (DWORD)strMessage.length(), &bytesWritten);
-		free(tempMessage);
+	tempMessage = (char *)malloc(sizeof(char) * (strMessage.size()));
+	for(unsigned int i = 0; i < strMessage.size(); ++i) {
+		tempMessage[i] = strMessage[i];
+	}
+	ftStatus = FT_Write(fthHandle, tempMessage, (DWORD)strMessage.length(), &bytesWritten);
+	free(tempMessage);
 
-		bool c = true;
-		while(c) {
-			ftStatus = FT_Read(fthHandle,&in,1,&bytesRead);
-			if (ftStatus == FT_OK) {
-				if (bytesRead == 1) {
-					if (in == '\n') {
-						break;
-					}
-				} else { //Timeout
-					c = false;
+	bool c = true;
+	while(c) {
+		ftStatus = FT_Read(fthHandle,&in,1,&bytesRead);
+		if (ftStatus == FT_OK) {
+			if (bytesRead == 1) {
+				msgBack.append(1, in);
+				if (in == '\n') {
+					break;
 				}
-			} else { //Error
+			} else { //Timeout
 				c = false;
 			}
-		}
-  
-		ftStatus = FT_Close(fthHandle);
-
-		if (!c) {
-			return TELLSTICK_ERROR_COMMUNICATION;
+		} else { //Error
+			c = false;
 		}
 	}
-	catch(...){
-		throw;
+	ftStatus = FT_Close(fthHandle);
+	if (!c) {
+		return TELLSTICK_ERROR_COMMUNICATION;
 	}
 	return TELLSTICK_SUCCESS;
 }
