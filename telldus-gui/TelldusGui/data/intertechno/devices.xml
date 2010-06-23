@@ -2,7 +2,7 @@
 <devices>
 	<type name="Remote Switches" expanded="true">
 		<vendor name="Intertechno" image="intertechno">
-			<device model="selflearning-switch:homeeasy" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
+			<device model="selflearning-switch:intertechno" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
 		</vendor>
         </type>
 </devices>
