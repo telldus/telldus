@@ -52,6 +52,8 @@ IF (APPLE) #### Mac OS X ####
 		main_unix.cpp
 		MessageReceiver_mac.cpp
 		MessageReceiverPrivate_mac.cpp
+		../common/Socket_unix.cpp
+		Pipe_unix.cpp
 	)
 	SET( telldus-service_MOC_HDRS
 		${telldus-service_MOC_HDRS}
@@ -89,6 +91,8 @@ ELSE (APPLE) #### Linux ####
 		${telldus-service_SRCS}
 		MessageReceiver_unix.cpp
 		main_unix.cpp
+		../common/Socket_unix.cpp
+		Pipe_unix.cpp
 	)
 	SET( telldus-service_LIBRARIES
 		${telldus-service_LIBRARIES}

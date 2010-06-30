@@ -75,6 +75,14 @@ ELSE (APPLE) #### Linux ####
 
 ENDIF (APPLE)
 
+IF (NOT WIN32)
+	SET( telldus-client_SRCS
+		${telldus-client_SRCS}
+		../common/Socket_unix.cpp
+	)
+
+ENDIF (NOT WIN32)
+
 
 ######## Configuring  ########
 
