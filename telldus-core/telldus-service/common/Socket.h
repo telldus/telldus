@@ -4,10 +4,13 @@
 #include "Message.h"
 #include <QObject>
 
+#define BUFSIZE 512
+
 #ifdef _WINDOWS
 	#include <windows.h>
 	typedef HANDLE SOCKET_T;
-	#define BUFSIZE 512
+#else
+	typedef unsigned int SOCKET_T;
 #endif
 
 class Socket : public QObject {
