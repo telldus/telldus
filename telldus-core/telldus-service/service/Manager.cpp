@@ -157,6 +157,20 @@ QVariant Manager::parseMessage(const std::string &message) {
 		std::string command = Message::takeString(&msg);
 		int reserved = Message::takeInt(&msg);
 		return tdSendRawCommand(command.c_str(), reserved);
+		
+	} else if (function == "tdConnectTellStickController") {
+		int vid = Message::takeInt(&msg);
+		int pid = Message::takeInt(&msg);
+		std::string serial = Message::takeString(&msg);
+		tdConnectTellStickController(vid, pid, serial.c_str());
+		return "";
+
+	} else if (function == "tdDisconnectTellStickController") {
+		int vid = Message::takeInt(&msg);
+		int pid = Message::takeInt(&msg);
+		std::string serial = Message::takeString(&msg);
+		tdDisconnectTellStickController(vid, pid, serial.c_str());
+		return "";
 
 	}
 
