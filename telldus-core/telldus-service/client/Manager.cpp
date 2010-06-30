@@ -204,6 +204,7 @@ QVariant Manager::send(const Message &message, bool *success) {
 #include <QFile>
 #include <QTextStream>
 #include <QTime>
+#include <QDebug>
 void Manager::logMessage( const QString &message) {
 #ifdef _WINDOWS
 	QFile file("C:/log_client.txt");
