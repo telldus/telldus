@@ -16,8 +16,8 @@ namespace TelldusService {
 		//void addArgument(const QVariant &);
 		void addArgument(const char *);
 	
-		static bool Message::nextIsInt(const std::string &);
-		static bool Message::nextIsString(const std::string &);
+		static bool nextIsInt(const std::string &);
+		static bool nextIsString(const std::string &);
 
 		static std::string takeString(std::string *);
 		static int takeInt(std::string *);
