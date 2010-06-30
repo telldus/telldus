@@ -3,6 +3,8 @@
 using namespace TelldusService;
 #include <sstream>
 #include <ctype.h>
+#include <stdlib.h>
+
 
 /*class MesssagePrivate {
 public:
