@@ -3,7 +3,6 @@
 
 #include "Message.h"
 #include <QObject>
-class SocketPrivate;
 
 #ifdef _WINDOWS
 	#include <windows.h>
@@ -31,7 +30,8 @@ signals:
 	void disconnected();
 
 private:
-	SocketPrivate *d;
+	class PrivateData;
+	PrivateData *d;
 };
 
 #endif //SOCKET_H

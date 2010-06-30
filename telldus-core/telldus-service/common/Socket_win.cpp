@@ -1,7 +1,7 @@
 #include "Socket.h"
 //#include "TelldusCore.h"
 
-class SocketPrivate {
+class Socket::PrivateData {
 public:
 	SOCKET_T hPipe;
 	HANDLE event;
@@ -10,7 +10,7 @@ public:
 
 Socket::Socket(SOCKET_T socket)
 {
-	d = new SocketPrivate;
+	d = new PrivateData;
 	d->hPipe = socket;
 	d->event = INVALID_HANDLE_VALUE;
 	d->connected = true;
