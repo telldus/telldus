@@ -36,9 +36,8 @@ INCLUDE_DIRECTORIES(
 
 ######## Platforms-specific, non configurable  ########
 
-SET( telldus-service_TARGET	TelldusService )
-
 IF (APPLE) #### Mac OS X ####
+	SET( telldus-service_TARGET	TelldusService )
 	FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
 	FIND_LIBRARY(IOKIT_LIBRARY IOKit)
 	
@@ -60,6 +59,7 @@ IF (APPLE) #### Mac OS X ####
 	)
 	
 ELSEIF (WIN32) #### Windows ####
+	SET( telldus-service_TARGET	TelldusService )
 	ADD_DEFINITIONS( -DUNICODE )
 	ADD_DEFINITIONS( /Zc:wchar_t- ) # Treat wchar_t as Built-in Type' = No
 	SET(CMAKE_EXE_LINKER_FLAGS
@@ -84,6 +84,7 @@ ELSEIF (WIN32) #### Windows ####
 	)
 
 ELSE (APPLE) #### Linux ####
+	SET( telldus-service_TARGET	telldusd )
 	SET( telldus-service_SRCS
 		${telldus-service_SRCS}
 		MessageReceiver_unix.cpp
@@ -124,10 +125,6 @@ SET_TARGET_PROPERTIES(${telldus-service_TARGET} PROPERTIES
 IF (APPLE)
 	SET_TARGET_PROPERTIES(${telldus-service_TARGET} PROPERTIES
 		RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
-	)
-ELSEIF (UNIX)
-	SET_TARGET_PROPERTIES(${telldus-service_TARGET} PROPERTIES
-		RUNTIME_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/TelldusCenter
 	)
 ENDIF (APPLE)
 
