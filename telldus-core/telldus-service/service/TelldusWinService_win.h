@@ -11,11 +11,11 @@ class TelldusCore;
 
 #define serviceName TEXT("TelldusCore")
 
-class TelldusService : public QObject {
+class TelldusWinService : public QObject {
 	Q_OBJECT
 public:
-    TelldusService();
-    ~TelldusService();
+    TelldusWinService();
+    ~TelldusWinService();
 
 	static void WINAPI serviceMain( DWORD /*argc*/, TCHAR* /*argv*/[] );
 

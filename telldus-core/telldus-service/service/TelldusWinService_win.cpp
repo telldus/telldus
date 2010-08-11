@@ -1,4 +1,4 @@
-#include "TelldusService_win.h"
+#include "TelldusWinService_win.h"
 #include "TelldusCore.h"
 #include <QCoreApplication>
 #include <QRegExp>
@@ -12,17 +12,17 @@ char **g_argv;
 static const GUID GUID_DEVINTERFACE_USBRAW =
 { 0xA5DCBF10L, 0x6530, 0x11D2, { 0x90, 0x1F, 0x00, 0xC0, 0x4F, 0xB9, 0x51, 0xED } };
 
-TelldusService::TelldusService()
+TelldusWinService::TelldusWinService()
 	:tc(0)
 {
 	
     //setServiceDescription("A Telldus service for managing TellStick Duo.");
 }
 
-TelldusService::~TelldusService() {
+TelldusWinService::~TelldusWinService() {
 }
 
-void TelldusService::start() {
+void TelldusWinService::start() {
 	tc = new TelldusCore();
 
 	connect(this, SIGNAL(deviceInserted(int,int,const QString &)), tc, SLOT(deviceInserted(int,int,const QString &)));
@@ -33,14 +33,14 @@ void TelldusService::start() {
 }
 
 
-void TelldusService::stop() {
+void TelldusWinService::stop() {
 	if (tc) {
 		delete tc;
 	}
 	tc = 0;
 }
 
-DWORD WINAPI TelldusService::serviceControlHandler( DWORD controlCode, DWORD dwEventType, LPVOID lpEventData ) {
+DWORD WINAPI TelldusWinService::serviceControlHandler( DWORD controlCode, DWORD dwEventType, LPVOID lpEventData ) {
 	switch ( controlCode ) {
 		case SERVICE_CONTROL_INTERROGATE:
 			SetServiceStatus( serviceStatusHandle, &serviceStatus );
@@ -90,16 +90,16 @@ DWORD WINAPI TelldusService::serviceControlHandler( DWORD controlCode, DWORD dwE
 	return ERROR_CALL_NOT_IMPLEMENTED;
 }
 
-DWORD WINAPI TelldusService::serviceControlHandler( DWORD controlCode, DWORD dwEventType, LPVOID lpEventData, LPVOID lpContext ) {
-	TelldusService *instance = reinterpret_cast<TelldusService *>(lpContext);
+DWORD WINAPI TelldusWinService::serviceControlHandler( DWORD controlCode, DWORD dwEventType, LPVOID lpEventData, LPVOID lpContext ) {
+	TelldusWinService *instance = reinterpret_cast<TelldusWinService *>(lpContext);
 	if (!instance) {
 		return ERROR_CALL_NOT_IMPLEMENTED;
 	}
 	return instance->serviceControlHandler(controlCode, dwEventType, lpEventData);
 }
 
-void WINAPI TelldusService::serviceMain( DWORD argc, TCHAR* argv[] ) {
-	TelldusService instance;
+void WINAPI TelldusWinService::serviceMain( DWORD argc, TCHAR* argv[] ) {
+	TelldusWinService instance;
 	QCoreApplication app(g_argc, g_argv);
 
 
@@ -112,7 +112,7 @@ void WINAPI TelldusService::serviceMain( DWORD argc, TCHAR* argv[] ) {
 	instance.serviceStatus.dwCheckPoint = 0;
 	instance.serviceStatus.dwWaitHint = 0;
 
-	instance.serviceStatusHandle = RegisterServiceCtrlHandlerEx( serviceName, TelldusService::serviceControlHandler, &instance );
+	instance.serviceStatusHandle = RegisterServiceCtrlHandlerEx( serviceName, TelldusWinService::serviceControlHandler, &instance );
 
 	if ( instance.serviceStatusHandle ) {
 		// service is starting

@@ -77,12 +77,12 @@ ELSEIF (WIN32) #### Windows ####
 		Pipe_win.cpp
 		../common/Socket_win.cpp
 		main_win.cpp
-		TelldusService_win.cpp
+		TelldusWinService_win.cpp
 	)
 	
 	SET( telldus-service_MOC_HDRS
 		${telldus-service_MOC_HDRS}
-		TelldusService_win.h
+		TelldusWinService_win.h
 	)
 
 ELSE (APPLE) #### Linux ####

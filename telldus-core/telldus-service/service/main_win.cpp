@@ -1,4 +1,4 @@
-#include "TelldusService_win.h"
+#include "TelldusWinService_win.h"
 #include <QCoreApplication>
 
 #include <windows.h>
@@ -10,7 +10,7 @@ int main(int argc, char **argv) {
 	g_argv = argv;
 
 	SERVICE_TABLE_ENTRY serviceTable[] = {
-		{serviceName, TelldusService::serviceMain },
+		{serviceName, TelldusWinService::serviceMain },
         { 0, 0 }
     };
 
