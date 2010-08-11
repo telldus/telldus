@@ -17,7 +17,7 @@ Socket::Socket(SOCKET_T socket)
 }
 
 Socket::Socket() {
-	d = new SocketPrivate;
+	d = new PrivateData;
 	d->hPipe = INVALID_HANDLE_VALUE;
 	d->event = INVALID_HANDLE_VALUE;
 	d->connected = false;
