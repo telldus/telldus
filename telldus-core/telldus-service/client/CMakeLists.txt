@@ -18,11 +18,6 @@ SET( telldus-client_HDRS
 	${CMAKE_SOURCE_DIR}/driver/libtelldus-core/Thread.h
 )
 
-SET( telldus-client_MOC_HDRS
-#	Manager.h
-	../common/Socket.h
-)
-	
 SET( telldus-client_LIBRARIES
 	${QT_LIBRARIES}
 )
@@ -31,9 +26,6 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_SOURCE_DIR}/driver
 	${CMAKE_CURRENT_SOURCE_DIR}/../common
 )
-
-QT4_WRAP_CPP(  telldus-client_MOC_SRCS  ${telldus-client_MOC_HDRS} )
-QT4_AUTOMOC (  ${telldus-client_SRCS} )
 
 ######## Configurable options for the platform  ########
 
@@ -89,8 +81,6 @@ ENDIF (NOT WIN32)
 ADD_LIBRARY(${telldus-client_TARGET} SHARED
 	${telldus-client_SRCS}
 	${telldus-client_HDRS}
-	${telldus-client_MOC_HDRS}
-	${telldus-client_MOC_SRCS}
 )
 SET_SOURCE_FILES_PROPERTIES(${telldus-service_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 

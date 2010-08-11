@@ -44,7 +44,7 @@ Socket::~Socket(void) {
 	delete d;
 }
 
-void Socket::connectToServer(const QString &server) {
+void Socket::connectToServer(const std::string &server) {
 	DWORD dwMode;
 	bool  fSuccess = false;
 
@@ -58,9 +58,11 @@ void Socket::connectToServer(const QString &server) {
 		return;
 	}
 
-	QString name = QString("\\\\.\\pipe\\%1").arg(server);
+	//Convert our std::string to std::wstring since we build agains win32 with unicode support
+	std::string strName = "\\\\.\\pipe\\" + server;
+	std::wstring name(strName.begin(), strName.end());
 	d->hPipe = CreateFile(
-		(const wchar_t *)name.utf16(),   // pipe name 
+		name.c_str(),           // pipe name 
 		GENERIC_READ |  // read and write access 
 		GENERIC_WRITE, 
 		0,              // no sharing 
@@ -75,7 +77,7 @@ void Socket::connectToServer(const QString &server) {
 	
 	dwMode = PIPE_READMODE_MESSAGE; 
 	fSuccess = SetNamedPipeHandleState( 
-      d->hPipe,    // pipe handle 
+      d->hPipe, // pipe handle 
       &dwMode,  // new pipe mode 
       NULL,     // don't set maximum bytes 
       NULL);    // don't set maximum time 
@@ -92,17 +94,14 @@ void Socket::disconnect() {
 	if (d->event != INVALID_HANDLE_VALUE) {
 		SetEvent(d->event);
 	}
-	emit disconnected();
-
 }
 
 void Socket::write(const TelldusService::Message &msg) {
 	DWORD bytesWritten = 0;
-	if (WriteFile(d->hPipe, msg.data(), msg.length(), &bytesWritten, NULL)) {
+	if (WriteFile(d->hPipe, msg.data(), (DWORD)msg.length(), &bytesWritten, NULL)) {
 		FlushFileBuffers(d->hPipe);
 	} else {
 		d->connected = false;
-		emit disconnected();
 	}
 }
 
@@ -113,18 +112,16 @@ void Socket::writeOverlapped(const TelldusService::Message &msg) {
 	bool fSuccess;
 
 	oOverlap.hEvent = d->event;
-	WriteFile(d->hPipe, msg.data(), msg.length(), &bytesWritten, &oOverlap);
+	WriteFile(d->hPipe, msg.data(), (DWORD)msg.length(), &bytesWritten, &oOverlap);
 
 	result = WaitForSingleObject(oOverlap.hEvent, 10000);
 	if (result == WAIT_TIMEOUT) {
 		d->connected = false;
-		emit disconnected();
 		return;
 	}
 	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &bytesWritten, false);
 	if (!fSuccess) {
 		d->connected = false;
-		emit disconnected();
 		return;
 	}
 }
@@ -191,7 +188,6 @@ std::string Socket::read() {
 		}
 		//TelldusCore::logMessage(QString("= Failed read %1").arg(GetLastError()));
 		d->connected = false;
-		emit disconnected();
 	}
 	return "";
 }

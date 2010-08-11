@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include "Pipe.h"
+#include "Message.h"
 #include <libtelldus-core/telldus-core-service.h>
 
 class TelldusCorePrivate;
@@ -27,7 +28,6 @@ public slots:
 private slots:
 	void newConnection(Socket *);
 	void newEventConnection(Socket *);
-	void disconnected();
 	void deviceEventSlot(int, int, const char *);
 	void deviceChangeEventSlot(int, int, int);
 	void rawDeviceEventSlot(const char *);
@@ -39,6 +39,8 @@ signals:
 	void rawDeviceEventSignal(const char *);
 
 private:
+	void disconnected(Socket *);
+	void sendEventMessage(const TelldusService::Message &msg);
 	TelldusCorePrivate * const d;
 
 	static void WINAPI deviceEvent(int deviceId, int, const char *, int, void *);
