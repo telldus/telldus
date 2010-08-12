@@ -49,7 +49,7 @@ int WINAPI tdTurnOn(int intDeviceId){
 	Manager *manager = Manager::getInstance();
 	Message message("tdTurnOn");
 	message.addArgument(intDeviceId);
-	return manager->send(message, &ok).toInt();
+	return manager->sendAndReceiveInt(message, &ok);
 }
 
 int WINAPI tdTurnOff(int intDeviceId){
@@ -57,7 +57,7 @@ int WINAPI tdTurnOff(int intDeviceId){
 	Manager *manager = Manager::getInstance();
 	Message message("tdTurnOff");
 	message.addArgument(intDeviceId);
-	return manager->send(message, &ok).toInt();
+	return manager->sendAndReceiveInt(message, &ok);
 }
 
 int WINAPI tdBell(int intDeviceId){
@@ -65,7 +65,7 @@ int WINAPI tdBell(int intDeviceId){
 	Manager *manager = Manager::getInstance();
 	Message message("tdBell");
 	message.addArgument(intDeviceId);
-	return manager->send(message, &ok).toInt();
+	return manager->sendAndReceiveInt(message, &ok);
 }
 
 int WINAPI tdDim(int intDeviceId, unsigned char level){
@@ -74,7 +74,7 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
 	Message message("tdDim");
 	message.addArgument(intDeviceId);
 	message.addArgument(level);
-	return manager->send(message, &ok).toInt();
+	return manager->sendAndReceiveInt(message, &ok);
 }
 
 int WINAPI tdLearn(int intDeviceId) {
@@ -82,7 +82,7 @@ int WINAPI tdLearn(int intDeviceId) {
 	Manager *manager = Manager::getInstance();
 	Message message("tdLearn");
 	message.addArgument(intDeviceId);
-	return manager->send(message, &ok).toInt();
+	return manager->sendAndReceiveInt(message, &ok);
 }
 
 int WINAPI tdLastSentCommand( int intDeviceId, int methodsSupported ) {
@@ -91,7 +91,7 @@ int WINAPI tdLastSentCommand( int intDeviceId, int methodsSupported ) {
 	Message message("tdLastSentCommand");
 	message.addArgument(intDeviceId);
 	message.addArgument(methodsSupported);
-	return manager->send(message, &ok).toInt();
+	return manager->sendAndReceiveInt(message, &ok);
 }
 
 char * WINAPI tdLastSentValue( int intDeviceId ) {
@@ -99,11 +99,11 @@ char * WINAPI tdLastSentValue( int intDeviceId ) {
 	Manager *manager = Manager::getInstance();
 	Message message("tdLastSentValue");
 	message.addArgument(intDeviceId);
-	QVariant retval = manager->send(message, &ok);
+	std::string retval = manager->sendAndReceiveString(message, &ok);
 	if (!ok) {
 		return wrapStdString("0");
 	}
-	return wrapStdString(retval.toString().toStdString());
+	return wrapStdString(retval);
 }
 
 int WINAPI tdGetNumberOfDevices(void){
@@ -117,7 +117,7 @@ int WINAPI tdGetDeviceId(int intDeviceIndex){
 	Manager *manager = Manager::getInstance();
 	Message message("tdGetDeviceId");
 	message.addArgument(intDeviceIndex);
-	return manager->send(message, &ok).toInt();
+	return manager->sendAndReceiveInt(message, &ok);
 }
 
 int WINAPI tdGetDeviceType(int intDeviceId) {
@@ -125,13 +125,13 @@ int WINAPI tdGetDeviceType(int intDeviceId) {
 	Manager *manager = Manager::getInstance();
 	Message message("tdGetDeviceType");
 	message.addArgument(intDeviceId);
-	return manager->send(message, &ok).toInt();
+	return manager->sendAndReceiveInt(message, &ok);
 }
 
 char * WINAPI tdGetName(int intDeviceId){
 	Manager *manager = Manager::getInstance();
-	QString name = manager->deviceName(intDeviceId);
-	return wrapStdString(name.toStdString());
+	std::string name = manager->deviceName(intDeviceId);
+	return wrapStdString(name);
 }
 
 bool WINAPI tdSetName(int intDeviceId, const char* strNewName) {
@@ -140,11 +140,11 @@ bool WINAPI tdSetName(int intDeviceId, const char* strNewName) {
 	Message message("tdSetName");
 	message.addArgument(intDeviceId);
 	message.addArgument(strNewName);
-	bool retval = manager->send(message, &ok).toBool();
+	int retval = manager->sendAndReceiveInt(message, &ok);
 	if (!ok) {
 		return false;
 	}
-	return retval;
+	return (retval == 1);
 }
 
 char* WINAPI tdGetProtocol(int intDeviceId){
@@ -152,11 +152,11 @@ char* WINAPI tdGetProtocol(int intDeviceId){
 	Manager *manager = Manager::getInstance();
 	Message message("tdGetProtocol");
 	message.addArgument(intDeviceId);
-	QString retval = manager->send(message, &ok).toString();
+	std::string retval = manager->sendAndReceiveString(message, &ok);
 	if (!ok) {
 		retval = "arctech";
 	}
-	return wrapStdString(retval.toStdString());
+	return wrapStdString(retval);
 }
 
 bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol) {
@@ -165,11 +165,11 @@ bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol) {
 	Message message("tdSetProtocol");
 	message.addArgument(intDeviceId);
 	message.addArgument(strProtocol);
-	bool retval = manager->send(message, &ok).toBool();
+	int retval = manager->sendAndReceiveInt(message, &ok);
 	if (!ok) {
 		return false;
 	}
-	return retval;
+	return (retval == 1);
 }
 
 char* WINAPI tdGetModel(int intDeviceId) {
@@ -177,11 +177,11 @@ char* WINAPI tdGetModel(int intDeviceId) {
 	Manager *manager = Manager::getInstance();
 	Message message("tdGetModel");
 	message.addArgument(intDeviceId);
-	QString retval = manager->send(message, &ok).toString();
+	std::string retval = manager->sendAndReceiveString(message, &ok);
 	if (!ok) {
 		retval = "";
 	}
-	return wrapStdString(retval.toStdString());
+	return wrapStdString(retval);
 }
 
 bool WINAPI tdSetModel(int intDeviceId, const char *strModel) {
@@ -190,11 +190,11 @@ bool WINAPI tdSetModel(int intDeviceId, const char *strModel) {
 	Message message("tdSetModel");
 	message.addArgument(intDeviceId);
 	message.addArgument(strModel);
-	bool retval = manager->send(message, &ok).toBool();
+	int retval = manager->sendAndReceiveInt(message, &ok);
 	if (!ok) {
 		return false;
 	}
-	return retval;
+	return (retval == 1);
 }
 
 bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const char *strValue) {
@@ -204,11 +204,11 @@ bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const cha
 	message.addArgument(intDeviceId);
 	message.addArgument(strName);
 	message.addArgument(strValue);
-	bool retval = manager->send(message, &ok).toBool();
+	int retval = manager->sendAndReceiveInt(message, &ok);
 	if (!ok) {
 		return false;
 	}
-	return retval;
+	return (retval == 1);
 }
 
 char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const char *defaultValue){
@@ -218,18 +218,18 @@ char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const c
 	message.addArgument(intDeviceId);
 	message.addArgument(strName);
 	message.addArgument(defaultValue);
-	QString retval = manager->send(message, &ok).toString();
+	std::string retval = manager->sendAndReceiveString(message, &ok);
 	if (!ok) {
 		retval = defaultValue;
 	}
-	return wrapStdString(retval.toStdString());
+	return wrapStdString(retval);
 }
 
 int WINAPI tdAddDevice(){
 	bool ok;
 	Manager *manager = Manager::getInstance();
 	Message message("tdAddDevice");
-	return manager->send(message, &ok).toInt();
+	return manager->sendAndReceiveInt(message, &ok);
 }
 
 bool WINAPI tdRemoveDevice(int intDeviceId) {
@@ -237,7 +237,7 @@ bool WINAPI tdRemoveDevice(int intDeviceId) {
 	Manager *manager = Manager::getInstance();
 	Message message("tdRemoveDevice");
 	message.addArgument(intDeviceId);
-	return manager->send(message, &ok).toBool();
+	return (manager->sendAndReceiveInt(message, &ok) == 1);
 }
 
 int WINAPI tdMethods(int id, int methodsSupported) {
@@ -246,7 +246,7 @@ int WINAPI tdMethods(int id, int methodsSupported) {
 	Message message("tdMethods");
 	message.addArgument(id);
 	message.addArgument(methodsSupported);
-	return manager->send(message, &ok).toInt();
+	return manager->sendAndReceiveInt(message, &ok);
 }
 
 char * WINAPI tdGetErrorString(int intErrorNo) {
@@ -258,11 +258,11 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
 	Manager *manager = Manager::getInstance();
 	Message message("tdGetErrorString");
 	message.addArgument(intErrorNo);
-	QString retval = manager->send(message, &ok).toString();
+	std::string retval = manager->sendAndReceiveString(message, &ok);
 	if (!ok) {
 		retval = "Unknown error";
 	}
-	return wrapStdString(retval.toStdString());
+	return wrapStdString(retval);
 }
 
 int WINAPI tdSendRawCommand(const char *command, int reserved) {
@@ -271,7 +271,7 @@ int WINAPI tdSendRawCommand(const char *command, int reserved) {
 	Message message("tdSendRawCommand");
 	message.addArgument(command);
 	message.addArgument(reserved);
-	return manager->send(message, &ok).toInt();
+	return manager->sendAndReceiveInt(message, &ok);
 }
 
 void WINAPI tdConnectTellStickController(int vid, int pid, const char *serial) {

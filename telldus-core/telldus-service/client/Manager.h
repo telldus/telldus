@@ -1,8 +1,6 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include <QByteArray>
-#include <QVariant>
 #include "Message.h"
 #include <libtelldus-core/Thread.h>
 #include <libtelldus-core/telldus-core.h>
@@ -33,26 +31,26 @@ public:
 	static Manager *getInstance();
 	static void close();
 
-	QVariant send(const TelldusService::Message &msg, bool *success);
+	std::string send(const TelldusService::Message &msg, bool *success);
+	std::string sendAndReceiveString(const TelldusService::Message &msg, bool *success);
+	int sendAndReceiveInt(const TelldusService::Message &msg, bool *success);
 
 	int numberOfDevices();
-	QString deviceName(int deviceId);
+	std::string deviceName(int deviceId);
 
 	int registerDeviceEvent( TDDeviceEvent eventFunction, void *context );
 	int registerDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context );
 	int registerRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context );
 	bool unregisterCallback( int callbackId );
 
-	static void logMessage( const QString &message);
+	static void logMessage( const std::string &message);
 
 protected:
 	void run();
 
-private slots:
-	void dataReceived(const std::string &msg);
-
 private:
 	Manager(void);
+	void dataReceived(const std::string &msg);
 
 	ManagerPrivate *d;
 	static Manager *instance;

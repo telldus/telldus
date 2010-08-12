@@ -2,6 +2,7 @@
 #include "Manager.h"
 #include "Message.h"
 #include "../common/Socket.h"
+#include <list>
 
 using namespace TelldusService;
 
@@ -68,15 +69,15 @@ int Manager::numberOfDevices() {
 		return d->numberOfDevices;
 	}
 	Message message("tdGetNumberOfDevices");
-	d->numberOfDevices = this->send(message, &ok).toInt();
+	d->numberOfDevices = this->sendAndReceiveInt(message, &ok);
 	return d->numberOfDevices;
 }
 
-QString Manager::deviceName(int deviceId) {
+std::string Manager::deviceName(int deviceId) {
 	bool ok;
 	Message message("tdGetName");
 	message.addArgument(deviceId);
-	QString retval = this->send(message, &ok).toString();
+	std::string retval = this->sendAndReceiveString(message, &ok);
 	if (!ok) {
 		retval = "";
 	}
@@ -136,7 +137,7 @@ void Manager::run() {
 	while( d->eventSocket.connected() ) {
 		logMessage("-> OVERLAPPED read");
 		std::string data(d->eventSocket.readOverlapped());
-		logMessage(QString("<- OVERLAPPED result: %1").arg(QString::fromStdString(data)));
+//		logMessage(QString("<- OVERLAPPED result: %1").arg(QString::fromStdString(data)));
 		if (data.length() == 0) {
 			continue;
 		}
@@ -146,14 +147,14 @@ void Manager::run() {
 
 void Manager::dataReceived(const std::string &message) {
 	Message msg(message); //Copy
-	logMessage(QString::fromStdString(msg));
+//	logMessage(QString::fromStdString(msg));
 	std::string funcName = Message::takeString(&msg);
-	logMessage(QString::fromStdString(funcName));
+//	logMessage(QString::fromStdString(funcName));
 	if (funcName == "TDDeviceEvent") {
 		int intDeviceId = Message::takeInt(&msg);
 		int intDeviceState = Message::takeInt(&msg);
 		std::string strDeviceStateValue = Message::takeString(&msg);
-		logMessage(QString("Sending %1 callbacks").arg(d->callbacks.size()));
+//		logMessage(QString("Sending %1 callbacks").arg(d->callbacks.size()));
 		for(CallbackList::const_iterator callback_it = d->callbacks.begin(); callback_it != d->callbacks.end(); ++callback_it) {
 			logMessage("StartSend");
 			(*callback_it).event(intDeviceId, intDeviceState, strDeviceStateValue.c_str(), (*callback_it).id, (*callback_it).context);
@@ -165,7 +166,7 @@ void Manager::dataReceived(const std::string &message) {
 		int intChange = Message::takeInt(&msg);
 		//Clear the cache
 		d->numberOfDevices = -1;
-		logMessage(QString("Number of callbacks %1").arg(d->deviceChangeCallbacks.size()));
+//		logMessage(QString("Number of callbacks %1").arg(d->deviceChangeCallbacks.size()));
 		for(DeviceChangeCallbackList::const_iterator callback_it = d->deviceChangeCallbacks.begin(); callback_it != d->deviceChangeCallbacks.end(); ++callback_it) {
 			(*callback_it).event(intDeviceId, intEvent, intChange, (*callback_it).id, (*callback_it).context);
 		}
@@ -177,36 +178,46 @@ void Manager::dataReceived(const std::string &message) {
 	}
 }
 
-QVariant Manager::send(const Message &message, bool *success) {
+std::string Manager::send(const Message &message, bool *success) {
 	(*success) = false;
 	if (!d->s.connected()) {
-		return TELLSTICK_ERROR_CONNECTING_SERVICE;
+		Message msg;
+		msg.addArgument(TELLSTICK_ERROR_CONNECTING_SERVICE);
+		return msg;
 	}
 	std::string response;
 	{
 		TelldusCore::MutexLocker l(&d->sMutex);
-		logMessage(QString("Sending: %1").arg(QString::fromStdString(message)));
-		d->s.writeOverlapped(message);
-		response = d->s.readOverlapped();
+//		logMessage(QString("Sending: %1").arg(QString::fromStdString(message)));
+		response = d->s.readWriteOverlapped(message);
 	}
 	if (response.length() > 0) {
-		logMessage(QString("Received: %1 from: %2").arg(QString::fromStdString(response).trimmed()).arg(QString::fromStdString(message)));
+//		logMessage(QString("Received: %1 from: %2").arg(QString::fromStdString(response).trimmed()).arg(QString::fromStdString(message)));
 		(*success) = true;
-		if (Message::nextIsInt(response)) {
-			return Message::takeInt(&response);
-		}
-		return QString::fromStdString(Message::takeString(&response));
+		return response;
 	}
 	logMessage("Received: empty result");
-	return TELLSTICK_ERROR_UNKNOWN_RESPONSE;
+	Message msg;
+	msg.addArgument(TELLSTICK_ERROR_UNKNOWN_RESPONSE);
+	return msg;
 }
 
-#include <QFile>
-#include <QTextStream>
-#include <QTime>
-#include <QDebug>
-void Manager::logMessage( const QString &message) {
-#ifdef _WINDOWS
+std::string Manager::sendAndReceiveString(const TelldusService::Message &msg, bool *success) {
+	std::string message(send(msg, success));
+	return Message::takeString(&message);
+}
+
+int Manager::sendAndReceiveInt(const TelldusService::Message &msg, bool *success) {
+	std::string message(send(msg, success));
+	return Message::takeInt(&message);
+}
+
+//#include <QFile>
+//#include <QTextStream>
+//#include <QTime>
+//#include <QDebug>
+//void Manager::logMessage( const QString &message) {
+/*#ifdef _WINDOWS
 	QFile file("C:/log_client.txt");
 	return;
 	static bool firstRun = true;
@@ -222,4 +233,8 @@ void Manager::logMessage( const QString &message) {
 #else
 	qDebug() << message;
 #endif
+}
+*/
+
+void Manager::logMessage( const std::string &message) {
 }
