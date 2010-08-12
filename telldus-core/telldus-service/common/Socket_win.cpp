@@ -153,6 +153,31 @@ std::string Socket::readOverlapped() {
 	return buf;
 }
 
+std::string Socket::readWriteOverlapped(const TelldusService::Message &msg) {
+	int result;
+	bool fSuccess = false;
+	char buf[BUFSIZE];
+	DWORD cbBytesRead = 0;
+	OVERLAPPED oOverlap; 
+	oOverlap.hEvent = d->event;
+
+	char *temp = new char[msg.size()+1];
+	strcpy_s(temp, msg.size()+1, msg.data());
+
+	TransactNamedPipe( d->hPipe, temp, (DWORD)msg.length(), &buf, sizeof(char)*BUFSIZE, &cbBytesRead, &oOverlap );
+
+	result = WaitForSingleObject(oOverlap.hEvent, 10000);
+	delete temp;
+	if (result == WAIT_TIMEOUT) {
+		return "";
+	}
+	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &cbBytesRead, false);
+	if (!fSuccess) {
+		return "";
+	}
+	return buf;
+}
+
 std::string Socket::read() {
 	char buf[BUFSIZE];
 	DWORD cbBytesRead = 0;
