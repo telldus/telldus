@@ -13,13 +13,13 @@ SET( telldus-service_SRCS
 	../common/Message.cpp
 )
 SET( telldus-service_HDRS
+	../common/Socket.h
 )
 SET( telldus-service_MOC_HDRS
 	TelldusCore.h
 	Manager.h
 	MessageReceiver.h
 	Pipe.h
-	../common/Socket.h
 )
 	
 SET( telldus-service_LIBRARIES
