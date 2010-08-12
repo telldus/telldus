@@ -146,7 +146,7 @@ void Manager::run() {
 }
 
 void Manager::dataReceived(const std::string &message) {
-	Message msg(message); //Copy
+	std::string msg(message); //Copy
 //	logMessage(QString::fromStdString(msg));
 	std::string funcName = Message::takeString(&msg);
 //	logMessage(QString::fromStdString(funcName));
