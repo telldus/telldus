@@ -1,6 +1,3 @@
-FIND_PACKAGE( Qt4 REQUIRED )
-INCLUDE( ${QT_USE_FILE} )
-
 IF(COMMAND cmake_policy)
 	CMAKE_POLICY(SET CMP0003 NEW)
 ENDIF(COMMAND cmake_policy)
@@ -19,7 +16,6 @@ SET( telldus-client_HDRS
 )
 
 SET( telldus-client_LIBRARIES
-	${QT_LIBRARIES}
 )
 
 INCLUDE_DIRECTORIES(
