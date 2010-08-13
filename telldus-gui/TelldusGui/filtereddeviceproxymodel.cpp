@@ -62,8 +62,16 @@ bool FilteredDeviceProxyModel::filterAcceptsRow ( int sourceRow, const QModelInd
 		return true;
 	}
 	if (!item->isDevice()) {
-		//Non devices is always shown
-		return true;
+		//Check if any children is visible
+		int children = d->model->rowCount(index);
+		for (int i = 0; i < children; ++i) {
+			if (this->filterAcceptsRow(i, index)) {
+				//Child visible, parent should be visible
+				return true;
+			}
+		}
+		//No children visible, parent should be hidden
+		return false;
 	}
 
 	if (item->deviceProtocol() == d->protocol) {
