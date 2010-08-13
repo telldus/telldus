@@ -11,7 +11,7 @@
 class PipePrivate {
 public:
 	QString name;
-	HANDLE hPipe;
+	HANDLE event;
 	bool closing;
 };
 
@@ -19,24 +19,15 @@ Pipe::Pipe(QObject *parent)
 	:QThread(parent)
 {
 	d = new PipePrivate;
-	d->hPipe = INVALID_HANDLE_VALUE;
+	d->event = INVALID_HANDLE_VALUE;
 	d->closing = false;
 }
 
 Pipe::~Pipe(void) {
 	TelldusCore::logMessage(QString("Stopping pipe %1").arg(d->name));
 	d->closing = true;
-	if (d->hPipe != INVALID_HANDLE_VALUE) {
-		TelldusCore::logMessage("Pipe is connected, try to close it");
-		HANDLE hPipe = CreateFile(
-			(const wchar_t *)d->name.utf16(),
-			GENERIC_READ | GENERIC_WRITE,
-			0, NULL, OPEN_EXISTING, 0, NULL);
-		TelldusCore::logMessage("New file created");
-		if (hPipe != INVALID_HANDLE_VALUE) {
-			TelldusCore::logMessage("Close it");
-			CloseHandle(hPipe);
-		}
+	if (d->event != INVALID_HANDLE_VALUE) {
+		SetEvent(d->event);
 	}
 	TelldusCore::logMessage("Waiting for thread to close");
 	this->wait();
@@ -55,7 +46,7 @@ void Pipe::run() {
 	EXPLICIT_ACCESS ea;
 	PSID pEveryoneSID = NULL;
 	SID_IDENTIFIER_AUTHORITY SIDAuthWorld = SECURITY_WORLD_SID_AUTHORITY;
-
+	DWORD cbBytesRead;
 
 	pSD = (PSECURITY_DESCRIPTOR) LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH); 
 	if (pSD == NULL) {
@@ -99,11 +90,16 @@ void Pipe::run() {
 	sa.lpSecurityDescriptor = pSD;
 	sa.bInheritHandle = false;
 
+	OVERLAPPED oOverlap;
+	oOverlap.hEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
+	d->event = oOverlap.hEvent;
+
 	while(!d->closing) {
 		TelldusCore::logMessage(QString("Starting listening in pipe %1").arg(d->name));
-		d->hPipe = CreateNamedPipe( 
+		HANDLE hPipe = CreateNamedPipe( 
 			(const wchar_t *)d->name.utf16(),             // pipe name 
-			PIPE_ACCESS_DUPLEX,       // read/write access 
+			PIPE_ACCESS_DUPLEX |      // read/write access 
+			FILE_FLAG_OVERLAPPED,	  //Overlapped mode
 			PIPE_TYPE_MESSAGE |       // message type pipe 
 			PIPE_READMODE_MESSAGE |   // message-read mode 
 			PIPE_WAIT,                // blocking mode 
@@ -113,20 +109,29 @@ void Pipe::run() {
 			0,                        // client time-out 
 			&sa);                    // default security attribute 
 
-		if (d->hPipe == INVALID_HANDLE_VALUE) {
+		if (hPipe == INVALID_HANDLE_VALUE) {
 			TelldusCore::logMessage("Could not create named pipe"); 
 			return;
 		}
 
-		bool connected = ConnectNamedPipe(d->hPipe, NULL);
+		ConnectNamedPipe(hPipe, &oOverlap);
+		int result = WaitForSingleObject(oOverlap.hEvent, INFINITE);
+		if (result == WAIT_TIMEOUT) {
+			continue;
+		}
+		bool connected = GetOverlappedResult(hPipe, &oOverlap, &cbBytesRead, false);
 		if (d->closing || !connected) {
-			CloseHandle(d->hPipe);
+			CloseHandle(hPipe);
 			TelldusCore::logMessage("Closing or no connection, restart");
 			continue;
 		}
 		TelldusCore::logMessage("Connected");
-		emit newConnection(new Socket(d->hPipe));
+		emit newConnection(new Socket(hPipe));
 	}
+
+	CloseHandle(oOverlap.hEvent);
+	d->event = INVALID_HANDLE_VALUE;
+
 	LocalFree(pSD);
 	FreeSid(pEveryoneSID);
 	LocalFree(pACL);

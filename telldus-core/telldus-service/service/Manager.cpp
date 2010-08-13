@@ -31,6 +31,10 @@ Manager::Manager(Socket *s, QObject *parent)
 
 Manager::~Manager(void) {
 	TelldusCore::logMessage("  Destroying Manager");
+	d->s->disconnect();
+	TelldusCore::logMessage("  Disconnected, waiting");
+	wait();
+	TelldusCore::logMessage("  Waited, deleting");
 	delete d->s;
 	delete d;
 	TelldusCore::logMessage("  Manager destroyed");

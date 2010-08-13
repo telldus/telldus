@@ -23,7 +23,7 @@ public:
 	void write(const TelldusService::Message &msg);
 	void writeOverlapped(const TelldusService::Message &msg);
 	std::string readWriteOverlapped(const TelldusService::Message &msg);
-	std::string readOverlapped();
+	std::string readOverlapped(int timeout = 10000);
 	std::string read();
 
 	bool connected() const;

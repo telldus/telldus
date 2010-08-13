@@ -4,7 +4,7 @@
 class Socket::PrivateData {
 public:
 	SOCKET_T hPipe;
-	HANDLE event;
+	HANDLE readEvent;
 	bool connected;
 };
 
@@ -12,14 +12,14 @@ Socket::Socket(SOCKET_T socket)
 {
 	d = new PrivateData;
 	d->hPipe = socket;
-	d->event = INVALID_HANDLE_VALUE;
+	d->readEvent = INVALID_HANDLE_VALUE;
 	d->connected = true;
 }
 
 Socket::Socket() {
 	d = new PrivateData;
 	d->hPipe = INVALID_HANDLE_VALUE;
-	d->event = INVALID_HANDLE_VALUE;
+	d->readEvent = INVALID_HANDLE_VALUE;
 	d->connected = false;
 }
 
@@ -38,25 +38,12 @@ Socket::~Socket(void) {
 		CloseHandle(d->hPipe); 
 		//TelldusCore::logMessage("Done");
 	}
-	if (d->event != INVALID_HANDLE_VALUE) {
-		CloseHandle(d->event);
-	}
 	delete d;
 }
 
 void Socket::connectToServer(const std::string &server) {
 	DWORD dwMode;
 	bool  fSuccess = false;
-
-	d->event = CreateEvent( 
-         NULL,    // default security attribute 
-         TRUE,    // manual-reset event 
-         TRUE,    // initial state = signaled 
-         NULL);   // unnamed event object 
-
-	if (d->event == NULL) {
-		return;
-	}
 
 	//Convert our std::string to std::wstring since we build agains win32 with unicode support
 	std::string strName = "\\\\.\\pipe\\" + server;
@@ -91,8 +78,8 @@ void Socket::connectToServer(const std::string &server) {
 
 void Socket::disconnect() {
 	d->connected = false;
-	if (d->event != INVALID_HANDLE_VALUE) {
-		SetEvent(d->event);
+	if (d->readEvent != INVALID_HANDLE_VALUE) {
+		SetEvent(d->readEvent);
 	}
 }
 
@@ -111,27 +98,30 @@ void Socket::writeOverlapped(const TelldusService::Message &msg) {
 	int result;
 	bool fSuccess;
 
-	oOverlap.hEvent = d->event;
+	oOverlap.hEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
 	WriteFile(d->hPipe, msg.data(), (DWORD)msg.length(), &bytesWritten, &oOverlap);
 
 	result = WaitForSingleObject(oOverlap.hEvent, 10000);
 	if (result == WAIT_TIMEOUT) {
+		CloseHandle(oOverlap.hEvent);
 		d->connected = false;
 		return;
 	}
 	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &bytesWritten, false);
+	CloseHandle(oOverlap.hEvent);
 	if (!fSuccess) {
 		d->connected = false;
 		return;
 	}
 }
 
-std::string Socket::readOverlapped() {
+std::string Socket::readOverlapped(int timeout) {
 	char buf[BUFSIZE];
 	int result;
 	DWORD cbBytesRead = 0;
 	OVERLAPPED oOverlap; 
-	oOverlap.hEvent = d->event;
+	d->readEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
+	oOverlap.hEvent = d->readEvent;
 	bool fSuccess = false;
 
 	memset(&buf, 0, BUFSIZE);
@@ -142,11 +132,15 @@ std::string Socket::readOverlapped() {
 
 	ReadFile( d->hPipe, &buf, sizeof(char)*BUFSIZE, &cbBytesRead, &oOverlap);
 
-	result = WaitForSingleObject(oOverlap.hEvent, 10000);
+	result = WaitForSingleObject(oOverlap.hEvent, timeout);
 	if (result == WAIT_TIMEOUT) {
+		CloseHandle(d->readEvent);
+		d->readEvent = INVALID_HANDLE_VALUE;
 		return "";
 	}
 	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &cbBytesRead, false);
+	CloseHandle(d->readEvent);
+	d->readEvent = INVALID_HANDLE_VALUE;
 	if (!fSuccess) {
 		return "";
 	}
@@ -159,7 +153,7 @@ std::string Socket::readWriteOverlapped(const TelldusService::Message &msg) {
 	char buf[BUFSIZE];
 	DWORD cbBytesRead = 0;
 	OVERLAPPED oOverlap; 
-	oOverlap.hEvent = d->event;
+	oOverlap.hEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
 
 	char *temp = new char[msg.size()+1];
 	strcpy_s(temp, msg.size()+1, msg.data());
@@ -169,9 +163,11 @@ std::string Socket::readWriteOverlapped(const TelldusService::Message &msg) {
 	result = WaitForSingleObject(oOverlap.hEvent, 10000);
 	delete temp;
 	if (result == WAIT_TIMEOUT) {
+		CloseHandle(oOverlap.hEvent);
 		return "";
 	}
 	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &cbBytesRead, false);
+	CloseHandle(oOverlap.hEvent);
 	if (!fSuccess) {
 		return "";
 	}
@@ -179,6 +175,8 @@ std::string Socket::readWriteOverlapped(const TelldusService::Message &msg) {
 }
 
 std::string Socket::read() {
+	return this->readOverlapped(INFINITE);
+
 	char buf[BUFSIZE];
 	DWORD cbBytesRead = 0;
 	bool fSuccess = false;
