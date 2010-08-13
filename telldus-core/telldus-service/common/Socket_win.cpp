@@ -181,43 +181,6 @@ std::string Socket::readWriteOverlapped(const TelldusService::Message &msg) {
 
 std::string Socket::read() {
 	return this->readOverlapped(INFINITE);
-
-	char buf[BUFSIZE];
-	DWORD cbBytesRead = 0;
-	bool fSuccess = false;
-
-	//TelldusCore::logMessage("= Start read");
-
-	//If we have a connection from a client this function will never complete
-	//So while the is connected clients this service cannot exit properly.
-	//We should find a way to make this function fail in the destructor to this
-	//class.
-	fSuccess = ReadFile( 
-		d->hPipe,        // handle to pipe 
-		&buf,    // buffer to receive data 
-		BUFSIZE*sizeof(char), // size of buffer 
-		&cbBytesRead, // number of bytes read 
-		NULL);
-
-	if (fSuccess) {
-		//TelldusCore::logMessage(QString("= Done read: %1").arg(buf));
-
-		return buf;
-	} else {
-		if (cbBytesRead == 0) {
-			int err =  GetLastError();
-			if (err == ERROR_BROKEN_PIPE) {
-				//TelldusCore::logMessage("Broken Pipe");
-			} else if (err == ERROR_INVALID_HANDLE) {
-				//TelldusCore::logMessage("Invalid handle");
-			} else {
-				//TelldusCore::logMessage("Unknown error");
-			}
-		}
-		//TelldusCore::logMessage(QString("= Failed read %1").arg(GetLastError()));
-		d->connected = false;
-	}
-	return "";
 }
 
 bool Socket::connected() const {
