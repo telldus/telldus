@@ -71,6 +71,9 @@ int DeviceSartano::turnOff(Controller *controller){
 }
 
 bool DeviceSartano::parameterMatches( const std::string &name, const std::string &value ) const {
+	if (name.compare("code") == 0 && value.compare(strCode) == 0) {
+		return true;
+	}
 	return false;
 }
 
