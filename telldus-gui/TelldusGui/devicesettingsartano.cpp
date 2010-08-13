@@ -67,6 +67,8 @@ void DeviceSettingSartano::setValue( const QString &name, const QString &value )
 		for (int i = 0; i < 10; ++i) {
 			if (value[i] == '0') {
 				button1[i]->setChecked(true);
+			} else {
+				button0[i]->setChecked(true);
 			}
 		}
 	}
