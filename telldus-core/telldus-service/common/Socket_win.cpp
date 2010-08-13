@@ -1,4 +1,5 @@
 #include "Socket.h"
+#include <windows.h>
 //#include "TelldusCore.h"
 
 class Socket::PrivateData {
@@ -139,11 +140,15 @@ std::string Socket::readOverlapped(int timeout) {
 		return "";
 	}
 	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &cbBytesRead, false);
+	if (!fSuccess) {
+		DWORD err = GetLastError();
+		if (err == ERROR_BROKEN_PIPE) {
+			d->connected = false;
+		}
+		buf[0] = 0;
+	}
 	CloseHandle(d->readEvent);
 	d->readEvent = INVALID_HANDLE_VALUE;
-	if (!fSuccess) {
-		return "";
-	}
 	return buf;
 }
 
