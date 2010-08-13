@@ -250,9 +250,6 @@ std::string DeviceNexa::getStringSelflearning(bool dim, unsigned char level) {
 }
 
 bool DeviceNexa::parameterMatches( const std::string &name, const std::string &value ) const {
-	if (value.length() == 0) {
-		return false;
-	}
 	if (name.compare("house") == 0) {
 		if (isSelflearning()) {
 			return intHouse == atoi(value.c_str());

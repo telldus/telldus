@@ -523,6 +523,9 @@ void TelldusCore::Manager::processMessage(const std::string & message) {
 		}
 		bool found = true;
 		for (std::map<std::string, std::string>::const_iterator p_it = parameters.begin(); p_it != parameters.end(); ++p_it) {
+			if (p_it->second.length() == 0) {
+				continue;
+			}
 			if (!it->second->parameterMatches(p_it->first, p_it->second)) {
 				found = false;
 				break;
