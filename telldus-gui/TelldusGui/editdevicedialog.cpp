@@ -280,7 +280,7 @@ void EditDeviceDialog::rawDataSlot( const QString &data ) {
 	if (!d->scanning) {
 		return;
 	}
-	d->filteredModel->setFilter(data);
+	d->filteredModel->addFilter(data);
 }
 
 void WINAPI EditDeviceDialog::rawData(const char *data, int callbackId, void *context) {

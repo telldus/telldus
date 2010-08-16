@@ -14,7 +14,7 @@ public:
 	virtual void setSourceModel( VendorDeviceModel * sourceModel );
 
 	void showAll();
-	void setFilter( const QString & );
+	void addFilter( const QString & );
 
 signals:
 	void setParameter(const QString &name, const QString &value);
