@@ -27,7 +27,6 @@ FilteredDeviceProxyModel::FilteredDeviceProxyModel( QObject * parent )
 		d(new PrivateData)
 {
 	d->filtered = false;
-	d->filters.clear();
 }
 
 FilteredDeviceProxyModel::~FilteredDeviceProxyModel() {
@@ -72,6 +71,7 @@ void FilteredDeviceProxyModel::addFilter( const QString &filter ) {
 
 void FilteredDeviceProxyModel::showAll() {
 	d->filtered = false;
+	d->filters.clear();
 	invalidateFilter();
 }
 
