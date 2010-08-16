@@ -16,6 +16,7 @@
         <file>../images/devices/sartano.png</file>
         <file>../images/devices/upm_sl.png</file>
         <file>../images/devices/waveman_cs.png</file>
+        <file>../images/devices/x10.png</file>
         <file>../images/devices/zke-2603.png</file>
         <file>../images/vendors/chacon.png</file>
         <file>../images/vendors/coco.png</file>
@@ -35,5 +36,6 @@
         <file>../images/vendors/sartano.png</file>
         <file>../images/vendors/upm.png</file>
         <file>../images/vendors/waveman.png</file>
+        <file>../images/vendors/x10.png</file>
     </qresource>
 </RCC>
