@@ -187,7 +187,18 @@ std::string DeviceX10::getStringCode(bool on){
 }
 
 bool DeviceX10::parameterMatches( const std::string &name, const std::string &value ) const {
-	return false;
+	if (name.compare("house") == 0) {
+		int h = value[0] - 'A';
+		if (h < 0) {
+			h = 0;
+		} else if (h > 15) {
+			h = 15;
+		}
+		return intHouse == HOUSES[h];
+	} else if (name.compare("unit") == 0) {
+		return intCode == atoi(value.c_str()) - 1;
+	}
+	return true;
 }
 
 /*
