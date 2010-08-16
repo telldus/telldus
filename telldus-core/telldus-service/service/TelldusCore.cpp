@@ -25,7 +25,7 @@ TelldusCore::TelldusCore(void)
 {
 	connect(this, SIGNAL(deviceEventSignal(int, int, const char *)), this, SLOT(deviceEventSlot(int, int, const char *)));
 	connect(this, SIGNAL(deviceChangeEventSignal(int, int, int)), this, SLOT(deviceChangeEventSlot(int, int, int)));
-	connect(this, SIGNAL(rawDeviceEventSignal(const char *)), this, SLOT(rawDeviceEventSlot(const char *)));
+	connect(this, SIGNAL(rawDeviceEventSignal(const QString &)), this, SLOT(rawDeviceEventSlot(const QString &)));
 
 	tdInit();
 
@@ -120,9 +120,9 @@ void TelldusCore::deviceChangeEventSlot(int deviceId, int eventId, int changeTyp
 	sendEventMessage(msg);
 }
 
-void TelldusCore::rawDeviceEventSlot(const char *data) {
+void TelldusCore::rawDeviceEventSlot(const QString &data) {
 	Message msg("TDRawDeviceEvent");
-	msg.addArgument(data);
+	msg.addArgument(data.toStdString());
 	sendEventMessage(msg);
 }
 
@@ -202,6 +202,8 @@ void WINAPI TelldusCore::deviceChangeEvent(int deviceId, int eventId, int change
 void WINAPI TelldusCore::rawDeviceEvent(const char *data, int, void *context) {
 	TelldusCore *tc = reinterpret_cast<TelldusCore *>(context);
 	if (tc) {
-		emit tc->rawDeviceEventSignal(data);
+		//Copy the data so we own it since we will hand it over to another thread.
+		QString msg(data);
+		emit tc->rawDeviceEventSignal(msg);
 	}
 }

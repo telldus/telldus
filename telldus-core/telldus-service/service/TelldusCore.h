@@ -30,13 +30,13 @@ private slots:
 	void newEventConnection(Socket *);
 	void deviceEventSlot(int, int, const char *);
 	void deviceChangeEventSlot(int, int, int);
-	void rawDeviceEventSlot(const char *);
+	void rawDeviceEventSlot(const QString &);
 	void managerDone();
 
 signals:
 	void deviceEventSignal(int, int, const char *);
 	void deviceChangeEventSignal(int, int, int);
-	void rawDeviceEventSignal(const char *);
+	void rawDeviceEventSignal(const QString &);
 
 private:
 	void disconnected(Socket *);
