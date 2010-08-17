@@ -29,7 +29,7 @@ private slots:
 	void rawDataSlot( const QString &data );
 
 private:
-	static void WINAPI rawData(const char *data, int callbackId, void *context);
+	static void WINAPI rawData(const char *data, int controllerId, int callbackId, void *context);
 	void expandNodes(QTreeView *deviceView);
 
 	class PrivateData;

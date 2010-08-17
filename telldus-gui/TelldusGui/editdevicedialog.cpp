@@ -283,7 +283,7 @@ void EditDeviceDialog::rawDataSlot( const QString &data ) {
 	d->filteredModel->addFilter(data);
 }
 
-void WINAPI EditDeviceDialog::rawData(const char *data, int callbackId, void *context) {
+void WINAPI EditDeviceDialog::rawData(const char *data, int controllerId, int callbackId, void *context) {
 	EditDeviceDialog *dialog = reinterpret_cast<EditDeviceDialog *>(context);
 	if (dialog) {
 		emit dialog->rawDataReceived(data);
