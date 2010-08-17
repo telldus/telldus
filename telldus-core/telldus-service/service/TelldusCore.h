@@ -30,13 +30,13 @@ private slots:
 	void newEventConnection(Socket *);
 	void deviceEventSlot(int, int, const char *);
 	void deviceChangeEventSlot(int, int, int);
-	void rawDeviceEventSlot(const QString &);
+	void rawDeviceEventSlot(const QString &, int);
 	void managerDone();
 
 signals:
 	void deviceEventSignal(int, int, const char *);
 	void deviceChangeEventSignal(int, int, int);
-	void rawDeviceEventSignal(const QString &);
+	void rawDeviceEventSignal(const QString &, int);
 
 private:
 	void disconnected(Socket *);
@@ -45,7 +45,7 @@ private:
 
 	static void WINAPI deviceEvent(int deviceId, int, const char *, int, void *);
 	static void WINAPI deviceChangeEvent(int deviceId, int eventId, int changeType, int, void *);
-	static void WINAPI rawDeviceEvent(const char *data, int, void *);
+	static void WINAPI rawDeviceEvent(const char *data, int controllerId, int, void *);
 	static int callbackId;
 };
 

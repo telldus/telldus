@@ -172,8 +172,9 @@ void Manager::dataReceived(const std::string &message) {
 		}
 	} else if (funcName == "TDRawDeviceEvent") {
 		std::string strData = Message::takeString(&msg);
+		int controllerId = Message::takeInt(&msg);
 		for(RawCallbackList::const_iterator callback_it = d->rawCallbacks.begin(); callback_it != d->rawCallbacks.end(); ++callback_it) {
-			(*callback_it).event(strData.c_str(), (*callback_it).id, (*callback_it).context);
+			(*callback_it).event(strData.c_str(), controllerId, (*callback_it).id, (*callback_it).context);
 		}
 	}
 }

@@ -31,7 +31,7 @@ namespace TelldusCore {
 			void start();
 			bool wait();
 			
-			void sendEvent(const std::string &string);
+			void sendEvent(const std::string &string, int integer = 0);
 			
 			static void initMutex(MUTEX *m);
 			static void destroyMutex(MUTEX *m);
@@ -40,7 +40,7 @@ namespace TelldusCore {
 						
 		protected:
 			virtual void run() = 0;
-			std::string waitForEvent();
+			std::string waitForEvent(int *intMessage);
 		
 		private:
 			static void* exec( void *ptr );

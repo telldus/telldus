@@ -81,7 +81,7 @@ namespace TelldusCore {
 		int registerDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context );
 		int registerRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context );
 		bool unregisterCallback( int callbackId );
-		void parseMessage( const std::string &message );
+		void parseMessage( const std::string &message, Controller *controller );
 	
 	protected:
 		void loadAllDevices();
@@ -92,7 +92,7 @@ namespace TelldusCore {
 		
 	private:
 		Manager();
-		void processMessage( const std::string &message );
+		void processMessage( const std::string &message, int controllerId );
 		int findTellStickController(int vid, int pid, const std::string &serial);
 		
 		Settings settings;

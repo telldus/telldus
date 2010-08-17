@@ -232,9 +232,20 @@ bool Manager::deviceLoaded(int deviceId) const {
 	return true;
 }
 
-void Manager::parseMessage( const std::string &message ) {
+void Manager::parseMessage( const std::string &message, TelldusCore::Controller *controller ) {
+	//Find the controller
+	int controllerId = 0;
+	{
+		MutexLocker locker(&mutex);
+		for(ControllerMap::iterator it = controllers.begin(); it != controllers.end(); ++it) {
+			if (it->second == controller) {
+				controllerId = it->first;
+				break;
+			}
+		}
+	}
 	//Pass the message to our worker-thread!
-	this->sendEvent(message);
+	this->sendEvent(message, controllerId);
 }
 
 int Manager::registerDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
@@ -482,12 +493,13 @@ void TelldusCore::Manager::emitDeviceChange( int deviceId, int event, int change
 void TelldusCore::Manager::run() {
 	//Our worker-thread has started
 	while(1) {
-		std::string m = this->waitForEvent();
-		this->processMessage(m);
+		int controllerId;
+		std::string m = this->waitForEvent(&controllerId);
+		this->processMessage(m, controllerId);
 	}
 }
 
-void TelldusCore::Manager::processMessage(const std::string & message) {
+void TelldusCore::Manager::processMessage(const std::string & message, int controllerId) {
 	loadAllDevices(); //Make sure all devices is loaded before we iterator the list.
 	
 	std::map<std::string, std::string> parameters;
@@ -538,7 +550,7 @@ void TelldusCore::Manager::processMessage(const std::string & message) {
 	}
 
 	for(RawCallbackList::const_iterator it = rawCallbacks.begin(); it != rawCallbacks.end(); ++it) {
-		(*it).event(message.c_str(), (*it).id, (*it).context);
+		(*it).event(message.c_str(), controllerId, (*it).id, (*it).context);
 	}
 
 }

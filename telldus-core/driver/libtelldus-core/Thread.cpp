@@ -28,7 +28,8 @@ public:
 	
 	//Must be locked by the mutex!
 	bool hasEvent;
-	std::string message;
+	std::string strMessage;
+	int intMessage;
 };
 
 Thread::Thread() {
@@ -86,8 +87,8 @@ void *Thread::exec( void *ptr ) {
 	return 0;
 }
 
-std::string Thread::waitForEvent() {
-	std::string message;
+std::string Thread::waitForEvent(int *intMessage) {
+	std::string strMessage;
 	lockMutex(&d->mutex);
 	while(!d->hasEvent) {
 #ifdef _WINDOWS
@@ -99,17 +100,18 @@ std::string Thread::waitForEvent() {
 #endif
 	}
 	d->hasEvent = false;
-	message = d->message;
+	strMessage = d->strMessage;
+	(*intMessage) = d->intMessage;
 	unlockMutex(&d->mutex);
 #ifdef _WINDOWS
 	SetEvent(d->noEvent);
 #else
 	pthread_cond_broadcast(&d->noEvent);
 #endif
-	return message;
+	return strMessage;
 }
 
-void Thread::sendEvent(const std::string &message) {
+void Thread::sendEvent(const std::string &strMessage, int intMessage) {
 	lockMutex(&d->mutex);
 	while (d->hasEvent) { //We have an unprocessed event
 #ifdef _WINDOWS
@@ -121,7 +123,8 @@ void Thread::sendEvent(const std::string &message) {
 #endif
 	}
 	d->hasEvent = true;
-	d->message = message;
+	d->strMessage = strMessage;
+	d->intMessage = intMessage;
 	unlockMutex(&d->mutex);
 #ifdef _WINDOWS
 	SetEvent(d->noWait);

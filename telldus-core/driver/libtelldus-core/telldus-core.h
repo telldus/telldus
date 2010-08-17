@@ -25,7 +25,7 @@
 
 typedef void (WINAPI *TDDeviceEvent)(int deviceId, int method, const char *data, int callbackId, void *context);
 typedef void (WINAPI *TDDeviceChangeEvent)(int deviceId, int changeEvent, int changeType, int callbackId, void *context); 
-typedef void (WINAPI *TDRawDeviceEvent)(const char *data, int callbackId, void *context);
+typedef void (WINAPI *TDRawDeviceEvent)(const char *data, int controllerId, int callbackId, void *context);
 
 #ifndef __cplusplus 
 	#define bool char 

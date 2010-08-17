@@ -176,7 +176,7 @@ void PrivateTellStickDuoListener::processData( const std::string &data ) {
 				printf("Firmware version: %s\n", message.substr(2).c_str());
 			} else if (message.substr(0,2).compare("+R") == 0) {
 				Manager *manager = Manager::getInstance();
-				manager->parseMessage(message.substr(2));
+				manager->parseMessage(message.substr(2), parent);
 			}
 			message.clear();
 		} else { // Append the character
