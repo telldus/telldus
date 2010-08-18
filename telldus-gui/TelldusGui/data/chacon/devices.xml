@@ -1,0 +1,7 @@
+<?xml version="1.0" encoding="utf8" ?>
+<devices>
+	<type name="Remote Switches" expanded="true">
+		<vendor name="Chacon" image="chacon">
+			<device model="selflearning-switch:chacon" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
+		</vendor>
+</devices>

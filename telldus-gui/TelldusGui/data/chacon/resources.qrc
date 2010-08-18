@@ -1,0 +1,8 @@
+<RCC>
+    <qresource prefix="/" >
+        <file alias="data/devices.xml">devices.xml</file>
+        <file>../../images/devices/arctech_cs.png</file>
+        <file>../../images/devices/arctech_sl.png</file>
+        <file>../../images/vendors/chacon.png</file>
+    </qresource>
+</RCC>
