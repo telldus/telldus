@@ -43,7 +43,7 @@
 			<device model="codeswitch:intertechno" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
 			<device model="selflearning-switch:intertechno" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
 			<device model="selflearning-dimmer:intertechno" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
-			<device model="bell:homeeasy" protocol="intertechno" widget="4" image="bell" name="Bell">Bell</device>
+			<device model="bell:intertechno" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
 		</vendor>
 		<vendor name="Kappa" image="kappa">
 			<!--<text>http://www.kappak.sk</text> -->
