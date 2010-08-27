@@ -54,6 +54,9 @@ bool DeviceUpm::setDeviceParameter(const std::string &strName, const std::string
 	if (strName.compare("house") == 0) {
 		return setHouse(strValue);
 	}
+	if (strName.compare("unit") == 0) {
+		return setUnit(strValue);
+	}
 	return false;
 }
 
