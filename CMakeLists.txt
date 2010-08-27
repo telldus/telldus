@@ -30,6 +30,11 @@ SET(BUILD_TDTOOL	TRUE	CACHE BOOL "Build tdtool")
 SET(GENERATE_MAN	FALSE	CACHE	BOOL "Enable generation of man-files")
 SET(BRANDING "telldus" CACHE STRING "The brand to use")
 
+# Lets figure if we need to build against Qt or not
+IF(USE_QT_SETTINGS_BACKEND)
+	SET(BUILD_WITH_QT TRUE)
+ENDIF(USE_QT_SETTINGS_BACKEND)
+
 ADD_SUBDIRECTORY(driver)
 
 if(BUILD_TDTOOL)
