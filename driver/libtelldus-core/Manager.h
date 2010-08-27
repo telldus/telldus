@@ -15,6 +15,7 @@
 #include <QtCore/QObject>
 #include "Settings.h"
 #include <map>
+#include <list>
 
 namespace TelldusCore {
 	class Device;
