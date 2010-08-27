@@ -1,6 +1,8 @@
-FIND_PACKAGE( Qt4 REQUIRED )
-SET( QT_DONT_USE_QTGUI TRUE )
-INCLUDE( ${QT_USE_FILE} )
+IF (BUILD_WITH_QT)
+  FIND_PACKAGE( Qt4 REQUIRED )
+  SET( QT_DONT_USE_QTGUI TRUE )
+  INCLUDE( ${QT_USE_FILE} )
+ENDIF (BUILD_WITH_QT)
 
 if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
@@ -33,16 +35,14 @@ SET( telldus-core_HDRS
 	telldus-core-service.h
 )
 
-SET( telldus-core_MOC_HDRS
+IF (BUILD_WITH_QT)
+	QT4_WRAP_CPP(  telldus-core_MOC_SRCS  ${telldus-core_MOC_HDRS} )
+	QT4_AUTOMOC (  ${telldus-core_SRCS} )
+
+	SET( telldus-core_LIBRARIES
+		${QT_LIBRARIES}
 	)
-	
-QT4_WRAP_CPP(  telldus-core_MOC_SRCS  ${telldus-core_MOC_HDRS} )
-QT4_AUTOMOC (  ${telldus-core_SRCS} )
-
-
-SET( telldus-core_LIBRARIES
-	${QT_LIBRARIES}
-)
+ENDIF (BUILD_WITH_QT)
 
 IF (SUPPORT_USB)
 	OPTION(USE_FTD2XX_RATHER_THEN_LIBFTDI "Link against ftd2xx even if libftdi is the preferred one" OFF)
@@ -181,7 +181,6 @@ ENDIF (BUILD_LIBTELLDUS-CORE_AS_SERVICE)
 ADD_LIBRARY(${telldus-core_TARGET} ${TYPE}
 	${telldus-core_SRCS}
 	${telldus-core_HDRS}
-	${telldus-core_MOC_SRCS}
 )
 
 TARGET_LINK_LIBRARIES( ${telldus-core_TARGET}	${telldus-core_LIBRARIES} )

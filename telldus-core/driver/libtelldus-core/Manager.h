@@ -12,7 +12,6 @@
 #ifndef MANAGER_H
 #define MANAGER_H
 
-#include <QtCore/QObject>
 #include "Settings.h"
 #include "Thread.h"
 #include <map>

@@ -13,7 +13,6 @@
 #define CONTROLLER_H
 
 #include <string>
-#include <QObject>
 
 /**
 	@author Micke Prag <micke.prag@telldus.se>
