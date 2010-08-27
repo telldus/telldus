@@ -168,7 +168,7 @@ void PrivateTellStickDuoListener::run() {
 }
 
 void PrivateTellStickDuoListener::processData( const std::string &data ) {
-	for (uint i = 0; i < data.length(); ++i) {
+	for (unsigned int i = 0; i < data.length(); ++i) {
 		if (data[i] == 13) { // Skip \r
 			continue;
 		} else if (data[i] == 10) { // \n found
