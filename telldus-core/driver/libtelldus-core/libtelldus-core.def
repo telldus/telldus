@@ -39,3 +39,9 @@ EXPORTS
 	
 	tdReleaseString @28
 	tdUnregisterCallback @29
+
+	tdConnectTellStickController @30
+	tdDisconnectTellStickController @31
+
+	tdRegisterDeviceChangeEvent @32
+	
