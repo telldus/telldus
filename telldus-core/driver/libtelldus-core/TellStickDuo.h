@@ -12,9 +12,6 @@
 #ifndef TELLSTICKDUO_H
 #define TELLSTICKDUO_H
 
-#include <QThread>
-#include <QMutex>
-
 #include "TellStick.h"
 #include "ftd2xx.h"
 

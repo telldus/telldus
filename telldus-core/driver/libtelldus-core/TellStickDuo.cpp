@@ -13,6 +13,7 @@
 #include "Thread.h"
 #include "Manager.h"
 #include <stdlib.h>
+#include <string.h>
 
 #if defined(_WINDOWS) && defined(LIBFTD2XX)
 typedef HANDLE EVENT_HANDLE;
@@ -42,7 +43,7 @@ namespace TelldusCore {
 			TellStickDuo *parent;
 			EVENT_HANDLE eh;
 			bool running;
-			QMutex mutex;
+			MUTEX mutex;
 			std::string message;
 	};
 	
@@ -91,7 +92,7 @@ PrivateTellStickDuoListener::~PrivateTellStickDuoListener() {
 void PrivateTellStickDuoListener::stop() {
 	if (running) {
 		{
-			QMutexLocker locker(&mutex);
+			MutexLocker locker(&mutex);
 			running = false;
 		}
 		//Unlock the wait-condition
@@ -123,7 +124,7 @@ void PrivateTellStickDuoListener::run() {
 #endif
 
 	{
-		QMutexLocker locker(&mutex);
+		MutexLocker locker(&mutex);
 		running = true;
 	}
 
@@ -139,7 +140,7 @@ void PrivateTellStickDuoListener::run() {
 		pthread_mutex_unlock(&eh.eMutex);
 #endif
 		{
-			QMutexLocker locker(&mutex);
+			MutexLocker locker(&mutex);
 			if (!running) {
 				break;
 			}
@@ -173,7 +174,7 @@ void PrivateTellStickDuoListener::processData( const std::string &data ) {
 		} else if (data[i] == 10) { // \n found
 			if (message.substr(0,2).compare("+V") == 0) {
 				//parent->fwVersion = atoi(message.substr(2).c_str());
-				printf("Firmware version: %s\n", message.substr(2).c_str());
+				//printf("Firmware version: %s\n", message.substr(2).c_str());
 			} else if (message.substr(0,2).compare("+R") == 0) {
 				Manager *manager = Manager::getInstance();
 				manager->parseMessage(message.substr(2), parent);

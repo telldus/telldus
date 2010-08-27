@@ -12,7 +12,7 @@
 #include "TellStick.h"
 #include "TellStickDuo.h"
 #include "telldus-core.h"
-#include <string>
+#include <string.h>
 #include <stdlib.h>
 
 using namespace TelldusCore;
