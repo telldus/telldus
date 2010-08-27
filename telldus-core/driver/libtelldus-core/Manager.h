@@ -16,6 +16,7 @@
 #include "Settings.h"
 #include "Thread.h"
 #include <map>
+#include <list>
 
 namespace TelldusCore {
 	class Device;
