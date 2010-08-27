@@ -36,7 +36,7 @@ Socket::~Socket(void) {
 	delete d;
 }
 
-void Socket::connectToServer(const QString &server) {
+void Socket::connectToServer(const std::string &server) {
 	struct sockaddr_un remote;
 	socklen_t len;
 	//QString name = QString("/tmp/%1").arg(server);
@@ -45,7 +45,7 @@ void Socket::connectToServer(const QString &server) {
 		return;
 	}
 	remote.sun_family = AF_UNIX;
-	strcpy(remote.sun_path, server.toLocal8Bit());
+	strcpy(remote.sun_path, server.c_str());
 	len = SUN_LEN(&remote);
 
 	if (connectWrapper(d->socket, (struct sockaddr *)&remote, len) == -1) {
@@ -57,7 +57,7 @@ void Socket::connectToServer(const QString &server) {
 void Socket::disconnect() {
 	d->connected = false;
 	close(d->socket);
-	emit disconnected();
+//	emit disconnected(); //TODO:!
 }
 
 void Socket::write(const TelldusService::Message &msg) {
@@ -68,7 +68,7 @@ void Socket::writeOverlapped(const TelldusService::Message &msg) {
 	this->write(msg);
 }
 
-std::string Socket::readOverlapped() {
+std::string Socket::readOverlapped(int timeout) {
 	return this->read();
 }
 
@@ -81,6 +81,11 @@ std::string Socket::read() {
 		return "";
 	}
 	return buf;
+}
+
+std::string Socket::readWriteOverlapped(const TelldusService::Message &msg) {
+	this->writeOverlapped(msg);
+	return this->readOverlapped();
 }
 
 bool Socket::connected() const {
