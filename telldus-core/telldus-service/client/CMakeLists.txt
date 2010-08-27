@@ -23,6 +23,10 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_CURRENT_SOURCE_DIR}/../common
 )
 
+FIND_PACKAGE(Threads)
+LIST(APPEND telldus-client_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
+
+
 ######## Configurable options for the platform  ########
 
 

@@ -31,6 +31,9 @@ INCLUDE_DIRECTORIES(
 	${CMAKE_CURRENT_SOURCE_DIR}/../common
 )
 
+FIND_PACKAGE(Threads)
+LIST(APPEND telldus-service_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
+
 
 ######## Configurable options for the platform  ########
 
@@ -86,6 +89,7 @@ ELSEIF (WIN32) #### Windows ####
 	)
 
 ELSE (APPLE) #### Linux ####
+
 	SET( telldus-service_TARGET	telldusd )
 	SET( telldus-service_SRCS
 		${telldus-service_SRCS}
