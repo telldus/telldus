@@ -81,12 +81,14 @@ PrivateTellStickDuoListener::PrivateTellStickDuoListener( TellStickDuo *p )
 	parent(p),
 	running(false)
 {
+	Thread::initMutex(&mutex);
 }
 
 PrivateTellStickDuoListener::~PrivateTellStickDuoListener() {
 	if (running) {
 		stop();
 	}
+	Thread::destroyMutex(&mutex);
 }
 
 void PrivateTellStickDuoListener::stop() {
