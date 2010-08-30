@@ -136,8 +136,9 @@ bool Manager::unregisterCallback( int callbackId ) {
 void Manager::run() {
 	while( d->eventSocket.connected() ) {
 		logMessage("-> OVERLAPPED read");
-		std::string data(d->eventSocket.readOverlapped());
-//		logMessage(QString("<- OVERLAPPED result: %1").arg(QString::fromStdString(data)));
+		std::string data(d->eventSocket.read());
+		logMessage("<- OVERLAPPED result:");
+		logMessage(data);
 		if (data.length() == 0) {
 			continue;
 		}
@@ -156,9 +157,9 @@ void Manager::dataReceived(const std::string &message) {
 		std::string strDeviceStateValue = Message::takeString(&msg);
 //		logMessage(QString("Sending %1 callbacks").arg(d->callbacks.size()));
 		for(CallbackList::const_iterator callback_it = d->callbacks.begin(); callback_it != d->callbacks.end(); ++callback_it) {
-			logMessage("StartSend");
+			//logMessage("StartSend");
 			(*callback_it).event(intDeviceId, intDeviceState, strDeviceStateValue.c_str(), (*callback_it).id, (*callback_it).context);
-			logMessage("SendDone");
+			//logMessage("SendDone");
 		}
 	} else if (funcName == "TDDeviceChangeEvent") {
 		int intDeviceId = Message::takeInt(&msg);
@@ -172,6 +173,7 @@ void Manager::dataReceived(const std::string &message) {
 		}
 	} else if (funcName == "TDRawDeviceEvent") {
 		std::string strData = Message::takeString(&msg);
+		//logMessage(strData);
 		int controllerId = Message::takeInt(&msg);
 		for(RawCallbackList::const_iterator callback_it = d->rawCallbacks.begin(); callback_it != d->rawCallbacks.end(); ++callback_it) {
 			(*callback_it).event(strData.c_str(), controllerId, (*callback_it).id, (*callback_it).context);
@@ -205,7 +207,7 @@ std::string Manager::send(const Message &message, bool *success) {
 
 std::string Manager::sendAndReceiveString(const TelldusService::Message &msg, bool *success) {
 	std::string message(send(msg, success));
-	return Message::takeString(&message);
+	return Message::ta§keString(&message);
 }
 
 int Manager::sendAndReceiveInt(const TelldusService::Message &msg, bool *success) {
@@ -214,28 +216,27 @@ int Manager::sendAndReceiveInt(const TelldusService::Message &msg, bool *success
 }
 
 //#include <QFile>
-//#include <QTextStream>
-//#include <QTime>
+#include <iostream>
+#include <windows.h>
+#include <fstream>
 //#include <QDebug>
-//void Manager::logMessage( const QString &message) {
-/*#ifdef _WINDOWS
-	QFile file("C:/log_client.txt");
+void Manager::logMessage( const std::string &message) {
+#ifdef _WINDOWS
 	return;
 	static bool firstRun = true;
+	std::ofstream file;
+	std::string filename("C:/log_client.txt");
 	if (firstRun) {
-		file.open(QIODevice::WriteOnly | QIODevice::Text);
+		file.open(filename.c_str(), std::ios::out);
 		firstRun = false;
 	} else {
-		file.open(QIODevice::Append | QIODevice::Text);
+		file.open(filename.c_str(), std::ios::out | std::ios::app);
 	}
-	QTextStream out(&file);
-	out << QTime::currentTime().toString() << ": " << message << "\n";
+	
+	file << message << "\n";
+	file.flush();
 	file.close();
 #else
 	qDebug() << message;
 #endif
-}
-*/
-
-void Manager::logMessage( const std::string &message) {
 }
