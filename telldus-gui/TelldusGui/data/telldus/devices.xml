@@ -36,7 +36,7 @@
 			<device model="selflearning-dimmer:homeeasy" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
 		</vendor>
 		<vendor name="HQ" image="hq">
-			<device model="codeswitch:hq" protocol="hq" widget="2" image="hq_cs" name="Code Switch">Code Switch</device>
+			<device model="codeswitch:fuhaote" protocol="fuhaote" widget="2" image="hq_cs" name="Code Switch">Code Switch</device>
 		</vendor>
 		<vendor name="IKEA" image="ikea">
 			<device model="selflearning:ikea" protocol="ikea" widget="3" image="koppla">Koppla</device>
