@@ -41,7 +41,7 @@ bool DeviceFuhaote::setDeviceParameter(const std::string &strName, const std::st
 /*
 * Turn on this device
 */
-int DeviceFuhaote::turnOn(Controller *controller){
+int DeviceFuhaote::turnOn(void){
 
 	std::string strCode = "S";
 	strCode.append(getStringCode());
@@ -49,13 +49,13 @@ int DeviceFuhaote::turnOn(Controller *controller){
 	strCode.append(1, S);
 	strCode.append("+");
 	
-	return controller->send(strCode);
+	return Device::send(strCode);
 }
 
 /*
 * Turn off this device
 */
-int DeviceFuhaote::turnOff(Controller *controller){
+int DeviceFuhaote::turnOff(void){
 	
 	std::string strCode = "S";
 	strCode.append(getStringCode());
@@ -63,7 +63,7 @@ int DeviceFuhaote::turnOff(Controller *controller){
 	strCode.append(1, S);
 	strCode.append("+");
 	
-	return controller->send(strCode);
+	return Device::send(strCode);
 }
 
 bool DeviceFuhaote::parameterMatches( const std::string &name, const std::string &value ) const {
