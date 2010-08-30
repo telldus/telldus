@@ -93,6 +93,10 @@
 			<!--<text></text> -->
 			<device model="codeswitch:waveman" protocol="waveman" widget="1" image="waveman_cs" name="Code Switch">Code Switch</device>
 		</vendor>
+		<vendor name="X10 (experimental)" image="x10">
+			<!--<text></text> -->
+			<device model="codeswitch:x10" protocol="x10" widget="1" image="x10" name="Code Switch">Code Switch</device>
+		</vendor>
 	</type>
 	<type name="Projector screens" expanded="true">
 		<vendor name="Roxcore" image="roxcore">
