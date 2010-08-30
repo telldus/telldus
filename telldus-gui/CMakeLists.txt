@@ -17,6 +17,8 @@ SET(LANGUAGES sv)
 SET(BUILD_LIBTELLDUS-GUI	TRUE	CACHE BOOL "Build libtelldus-gui")
 SET(BUILD_TELLDUS-CENTER TRUE CACHE BOOL "Build TelldusCenter")
 
+SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
+
 IF (WIN32)
 	SET(TELLDUSCORE_INCLUDE_DIR	""	CACHE PATH "Path to the directory which contains telldus-core.h")
 	SET(TELLDUSCORE_LIBRARY	""	CACHE FILEPATH "Path to TelldusCore.lib")

@@ -58,8 +58,7 @@ QT4_WRAP_CPP(  telldus-gui_MOC_SRCS  ${telldus-gui_MOC_HDRS} )
 QT4_AUTOMOC (  ${telldus-gui_SRCS} )
 QT4_ADD_RESOURCES  (telldus-gui_RSRCS   telldusgui.qrc  data/${BRANDING}/resources.qrc         )
 
-FIND_LIBRARY( TELLDUSCORE_LIBRARY telldus-core )
-
+FIND_PACKAGE(TelldusCore REQUIRED)
 SET( telldus-gui_LIBRARIES
 	${QT_LIBRARIES}
 	${TELLDUSCORE_LIBRARY}
@@ -77,6 +76,7 @@ IF (APPLE)
 	ADD_DEFINITIONS(
 		-D_MACOSX
 	)
+
 ELSEIF (WIN32)
 	#### Windows ####
 	SET( telldus-gui_TARGET	TelldusGui )
