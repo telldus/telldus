@@ -135,13 +135,11 @@ void WINAPI TelldusWinService::serviceMain( DWORD argc, TCHAR* argv[] ) {
 
 		if (!deviceNotificationHandle) {
 			TelldusCore::logMessage(QString("Fail RegisterDeviceNotification"));
-		} else {
-			TelldusCore::logMessage(QString("Success RegisterDeviceNotification"));
 		}
 
-		TelldusCore::logMessage(QString("Main thread waiting for service to stop"));
+		//TelldusCore::logMessage(QString("Main thread waiting for service to stop"));
 		app.exec();
-		TelldusCore::logMessage(QString("Main thread waited, shutting down"));
+		//TelldusCore::logMessage(QString("Main thread waited, shutting down"));
 
 		// service was stopped
 		instance.serviceStatus.dwCurrentState = SERVICE_STOP_PENDING;

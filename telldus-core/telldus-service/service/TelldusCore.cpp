@@ -61,14 +61,14 @@ void TelldusCore::managerDone() {
 }
 
 void TelldusCore::newConnection(Socket *socket) {
-	logMessage(" New normal Connection");
+	//logMessage(" New normal Connection");
 	//QLocalSocket *s = d->server.nextPendingConnection();
 	Manager *m = new Manager(socket, this);
 	connect(m, SIGNAL(done()), this, SLOT(managerDone()));
 }
 
 void TelldusCore::newEventConnection(Socket *socket) {
-	logMessage(" New eventConnection");
+	//logMessage(" New eventConnection");
 //	QLocalSocket *s = d->eventServer.nextPendingConnection();
 	//connect(socket, SIGNAL(disconnected()), this, SLOT(disconnected())); //TODO: Must check for disconnect somehow
 	d->eventSockets.append(socket);
@@ -121,6 +121,7 @@ void TelldusCore::deviceChangeEventSlot(int deviceId, int eventId, int changeTyp
 }
 
 void TelldusCore::rawDeviceEventSlot(const QString &data, int controllerId) {
+	logMessage(data);
 	Message msg("TDRawDeviceEvent");
 	msg.addArgument(data.toStdString());
 	msg.addArgument(controllerId);
@@ -137,7 +138,7 @@ void TelldusCore::logMessage( const QString &message) {
 #ifdef _WINDOWS
 	return;
 	static bool firstRun = true;
-	QFile file("C:/log.txt");
+	QFile file("C:/log_server.txt");
 	if (firstRun) {
 		file.open(QIODevice::WriteOnly | QIODevice::Text);
 		firstRun = false;

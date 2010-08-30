@@ -25,19 +25,19 @@ Manager::Manager(Socket *s, QObject *parent)
 	d->running = true;
 	connect(this, SIGNAL(finished()), this, SIGNAL(done()));
 //	connect(d->s, SIGNAL(dataArrived(const QByteArray &)), this, SLOT(dataArrived(const QByteArray &)));
-	TelldusCore::logMessage("  Manager created");
+	//TelldusCore::logMessage("  Manager created");
 	this->start();
 }
 
 Manager::~Manager(void) {
-	TelldusCore::logMessage("  Destroying Manager");
+	//TelldusCore::logMessage("  Destroying Manager");
 	d->s->disconnect();
-	TelldusCore::logMessage("  Disconnected, waiting");
+	//TelldusCore::logMessage("  Disconnected, waiting");
 	wait();
-	TelldusCore::logMessage("  Waited, deleting");
+	//TelldusCore::logMessage("  Waited, deleting");
 	delete d->s;
 	delete d;
-	TelldusCore::logMessage("  Manager destroyed");
+	//TelldusCore::logMessage("  Manager destroyed");
 }
 
 QVariant Manager::parseMessage(const std::string &message) {
@@ -190,7 +190,7 @@ void Manager::run() {
 			}
 			continue;
 		}
-		TelldusCore::logMessage(data);
+		//TelldusCore::logMessage(data);
 		QVariant response(this->parseMessage(data));
 		Message msg;
 		if (response.type() == QVariant::Int) {

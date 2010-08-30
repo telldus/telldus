@@ -24,12 +24,12 @@ Pipe::Pipe(QObject *parent)
 }
 
 Pipe::~Pipe(void) {
-	TelldusCore::logMessage(QString("Stopping pipe %1").arg(d->name));
+	//TelldusCore::logMessage(QString("Stopping pipe %1").arg(d->name));
 	d->closing = true;
 	if (d->event != INVALID_HANDLE_VALUE) {
 		SetEvent(d->event);
 	}
-	TelldusCore::logMessage("Waiting for thread to close");
+	//TelldusCore::logMessage("Waiting for thread to close");
 	this->wait();
 	delete d;
 }
@@ -50,18 +50,15 @@ void Pipe::run() {
 
 	pSD = (PSECURITY_DESCRIPTOR) LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH); 
 	if (pSD == NULL) {
-		TelldusCore::logMessage("LocalAlloc Error");
 		return;
     } 
  
     if (!InitializeSecurityDescriptor(pSD, SECURITY_DESCRIPTOR_REVISION)) {  
-		TelldusCore::logMessage("InitializeSecurityDescriptor Error");
         LocalFree(pSD);
 		return;
     }
 
 	if(!AllocateAndInitializeSid(&SIDAuthWorld, 1, SECURITY_WORLD_RID, 0, 0, 0, 0, 0, 0, 0, &pEveryoneSID)) {
-		TelldusCore::logMessage("AllocateAndInitializeSid Error");
         LocalFree(pSD);
     }
 
@@ -80,7 +77,6 @@ void Pipe::run() {
             pACL, 
             FALSE))   // not a default DACL 
     {  
-		TelldusCore::logMessage("SetSecurityDescriptorDacl Error");
         LocalFree(pSD);
 		FreeSid(pEveryoneSID);
     }
@@ -95,7 +91,7 @@ void Pipe::run() {
 	d->event = oOverlap.hEvent;
 
 	while(!d->closing) {
-		TelldusCore::logMessage(QString("Starting listening in pipe %1").arg(d->name));
+		//TelldusCore::logMessage(QString("Starting listening in pipe %1").arg(d->name));
 		HANDLE hPipe = CreateNamedPipe( 
 			(const wchar_t *)d->name.utf16(),             // pipe name 
 			PIPE_ACCESS_DUPLEX |      // read/write access 
@@ -122,10 +118,10 @@ void Pipe::run() {
 		bool connected = GetOverlappedResult(hPipe, &oOverlap, &cbBytesRead, false);
 		if (d->closing || !connected) {
 			CloseHandle(hPipe);
-			TelldusCore::logMessage("Closing or no connection, restart");
+			//TelldusCore::logMessage("Closing or no connection, restart");
 			continue;
 		}
-		TelldusCore::logMessage("Connected");
+		//TelldusCore::logMessage("Connected");
 		emit newConnection(new Socket(hPipe));
 	}
 
