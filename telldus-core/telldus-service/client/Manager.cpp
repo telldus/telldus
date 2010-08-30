@@ -207,7 +207,7 @@ std::string Manager::send(const Message &message, bool *success) {
 
 std::string Manager::sendAndReceiveString(const TelldusService::Message &msg, bool *success) {
 	std::string message(send(msg, success));
-	return Message::ta§keString(&message);
+	return Message::takeString(&message);
 }
 
 int Manager::sendAndReceiveInt(const TelldusService::Message &msg, bool *success) {
