@@ -14,6 +14,7 @@
 
 #include "DeviceBrateck.h"
 #include "DeviceEverflourish.h"
+#include "DeviceFuhaote.h"
 #include "DeviceGroup.h"
 #include "DeviceNexa.h"
 #include "DeviceRisingSun.h"
@@ -102,6 +103,11 @@ Device *Manager::getDevice(int intDeviceId){
 			dev = new DeviceEverflourish(intDeviceId, strModel, strName);
 			((DeviceEverflourish*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "house"));
 			((DeviceEverflourish*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "unit"));
+#endif
+#ifdef PROTOCOL_FUHAOTE
+		} else if (strcasecmp(protocol.c_str(), "fuhaote") == 0) {
+			dev = new DeviceFuhaote(intDeviceId, strModel, strName);
+			((DeviceFuhaote*)dev)->setCode(settings.getDeviceParameter(intDeviceId, "code"));
 #endif
 #ifdef PROTOCOL_GROUP
 		} else if (strcasecmp(protocol.c_str(), "group") == 0) {

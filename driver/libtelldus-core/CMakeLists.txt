@@ -13,6 +13,7 @@ SET( telldus-core_SRCS
 	Device.cpp
 	DeviceBrateck.cpp
 	DeviceEverflourish.cpp
+	DeviceFuhaote.cpp
 	DeviceGroup.cpp
 	DeviceIkea.cpp
 	DeviceNexa.cpp

@@ -8,6 +8,7 @@
 	#define PROTOCOL_ARCTECH
 	#define PROTOCOL_BRATECK
 	#define PROTOCOL_EVERFLOURISH
+	#define PROTOCOL_FUHAOTE
 	#define PROTOCOL_GROUP
 	#define PROTOCOL_RISINGSUN
 	#define PROTOCOL_WAVEMAN
@@ -16,3 +17,4 @@
 	#define PROTOCOL_UPM
 	#define PROTOCOL_X10
 #endif
+
