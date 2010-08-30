@@ -35,6 +35,9 @@
 			<device model="selflearning-switch:homeeasy" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
 			<device model="selflearning-dimmer:homeeasy" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
 		</vendor>
+		<vendor name="HQ" image="hq">
+			<device model="codeswitch:fuhaote" protocol="fuhaote" widget="2" image="hq_cs" name="Code Switch">Code Switch</device>
+		</vendor>
 		<vendor name="IKEA" image="ikea">
 			<device model="selflearning:ikea" protocol="ikea" widget="3" image="koppla">Koppla</device>
 		</vendor>
@@ -87,7 +90,7 @@
 			<device model="codeswitch:sartano" protocol="sartano" widget="2" image="sartano" name="Code Switch">Code Switch</device>
 		</vendor>
 		<vendor name="UPM" image="upm">
-			<device model="selflearning:upm" protocol="upm" widget="9" image="upm_sl" name="Selflearning">Selflerning</device>
+			<device model="selflearning:upm" protocol="upm" widget="9" image="upm_sl" name="Self Learning">Self Learning</device>
 		</vendor>
 		<vendor name="Waveman" image="waveman">
 			<!--<text></text> -->
