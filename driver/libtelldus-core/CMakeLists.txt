@@ -29,8 +29,11 @@ SET( telldus-core_SRCS
 	telldus-core.cpp
 	)
 
-SET( telldus-core_HDRS
+SET( telldus-core_PUB_HDRS
 	telldus-core.h
+)
+
+SET( telldus-core_HDRS
 	${CMAKE_CURRENT_BINARY_DIR}/include/config.h
 )
 
@@ -157,6 +160,7 @@ ENDIF (APPLE)
 ADD_LIBRARY(${telldus-core_TARGET} SHARED
 	${telldus-core_SRCS}
 	${telldus-core_HDRS}
+	${telldus-core_PUB_HDRS}
 )
 
 TARGET_LINK_LIBRARIES( ${telldus-core_TARGET}	${telldus-core_LIBRARIES} )
@@ -165,7 +169,7 @@ SET_PROPERTY(TARGET ${telldus-core_TARGET}
 	PROPERTY FRAMEWORK TRUE	
 )
 SET_PROPERTY(TARGET ${telldus-core_TARGET}
-	PROPERTY PUBLIC_HEADER ${telldus-core_HDRS}
+	PROPERTY PUBLIC_HEADER ${telldus-core_PUB_HDRS}
 )
 
 SET_PROPERTY(TARGET ${telldus-core_TARGET}
