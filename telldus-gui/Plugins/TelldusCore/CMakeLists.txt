@@ -1,4 +1,5 @@
 SET( Plugin_NAME "TelldusCorePlugin" )
+SET( Plugin_PATH "com.telldus.core" )
 
 SET( Plugin_SRCS
 	tellduscoreplugin.cpp

@@ -24,49 +24,68 @@ ADD_DEFINITIONS(-DQT_SHARED)
 #SET( LIBRARY_OUTPUT_PATH	${LIBRARY_OUTPUT_PATH/Plugins} )
 
 FOREACH(lang ${LANGUAGES})
-	LIST(APPEND Plugin_TS "translation_${lang}.ts")
+	IF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/translation_${lang}.ts" OR UPDATE_TRANSLATIONS)
+		LIST(APPEND Plugin_TS "translation_${lang}.ts")
+	ENDIF(EXISTS "${CMAKE_CURRENT_SOURCE_DIR}/translation_${lang}.ts" OR UPDATE_TRANSLATIONS)
 ENDFOREACH(lang)
 SET(translation_sources ${Plugin_SRCS})
+
 IF(Plugin_PATH)
 	STRING(REPLACE "." "/"
 		path ${Plugin_PATH}
 	)
+	IF (APPLE)
+		SET(Plugin_PATH "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Plugins/script/${path}")
+	ELSE (APPLE)
+		SET(Plugin_PATH "${CMAKE_SOURCE_DIR}/TelldusCenter/Plugins/script/${path}")
+	ENDIF (APPLE)
+	
 	LIST(APPEND translation_sources
 		"${CMAKE_SOURCE_DIR}/TelldusCenter/Plugins/script/${path}/__init__.js"
 	)
-	IF (APPLE)
-		SET_SOURCE_FILES_PROPERTIES(${Plugin_TS} PROPERTIES
-			OUTPUT_LOCATION "${CMAKE_SOURCE_DIR}/TelldusCenter/Plugins/script/${path}"
-		)
-	ELSE (APPLE)
-		SET_SOURCE_FILES_PROPERTIES(${Plugin_TS} PROPERTIES
-			OUTPUT_LOCATION "${CMAKE_SOURCE_DIR}/TelldusCenter/Plugins/script/${path}"
-		)
-	ENDIF (APPLE)
+	LIST(APPEND Plugin_FILES "${CMAKE_SOURCE_DIR}/TelldusCenter/Plugins/script/${path}/__init__.js")
+	
 ENDIF(Plugin_PATH)
+
 IF (UPDATE_TRANSLATIONS)
 	QT4_CREATE_TRANSLATION( QM_FILES ${Plugin_SRCS} ${translation_sources} ${Plugin_TS} )
 ELSE (UPDATE_TRANSLATIONS)
 	QT4_ADD_TRANSLATION(Plugin_QM ${Plugin_TS})
+	LIST(APPEND Plugin_FILES ${Plugin_QM})
 ENDIF (UPDATE_TRANSLATIONS)
 
-ADD_LIBRARY(${Plugin_NAME} SHARED
-	${Plugin_SRCS}
-	${Plugin_HDRS}
-	${Plugin_MOC_SRCS}
-	${Plugin_TS}
-	${Plugin_QM}
-)
+IF(Plugin_SRCS)
+	ADD_LIBRARY(${Plugin_NAME} SHARED
+		${Plugin_SRCS}
+		${Plugin_HDRS}
+		${Plugin_MOC_SRCS}
+		${Plugin_TS}
+		${Plugin_QM}
+	)
+	TARGET_LINK_LIBRARIES( ${Plugin_NAME}	${Plugin_LIBRARIES} )
+	
+	IF (APPLE)
+		SET_TARGET_PROPERTIES(${Plugin_NAME} PROPERTIES
+			LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Plugins/script
+			PREFIX "../"
+		)
+	ELSE (APPLE)
+		SET_TARGET_PROPERTIES(${Plugin_NAME} PROPERTIES
+			LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/TelldusCenter/Plugins/script
+		)
+	ENDIF (APPLE)
+ELSE(Plugin_SRCS)
+	ADD_CUSTOM_TARGET(${Plugin_NAME} ALL
+		SOURCES ${Plugin_FILES}
+	)
+ENDIF(Plugin_SRCS)
 
-TARGET_LINK_LIBRARIES( ${Plugin_NAME}	${Plugin_LIBRARIES} )
-
-IF (APPLE)
+IF(Plugin_PATH)
 	ADD_CUSTOM_COMMAND( TARGET ${Plugin_NAME}
 		POST_BUILD
-		COMMAND cp "${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/lib${Plugin_NAME}.dylib" "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Plugins/script/"
+		COMMAND mkdir -p ${Plugin_PATH}
+		COMMAND cp ${Plugin_FILES} ${Plugin_PATH}
+		COMMENT "Copy files files for plugin ${Plugin_NAME}"
 	)
-ELSE (APPLE)
-	SET_TARGET_PROPERTIES(${Plugin_NAME} PROPERTIES
-		LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/TelldusCenter/Plugins/script
-	)
-ENDIF (APPLE)
+ENDIF(Plugin_PATH)
+
