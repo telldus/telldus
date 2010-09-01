@@ -137,6 +137,8 @@ void Manager::run() {
 	while( d->eventSocket.connected() ) {
 		logMessage("-> OVERLAPPED read");
 		std::string data(d->eventSocket.read());
+		Message message("Tack");
+		d->eventSocket.write(message);
 		logMessage("<- OVERLAPPED result:");
 		logMessage(data);
 		if (data.length() == 0) {

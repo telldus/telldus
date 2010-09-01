@@ -130,7 +130,7 @@ void TelldusCore::rawDeviceEventSlot(const QString &data, int controllerId) {
 
 void TelldusCore::sendEventMessage(const Message &msg) {
 	foreach(Socket *s, d->eventSockets) {
-		s->write(msg);
+		std::string ret = s->readWriteOverlapped(msg);
 	}
 }
 

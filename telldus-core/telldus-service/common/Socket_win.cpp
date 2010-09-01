@@ -85,12 +85,13 @@ void Socket::disconnect() {
 }
 
 void Socket::write(const TelldusService::Message &msg) {
-	DWORD bytesWritten = 0;
+	this->writeOverlapped(msg);
+	/*DWORD bytesWritten = 0;
 	if (WriteFile(d->hPipe, msg.data(), (DWORD)msg.length(), &bytesWritten, NULL)) {
 		FlushFileBuffers(d->hPipe);
 	} else {
 		d->connected = false;
-	}
+	}*/
 }
 
 void Socket::writeOverlapped(const TelldusService::Message &msg) {
