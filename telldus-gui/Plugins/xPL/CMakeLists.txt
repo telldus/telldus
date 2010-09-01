@@ -1,6 +1,7 @@
 SET(QT_USE_QTNETWORK TRUE)
 
 SET( Plugin_NAME "xPLPlugin" )
+SET( Plugin_PATH "com.telldus.xpl" )
 
 SET( Plugin_SRCS
 	xplplugin.cpp
