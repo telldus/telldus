@@ -37,7 +37,7 @@ IF(Plugin_PATH)
 	IF (APPLE)
 		SET(Plugin_PATH "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Plugins/script/${path}")
 	ELSE (APPLE)
-		SET(Plugin_PATH "${CMAKE_SOURCE_DIR}/TelldusCenter/Plugins/script/${path}")
+		SET(Plugin_PATH "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/Plugins/script/${path}")
 	ENDIF (APPLE)
 	
 	LIST(APPEND translation_sources
@@ -71,7 +71,7 @@ IF(Plugin_SRCS)
 		)
 	ELSE (APPLE)
 		SET_TARGET_PROPERTIES(${Plugin_NAME} PROPERTIES
-			LIBRARY_OUTPUT_DIRECTORY ${CMAKE_SOURCE_DIR}/TelldusCenter/Plugins/script
+			PREFIX "Plugins/script/"
 		)
 	ENDIF (APPLE)
 ELSE(Plugin_SRCS)
@@ -83,9 +83,16 @@ ENDIF(Plugin_SRCS)
 IF(Plugin_PATH)
 	ADD_CUSTOM_COMMAND( TARGET ${Plugin_NAME}
 		POST_BUILD
-		COMMAND mkdir -p ${Plugin_PATH}
-		COMMAND cp ${Plugin_FILES} ${Plugin_PATH}
-		COMMENT "Copy files files for plugin ${Plugin_NAME}"
+		COMMAND ${CMAKE_COMMAND} -E make_directory ${Plugin_PATH}
+		COMMENT "Creating plugin directory ${Plugin_NAME}"
 	)
+	FOREACH(_FILE ${Plugin_FILES})
+		GET_FILENAME_COMPONENT(_FILENAME ${_FILE} NAME)
+		ADD_CUSTOM_COMMAND( TARGET ${Plugin_NAME}
+			POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy ${_FILE} ${Plugin_PATH}
+			COMMENT "Copy ${_FILENAME} for plugin ${Plugin_NAME}"
+		)
+	ENDFOREACH(_FILE)
 ENDIF(Plugin_PATH)
 
