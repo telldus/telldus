@@ -46,7 +46,7 @@ Device::Device(int id, int supportedMethods, QObject *parent)
 		tdReleaseString( protocol );
 	}
 
-	connect(this, SIGNAL(deviceChanged(int,int,int)), this, SLOT(deviceChangedSlot(int,int,int)));
+	connect(this, SIGNAL(deviceChanged(int,int,int)), this, SLOT(deviceChangedSlot(int,int,int)), Qt::QueuedConnection);
 }
 
 Device::~Device() {

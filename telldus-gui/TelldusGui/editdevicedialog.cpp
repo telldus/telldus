@@ -170,7 +170,7 @@ EditDeviceDialog::EditDeviceDialog(Device *device, QWidget *parent, Qt::WFlags f
 		d->selection->setCurrentIndex(index, QItemSelectionModel::ClearAndSelect );
 	}
 
-	connect(this, SIGNAL(rawDataReceived(const QString &)), this, SLOT(rawDataSlot(const QString &)));
+	connect(this, SIGNAL(rawDataReceived(const QString &)), this, SLOT(rawDataSlot(const QString &)), Qt::QueuedConnection);
 	d->rawDeviceEventId = tdRegisterRawDeviceEvent(reinterpret_cast<TDRawDeviceEvent>(&EditDeviceDialog::rawData), this);
 
 	stopScanClicked();

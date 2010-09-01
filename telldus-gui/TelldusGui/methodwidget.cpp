@@ -64,7 +64,7 @@ MethodWidget::MethodWidget( Device *device, QWidget *parent )
 	d->learn->setVisible( false );
 	layout->addWidget( d->learn );
 
-	connect(device, SIGNAL(methodsChanged(int)), this, SLOT(updateMethods(int)));
+	connect(device, SIGNAL(methodsChanged(int)), this, SLOT(updateMethods(int)), Qt::QueuedConnection);
 	connect(d->turnOff, SIGNAL(clicked()), device, SLOT(turnOff()));
 	connect(d->dim25, SIGNAL(clicked()), this, SLOT(dim()));
 	connect(d->dim50, SIGNAL(clicked()), this, SLOT(dim()));

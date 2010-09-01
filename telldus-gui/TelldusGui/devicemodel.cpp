@@ -4,6 +4,7 @@
 #include <QQueue>
 #include <QIcon>
 #include <math.h>
+#include <QThread>
 #include <QDebug>
 
 #ifdef _WINDOWS
@@ -18,14 +19,14 @@ const int SUPPORTED_METHODS = TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_B
 DeviceModel::DeviceModel(QObject *parent)
 		:QAbstractTableModel(parent)
 {
-	connect(this, SIGNAL(deviceChange(int,int,int)), this, SLOT(deviceChanged(int,int,int)));
+	connect(this, SIGNAL(deviceChange(int,int,int)), this, SLOT(deviceChanged(int,int,int)), Qt::QueuedConnection);
 	int numberOfDevices = tdGetNumberOfDevices();
 	for( int i = 0; i < numberOfDevices; ++i ) {
 		int id = tdGetDeviceId(i);
 		Device *device = new Device(id, SUPPORTED_METHODS, this);
 		devices.append(device);
-		connect(device, SIGNAL(stateChanged(int)), this, SLOT(deviceStateChanged(int)));
-		connect(device, SIGNAL(nameChanged(int,QString)), this, SLOT(nameChanged(int,QString)));
+		connect(device, SIGNAL(stateChanged(int)), this, SLOT(deviceStateChanged(int)), Qt::QueuedConnection);
+		connect(device, SIGNAL(nameChanged(int,QString)), this, SLOT(nameChanged(int,QString)), Qt::QueuedConnection);
 	}
 	
 	deviceChangeCallbackId = tdRegisterDeviceChangeEvent( reinterpret_cast<TDDeviceChangeEvent>(&DeviceModel::deviceChangeEvent), this);
@@ -134,7 +135,10 @@ void DeviceModel::deviceChanged( int deviceId, int eventType, int changeType ) {
 	if (eventType == TELLSTICK_DEVICE_ADDED) {
 		int deviceCount = devices.size();
 		beginInsertRows( QModelIndex(), deviceCount, deviceCount );
-		Device *device = new Device(deviceId, SUPPORTED_METHODS, this);
+		Device *device = new Device(deviceId, SUPPORTED_METHODS);
+		//We are not running in the DeviceModel-thread here. Move the device to the correct thread
+		device->moveToThread(this->thread());
+		device->setParent(this);
 		devices.append(device);
 		connect(device, SIGNAL(stateChanged(int)), this, SLOT(deviceStateChanged(int)));
 		connect(device, SIGNAL(nameChanged(int,QString)), this, SLOT(nameChanged(int,QString)));
