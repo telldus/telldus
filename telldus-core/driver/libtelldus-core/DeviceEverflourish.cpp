@@ -101,7 +101,12 @@ int DeviceEverflourish::learn(Controller *controller){
 
 
 bool DeviceEverflourish::parameterMatches( const std::string &name, const std::string &value ) const {
-	return false;
+	if (name.compare("house") == 0) {
+		return intHouse == atoi(value.c_str());
+	} else if (name.compare("unit") == 0) {
+		return intCode == atoi(value.c_str()) - 1;
+	}
+	return true;
 }
 
 /*
@@ -112,7 +117,7 @@ int DeviceEverflourish::methods(){
 }
 
 std::string DeviceEverflourish::getProtocol() const {
-	return "arctech";
+	return "everflourish";
 }
 
 std::string DeviceEverflourish::getCode(unsigned char action) {
