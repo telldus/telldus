@@ -91,15 +91,7 @@ void TelldusCenterApplication::eventTriggered( const QString &name, const QStrin
 void TelldusCenterApplication::loadPlugins() {
 	QDir pluginsDir = QDir(qApp->applicationDirPath());
 
-#if defined(Q_OS_WIN)
-	bool inBuildDir = false;
-	if (pluginsDir.dirName().toLower() == "debug" || 
-		pluginsDir.dirName().toLower() == "release" ||
-		pluginsDir.dirName().toLower() == "relwithdebinfo")
-	{
-		inBuildDir = true;
-	}
-#elif defined(Q_OS_MAC)
+#if defined(Q_OS_MAC)
 	if (pluginsDir.dirName() == "MacOS") {
 		pluginsDir.cdUp();
 	}
@@ -107,11 +99,6 @@ void TelldusCenterApplication::loadPlugins() {
 	if (!pluginsDir.cd("Plugins")) {
 		return;
 	}
-#if defined(Q_OS_WIN)
-	if (inBuildDir) {
-		pluginsDir.cdUp();
-	}
-#endif
 
 	this->setLibraryPaths( QStringList(pluginsDir.absolutePath()) );
 
