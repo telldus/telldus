@@ -41,9 +41,9 @@ IF(Plugin_PATH)
 	ENDIF (APPLE)
 	
 	LIST(APPEND translation_sources
-		"${CMAKE_SOURCE_DIR}/TelldusCenter/Plugins/script/${path}/__init__.js"
+		"${CMAKE_CURRENT_SOURCE_DIR}/__init__.js"
 	)
-	LIST(APPEND Plugin_FILES "${CMAKE_SOURCE_DIR}/TelldusCenter/Plugins/script/${path}/__init__.js")
+	LIST(APPEND Plugin_FILES "${CMAKE_CURRENT_SOURCE_DIR}/__init__.js")
 	
 ENDIF(Plugin_PATH)
 
