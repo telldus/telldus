@@ -42,7 +42,7 @@ void LiveObject::activate() {
 
 void LiveObject::connectToServer() {
 	d->socket->abort();
-	d->socket->connectToHost("192.168.0.50", 50000);
+	d->socket->connectToHost("tech.telldus.com", 50000);
 }
 
 void LiveObject::disconnect() {
