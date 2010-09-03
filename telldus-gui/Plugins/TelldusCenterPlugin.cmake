@@ -59,6 +59,7 @@ IF(Plugin_SRCS)
 		${Plugin_SRCS}
 		${Plugin_HDRS}
 		${Plugin_MOC_SRCS}
+		${Plugin_MOC_HDRS}
 		${Plugin_FILES}
 		${Plugin_TS}
 		${Plugin_QM}
