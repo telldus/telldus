@@ -2,7 +2,13 @@
 #define BRANDING "${BRANDING}"
 #define BRANDING_${BRANDING}
 
-#ifdef BRANDING_chacon
+#if defined(BRANDING_byron)
+	#define PROTOCOL_ARCTECH
+#elif defined(BRANDING_chacon)
+	#define PROTOCOL_ARCTECH
+#elif defined(BRANDING_coco)
+	#define PROTOCOL_ARCTECH
+#elif defined(BRANDING_intertechno)
 	#define PROTOCOL_ARCTECH
 #else
 	#define PROTOCOL_ARCTECH
