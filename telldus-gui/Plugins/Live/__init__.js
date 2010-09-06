@@ -6,14 +6,14 @@ com.telldus.live = function() {
 	
 	function init() {
 		socket = new LiveSocket();
-		socket.connected.connect(connected);
+		socket.notRegistered.connect(notRegistered);
 		socket.registered.connect(registered);
 		socket.messageReceived.connect(messageReceived);
 		socket.connectToServer();
    		com.telldus.core.deviceEvent.connect(deviceEvent);
 	}
 	
-	function connected() {
+	function notRegistered() {
    		if (com.telldus.systray) {
    		    com.telldus.systray.addSeparator();
 			menuId = com.telldus.systray.addMenuItem( "Activate Telldus Live!" );
