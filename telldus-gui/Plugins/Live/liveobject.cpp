@@ -1,7 +1,9 @@
 #include "liveobject.h"
+#include "config.h"
 #include <QtNetwork>
 #include <QtCore>
 #include <QDesktopServices>
+#include <QCryptographicHash>
 
 #include <QDebug>
 
@@ -37,12 +39,12 @@ void LiveObject::activate() {
 	if (d->mac == "" || d->socket->state() != QAbstractSocket::ConnectedState) {
 		return;
 	}
-	QDesktopServices::openUrl(QUrl("http://stage.telldus.se/telldus-live/register/client?address=" + d->mac));
+	QDesktopServices::openUrl(QUrl("http://stage.telldus.se/telldus-live/activate/client?address=" + d->mac));
 }
 
 void LiveObject::connectToServer() {
 	d->socket->abort();
-	d->socket->connectToHost("tech.telldus.com", 50000);
+	d->socket->connectToHost(TELLDUS_LIVE_HOST, TELLDUS_LIVE_PORT);
 }
 
 void LiveObject::disconnect() {
@@ -72,7 +74,15 @@ void LiveObject::pingServer() {
 
 
 void LiveObject::sendMessage(const LiveMessage &message) {
-	d->socket->write(message.toByteArray());
+	//Create a new signed message
+	QCryptographicHash signature( QCryptographicHash::Sha1 );
+	signature.addData(message.toByteArray());
+	signature.addData(TELLDUS_LIVE_PRIVATE_KEY);
+
+	LiveMessage msg(signature.result().toHex());
+	msg.append(message.toByteArray());
+	
+	d->socket->write(msg.toByteArray());
 	d->socket->flush();
 }
 
@@ -93,6 +103,7 @@ void LiveObject::p_connected() {
 	d->mac = iface.hardwareAddress().replace(":","");
 	LiveMessage msg("Register");
 	msg.append(d->mac);
+	msg.append(TELLDUS_LIVE_PUBLIC_KEY);
 	this->sendMessage(msg);
 	emit connected();
 }
