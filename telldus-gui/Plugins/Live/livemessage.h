@@ -17,7 +17,7 @@ public:
 
 public slots:
 	void append(const QString &argument);
-	QString argument(int index) const;
+	QByteArray argument(int index) const;
 	QString name() const;
 
 private:

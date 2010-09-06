@@ -30,11 +30,11 @@ void LiveMessage::append(const QString &argument) {
 	d->args.append(argument);
 }
 
-QString LiveMessage::argument(int index) const {
+QByteArray LiveMessage::argument(int index) const {
 	if (index + 1 >= d->args.count()) {
 		return "";
 	}
-	return d->args.at(index +1 ).toString();
+	return d->args.at(index +1 ).toByteArray();
 }
 
 QString LiveMessage::name() const {

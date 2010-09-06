@@ -12,6 +12,7 @@ public:
 	QTcpSocket *socket;
 	QTimer timer;
 	bool registered;
+	QUrl registerUrl;
 	QString mac;
 };
 
@@ -36,10 +37,10 @@ LiveObject::~LiveObject() {
 }
 
 void LiveObject::activate() {
-	if (d->mac == "" || d->socket->state() != QAbstractSocket::ConnectedState) {
+	if (d->mac == "" || d->socket->state() != QAbstractSocket::ConnectedState || !d->registerUrl.isValid()) {
 		return;
 	}
-	QDesktopServices::openUrl(QUrl("http://stage.telldus.se/telldus-live/activate/client?address=" + d->mac));
+	QDesktopServices::openUrl(d->registerUrl);
 }
 
 void LiveObject::connectToServer() {
@@ -53,12 +54,23 @@ void LiveObject::disconnect() {
 
 void LiveObject::readyRead() {
 	QByteArray ba = d->socket->readAll();
-	LiveMessage msg = LiveMessage::fromByteArray(ba);
+	LiveMessage envelope = LiveMessage::fromByteArray(ba);
+	QString signature = envelope.name();
+	LiveMessage msg = LiveMessage::fromByteArray(envelope.argument(0));
+
+	if (signatureForMessage(envelope.argument(0)) != signature) {
+		qDebug() << "HASH mismatch!" << msg.name();
+		return;
+	}
+
 	if (msg.name() == "") {
 		return;
 	} else if (msg.name() == "registered") {
 		d->registered = true;
 		emit registered();
+	} else if (msg.name() == "notregistered") {
+		d->registerUrl = msg.argument(0);
+		emit notRegistered();
 	} else {
 		emit messageReceived(&msg);
 	}
@@ -75,12 +87,9 @@ void LiveObject::pingServer() {
 
 void LiveObject::sendMessage(const LiveMessage &message) {
 	//Create a new signed message
-	QCryptographicHash signature( QCryptographicHash::Sha1 );
-	signature.addData(message.toByteArray());
-	signature.addData(TELLDUS_LIVE_PRIVATE_KEY);
-
-	LiveMessage msg(signature.result().toHex());
-	msg.append(message.toByteArray());
+	QByteArray body = message.toByteArray();
+	LiveMessage msg(signatureForMessage(body));
+	msg.append(body);
 	
 	d->socket->write(msg.toByteArray());
 	d->socket->flush();
@@ -128,4 +137,12 @@ QNetworkInterface LiveObject::interfaceFromAddress( const QHostAddress &address 
 		}
 	}
 	return QNetworkInterface();
+}
+
+QByteArray LiveObject::signatureForMessage( const QByteArray &message ) {
+	QCryptographicHash signature( QCryptographicHash::Sha1 );
+	signature.addData(message);
+	signature.addData(TELLDUS_LIVE_PRIVATE_KEY);
+
+	return signature.result().toHex();
 }
