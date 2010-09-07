@@ -6,6 +6,7 @@
 #include <QAbstractSocket>
 #include <QNetworkInterface>
 #include <QHostAddress>
+#include <QSslError>
 #include "LiveMessage.h"
 
 class LiveObject : public QObject
@@ -35,6 +36,7 @@ private slots:
 	void readyRead();
 	void error( QAbstractSocket::SocketError socketError );
 	void stateChanged( QAbstractSocket::SocketState socketState );
+	void sslErrors( const QList<QSslError> & errors );
 
 private:
 	void sendMessage(const LiveMessage &message);

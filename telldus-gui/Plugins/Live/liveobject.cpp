@@ -9,7 +9,7 @@
 
 class LiveObject::PrivateData {
 public:
-	QTcpSocket *socket;
+	QSslSocket *socket;
 	QTimer timer;
 	bool registered;
 	QUrl registerUrl;
@@ -21,12 +21,14 @@ LiveObject::LiveObject( QScriptEngine *engine, QObject * parent )
 {
 	d = new PrivateData;
 	d->registered = false;
-	d->socket = new QTcpSocket(this);
-	connect(d->socket, SIGNAL(connected()), this, SLOT(p_connected()));
+	d->socket = new QSslSocket(this);
+	d->socket->setProtocol( QSsl::TlsV1 );
+	connect(d->socket, SIGNAL(encrypted()), this, SLOT(p_connected()));
 	connect(d->socket, SIGNAL(disconnected()), this, SLOT(p_disconnected()));
 	connect(d->socket, SIGNAL(readyRead()), this, SLOT(readyRead()));
 	connect(d->socket, SIGNAL(error(QAbstractSocket::SocketError)), this, SLOT(error(QAbstractSocket::SocketError)));
 	connect(d->socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(stateChanged(QAbstractSocket::SocketState)));
+	connect(d->socket, SIGNAL(sslErrors(const QList<QSslError> &)), this, SLOT(sslErrors(const QList<QSslError> &)));
 
 	d->timer.setInterval(60000); //Once a minute
 	connect(&d->timer, SIGNAL(timeout()), this, SLOT(pingServer()));
@@ -45,7 +47,7 @@ void LiveObject::activate() {
 
 void LiveObject::connectToServer() {
 	d->socket->abort();
-	d->socket->connectToHost(TELLDUS_LIVE_HOST, TELLDUS_LIVE_PORT);
+	d->socket->connectToHostEncrypted(TELLDUS_LIVE_HOST, TELLDUS_LIVE_PORT);
 }
 
 void LiveObject::disconnect() {
@@ -125,6 +127,23 @@ void LiveObject::error( QAbstractSocket::SocketError socketError ) {
 }
 
 void LiveObject::stateChanged( QAbstractSocket::SocketState socketState ) {
+}
+
+void LiveObject::sslErrors( const QList<QSslError> & errors ) {
+	bool everythingOK = true;
+	foreach( QSslError error, errors ) {
+		switch( error.error() ) {
+			case QSslError::SelfSignedCertificate:
+				continue;
+			default:
+				everythingOK = false;
+				qDebug() << "SSLErrors" << error;
+				break;
+		}
+	}
+	if (everythingOK) {
+		d->socket->ignoreSslErrors();
+	}
 }
 
 QNetworkInterface LiveObject::interfaceFromAddress( const QHostAddress &address ) {
