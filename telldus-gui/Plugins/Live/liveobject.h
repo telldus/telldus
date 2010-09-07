@@ -40,8 +40,8 @@ private slots:
 
 private:
 	void sendMessage(const LiveMessage &message);
+	QByteArray signatureForMessage( const QByteArray &message );
 	static QNetworkInterface interfaceFromAddress( const QHostAddress &address );
-	static QByteArray signatureForMessage( const QByteArray &message );
 
 	class PrivateData;
 	PrivateData *d;

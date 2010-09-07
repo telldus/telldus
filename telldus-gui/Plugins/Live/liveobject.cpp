@@ -3,7 +3,7 @@
 #include <QtNetwork>
 #include <QtCore>
 #include <QDesktopServices>
-#include <QCryptographicHash>
+#include <QtCrypto>
 
 #include <QDebug>
 
@@ -13,13 +13,21 @@ public:
 	QTimer timer;
 	bool registered;
 	QUrl registerUrl;
-	QString mac;
+	QString mac, hashMethod;
+	QCA::Initializer qcaInit;
 };
 
 LiveObject::LiveObject( QScriptEngine *engine, QObject * parent )
 		: QObject(parent)
 {
 	d = new PrivateData;
+	d->hashMethod = "sha1";
+	foreach(QString hash, QStringList() << "sha512" << "sha256") {
+		if (QCA::isSupported(hash.toLocal8Bit())) {
+			d->hashMethod = hash;
+			break;
+		}
+	}
 	d->registered = false;
 	d->socket = new QSslSocket(this);
 	d->socket->setProtocol( QSsl::TlsV1 );
@@ -115,6 +123,7 @@ void LiveObject::p_connected() {
 	LiveMessage msg("Register");
 	msg.append(d->mac);
 	msg.append(TELLDUS_LIVE_PUBLIC_KEY);
+	msg.append(d->hashMethod);
 	this->sendMessage(msg);
 	emit connected();
 }
@@ -146,6 +155,21 @@ void LiveObject::sslErrors( const QList<QSslError> & errors ) {
 	}
 }
 
+QByteArray LiveObject::signatureForMessage( const QByteArray &message ) {
+	if (QCA::isSupported(d->hashMethod.toLocal8Bit())) {
+		QCA::Hash signature(d->hashMethod);
+		signature.update(message);
+		signature.update(TELLDUS_LIVE_PRIVATE_KEY);
+		return signature.final().toByteArray().toHex();
+	}
+	
+	//Fallback to builtin function
+	QCryptographicHash signature( QCryptographicHash::Sha1 );
+	signature.addData(message);
+	signature.addData(TELLDUS_LIVE_PRIVATE_KEY);
+	return signature.result().toHex();
+}
+
 QNetworkInterface LiveObject::interfaceFromAddress( const QHostAddress &address ) {
 	QList<QNetworkInterface> interfaceList = QNetworkInterface::allInterfaces();
 	foreach (QNetworkInterface i, interfaceList) {
@@ -158,10 +182,3 @@ QNetworkInterface LiveObject::interfaceFromAddress( const QHostAddress &address 
 	return QNetworkInterface();
 }
 
-QByteArray LiveObject::signatureForMessage( const QByteArray &message ) {
-	QCryptographicHash signature( QCryptographicHash::Sha1 );
-	signature.addData(message);
-	signature.addData(TELLDUS_LIVE_PRIVATE_KEY);
-
-	return signature.result().toHex();
-}
