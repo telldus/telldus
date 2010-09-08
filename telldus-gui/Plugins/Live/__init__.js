@@ -3,6 +3,7 @@ __setupPackage__( __extension__ );
 com.telldus.live = function() {
     var socket = null;
     var menuId = 0;
+    var isRegistered = false;
 	
 	function init() {
 		socket = new LiveSocket();
@@ -11,9 +12,11 @@ com.telldus.live = function() {
 		socket.messageReceived.connect(messageReceived);
 		socket.connectToServer();
    		com.telldus.core.deviceEvent.connect(deviceEvent);
+   		com.telldus.core.deviceChange.connect(sendDevicesReport);
 	}
 	
 	function notRegistered() {
+	    isRegistered = false;
    		if (com.telldus.systray) {
    		    com.telldus.systray.addSeparator();
 			menuId = com.telldus.systray.addMenuItem( "Activate Telldus Live!" );
@@ -30,6 +33,9 @@ com.telldus.live = function() {
 	    socket.sendMessage(msg);
 	}
 	
+	function deviceChangeEvent() {
+	}
+	
 	function messageReceived(msg) {
 	    if (msg.name() == "turnon") {
 	        com.telldus.core.turnOn( msg.argument(0) );
@@ -44,6 +50,14 @@ com.telldus.live = function() {
 	        com.telldus.systray.removeMenuItem(menuId);
 	        menuId = 0;
 	    }
+	    isRegistered = true;
+        sendDevicesReport();
+	}
+	
+	function sendDevicesReport() {
+	    if (!isRegistered) {
+	        return;
+	    }
 	    msg = new LiveMessage("DevicesReport");
 	    var deviceList = com.telldus.core.deviceList.getList();
 	    msg.append(deviceList.length);
@@ -51,7 +65,7 @@ com.telldus.live = function() {
 		    msg.append(deviceList[i].id);
 		    msg.append(deviceList[i].name);
 		}
-		socket.sendMessage(msg);	
+		socket.sendMessage(msg);
 	}
 	
 	return { //Public functions
