@@ -64,6 +64,7 @@ void LiveObject::disconnect() {
 
 void LiveObject::readyRead() {
 	QByteArray ba = d->socket->readAll();
+	qDebug() << ba;
 	LiveMessage envelope = LiveMessage::fromByteArray(ba);
 	QString signature = envelope.name();
 	LiveMessage msg = LiveMessage::fromByteArray(envelope.argument(0));
@@ -113,6 +114,7 @@ void LiveObject::sendMessage(LiveMessage *message) {
 }
 
 void LiveObject::p_connected() {
+	qDebug() << "Encrypted";
 	//Lets find out our mac-address
 	QNetworkInterface iface = interfaceFromAddress(d->socket->localAddress());
 	if (!iface.isValid()) {
@@ -133,9 +135,14 @@ void LiveObject::p_disconnected() {
 }
 
 void LiveObject::error( QAbstractSocket::SocketError socketError ) {
+	qDebug() << socketError;
 }
 
 void LiveObject::stateChanged( QAbstractSocket::SocketState socketState ) {
+	if (socketState == QAbstractSocket::UnconnectedState) {
+		QTimer::singleShot(10000, this, SLOT(connectToServer()));
+	}
+	qDebug() << socketState;
 }
 
 void LiveObject::sslErrors( const QList<QSslError> & errors ) {
