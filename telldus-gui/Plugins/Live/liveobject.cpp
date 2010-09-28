@@ -15,6 +15,7 @@ public:
 	QUrl registerUrl;
 	QString mac, hashMethod;
 	QCA::Initializer qcaInit;
+	QNetworkAccessManager *manager;
 };
 
 LiveObject::LiveObject( QScriptEngine *engine, QObject * parent )
@@ -40,6 +41,9 @@ LiveObject::LiveObject( QScriptEngine *engine, QObject * parent )
 
 	d->timer.setInterval(60000); //Once a minute
 	connect(&d->timer, SIGNAL(timeout()), this, SLOT(pingServer()));
+
+	d->manager = new QNetworkAccessManager(this);
+	connect(d->manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(serverAssignReply(QNetworkReply*)));
 }
 
 LiveObject::~LiveObject() {
@@ -54,8 +58,7 @@ void LiveObject::activate() {
 }
 
 void LiveObject::connectToServer() {
-	d->socket->abort();
-	d->socket->connectToHostEncrypted(TELLDUS_LIVE_HOST, TELLDUS_LIVE_PORT);
+	d->manager->get(QNetworkRequest(QUrl(TELLDUS_LIVE_URI)));
 }
 
 void LiveObject::disconnect() {
@@ -114,7 +117,6 @@ void LiveObject::sendMessage(LiveMessage *message) {
 }
 
 void LiveObject::p_connected() {
-	qDebug() << "Encrypted";
 	//Lets find out our mac-address
 	QNetworkInterface iface = interfaceFromAddress(d->socket->localAddress());
 	if (!iface.isValid()) {
@@ -132,17 +134,22 @@ void LiveObject::p_connected() {
 
 void LiveObject::p_disconnected() {
 	d->timer.stop();
+	d->registered = false;
 }
 
 void LiveObject::error( QAbstractSocket::SocketError socketError ) {
-	qDebug() << socketError;
+	qDebug() << "Error:" << socketError;
 }
 
 void LiveObject::stateChanged( QAbstractSocket::SocketState socketState ) {
 	if (socketState == QAbstractSocket::UnconnectedState) {
 		QTimer::singleShot(10000, this, SLOT(connectToServer()));
+		qDebug() << "Reconnect in 10 seconds...";
+	} else if (socketState == QAbstractSocket::ConnectingState) {
+		qDebug() << "Connecting...";
+	} else {
+		//qDebug() << "State:" << socketState;
 	}
-	qDebug() << socketState;
 }
 
 void LiveObject::sslErrors( const QList<QSslError> & errors ) {
@@ -160,6 +167,26 @@ void LiveObject::sslErrors( const QList<QSslError> & errors ) {
 	if (everythingOK) {
 		d->socket->ignoreSslErrors();
 	}
+}
+
+void LiveObject::serverAssignReply( QNetworkReply *r ) {
+	QXmlStreamReader xml(r);
+	xml.readNextStartElement(); // enter <servers>
+	
+	while (xml.readNextStartElement()) {
+		if (xml.name().toString().toUpper() == "SERVER") {
+			QXmlStreamAttributes attrs = xml.attributes();
+			qDebug() << "Connecting to server" << attrs.value("name").toString();
+			d->socket->abort();
+			d->socket->connectToHostEncrypted(attrs.value("address").toString(), attrs.value("port").toString().toInt());
+			break;
+		} else {
+			qDebug() << xml.name();
+			xml.skipCurrentElement();
+		}
+
+	}
+	r->deleteLater();
 }
 
 QByteArray LiveObject::signatureForMessage( const QByteArray &message ) {

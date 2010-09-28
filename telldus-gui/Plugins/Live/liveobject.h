@@ -9,6 +9,8 @@
 #include <QSslError>
 #include "LiveMessage.h"
 
+class QNetworkReply;
+
 class LiveObject : public QObject
 {
 	Q_OBJECT
@@ -37,6 +39,7 @@ private slots:
 	void error( QAbstractSocket::SocketError socketError );
 	void stateChanged( QAbstractSocket::SocketState socketState );
 	void sslErrors( const QList<QSslError> & errors );
+	void serverAssignReply(QNetworkReply*);
 
 private:
 	void sendMessage(const LiveMessage &message);
