@@ -16,6 +16,7 @@
 #include "DeviceEverflourish.h"
 #include "DeviceFuhaote.h"
 #include "DeviceGroup.h"
+#include "DeviceSilvanChip.h"
 #include "DeviceNexa.h"
 #include "DeviceRisingSun.h"
 #include "DeviceWaveman.h"
@@ -104,6 +105,10 @@ Device *Manager::getDevice(int intDeviceId){
 		} else if (strcasecmp(protocol.c_str(), "fuhaote") == 0) {
 			dev = new DeviceFuhaote(intDeviceId, strModel, strName);
 			((DeviceFuhaote*)dev)->setCode(settings.getDeviceParameter(intDeviceId, "code"));
+
+		} else if (strcasecmp(protocol.c_str(), "silvanchip") == 0) {
+			dev = new DeviceSilvanChip(intDeviceId, strModel, strName);
+			((DeviceSilvanChip*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "house"));
 
 		} else if (strcasecmp(protocol.c_str(), "group") == 0) {
 			dev = new DeviceGroup(intDeviceId, strModel, strName);
