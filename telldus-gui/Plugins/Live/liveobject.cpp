@@ -206,11 +206,10 @@ void LiveObject::serverAssignReply( QNetworkReply *r ) {
 			server.port = attrs.value("port").toString().toInt();
 			d->serverList << server;
 			found = true;
-		} else {
-			xml.skipCurrentElement();
 		}
-
+		xml.skipCurrentElement();
 	}
+
 	if (found) {
 		qDebug() << "Servers found, retry direct...";
 		d->serverRefreshTime = QDateTime::currentDateTime();
