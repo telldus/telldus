@@ -73,6 +73,9 @@
 			<device model="selflearning-dimmer:nexa" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning dimmer">Self Learning dimmer</device>
 			<device model="bell:nexa" protocol="arctech" widget="4" image="bell" name="Bell">Bell</device>
 		</vendor>
+		<vendor name="Otio" image="otio">
+			<device model="selflearning:otio" protocol="risingsun" widget="12" image="otio" name="Self Learning">Self Learning</device>
+		</vendor>
 		<vendor name="Proove" image="proove">
 			<!--<text>http://www.proove.se/</text> -->
 			<device model="codeswitch:proove" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
