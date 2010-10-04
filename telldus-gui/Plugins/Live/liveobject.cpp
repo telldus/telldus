@@ -9,6 +9,8 @@
 
 class LiveObject::PrivateData {
 public:
+	class Server;
+
 	QSslSocket *socket;
 	QTimer timer;
 	bool registered;
@@ -16,7 +18,16 @@ public:
 	QString mac, hashMethod;
 	QCA::Initializer qcaInit;
 	QNetworkAccessManager *manager;
+	QList<Server> serverList;
+	QDateTime serverRefreshTime;
 };
+
+class LiveObject::PrivateData::Server {
+public:
+	QString address;
+	int port;
+};
+
 
 LiveObject::LiveObject( QScriptEngine *engine, QObject * parent )
 		: QObject(parent)
@@ -58,7 +69,19 @@ void LiveObject::activate() {
 }
 
 void LiveObject::connectToServer() {
-	d->manager->get(QNetworkRequest(QUrl(TELLDUS_LIVE_URI)));
+	if (d->serverList.isEmpty()) {
+		qDebug() << "No servers to connect to, refresh list";
+		d->manager->get(QNetworkRequest(QUrl(TELLDUS_LIVE_URI)));
+	} else if (d->serverRefreshTime.secsTo(QDateTime::currentDateTime()) > 300) { //Valid 5 min
+		qDebug() << "Serverlist to old, refresh";
+		d->serverList.clear();
+		d->manager->get(QNetworkRequest(QUrl(TELLDUS_LIVE_URI)));
+	} else {
+		d->socket->abort();
+		PrivateData::Server server = d->serverList.takeFirst();
+		qDebug() << "Connecting to" << server.address;
+		d->socket->connectToHostEncrypted(server.address, server.port);
+	}
 }
 
 void LiveObject::disconnect() {
@@ -170,21 +193,31 @@ void LiveObject::sslErrors( const QList<QSslError> & errors ) {
 }
 
 void LiveObject::serverAssignReply( QNetworkReply *r ) {
+	qDebug() << "Server assign reply";
 	QXmlStreamReader xml(r);
 	xml.readNextStartElement(); // enter <servers>
-	
+
+	bool found = false;
 	while (xml.readNextStartElement()) {
 		if (xml.name().toString().toUpper() == "SERVER") {
 			QXmlStreamAttributes attrs = xml.attributes();
-			qDebug() << "Connecting to server" << attrs.value("name").toString();
-			d->socket->abort();
-			d->socket->connectToHostEncrypted(attrs.value("address").toString(), attrs.value("port").toString().toInt());
-			break;
+			PrivateData::Server server;
+			server.address = attrs.value("address").toString();
+			server.port = attrs.value("port").toString().toInt();
+			d->serverList << server;
+			found = true;
 		} else {
-			qDebug() << xml.name();
 			xml.skipCurrentElement();
 		}
 
+	}
+	if (found) {
+		qDebug() << "Servers found, retry direct...";
+		d->serverRefreshTime = QDateTime::currentDateTime();
+		QTimer::singleShot(0, this, SLOT(connectToServer()));
+	} else {
+		QTimer::singleShot(10000, this, SLOT(connectToServer()));
+		qDebug() << "No server found, retry in 10 seconds...";
 	}
 	r->deleteLater();
 }
