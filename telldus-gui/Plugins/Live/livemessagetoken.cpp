@@ -14,6 +14,13 @@ LiveMessageToken::LiveMessageToken(const QString &value) {
 QByteArray LiveMessageToken::toByteArray() const {
 	if (valueType == Int) {
 		return QString("i%1e").arg(intVal).toLocal8Bit();
+	} else if (valueType == List) {
+		QByteArray retVal("l");
+		foreach(LiveMessageToken token, listVal) {
+			retVal.append(token.toByteArray());
+		}
+		retVal.append("e");
+		return retVal;
 	} else if (valueType == Dictionary) {
 		QByteArray retVal("h");
 		QHashIterator<QString, LiveMessageToken> it(dictVal);
@@ -67,6 +74,11 @@ LiveMessageTokenScriptWrapper::~LiveMessageTokenScriptWrapper() {
 
 LiveMessageToken LiveMessageTokenScriptWrapper::token() const {
 	return p_token;
+}
+
+void LiveMessageTokenScriptWrapper::add(LiveMessageTokenScriptWrapper *t) {
+	p_token.valueType = LiveMessageToken::List;
+	p_token.listVal << t->p_token;
 }
 
 void LiveMessageTokenScriptWrapper::set(const QString &key, int value) {

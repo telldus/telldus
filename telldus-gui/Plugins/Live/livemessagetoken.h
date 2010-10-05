@@ -8,7 +8,7 @@
 
 class LiveMessageToken {
 public:
-	enum Type {Invalid, Int, String, Dictionary};
+	enum Type {Invalid, Int, String, List, Dictionary};
 
 	LiveMessageToken();
 	LiveMessageToken(const QString &value);
@@ -18,6 +18,7 @@ public:
 	Type valueType;
 	int intVal;
 	QString stringVal;
+	QList<LiveMessageToken> listVal;
 	QHash<QString, LiveMessageToken> dictVal;
 };
 
@@ -30,6 +31,8 @@ public:
 	LiveMessageToken token() const;
 
 public slots:
+	void add(LiveMessageTokenScriptWrapper *token);
+
 	void set(const QString &key, int value);
 	void set(const QString &key, const QString &value);
 	
