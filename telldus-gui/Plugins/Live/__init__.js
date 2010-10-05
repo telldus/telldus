@@ -60,11 +60,14 @@ com.telldus.live = function() {
 	    }
 	    msg = new LiveMessage("DevicesReport");
 	    var deviceList = com.telldus.core.deviceList.getList();
-	    msg.append(deviceList.length);
+	    list = new LiveMessageToken();
 		for( i in deviceList ) {
-		    msg.append(deviceList[i].id);
-		    msg.append(deviceList[i].name);
+		    device = new LiveMessageToken();
+		    device.set('id', deviceList[i].id);
+		    device.set('name', deviceList[i].name);
+		    list.add(device);
 		}
+		msg.appendToken(list);
 		socket.sendMessage(msg);
 	}
 	
