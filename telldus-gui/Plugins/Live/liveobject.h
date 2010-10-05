@@ -10,6 +10,7 @@
 #include "LiveMessage.h"
 
 class QNetworkReply;
+class LiveMessageToken;
 
 class LiveObject : public QObject
 {
@@ -44,6 +45,7 @@ private slots:
 private:
 	void sendMessage(const LiveMessage &message);
 	QByteArray signatureForMessage( const QByteArray &message );
+	static LiveMessageToken generateVersionToken();
 	static QNetworkInterface interfaceFromAddress( const QHostAddress &address );
 
 	class PrivateData;

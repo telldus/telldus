@@ -150,9 +150,15 @@ void LiveObject::p_connected() {
 	d->timer.start();
 	d->mac = iface.hardwareAddress().replace(":","");
 	LiveMessage msg("Register");
-	msg.append(d->mac);
-	msg.append(TELLDUS_LIVE_PUBLIC_KEY);
-	msg.append(d->hashMethod);
+
+	LiveMessageToken token;
+	token.valueType = LiveMessageToken::Dictionary;
+	token.dictVal["mac"] = LiveMessageToken(d->mac);
+	token.dictVal["key"] = LiveMessageToken(TELLDUS_LIVE_PUBLIC_KEY);
+	token.dictVal["hash"] = LiveMessageToken(d->hashMethod);
+	msg.append(token);
+	msg.append(generateVersionToken());
+
 	this->sendMessage(msg);
 	emit connected();
 }
@@ -236,6 +242,35 @@ QByteArray LiveObject::signatureForMessage( const QByteArray &message ) {
 	signature.addData(message);
 	signature.addData(TELLDUS_LIVE_PRIVATE_KEY);
 	return signature.result().toHex();
+}
+
+LiveMessageToken LiveObject::generateVersionToken() {
+	LiveMessageToken token;
+	token.valueType = LiveMessageToken::Dictionary;
+	token.dictVal["protocol"] = LiveMessageToken("1");
+	token.dictVal["version"] = LiveMessageToken(TELLDUS_CENTER_VERSION);
+#ifdef Q_WS_WIN
+	token.dictVal["os"] = LiveMessageToken("windows");
+	switch (QSysInfo::WindowsVersion) {
+		case QSysInfo::WV_XP:
+			token.dictVal["os-version"] = LiveMessageToken("xp");
+			break;
+		case QSysInfo::WV_2003:
+			token.dictVal["os-version"] = LiveMessageToken("2003");
+			break;
+		case QSysInfo::WV_VISTA:
+			token.dictVal["os-version"] = LiveMessageToken("vista");
+			break;
+		case QSysInfo::WV_WINDOWS7:
+			token.dictVal["os-version"] = LiveMessageToken("win7");
+			break;
+		default:
+			token.dictVal["os-version"] = LiveMessageToken("unknown");
+	}
+#else
+	token.dictVal["os"] = LiveMessageToken("unknown");
+#endif
+	return token;
 }
 
 QNetworkInterface LiveObject::interfaceFromAddress( const QHostAddress &address ) {
