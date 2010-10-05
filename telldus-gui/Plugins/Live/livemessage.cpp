@@ -35,6 +35,10 @@ void LiveMessage::append(const LiveMessageToken &argument) {
 	d->args.append(argument);
 }
 
+void LiveMessage::appendToken(LiveMessageTokenScriptWrapper *argument) {
+	this->append(argument->token());
+}
+
 QByteArray LiveMessage::argument(int index) const {
 	if (index + 1 >= d->args.count()) {
 		return "";

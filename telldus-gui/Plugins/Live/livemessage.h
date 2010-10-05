@@ -4,6 +4,7 @@
 #include <QObject>
 #include <QMetaType>
 class LiveMessageToken;
+class LiveMessageTokenScriptWrapper;
 
 class LiveMessage : public QObject
 {
@@ -19,6 +20,7 @@ public:
 public slots:
 	void append(const QString &argument);
 	void append(const LiveMessageToken &argument);
+	void appendToken(LiveMessageTokenScriptWrapper *argument);
 	QByteArray argument(int index) const;
 	QString name() const;
 

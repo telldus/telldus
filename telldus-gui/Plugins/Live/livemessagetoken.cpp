@@ -56,3 +56,24 @@ LiveMessageToken LiveMessageToken::parseToken(const QByteArray &string, int* sta
 	}
 	return d;
 }
+
+LiveMessageTokenScriptWrapper::LiveMessageTokenScriptWrapper()
+	:QObject()
+{
+}
+
+LiveMessageTokenScriptWrapper::~LiveMessageTokenScriptWrapper() {
+}
+
+LiveMessageToken LiveMessageTokenScriptWrapper::token() const {
+	return p_token;
+}
+
+void LiveMessageTokenScriptWrapper::set(const QString &key, int value) {
+	this->set(key, QString::number(value));
+}
+
+void LiveMessageTokenScriptWrapper::set(const QString &key, const QString &value) {
+	p_token.valueType = LiveMessageToken::Dictionary;
+	p_token.dictVal[key] = LiveMessageToken(value);
+}

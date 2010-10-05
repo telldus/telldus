@@ -12,12 +12,12 @@ SET( Plugin_SRCS
 
 SET( Plugin_HDRS
 	liveplugin.h
-	livemessagetoken.h
 	${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
 	${CMAKE_CURRENT_BINARY_DIR}/parsed/config.h
 )
 
 SET( Plugin_MOC_HDRS
+	livemessagetoken.h
 	livemessage.h
 	liveobject.h
 )

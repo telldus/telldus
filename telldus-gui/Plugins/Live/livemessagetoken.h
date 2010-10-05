@@ -4,6 +4,7 @@
 #include <QByteArray>
 #include <QString>
 #include <QHash>
+#include <QMetaType>
 
 class LiveMessageToken {
 public:
@@ -20,6 +21,23 @@ public:
 	QHash<QString, LiveMessageToken> dictVal;
 };
 
+class LiveMessageTokenScriptWrapper : public QObject {
+	Q_OBJECT
+public:
+	LiveMessageTokenScriptWrapper();
+	virtual ~LiveMessageTokenScriptWrapper();
+
+	LiveMessageToken token() const;
+
+public slots:
+	void set(const QString &key, int value);
+	void set(const QString &key, const QString &value);
+	
+private:
+	LiveMessageToken p_token;
+};
+
+Q_DECLARE_METATYPE(LiveMessageTokenScriptWrapper*)
 
 
 #endif // LIVEMESSAGETOKEN_H

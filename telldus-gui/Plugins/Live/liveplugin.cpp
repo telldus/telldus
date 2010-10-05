@@ -1,5 +1,6 @@
 #include "liveplugin.h"
 #include "livemessage.h"
+#include "livemessagetoken.h"
 #include "liveobject.h"
 #include <QScriptEngine>
 #include <QDebug>
@@ -38,6 +39,24 @@ QScriptValue LiveMessageCtor(QScriptContext *context, QScriptEngine *engine)
 	return engine->undefinedValue();
 }
 
+QScriptValue LiveMessageTokenToScriptValue(QScriptEngine *engine, LiveMessageTokenScriptWrapper* const &in) {
+	return engine->newQObject(in);
+}
+
+void LiveMessageTokenFromScriptValue(const QScriptValue &object, LiveMessageTokenScriptWrapper* &out) {
+	out = qobject_cast<LiveMessageTokenScriptWrapper*>(object.toQObject());
+}
+
+QScriptValue LiveMessageTokenCtor(QScriptContext *context, QScriptEngine *engine)
+{
+	if (context->isCalledAsConstructor()) {
+		LiveMessageTokenScriptWrapper *msgToken = new LiveMessageTokenScriptWrapper();
+		QScriptValue msgTokenValue = engine->newQObject(msgToken, QScriptEngine::ScriptOwnership);
+		context->setThisObject( msgTokenValue );
+	}
+	return engine->undefinedValue();
+}
+
 LivePlugin::LivePlugin ( QObject * parent )
 		:QScriptExtensionPlugin( parent )
 {
@@ -49,9 +68,11 @@ LivePlugin::~LivePlugin() {
 void LivePlugin::initialize ( const QString & key, QScriptEngine * engine ) {
 	if (key == "com.telldus.live") {
 		qScriptRegisterMetaType(engine, LiveMessageToScriptValue, LiveMessageFromScriptValue);
+		qScriptRegisterMetaType(engine, LiveMessageTokenToScriptValue, LiveMessageTokenFromScriptValue);
 
 		engine->globalObject().setProperty("LiveSocket", engine->newFunction(LiveSocketCtor));
 		engine->globalObject().setProperty("LiveMessage", engine->newFunction(LiveMessageCtor));
+		engine->globalObject().setProperty("LiveMessageToken", engine->newFunction(LiveMessageTokenCtor));
 	}
 }
 
