@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QMetaType>
+class LiveMessageToken;
 
 class LiveMessage : public QObject
 {
@@ -17,11 +18,12 @@ public:
 
 public slots:
 	void append(const QString &argument);
+	void append(const LiveMessageToken &argument);
 	QByteArray argument(int index) const;
 	QString name() const;
 
 private:
-	LiveMessage(const QList<QVariant> &args);
+	LiveMessage(const QList<LiveMessageToken> &args);
 	class PrivateData;
 	PrivateData *d;
 };

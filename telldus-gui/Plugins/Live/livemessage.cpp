@@ -1,11 +1,12 @@
 #include "livemessage.h"
+#include "livemessagetoken.h"
 
 #include <QVariant>
 #include <QDebug>
 
 class LiveMessage::PrivateData {
 public:
-	QList<QVariant> args;
+	QList<LiveMessageToken> args;
 };
 
 LiveMessage::LiveMessage(const QString &name )
@@ -15,7 +16,7 @@ LiveMessage::LiveMessage(const QString &name )
 	this->append(name);
 }
 
-LiveMessage::LiveMessage(const QList<QVariant> &args )
+LiveMessage::LiveMessage(const QList<LiveMessageToken> &args )
 		: QObject()
 {
 	d = new PrivateData;
@@ -27,6 +28,10 @@ LiveMessage::~LiveMessage() {
 }
 
 void LiveMessage::append(const QString &argument) {
+	this->append(LiveMessageToken(argument));
+}
+
+void LiveMessage::append(const LiveMessageToken &argument) {
 	d->args.append(argument);
 }
 
@@ -34,7 +39,7 @@ QByteArray LiveMessage::argument(int index) const {
 	if (index + 1 >= d->args.count()) {
 		return "";
 	}
-	return d->args.at(index +1 ).toByteArray();
+	return d->args.at(index +1 ).stringVal.toLocal8Bit();
 }
 
 QString LiveMessage::name() const {
@@ -43,34 +48,22 @@ QString LiveMessage::name() const {
 
 QByteArray LiveMessage::toByteArray() const {
 	QByteArray retval;
-	foreach(QVariant arg, d->args) {
-		retval.append(QString("%1:%2").arg(arg.toString().length(), 0, 16).arg(arg.toString()));
+	foreach(LiveMessageToken arg, d->args) {
+		retval.append(arg.toByteArray());
 	}
 	return retval;
 }
 
+
 LiveMessage LiveMessage::fromByteArray(const QByteArray &ba) {
-	bool ok;
-	int pos = 0;
-	QList<QVariant> list;
-	while(1) {
-		int index = ba.indexOf(':', pos);
-		if (index < 0) {
-			return LiveMessage("");
-		}
-		int length = ba.mid(pos, index - pos).toInt(&ok, 16);
-		if (!ok) {
-			return LiveMessage("");
-		}
-		pos = index + length + 1;
-		if (ba.length() < pos) {
-			return LiveMessage("");
-		}
-		QString arg = ba.mid(index+1, length);
-		list.append(arg);
-		if (pos >= ba.length()) {
+	int start = 0;
+	QList<LiveMessageToken> list;
+	while (start < ba.length()) {
+		LiveMessageToken d = LiveMessageToken::parseToken(ba, &start);
+		if (d.valueType == LiveMessageToken::Invalid) {
 			break;
 		}
+		list.append(d);
 	}
 	return LiveMessage(list);
 }

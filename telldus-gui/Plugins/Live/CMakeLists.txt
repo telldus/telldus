@@ -5,12 +5,14 @@ SET( Plugin_PATH "com.telldus.live" )
 
 SET( Plugin_SRCS
 	livemessage.cpp
+	livemessagetoken.cpp
 	liveobject.cpp
 	liveplugin.cpp
 )
 
 SET( Plugin_HDRS
 	liveplugin.h
+	livemessagetoken.h
 	${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
 	${CMAKE_CURRENT_BINARY_DIR}/parsed/config.h
 )

@@ -1,4 +1,5 @@
 #include "liveobject.h"
+#include "livemessagetoken.h"
 #include "config.h"
 #include <QtNetwork>
 #include <QtCore>
@@ -77,6 +78,7 @@ void LiveObject::connectToServer() {
 		d->serverList.clear();
 		d->manager->get(QNetworkRequest(QUrl(TELLDUS_LIVE_URI)));
 	} else {
+		qDebug() << "Serverlist still valid, time:" << d->serverRefreshTime.secsTo(QDateTime::currentDateTime());
 		d->socket->abort();
 		PrivateData::Server server = d->serverList.takeFirst();
 		qDebug() << "Connecting to" << server.address;
