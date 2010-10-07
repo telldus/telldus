@@ -23,6 +23,8 @@ IF (APPLE)
 	ADD_DEFINITIONS( -D_MACOSX )
 ELSEIF (WIN32)
 	#### Windows ####
+	ADD_DEFINITIONS( -DUNICODE )
+	ADD_DEFINITIONS( /Zc:wchar_t- ) # Treat wchar_t as Built-in Type' = No
 	SET( telldus-common_TARGET	TelldusCommon )
 	ADD_DEFINITIONS( -D_WINDOWS )
 	LIST(APPEND  telldus-common_SRCS

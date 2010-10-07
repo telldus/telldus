@@ -29,8 +29,9 @@ void TelldusMain::start(void){
 //		if (eventId == clientEvent.id()) {
 			//New client connection
 			Socket *s = clientListener.retrieveClientSocket();
-			s->read();
-			delete s;
+			std::wstring clientMessage = s->read();
+
+			delete s;	//TODO: Cleanup
 			clientListener.listen(clientEvent);
 		}
 

@@ -10,7 +10,7 @@ public:
 	Socket(HANDLE hPipe);
 	virtual ~Socket(void);
 
-	std::string read();
+	std::wstring read();
 	
 private:
 	class PrivateData;

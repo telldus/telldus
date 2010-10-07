@@ -7,6 +7,8 @@
 
 #define BUFSIZE 512
 
+//TODO: using namespace TelldusCore;
+
 class Socket::PrivateData {
 public:
 	HANDLE hPipe;
@@ -23,8 +25,8 @@ Socket::~Socket(void){
 	delete d;
 }
 
-std::string Socket::read() {
-	char buf[BUFSIZE];
+std::wstring Socket::read() {
+	wchar_t buf[BUFSIZE];
 	int result;
 	DWORD cbBytesRead = 0;
 	OVERLAPPED oOverlap; 
@@ -34,12 +36,12 @@ std::string Socket::read() {
 
 	memset(&buf, 0, BUFSIZE);
 
-	ReadFile( d->hPipe, &buf, sizeof(char)*BUFSIZE, &cbBytesRead, &oOverlap);
+	ReadFile( d->hPipe, &buf, sizeof(wchar_t)*BUFSIZE, &cbBytesRead, &oOverlap);
 
 	result = WaitForSingleObject(oOverlap.hEvent, 10000);
 	if (result == WAIT_TIMEOUT) {
 		CloseHandle(readEvent);
-		return "";
+		return L"";
 	}
 	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &cbBytesRead, false);
 	if (!fSuccess) {
