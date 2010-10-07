@@ -2,7 +2,6 @@
 #define SOCKET_H
 
 #include <string>
-#include "Event.h"
 
 class Socket
 {
