@@ -1,5 +1,6 @@
 #include "TelldusMain.h"
 #include "ConnectionListener.h"
+#include "EventHandler.h"
 
 TelldusMain::TelldusMain(void)
 {
@@ -12,19 +13,19 @@ TelldusMain::~TelldusMain(void)
 
 void TelldusMain::start(void){
 	ConnectionListener clientListener(L"TelldusClient");
-	EVENT clientEvent = CreateEvent(NULL, true, true, NULL);//EventHandler::createEvent();
+	EVENT clientEvent = EventHandler::createEvent();
 	//TODO: eventlistener
 
 	clientListener.listen(clientEvent);
 	//TODO: listen on eventListener
 
-	//EventHandler eventHandler;
+	EventHandler eventHandler;
+	eventHandler.addEvent(clientEvent);
 	while(running) {
 
 
-//		int eventId = eventHandler.waitForAny();
-		int result = WaitForSingleObject(clientEvent, 3000);
-		if (result != WAIT_TIMEOUT) {
+		int eventId = eventHandler.waitForAny();
+		if (eventId) {
 //		if (eventId == clientEvent.id()) {
 			//New client connection
 			Socket *s = clientListener.retrieveClientSocket();

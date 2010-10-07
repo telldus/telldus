@@ -10,6 +10,7 @@ SET( telldus-service_HDRS
 	TelldusMain.h
 	ConnectionListener.h
 	Event.h
+	EventHandler.h
 )
 
 FIND_PACKAGE(Threads)
@@ -52,6 +53,7 @@ ELSEIF (WIN32) #### Windows ####
 		main_win.cpp
 		TelldusWinService_win.cpp
 		ConnectionListener_win.cpp
+		EventHandler_win.cpp
 	)
 	LIST(APPEND telldus-service_HDRS
 		TelldusWinService_win.h
