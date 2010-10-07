@@ -12,7 +12,6 @@ SET( telldus-service_HDRS
 FIND_PACKAGE(Threads)
 LIST(APPEND telldus-service_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
 
-
 ######## Configurable options for the platform  ########
 
 ######## Platforms-specific, non configurable  ########
@@ -65,6 +64,7 @@ ENDIF (APPLE)
 
 ADD_EXECUTABLE(${telldus-service_TARGET}
 	${telldus-service_SRCS}
+	${telldus-service_HDRS}
 )
 SET_SOURCE_FILES_PROPERTIES(${telldus-service_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
