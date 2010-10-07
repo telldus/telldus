@@ -7,6 +7,7 @@ extern int g_argc;
 extern char **g_argv;
 
 class TelldusCore;
+class TelldusMain;
 
 #define serviceName TEXT("TelldusCore")
 
@@ -16,7 +17,7 @@ public:
     ~TelldusWinService();
 
 	static void WINAPI serviceMain( DWORD /*argc*/, TCHAR* /*argv*/[] );
-
+	
 protected:
 
     void start();
@@ -26,6 +27,7 @@ protected:
 
 private:
 	TelldusCore *tc;
+	TelldusMain *tm;
 	SERVICE_STATUS serviceStatus;
 	SERVICE_STATUS_HANDLE serviceStatusHandle;
 

@@ -1,4 +1,5 @@
 #include "TelldusWinService_win.h"
+#include "TelldusMain.h"
 //#include "TelldusCore.h"
 //#include <QCoreApplication>
 //#include <QRegExp>
@@ -13,10 +14,11 @@ static const GUID GUID_DEVINTERFACE_USBRAW =
 { 0xA5DCBF10L, 0x6530, 0x11D2, { 0x90, 0x1F, 0x00, 0xC0, 0x4F, 0xB9, 0x51, 0xED } };
 
 TelldusWinService::TelldusWinService()
-	:tc(0)
+	:tm(0)
 {
-	
-    //setServiceDescription("A Telldus service for managing TellStick Duo.");
+	tm = new TelldusMain();
+
+	//setServiceDescription("A Telldus service for managing TellStick Duo.");
 }
 
 TelldusWinService::~TelldusWinService() {
@@ -34,6 +36,12 @@ void TelldusWinService::start() {
 
 
 void TelldusWinService::stop() {
+	//running = false;
+	tm->stop();
+	//if(tm){
+	//	delete tm;
+	//}
+	//tm = 0;
 //	if (tc) {
 //		delete tc;
 //	}
@@ -137,6 +145,17 @@ void WINAPI TelldusWinService::serviceMain( DWORD argc, TCHAR* argv[] ) {
 		}
 
 		//TelldusCore::logMessage(QString("Main thread waiting for service to stop"));
+		
+		//TelldusMain tm;
+		//tm = new TelldusMain();
+		//tm.start();
+		instance.tm->start();
+		
+		//while(instance.running) {
+		//	Sleep(1000);
+		//}
+
+
 //		app.exec();
 		//TelldusCore::logMessage(QString("Main thread waited, shutting down"));
 
