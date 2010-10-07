@@ -9,6 +9,7 @@ public:
 	virtual ~EventHandler(void);
 
 	void addEvent(EVENT event);
+	EVENT addEvent();
 
 	EVENT waitForAny();
 
