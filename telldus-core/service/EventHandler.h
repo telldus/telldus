@@ -10,7 +10,7 @@ public:
 
 	void addEvent(EVENT event);
 
-	int waitForAny();
+	EVENT waitForAny();
 
 	static EVENT createEvent();
 private:

@@ -24,9 +24,8 @@ void TelldusMain::start(void){
 	while(running) {
 
 
-		int eventId = eventHandler.waitForAny();
-		if (eventId) {
-//		if (eventId == clientEvent.id()) {
+		EVENT signaledEvent = eventHandler.waitForAny();
+		if (signaledEvent == clientEvent) {
 			//New client connection
 			Socket *s = clientListener.retrieveClientSocket();
 			std::wstring clientMessage = s->read();

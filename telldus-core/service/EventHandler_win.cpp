@@ -2,30 +2,42 @@
 
 class EventHandler::PrivateData {
 public:
-	EVENT event;
+	EVENT *events;
+	int eventCount;
 };
 
-EventHandler::EventHandler()
-{
+EventHandler::EventHandler() {
 	d = new PrivateData;
-
+	d->eventCount = 0;
+	d->events = new EVENT[0];
 }
 
-EventHandler::~EventHandler(void)
-{
+EventHandler::~EventHandler(void) {
+	delete[] d->events;
 	delete d;
 }
 
 void EventHandler::addEvent(EVENT event) {
-	d->event = event;
+	EVENT *newArray = new EVENT[d->eventCount+1];
+	for (int i = 0; i < d->eventCount; ++i) {
+		newArray[i] = d->events[i];
+	}
+	delete[] d->events;
+	d->events = newArray;
+	d->events[d->eventCount] = event;
+	++d->eventCount;
 }
 
-int EventHandler::waitForAny() {
-	int result = WaitForSingleObject(d->event, 3000);
+EVENT EventHandler::waitForAny() {
+	int result = WaitForMultipleObjects(d->eventCount, d->events, FALSE, 3000);
 	if (result == WAIT_TIMEOUT) {
 		return 0;
 	}
-	return 1;
+	int eventIndex = result - WAIT_OBJECT_0;
+	if (eventIndex >= d->eventCount) {
+		return 0;
+	}
+	return d->events[eventIndex];
 
 }
 
