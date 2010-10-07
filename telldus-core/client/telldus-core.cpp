@@ -179,11 +179,62 @@ char * WINAPI tdLastSentValue( int intDeviceId ) {
 	return wrapStdString("255");
 }
 
+
 /**
  * This function returns the number of devices configured
  * @returns an integer of the total number of devices configured
  */
 int WINAPI tdGetNumberOfDevices(void){
+	DWORD dwMode;
+	bool  fSuccess = false;
+
+	//Convert our std::string to std::wstring since we build agains win32 with unicode support
+	//std::string strName = "\\\\.\\pipe\\" + server;
+	std::wstring name(L"\\\\.\\pipe\\TelldusClient");
+	HANDLE hPipe = CreateFile(
+		(const wchar_t *)name.c_str(),           // pipe name 
+		GENERIC_READ |  // read and write access 
+		GENERIC_WRITE, 
+		0,              // no sharing 
+		NULL,           // default security attributes
+		OPEN_EXISTING,  // opens existing pipe 
+		FILE_FLAG_OVERLAPPED, // default attributes 
+		NULL);          // no template file 
+
+	if (hPipe == INVALID_HANDLE_VALUE) {
+		return 2;
+	}
+	
+	dwMode = PIPE_READMODE_MESSAGE; 
+	fSuccess = SetNamedPipeHandleState( 
+      hPipe, // pipe handle 
+      &dwMode,  // new pipe mode 
+      NULL,     // don't set maximum bytes 
+      NULL);    // don't set maximum time 
+
+	if (!fSuccess) {
+		return 3;
+	}
+
+	OVERLAPPED oOverlap; 
+	DWORD bytesWritten = 0;
+	
+	oOverlap.hEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
+	std::string msg = "tdGetNumberOfDevices";
+	WriteFile(hPipe, msg.data(), (DWORD)msg.length(), &bytesWritten, &oOverlap);
+
+	/*result = WaitForSingleObject(oOverlap.hEvent, 10000);
+	if (result == WAIT_TIMEOUT) {
+		CloseHandle(oOverlap.hEvent);
+		return;
+	}
+	
+	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &bytesWritten, false);
+	CloseHandle(oOverlap.hEvent);
+	if (!fSuccess) {
+		return;
+	}
+*/
 	return 1;
 }
 
