@@ -39,6 +39,7 @@ IF (APPLE) #### Mac OS X ####
 	)
 	LIST(APPEND telldus-service_SRCS
 		main_unix.cpp
+		Event_unix.cpp
 		EventHandler_unix.cpp
 	)
 	
@@ -67,6 +68,7 @@ ELSE (APPLE) #### Linux ####
 	SET( telldus-service_TARGET	telldusd )
 	LIST(APPEND telldus-service_SRCS
 		main_unix.cpp
+		Event_unix.cpp
 		EventHandler_unix.cpp
 	)
 	LIST(APPEND telldus-service_LIBRARIES

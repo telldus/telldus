@@ -1,19 +1,18 @@
 #ifndef EVENTHANDLER_H
 #define EVENTHANDLER_H
 
-#include "Event.h"
+class Event;
 
 class EventHandler {
 public:
 	EventHandler();
 	virtual ~EventHandler(void);
 
-	void addEvent(EVENT event);
-	EVENT addEvent();
+	Event *addEvent();
+	
+	void signal(Event *event);
+	void waitForAny();
 
-	EVENT waitForAny();
-
-	static EVENT createEvent();
 private:
 	class PrivateData;
 	PrivateData *d;

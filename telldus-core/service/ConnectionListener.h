@@ -10,7 +10,7 @@ class ConnectionListener
 public:
 	ConnectionListener(const std::wstring &name);
 	virtual ~ConnectionListener(void);
-	void listen(EVENT waitEvent);
+	void listen(Event *waitEvent);
 	Socket *retrieveClientSocket();
 
 private:

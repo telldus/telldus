@@ -1,28 +1,46 @@
 #include "EventHandler.h"
+#include "Event.h"
+#include <pthread.h>
 
 class EventHandler::PrivateData {
 public:
+	pthread_cond_t event;
+	pthread_mutex_t mutex;
+	bool hasEvent;
 };
 
 EventHandler::EventHandler() {
 	d = new PrivateData;
+	pthread_cond_init(&d->event, NULL);
+	pthread_mutex_init(&d->mutex, NULL);
 }
 
 EventHandler::~EventHandler(void) {
+	pthread_mutex_destroy(&d->mutex);
+	pthread_cond_destroy(&d->event);
 	delete d;
 }
 
-void EventHandler::addEvent(EVENT event) {
-}
-
-EVENT EventHandler::addEvent() {
-	EVENT event = EventHandler::createEvent();
-	this->addEvent(event);
+Event *EventHandler::addEvent() {
+	Event *event = new Event(this);
 	return event;
 }
 
-EVENT EventHandler::waitForAny() {
+void EventHandler::signal(Event *event) {
+	pthread_mutex_lock(&d->mutex);
+	event->setSignaled();
+	d->hasEvent = true;
+	pthread_cond_signal(&d->event);
+	pthread_mutex_unlock(&d->mutex);	
 }
 
-EVENT EventHandler::createEvent() {
+void EventHandler::waitForAny() {
+	pthread_mutex_lock(&d->mutex);
+	while(!d->hasEvent) {
+		pthread_cond_wait(&d->event, &d->mutex);
+	}
+	d->hasEvent = false;
+	pthread_mutex_unlock(&d->mutex);
+
+	return;
 }

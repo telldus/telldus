@@ -13,7 +13,7 @@ TelldusMain::~TelldusMain(void)
 
 void TelldusMain::start(void){
 	EventHandler eventHandler;
-	EVENT clientEvent = eventHandler.addEvent();
+	Event *clientEvent = eventHandler.addEvent();
 	
 	ConnectionListener clientListener(L"TelldusClient");
 	//TODO: eventlistener
@@ -24,15 +24,15 @@ void TelldusMain::start(void){
 	while(running) {
 
 
-		EVENT signaledEvent = eventHandler.waitForAny();
-		if (signaledEvent == clientEvent) {
+		//Event *signaledEvent = eventHandler.waitForAny();
+		/*if (signaledEvent == clientEvent) {
 			//New client connection
 			Socket *s = clientListener.retrieveClientSocket();
 			std::wstring clientMessage = s->read();
 
 			delete s;	//TODO: Cleanup
 			clientListener.listen(clientEvent);
-		}
+		}*/
 #ifdef _WINDOWS
 		Sleep(1000);
 #else
