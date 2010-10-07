@@ -4,9 +4,12 @@ ENDIF(COMMAND cmake_policy)
 
 ######## Non configurable options  ########
 SET( telldus-service_SRCS
+	TelldusMain.cpp
 )
 SET( telldus-service_HDRS
-	TelldusWinService_win.h
+	TelldusMain.h
+	ConnectionListener.h
+	Event.h
 )
 
 FIND_PACKAGE(Threads)
@@ -48,6 +51,10 @@ ELSEIF (WIN32) #### Windows ####
 	LIST(APPEND telldus-service_SRCS
 		main_win.cpp
 		TelldusWinService_win.cpp
+		ConnectionListener_win.cpp
+	)
+	LIST(APPEND telldus-service_HDRS
+		TelldusWinService_win.h
 	)
 
 ELSE (APPLE) #### Linux ####
