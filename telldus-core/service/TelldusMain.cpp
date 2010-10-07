@@ -12,15 +12,15 @@ TelldusMain::~TelldusMain(void)
 }
 
 void TelldusMain::start(void){
+	EventHandler eventHandler;
+	EVENT clientEvent = eventHandler.addEvent();
+	
 	ConnectionListener clientListener(L"TelldusClient");
-	EVENT clientEvent = EventHandler::createEvent();
 	//TODO: eventlistener
 
 	clientListener.listen(clientEvent);
 	//TODO: listen on eventListener
 
-	EventHandler eventHandler;
-	eventHandler.addEvent(clientEvent);
 	while(running) {
 
 
@@ -33,8 +33,11 @@ void TelldusMain::start(void){
 			delete s;	//TODO: Cleanup
 			clientListener.listen(clientEvent);
 		}
-
+#ifdef _WINDOWS
 		Sleep(1000);
+#else
+		sleep(1);
+#endif
 	}
 }
 
