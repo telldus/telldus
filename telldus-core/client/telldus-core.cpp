@@ -83,6 +83,10 @@ int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void 
 	return 0;
 }
 
+int WINAPI tdUnregisterCallback( int callbackId ) {
+	return TELLSTICK_SUCCESS;
+}
+
 
 /**
  * Close the library and clean up the cache it uses.

@@ -6,16 +6,16 @@
 //
 
 #ifdef _WINDOWS
-#include "stdafx.h"
+#include <windows.h>
 #include <ole2.h>
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
-
+#else
+#include <unistd.h>
 #endif
 #include <stdlib.h>
 #include <string.h>
 #include <string>
-#include <unistd.h>
 
 inline void msleep( const int msec) {
 #ifdef _WINDOWS
