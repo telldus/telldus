@@ -1,8 +1,6 @@
 #ifndef TELLDUSMAIN_H
 #define TELLDUSMAIN_H
 
-#include <windows.h>
-
 class TelldusMain
 {
 public:

@@ -1,7 +1,5 @@
 #include "ClientMessageHandler.h"
 
-#include <windows.h>
-
 class ClientMessageHandler::PrivateData {
 public:
 	std::wstring clientMessage;
