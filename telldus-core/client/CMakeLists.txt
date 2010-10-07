@@ -46,12 +46,14 @@ IF (APPLE)
 	)
 ELSEIF (WIN32)
 	#### Windows ####
+	ADD_DEFINITIONS( -DUNICODE )
+	ADD_DEFINITIONS( /Zc:wchar_t- ) # Treat wchar_t as Built-in Type' = No
 	SET( telldus-core_TARGET	TelldusCore )
-	IF (NOT CMAKE_CL_64)
+	#IF (NOT CMAKE_CL_64)
 		LIST(APPEND telldus-core_SRCS
 			libtelldus-core.def
 		)
-	ENDIF(NOT CMAKE_CL_64)
+	#ENDIF(NOT CMAKE_CL_64)
 	ADD_DEFINITIONS(
 		-D_WINDOWS
 		-DTELLDUSCORE_EXPORTS
