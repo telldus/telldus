@@ -3,10 +3,12 @@ IF(COMMAND cmake_policy)
 ENDIF(COMMAND cmake_policy)
 
 ######## Non configurable options  ########
-SET( common_SRCS
-	)
+SET( telldus-common_SRCS
+	Thread.cpp
+)
 
-SET( common_HDRS
+SET( telldus-common_HDRS
+	Thread.h
 )
 
 ######## Configurable options for the platform  ########

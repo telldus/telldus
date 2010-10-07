@@ -12,6 +12,10 @@ SET( telldus-service_HDRS
 FIND_PACKAGE(Threads)
 LIST(APPEND telldus-service_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
 
+INCLUDE_DIRECTORIES(
+	${CMAKE_CURRENT_SOURCE_DIR}/../common
+)
+
 ######## Configurable options for the platform  ########
 
 ######## Platforms-specific, non configurable  ########
@@ -38,10 +42,9 @@ ELSEIF (WIN32) #### Windows ####
 	SET(CMAKE_EXE_LINKER_FLAGS
 		"${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE"
 	)
-	#SET( telldus-service_LIBRARIES
-	#	${telldus-service_LIBRARIES}
-	#	${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/TelldusCommon.lib
-	#)
+	LIST(APPEND telldus-service_LIBRARIES
+		${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/TelldusCommon.lib
+	)
 	LIST(APPEND telldus-service_SRCS
 		main_win.cpp
 		TelldusWinService_win.cpp
