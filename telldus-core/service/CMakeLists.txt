@@ -6,6 +6,7 @@ ENDIF(COMMAND cmake_policy)
 SET( telldus-service_SRCS
 )
 SET( telldus-service_HDRS
+	TelldusWinService_win.h
 )
 
 FIND_PACKAGE(Threads)
@@ -38,12 +39,13 @@ ELSEIF (WIN32) #### Windows ####
 	SET(CMAKE_EXE_LINKER_FLAGS
 		"${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE"
 	)
-	SET( telldus-service_LIBRARIES
-		${telldus-service_LIBRARIES}
-		${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/TelldusCommon.lib
-	)
+	#SET( telldus-service_LIBRARIES
+	#	${telldus-service_LIBRARIES}
+	#	${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/TelldusCommon.lib
+	#)
 	LIST(APPEND telldus-service_SRCS
 		main_win.cpp
+		TelldusWinService_win.cpp
 	)
 
 ELSE (APPLE) #### Linux ####

@@ -1,5 +1,5 @@
 #include "TelldusWinService_win.h"
-#include <QCoreApplication>
+//#include <QCoreApplication>
 
 #include <windows.h>
 #include <Dbt.h>
