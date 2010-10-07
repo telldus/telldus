@@ -9,6 +9,7 @@ SET( telldus-common_SRCS
 
 SET( telldus-common_HDRS
 	Thread.h
+	Socket.h
 )
 
 ######## Configurable options for the platform  ########
@@ -24,6 +25,9 @@ ELSEIF (WIN32)
 	#### Windows ####
 	SET( telldus-common_TARGET	TelldusCommon )
 	ADD_DEFINITIONS( -D_WINDOWS )
+	LIST(APPEND  telldus-common_SRCS
+		Socket_win.cpp
+	)
 ELSE (APPLE)
 	#### Linux ####
 	SET( telldus-common_TARGET	telldus-common )
