@@ -5,6 +5,7 @@
 #include <QtCore>
 #include <QDesktopServices>
 #include <QtCrypto>
+#include <QMessageBox>
 
 #include <QDebug>
 
@@ -66,7 +67,16 @@ void LiveObject::activate() {
 	if (d->mac == "" || d->socket->state() != QAbstractSocket::ConnectedState || !d->registerUrl.isValid()) {
 		return;
 	}
-	QDesktopServices::openUrl(d->registerUrl);
+	if (!QDesktopServices::openUrl(d->registerUrl)) {
+		QMessageBox msgBox;
+		msgBox.setIcon(QMessageBox::Information);
+		msgBox.setTextFormat(Qt::RichText);
+		msgBox.setWindowTitle(tr("Default browser could not be opened"));
+		msgBox.setText(tr("We could not open your default internet browser"));
+		msgBox.setInformativeText(tr("Please copy the following url and enter it in your browser:<br><a href='%1'>%1</a>").arg(d->registerUrl.toString()));
+		msgBox.setStandardButtons(QMessageBox::Ok);
+		msgBox.exec();
+	}
 }
 
 void LiveObject::connectToServer() {
