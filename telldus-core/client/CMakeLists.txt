@@ -47,10 +47,11 @@ IF (APPLE)
 ELSEIF (WIN32)
 	#### Windows ####
 	SET( telldus-core_TARGET	TelldusCore )
-	SET( telldus-core_SRCS
-		${telldus-core_SRCS}
-		libtelldus-core.def
-	)
+	IF (NOT CMAKE_CL_64)
+		LIST(APPEND telldus-core_SRCS
+			libtelldus-core.def
+		)
+	ENDIF(NOT CMAKE_CL_64)
 	ADD_DEFINITIONS(
 		-D_WINDOWS
 		-DTELLDUSCORE_EXPORTS
