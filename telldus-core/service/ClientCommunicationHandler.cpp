@@ -1,11 +1,11 @@
-#include "ClientMessageHandler.h"
+#include "ClientCommunicationHandler.h"
 
-class ClientMessageHandler::PrivateData {
+class ClientCommunicationHandler::PrivateData {
 public:
 	std::wstring clientMessage;
 };
 
-ClientMessageHandler::ClientMessageHandler(const std::wstring &clientMessage)
+ClientCommunicationHandler::ClientCommunicationHandler(const std::wstring &clientMessage)
 	:Thread()
 {
 	d = new PrivateData;
@@ -13,13 +13,16 @@ ClientMessageHandler::ClientMessageHandler(const std::wstring &clientMessage)
 	
 }
 
-ClientMessageHandler::~ClientMessageHandler(void)
+ClientCommunicationHandler::~ClientCommunicationHandler(void)
 {
 	delete d;
 }
 
-void ClientMessageHandler::run(){
+void ClientCommunicationHandler::run(){
 	//run thread
+
+//	std::wstring clientMessage = s->read();
+
 	if(d->clientMessage == L"tdGetNumberOfDevices"){
 		//starta ny tråd (ny klass, ärv från Thread)
 		//skicka in meddelandet i denna tråd
@@ -27,6 +30,8 @@ void ClientMessageHandler::run(){
 		//do stuff
 		//TODO
 	}
+
+//	delete s;	//TODO: Cleanup
 }
 
 

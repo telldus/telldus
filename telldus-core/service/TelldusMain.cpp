@@ -22,7 +22,9 @@ void TelldusMain::start(void){
 	//TODO: listen on eventListener
 
 	while(running) {
+		Socket *s = clientListener.retrieveClientSocket();
 
+			
 
 		//Event *signaledEvent = eventHandler.waitForAny();
 		/*if (signaledEvent == clientEvent) {
