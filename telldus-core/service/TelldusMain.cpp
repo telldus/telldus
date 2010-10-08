@@ -25,14 +25,14 @@ void TelldusMain::start(void){
 		if (!eventHandler.waitForAny()) {
 			continue;
 		}
-		//if (signaledEvent == clientEvent) {
+		if (clientEvent->isSignaled()) {
 			//New client connection
 			Socket *s = clientListener.retrieveClientSocket();
 			std::wstring clientMessage = s->read();
 
 			delete s;	//TODO: Cleanup
 			clientListener.listen(clientEvent);
-		//}
+		}
 #ifdef _WINDOWS
 		Sleep(1000);
 #else
