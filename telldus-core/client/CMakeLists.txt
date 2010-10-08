@@ -31,6 +31,9 @@ ELSE (APPLE OR WIN32 OR USE_FTD2XX_RATHER_THEN_LIBFTDI)
 	ADD_DEFINITIONS( -DLIBFTDI )
 ENDIF (APPLE OR WIN32 OR USE_FTD2XX_RATHER_THEN_LIBFTDI)
 
+INCLUDE_DIRECTORIES(
+	${CMAKE_CURRENT_SOURCE_DIR}/../common
+)
 
 ######## Configurable options for the platform  ########
 
@@ -49,6 +52,9 @@ ELSEIF (WIN32)
 	ADD_DEFINITIONS( -DUNICODE )
 	ADD_DEFINITIONS( /Zc:wchar_t- ) # Treat wchar_t as Built-in Type' = No
 	SET( telldus-core_TARGET	TelldusCore )
+	LIST(APPEND telldus-core_LIBRARIES
+		${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/TelldusCommon.lib
+	)
 	#IF (NOT CMAKE_CL_64)
 		LIST(APPEND telldus-core_SRCS
 			libtelldus-core.def
