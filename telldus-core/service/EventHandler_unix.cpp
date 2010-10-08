@@ -1,6 +1,8 @@
 #include "EventHandler.h"
 #include "Event.h"
+#include "Thread.h"
 #include <pthread.h>
+#include <stdio.h>
 
 class EventHandler::PrivateData {
 public:
@@ -31,10 +33,10 @@ void EventHandler::signal(Event *event) {
 	event->setSignaled();
 	d->hasEvent = true;
 	pthread_cond_signal(&d->event);
-	pthread_mutex_unlock(&d->mutex);	
+	pthread_mutex_unlock(&d->mutex);
 }
 
-void EventHandler::waitForAny() {
+bool EventHandler::waitForAny() {
 	pthread_mutex_lock(&d->mutex);
 	while(!d->hasEvent) {
 		pthread_cond_wait(&d->event, &d->mutex);
@@ -42,5 +44,5 @@ void EventHandler::waitForAny() {
 	d->hasEvent = false;
 	pthread_mutex_unlock(&d->mutex);
 
-	return;
+	return true;
 }
