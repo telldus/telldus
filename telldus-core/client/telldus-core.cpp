@@ -220,8 +220,8 @@ int WINAPI tdGetNumberOfDevices(void){
 	DWORD bytesWritten = 0;
 	
 	oOverlap.hEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
-	std::string msg = "tdGetNumberOfDevices";
-	WriteFile(hPipe, msg.data(), (DWORD)msg.length(), &bytesWritten, &oOverlap);
+	std::wstring msg = L"tdGetNumberOfDevices";
+	WriteFile(hPipe, msg.data(), (DWORD)msg.length()*sizeof(wchar_t), &bytesWritten, &oOverlap);
 
 	/*result = WaitForSingleObject(oOverlap.hEvent, 10000);
 	if (result == WAIT_TIMEOUT) {
