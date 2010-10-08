@@ -1,5 +1,6 @@
 #include "EventHandler.h"
 #include "Event.h"
+#include "Thread.h"
 
 #include <windows.h>
 #include <list>
@@ -8,6 +9,7 @@ class EventHandler::PrivateData {
 public:
 	HANDLE *eventArray;
 	Event **eventObjectArray;
+	MUTEX_T mutex;
 	int eventCount;
 };
 
@@ -16,9 +18,11 @@ EventHandler::EventHandler() {
 	d->eventCount = 0;
 	d->eventArray = new HANDLE[0];
 	d->eventObjectArray = new Event*[0];
+	TelldusCore::Thread::initMutex(&d->mutex);
 }
 
 EventHandler::~EventHandler(void) {
+	TelldusCore::Thread::destroyMutex(&d->mutex);
 	delete[] d->eventObjectArray;
 	delete[] d->eventArray;
 	delete d;
@@ -26,6 +30,8 @@ EventHandler::~EventHandler(void) {
 
 Event *EventHandler::addEvent() {
 	Event *event = new Event(this);
+
+	TelldusCore::MutexLocker locker(&d->mutex);
 
 	HANDLE *newArray = new HANDLE[d->eventCount+1];
 	Event **newObjectArray = new Event*[d->eventCount+1];
@@ -43,12 +49,36 @@ Event *EventHandler::addEvent() {
 	return event;
 }
 
+bool EventHandler::removeEvent(Event *event) {
+	TelldusCore::MutexLocker locker(&d->mutex);
+	HANDLE *newArray = new HANDLE[d->eventCount-1];
+	Event **newObjectArray = new Event*[d->eventCount-1];
+	int index = 0;
+	int i = 0;
+	for (; i < d->eventCount; ++i) {
+		if ( d->eventObjectArray[i] == event ) {
+			continue;
+		}
+		newArray[index] = d->eventArray[i];
+		newObjectArray[index] = d->eventObjectArray[i];
+		++index;
+	}
+	delete[] d->eventArray;
+	delete[] d->eventObjectArray;
+	d->eventArray = newArray;
+	d->eventObjectArray = newObjectArray;
+	--d->eventCount;
+	return (i != index);
+}
+
 void EventHandler::signal(Event *event) {
 	event->signal();
 }
 
 bool EventHandler::waitForAny() {
 	int result = WaitForMultipleObjects(d->eventCount, d->eventArray, FALSE, 3000);
+
+	TelldusCore::MutexLocker locker(&d->mutex);
 	if (result == WAIT_TIMEOUT) {
 		return false;
 	}
@@ -58,5 +88,4 @@ bool EventHandler::waitForAny() {
 	}
 	d->eventObjectArray[eventIndex]->setSignaled();
 	return true;
-
 }

@@ -9,6 +9,7 @@ public:
 	virtual ~EventHandler(void);
 
 	Event *addEvent();
+	bool removeEvent(Event *event);
 	
 	void signal(Event *event);
 	bool waitForAny();
