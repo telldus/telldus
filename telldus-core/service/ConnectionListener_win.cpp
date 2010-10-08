@@ -72,7 +72,7 @@ ConnectionListener::~ConnectionListener(void)
 	delete d;
 }
 
-void ConnectionListener::listen(EVENT waitEvent){
+void ConnectionListener::listen(Event *waitEvent){
 	
 	d->oOverlap.hEvent = waitEvent;
 	

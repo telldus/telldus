@@ -14,7 +14,7 @@ public:
 	HANDLE hPipe;
 };
 
-Socket::Socket(HANDLE hPipe)
+Socket::Socket(SOCKET_T hPipe)
 {
 	d = new PrivateData;
 	d->hPipe = hPipe;

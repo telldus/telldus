@@ -5,7 +5,7 @@
 
 #ifdef _WINDOWS
 	#include <windows.h>
-	typedef HANDLE SOCKET;
+	typedef HANDLE SOCKET_T;
 #else
 	typedef unsigned int SOCKET;
 #endif
@@ -13,7 +13,7 @@
 class Socket
 {
 public:
-	Socket(SOCKET hPipe);
+	Socket(SOCKET_T hPipe);
 	virtual ~Socket(void);
 
 	std::wstring read();

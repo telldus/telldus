@@ -1,15 +1,17 @@
 #include "EventHandler.h"
 
+#include <windows.h>
+
 class EventHandler::PrivateData {
 public:
-	EVENT *events;
+	HANDLE *events;
 	int eventCount;
 };
 
 EventHandler::EventHandler() {
 	d = new PrivateData;
 	d->eventCount = 0;
-	d->events = new EVENT[0];
+	d->events = new HANDLE[0];
 }
 
 EventHandler::~EventHandler(void) {
@@ -17,30 +19,31 @@ EventHandler::~EventHandler(void) {
 	delete d;
 }
 
-void EventHandler::addEvent(EVENT event) {
-	EVENT *newArray = new EVENT[d->eventCount+1];
+Event *EventHandler::addEvent() {
+/*	EVENT *newArray = new EVENT[d->eventCount+1];
 	for (int i = 0; i < d->eventCount; ++i) {
 		newArray[i] = d->events[i];
 	}
 	delete[] d->events;
 	d->events = newArray;
 	d->events[d->eventCount] = event;
-	++d->eventCount;
+	++d->eventCount;*/
+	return 0;
 }
 
-EVENT EventHandler::waitForAny() {
+void EventHandler::waitForAny() {
 	int result = WaitForMultipleObjects(d->eventCount, d->events, FALSE, 3000);
 	if (result == WAIT_TIMEOUT) {
-		return 0;
+		return;
 	}
 	int eventIndex = result - WAIT_OBJECT_0;
 	if (eventIndex >= d->eventCount) {
-		return 0;
+		return;
 	}
-	return d->events[eventIndex];
+	return;
 
 }
 
-EVENT EventHandler::createEvent() {
+/*EVENT EventHandler::createEvent() {
 	return CreateEvent(NULL, true, true, NULL);
-}
+}*/
