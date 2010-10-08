@@ -3,12 +3,16 @@
 
 #include <string>
 #include "Thread.h"
+#include "Socket.h"
+#include "Event.h"
 
 class ClientCommunicationHandler : public TelldusCore::Thread
 {
 public:
-	ClientCommunicationHandler(const std::wstring &clientMessage);
+	ClientCommunicationHandler(Socket *clientSocket, Event *event);
 	~ClientCommunicationHandler(void);
+
+	bool isDone();
 
 protected:
 	void run();
