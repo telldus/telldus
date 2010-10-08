@@ -13,7 +13,8 @@ public:
 Event::Event(EventHandler *handler) {
 	d = new PrivateData;
 	d->signaled = false;
-	d->event = CreateEvent(NULL, true, true, NULL);
+	d->handler = handler;
+	d->event = CreateEvent(NULL, true, false, NULL);
 	TelldusCore::Thread::initMutex(&d->mutex);
 }
 
