@@ -6,6 +6,7 @@
 
 #include "telldus-core.h"
 #include "common.h"
+#include "Socket.h"
 #include <stdlib.h>
 
 
@@ -185,95 +186,12 @@ char * WINAPI tdLastSentValue( int intDeviceId ) {
  * @returns an integer of the total number of devices configured
  */
 int WINAPI tdGetNumberOfDevices(void){
-	DWORD dwMode;
-	bool  fSuccess = false;
-
-	//Convert our std::string to std::wstring since we build agains win32 with unicode support
-	//std::string strName = "\\\\.\\pipe\\" + server;
-	std::wstring name(L"\\\\.\\pipe\\TelldusClient");
-	HANDLE hPipe = CreateFile(
-		(const wchar_t *)name.c_str(),           // pipe name 
-		GENERIC_READ |  // read and write access 
-		GENERIC_WRITE, 
-		0,              // no sharing 
-		NULL,           // default security attributes
-		OPEN_EXISTING,  // opens existing pipe 
-		FILE_FLAG_OVERLAPPED, // default attributes 
-		NULL);          // no template file 
-
-	if (hPipe == INVALID_HANDLE_VALUE) {
-		return 2;
-	}
-	
-	dwMode = PIPE_READMODE_MESSAGE; 
-	fSuccess = SetNamedPipeHandleState( 
-      hPipe, // pipe handle 
-      &dwMode,  // new pipe mode 
-      NULL,     // don't set maximum bytes 
-      NULL);    // don't set maximum time 
-
-	if (!fSuccess) {
-		return 3;
-	}
-
-	OVERLAPPED oOverlap; 
-	DWORD bytesWritten = 0;
-	int result;
-	char buf[512];	//TODO #define BUFSIZE 512
-	DWORD cbBytesRead = 0;
-
-	oOverlap.hEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
+	TelldusCore::Socket s(L"TelldusClient");
 	std::wstring msg = L"20:tdGetNumberOfDevices";
-	WriteFile(hPipe, msg.data(), (DWORD)msg.length()*sizeof(wchar_t), &bytesWritten, &oOverlap);
+	s.write(msg);
 
-	result = WaitForSingleObject(oOverlap.hEvent, 10000);
-	if (result == WAIT_TIMEOUT) {
-		CloseHandle(oOverlap.hEvent);
-		return 16;
-	}
-	
-	fSuccess = GetOverlappedResult(hPipe, &oOverlap, &bytesWritten, false);
-	CloseHandle(oOverlap.hEvent);
-	if (!fSuccess) {
-		return 8;
-	}
-
-
-	//READ //debug
-	HANDLE writeEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
-    oOverlap.hEvent = writeEvent;	//TODO: correct?
-	fSuccess = false;
-
-	memset(&buf, 0, 512);	//#define BUFSIZE 512
-
-	/*
-	if (!d->connected) {
-		return "";
-	}
-	*/
-
-	ReadFile(hPipe, &buf, sizeof(char)*512, &cbBytesRead, &oOverlap);	//#define BUFSIZE 512
-
-	result = WaitForSingleObject(writeEvent, 10000);	//TODO timeout
-	if (result == WAIT_TIMEOUT) {
-		//CloseHandle(d->readEvent);
-		//d->readEvent = INVALID_HANDLE_VALUE;
-		return 9;
-	}
-	fSuccess = GetOverlappedResult(hPipe, &oOverlap, &cbBytesRead, false);
-	if (!fSuccess) {
-		DWORD err = GetLastError();
-		if (err == ERROR_BROKEN_PIPE) {
-			//d->connected = false;
-		}
-		buf[0] = 0;
-	}
-	//CloseHandle(d->readEvent);
-	//d->readEvent = INVALID_HANDLE_VALUE;
-	//return buf;
-	
-	return 2;	//TODO, decode:a buf-en
-	//return buf[0];	//TODO
+	std::wstring response = s.read();
+	return 1;	
 }
 
 /**

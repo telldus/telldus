@@ -14,6 +14,7 @@ namespace TelldusCore {
 	class Socket
 	{
 	public:
+		Socket(const std::wstring &server);
 		Socket(SOCKET_T hPipe);
 		virtual ~Socket(void);
 

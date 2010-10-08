@@ -11,7 +11,42 @@ using namespace TelldusCore;
 class Socket::PrivateData {
 public:
 	HANDLE hPipe;
+	bool connected;
 };
+
+Socket::Socket(const std::wstring &server) {
+	d = new PrivateData;
+	d->connected = false;
+
+	bool  fSuccess = false;
+
+	std::wstring name(L"\\\\.\\pipe\\" + server);
+	d->hPipe = CreateFile(
+		(const wchar_t *)name.c_str(),           // pipe name 
+		GENERIC_READ |  // read and write access 
+		GENERIC_WRITE, 
+		0,              // no sharing 
+		NULL,           // default security attributes
+		OPEN_EXISTING,  // opens existing pipe 
+		FILE_FLAG_OVERLAPPED, // default attributes 
+		NULL);          // no template file 
+
+	if (d->hPipe == INVALID_HANDLE_VALUE) {
+		return;
+	}
+	
+	DWORD dwMode = PIPE_READMODE_MESSAGE; 
+	fSuccess = SetNamedPipeHandleState( 
+      d->hPipe, // pipe handle 
+      &dwMode,  // new pipe mode 
+      NULL,     // don't set maximum bytes 
+      NULL);    // don't set maximum time 
+
+	if (!fSuccess) {
+		return;
+	}
+	d->connected = true;
+}
 
 Socket::Socket(SOCKET_T hPipe)
 {
