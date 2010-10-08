@@ -41,6 +41,7 @@ IF (APPLE) #### Mac OS X ####
 		main_unix.cpp
 		Event_unix.cpp
 		EventHandler_unix.cpp
+		ConnectionListener_unix.cpp
 	)
 	
 ELSEIF (WIN32) #### Windows ####
@@ -70,6 +71,7 @@ ELSE (APPLE) #### Linux ####
 		main_unix.cpp
 		Event_unix.cpp
 		EventHandler_unix.cpp
+		ConnectionListener_unix.cpp
 	)
 	LIST(APPEND telldus-service_LIBRARIES
 		${telldus-service_LIBRARIES}
