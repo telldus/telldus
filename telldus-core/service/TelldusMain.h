@@ -11,8 +11,8 @@ public:
 	void stop();
 
 private:
-	bool running;
-
+	class PrivateData;
+	PrivateData *d;
 };
 
 #endif //TELLDUSMAIN_H

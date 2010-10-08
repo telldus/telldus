@@ -3,20 +3,28 @@
 #include "EventHandler.h"
 #include "ClientCommunicationHandler.h"
 
+#include <stdio.h>
 #include <list>
+
+class TelldusMain::PrivateData {
+public:
+	EventHandler eventHandler;
+	Event *stopEvent;
+};
 
 TelldusMain::TelldusMain(void)
 {
-	running = true;
+	d = new PrivateData;
+	d->stopEvent = d->eventHandler.addEvent();
 }
 
 TelldusMain::~TelldusMain(void)
 {
+	delete d;
 }
 
-void TelldusMain::start(void){
-	EventHandler eventHandler;
-	Event *clientEvent = eventHandler.addEvent();
+void TelldusMain::start(void) {
+	Event *clientEvent = d->eventHandler.addEvent();
 	
 	ConnectionListener clientListener(L"TelldusClient");
 	//TODO: eventlistener
@@ -26,8 +34,8 @@ void TelldusMain::start(void){
 
 	std::list<ClientCommunicationHandler *> clientCommunicationHandlerList;
 
-	while(running) {
-		if (!eventHandler.waitForAny()) {
+	while(!d->stopEvent->isSignaled()) {
+		if (!d->eventHandler.waitForAny()) {
 			continue;
 		}
 		if (clientEvent->isSignaled()) {
@@ -37,7 +45,7 @@ void TelldusMain::start(void){
 			
 			TelldusCore::Socket *s = clientListener.retrieveClientSocket();
 			if(s){
-				Event *handlerEvent = eventHandler.addEvent();
+				Event *handlerEvent = d->eventHandler.addEvent();
 				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(s, handlerEvent);
 				clientCommunication->start();
 				clientCommunicationHandlerList.push_back(clientCommunication);
@@ -66,5 +74,5 @@ void TelldusMain::start(void){
 }
 
 void TelldusMain::stop(void){
-	running = false;
+	d->eventHandler.signal(d->stopEvent);
 }
