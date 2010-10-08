@@ -21,7 +21,7 @@ namespace TelldusCore {
                 static int takeInt(std::wstring *);
 		
 		private:
-				static int wideToInteger(std::wstring *input);
+				static int wideToInteger(const std::wstring &input);
         };
 }
 

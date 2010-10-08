@@ -36,9 +36,25 @@ void ClientCommunicationHandler::run(){
 	
 	std::wstring clientMessage = d->clientSocket->read();
 
-	//std::wstring temp = parseMessage(clientMessage);
+	int intTemp;
+	std::wstring strReturn;
+	strReturn = L"";
+	parseMessage(clientMessage, intTemp, strReturn);
 	
-	
+	TelldusCore::Message msg;
+	/* TODO
+	if (response.type() == QVariant::Int) {
+		msg.addArgument(response.toInt());
+	} else {
+	*/
+	//allt som wstring ?
+	if(strReturn == L""){
+		msg.addArgument(intTemp);
+	}
+	//	msg.addArgument(temp);		//temp.toString().toStdString());
+	//}
+	msg.append(L"\n");
+	d->clientSocket->write(msg);
 
 	//We are done, signal for removal
 	d->done = true;
@@ -50,17 +66,18 @@ bool ClientCommunicationHandler::isDone(){
 }
 
 
-std::wstring parseMessage(const std::wstring &clientMessage){
+void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage, int &intReturn, std::wstring &wstringReturn){
 
 	std::wstring msg(clientMessage);	//Copy
-	//std::wstring function(TelldusCore::Message::takeString(&msg));
-	if(clientMessage == L"tdGetNumberOfDevices"){
-		//starta ny tråd (ny klass, ärv från Thread)
-		//skicka in meddelandet i denna tråd
-		//kolla där vad det är för meddelande
-		//do stuff
-		//TODO
+	std::wstring function(TelldusCore::Message::takeString(&msg));
+	
+	if(function == L"tdGetNumberOfDevices"){
+		
+		//return L"12";
+		intReturn = 12;
 	}
+	
+	intReturn = 5;
 
-	return L"Dummy";
+	//return L"5";
 }

@@ -218,24 +218,62 @@ int WINAPI tdGetNumberOfDevices(void){
 
 	OVERLAPPED oOverlap; 
 	DWORD bytesWritten = 0;
-	
+	int result;
+	char buf[512];	//TODO #define BUFSIZE 512
+	DWORD cbBytesRead = 0;
+
 	oOverlap.hEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
-	std::wstring msg = L"tdGetNumberOfDevices";
+	std::wstring msg = L"20:tdGetNumberOfDevices";
 	WriteFile(hPipe, msg.data(), (DWORD)msg.length()*sizeof(wchar_t), &bytesWritten, &oOverlap);
 
-	/*result = WaitForSingleObject(oOverlap.hEvent, 10000);
+	result = WaitForSingleObject(oOverlap.hEvent, 10000);
 	if (result == WAIT_TIMEOUT) {
 		CloseHandle(oOverlap.hEvent);
-		return;
+		return 16;
 	}
 	
-	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &bytesWritten, false);
+	fSuccess = GetOverlappedResult(hPipe, &oOverlap, &bytesWritten, false);
 	CloseHandle(oOverlap.hEvent);
 	if (!fSuccess) {
-		return;
+		return 8;
 	}
-*/
-	return 1;
+
+
+	//READ //debug
+	HANDLE writeEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
+    oOverlap.hEvent = writeEvent;	//TODO: correct?
+	fSuccess = false;
+
+	memset(&buf, 0, 512);	//#define BUFSIZE 512
+
+	/*
+	if (!d->connected) {
+		return "";
+	}
+	*/
+
+	ReadFile(hPipe, &buf, sizeof(char)*512, &cbBytesRead, &oOverlap);	//#define BUFSIZE 512
+
+	result = WaitForSingleObject(writeEvent, 10000);	//TODO timeout
+	if (result == WAIT_TIMEOUT) {
+		//CloseHandle(d->readEvent);
+		//d->readEvent = INVALID_HANDLE_VALUE;
+		return 9;
+	}
+	fSuccess = GetOverlappedResult(hPipe, &oOverlap, &cbBytesRead, false);
+	if (!fSuccess) {
+		DWORD err = GetLastError();
+		if (err == ERROR_BROKEN_PIPE) {
+			//d->connected = false;
+		}
+		buf[0] = 0;
+	}
+	//CloseHandle(d->readEvent);
+	//d->readEvent = INVALID_HANDLE_VALUE;
+	//return buf;
+	
+	return 2;	//TODO, decode:a buf-en
+	//return buf[0];	//TODO
 }
 
 /**

@@ -56,3 +56,29 @@ std::wstring Socket::read() {
 	CloseHandle(readEvent);
 	return buf;
 }
+
+void Socket::write(const std::wstring &msg){
+	
+	OVERLAPPED oOverlap; 
+	DWORD bytesWritten = 0;
+	int result;
+	bool fSuccess;
+
+	HANDLE writeEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
+	oOverlap.hEvent = writeEvent;
+	
+	WriteFile(d->hPipe, msg.data(), (DWORD)msg.length()*sizeof(wchar_t), &bytesWritten, &oOverlap);
+
+	result = WaitForSingleObject(writeEvent, 10000);
+	if (result == WAIT_TIMEOUT) {
+		CloseHandle(writeEvent);
+		//d->connected = false;
+		return;
+	}
+	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &bytesWritten, false);
+	CloseHandle(writeEvent);
+	if (!fSuccess) {
+		//d->connected = false;
+		return;	
+	}
+}

@@ -18,6 +18,7 @@ namespace TelldusCore {
 		virtual ~Socket(void);
 
 		std::wstring read();
+		void write(const std::wstring &msg);
 		
 	private:
 		class PrivateData;
