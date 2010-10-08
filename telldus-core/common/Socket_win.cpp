@@ -22,6 +22,9 @@ Socket::Socket(SOCKET_T hPipe)
 }
 
 Socket::~Socket(void){
+	if (d->hPipe != INVALID_HANDLE_VALUE) {
+		CloseHandle(d->hPipe);
+	}
 	delete d;
 }
 
