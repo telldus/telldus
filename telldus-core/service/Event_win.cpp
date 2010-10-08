@@ -28,7 +28,7 @@ bool Event::isSignaled() {
 }
 
 void Event::signal() {
-	//d->handler->signal(this);
+	SetEvent(d->event);
 }
 
 void Event::setSignaled() {
