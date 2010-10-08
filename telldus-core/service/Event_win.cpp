@@ -29,12 +29,18 @@ Event::~Event(void) {
 
 void Event::clearSignal() {
 	TelldusCore::MutexLocker locker(&d->mutex);
+	ResetEvent(d->event);
 	d->signaled = false;
 }
 
 bool Event::isSignaled() {
 	TelldusCore::MutexLocker locker(&d->mutex);
 	return d->signaled;
+}
+
+EVENT_T Event::retrieveNative() {
+	TelldusCore::MutexLocker locker(&d->mutex);
+	return d->event;
 }
 
 void Event::signal() {
@@ -51,7 +57,3 @@ void Event::setSignaled() {
 	d->signaled = true;
 }
 
-EVENT_T Event::retrieveNative() {
-	TelldusCore::MutexLocker locker(&d->mutex);
-	return d->event;
-}
