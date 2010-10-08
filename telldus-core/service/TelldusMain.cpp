@@ -10,16 +10,19 @@ class TelldusMain::PrivateData {
 public:
 	EventHandler eventHandler;
 	Event *stopEvent;
+	bool running;
 };
 
 TelldusMain::TelldusMain(void)
 {
 	d = new PrivateData;
 	d->stopEvent = d->eventHandler.addEvent();
+	d->running = true;
 }
 
 TelldusMain::~TelldusMain(void)
 {
+	delete d->stopEvent;
 	delete d;
 }
 
@@ -34,10 +37,14 @@ void TelldusMain::start(void) {
 
 	std::list<ClientCommunicationHandler *> clientCommunicationHandlerList;
 
-	while(!d->stopEvent->isSignaled()) {
+	while(d->running) {
 		if (!d->eventHandler.waitForAny()) {
 			continue;
 		}
+		/*if (d->stopEvent->isSignaled()) {
+			printf("Stopped\n");
+			break;
+		}*/
 		if (clientEvent->isSignaled()) {
 			clientEvent->clearSignal();
 			//New client connection
@@ -74,5 +81,6 @@ void TelldusMain::start(void) {
 }
 
 void TelldusMain::stop(void){
-	d->eventHandler.signal(d->stopEvent);
+	//d->eventHandler.signal(d->stopEvent);
+	d->running = false;
 }
