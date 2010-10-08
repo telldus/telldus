@@ -19,6 +19,9 @@ Event::Event(EventHandler *handler) {
 }
 
 Event::~Event(void) {
+	if (d->handler) {
+		d->handler->removeEvent(this);
+	}
 	TelldusCore::Thread::destroyMutex(&d->mutex);
 	CloseHandle(d->event);
 	delete d;
@@ -36,6 +39,11 @@ bool Event::isSignaled() {
 
 void Event::signal() {
 	SetEvent(d->event);
+}
+
+void Event::clearHandler() {
+	TelldusCore::MutexLocker locker(&d->mutex);
+	d->handler = 0;
 }
 
 void Event::setSignaled() {

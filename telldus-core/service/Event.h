@@ -22,6 +22,7 @@ public:
 protected:
 	Event(EventHandler *handler);
 	void setSignaled();
+	void clearHandler();
 	
 private:
 	class PrivateData;
