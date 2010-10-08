@@ -74,7 +74,7 @@ ConnectionListener::~ConnectionListener(void)
 
 void ConnectionListener::listen(Event *waitEvent){
 	
-	d->oOverlap.hEvent = waitEvent;
+	d->oOverlap.hEvent = waitEvent->retrieveNative();
 	
 	d->hPipe = CreateNamedPipe( 
 			(const wchar_t *)d->pipename.c_str(),             // pipe name 

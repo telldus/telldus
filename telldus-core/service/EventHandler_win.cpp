@@ -1,49 +1,54 @@
 #include "EventHandler.h"
+#include "Event.h"
 
 #include <windows.h>
+#include <list>
 
 class EventHandler::PrivateData {
 public:
-	HANDLE *events;
+	HANDLE *eventArray;
+	std::list<Event *> eventList;
 	int eventCount;
 };
 
 EventHandler::EventHandler() {
 	d = new PrivateData;
 	d->eventCount = 0;
-	d->events = new HANDLE[0];
+	d->eventArray = new HANDLE[0];
 }
 
 EventHandler::~EventHandler(void) {
-	delete[] d->events;
+	delete[] d->eventArray;
 	delete d;
 }
 
 Event *EventHandler::addEvent() {
-/*	EVENT *newArray = new EVENT[d->eventCount+1];
+	Event *event = new Event(this);
+	HANDLE *newArray = new HANDLE[d->eventCount+1];
 	for (int i = 0; i < d->eventCount; ++i) {
-		newArray[i] = d->events[i];
+		newArray[i] = d->eventArray[i];
 	}
-	delete[] d->events;
-	d->events = newArray;
-	d->events[d->eventCount] = event;
-	++d->eventCount;*/
-	return 0;
+	delete[] d->eventArray;
+	d->eventArray = newArray;
+	d->eventArray[d->eventCount] = event->retrieveNative();
+	d->eventList.push_back(event);
+	++d->eventCount;
+	return event;
 }
 
-void EventHandler::waitForAny() {
-	int result = WaitForMultipleObjects(d->eventCount, d->events, FALSE, 3000);
+void EventHandler::signal(Event *event) {
+}
+
+bool EventHandler::waitForAny() {
+	int result = WaitForMultipleObjects(d->eventCount, d->eventArray, FALSE, 3000);
 	if (result == WAIT_TIMEOUT) {
-		return;
+		return false;
 	}
 	int eventIndex = result - WAIT_OBJECT_0;
 	if (eventIndex >= d->eventCount) {
-		return;
+		return false;
 	}
-	return;
+
+	return true;
 
 }
-
-/*EVENT EventHandler::createEvent() {
-	return CreateEvent(NULL, true, true, NULL);
-}*/

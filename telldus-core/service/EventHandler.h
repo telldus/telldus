@@ -11,7 +11,7 @@ public:
 	Event *addEvent();
 	
 	void signal(Event *event);
-	void waitForAny();
+	bool waitForAny();
 
 private:
 	class PrivateData;

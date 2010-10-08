@@ -58,6 +58,7 @@ ELSEIF (WIN32) #### Windows ####
 		main_win.cpp
 		TelldusWinService_win.cpp
 		ConnectionListener_win.cpp
+		Event_win.cpp
 		EventHandler_win.cpp
 	)
 	LIST(APPEND telldus-service_HDRS
