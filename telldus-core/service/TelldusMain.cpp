@@ -63,12 +63,6 @@ void TelldusMain::start(void) {
 				++it;
 			}
 		}
-
-#ifdef _WINDOWS
-		Sleep(1000);
-#else
-		sleep(1);
-#endif
 	}
 }
 
