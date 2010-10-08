@@ -19,6 +19,7 @@ Event::Event(EventHandler *handler) {
 
 Event::~Event(void) {
 	TelldusCore::Thread::destroyMutex(&d->mutex);
+	CloseHandle(d->event);
 	delete d;
 }
 
