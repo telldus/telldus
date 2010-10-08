@@ -47,6 +47,9 @@ IF (APPLE)
 	ADD_DEFINITIONS(
 		-D_MACOSX
 	)
+	LIST(APPEND telldus-core_LIBRARIES
+		TelldusCommon
+	)
 ELSEIF (WIN32)
 	#### Windows ####
 	ADD_DEFINITIONS( -DUNICODE )
