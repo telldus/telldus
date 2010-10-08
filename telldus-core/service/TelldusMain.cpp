@@ -1,6 +1,9 @@
 #include "TelldusMain.h"
 #include "ConnectionListener.h"
 #include "EventHandler.h"
+#include "ClientCommunicationHandler.h"
+
+#include <list>
 
 TelldusMain::TelldusMain(void)
 {
@@ -21,18 +24,38 @@ void TelldusMain::start(void){
 	clientListener.listen(clientEvent);
 	//TODO: listen on eventListener
 
+	std::list<ClientCommunicationHandler *> clientCommunicationHandlerList;
+
 	while(running) {
 		if (!eventHandler.waitForAny()) {
 			continue;
 		}
 		if (clientEvent->isSignaled()) {
 			//New client connection
+			
+			
 			Socket *s = clientListener.retrieveClientSocket();
-			std::wstring clientMessage = s->read();
-
-			delete s;	//TODO: Cleanup
+			if(s){
+				Event *handlerEvent = eventHandler.addEvent();
+				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(s, handlerEvent);
+				clientCommunication->start();
+				clientCommunicationHandlerList.push_back(clientCommunication);
+			}
+			
 			clientListener.listen(clientEvent);
 		}
+
+
+		for ( std::list<ClientCommunicationHandler *>::iterator it = clientCommunicationHandlerList.begin(); it != clientCommunicationHandlerList.end(); ){
+			if ((*it)->isDone()){
+				delete *it;
+				it = clientCommunicationHandlerList.erase(it);
+			}
+			else{
+				++it;
+			}
+		}
+
 #ifdef _WINDOWS
 		Sleep(1000);
 #else
