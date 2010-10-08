@@ -16,10 +16,10 @@
 
 #ifdef _WINDOWS
 	#include <windows.h>
-	typedef CRITICAL_SECTION MUTEX;
+	typedef CRITICAL_SECTION MUTEX_T;
 #else
 	#include <pthread.h>
-	typedef pthread_mutex_t MUTEX;
+	typedef pthread_mutex_t MUTEX_T;
 #endif
 
 namespace TelldusCore {
@@ -33,10 +33,10 @@ namespace TelldusCore {
 			
 			void sendEvent(const std::string &string, int integer = 0);
 			
-			static void initMutex(MUTEX *m);
-			static void destroyMutex(MUTEX *m);
-			static void lockMutex(MUTEX *m);
-			static void unlockMutex(MUTEX *m);
+			static void initMutex(MUTEX_T *m);
+			static void destroyMutex(MUTEX_T *m);
+			static void lockMutex(MUTEX_T *m);
+			static void unlockMutex(MUTEX_T *m);
 						
 		protected:
 			virtual void run() = 0;
@@ -49,10 +49,10 @@ namespace TelldusCore {
 	
 	class MutexLocker {
 	public:
-		MutexLocker(MUTEX *m);
+		MutexLocker(MUTEX_T *m);
 		~MutexLocker();
 	private:
-		MUTEX *mutex;
+		MUTEX_T *mutex;
 	};
 }
 

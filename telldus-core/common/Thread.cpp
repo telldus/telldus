@@ -24,7 +24,7 @@ public:
 	pthread_t thread;
 	pthread_cond_t noEvent, noWait;
 #endif
-	MUTEX mutex;
+	MUTEX_T mutex;
 	
 	//Must be locked by the mutex!
 	bool hasEvent;
@@ -133,7 +133,7 @@ void Thread::sendEvent(const std::string &strMessage, int intMessage) {
 #endif
 }
 
-void Thread::initMutex(MUTEX * m) {
+void Thread::initMutex(MUTEX_T * m) {
 #ifdef _WINDOWS
 	InitializeCriticalSection(m);
 #else
@@ -141,7 +141,7 @@ void Thread::initMutex(MUTEX * m) {
 #endif
 }
 
-void Thread::destroyMutex(MUTEX * m) {
+void Thread::destroyMutex(MUTEX_T * m) {
 #ifdef _WINDOWS
 	DeleteCriticalSection(m);
 #else
@@ -149,7 +149,7 @@ void Thread::destroyMutex(MUTEX * m) {
 #endif
 }
 
-void Thread::unlockMutex(MUTEX * m) {
+void Thread::unlockMutex(MUTEX_T * m) {
 #ifdef _WINDOWS
 	LeaveCriticalSection(m);
 #else
@@ -157,7 +157,7 @@ void Thread::unlockMutex(MUTEX * m) {
 #endif
 }
 
-void Thread::lockMutex(MUTEX * m) {
+void Thread::lockMutex(MUTEX_T * m) {
 #ifdef _WINDOWS
 	EnterCriticalSection(m);
 #else
@@ -166,7 +166,7 @@ void Thread::lockMutex(MUTEX * m) {
 }
 
 
-MutexLocker::MutexLocker(MUTEX *m)
+MutexLocker::MutexLocker(MUTEX_T *m)
 	:mutex(m) {
 	Thread::lockMutex(mutex);
 }
