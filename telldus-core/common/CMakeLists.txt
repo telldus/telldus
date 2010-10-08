@@ -23,6 +23,9 @@ IF (APPLE)
 	#### Mac OS X ####
 	SET( telldus-common_TARGET	TelldusCommon )
 	ADD_DEFINITIONS( -D_MACOSX )
+	LIST(APPEND  telldus-common_SRCS
+		Socket_unix.cpp
+	)
 ELSEIF (WIN32)
 	#### Windows ####
 	ADD_DEFINITIONS( -DUNICODE )
@@ -36,6 +39,9 @@ ELSE (APPLE)
 	#### Linux ####
 	SET( telldus-common_TARGET	telldus-common )
 	ADD_DEFINITIONS( -D_LINUX )
+	LIST(APPEND  telldus-common_SRCS
+		Socket_unix.cpp
+	)
 ENDIF (APPLE)
 
 
