@@ -7,7 +7,7 @@
 	#include <windows.h>
 	typedef HANDLE SOCKET_T;
 #else
-	typedef unsigned int SOCKET;
+	typedef unsigned int SOCKET_T;
 #endif
 
 namespace TelldusCore {
