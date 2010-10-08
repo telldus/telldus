@@ -23,6 +23,11 @@ Event::~Event(void) {
 	delete d;
 }
 
+void Event::clearSignal() {
+	TelldusCore::MutexLocker locker(&d->mutex);
+	d->signaled = false;
+}
+
 bool Event::isSignaled() {
 	TelldusCore::MutexLocker locker(&d->mutex);
 	return d->signaled;

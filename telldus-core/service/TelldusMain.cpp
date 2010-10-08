@@ -31,6 +31,7 @@ void TelldusMain::start(void){
 			continue;
 		}
 		if (clientEvent->isSignaled()) {
+			clientEvent->clearSignal();
 			//New client connection
 			
 			

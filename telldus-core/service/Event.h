@@ -15,6 +15,7 @@ public:
 	Event(EventHandler *handler);
 	virtual ~Event();
 	
+	void clearSignal();
 	bool isSignaled();
 	EVENT_T retrieveNative();
 	void signal();
