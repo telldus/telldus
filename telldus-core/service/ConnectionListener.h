@@ -2,8 +2,11 @@
 #define CONNECTIONLISTENER_H
 
 #include <string>
-#include "Event.h"
-#include "Socket.h"
+
+class Event;
+namespace TelldusCore {
+	class Socket;
+};
 
 class ConnectionListener
 {

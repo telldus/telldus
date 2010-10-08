@@ -18,6 +18,6 @@ void ConnectionListener::listen(Event *waitEvent){
 	
 }
 
-Socket *ConnectionListener::retrieveClientSocket(){
+TelldusCore::Socket *ConnectionListener::retrieveClientSocket(){
 	
 }
