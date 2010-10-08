@@ -12,7 +12,6 @@ class EventHandler;
 
 class Event {
 public:
-	Event(EventHandler *handler);
 	virtual ~Event();
 	
 	void clearSignal();
@@ -21,6 +20,7 @@ public:
 	void signal();
 	
 protected:
+	Event(EventHandler *handler);
 	void setSignaled();
 	
 private:
