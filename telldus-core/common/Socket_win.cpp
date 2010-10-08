@@ -1,5 +1,4 @@
 #include "Socket.h"
-#include "Event.h"
 
 #include <windows.h>
 #include <AccCtrl.h>
