@@ -25,6 +25,7 @@ ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clie
 ClientCommunicationHandler::~ClientCommunicationHandler(void)
 {
 	wait();
+	delete(d->event);
 	delete(d->clientSocket);
 	delete d;
 }
