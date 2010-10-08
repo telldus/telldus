@@ -5,11 +5,13 @@ ENDIF(COMMAND cmake_policy)
 ######## Non configurable options  ########
 SET( telldus-common_SRCS
 	Thread.cpp
+	Message.cpp
 )
 
 SET( telldus-common_HDRS
 	Thread.h
 	Socket.h
+	Message.h
 )
 
 ######## Configurable options for the platform  ########

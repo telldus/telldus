@@ -1,4 +1,5 @@
 #include "ClientCommunicationHandler.h"
+#include "Message.h"
 
 class ClientCommunicationHandler::PrivateData {
 public:
@@ -6,6 +7,10 @@ public:
 	Event *event;
 	bool done;
 };
+
+ClientCommunicationHandler::ClientCommunicationHandler(){
+
+}
 
 ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clientSocket, Event *event)
 	:Thread()
@@ -30,7 +35,7 @@ void ClientCommunicationHandler::run(){
 	
 	std::wstring clientMessage = d->clientSocket->read();
 
-	//parseMessage(clientMessage);
+	//std::wstring temp = parseMessage(clientMessage);
 	
 	
 
@@ -43,9 +48,11 @@ bool ClientCommunicationHandler::isDone(){
 	return d->done;
 }
 
-/*
-std::wstring parseMessage(std::wstring &clientMessage){
 
+std::wstring parseMessage(const std::wstring &clientMessage){
+
+	std::wstring msg(clientMessage);	//Copy
+	//std::wstring function(TelldusCore::Message::takeString(&msg));
 	if(clientMessage == L"tdGetNumberOfDevices"){
 		//starta ny tråd (ny klass, ärv från Thread)
 		//skicka in meddelandet i denna tråd
@@ -54,5 +61,5 @@ std::wstring parseMessage(std::wstring &clientMessage){
 		//TODO
 	}
 
+	return L"Dummy";
 }
-*/
