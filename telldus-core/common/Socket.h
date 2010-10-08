@@ -10,17 +10,18 @@
 	typedef unsigned int SOCKET;
 #endif
 
-class Socket
-{
-public:
-	Socket(SOCKET_T hPipe);
-	virtual ~Socket(void);
+namespace TelldusCore {
+	class Socket
+	{
+	public:
+		Socket(SOCKET_T hPipe);
+		virtual ~Socket(void);
 
-	std::wstring read();
-	
-private:
-	class PrivateData;
-	PrivateData *d;
-};
-
+		std::wstring read();
+		
+	private:
+		class PrivateData;
+		PrivateData *d;
+	};
+}
 #endif //SOCKET_H

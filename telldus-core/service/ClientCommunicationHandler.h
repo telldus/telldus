@@ -9,7 +9,7 @@
 class ClientCommunicationHandler : public TelldusCore::Thread
 {
 public:
-	ClientCommunicationHandler(Socket *clientSocket, Event *event);
+	ClientCommunicationHandler(TelldusCore::Socket *clientSocket, Event *event);
 	~ClientCommunicationHandler(void);
 
 	bool isDone();
@@ -20,6 +20,7 @@ protected:
 private:
 	class PrivateData;
 	PrivateData *d;
+	//std::wstring parseMessage(std::wstring);
 };
 
 #endif //CLIENTCOMMUNICATIONHANDLER_H

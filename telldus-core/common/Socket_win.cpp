@@ -7,7 +7,7 @@
 
 #define BUFSIZE 512
 
-//TODO: using namespace TelldusCore;
+using namespace TelldusCore;
 
 class Socket::PrivateData {
 public:

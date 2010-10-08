@@ -11,7 +11,7 @@ public:
 	ConnectionListener(const std::wstring &name);
 	virtual ~ConnectionListener(void);
 	void listen(Event *waitEvent);
-	Socket *retrieveClientSocket();
+	TelldusCore::Socket *retrieveClientSocket();
 
 private:
 	class PrivateData;

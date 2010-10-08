@@ -97,7 +97,7 @@ void ConnectionListener::listen(Event *waitEvent){
 		ConnectNamedPipe(d->hPipe, &d->oOverlap);
 }
 
-Socket *ConnectionListener::retrieveClientSocket(){
+TelldusCore::Socket *ConnectionListener::retrieveClientSocket(){
 	DWORD cbBytesRead;
 
 	bool connected = GetOverlappedResult(d->hPipe, &d->oOverlap, &cbBytesRead, false);
@@ -105,7 +105,7 @@ Socket *ConnectionListener::retrieveClientSocket(){
 		CloseHandle(d->hPipe);
 		return 0;
 	}
-	Socket *s = new Socket(d->hPipe);
+	TelldusCore::Socket *s = new TelldusCore::Socket(d->hPipe);
 	return s;
 	
 }

@@ -2,12 +2,12 @@
 
 class ClientCommunicationHandler::PrivateData {
 public:
-	Socket *clientSocket;
+	TelldusCore::Socket *clientSocket;
 	Event *event;
 	bool done;
 };
 
-ClientCommunicationHandler::ClientCommunicationHandler(Socket *clientSocket, Event *event)
+ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clientSocket, Event *event)
 	:Thread()
 {
 	d = new PrivateData;
@@ -30,13 +30,8 @@ void ClientCommunicationHandler::run(){
 	
 	std::wstring clientMessage = d->clientSocket->read();
 
-	if(clientMessage == L"tdGetNumberOfDevices"){
-		//starta ny tråd (ny klass, ärv från Thread)
-		//skicka in meddelandet i denna tråd
-		//kolla där vad det är för meddelande
-		//do stuff
-		//TODO
-	}
+	//parseMessage(clientMessage);
+	
 	
 
 	//We are done, signal for removal
@@ -47,3 +42,17 @@ void ClientCommunicationHandler::run(){
 bool ClientCommunicationHandler::isDone(){
 	return d->done;
 }
+
+/*
+std::wstring parseMessage(std::wstring &clientMessage){
+
+	if(clientMessage == L"tdGetNumberOfDevices"){
+		//starta ny tråd (ny klass, ärv från Thread)
+		//skicka in meddelandet i denna tråd
+		//kolla där vad det är för meddelande
+		//do stuff
+		//TODO
+	}
+
+}
+*/

@@ -35,7 +35,7 @@ void TelldusMain::start(void){
 			//New client connection
 			
 			
-			Socket *s = clientListener.retrieveClientSocket();
+			TelldusCore::Socket *s = clientListener.retrieveClientSocket();
 			if(s){
 				Event *handlerEvent = eventHandler.addEvent();
 				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(s, handlerEvent);
