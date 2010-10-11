@@ -6,6 +6,8 @@
 class Settings {
 public:
 	Settings(void);
+	virtual ~Settings(void);
+
 	std::wstring getSetting(const std::wstring &strName) const;
 	int getNumberOfDevices(void) const;
 	std::wstring getName(int intDeviceId) const;
@@ -23,8 +25,6 @@ public:
 	int addDevice();
 	int getDeviceId(int intDeviceIndex) const;
 	bool removeDevice(int intDeviceId);
-
-	~Settings(void);
 	
 protected:
 	std::wstring getStringSetting(int intDeviceId, const std::wstring &name, bool parameter) const;
