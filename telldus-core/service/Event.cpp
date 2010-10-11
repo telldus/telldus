@@ -28,6 +28,11 @@ EventBase::~EventBase(void) {
 	if (d->handler) {
 		d->handler->removeEvent(this);
 	}
+	//If we have signals left, make sure we delete the data
+	std::list<EventData *>::const_iterator it = d->eventDataList.begin();
+	for(; it != d->eventDataList.end(); ++it) {
+		delete(*it);
+	}
 	TelldusCore::Thread::destroyMutex(&d->mutex);
 	delete d;
 }
