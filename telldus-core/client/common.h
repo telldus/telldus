@@ -34,3 +34,7 @@ inline char *wrapStdString( const std::string &string) {
 	return returnVal;
 #endif
 }
+
+inline char *wrapStdWstring( const std::wstring &wstring) {
+	return wrapStdString(std::string(wstring.begin(), wstring.end()));
+}
