@@ -12,9 +12,14 @@ namespace TelldusCore {
        
                 void addArgument(const std::wstring &);
                 void addArgument(int);
-                //void addArgument(const char *);
-       
-                static bool nextIsInt(const std::wstring &);
+                void addArgument(const char *);
+
+				bool getClientBoolFromSocket();
+				int getClientIntegerFromSocket();
+				std::wstring getClientWStringFromSocket();
+				
+                static std::wstring charToWstring(const char *value);
+				static bool nextIsInt(const std::wstring &);
                 static bool nextIsString(const std::wstring &);
 
                 static std::wstring takeString(std::wstring *);

@@ -117,7 +117,9 @@ void WINAPI tdReleaseString(char *string) {
  * @param intDeviceId The device id to turn on.
  **/
 int WINAPI tdTurnOn(int intDeviceId){
-	return TELLSTICK_ERROR_UNKNOWN;
+	TelldusCore::Message msg(L"tdTurnOn");	
+	msg.addArgument(intDeviceId);
+	return msg.getClientIntegerFromSocket();
 }
 
 /**
@@ -127,7 +129,9 @@ int WINAPI tdTurnOn(int intDeviceId){
  * @param intDeviceId The device id to turn off.
  */
 int WINAPI tdTurnOff(int intDeviceId){
-	return TELLSTICK_ERROR_UNKNOWN;
+	TelldusCore::Message msg(L"tdTurnOff");	
+	msg.addArgument(intDeviceId);
+	return msg.getClientIntegerFromSocket();
 }
 
 /**
@@ -137,7 +141,9 @@ int WINAPI tdTurnOff(int intDeviceId){
  * @param intDeviceId The device id to send bell to
  */
 int WINAPI tdBell(int intDeviceId){
-	return TELLSTICK_ERROR_UNKNOWN;
+	TelldusCore::Message msg(L"tdBell");	
+	msg.addArgument(intDeviceId);
+	return msg.getClientIntegerFromSocket();
 }
 
 /**
@@ -148,7 +154,10 @@ int WINAPI tdBell(int intDeviceId){
  * @param level The level the device should dim to. This value should be 0-255
  */
 int WINAPI tdDim(int intDeviceId, unsigned char level){
-	return TELLSTICK_ERROR_UNKNOWN;
+	TelldusCore::Message msg(L"tdDim");	
+	msg.addArgument(intDeviceId);
+	msg.addArgument(level);
+	return msg.getClientIntegerFromSocket();
 }
 
 /**
@@ -159,7 +168,9 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
  * @param intDeviceId The device id to learn.
  */
 int WINAPI tdLearn(int intDeviceId) {
-	return TELLSTICK_ERROR_UNKNOWN;
+	TelldusCore::Message msg(L"tdLearn");	
+	msg.addArgument(intDeviceId);
+	return msg.getClientIntegerFromSocket();
 }
 
 /**
@@ -168,8 +179,11 @@ int WINAPI tdLearn(int intDeviceId) {
  * @param methodsSupported The methods supported by the client. See tdMethods() for more information.
  * @returns the last sent command as integer, example TELLSTICK_TURNON or TELLSTICK_TURNOFF
  */
-int WINAPI tdLastSentCommand( int intDeviceId, int methodsSupported ) {
-	return TELLSTICK_TURNOFF;
+int WINAPI tdLastSentCommand(int intDeviceId, int methodsSupported ) {
+	TelldusCore::Message msg(L"tdLearn");	
+	msg.addArgument(intDeviceId);
+	msg.addArgument(methodsSupported);
+	return msg.getClientIntegerFromSocket();
 }
 
 /**
@@ -178,22 +192,20 @@ int WINAPI tdLastSentCommand( int intDeviceId, int methodsSupported ) {
  * @returns the the value as a human readable string, example "128" for 50%
  */
 char * WINAPI tdLastSentValue( int intDeviceId ) {
-	return wrapStdString("255");
+	TelldusCore::Message msg(L"tdLastSentValue");	
+	msg.addArgument(intDeviceId);
+	std::wstring strReturn = msg.getClientWStringFromSocket();
+	return wrapStdWstring(strReturn);
 }
-
 
 /**
  * This function returns the number of devices configured
  * @returns an integer of the total number of devices configured
  */
 int WINAPI tdGetNumberOfDevices(void){
-	TelldusCore::Socket s;
-	s.connect(L"TelldusClient");
-	std::wstring msg = L"20:tdGetNumberOfDevices";
-	s.write(msg);
-
-	std::wstring response = s.read();
-	return TelldusCore::Message::takeInt(&response);	
+	
+	TelldusCore::Message msg(L"tdGetNumberOfDevices");	
+	return msg.getClientIntegerFromSocket();
 }
 
 /**
@@ -210,7 +222,9 @@ int WINAPI tdGetNumberOfDevices(void){
  * @returns the unique id for the device or -1 if the device is not found.
  */
 int WINAPI tdGetDeviceId(int intDeviceIndex){
-	return 1;
+	TelldusCore::Message msg(L"tdGetDeviceId");	
+	msg.addArgument(intDeviceIndex);
+	return msg.getClientIntegerFromSocket();
 }
 
 /**
@@ -218,7 +232,9 @@ int WINAPI tdGetDeviceId(int intDeviceIndex){
  * TELLSTICK_TYPE_DEVICE or TELLSTICK_TYPE_GROUP
  */
 int WINAPI tdGetDeviceType(int intDeviceId) {
-	return TELLSTICK_TYPE_DEVICE;
+	TelldusCore::Message msg(L"tdGetDeviceType");	
+	msg.addArgument(intDeviceId);
+	return msg.getClientIntegerFromSocket();
 }
 
 /**
@@ -227,8 +243,10 @@ int WINAPI tdGetDeviceType(int intDeviceId) {
  * @returns The name of the device or an empty string if the device is not found.
  */
 char * WINAPI tdGetName(int intDeviceId){
-	std::string strReturn = "Hardcoded device";
-	return wrapStdString(strReturn);
+	TelldusCore::Message msg(L"tdGetName");	
+	msg.addArgument(intDeviceId);
+	std::wstring strReturn = msg.getClientWStringFromSocket();
+	return wrapStdWstring(strReturn);
 }
 
 /**
@@ -239,8 +257,10 @@ char * WINAPI tdGetName(int intDeviceId){
  * @returns \c true on success, \c false otherwise.
  */
 bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
-	bool blnSuccess = false;
-	return blnSuccess;
+	TelldusCore::Message msg(L"tdSetName");	
+	msg.addArgument(intDeviceId);
+	msg.addArgument(strNewName);
+	return msg.getClientBoolFromSocket();
 }
 
 /**
@@ -248,8 +268,10 @@ bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
  * @param intDeviceId The device id to query.
  */
 char* WINAPI tdGetProtocol(int intDeviceId){
-	std::string strReturn = "";
-	return wrapStdString(strReturn);
+	TelldusCore::Message msg(L"tdGetProtocol");	
+	msg.addArgument(intDeviceId);
+	std::wstring strReturn = msg.getClientWStringFromSocket();
+	return wrapStdWstring(strReturn);
 }
 
 /**
@@ -262,8 +284,10 @@ char* WINAPI tdGetProtocol(int intDeviceId){
  * @sa tdSetDeviceParameter()
  */
 bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
-	bool blnSuccess = false;
-	return blnSuccess;
+	TelldusCore::Message msg(L"tdSetProtocol");	
+	msg.addArgument(intDeviceId);
+	msg.addArgument(strProtocol);
+	return msg.getClientBoolFromSocket();
 }
 
 /**
@@ -271,8 +295,10 @@ bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
  * @param intDeviceId The device to query.
  */
 char* WINAPI tdGetModel(int intDeviceId){
-	std::string strReturn = "";
-	return wrapStdString(strReturn);
+	TelldusCore::Message msg(L"tdGetModel");	
+	msg.addArgument(intDeviceId);
+	std::wstring strReturn = msg.getClientWStringFromSocket();
+	return wrapStdWstring(strReturn);
 }
 
 /**
@@ -283,8 +309,10 @@ char* WINAPI tdGetModel(int intDeviceId){
  * @returns \c true on success, \c false otherwise.
  */
 bool WINAPI tdSetModel(int intDeviceId, const char *strModel){
-	bool blnSuccess = false;
-	return blnSuccess;
+	TelldusCore::Message msg(L"tdSetModel");	
+	msg.addArgument(intDeviceId);
+	msg.addArgument(strModel);
+	return msg.getClientBoolFromSocket();
 }
 
 /**
@@ -296,7 +324,11 @@ bool WINAPI tdSetModel(int intDeviceId, const char *strModel){
  * @returns \c true on success, \c false otherwise.
  */
 bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const char *strValue){
-	return false;
+	TelldusCore::Message msg(L"tdSetDeviceParameter");	
+	msg.addArgument(intDeviceId);
+	msg.addArgument(strName);
+	msg.addArgument(strValue);
+	return msg.getClientBoolFromSocket();
 }
 
 /**
@@ -306,8 +338,12 @@ bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const cha
  * @param defaultValue A defaultValue to return if the current parameter hasn't previously been set.
  */
 char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const char *defaultValue){
-	std::string strReturn = "";
-	return wrapStdString(strReturn);
+	TelldusCore::Message msg(L"tdGetDeviceParameter");	
+	msg.addArgument(intDeviceId);
+	msg.addArgument(strName);
+	msg.addArgument(defaultValue);
+	std::wstring strReturn = msg.getClientWStringFromSocket();
+	return wrapStdWstring(strReturn);
 }
 
 /**
@@ -317,8 +353,8 @@ char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const c
  * negative value.
  */
 int WINAPI tdAddDevice(){
-	int intNewDeviceId = -1;
-	return intNewDeviceId;
+	TelldusCore::Message msg(L"tdAddDevice");	
+	return msg.getClientIntegerFromSocket();
 }
 
 /**
@@ -326,8 +362,9 @@ int WINAPI tdAddDevice(){
  * @returns \c true on success, \c false otherwise.
  */
 bool WINAPI tdRemoveDevice(int intDeviceId){
-	bool blnSuccess = false;
-	return blnSuccess;
+	TelldusCore::Message msg(L"tdRemoveDevice");	
+	msg.addArgument(intDeviceId);
+	return msg.getClientBoolFromSocket();
 }
 
 /**
@@ -350,8 +387,10 @@ bool WINAPI tdRemoveDevice(int intDeviceId){
  * @sa TELLSTICK_DIM
  */
 int WINAPI tdMethods(int id, int methodsSupported){
-
-	return TELLSTICK_TURNON;
+	TelldusCore::Message msg(L"tdMethods");	
+	msg.addArgument(id);
+	msg.addArgument(methodsSupported);
+	return msg.getClientIntegerFromSocket();
 }
 
 /**
@@ -396,14 +435,27 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
  * @returns TELLSTICK_SUCCESS on success or one of the errorcodes on failure
  */
 int WINAPI tdSendRawCommand(const char *command, int reserved) {
-	return TELLSTICK_ERROR_UNKNOWN;
+	TelldusCore::Message msg(L"tdSendRawCommand");	
+	msg.addArgument(command);
+	msg.addArgument(reserved);
+	return msg.getClientIntegerFromSocket();
 }
 
 
 void WINAPI tdConnectTellStickController(int vid, int pid, const char *serial) {
+	TelldusCore::Message msg(L"tdConnectTellStickController");	
+	msg.addArgument(vid);
+	msg.addArgument(pid);
+	msg.addArgument(serial);
+	msg.getClientWStringFromSocket();
 }
 
 void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial) {
+	TelldusCore::Message msg(L"tdDisconnectTellStickController");	
+	msg.addArgument(vid);
+	msg.addArgument(pid);
+	msg.addArgument(serial);
+	msg.getClientWStringFromSocket();
 }
 
 
