@@ -73,7 +73,7 @@ std::wstring Socket::read() {
 	OVERLAPPED oOverlap; 
 	HANDLE readEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
 	oOverlap.hEvent = readEvent;
-	bool fSuccess = false;
+	BOOL fSuccess = false;
 
 	memset(&buf, 0, BUFSIZE);
 
@@ -101,7 +101,7 @@ void Socket::write(const std::wstring &msg){
 	OVERLAPPED oOverlap; 
 	DWORD bytesWritten = 0;
 	int result;
-	bool fSuccess;
+	BOOL fSuccess;
 
 	HANDLE writeEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
 	oOverlap.hEvent = writeEvent;
