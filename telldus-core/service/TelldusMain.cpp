@@ -27,11 +27,8 @@ TelldusMain::~TelldusMain(void)
 void TelldusMain::start(void) {
 	Event *clientEvent = d->eventHandler.addEvent();
 	
-	ConnectionListener clientListener(L"TelldusClient");
+	ConnectionListener clientListener(L"TelldusClient", clientEvent);
 	//TODO: eventlistener
-
-	clientListener.listen(clientEvent);
-	//TODO: listen on eventListener
 
 	std::list<ClientCommunicationHandler *> clientCommunicationHandlerList;
 
@@ -44,14 +41,12 @@ void TelldusMain::start(void) {
 			//New client connection
 			
 			TelldusCore::Socket *s = clientListener.retrieveClientSocket();
-			if(s){
+			if (s){
 				Event *handlerEvent = d->eventHandler.addEvent();
 				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(s, handlerEvent);
 				clientCommunication->start();
 				clientCommunicationHandlerList.push_back(clientCommunication);
 			}
-			
-			clientListener.listen(clientEvent);
 		}
 
 

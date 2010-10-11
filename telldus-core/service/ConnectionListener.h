@@ -2,19 +2,21 @@
 #define CONNECTIONLISTENER_H
 
 #include <string>
+#include "Thread.h"
 
 class Event;
 namespace TelldusCore {
 	class Socket;
 };
 
-class ConnectionListener
-{
+class ConnectionListener : public TelldusCore::Thread {
 public:
-	ConnectionListener(const std::wstring &name);
+	ConnectionListener(const std::wstring &name, Event *waitEvent);
 	virtual ~ConnectionListener(void);
-	void listen(Event *waitEvent);
 	TelldusCore::Socket *retrieveClientSocket();
+
+protected:
+	void run();
 
 private:
 	class PrivateData;

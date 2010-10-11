@@ -12,16 +12,20 @@ class ConnectionListener::PrivateData {
 public:
 	std::wstring pipename;
 	SECURITY_ATTRIBUTES sa;
-	HANDLE hPipe;
-	OVERLAPPED oOverlap;
+	TelldusCore::Socket *socket;
+	HANDLE hEvent;
+	bool running;
+	Event *waitEvent;
 };
 
-ConnectionListener::ConnectionListener(const std::wstring &name)
+ConnectionListener::ConnectionListener(const std::wstring &name, Event *waitEvent)
 {
 	d = new PrivateData;
+	d->hEvent = 0;
 
+	d->running = true;
+	d->waitEvent = waitEvent;
 	d->pipename = L"\\\\.\\pipe\\" + name;
-	
 
 	PSECURITY_DESCRIPTOR pSD = NULL;
 	PACL pACL = NULL;
@@ -67,18 +71,29 @@ ConnectionListener::ConnectionListener(const std::wstring &name)
 	d->sa.lpSecurityDescriptor = pSD;
 	d->sa.bInheritHandle = false;
 
+	start();
 }
 
-ConnectionListener::~ConnectionListener(void)
-{
+ConnectionListener::~ConnectionListener(void) {
+	d->running = false;
+	if (d->hEvent) {
+		SetEvent(d->hEvent);
+	}
+	wait();
+	delete d->waitEvent;
 	delete d;
 }
 
-void ConnectionListener::listen(Event *waitEvent){
+void ConnectionListener::run() {
+	HANDLE hPipe;
+	OVERLAPPED oOverlap;
+	DWORD cbBytesRead;
+
+	d->hEvent = CreateEvent(NULL, true, false, NULL);
+	oOverlap.hEvent = d->hEvent;
 	
-	d->oOverlap.hEvent = waitEvent->retrieveNative();
-	
-	d->hPipe = CreateNamedPipe( 
+	while (1) {
+		hPipe = CreateNamedPipe( 
 			(const wchar_t *)d->pipename.c_str(),             // pipe name 
 			PIPE_ACCESS_DUPLEX |      // read/write access 
 			FILE_FLAG_OVERLAPPED,	  //Overlapped mode
@@ -91,23 +106,33 @@ void ConnectionListener::listen(Event *waitEvent){
 			0,                        // client time-out 
 			&d->sa);                    // default security attribute 
 
-		if (d->hPipe == INVALID_HANDLE_VALUE) {
+		if (hPipe == INVALID_HANDLE_VALUE) {
 			//TelldusCore::logMessage("Could not create named pipe"); 
 			return;
 		}
 
-		ConnectNamedPipe(d->hPipe, &d->oOverlap);
+		ConnectNamedPipe(hPipe, &oOverlap);
+
+		WaitForSingleObject(oOverlap.hEvent, INFINITE);
+
+		if (!d->running) {
+			break;
+		}
+
+		BOOL connected = GetOverlappedResult(hPipe, &oOverlap, &cbBytesRead, false);
+		if (!connected) {
+			CloseHandle(hPipe);
+			return;
+		}
+		d->socket = new TelldusCore::Socket(hPipe);
+		d->waitEvent->signal();
+	}
+
+	CloseHandle(d->hEvent);
+	CloseHandle(hPipe);
 }
 
 TelldusCore::Socket *ConnectionListener::retrieveClientSocket(){
-	DWORD cbBytesRead;
-
-	bool connected = GetOverlappedResult(d->hPipe, &d->oOverlap, &cbBytesRead, false);
-	if (!connected) {
-		CloseHandle(d->hPipe);
-		return 0;
-	}
-	TelldusCore::Socket *s = new TelldusCore::Socket(d->hPipe);
-	return s;
+	return d->socket;
 	
 }
