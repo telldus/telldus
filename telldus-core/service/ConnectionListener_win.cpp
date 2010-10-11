@@ -12,7 +12,6 @@ class ConnectionListener::PrivateData {
 public:
 	std::wstring pipename;
 	SECURITY_ATTRIBUTES sa;
-	TelldusCore::Socket *socket;
 	HANDLE hEvent;
 	bool running;
 	Event *waitEvent;
@@ -124,15 +123,11 @@ void ConnectionListener::run() {
 			CloseHandle(hPipe);
 			return;
 		}
-		d->socket = new TelldusCore::Socket(hPipe);
-		d->waitEvent->signal();
+		ConnectionListenerEventData *data = new ConnectionListenerEventData();
+		data->socket = new TelldusCore::Socket(hPipe);
+		d->waitEvent->signal(data);
 	}
 
 	CloseHandle(d->hEvent);
 	CloseHandle(hPipe);
-}
-
-TelldusCore::Socket *ConnectionListener::retrieveClientSocket(){
-	return d->socket;
-	
 }

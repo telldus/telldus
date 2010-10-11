@@ -37,16 +37,16 @@ void TelldusMain::start(void) {
 			continue;
 		}
 		if (clientEvent->isSignaled()) {
-			EventData data = clientEvent->takeSignal();
 			//New client connection
-			
-			TelldusCore::Socket *s = clientListener.retrieveClientSocket();
-			if (s){
+			EventData *eventData = clientEvent->takeSignal();
+			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventData);
+			if (data) {
 				Event *handlerEvent = d->eventHandler.addEvent();
-				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(s, handlerEvent);
+				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(data->socket, handlerEvent);
 				clientCommunication->start();
 				clientCommunicationHandlerList.push_back(clientCommunication);
 			}
+			delete eventData;
 		}
 
 

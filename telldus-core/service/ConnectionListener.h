@@ -3,17 +3,22 @@
 
 #include <string>
 #include "Thread.h"
+#include "Event.h"
 
 class Event;
 namespace TelldusCore {
 	class Socket;
 };
 
+class ConnectionListenerEventData : public EventDataBase {
+public:
+	TelldusCore::Socket *socket;
+};
+
 class ConnectionListener : public TelldusCore::Thread {
 public:
 	ConnectionListener(const std::wstring &name, Event *waitEvent);
 	virtual ~ConnectionListener(void);
-	TelldusCore::Socket *retrieveClientSocket();
 
 protected:
 	void run();
