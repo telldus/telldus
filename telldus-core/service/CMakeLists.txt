@@ -4,15 +4,17 @@ ENDIF(COMMAND cmake_policy)
 
 ######## Non configurable options  ########
 SET( telldus-service_SRCS
-	TelldusMain.cpp
 	ClientCommunicationHandler.cpp
+	Settings.cpp
+	TelldusMain.cpp
 )
 SET( telldus-service_HDRS
-	TelldusMain.h
+	ClientCommunicationHandler.h
 	ConnectionListener.h
 	Event.h
-	ClientCommunicationHandler.h
 	EventHandler.h
+	Settings.h
+	TelldusMain.h
 )
 
 FIND_PACKAGE(Threads)
@@ -55,11 +57,12 @@ ELSEIF (WIN32) #### Windows ####
 		${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/TelldusCommon.lib
 	)
 	LIST(APPEND telldus-service_SRCS
-		main_win.cpp
-		TelldusWinService_win.cpp
 		ConnectionListener_win.cpp
 		Event_win.cpp
 		EventHandler_win.cpp
+		main_win.cpp
+		SettingsWinRegistry.cpp
+		TelldusWinService_win.cpp
 	)
 	LIST(APPEND telldus-service_HDRS
 		TelldusWinService_win.h
