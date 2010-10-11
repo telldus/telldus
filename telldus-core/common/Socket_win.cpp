@@ -14,10 +14,27 @@ public:
 	bool connected;
 };
 
-Socket::Socket(const std::wstring &server) {
+Socket::Socket() {
 	d = new PrivateData;
 	d->connected = false;
+}
 
+Socket::Socket(SOCKET_T hPipe)
+{
+	d = new PrivateData;
+	d->hPipe = hPipe;
+	
+}
+
+
+Socket::~Socket(void){
+	if (d->hPipe != INVALID_HANDLE_VALUE) {
+		CloseHandle(d->hPipe);
+	}
+	delete d;
+}
+
+void Socket::connect(const std::wstring &server){
 	bool  fSuccess = false;
 
 	std::wstring name(L"\\\\.\\pipe\\" + server);
@@ -46,20 +63,6 @@ Socket::Socket(const std::wstring &server) {
 		return;
 	}
 	d->connected = true;
-}
-
-Socket::Socket(SOCKET_T hPipe)
-{
-	d = new PrivateData;
-	d->hPipe = hPipe;
-	
-}
-
-Socket::~Socket(void){
-	if (d->hPipe != INVALID_HANDLE_VALUE) {
-		CloseHandle(d->hPipe);
-	}
-	delete d;
 }
 
 std::wstring Socket::read() {

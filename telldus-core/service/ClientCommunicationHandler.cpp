@@ -51,8 +51,9 @@ void ClientCommunicationHandler::run(){
 	if(strReturn == L""){
 		msg.addArgument(intTemp);
 	}
-	//	msg.addArgument(temp);		//temp.toString().toStdString());
-	//}
+	else{
+		msg.addArgument(strReturn);		//temp.toString().toStdString());
+	}
 	msg.append(L"\n");
 	d->clientSocket->write(msg);
 
@@ -76,8 +77,8 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		//return L"12";
 		intReturn = 12;
 	}
-	
-	intReturn = 5;
-
+	else{
+		intReturn = 5;
+	}
 	//return L"5";
 }

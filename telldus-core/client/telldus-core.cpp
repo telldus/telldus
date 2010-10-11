@@ -6,6 +6,7 @@
 
 #include "telldus-core.h"
 #include "common.h"
+#include "Message.h"
 #include "Socket.h"
 #include <stdlib.h>
 
@@ -186,12 +187,13 @@ char * WINAPI tdLastSentValue( int intDeviceId ) {
  * @returns an integer of the total number of devices configured
  */
 int WINAPI tdGetNumberOfDevices(void){
-	TelldusCore::Socket s(L"TelldusClient");
+	TelldusCore::Socket s;
+	s.connect(L"TelldusClient");
 	std::wstring msg = L"20:tdGetNumberOfDevices";
 	s.write(msg);
 
 	std::wstring response = s.read();
-	return 1;	
+	return TelldusCore::Message::takeInt(&response);	
 }
 
 /**
