@@ -27,8 +27,8 @@ public:
 	
 	bool isSignaled();
 	void signal();
-	virtual void signal(const EventData &);
-	EventData takeSignal();
+	virtual void signal(EventData *);
+	EventData *takeSignal();
 
 protected:
 	EventBase(EventHandler *handler);

@@ -15,7 +15,7 @@ class EventBase::PrivateData {
 public:
 	MUTEX_T mutex;
 	EventHandler *handler;
-	std::list<EventData> eventDataList;
+	std::list<EventData *> eventDataList;
 };
 
 EventBase::EventBase(EventHandler *handler) {
@@ -43,10 +43,10 @@ bool EventBase::isSignaled() {
 }
 
 void EventBase::signal() {
-	signal(EventData());
+	signal(new EventData());
 }
 
-void EventBase::signal(const EventData &eventData) {
+void EventBase::signal(EventData *eventData) {
 	{
 		TelldusCore::MutexLocker locker(&d->mutex);
 		d->eventDataList.push_back(eventData);
@@ -54,12 +54,12 @@ void EventBase::signal(const EventData &eventData) {
 	sendSignal();
 }
 
-EventData EventBase::takeSignal() {
+EventData *EventBase::takeSignal() {
 	TelldusCore::MutexLocker locker(&d->mutex);
 	if (d->eventDataList.size() == 0) {
-		return EventData();
+		return new EventData();
 	}
-	EventData data = d->eventDataList.front();
+	EventData *data = d->eventDataList.front();
 	d->eventDataList.pop_front();
 	if (d->eventDataList.size() == 0) {
 		this->clearSignal();
