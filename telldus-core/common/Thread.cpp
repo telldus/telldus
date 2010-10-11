@@ -24,41 +24,14 @@ public:
 	pthread_t thread;
 	pthread_cond_t noEvent, noWait;
 #endif
-	MUTEX_T mutex;
-	
-	//Must be locked by the mutex!
-	bool hasEvent;
-	std::string strMessage;
-	int intMessage;
 };
 
 Thread::Thread() {
 	d = new ThreadPrivate;
 	d->thread = 0;
-	initMutex(&d->mutex);
-	
-	lockMutex(&d->mutex);
-	d->hasEvent = false;
-	unlockMutex(&d->mutex);
-	
-#ifdef _WINDOWS
-	d->noEvent = CreateEvent(0, FALSE, FALSE, 0);
-	d->noWait = CreateEvent(0, FALSE, FALSE, 0);
-#else
-	pthread_cond_init(&d->noEvent, NULL);
-	pthread_cond_init(&d->noWait, NULL);
-#endif
 }
 
 Thread::~Thread() {
-	destroyMutex(&d->mutex);
-#ifdef _WINDOWS
-	CloseHandle(d->noEvent);
-	CloseHandle(d->noWait);
-#else
-	pthread_cond_destroy(&d->noEvent);
-	pthread_cond_destroy(&d->noWait);
-#endif
 	delete d;
 }
 
@@ -89,52 +62,6 @@ void *Thread::exec( void *ptr ) {
 		t->run();
 	}
 	return 0;
-}
-
-std::string Thread::waitForEvent(int *intMessage) {
-	std::string strMessage;
-	lockMutex(&d->mutex);
-	while(!d->hasEvent) {
-#ifdef _WINDOWS
-		unlockMutex(&d->mutex);
-		WaitForSingleObject(d->noWait, INFINITE);
-		lockMutex(&d->mutex);
-#else
-		pthread_cond_wait(&d->noWait, &d->mutex);
-#endif
-	}
-	d->hasEvent = false;
-	strMessage = d->strMessage;
-	(*intMessage) = d->intMessage;
-	unlockMutex(&d->mutex);
-#ifdef _WINDOWS
-	SetEvent(d->noEvent);
-#else
-	pthread_cond_broadcast(&d->noEvent);
-#endif
-	return strMessage;
-}
-
-void Thread::sendEvent(const std::string &strMessage, int intMessage) {
-	lockMutex(&d->mutex);
-	while (d->hasEvent) { //We have an unprocessed event
-#ifdef _WINDOWS
-		unlockMutex(&d->mutex);
-		WaitForSingleObject(d->noEvent, INFINITE);
-		lockMutex(&d->mutex);
-#else
-		pthread_cond_wait(&d->noEvent, &d->mutex);
-#endif
-	}
-	d->hasEvent = true;
-	d->strMessage = strMessage;
-	d->intMessage = intMessage;
-	unlockMutex(&d->mutex);
-#ifdef _WINDOWS
-	SetEvent(d->noWait);
-#else
-	pthread_cond_broadcast(&d->noWait);
-#endif
 }
 
 void Thread::initMutex(MUTEX_T * m) {
