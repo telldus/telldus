@@ -16,13 +16,13 @@ public:
 	
 	void clearSignal();
 	bool isSignaled();
-	EVENT_T retrieveNative();
 	void signal();
 	
 protected:
 	Event(EventHandler *handler);
-	void setSignaled();
 	void clearHandler();
+	void setSignaled();
+	EVENT_T retrieveNative();
 	
 private:
 	class PrivateData;
