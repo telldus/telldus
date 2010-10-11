@@ -19,10 +19,8 @@ public:
 #ifdef _WINDOWS
 	HANDLE thread;
 	DWORD threadId;
-	HANDLE noEvent, noWait;
 #else
 	pthread_t thread;
-	pthread_cond_t noEvent, noWait;
 #endif
 };
 
