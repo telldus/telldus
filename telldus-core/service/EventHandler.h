@@ -2,6 +2,7 @@
 #define EVENTHANDLER_H
 
 class Event;
+class EventBase;
 
 class EventHandler {
 public:
@@ -9,10 +10,12 @@ public:
 	virtual ~EventHandler(void);
 
 	Event *addEvent();
-	bool removeEvent(Event *event);
+	bool removeEvent(EventBase *event);
 	
-	void signal(Event *event);
 	bool waitForAny();
+
+protected:
+	void signal(Event *event);
 
 private:
 	class PrivateData;

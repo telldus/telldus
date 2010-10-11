@@ -30,7 +30,7 @@ Event *EventHandler::addEvent() {
 
 void EventHandler::signal(Event *event) {
 	pthread_mutex_lock(&d->mutex);
-	event->setSignaled();
+	//event->setSignaled();
 	d->hasEvent = true;
 	pthread_cond_signal(&d->event);
 	pthread_mutex_unlock(&d->mutex);

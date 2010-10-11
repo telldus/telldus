@@ -49,7 +49,7 @@ Event *EventHandler::addEvent() {
 	return event;
 }
 
-bool EventHandler::removeEvent(Event *event) {
+bool EventHandler::removeEvent(EventBase *event) {
 	TelldusCore::MutexLocker locker(&d->mutex);
 	HANDLE *newArray = new HANDLE[d->eventCount-1];
 	Event **newObjectArray = new Event*[d->eventCount-1];
@@ -71,8 +71,7 @@ bool EventHandler::removeEvent(Event *event) {
 	return (i != index);
 }
 
-void EventHandler::signal(Event *event) {
-	event->signal();
+void EventHandler::signal(Event *) {
 }
 
 bool EventHandler::waitForAny() {
@@ -86,6 +85,5 @@ bool EventHandler::waitForAny() {
 	if (eventIndex >= d->eventCount) {
 		return false;
 	}
-	d->eventObjectArray[eventIndex]->setSignaled();
 	return true;
 }

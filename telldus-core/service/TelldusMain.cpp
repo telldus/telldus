@@ -37,7 +37,7 @@ void TelldusMain::start(void) {
 			continue;
 		}
 		if (clientEvent->isSignaled()) {
-			clientEvent->clearSignal();
+			EventData data = clientEvent->takeSignal();
 			//New client connection
 			
 			TelldusCore::Socket *s = clientListener.retrieveClientSocket();

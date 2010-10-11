@@ -5,6 +5,7 @@ ENDIF(COMMAND cmake_policy)
 ######## Non configurable options  ########
 SET( telldus-service_SRCS
 	ClientCommunicationHandler.cpp
+	Event.cpp
 	Settings.cpp
 	TelldusMain.cpp
 )
