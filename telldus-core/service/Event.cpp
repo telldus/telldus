@@ -57,12 +57,16 @@ void EventBase::signal(EventData *eventData) {
 EventData *EventBase::takeSignal() {
 	TelldusCore::MutexLocker locker(&d->mutex);
 	if (d->eventDataList.size() == 0) {
-		return new EventData();
+		return 0;
 	}
 	EventData *data = d->eventDataList.front();
 	d->eventDataList.pop_front();
 	if (d->eventDataList.size() == 0) {
 		this->clearSignal();
+	}
+	if (!data->isValid()) {
+		delete data;
+		return 0;
 	}
 	return data;
 }
