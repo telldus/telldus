@@ -16,6 +16,7 @@ public:
 
 Socket::Socket() {
 	d = new PrivateData;
+	d->hPipe = INVALID_HANDLE_VALUE;
 	d->connected = false;
 }
 
