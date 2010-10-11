@@ -13,12 +13,12 @@ class EventHandler;
 
 class EventData {
 public:
-	bool isValid() const;
+	virtual bool isValid() const;
 };
 
 class EventDataBase : public EventData {
 public:
-	bool isValid() const;
+	virtual bool isValid() const;
 };
 
 class EventBase {
