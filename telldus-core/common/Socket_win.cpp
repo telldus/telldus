@@ -35,7 +35,7 @@ Socket::~Socket(void){
 }
 
 void Socket::connect(const std::wstring &server){
-	bool  fSuccess = false;
+	BOOL fSuccess = false;
 
 	std::wstring name(L"\\\\.\\pipe\\" + server);
 	d->hPipe = CreateFile(
