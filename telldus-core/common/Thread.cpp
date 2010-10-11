@@ -34,6 +34,7 @@ public:
 
 Thread::Thread() {
 	d = new ThreadPrivate;
+	d->thread = 0;
 	initMutex(&d->mutex);
 	
 	lockMutex(&d->mutex);
@@ -70,6 +71,9 @@ void Thread::start() {
 }
 
 bool Thread::wait() {
+	if (!d->thread) {
+		return true;
+	}
 #ifdef _WINDOWS
 	WaitForSingleObject(d->thread, INFINITE);
 	CloseHandle(d->thread);
