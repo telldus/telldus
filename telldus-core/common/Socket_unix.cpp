@@ -6,8 +6,8 @@ class Socket::PrivateData {
 public:
 };
 
-Socket::Socket(const std::wstring &server) {
-	
+Socket::Socket() {
+	d = new PrivateData;
 }
 
 Socket::Socket(SOCKET_T hPipe)
@@ -15,8 +15,11 @@ Socket::Socket(SOCKET_T hPipe)
 	d = new PrivateData;
 }
 
-Socket::~Socket(void){
+Socket::~Socket(void) {
 	delete d;
+}
+
+void Socket::connect(const std::wstring &server) {
 }
 
 std::wstring Socket::read() {
