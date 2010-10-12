@@ -5,7 +5,7 @@ class ConnectionListener::PrivateData {
 public:
 };
 
-ConnectionListener::ConnectionListener(const std::wstring &name)
+ConnectionListener::ConnectionListener(const std::wstring &name, Event *waitEvent)
 {
 	d = new PrivateData;
 }
@@ -14,10 +14,7 @@ ConnectionListener::~ConnectionListener(void) {
 	delete d;
 }
 
-void ConnectionListener::listen(Event *waitEvent){
+void ConnectionListener::run(){
 	
 }
 
-TelldusCore::Socket *ConnectionListener::retrieveClientSocket(){
-	
-}
