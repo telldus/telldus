@@ -28,6 +28,9 @@ Event *EventHandler::addEvent() {
 	return event;
 }
 
+bool EventHandler::removeEvent(EventBase *event) {
+}
+
 void EventHandler::signal(Event *event) {
 	pthread_mutex_lock(&d->mutex);
 	//event->setSignaled();
