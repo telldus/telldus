@@ -10,9 +10,7 @@
 // sees symbols defined with this macro as being exported.
 
 #ifdef _WINDOWS
-	#if defined(TELLDUSCORE_STATIC)
-		#define TELLSTICK_API
-	#elif defined(TELLDUSCORE_EXPORTS)
+	#if defined(TELLDUSCORE_EXPORTS)
 		#define TELLSTICK_API __declspec(dllexport)
 	#else
 		#define TELLSTICK_API __declspec(dllimport)
