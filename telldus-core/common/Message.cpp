@@ -8,69 +8,69 @@ using namespace TelldusCore;
 
 
 Message::Message()
-        : std::wstring()
+	: std::wstring()
 {
 }
 
 Message::Message(const std::wstring &functionName)
-		:std::wstring()
+	:std::wstring()
 {
-        this->addArgument(functionName);
+	this->addArgument(functionName);
 }
 
 Message::~Message(void) {
 }
 
 void Message::addArgument(const std::wstring &value) {
-    std::wstringstream st;
-    st << (int)value.size();
-    this->append(st.str());
-    this->append(L":");
-    this->append(value);
+	std::wstringstream st;
+	st << (int)value.size();
+	this->append(st.str());
+	this->append(L":");
+	this->append(value);
 }
 
 void Message::addArgument(int value) {
-    std::wstringstream st;
-    st << (int)value;
-    this->append(L"i");
-    this->append(st.str());
-    this->append(L"s");
+	std::wstringstream st;
+	st << (int)value;
+	this->append(L"i");
+	this->append(st.str());
+	this->append(L"s");
 }
 
 void Message::addArgument(const char *value) {
-     this->addArgument(charToWstring(value));
+	this->addArgument(charToWstring(value));
 }
 
 std::wstring Message::charToWstring(const char *value) {
-    std::wstringstream st;
-    st << value;
+	std::wstringstream st;
+	st << value;
 	return st.str();
 }
 
 bool Message::nextIsInt(const std::wstring &message) {
-    if (message.length() == 0) {
-            return false;
-    }
-    return (message.at(0) == 'i');
+	if (message.length() == 0) {
+		return false;
+	}
+	return (message.at(0) == 'i');
 }
 
 bool Message::nextIsString(const std::wstring &message) {
-    if (message.length() == 0) {
-            return false;
-    }
-    return (iswdigit(message.at(0)) != 0);
+	if (message.length() == 0) {
+		return false;
+	}
+	return (iswdigit(message.at(0)) != 0);
 }
 
 std::wstring Message::takeString(std::wstring *message) {
     
 	if (!Message::nextIsString(*message)) {
-            return L"";
-    }
-    int index = message->find(':');
-    int length = wideToInteger(message->substr(0, index));
-    std::wstring retval(message->substr(index+1, length));
-    message->erase(0, index+length+1);
-    return retval;
+		return L"";
+	}
+	int index = message->find(':');
+	int length = wideToInteger(message->substr(0, index));
+	std::wstring retval(message->substr(index+1, length));
+	message->erase(0, index+length+1);
+	return retval;
 }
 
 int Message::takeInt(std::wstring *message) {
