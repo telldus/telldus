@@ -90,7 +90,6 @@ ELSE (APPLE) #### Linux ####
 		SettingsConfuse.cpp
 	)
 	LIST(APPEND telldus-service_LIBRARIES
-		${telldus-service_LIBRARIES}
 		${CONFUSE_LIBRARY}
 		telldus-common
 	)
