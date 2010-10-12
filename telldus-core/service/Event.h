@@ -34,6 +34,7 @@ protected:
 	EventBase(EventHandler *handler);
 	void clearHandler();
 	virtual void clearSignal() = 0;
+	EventHandler *handler() const;
 	virtual void sendSignal() = 0;
 
 private:

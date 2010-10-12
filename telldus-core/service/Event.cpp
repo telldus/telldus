@@ -42,6 +42,10 @@ void EventBase::clearHandler() {
 	d->handler = 0;
 }
 
+EventHandler *EventBase::handler() const {
+	return d->handler;
+}
+
 bool EventBase::isSignaled() {
 	TelldusCore::MutexLocker locker(&d->mutex);
 	return (d->eventDataList.size() > 0);
