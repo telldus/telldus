@@ -1,13 +1,18 @@
 #include "DeviceManager.h"
+#include "Device.h"
+
+#include <map>
 
 class DeviceManager::PrivateData {
 public:
-	//Lista med devices
+	std::map<int, Device> devices;
 };
 
-DeviceManager::DeviceManager()
-{
+DeviceManager::DeviceManager(){
+
 }
 
 DeviceManager::~DeviceManager(void) {
+	//delete d->devices;
+	delete d;
 }
