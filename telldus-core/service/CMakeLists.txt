@@ -70,16 +70,20 @@ ELSEIF (WIN32) #### Windows ####
 	)
 
 ELSE (APPLE) #### Linux ####
+	FIND_LIBRARY(CONFUSE_LIBRARY confuse)
+	ADD_DEFINITIONS( -D_CONFUSE )
 
 	SET( telldus-service_TARGET	telldusd )
 	LIST(APPEND telldus-service_SRCS
-		main_unix.cpp
+		ConnectionListener_unix.cpp
 		Event_unix.cpp
 		EventHandler_unix.cpp
-		ConnectionListener_unix.cpp
+		main_unix.cpp
+		SettingsConfuse.cpp
 	)
 	LIST(APPEND telldus-service_LIBRARIES
 		${telldus-service_LIBRARIES}
+		${CONFUSE_LIBRARY}
 		telldus-common
 	)
 ENDIF (APPLE)
