@@ -20,6 +20,8 @@ protected:
 private:
 	class PrivateData;
 	PrivateData *d;
+	
+	friend class Event;
 };
 
 #endif //EVENTHANDLER_H
