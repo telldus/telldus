@@ -4,10 +4,13 @@
 class DeviceManager
 {
 public:
-	DeviceManager();
+	DeviceManager(void);
 	~DeviceManager(void);
 
 private:
+
+	void fillDevices(void);
+
 	class PrivateData;
 	PrivateData *d;
 };

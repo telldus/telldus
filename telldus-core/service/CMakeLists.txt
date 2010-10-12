@@ -10,6 +10,8 @@ SET( telldus-service_SRCS
 	TelldusMain.cpp
 	DeviceManager.cpp
 	Device.cpp
+	Protocol.cpp
+	Controller.cpp
 )
 SET( telldus-service_HDRS
 	ClientCommunicationHandler.h
@@ -20,6 +22,8 @@ SET( telldus-service_HDRS
 	TelldusMain.h
 	DeviceManager.h
 	Device.h
+	Protocol.h
+	Controller.h
 )
 
 FIND_PACKAGE(Threads)

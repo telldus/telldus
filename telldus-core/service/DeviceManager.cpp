@@ -9,10 +9,17 @@ public:
 };
 
 DeviceManager::DeviceManager(){
-
+	d = new PrivateData;
+	fillDevices();
 }
 
 DeviceManager::~DeviceManager(void) {
 	//delete d->devices;
 	delete d;
+}
+
+void DeviceManager::fillDevices(){
+	//foreach device i registret
+		//hämta id, låt devicen själv sätta sina värden i constructorn
+		//lägg till i devices-listan
 }
