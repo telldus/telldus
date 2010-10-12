@@ -4,30 +4,30 @@
 #include <string>
 
 namespace TelldusCore {
-        class Message : public std::wstring {
-        public:
-                Message();
-                Message(const std::wstring &);
-                ~Message(void);
-       
-                void addArgument(const std::wstring &);
-                void addArgument(int);
-                void addArgument(const char *);
+	class Message : public std::wstring {
+	public:
+		Message();
+		Message(const std::wstring &);
+		~Message(void);
 
-				bool getClientBoolFromSocket();
-				int getClientIntegerFromSocket();
-				std::wstring getClientWStringFromSocket();
+		void addArgument(const std::wstring &);
+		void addArgument(int);
+		void addArgument(const char *);
+
+		bool getClientBoolFromSocket();
+		int getClientIntegerFromSocket();
+		std::wstring getClientWStringFromSocket();
 				
-                static std::wstring charToWstring(const char *value);
-				static bool nextIsInt(const std::wstring &);
-                static bool nextIsString(const std::wstring &);
+		static std::wstring charToWstring(const char *value);
+		static bool nextIsInt(const std::wstring &);
+		static bool nextIsString(const std::wstring &);
 
-                static std::wstring takeString(std::wstring *);
-                static int takeInt(std::wstring *);
+		static std::wstring takeString(std::wstring *);
+		static int takeInt(std::wstring *);
 		
-		private:
-				static int wideToInteger(const std::wstring &input);
-        };
+	private:
+		static int wideToInteger(const std::wstring &input);
+	};
 }
 
 #endif //MESSAGE_H

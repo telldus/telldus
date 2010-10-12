@@ -1,9 +1,11 @@
 #include "Message.h"
 #include "Socket.h"
-using namespace TelldusCore;
 #include <sstream>
 #include <wctype.h>
 #include <stdlib.h>
+
+using namespace TelldusCore;
+
 
 Message::Message()
         : std::wstring()
