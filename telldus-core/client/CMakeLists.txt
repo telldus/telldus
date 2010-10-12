@@ -70,6 +70,10 @@ ELSEIF (WIN32)
 ELSE (APPLE)
 	#### Linux ####
 	SET( telldus-core_TARGET	telldus-core )
+	LIST(APPEND telldus-core_LIBRARIES
+		telldus-common
+	)
+
 	ADD_DEFINITIONS(
 		-D_LINUX
 	)
