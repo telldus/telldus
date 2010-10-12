@@ -6,12 +6,16 @@ class Event::PrivateData {
 public:
 };
 
-Event::Event(EventHandler *handler) {
+Event::Event(EventHandler *handler)
+	:EventBase(handler){
 	d = new PrivateData;
 }
 
 Event::~Event(void) {
 	delete d;
+}
+
+void Event::clearSignal() {
 }
 
 void Event::sendSignal() {
