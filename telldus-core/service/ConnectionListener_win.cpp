@@ -35,35 +35,35 @@ ConnectionListener::ConnectionListener(const std::wstring &name, Event *waitEven
 	pSD = (PSECURITY_DESCRIPTOR) LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH); 
 	if (pSD == NULL) {
 		return;
-    } 
+	} 
  
-    if (!InitializeSecurityDescriptor(pSD, SECURITY_DESCRIPTOR_REVISION)) {  
-        LocalFree(pSD);
+	if (!InitializeSecurityDescriptor(pSD, SECURITY_DESCRIPTOR_REVISION)) {  
+		LocalFree(pSD);
 		return;
-    }
+	}
 
 	if(!AllocateAndInitializeSid(&SIDAuthWorld, 1, SECURITY_WORLD_RID, 0, 0, 0, 0, 0, 0, 0, &pEveryoneSID)) {
-        LocalFree(pSD);
-    }
+		LocalFree(pSD);
+	}
 
 	ZeroMemory(&ea, sizeof(EXPLICIT_ACCESS));
 	ea.grfAccessPermissions = STANDARD_RIGHTS_ALL;
 	ea.grfAccessMode = SET_ACCESS;
-    ea.grfInheritance= NO_INHERITANCE;
-    ea.Trustee.TrusteeForm = TRUSTEE_IS_SID;
-    ea.Trustee.TrusteeType = TRUSTEE_IS_WELL_KNOWN_GROUP;
-    ea.Trustee.ptstrName  = (LPTSTR) pEveryoneSID;
+	ea.grfInheritance= NO_INHERITANCE;
+	ea.Trustee.TrusteeForm = TRUSTEE_IS_SID;
+	ea.Trustee.TrusteeType = TRUSTEE_IS_WELL_KNOWN_GROUP;
+	ea.Trustee.ptstrName  = (LPTSTR) pEveryoneSID;
 
  
-    // Add the ACL to the security descriptor. 
-    if (!SetSecurityDescriptorDacl(pSD, 
-            TRUE,     // bDaclPresent flag   
-            pACL, 
-            FALSE))   // not a default DACL 
-    {  
-        LocalFree(pSD);
+	// Add the ACL to the security descriptor. 
+	if (!SetSecurityDescriptorDacl(pSD, 
+				TRUE,     // bDaclPresent flag   
+				pACL, 
+				FALSE))   // not a default DACL 
+	{  
+		LocalFree(pSD);
 		FreeSid(pEveryoneSID);
-    }
+	}
 
 
 	d->sa.nLength = sizeof(SECURITY_ATTRIBUTES);
