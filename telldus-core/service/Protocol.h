@@ -3,6 +3,7 @@
 
 #include <string>
 #include <map>
+#include "../client/telldus-core.h"
 
 typedef std::map<std::wstring, std::wstring> ParameterMap;
 
@@ -19,11 +20,11 @@ public:
 	void setModel(const std::wstring &model);
 	void setParameters(ParameterMap &parameterList);
 
-	virtual int turnOn(Controller *controller);
-	virtual int turnOff(Controller *controller);
-	virtual int bell(Controller *controller);
-	virtual int dim(unsigned char level, Controller *controller);
-	virtual int learn(Controller *controller);
+	virtual std::string getStringForMethod(int method, const std::string &data, Controller *controller) = 0;
+
+protected:
+	std::wstring getStringParameter(const std::wstring &name, const std::wstring &defaultValue = L"") const;
+	int getIntParameter(const std::wstring &name, int min, int max) const;
 
 private:
 	class PrivateData;

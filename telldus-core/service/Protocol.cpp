@@ -5,6 +5,7 @@
 #include "ProtocolNexa.h"
 #include <algorithm>
 #include <string>
+#include <sstream>
 
 class Protocol::PrivateData {
 public:
@@ -29,24 +30,30 @@ void Protocol::setParameters(ParameterMap &parameterList){
 	d->parameterList = parameterList;
 }
 
-int Protocol::turnOn(Controller * ){
-	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+std::wstring Protocol::getStringParameter(const std::wstring &name, const std::wstring &defaultValue) const {
+	ParameterMap::const_iterator it = d->parameterList.find(name);
+	if (it == d->parameterList.end()) {
+		return defaultValue;
+	}
+	return it->second;
 }
 
-int Protocol::turnOff(Controller *) {
-	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
-}
-
-int Protocol::bell(Controller *) {
-	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
-}
-
-int Protocol::dim(unsigned char level, Controller *) {
-	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
-}
-
-int Protocol::learn(Controller *){
-	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+int Protocol::getIntParameter(const std::wstring &name, int min, int max) const {
+	std::wstring value = getStringParameter(name, L"");
+	if (value == L"") {
+		return min;
+	}
+	std::wstringstream st;
+	st << value;
+	int intValue = 0;
+	st >> intValue;
+	if (intValue < min) {
+		return min;
+	}
+	if (intValue > max) {
+		return max;
+	}
+	return intValue;
 }
 
 /**
