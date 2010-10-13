@@ -12,6 +12,7 @@ SET( telldus-service_SRCS
 	Event.cpp
 	Settings.cpp
 	TelldusMain.cpp
+	TellStick.cpp
 )
 SET( telldus-service_protocol_SRCS
 	Protocol.h
@@ -30,6 +31,7 @@ SET( telldus-service_HDRS
 	EventHandler.h
 	Settings.h
 	TelldusMain.h
+	TellStick.h
 )
 FIND_PACKAGE(Threads)
 LIST(APPEND telldus-service_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
@@ -62,13 +64,15 @@ IF (APPLE) #### Mac OS X ####
 	
 ELSEIF (WIN32) #### Windows ####
 	SET( telldus-service_TARGET	TelldusService )
-	ADD_DEFINITIONS( -DUNICODE )
+	FIND_LIBRARY(FTD2XX_LIBRARY ftd2xx)
+	ADD_DEFINITIONS( -DUNICODE -DLIBFTD2XX )
 	ADD_DEFINITIONS( /Zc:wchar_t- ) # Treat wchar_t as Built-in Type' = No
 	SET(CMAKE_EXE_LINKER_FLAGS
 		"${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE"
 	)
 	LIST(APPEND telldus-service_LIBRARIES
 		${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/TelldusCommon.lib
+		${FTD2XX_LIBRARY}
 	)
 	LIST(APPEND telldus-service_SRCS
 		ConnectionListener_win.cpp
