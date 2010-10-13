@@ -235,7 +235,11 @@ std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &nam
 			if (parameter) {
 				cfg_device = cfg_getsec(cfg_device, "parameters");
 			}
-			std::string setting(cfg_getstr(cfg_device, std::string(name.begin(), name.end()).c_str()));
+			std::string setting;
+			char *cSetting = cfg_getstr(cfg_device, std::string(name.begin(), name.end()).c_str());
+			if (cSetting) {
+				setting = cSetting;
+			}
 			return std::wstring(setting.begin(), setting.end());
 		}
 	}
