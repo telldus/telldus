@@ -88,7 +88,8 @@ ELSEIF (WIN32) #### Windows ####
 
 ELSE (APPLE) #### Linux ####
 	FIND_LIBRARY(CONFUSE_LIBRARY confuse)
-	ADD_DEFINITIONS( -D_CONFUSE )
+	FIND_LIBRARY(FTDI_LIBRARY ftdi)
+	ADD_DEFINITIONS( -D_CONFUSE -DLIBFTDI )
 
 	SET( telldus-service_TARGET	telldusd )
 	LIST(APPEND telldus-service_SRCS
@@ -100,6 +101,7 @@ ELSE (APPLE) #### Linux ####
 	)
 	LIST(APPEND telldus-service_LIBRARIES
 		${CONFUSE_LIBRARY}
+		${FTDI_LIBRARY}
 		telldus-common
 	)
 ENDIF (APPLE)
