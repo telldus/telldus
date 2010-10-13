@@ -56,6 +56,20 @@ std::wstring Settings::getDeviceParameter(int intDeviceId, const std::wstring &s
 	return getStringSetting(intDeviceId, strName, true);
 }
 
+/*
+* Set preferred controller id
+*/
+bool Settings::setPreferredControllerId(int intDeviceId, int value){
+	return setIntSetting(intDeviceId,  L"controllerId", value, false);
+}
+
+/*
+* Get preferred controller id
+*/
+int Settings::getPreferredControllerId(int intDeviceId) {
+	return getIntSetting(intDeviceId, L"controllerId", false);
+}
+
 #ifndef _CONFUSE
 
 bool Settings::setDeviceState( int intDeviceId, int intDeviceState, const std::wstring &strDeviceStateValue ) {

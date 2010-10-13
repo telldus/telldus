@@ -32,6 +32,7 @@ void DeviceManager::fillDevices(){
 		d->devices[id]->setName(set.getName(id));
 		d->devices[id]->setModel(set.getModel(id));
 		d->devices[id]->setProtocolName(set.getProtocol(id));
+		d->devices[id]->setPreferredControllerId(set.getPreferredControllerId(id));
 		d->devices[id]->setParameter(L"house", set.getDeviceParameter(id, L"house"));
 		d->devices[id]->setParameter(L"unit", set.getDeviceParameter(id, L"unit"));
 		d->devices[id]->setParameter(L"code", set.getDeviceParameter(id, L"code"));

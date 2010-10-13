@@ -42,11 +42,9 @@ bool Protocol::comparei(std::wstring stringA , std::wstring stringB)
 
 Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 	
-	//TODO: tr1:shared_ptr...
-	//Protocol *prot;
 	if(comparei(protocolname, L"arctech")){	//TODO: Test this
 		return new ProtocolNexa();
-		//((ProtocolNexa*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));	//todo: try to do this in ProtocolNexa instead
+		//((ProtocolNexa*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
 		//((ProtocolNexa*)prot)->setUnit(settings.getDeviceParameter(deviceId, "unit"));
 
 	} 
@@ -105,7 +103,7 @@ Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 	}
 	*/
 	else{
-		return 0;	//TODO can be null
+		return 0;
 	}
 }
 

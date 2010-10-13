@@ -21,7 +21,9 @@ public:
 	bool setDeviceState( int intDeviceId, int intDeviceState, const std::wstring &strDeviceStateValue );
 	int getDeviceState( int intDeviceId ) const;
 	std::wstring getDeviceStateValue( int intDeviceId ) const;
-
+	int getPreferredControllerId(int intDeviceId);
+	bool setPreferredControllerId(int intDeviceId, int value);
+	
 	int addDevice();
 	int getDeviceId(int intDeviceIndex) const;
 	bool removeDevice(int intDeviceId);

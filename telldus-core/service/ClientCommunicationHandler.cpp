@@ -74,11 +74,11 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	
 	if (function == L"tdTurnOn") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
-		//TODO Lock controller?
-		Controller *controller = d->controllerManager->getBestControllerById(0);
-		//TODO: Lock device
+		//TODO Lock controller and device?
+		Controller *controller = d->controllerManager->getBestControllerById(d->deviceManager->getDevice(deviceId)->getPreferredControllerId());	//TODO: Get controller id...
+		//TODO: Lock device?
 		if(controller){
-			(*intReturn) = d->deviceManager->getDevice(deviceId)->turnOn(controller); //TODO: Choose correct controller and check for none
+			(*intReturn) = d->deviceManager->getDevice(deviceId)->turnOn(controller);
 		}
 		else{
 			(*intReturn) = 0;

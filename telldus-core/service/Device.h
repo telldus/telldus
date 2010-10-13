@@ -17,9 +17,10 @@ public:
 	void setName(const std::wstring &name);
 	std::wstring getParameter(const std::wstring &key);
 	void setParameter(const std::wstring &key, const std::wstring &value);
+	int getPreferredControllerId();
+	void setPreferredControllerId(int controllerId);
 	std::wstring getProtocolName();
 	void setProtocolName(const std::wstring &name);
-	
 	
 	int turnOn(Controller *controller);
 

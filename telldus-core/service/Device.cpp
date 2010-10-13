@@ -3,12 +3,12 @@
 
 class Device::PrivateData {
 public:
-	std::wstring name;
 	std::wstring model;
-	std::wstring protocolName;
+	std::wstring name;
 	ParameterMap parameterList;
-	
 	Protocol *protocol;
+	std::wstring protocolName;
+	int preferredControllerId;
 };
 
 Device::Device(int id){
@@ -48,6 +48,14 @@ std::wstring Device::getParameter(const std::wstring &key){
 
 void Device::setParameter(const std::wstring &key, const std::wstring &value){
 	d->parameterList[key] = value;
+}
+
+int Device::getPreferredControllerId(){
+	return d->preferredControllerId;
+}
+
+void Device::setPreferredControllerId(int controllerId){
+	d->preferredControllerId = controllerId;
 }
 
 std::wstring Device::getProtocolName(){
