@@ -41,7 +41,11 @@ TellStick::TellStick( const TellStickDescriptor &td ) {
 	}
 	
 	if (d->open) {
- 		setBaud(4800);
+		if (td.pid == 0x0C31) {
+			setBaud(9600);
+		} else {
+ 			setBaud(4800);
+		}
 	}
 }
 
