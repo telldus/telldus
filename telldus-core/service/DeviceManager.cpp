@@ -46,5 +46,13 @@ int DeviceManager::getNumberOfDevices(){
 }
 
 Device *DeviceManager::getDevice(int deviceId){
-	return d->devices[deviceId];	//TODO
+	
+	if (!d->devices.size()) {
+		return 0;
+	}
+	DeviceMap::iterator it = d->devices.find(deviceId);
+	if (it != d->devices.end()) {
+		return it->second;
+	}
+	return 0;	//not found
 }

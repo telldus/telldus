@@ -16,7 +16,7 @@ Device::Device(){
 
 Device::Device(int id){
 	d = new PrivateData;
-	
+	d->protocol = 0;
 	//när något uppdateras, spara också till registret
 	//obs, alla hantera om alla värden inte är satta
 }
