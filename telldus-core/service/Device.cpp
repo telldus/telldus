@@ -1,19 +1,24 @@
 #include "Device.h"
+#include "Settings.h"
 
 class Device::PrivateData {
 public:
 	std::wstring name;
-	Protocol* protocol;
+	std::wstring model;
+	std::wstring protocolName;
+	ParameterMap parameterList;
+	
+	Protocol *protocol;
 };
 
 Device::Device(){
+}
 
+Device::Device(int id){
 	d = new PrivateData;
-	//vid skapande, hämta settings från registret, vissa sätts i protokollet, vid dess skapande
+	
 	//när något uppdateras, spara också till registret
-	//Denna klass har alla metoder (turnOn, turnOff etc)... 
-	//Men t.ex. att om modellen är bell, då ska turnon returnera bell... eller isDimmer, ska returnera annat... hur göra? - låt vara i samma klass till att börja med
-	//Men skulle egentligen vilja ha tagit ställning till modell redan i initieringen... åtminstone spara undan det i en egen variabel
+	//obs, alla hantera om alla värden inte är satta
 }
 
 Device::~Device(void) {
@@ -21,22 +26,60 @@ Device::~Device(void) {
 	delete d;
 }
 
+/**
+* Get-/Set-methods
+*/
+std::wstring Device::getModel(){
+	return d->model;
+}
+
+void Device::setModel(const std::wstring &model){
+	d->model = model;
+}
+
 std::wstring Device::getName(){
 	return d->name;
 }
+
+void Device::setName(const std::wstring &name){
+	d->name = name;
+}
+
+std::wstring Device::getParameter(const std::wstring &key){
+	return d->parameterList[key];
+}
+
+void Device::setParameter(const std::wstring &key, const std::wstring &value){
+	d->parameterList[key] = value;
+}
+
+std::wstring Device::getProtocolName(){
+	return d->protocolName;
+}
+
+void Device::setProtocolName(const std::wstring &protocolName){
+	d->protocolName = protocolName;
+}
+
+/**
+* End Get-/Set
+*/
 
 int Device::turnOn(Controller *controller) {
 	Protocol *p = this->retrieveProtocol();
 
 	//p->turnOn(controller);
+	//TODO: Handle p
 	return 0;
 }
 
-Protocol *Device::retrieveProtocol() {
+Protocol* Device::retrieveProtocol() {
 	if (d->protocol) {
 		return d->protocol;
 	}
-
-	d->protocol = new Protocol();
+	
+	d->protocol = Protocol::getProtocolInstance(d->protocolName);
+	d->protocol->setModel(d->model);
+	d->protocol->setParameters(d->parameterList);
 	return d->protocol;
 }
