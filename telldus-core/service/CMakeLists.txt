@@ -10,8 +10,12 @@ SET( telldus-service_SRCS
 	TelldusMain.cpp
 	DeviceManager.cpp
 	Device.cpp
-	Protocol.cpp
 	Controller.cpp
+)
+SET( telldus-service_protocol_SRCS
+	Protocol.h
+	Protocol.cpp
+	ProtocolNexa.h
 	ProtocolNexa.cpp
 )
 SET( telldus-service_HDRS
@@ -23,11 +27,8 @@ SET( telldus-service_HDRS
 	TelldusMain.h
 	DeviceManager.h
 	Device.h
-	Protocol.h
 	Controller.h
-	ProtocolNexa.h
 )
-
 FIND_PACKAGE(Threads)
 LIST(APPEND telldus-service_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
 
@@ -99,9 +100,11 @@ ENDIF (APPLE)
 
 ######## Configuring  ########
 
+SOURCE_GROUP("Protocol Files" FILES ${telldus-service_protocol_SRCS})
 
 ADD_EXECUTABLE(${telldus-service_TARGET}
 	${telldus-service_SRCS}
+	${telldus-service_protocol_SRCS}
 	${telldus-service_HDRS}
 )
 SET_SOURCE_FILES_PROPERTIES(${telldus-service_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
