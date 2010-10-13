@@ -34,13 +34,10 @@ void Protocol::setParameters(ParameterMap &parameterList){
 bool Protocol::comparei(std::wstring stringA , std::wstring stringB)
 {
 	//move?
-    transform(stringA.begin(), stringA.end(), stringA.begin(), toupper);
-    transform(stringB.begin(), stringB.end(), stringB.begin(), toupper);
+	transform(stringA.begin(), stringA.end(), stringA.begin(), toupper);
+	transform(stringB.begin(), stringB.end(), stringB.begin(), toupper);
 
-    if(stringA == stringB)
-        return true;
-    else
-        return false;
+	return stringA == stringB;
 }
 
 Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
@@ -104,7 +101,7 @@ Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 		prot = new ProtocolX10(deviceId, modelname);
 		((ProtocolX10*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
 		((ProtocolX10*)prot)->setUnit(settings.getDeviceParameter(deviceId, "unit"));
-	
+
 	}
 	*/
 
