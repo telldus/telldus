@@ -74,7 +74,8 @@ void Device::setProtocolName(const std::wstring &protocolName){
 int Device::turnOn(Controller *controller) {
 	Protocol *p = this->retrieveProtocol();
 	if(p){
-		//p->turnOn(controller);
+		std::string code = p->getStringForMethod(TELLSTICK_TURNON, "", controller);
+		controller->send(code);
 	}
 	return 0;
 }
