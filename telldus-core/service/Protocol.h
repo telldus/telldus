@@ -20,6 +20,7 @@ public:
 private:
 	class PrivateData;
 	PrivateData *d;
+	static bool comparei(std::wstring stringA , std::wstring stringB);
 };
 
 #endif //PROTOCOL_H

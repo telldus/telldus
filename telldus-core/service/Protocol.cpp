@@ -2,6 +2,7 @@
 #include "Settings.h"
 
 #include "ProtocolNexa.h"
+#include <algorithm>
 #include <string>
 
 class Protocol::PrivateData {
@@ -19,11 +20,34 @@ Protocol::~Protocol(void) {
 	delete d;
 }
 
+void Protocol::setModel(const std::wstring &model){
+	d->model = model;
+}
+
+void Protocol::setParameters(ParameterMap &parameterList){
+	d->parameterList = parameterList;
+}
+
+/**
+* This method don't support all locales
+*/
+bool Protocol::comparei(std::wstring stringA , std::wstring stringB)
+{
+	//move?
+    transform(stringA.begin(), stringA.end(), stringA.begin(), toupper);
+    transform(stringB.begin(), stringB.end(), stringB.begin(), toupper);
+
+    if(stringA == stringB)
+        return true;
+    else
+        return false;
+}
+
 Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 	
 	//TODO: tr1:shared_ptr...
 	Protocol *prot;
-	if (protocolname.compare(L"arctech") == 0){	//TODO TO LOWER!
+	if(comparei(protocolname, L"arctech")){	//TODO: Test this
 		prot = new ProtocolNexa();
 		//((ProtocolNexa*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));	//todo: try to do this in ProtocolNexa instead
 		//((ProtocolNexa*)prot)->setUnit(settings.getDeviceParameter(deviceId, "unit"));
@@ -87,10 +111,3 @@ Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 	return prot;	//TODO can be null
 }
 
-void Protocol::setModel(const std::wstring &model){
-	d->model = model;
-}
-
-void Protocol::setParameters(ParameterMap &parameterList){
-	d->parameterList = parameterList;
-}
