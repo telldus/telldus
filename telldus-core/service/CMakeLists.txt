@@ -12,6 +12,7 @@ SET( telldus-service_SRCS
 	Device.cpp
 	Protocol.cpp
 	Controller.cpp
+	ProtocolNexa.cpp
 )
 SET( telldus-service_HDRS
 	ClientCommunicationHandler.h
@@ -24,6 +25,7 @@ SET( telldus-service_HDRS
 	Device.h
 	Protocol.h
 	Controller.h
+	ProtocolNexa.h
 )
 
 FIND_PACKAGE(Threads)
