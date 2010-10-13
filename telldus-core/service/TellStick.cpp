@@ -13,6 +13,7 @@
 #include "../client/telldus-core.h"
 #include <string.h>
 #include <stdlib.h>
+#include <stdio.h>
 
 class TellStick::TellStickDescriptor {
 public:
