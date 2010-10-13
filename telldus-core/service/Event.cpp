@@ -1,5 +1,6 @@
 #include "Event.h"
 #include "EventHandler.h"
+#include "Mutex.h"
 
 #include <list>
 
@@ -13,7 +14,7 @@ bool EventDataBase::isValid() const {
 
 class EventBase::PrivateData {
 public:
-	MUTEX_T mutex;
+	TelldusCore::Mutex mutex;
 	EventHandler *handler;
 	std::list<EventData *> eventDataList;
 };
@@ -21,7 +22,6 @@ public:
 EventBase::EventBase(EventHandler *handler) {
 	d = new PrivateData;
 	d->handler = handler;
-	TelldusCore::Thread::initMutex(&d->mutex);
 }
 
 EventBase::~EventBase(void) {
@@ -33,7 +33,6 @@ EventBase::~EventBase(void) {
 	for(; it != d->eventDataList.end(); ++it) {
 		delete(*it);
 	}
-	TelldusCore::Thread::destroyMutex(&d->mutex);
 	delete d;
 }
 

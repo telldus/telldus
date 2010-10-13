@@ -11,6 +11,9 @@
 //
 
 #include "Thread.h"
+#ifdef _WINDOWS
+#include <windows.h>
+#endif
 
 using namespace TelldusCore;
 
@@ -60,46 +63,4 @@ void *Thread::exec( void *ptr ) {
 		t->run();
 	}
 	return 0;
-}
-
-void Thread::initMutex(MUTEX_T * m) {
-#ifdef _WINDOWS
-	InitializeCriticalSection(m);
-#else
-	pthread_mutex_init(m, NULL);
-#endif
-}
-
-void Thread::destroyMutex(MUTEX_T * m) {
-#ifdef _WINDOWS
-	DeleteCriticalSection(m);
-#else
-	pthread_mutex_destroy(m);
-#endif
-}
-
-void Thread::unlockMutex(MUTEX_T * m) {
-#ifdef _WINDOWS
-	LeaveCriticalSection(m);
-#else
-	pthread_mutex_unlock(m);
-#endif
-}
-
-void Thread::lockMutex(MUTEX_T * m) {
-#ifdef _WINDOWS
-	EnterCriticalSection(m);
-#else
-	pthread_mutex_lock(m);
-#endif
-}
-
-
-MutexLocker::MutexLocker(MUTEX_T *m)
-	:mutex(m) {
-	Thread::lockMutex(mutex);
-}
-
-MutexLocker::~MutexLocker() {
-	Thread::unlockMutex(mutex);
 }

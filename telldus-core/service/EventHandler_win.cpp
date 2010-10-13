@@ -1,6 +1,6 @@
 #include "EventHandler.h"
 #include "Event.h"
-#include "Thread.h"
+#include "Mutex.h"
 
 #include <windows.h>
 #include <list>
@@ -9,7 +9,7 @@ class EventHandler::PrivateData {
 public:
 	HANDLE *eventArray;
 	Event **eventObjectArray;
-	MUTEX_T mutex;
+	TelldusCore::Mutex mutex;
 	int eventCount;
 };
 
@@ -18,11 +18,9 @@ EventHandler::EventHandler() {
 	d->eventCount = 0;
 	d->eventArray = new HANDLE[0];
 	d->eventObjectArray = new Event*[0];
-	TelldusCore::Thread::initMutex(&d->mutex);
 }
 
 EventHandler::~EventHandler(void) {
-	TelldusCore::Thread::destroyMutex(&d->mutex);
 	delete[] d->eventObjectArray;
 	delete[] d->eventArray;
 	delete d;
