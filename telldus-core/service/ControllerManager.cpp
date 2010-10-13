@@ -25,6 +25,10 @@ ControllerManager::~ControllerManager(void) {
 	delete d;
 }
 
+Controller *ControllerManager::getBestControllerById(int id) {
+	return 0;
+}
+
 void ControllerManager::loadControllers() {
 	while(1) {
 		TellStick *controller = TellStick::findFirstDevice();
