@@ -3,6 +3,7 @@
 #include "EventHandler.h"
 #include "ClientCommunicationHandler.h"
 #include "DeviceManager.h"
+#include "ControllerManager.h"
 
 #include <stdio.h>
 #include <list>
@@ -19,8 +20,7 @@ TelldusMain::TelldusMain(void)
 	d->stopEvent = d->eventHandler.addEvent();
 }
 
-TelldusMain::~TelldusMain(void)
-{
+TelldusMain::~TelldusMain(void) {
 	delete d->stopEvent;
 	delete d;
 }
@@ -29,6 +29,8 @@ void TelldusMain::start(void) {
 	Event *clientEvent = d->eventHandler.addEvent();
 	
 	DeviceManager deviceManager;
+	ControllerManager controllerManager;
+
 	ConnectionListener clientListener(L"TelldusClient", clientEvent);
 	//TODO: eventlistener
 

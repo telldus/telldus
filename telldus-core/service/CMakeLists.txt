@@ -5,12 +5,13 @@ ENDIF(COMMAND cmake_policy)
 ######## Non configurable options  ########
 SET( telldus-service_SRCS
 	ClientCommunicationHandler.cpp
+	Controller.cpp
+	ControllerManager.cpp
+	Device.cpp
+	DeviceManager.cpp
 	Event.cpp
 	Settings.cpp
 	TelldusMain.cpp
-	DeviceManager.cpp
-	Device.cpp
-	Controller.cpp
 )
 SET( telldus-service_protocol_SRCS
 	Protocol.h
@@ -21,13 +22,14 @@ SET( telldus-service_protocol_SRCS
 SET( telldus-service_HDRS
 	ClientCommunicationHandler.h
 	ConnectionListener.h
+	Controller.h
+	ControllerManager.h
+	Device.h
+	DeviceManager.h
 	Event.h
 	EventHandler.h
 	Settings.h
 	TelldusMain.h
-	DeviceManager.h
-	Device.h
-	Controller.h
 )
 FIND_PACKAGE(Threads)
 LIST(APPEND telldus-service_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
