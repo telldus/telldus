@@ -7,13 +7,14 @@ public:
 	Event *event;
 	bool done;
 	DeviceManager *deviceManager;
+	ControllerManager *controllerManager;
 };
 
 ClientCommunicationHandler::ClientCommunicationHandler(){
 
 }
 
-ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clientSocket, Event *event, DeviceManager *deviceManager)
+ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clientSocket, Event *event, DeviceManager *deviceManager, ControllerManager *controllerManager)
 	:Thread()
 {
 	d = new PrivateData;
@@ -21,6 +22,7 @@ ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clie
 	d->event = event;
 	d->done = false;
 	d->deviceManager = deviceManager;
+	d->controllerManager = controllerManager;
 	
 }
 
@@ -72,8 +74,15 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	
 	if (function == L"tdTurnOn") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
+		//TODO Lock controller?
+		Controller *controller = d->controllerManager->getBestControllerById(0);
 		//TODO: Lock device
-		//TODO: (*intReturn) = d->deviceManager->getDevice(deviceId)->turnOn(); //Controller...
+		if(controller){
+			(*intReturn) = d->deviceManager->getDevice(deviceId)->turnOn(controller); //TODO: Choose correct controller and check for none
+		}
+		else{
+			(*intReturn) = 0;
+		}
 		//TODO: Unlock
 		//(*intReturn) = 0;	//tdTurnOn(deviceId);
 
@@ -175,7 +184,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	} else if (function == L"tdMethods") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		int intMethodsSupported = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0;	// tdMethods(deviceId, intMethodsSupported);
+		(*intReturn) = 1;	// tdMethods(deviceId, intMethodsSupported);
 
 	} else if (function == L"tdGetErrorString") {
 		int intErrorNo = TelldusCore::Message::takeInt(&msg);

@@ -6,12 +6,13 @@
 #include "Socket.h"
 #include "Event.h"
 #include "DeviceManager.h"
+#include "ControllerManager.h"
 
 class ClientCommunicationHandler : public TelldusCore::Thread
 {
 public:
 	ClientCommunicationHandler();
-	ClientCommunicationHandler(TelldusCore::Socket *clientSocket, Event *event, DeviceManager *deviceManager);
+	ClientCommunicationHandler(TelldusCore::Socket *clientSocket, Event *event, DeviceManager *deviceManager, ControllerManager *controllerManager);
 	~ClientCommunicationHandler(void);
 
 	bool isDone();

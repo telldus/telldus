@@ -3,9 +3,11 @@
 
 #include <map>
 
+typedef std::map<int, Device *> DeviceMap;
+
 class DeviceManager::PrivateData {
 public:
-	std::map<int, Device *> devices;
+	 DeviceMap devices;
 };
 
 DeviceManager::DeviceManager(){
@@ -14,8 +16,9 @@ DeviceManager::DeviceManager(){
 }
 
 DeviceManager::~DeviceManager(void) {
-	//delete d->devices;
-	//todo: delete devices
+	for (DeviceMap::iterator it = d->devices.begin(); it != d->devices.end(); ++it) {
+		delete( it->second );
+	}
 	delete d;
 }
 
@@ -43,5 +46,5 @@ int DeviceManager::getNumberOfDevices(){
 }
 
 Device *DeviceManager::getDevice(int deviceId){
-	return d->devices[deviceId];
+	return d->devices[deviceId];	//TODO
 }

@@ -67,9 +67,10 @@ void Device::setProtocolName(const std::wstring &protocolName){
 
 int Device::turnOn(Controller *controller) {
 	Protocol *p = this->retrieveProtocol();
-
-	//p->turnOn(controller);
-	//TODO: Handle p
+	if(p){
+		//p->turnOn(controller);
+	}
+	//TODO: Handle p (shared_ptr?)
 	return 0;
 }
 
@@ -79,7 +80,11 @@ Protocol* Device::retrieveProtocol() {
 	}
 	
 	d->protocol = Protocol::getProtocolInstance(d->protocolName);
-	d->protocol->setModel(d->model);
-	d->protocol->setParameters(d->parameterList);
-	return d->protocol;
+	if(d->protocol){
+		d->protocol->setModel(d->model);
+		d->protocol->setParameters(d->parameterList);
+		return d->protocol;
+	}
+
+	return 0;
 }
