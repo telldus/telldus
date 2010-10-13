@@ -24,9 +24,24 @@ public:
 TellStick::TellStick( const TellStickDescriptor &td ) {
 	d = new PrivateData;
 	d->open = false;
+
+	char *tempSerial = new char[td.serial.size()+1];
+#ifdef _WINDOWS
+	strcpy_s(tempSerial, td.serial.size()+1, td.serial.c_str());
+#else
+	strcpy(tempSerial, td.serial.c_str());
+	FT_SetVIDPID(td.vid, td.pid);
+#endif
+	FT_STATUS ftStatus = FT_OpenEx(tempSerial, FT_OPEN_BY_SERIAL_NUMBER, &d->ftHandle);
+	delete tempSerial;
+	if (ftStatus == FT_OK) {
+		d->open = true;
+		FT_SetFlowControl(d->ftHandle, FT_FLOW_NONE, 0, 0);
+		FT_SetTimeouts(d->ftHandle,5000,0);
+	}
 	
 	if (d->open) {
-// 		setBaud(4800);
+ 		setBaud(4800);
 	}
 }
 
@@ -34,6 +49,10 @@ TellStick::~TellStick() {
 	if (d->open) {
 	}
 	delete d;
+}
+
+void TellStick::setBaud( int baud ) {
+	FT_SetBaudRate(d->ftHandle, baud);
 }
 
 int TellStick::firmwareVersion() {
@@ -44,7 +63,43 @@ bool TellStick::isOpen() const {
 	return d->open;
 }
 
-int TellStick::send( const std::string &message ) {
+int TellStick::send( const std::string &strMessage ) {
+	if (!d->open) {
+		return TELLSTICK_ERROR_NOT_FOUND;
+	}
+	bool c = true;
+
+	char *tempMessage = (char *)malloc(sizeof(char) * (strMessage.size()+1));
+#ifdef _WINDOWS
+	strcpy_s(tempMessage, strMessage.size()+1, strMessage.c_str());
+#else
+	strcpy(tempMessage, strMessage.c_str());
+#endif
+
+	ULONG bytesWritten, bytesRead;
+	char in;
+	FT_STATUS ftStatus;
+	ftStatus = FT_Write(d->ftHandle, tempMessage, (DWORD)strMessage.length(), &bytesWritten);
+	free(tempMessage);
+
+	while(c) {
+		ftStatus = FT_Read(d->ftHandle,&in,1,&bytesRead);
+		if (ftStatus == FT_OK) {
+			if (bytesRead == 1) {
+				if (in == '\n') {
+					break;
+				}
+			} else { //Timeout
+				c = false;
+			}
+		} else { //Error
+			c = false;
+		}
+	}
+
+	if (!c) {
+		return TELLSTICK_ERROR_COMMUNICATION;
+	}
 	return TELLSTICK_SUCCESS;
 }
 
