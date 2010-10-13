@@ -13,39 +13,31 @@
 #define TELLSTICK_H
 
 #include "Controller.h"
+#include <list>
 
-#include "ftd2xx.h"
-#ifdef LIBFTDI
-	typedef ftdi_context TellStickHandle;
-#else
-	typedef FT_HANDLE TellStickHandle;
-#endif
+class TellStickDescriptor {
+public:
+	std::string serial;
+	int vid, pid;
+};
 
 class TellStick : public Controller {
 public:	
+	TellStick(const TellStickDescriptor &d);
 	virtual ~TellStick();
 	
 	virtual int firmwareVersion();
+	bool isOpen() const;
 	virtual int send( const std::string &message );
-
-	int vid() const;
-	int pid() const;
-	std::string serial() const;
-	bool open() const;
-	bool stillConnected() const;
-
-	static TellStick *findFirstDevice(int vid = 0, int pid = 0);
-	static TellStick *loadBy(int vid, int pid, const std::string &serial);
+	
+	static std::list<TellStickDescriptor> findAll();
 	
 protected:
-	class TellStickDescriptor;
-
-	TellStick(const TellStickDescriptor &d);
 	void setBaud( int baud );
-	TellStickHandle handle() const;
-	
+
+
 private:
-	static TellStickDescriptor findByVIDPID( int vid, int pid );
+	static std::list<TellStickDescriptor> findAllByVIDPID( int vid, int pid );
 	
 	class PrivateData;
 	PrivateData *d;

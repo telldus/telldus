@@ -12,7 +12,6 @@ SET( telldus-service_SRCS
 	Event.cpp
 	Settings.cpp
 	TelldusMain.cpp
-	TellStick.cpp
 )
 SET( telldus-service_protocol_SRCS
 	Protocol.h
@@ -98,6 +97,7 @@ ELSE (APPLE) #### Linux ####
 		EventHandler_unix.cpp
 		main_unix.cpp
 		SettingsConfuse.cpp
+		TellStick_libftdi.cpp
 	)
 	LIST(APPEND telldus-service_LIBRARIES
 		${CONFUSE_LIBRARY}

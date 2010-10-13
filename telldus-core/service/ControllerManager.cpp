@@ -3,6 +3,7 @@
 #include "TellStick.h"
 
 #include <map>
+#include <stdio.h>
 
 typedef std::map<int, Controller *> ControllerMap;
 
@@ -38,27 +39,17 @@ Controller *ControllerManager::getBestControllerById(int id) {
 }
 
 void ControllerManager::loadControllers() {
-	while(1) {
-		TellStick *controller = TellStick::findFirstDevice();
-		if (!controller) {
-			break; //All TellStick loaded
-		}
-		//Make sure this isn't already loaded
-		bool found = false;
-		for(ControllerMap::iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
-			TellStick *tellstick = reinterpret_cast<TellStick *>(it->second);
-			if (!tellstick) { //No TellStick controller
-				continue;
-			}
-			if (tellstick->serial().compare(controller->serial()) == 0) { //Found a duplicate
-				found = true;
-				break;
-			}
-		}
-		if (found) {
-			break;
+	std::list<TellStickDescriptor> list = TellStick::findAll();
+	std::list<TellStickDescriptor>::iterator it = list.begin();
+	for(; it != list.end(); ++it) {
+		printf("Found (%i/%i): %s\n", (*it).vid, (*it).pid, (*it).serial.c_str());
+		TellStick *controller = new TellStick(*it);
+		if (!controller->isOpen()) {
+			delete controller;
+			continue;
 		}
 		d->lastControllerId--;
 		d->controllers[d->lastControllerId] = controller;
 	}
+	printf("List containing %i controllers\n", (int)d->controllers.size());
 }
