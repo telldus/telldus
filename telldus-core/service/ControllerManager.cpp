@@ -26,7 +26,15 @@ ControllerManager::~ControllerManager(void) {
 }
 
 Controller *ControllerManager::getBestControllerById(int id) {
-	return 0;
+	if (!d->controllers.size()) {
+		return 0;
+	}
+	ControllerMap::iterator it = d->controllers.find(id);
+	if (it != d->controllers.end()) {
+		return it->second;
+	}
+	return d->controllers.begin()->second;
+
 }
 
 void ControllerManager::loadControllers() {
