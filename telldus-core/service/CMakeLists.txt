@@ -80,6 +80,7 @@ ELSEIF (WIN32) #### Windows ####
 		main_win.cpp
 		SettingsWinRegistry.cpp
 		TelldusWinService_win.cpp
+		TellStick_ftd2xx.cpp
 	)
 	LIST(APPEND telldus-service_HDRS
 		TelldusWinService_win.h
