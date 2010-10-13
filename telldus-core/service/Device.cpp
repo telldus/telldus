@@ -15,7 +15,7 @@ Device::Device(int id){
 	d = new PrivateData;
 	d->protocol = 0;
 	//när något uppdateras, spara också till registret
-	//obs, alla hantera om alla värden inte är satta
+	//obs, kunna hantera om alla värden inte är satta
 }
 
 Device::~Device(void) {
@@ -67,7 +67,6 @@ int Device::turnOn(Controller *controller) {
 	if(p){
 		//p->turnOn(controller);
 	}
-	//TODO: Handle p (shared_ptr?)
 	return 0;
 }
 

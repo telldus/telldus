@@ -42,7 +42,7 @@ void DeviceManager::fillDevices(){
 }
 
 int DeviceManager::getNumberOfDevices(){
-	return d->devices.size();
+	return (int)d->devices.size();
 }
 
 Device *DeviceManager::getDevice(int deviceId){
