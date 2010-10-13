@@ -14,6 +14,7 @@ public:
 Device::Device(int id){
 	d = new PrivateData;
 	d->protocol = 0;
+	d->preferredControllerId = 0;
 	//när något uppdateras, spara också till registret
 	//obs, kunna hantera om alla värden inte är satta
 }

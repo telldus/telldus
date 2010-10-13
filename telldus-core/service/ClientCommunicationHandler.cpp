@@ -75,7 +75,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	if (function == L"tdTurnOn") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		//TODO Lock controller and device?
-		Controller *controller = d->controllerManager->getBestControllerById(d->deviceManager->getDevice(deviceId)->getPreferredControllerId());	//TODO: Get controller id...
+		Controller *controller = d->controllerManager->getBestControllerById(d->deviceManager->getDevice(deviceId)->getPreferredControllerId());
 		//TODO: Lock device?
 		if(controller){
 			(*intReturn) = d->deviceManager->getDevice(deviceId)->turnOn(controller);
@@ -84,7 +84,6 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 			(*intReturn) = 0;
 		}
 		//TODO: Unlock
-		//(*intReturn) = 0;	//tdTurnOn(deviceId);
 
 	} else if (function == L"tdTurnOff") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
@@ -170,11 +169,9 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 
 	} else if (function == L"tdAddDevice") {
 		//TODO
-		//int deviceId = d->settings.addDevice();
-		int deviceId = 0;
-		if(deviceId > 0){
-			//success
-			//TODO signal event...
+		if(d->deviceManager->addDevice()){
+			(*intReturn) = 1;
+			//TODO: signalEvent, or do that from where this is called? Or even inside addDevice?
 		}
 
 	} else if (function == L"tdRemoveDevice") {

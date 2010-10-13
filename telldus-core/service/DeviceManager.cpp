@@ -57,3 +57,21 @@ Device *DeviceManager::getDevice(int deviceId){
 	}
 	return 0;	//not found
 }
+
+bool DeviceManager::addDevice(){
+	Settings set;
+
+	//TODO: Lock?
+	int id = set.addDevice();
+	if(id == -1){
+		return false;
+	}
+
+	//TODO: Lock
+	d->devices[id] = new Device(id);
+	if(!d->devices[id]){
+		return false;
+	}
+	return true;
+	//release locks
+}

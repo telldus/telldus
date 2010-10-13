@@ -10,6 +10,7 @@ public:
 	~DeviceManager(void);
 	int getNumberOfDevices(void);
 	Device *getDevice(int deviceId);
+	bool addDevice();
 
 private:
 
