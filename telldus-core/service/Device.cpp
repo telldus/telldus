@@ -11,9 +11,6 @@ public:
 	Protocol *protocol;
 };
 
-Device::Device(){
-}
-
 Device::Device(int id){
 	d = new PrivateData;
 	d->protocol = 0;

@@ -8,7 +8,6 @@
 class Device
 {
 public:
-	Device();
 	Device(int id);
 	~Device(void);
 
