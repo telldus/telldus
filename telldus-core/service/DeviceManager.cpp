@@ -1,5 +1,4 @@
 #include "DeviceManager.h"
-#include "Device.h"
 #include "Settings.h"
 
 #include <map>
@@ -37,4 +36,12 @@ void DeviceManager::fillDevices(){
 		d->devices[id]->setParameter(L"fade", set.getDeviceParameter(id, L"fade"));
 		d->devices[id]->setParameter(L"system", set.getDeviceParameter(id, L"system"));
 	}
+}
+
+int DeviceManager::getNumberOfDevices(){
+	return d->devices.size();
+}
+
+Device *DeviceManager::getDevice(int deviceId){
+	return d->devices[deviceId];
 }

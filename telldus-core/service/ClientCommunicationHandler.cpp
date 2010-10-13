@@ -71,89 +71,92 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	std::wstring function(TelldusCore::Message::takeString(&msg));
 	
 	if (function == L"tdTurnOn") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0;	//tdTurnOn(intDeviceId);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
+		//TODO: Lock device
+		//TODO: (*intReturn) = d->deviceManager->getDevice(deviceId)->turnOn(); //Controller...
+		//TODO: Unlock
+		//(*intReturn) = 0;	//tdTurnOn(deviceId);
 
 	} else if (function == L"tdTurnOff") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0; //tdTurnOff(intDeviceId);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
+		(*intReturn) = 0; //tdTurnOff(deviceId);
 
 	} else if (function == L"tdBell") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0;	// tdBell(intDeviceId);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
+		(*intReturn) = 0;	// tdBell(deviceId);
 
 	} else if (function == L"tdDim") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
 		int level = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0;	// tdDim(intDeviceId, level);
+		(*intReturn) = 0;	// tdDim(deviceId, level);
 
 	} else if (function == L"tdLearn") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0;	//tdLearn(intDeviceId);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
+		(*intReturn) = 0;	//tdLearn(deviceId);
 
 	} else if (function == L"tdLastSentCommand") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
 		int methodsSupported = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0;	// tdLastSentCommand(intDeviceId, methodsSupported);
+		(*intReturn) = 0;	// tdLastSentCommand(deviceId, methodsSupported);
 
 	} else if (function == L"tdLastSentValue") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
-		const char *value = "";	//tdLastSentValue(intDeviceId);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
+		const char *value = "";	//tdLastSentValue(deviceId);
 		(*wstringReturn) =  TelldusCore::Message::charToWstring(value);
 
 	} else if(function == L"tdGetNumberOfDevices"){
 
-		(*intReturn) = 12;	//d->settings.getNumberOfDevices();
+		(*intReturn) = d->deviceManager->getNumberOfDevices();
 
 	} else if (function == L"tdGetDeviceId") {
 		int intDeviceIndex = TelldusCore::Message::takeInt(&msg);
 		(*intReturn) = 1;	//tdGetDeviceId(intDeviceIndex);
 
 	} else if (function == L"tdGetDeviceType") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 11;	// tdGetDeviceType(intDeviceId);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
+		(*intReturn) = 11;	// tdGetDeviceType(deviceId);
 
 	} else if (function == L"tdGetName") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
-		const char *name = "Default name";	//tdGetName(intDeviceId);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
+		const char *name = "Default name";	//tdGetName(deviceId);
 		(*wstringReturn) = TelldusCore::Message::charToWstring(name);
 
 	} else if (function == L"tdSetName") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring name = TelldusCore::Message::takeString(&msg);
-		(*intReturn) = 0; //tdSetName(intDeviceId, name.c_str());
+		(*intReturn) = 0; //tdSetName(deviceId, name.c_str());
 
 	} else if (function == L"tdGetProtocol") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
-		const char *protocol = "Default protocol";	//tdGetProtocol(intDeviceId);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
+		const char *protocol = "Default protocol";	//tdGetProtocol(deviceId);
 		(*wstringReturn) = TelldusCore::Message::charToWstring(protocol);
 
 	} else if (function == L"tdSetProtocol") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring protocol = TelldusCore::Message::takeString(&msg);
-		(*intReturn) = 0;	// tdSetProtocol(intDeviceId, protocol.c_str());
+		(*intReturn) = 0;	// tdSetProtocol(deviceId, protocol.c_str());
 
 	} else if (function == L"tdGetModel") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
-		const char *model = "Default model";	//tdGetModel(intDeviceId);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
+		const char *model = "Default model";	//tdGetModel(deviceId);
 		(*wstringReturn) = TelldusCore::Message::charToWstring(model);
 
 	} else if (function == L"tdSetModel") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring model = TelldusCore::Message::takeString(&msg);
-		(*intReturn) = 0;	// tdSetModel(intDeviceId, model.c_str());
+		(*intReturn) = 0;	// tdSetModel(deviceId, model.c_str());
 
 	} else if (function == L"tdSetDeviceParameter") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring name = TelldusCore::Message::takeString(&msg);
 		std::wstring value = TelldusCore::Message::takeString(&msg);
-		(*intReturn) = 0;	//tdSetDeviceParameter(intDeviceId, name.c_str(), value.c_str());
+		(*intReturn) = 0;	//tdSetDeviceParameter(deviceId, name.c_str(), value.c_str());
 
 	} else if (function == L"tdGetDeviceParameter") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring name = TelldusCore::Message::takeString(&msg);
 		std::wstring defaultValue = TelldusCore::Message::takeString(&msg);
-		const char *value = "Device parameter default";	//tdGetDeviceParameter(intDeviceId, name.c_str(), defaultValue.c_str());
+		const char *value = "Device parameter default";	//tdGetDeviceParameter(deviceId, name.c_str(), defaultValue.c_str());
 		(*wstringReturn) = TelldusCore::Message::charToWstring(value);
 
 	} else if (function == L"tdAddDevice") {
@@ -166,13 +169,13 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		}
 
 	} else if (function == L"tdRemoveDevice") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0;	// tdRemoveDevice(intDeviceId);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
+		(*intReturn) = 0;	// tdRemoveDevice(deviceId);
 
 	} else if (function == L"tdMethods") {
-		int intDeviceId = TelldusCore::Message::takeInt(&msg);
+		int deviceId = TelldusCore::Message::takeInt(&msg);
 		int intMethodsSupported = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0;	// tdMethods(intDeviceId, intMethodsSupported);
+		(*intReturn) = 0;	// tdMethods(deviceId, intMethodsSupported);
 
 	} else if (function == L"tdGetErrorString") {
 		int intErrorNo = TelldusCore::Message::takeInt(&msg);

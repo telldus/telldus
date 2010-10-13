@@ -29,7 +29,7 @@ void Protocol::setParameters(ParameterMap &parameterList){
 }
 
 /**
-* This method don't support all locales
+* This method doesn't support all locales
 */
 bool Protocol::comparei(std::wstring stringA , std::wstring stringB)
 {
