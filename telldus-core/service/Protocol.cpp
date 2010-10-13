@@ -1,4 +1,4 @@
-#include "protocol.h"
+#include "Protocol.h"
 #include "Settings.h"
 
 #include "ProtocolNexa.h"
