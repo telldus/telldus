@@ -60,14 +60,14 @@ std::wstring Settings::getDeviceParameter(int intDeviceId, const std::wstring &s
 * Set preferred controller id
 */
 bool Settings::setPreferredControllerId(int intDeviceId, int value){
-	return setIntSetting(intDeviceId,  L"controllerId", value, false);
+	return setIntSetting(intDeviceId,  L"controller", value, false);
 }
 
 /*
 * Get preferred controller id
 */
 int Settings::getPreferredControllerId(int intDeviceId) {
-	return getIntSetting(intDeviceId, L"controllerId", false);
+	return getIntSetting(intDeviceId, L"controller", false);
 }
 
 #ifndef _CONFUSE
