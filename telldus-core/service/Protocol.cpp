@@ -1,5 +1,6 @@
 #include "Protocol.h"
 #include "Settings.h"
+#include "../client/telldus-core.h"
 
 #include "ProtocolNexa.h"
 #include <algorithm>
@@ -26,6 +27,26 @@ void Protocol::setModel(const std::wstring &model){
 
 void Protocol::setParameters(ParameterMap &parameterList){
 	d->parameterList = parameterList;
+}
+
+int Protocol::turnOn(Controller * ){
+	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+}
+
+int Protocol::turnOff(Controller *) {
+	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+}
+
+int Protocol::bell(Controller *) {
+	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+}
+
+int Protocol::dim(unsigned char level, Controller *) {
+	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+}
+
+int Protocol::learn(Controller *){
+	return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 }
 
 /**
