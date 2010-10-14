@@ -18,6 +18,8 @@ SET( telldus-service_protocol_SRCS
 	Protocol.cpp
 	ProtocolBrateck.h
 	ProtocolBrateck.cpp
+	ProtocolEverflourish.h
+	ProtocolEverflourish.cpp
 	ProtocolNexa.h
 	ProtocolNexa.cpp
 )
