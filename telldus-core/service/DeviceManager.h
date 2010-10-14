@@ -12,6 +12,8 @@ public:
 	int getNumberOfDevices(void);
 	int addDevice();
 	int getDeviceId(int deviceIndex);
+	std::wstring getDeviceName(int deviceId);
+	int setDeviceName(int deviceId, std::wstring name);
 	int getDeviceType(int deviceId);
 	int getPreferredControllerId(int deviceId);
 	int removeDevice(int deviceId);
