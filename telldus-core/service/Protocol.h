@@ -17,6 +17,7 @@ public:
 
 	static Protocol *getProtocolInstance(std::wstring &protocolname);
 
+	std::wstring model() const;
 	void setModel(const std::wstring &model);
 	void setParameters(ParameterMap &parameterList);
 
@@ -25,11 +26,11 @@ public:
 protected:
 	std::wstring getStringParameter(const std::wstring &name, const std::wstring &defaultValue = L"") const;
 	int getIntParameter(const std::wstring &name, int min, int max) const;
+	static bool comparei(std::wstring stringA , std::wstring stringB);
 
 private:
 	class PrivateData;
 	PrivateData *d;
-	static bool comparei(std::wstring stringA , std::wstring stringB);
 };
 
 #endif //PROTOCOL_H

@@ -21,6 +21,10 @@ Protocol::~Protocol(void) {
 	delete d;
 }
 
+std::wstring Protocol::model() const {
+	return d->model;
+}
+
 void Protocol::setModel(const std::wstring &model){
 	d->model = model;
 }
