@@ -22,6 +22,8 @@ SET( telldus-service_protocol_SRCS
 	ProtocolEverflourish.cpp
 	ProtocolFuhaote.h
 	ProtocolFuhaote.cpp
+	ProtocolIkea.h
+	ProtocolIkea.cpp
 	ProtocolNexa.h
 	ProtocolNexa.cpp
 )

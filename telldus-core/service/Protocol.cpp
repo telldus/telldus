@@ -4,6 +4,7 @@
 #include "ProtocolBrateck.h"
 #include "ProtocolEverflourish.h"
 #include "ProtocolFuhaote.h"
+#include "ProtocolIkea.h"
 #include "ProtocolNexa.h"
 
 #include <algorithm>
@@ -96,14 +97,13 @@ Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 	} else if (comparei(protocolname, L"fuhaote")) {
 		return new ProtocolFuhaote();
 
+	} else if (comparei(protocolname, L"ikea")) {
+		return new ProtocolIkea();
+
 	}/* else if (wcscasecmp(protocolname.c_str(), L"silvanchip") == 0) {
 		prot = new ProtocolSilvanChip(deviceId, modelname);
 		((ProtocolSilvanChip*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
 
-	} else if (wcscasecmp(protocolname.c_str(), L"group") == 0) {
-		prot = new ProtocolGroup(deviceId, modelname);
-		//TODO: take a closer look
-		((ProtocolGroup*)prot)->setDevices(settings.getDeviceParameter(deviceId, "devices"));
 		
 	} else if (wcscasecmp(protocolname.c_str(), L"risingsun") == 0) {
 		prot = new ProtocolRisingSun(deviceId, modelname);
@@ -119,11 +119,6 @@ Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 		prot = new ProtocolSartano(deviceId, modelname);
 		((ProtocolSartano*)prot)->setCode(settings.getDeviceParameter(deviceId, "code"));
 
-	} else if (wcscasecmp(protocolname.c_str(), L"Ikea") == 0) {
-		prot = new ProtocolIkea(deviceId, modelname);
-		((ProtocolIkea*)prot)->setSystem(settings.getDeviceParameter(deviceId, "system"));
-		((ProtocolIkea*)prot)->setUnits(settings.getDeviceParameter(deviceId, "units"));
-		((ProtocolIkea*)prot)->setFade(settings.getDeviceParameter(deviceId, "fade"));
 
 	} else if (wcscasecmp(protocolname.c_str(), L"upm") == 0) {
 		prot = new ProtocolUpm(deviceId, modelname);
