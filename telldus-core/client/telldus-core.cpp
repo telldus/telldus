@@ -180,7 +180,7 @@ int WINAPI tdLearn(int intDeviceId) {
  * @returns the last sent command as integer, example TELLSTICK_TURNON or TELLSTICK_TURNOFF
  */
 int WINAPI tdLastSentCommand(int intDeviceId, int methodsSupported ) {
-	TelldusCore::Message msg(L"tdLearn");	
+	TelldusCore::Message msg(L"tdLastSentCommand");	
 	msg.addArgument(intDeviceId);
 	msg.addArgument(methodsSupported);
 	return msg.getClientIntegerFromSocket();
