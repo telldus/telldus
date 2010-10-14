@@ -1,6 +1,6 @@
 #include "ProtocolNexa.h"
 
-std::string ProtocolNexa::getStringForMethod(int method, const std::string &data, Controller *) {
+std::string ProtocolNexa::getStringForMethod(int method, unsigned char data, Controller *) {
 	if (!comparei(model(), L"codeswitch")) {
 		return getStringSelflearning(method, data);
 	}
@@ -25,7 +25,7 @@ std::string ProtocolNexa::getStringCodeSwitch(int method) {
 	return strReturn;
 }
 
-std::string ProtocolNexa::getStringSelflearning(int method, const std::string &data) {
+std::string ProtocolNexa::getStringSelflearning(int method, unsigned char level) {
 	const char START[] = {'T',127,255,24,1,0};
 //	const char START[] = {'T',130,255,26,24,0};
 
@@ -56,10 +56,10 @@ std::string ProtocolNexa::getStringSelflearning(int method, const std::string &d
 	}
 	
 	if (method == TELLSTICK_DIM) {
-		/*unsigned char newLevel = level/16;
+		unsigned char newLevel = level/16;
 		for (int i = 3; i >= 0; --i) {
 			m.append(newLevel & 1 << i ? "10" : "01");
-		}*/
+		}
 	}
 	
 	//The number of data is odd.

@@ -22,7 +22,7 @@ public:
 	void setPreferredControllerId(int controllerId);
 	std::wstring getProtocolName();
 	void setProtocolName(const std::wstring &name);
-	int doAction(int action, const std::wstring &data, Controller *controller);
+	int doAction(int action, unsigned char data, Controller *controller);
 	
 private:
 

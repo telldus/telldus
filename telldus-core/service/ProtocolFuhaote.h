@@ -6,7 +6,7 @@
 class ProtocolFuhaote : public Protocol
 {
 public:
-	virtual std::string getStringForMethod(int method, const std::string &data, Controller *controller);
+	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller);
 };
 
 #endif //PROTOCOLFUHAOTE_H

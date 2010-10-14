@@ -72,19 +72,19 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	
 	if (function == L"tdTurnOn") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_TURNON, L"");
+		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_TURNON, 0);
 	} else if (function == L"tdTurnOff") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_TURNOFF, L"");
+		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_TURNOFF, 0);
 
 	} else if (function == L"tdBell") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_BELL, L"");
+		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_BELL, 0);
 
 	} else if (function == L"tdDim") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		int level = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_DIM, TelldusCore::Message::intToWstring(level));
+		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_DIM, level);
 
 	} else if (function == L"tdLearn") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);

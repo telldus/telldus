@@ -1,13 +1,17 @@
-#pragma once
+#ifndef PROTOCOLNEXA_H
+#define PROTOCOLNEXA_H
+
 #include "Device.h"
 #include <string>
 
 class ProtocolNexa : public Protocol {
 public:
-	virtual std::string getStringForMethod(int method, const std::string &data, Controller *controller);
+	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller);
 
 protected:
-	std::string getStringSelflearning(int method, const std::string &data);
+	std::string getStringSelflearning(int method, unsigned char data);
 	std::string getStringCodeSwitch(int method);
 	static std::string getCodeSwitchTuple(int code);
 };
+
+#endif //PROTOCOLNEXA_H

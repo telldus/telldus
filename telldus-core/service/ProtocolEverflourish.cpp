@@ -1,6 +1,6 @@
 #include "ProtocolEverflourish.h"
 
-std::string ProtocolEverflourish::getStringForMethod(int method, const std::string &, Controller *) {
+std::string ProtocolEverflourish::getStringForMethod(int method, unsigned char, Controller *) {
 	unsigned int deviceCode = this->getIntParameter(L"house", 0, 16383);
 	unsigned int intCode = this->getIntParameter(L"unit", 1, 4)-1;
 	unsigned char action;

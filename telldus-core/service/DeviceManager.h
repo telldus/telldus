@@ -15,7 +15,7 @@ public:
 	int getDeviceType(int deviceId);
 	int getPreferredControllerId(int deviceId);
 	int removeDevice(int deviceId);
-	int doAction(int deviceId, int action, const std::wstring &data);
+	int doAction(int deviceId, int action, unsigned char data);
 
 private:
 

@@ -1,6 +1,6 @@
 #include "ProtocolBrateck.h"
 
-std::string ProtocolBrateck::getStringForMethod(int method, const std::string &, Controller *) {
+std::string ProtocolBrateck::getStringForMethod(int method, unsigned char, Controller *) {
 	const char S = '!';
 	const char L = 'V';
 	const char B1[] = {L,S,L,S,0};

@@ -21,7 +21,7 @@ public:
 	void setModel(const std::wstring &model);
 	void setParameters(ParameterMap &parameterList);
 
-	virtual std::string getStringForMethod(int method, const std::string &data, Controller *controller) = 0;
+	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller) = 0;
 
 protected:
 	std::wstring getStringParameter(const std::wstring &name, const std::wstring &defaultValue = L"") const;

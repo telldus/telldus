@@ -130,7 +130,7 @@ int DeviceManager::removeDevice(int deviceId){
 	return TELLSTICK_DEVICE_REMOVED;
 }
 
-int DeviceManager::doAction(int deviceId, int action, const std::wstring &data){
+int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 	Device *device = 0;
 	{ 
 		//devices locked

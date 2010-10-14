@@ -6,7 +6,7 @@
 class ProtocolEverflourish :  public Protocol
 {
 public:
-	virtual std::string getStringForMethod(int method, const std::string &data, Controller *controller);
+	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller);
 
 private:
 	static unsigned int calculateChecksum(unsigned int x);

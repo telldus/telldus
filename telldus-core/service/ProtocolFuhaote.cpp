@@ -1,6 +1,6 @@
 #include "ProtocolFuhaote.h"
 
-std::string ProtocolFuhaote::getStringForMethod(int method, const std::string &, Controller *) {
+std::string ProtocolFuhaote::getStringForMethod(int method, unsigned char, Controller *) {
 	const char S = 19;
 	const char L = 58;
 	const char B0[] = {S,L,L,S,0};
