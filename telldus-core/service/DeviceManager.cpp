@@ -50,6 +50,46 @@ void DeviceManager::fillDevices(){
 	}
 }
 
+std::wstring DeviceManager::getDeviceModel(int deviceId){
+	
+	TelldusCore::MutexLocker locker(&d->lock);
+	if (!d->devices.size()) {
+			return L"UNKNOWN";	//TODO, what?
+	}
+	DeviceMap::iterator it = d->devices.find(deviceId);
+	if (it != d->devices.end()) {
+		//TODO: Is it ok NOT to get a lock here? Should be, since the list is locked, and it's an fast operation?
+		return it->second->getModel();
+	}
+	return L"UNKNOWN";	//TODO, what?
+}
+
+int DeviceManager::setDeviceModel(int deviceId, std::wstring model)
+{	
+	//TODO: check this locking, ok?
+	Device *device = 0;
+	{
+		TelldusCore::MutexLocker locker(&d->lock);
+		if (!d->devices.size()) {
+				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+		}
+		DeviceMap::iterator it = d->devices.find(deviceId);
+		if (it != d->devices.end()) {
+			device = it->second;
+			d->set.setModel(deviceId, model);
+		}
+		else{
+			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+		}
+	}
+	if(device){
+		TelldusCore::MutexLocker lock(device);
+		device->setModel(model);
+	}
+	
+	return TELLSTICK_SUCCESS;
+}
+
 std::wstring DeviceManager::getDeviceName(int deviceId){
 	
 	TelldusCore::MutexLocker locker(&d->lock);

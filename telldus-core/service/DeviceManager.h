@@ -12,6 +12,8 @@ public:
 	int getNumberOfDevices(void);
 	int addDevice();
 	int getDeviceId(int deviceIndex);
+	std::wstring getDeviceModel(int deviceId);
+	int setDeviceModel(int deviceId, std::wstring model);
 	std::wstring getDeviceName(int deviceId);
 	int setDeviceName(int deviceId, std::wstring name);
 	std::wstring getDeviceProtocol(int deviceId);

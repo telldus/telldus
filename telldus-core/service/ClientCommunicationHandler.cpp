@@ -134,13 +134,12 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 
 	} else if (function == L"tdGetModel") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
-		const char *model = "Default model";	//tdGetModel(deviceId);
-		(*wstringReturn) = TelldusCore::Message::charToWstring(model);
+		(*wstringReturn) = d->deviceManager->getDeviceModel(deviceId);
 
 	} else if (function == L"tdSetModel") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring model = TelldusCore::Message::takeString(&msg);
-		(*intReturn) = 0;	// tdSetModel(deviceId, model.c_str());
+		(*intReturn) = d->deviceManager->setDeviceModel(deviceId, model);
 		//TODO, signal event
 
 	} else if (function == L"tdSetDeviceParameter") {
