@@ -2,10 +2,11 @@
 #define DEVICE_H
 
 #include "Controller.h"
+#include "Mutex.h"
 #include "Protocol.h"
 #include <string>
 
-class Device
+class Device : public TelldusCore::Mutex
 {
 public:
 	Device(int id);
@@ -21,9 +22,8 @@ public:
 	void setPreferredControllerId(int controllerId);
 	std::wstring getProtocolName();
 	void setProtocolName(const std::wstring &name);
+	int doAction(int action, const std::wstring &data, Controller *controller);
 	
-	int turnOn(Controller *controller);
-
 private:
 
 	Protocol *retrieveProtocol();

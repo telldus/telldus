@@ -7,14 +7,13 @@ public:
 	Event *event;
 	bool done;
 	DeviceManager *deviceManager;
-	ControllerManager *controllerManager;
 };
 
 ClientCommunicationHandler::ClientCommunicationHandler(){
 
 }
 
-ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clientSocket, Event *event, DeviceManager *deviceManager, ControllerManager *controllerManager)
+ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clientSocket, Event *event, DeviceManager *deviceManager)
 	:Thread()
 {
 	d = new PrivateData;
@@ -22,7 +21,6 @@ ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clie
 	d->event = event;
 	d->done = false;
 	d->deviceManager = deviceManager;
-	d->controllerManager = controllerManager;
 	
 }
 
@@ -75,14 +73,8 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	if (function == L"tdTurnOn") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		//TODO Lock controller and device?
-		Controller *controller = d->controllerManager->getBestControllerById(d->deviceManager->getPreferredControllerId(deviceId));
-		//TODO: Lock device?
-		if(controller){
-			(*intReturn) = d->deviceManager->turnOn(deviceId, controller);
-		}
-		else{
-			(*intReturn) = 0;
-		}
+		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_TURNON, L"");
+		
 		//TODO: Unlock
 
 	} else if (function == L"tdTurnOff") {

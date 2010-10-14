@@ -2,18 +2,19 @@
 #define DEVICEMANAGER_H
 
 #include "Device.h"
+#include "ControllerManager.h"
 
 class DeviceManager
 {
 public:
-	DeviceManager(void);
+	DeviceManager(ControllerManager *controllerManager);
 	~DeviceManager(void);
 	int getNumberOfDevices(void);
-	bool addDevice();
+	int addDevice();
 	int getDeviceId(int deviceIndex);
 	int getPreferredControllerId(int deviceId);
-	bool removeDevice(int deviceId);
-	bool turnOn(int deviceId, Controller *controller);
+	int removeDevice(int deviceId);
+	int doAction(int deviceId, int action, const std::wstring &data);
 
 private:
 

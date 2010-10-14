@@ -9,24 +9,29 @@ typedef std::map<int, Device *> DeviceMap;
 class DeviceManager::PrivateData {
 public:
 	 DeviceMap devices;
-	 Settings set;		//TODO: have to be here, right? Only one instance?
+	 Settings set;
+	 TelldusCore::Mutex lock;
+	 ControllerManager *controllerManager;
 };
 
-DeviceManager::DeviceManager(){
+DeviceManager::DeviceManager(ControllerManager *controllerManager){
 	d = new PrivateData;
+	d->controllerManager = controllerManager;
 	fillDevices();
 }
 
 DeviceManager::~DeviceManager(void) {
-	//TODO: Locks
-	//always lock list first, device after (or only one of them)
+	
+	TelldusCore::MutexLocker locker(&d->lock);
 	for (DeviceMap::iterator it = d->devices.begin(); it != d->devices.end(); ++it) {
+		{TelldusCore::MutexLocker lock(it->second);}	//aquire lock, and release it, just to see thats it's not in use anywhere
 		delete( it->second );
 	}
 	delete d;
 }
 
 void DeviceManager::fillDevices(){
+	TelldusCore::MutexLocker locker(&d->lock);
 	int numberOfDevices = d->set.getNumberOfDevices();
 
 	for (int i = 0; i < numberOfDevices; ++i) {
@@ -46,75 +51,116 @@ void DeviceManager::fillDevices(){
 }
 
 int DeviceManager::getNumberOfDevices(){
+	TelldusCore::MutexLocker locker(&d->lock);
 	return (int)d->devices.size();
 }
 
-bool DeviceManager::addDevice(){
+int DeviceManager::addDevice(){
+	TelldusCore::MutexLocker locker(&d->lock);
 	Settings set;
 
 	//TODO: Lock? (set too)
 	int id = d->set.addDevice();
 	if(id == -1){
-		return false;
+		return TELLSTICK_ERROR_UNKNOWN;
 	}
 
 	//TODO: Lock
 	d->devices[id] = new Device(id);
 	if(!d->devices[id]){
-		return false;
+		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
-	return true;
+	return TELLSTICK_DEVICE_ADDED;
 	//release locks
 }
 
 int DeviceManager::getDeviceId(int intDeviceIndex) {
-	//TODO This must be done differently, device index (why is it even needed?) may be stored in device too	
+	TelldusCore::MutexLocker locker(&d->lock);
 	return d->set.getDeviceId(intDeviceIndex);
 }
 
 int DeviceManager::getPreferredControllerId(int deviceId){
+	TelldusCore::MutexLocker locker(&d->lock);
 	
 	//TODO: repeating code...
 	//TODO: Lock
 	if (!d->devices.size()) {
-			return 0;
+			return TELLSTICK_ERROR_NOT_FOUND;
 	}
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
 		return it->second->getPreferredControllerId();
 	}
-	return 0;	//not found
+	return TELLSTICK_ERROR_NOT_FOUND;	//not found
 
 }
 
-bool DeviceManager::removeDevice(int deviceId){
+int DeviceManager::removeDevice(int deviceId){
 	
-	//TODO: Lock device/list and set?
-	if(d->set.removeDevice(deviceId)){
-		//TODO ta bort från listan d->devices[id]
-	}
-	
-
-	return false;
-}
-
-bool DeviceManager::turnOn(int deviceId, Controller *controller){
-	
-	
+	Device *device = 0;
 	{
-		//TODO: Get device
-		//TelldusCore::MutexLocker locker(&device);
-		//device is locked in current scope
-		
+		TelldusCore::MutexLocker locker(&d->lock);
+		if(!d->set.removeDevice(deviceId)){		//remove from register/settings
+			return TELLSTICK_ERROR_UNKNOWN;
+		}
+
 		if (!d->devices.size()) {
-				return false;
+				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
 		DeviceMap::iterator it = d->devices.find(deviceId);
 		if (it != d->devices.end()) {
-			return it->second->turnOn(controller);
+			//it->second.lock();
+			device = it->second;
+			d->devices.erase(it);	//remove from list, keep reference
 		}
-		return false;	//not found
+		else{
+			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+		}
+	}
+	{TelldusCore::MutexLocker lock(device);}	//waiting for device lock, if it's aquired, just unlock again. Device is removed from list, and cannot be accessed from anywhere else
+	delete device;
+
+	//1 lås lista
+	//2 ta bort från registret
+	//4 plocka ut device ur lista
+	//* Lås upp lista
+	//3 vänta på device lås
+	//{TelldusCore::MutexLocker(&device);}
+	//6 delete device
+
+	return TELLSTICK_DEVICE_REMOVED;
+}
+
+int DeviceManager::doAction(int deviceId, int action, const std::wstring &data){
+	Device *device = 0;
+	{ 
+		//devices locked
+		TelldusCore::MutexLocker deviceLocker(&d->lock);
 		
+		if (!d->devices.size()) {
+			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+		}
+		DeviceMap::iterator it = d->devices.find(deviceId);
+		if (it != d->devices.end()) {
+			it->second->lock();	//device locked
+			device = it->second;
+		}
+		//devices unlocked
+	}
+
+	if (!device) {
+		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;	//not found
 	}
 	
+	//TODO: Get controller here (controllermanager -> locks its own list, controller -> lock for send etc)
+	Controller *controller = d->controllerManager->getBestControllerById(this->getPreferredControllerId(deviceId));
+	if(controller){
+		int retval = device->doAction(action, data, controller);
+		device->unlock();
+		return retval;
+	}
+	else{
+		device->unlock();
+		return TELLSTICK_ERROR_NOT_FOUND;
+	}
 }

@@ -80,7 +80,7 @@ bool Protocol::comparei(std::wstring stringA , std::wstring stringB)
 
 Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 	
-	if(comparei(protocolname, L"arctech")){	//TODO: Test this
+	if(comparei(protocolname, L"arctech")){
 		return new ProtocolNexa();
 		//((ProtocolNexa*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
 		//((ProtocolNexa*)prot)->setUnit(settings.getDeviceParameter(deviceId, "unit"));

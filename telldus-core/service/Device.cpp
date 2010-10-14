@@ -11,7 +11,9 @@ public:
 	int preferredControllerId;
 };
 
-Device::Device(int id){
+Device::Device(int id)
+	:Mutex()
+{
 	d = new PrivateData;
 	d->protocol = 0;
 	d->preferredControllerId = 0;
@@ -71,10 +73,11 @@ void Device::setProtocolName(const std::wstring &protocolName){
 * End Get-/Set
 */
 
-int Device::turnOn(Controller *controller) {
+int Device::doAction(int action,  const std::wstring &data, Controller *controller) {
 	Protocol *p = this->retrieveProtocol();
 	if(p){
-		std::string code = p->getStringForMethod(TELLSTICK_TURNON, "", controller);
+		std::string stringData(data.begin(), data.end());	//conversion needed
+		std::string code = p->getStringForMethod(action, stringData, controller);
 		controller->send(code);
 	}
 	return 0;
