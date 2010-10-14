@@ -22,7 +22,14 @@ Protocol::~Protocol(void) {
 }
 
 std::wstring Protocol::model() const {
-	return d->model;
+	std::wstring strModel = d->model;
+	//Strip anything after : if it is found
+	size_t pos = strModel.find(L":");
+	if (pos != std::wstring::npos) { 
+		strModel = strModel.substr(0, pos);
+	}
+
+	return strModel;
 }
 
 void Protocol::setModel(const std::wstring &model){
