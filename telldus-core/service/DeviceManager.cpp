@@ -90,6 +90,46 @@ int DeviceManager::setDeviceName(int deviceId, std::wstring name){
 	return TELLSTICK_SUCCESS;
 }
 
+std::wstring DeviceManager::getDeviceProtocol(int deviceId){
+	
+	TelldusCore::MutexLocker locker(&d->lock);
+	if (!d->devices.size()) {
+			return L"UNKNOWN";	//TODO, what?
+	}
+	DeviceMap::iterator it = d->devices.find(deviceId);
+	if (it != d->devices.end()) {
+		//TODO: Is it ok NOT to get a lock here? Should be, since the list is locked, and it's an fast operation?
+		return it->second->getProtocolName();
+	}
+	return L"UNKNOWN";	//TODO, what?
+}
+
+int DeviceManager::setDeviceProtocol(int deviceId, std::wstring protocol)
+{	
+	//TODO: check this locking, ok?
+	Device *device = 0;
+	{
+		TelldusCore::MutexLocker locker(&d->lock);
+		if (!d->devices.size()) {
+				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+		}
+		DeviceMap::iterator it = d->devices.find(deviceId);
+		if (it != d->devices.end()) {
+			device = it->second;
+			d->set.setProtocol(deviceId, protocol);
+		}
+		else{
+			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+		}
+	}
+	if(device){
+		TelldusCore::MutexLocker lock(device);
+		device->setProtocolName(protocol);
+	}
+	
+	return TELLSTICK_SUCCESS;
+}
+
 int DeviceManager::getNumberOfDevices(){
 	TelldusCore::MutexLocker locker(&d->lock);
 	return (int)d->devices.size();

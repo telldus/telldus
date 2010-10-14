@@ -124,13 +124,12 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 
 	} else if (function == L"tdGetProtocol") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
-		const char *protocol = "Default protocol";	//tdGetProtocol(deviceId);
-		(*wstringReturn) = TelldusCore::Message::charToWstring(protocol);
+		(*wstringReturn) = d->deviceManager->getDeviceProtocol(deviceId);
 
 	} else if (function == L"tdSetProtocol") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring protocol = TelldusCore::Message::takeString(&msg);
-		(*intReturn) = 0;	// tdSetProtocol(deviceId, protocol.c_str());
+		(*intReturn) = d->deviceManager->setDeviceProtocol(deviceId, protocol);
 		//TODO, signal event
 
 	} else if (function == L"tdGetModel") {
