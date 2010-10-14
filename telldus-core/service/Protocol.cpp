@@ -6,6 +6,7 @@
 #include "ProtocolFuhaote.h"
 #include "ProtocolIkea.h"
 #include "ProtocolNexa.h"
+#include "ProtocolRisingSun.h"
 
 #include <algorithm>
 #include <string>
@@ -100,15 +101,14 @@ Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 	} else if (comparei(protocolname, L"ikea")) {
 		return new ProtocolIkea();
 
+	} else if (comparei(protocolname, L"risingsun")) {
+		return new ProtocolRisingSun();
+
 	}/* else if (wcscasecmp(protocolname.c_str(), L"silvanchip") == 0) {
 		prot = new ProtocolSilvanChip(deviceId, modelname);
 		((ProtocolSilvanChip*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
 
 		
-	} else if (wcscasecmp(protocolname.c_str(), L"risingsun") == 0) {
-		prot = new ProtocolRisingSun(deviceId, modelname);
-		((ProtocolRisingSun*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
-		((ProtocolRisingSun*)prot)->setUnit(settings.getDeviceParameter(deviceId, "unit"));
 
 	} else if (wcscasecmp(protocolname.c_str(), L"Waveman") == 0) {
 		prot = new ProtocolWaveman(deviceId, modelname);

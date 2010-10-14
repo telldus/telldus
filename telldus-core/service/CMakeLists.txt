@@ -26,6 +26,8 @@ SET( telldus-service_protocol_SRCS
 	ProtocolIkea.cpp
 	ProtocolNexa.h
 	ProtocolNexa.cpp
+	ProtocolRisingSun.h
+	ProtocolRisingSun.cpp
 )
 SET( telldus-service_HDRS
 	ClientCommunicationHandler.h
