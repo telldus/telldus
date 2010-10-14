@@ -88,7 +88,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 
 	} else if (function == L"tdLearn") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_LEARN, L"");
+		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_LEARN, 0);
 
 	} else if (function == L"tdLastSentCommand") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
