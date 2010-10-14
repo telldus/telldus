@@ -3,6 +3,7 @@
 
 #include "ProtocolBrateck.h"
 #include "ProtocolEverflourish.h"
+#include "ProtocolFuhaote.h"
 #include "ProtocolNexa.h"
 
 #include <algorithm>
@@ -92,11 +93,10 @@ Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 	} else if (comparei(protocolname, L"everflourish")) {
 		return new ProtocolEverflourish();
 
-	}/* else if (wcscasecmp(protocolname.c_str(), L"fuhaote") == 0) {
-		prot = new ProtocolFuhaote(deviceId, modelname);
-		((ProtocolFuhaote*)prot)->setCode(settings.getDeviceParameter(deviceId, "code"));
+	} else if (comparei(protocolname, L"fuhaote")) {
+		return new ProtocolFuhaote();
 
-	} else if (wcscasecmp(protocolname.c_str(), L"silvanchip") == 0) {
+	}/* else if (wcscasecmp(protocolname.c_str(), L"silvanchip") == 0) {
 		prot = new ProtocolSilvanChip(deviceId, modelname);
 		((ProtocolSilvanChip*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
 
