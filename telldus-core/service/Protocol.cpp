@@ -1,5 +1,4 @@
 #include "Protocol.h"
-#include "Settings.h"
 #include "../client/telldus-core.h"
 
 #include "ProtocolNexa.h"

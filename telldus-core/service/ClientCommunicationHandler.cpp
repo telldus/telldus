@@ -75,10 +75,10 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	if (function == L"tdTurnOn") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		//TODO Lock controller and device?
-		Controller *controller = d->controllerManager->getBestControllerById(d->deviceManager->getDevice(deviceId)->getPreferredControllerId());
+		Controller *controller = d->controllerManager->getBestControllerById(d->deviceManager->getPreferredControllerId(deviceId));
 		//TODO: Lock device?
 		if(controller){
-			(*intReturn) = d->deviceManager->getDevice(deviceId)->turnOn(controller);
+			(*intReturn) = d->deviceManager->turnOn(deviceId, controller);
 		}
 		else{
 			(*intReturn) = 0;
@@ -117,9 +117,10 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		(*intReturn) = d->deviceManager->getNumberOfDevices();
 
 	} else if (function == L"tdGetDeviceId") {
-		int intDeviceIndex = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 1;	//tdGetDeviceId(intDeviceIndex);
-
+		int deviceIndex = TelldusCore::Message::takeInt(&msg);
+		
+		(*intReturn) = d->deviceManager->getDeviceId(deviceIndex);
+	
 	} else if (function == L"tdGetDeviceType") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		(*intReturn) = 11;	// tdGetDeviceType(deviceId);
@@ -168,7 +169,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		(*wstringReturn) = TelldusCore::Message::charToWstring(value);
 
 	} else if (function == L"tdAddDevice") {
-		//TODO
+		//TODO: Lock
 		if(d->deviceManager->addDevice()){
 			(*intReturn) = 1;
 			//TODO: signalEvent, or do that from where this is called? Or even inside addDevice?
@@ -176,7 +177,10 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 
 	} else if (function == L"tdRemoveDevice") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0;	// tdRemoveDevice(deviceId);
+		if(d->deviceManager->removeDevice(deviceId)){
+			(*intReturn) = 1;
+			//TODO: signalEvent, or do that from where this is called? Or even inside removeDevice?
+		}
 
 	} else if (function == L"tdMethods") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);

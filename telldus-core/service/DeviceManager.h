@@ -9,8 +9,11 @@ public:
 	DeviceManager(void);
 	~DeviceManager(void);
 	int getNumberOfDevices(void);
-	Device *getDevice(int deviceId);
 	bool addDevice();
+	int getDeviceId(int deviceIndex);
+	int getPreferredControllerId(int deviceId);
+	bool removeDevice(int deviceId);
+	bool turnOn(int deviceId, Controller *controller);
 
 private:
 
