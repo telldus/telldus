@@ -13,13 +13,37 @@ ProtocolNexa::~ProtocolNexa(void)
 {}
 
 std::string ProtocolNexa::getStringForMethod(int method, const std::string &data, Controller *) {
-//	const char START[] = {'T',127,255,24,1,0};
-	const char START[] = {'T',130,255,26,24,0};
+	if (!comparei(model(), L"codeswitch")) {
+		return getStringSelflearning(method, data);
+	}
+	return getStringCodeSwitch(method);
+}
+
+std::string ProtocolNexa::getStringCodeSwitch(int method) {
+	std::string strReturn = "S";
+
+	int intHouse = 0; //TODO: getIntParameter(L"house", 1, 67108863)
+	strReturn.append(getCodeSwitchTuple(intHouse));
+	strReturn.append(getCodeSwitchTuple(getIntParameter(L"code", 1, 16)-1));
+
+	if (method == TELLSTICK_TURNON) {
+		strReturn.append("$k$k$kk$$kk$$kk$$k+");
+	} else if (method == TELLSTICK_TURNOFF) {
+		strReturn.append("$k$k$kk$$kk$$k$k$k+");
+	} else {
+		return "";
+	}
+	return strReturn;
+}
+
+std::string ProtocolNexa::getStringSelflearning(int method, const std::string &data) {
+	const char START[] = {'T',127,255,24,1,0};
+//	const char START[] = {'T',130,255,26,24,0};
 
 	std::string strMessage(START);
 	strMessage.append(1,(method == TELLSTICK_DIM ? 147 : 132)); //Number of pulses
 	int intHouse = getIntParameter(L"house", 1, 67108863);
-	int intCode = getIntParameter(L"code", 1, 16)-1;
+	int intCode = getIntParameter(L"unit", 1, 16)-1;
 		
 	std::string m;
 	for (int i = 25; i >= 0; --i) {
@@ -32,8 +56,10 @@ std::string ProtocolNexa::getStringForMethod(int method, const std::string &data
 		m.append("00");
 	} else if (method == TELLSTICK_TURNOFF) {
 		m.append("01");
-	} else {
+	} else if (method == TELLSTICK_TURNON) {
 		m.append("10");
+	} else {
+		return "";
 	}
 	
 	for (int i = 3; i >= 0; --i) {
@@ -72,4 +98,17 @@ std::string ProtocolNexa::getStringForMethod(int method, const std::string &data
 // 	}
 // 	printf("\n");
 	return strMessage;
+}
+
+std::string ProtocolNexa::getCodeSwitchTuple(int intCode) {
+	std::string strReturn = "";
+	for( int i = 0; i < 4; ++i ) {
+		if (intCode & 1) { //Convert 1
+			strReturn.append("$kk$");
+		} else { //Convert 0
+			strReturn.append("$k$k");
+		}
+		intCode >>= 1;
+	}
+	return strReturn;
 }
