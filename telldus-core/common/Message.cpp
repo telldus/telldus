@@ -74,7 +74,7 @@ std::wstring Message::takeString(std::wstring *message) {
 	if (!Message::nextIsString(*message)) {
 		return L"";
 	}
-	int index = message->find(':');
+	size_t index = message->find(':');
 	int length = wideToInteger(message->substr(0, index));
 	std::wstring retval(message->substr(index+1, length));
 	message->erase(0, index+length+1);
@@ -85,7 +85,7 @@ int Message::takeInt(std::wstring *message) {
 	if (!Message::nextIsInt(*message)) {
 		return 0;
 	}
-	int index = message->find('s');
+	size_t index = message->find('s');
 	int value = wideToInteger(message->substr(1, index - 1));
 	message->erase(0, index+1);
 	return value;
