@@ -24,8 +24,8 @@ DeviceManager::~DeviceManager(void) {
 	
 	TelldusCore::MutexLocker locker(&d->lock);
 	for (DeviceMap::iterator it = d->devices.begin(); it != d->devices.end(); ++it) {
-		{TelldusCore::MutexLocker lock(it->second);}	//aquire lock, and release it, just to see thats it's not in use anywhere
-		delete( it->second );
+		{TelldusCore::MutexLocker lock(it->second);}	//aquire lock, and release it, just to see that the device it's not in use anywhere
+		delete(it->second);
 	}
 	delete d;
 }
@@ -57,21 +57,17 @@ int DeviceManager::getNumberOfDevices(){
 
 int DeviceManager::addDevice(){
 	TelldusCore::MutexLocker locker(&d->lock);
-	Settings set;
-
-	//TODO: Lock? (set too)
+	
 	int id = d->set.addDevice();
 	if(id == -1){
 		return TELLSTICK_ERROR_UNKNOWN;
 	}
 
-	//TODO: Lock
 	d->devices[id] = new Device(id);
 	if(!d->devices[id]){
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
 	return TELLSTICK_DEVICE_ADDED;
-	//release locks
 }
 
 int DeviceManager::getDeviceId(int intDeviceIndex) {
@@ -80,19 +76,22 @@ int DeviceManager::getDeviceId(int intDeviceIndex) {
 }
 
 int DeviceManager::getPreferredControllerId(int deviceId){
-	TelldusCore::MutexLocker locker(&d->lock);
 	
-	//TODO: repeating code...
-	//TODO: Lock
-	if (!d->devices.size()) {
-			return TELLSTICK_ERROR_NOT_FOUND;
+	Device *device = 0;
+	
+	{
+		TelldusCore::MutexLocker locker(&d->lock);
+		
+		if (!d->devices.size()) {
+				return TELLSTICK_ERROR_NOT_FOUND;
+		}
+		DeviceMap::iterator it = d->devices.find(deviceId);
+		if (it != d->devices.end()) {
+			//TODO: Is it ok NOT to get a lock here? Should be, since the list is locked, and it's an fast operation?
+			return it->second->getPreferredControllerId();
+		}
+		return TELLSTICK_ERROR_NOT_FOUND;	//not found
 	}
-	DeviceMap::iterator it = d->devices.find(deviceId);
-	if (it != d->devices.end()) {
-		return it->second->getPreferredControllerId();
-	}
-	return TELLSTICK_ERROR_NOT_FOUND;	//not found
-
 }
 
 int DeviceManager::removeDevice(int deviceId){
@@ -109,7 +108,6 @@ int DeviceManager::removeDevice(int deviceId){
 		}
 		DeviceMap::iterator it = d->devices.find(deviceId);
 		if (it != d->devices.end()) {
-			//it->second.lock();
 			device = it->second;
 			d->devices.erase(it);	//remove from list, keep reference
 		}

@@ -72,14 +72,10 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	
 	if (function == L"tdTurnOn") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
-		//TODO Lock controller and device?
 		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_TURNON, L"");
-		
-		//TODO: Unlock
-
 	} else if (function == L"tdTurnOff") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0; //tdTurnOff(deviceId);
+		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_TURNOFF, L"");
 
 	} else if (function == L"tdBell") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
@@ -177,7 +173,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	} else if (function == L"tdMethods") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		int intMethodsSupported = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 1;	// tdMethods(deviceId, intMethodsSupported);
+		(*intReturn) = 3;	// tdMethods(deviceId, intMethodsSupported);
 
 	} else if (function == L"tdGetErrorString") {
 		int intErrorNo = TelldusCore::Message::takeInt(&msg);

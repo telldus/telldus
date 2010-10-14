@@ -10,7 +10,7 @@ typedef std::map<int, Controller *> ControllerMap;
 class ControllerManager::PrivateData {
 public:
 	int lastControllerId;
-	ControllerMap controllers;
+	ControllerMap controllers;	//TODO: Lock for this AND lock in controls, for send etc
 };
 
 ControllerManager::ControllerManager(){

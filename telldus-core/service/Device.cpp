@@ -74,6 +74,7 @@ void Device::setProtocolName(const std::wstring &protocolName){
 */
 
 int Device::doAction(int action,  const std::wstring &data, Controller *controller) {
+	//TODO, where to check for supported methods?
 	Protocol *p = this->retrieveProtocol();
 	if(p){
 		std::string stringData(data.begin(), data.end());	//conversion needed
