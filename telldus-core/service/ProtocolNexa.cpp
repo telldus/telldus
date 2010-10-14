@@ -1,17 +1,5 @@
 #include "ProtocolNexa.h"
 
-ProtocolNexa::ProtocolNexa()
-	:Protocol()
-{
-	
-}
-
-/*
-* Destructor
-*/
-ProtocolNexa::~ProtocolNexa(void)
-{}
-
 std::string ProtocolNexa::getStringForMethod(int method, const std::string &data, Controller *) {
 	if (!comparei(model(), L"codeswitch")) {
 		return getStringSelflearning(method, data);

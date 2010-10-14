@@ -4,9 +4,6 @@
 
 class ProtocolNexa : public Protocol {
 public:
-	ProtocolNexa();
-	virtual ~ProtocolNexa(void);
-
 	virtual std::string getStringForMethod(int method, const std::string &data, Controller *controller);
 
 protected:
