@@ -142,19 +142,18 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		(*intReturn) = d->deviceManager->setDeviceModel(deviceId, model);
 		//TODO, signal event
 
-	} else if (function == L"tdSetDeviceParameter") {
-		int deviceId = TelldusCore::Message::takeInt(&msg);
-		std::wstring name = TelldusCore::Message::takeString(&msg);
-		std::wstring value = TelldusCore::Message::takeString(&msg);
-		(*intReturn) = 0;	//tdSetDeviceParameter(deviceId, name.c_str(), value.c_str());
-		//TODO, signal event
-
 	} else if (function == L"tdGetDeviceParameter") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring name = TelldusCore::Message::takeString(&msg);
 		std::wstring defaultValue = TelldusCore::Message::takeString(&msg);
-		const char *value = "Device parameter default";	//tdGetDeviceParameter(deviceId, name.c_str(), defaultValue.c_str());
-		(*wstringReturn) = TelldusCore::Message::charToWstring(value);
+		(*wstringReturn) = d->deviceManager->getDeviceParameter(deviceId, name, defaultValue);
+
+	} else if (function == L"tdSetDeviceParameter") {
+		int deviceId = TelldusCore::Message::takeInt(&msg);
+		std::wstring name = TelldusCore::Message::takeString(&msg);
+		std::wstring value = TelldusCore::Message::takeString(&msg);
+		(*intReturn) = 0;	d->deviceManager->setDeviceParameter(deviceId, name, value);
+		//TODO, signal event
 
 	} else if (function == L"tdAddDevice") {
 		//TODO: Lock

@@ -16,6 +16,8 @@ public:
 	int setDeviceModel(int deviceId, std::wstring model);
 	std::wstring getDeviceName(int deviceId);
 	int setDeviceName(int deviceId, std::wstring name);
+	std::wstring getDeviceParameter(int deviceId, std::wstring name, std::wstring defauleValue);
+	int setDeviceParameter(int deviceId, std::wstring name, std::wstring value);
 	std::wstring getDeviceProtocol(int deviceId);
 	int setDeviceProtocol(int deviceId, std::wstring name);
 	int getDeviceType(int deviceId);
