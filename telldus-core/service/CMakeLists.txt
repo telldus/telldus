@@ -16,6 +16,8 @@ SET( telldus-service_SRCS
 SET( telldus-service_protocol_SRCS
 	Protocol.h
 	Protocol.cpp
+	ProtocolBrateck.h
+	ProtocolBrateck.cpp
 	ProtocolNexa.h
 	ProtocolNexa.cpp
 )

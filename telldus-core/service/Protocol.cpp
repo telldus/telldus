@@ -1,7 +1,9 @@
 #include "Protocol.h"
 #include "../client/telldus-core.h"
 
+#include "ProtocolBrateck.h"
 #include "ProtocolNexa.h"
+
 #include <algorithm>
 #include <string>
 #include <sstream>
@@ -82,15 +84,11 @@ Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 	
 	if(comparei(protocolname, L"arctech")){
 		return new ProtocolNexa();
-		//((ProtocolNexa*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
-		//((ProtocolNexa*)prot)->setUnit(settings.getDeviceParameter(deviceId, "unit"));
 
-	} 
-	/*else if (wcscasecmp(protocolname.c_str(), L"brateck") == 0) {
-		prot = new ProtocolBrateck(deviceId, modelname);
-		((ProtocolBrateck*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
+	} else if (comparei(protocolname, L"brateck")) {
+		return new ProtocolBrateck();
 
-	} else if (wcscasecmp(protocolname.c_str(), L"everflourish") == 0){
+	} /*else if (wcscasecmp(protocolname.c_str(), L"everflourish") == 0){
 		prot = new ProtocolEverflourish(deviceId, modelname);
 		((ProtocolEverflourish*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
 		((ProtocolEverflourish*)prot)->setUnit(settings.getDeviceParameter(deviceId, "unit"));
