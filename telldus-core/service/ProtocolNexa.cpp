@@ -22,9 +22,10 @@ std::string ProtocolNexa::getStringForMethod(int method, const std::string &data
 std::string ProtocolNexa::getStringCodeSwitch(int method) {
 	std::string strReturn = "S";
 
-	int intHouse = 0; //TODO: getIntParameter(L"house", 1, 67108863)
+	std::wstring house = getStringParameter(L"house", L"A");
+	int intHouse = house[0] - L'A';
 	strReturn.append(getCodeSwitchTuple(intHouse));
-	strReturn.append(getCodeSwitchTuple(getIntParameter(L"code", 1, 16)-1));
+	strReturn.append(getCodeSwitchTuple(getIntParameter(L"unit", 1, 16)-1));
 
 	if (method == TELLSTICK_TURNON) {
 		strReturn.append("$k$k$kk$$kk$$kk$$k+");
