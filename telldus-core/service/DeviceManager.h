@@ -12,6 +12,7 @@ public:
 	int getNumberOfDevices(void);
 	int addDevice();
 	int getDeviceId(int deviceIndex);
+	int getDeviceType(int deviceId);
 	int getPreferredControllerId(int deviceId);
 	int removeDevice(int deviceId);
 	int doAction(int deviceId, int action, const std::wstring &data);

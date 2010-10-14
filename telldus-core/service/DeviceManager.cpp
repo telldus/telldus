@@ -70,28 +70,29 @@ int DeviceManager::addDevice(){
 	return TELLSTICK_DEVICE_ADDED;
 }
 
-int DeviceManager::getDeviceId(int intDeviceIndex) {
+int DeviceManager::getDeviceId(int deviceIndex) {
 	TelldusCore::MutexLocker locker(&d->lock);
-	return d->set.getDeviceId(intDeviceIndex);
+	return d->set.getDeviceId(deviceIndex);
+}
+
+int DeviceManager::getDeviceType(int deviceId){
+
+	return TELLSTICK_TYPE_DEVICE;
 }
 
 int DeviceManager::getPreferredControllerId(int deviceId){
 	
-	Device *device = 0;
+	TelldusCore::MutexLocker locker(&d->lock);
 	
-	{
-		TelldusCore::MutexLocker locker(&d->lock);
-		
-		if (!d->devices.size()) {
-				return TELLSTICK_ERROR_NOT_FOUND;
-		}
-		DeviceMap::iterator it = d->devices.find(deviceId);
-		if (it != d->devices.end()) {
-			//TODO: Is it ok NOT to get a lock here? Should be, since the list is locked, and it's an fast operation?
-			return it->second->getPreferredControllerId();
-		}
-		return TELLSTICK_ERROR_NOT_FOUND;	//not found
+	if (!d->devices.size()) {
+			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
+	DeviceMap::iterator it = d->devices.find(deviceId);
+	if (it != d->devices.end()) {
+		//TODO: Is it ok NOT to get a lock here? Should be, since the list is locked, and it's an fast operation?
+		return it->second->getPreferredControllerId();
+	}
+	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;	//not found
 }
 
 int DeviceManager::removeDevice(int deviceId){

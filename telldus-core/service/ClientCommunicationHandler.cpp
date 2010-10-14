@@ -88,16 +88,16 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 
 	} else if (function == L"tdLearn") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0;	//tdLearn(deviceId);
+		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_LEARN, L"");
 
 	} else if (function == L"tdLastSentCommand") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		int methodsSupported = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0;	// tdLastSentCommand(deviceId, methodsSupported);
+		(*intReturn) = 0;	// tdLastSentCommand(deviceId, methodsSupported); TODO
 
 	} else if (function == L"tdLastSentValue") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
-		const char *value = "";	//tdLastSentValue(deviceId);
+		const char *value = "";	//tdLastSentValue(deviceId);	TODO
 		(*wstringReturn) =  TelldusCore::Message::charToWstring(value);
 
 	} else if(function == L"tdGetNumberOfDevices"){
@@ -106,12 +106,11 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 
 	} else if (function == L"tdGetDeviceId") {
 		int deviceIndex = TelldusCore::Message::takeInt(&msg);
-		
 		(*intReturn) = d->deviceManager->getDeviceId(deviceIndex);
 	
 	} else if (function == L"tdGetDeviceType") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 11;	// tdGetDeviceType(deviceId);
+		(*intReturn) = d->deviceManager->getDeviceType(deviceId);
 
 	} else if (function == L"tdGetName") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
@@ -122,6 +121,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring name = TelldusCore::Message::takeString(&msg);
 		(*intReturn) = 0; //tdSetName(deviceId, name.c_str());
+		//TODO, signal event
 
 	} else if (function == L"tdGetProtocol") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
@@ -132,6 +132,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring protocol = TelldusCore::Message::takeString(&msg);
 		(*intReturn) = 0;	// tdSetProtocol(deviceId, protocol.c_str());
+		//TODO, signal event
 
 	} else if (function == L"tdGetModel") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
@@ -142,12 +143,14 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring model = TelldusCore::Message::takeString(&msg);
 		(*intReturn) = 0;	// tdSetModel(deviceId, model.c_str());
+		//TODO, signal event
 
 	} else if (function == L"tdSetDeviceParameter") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring name = TelldusCore::Message::takeString(&msg);
 		std::wstring value = TelldusCore::Message::takeString(&msg);
 		(*intReturn) = 0;	//tdSetDeviceParameter(deviceId, name.c_str(), value.c_str());
+		//TODO, signal event
 
 	} else if (function == L"tdGetDeviceParameter") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
@@ -191,6 +194,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		std::wstring serial = TelldusCore::Message::takeString(&msg);
 		//tdConnectTellStickController(vid, pid, serial.c_str());
 		(*wstringReturn) = L"";
+		//TODO, signal event? Or done in other place?
 
 	} else if (function == L"tdDisconnectTellStickController") {
 		int vid = TelldusCore::Message::takeInt(&msg);
@@ -198,10 +202,11 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		std::wstring serial = TelldusCore::Message::takeString(&msg);
 		//tdDisconnectTellStickController(vid, pid, serial.c_str());
 		(*wstringReturn) = L"";
+		//TODO, signal event? Or done in other place?
 
 	}
 	else{
-		(*intReturn) = 6;
+		(*intReturn) = TELLSTICK_ERROR_UNKNOWN;
 	}
 }
 
