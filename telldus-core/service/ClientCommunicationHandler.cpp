@@ -79,12 +79,12 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 
 	} else if (function == L"tdBell") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0;	// tdBell(deviceId);
+		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_BELL, L"");
 
 	} else if (function == L"tdDim") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		int level = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0;	// tdDim(deviceId, level);
+		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_DIM, TelldusCore::Message::intToWstring(level));
 
 	} else if (function == L"tdLearn") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
@@ -173,7 +173,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	} else if (function == L"tdMethods") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		int intMethodsSupported = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 3;	// tdMethods(deviceId, intMethodsSupported);
+		(*intReturn) = 63;	// tdMethods(deviceId, intMethodsSupported);
 
 	} else if (function == L"tdGetErrorString") {
 		int intErrorNo = TelldusCore::Message::takeInt(&msg);

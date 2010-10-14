@@ -42,6 +42,14 @@ void Message::addArgument(const char *value) {
 }
 
 std::wstring Message::charToWstring(const char *value) {
+	//todo move?
+	std::wstringstream st;
+	st << value;
+	return st.str();
+}
+
+std::wstring Message::intToWstring(int value) {
+	//todo	move?
 	std::wstringstream st;
 	st << value;
 	return st.str();

@@ -19,6 +19,7 @@ namespace TelldusCore {
 		std::wstring getClientWStringFromSocket();
 				
 		static std::wstring charToWstring(const char *value);
+		static std::wstring intToWstring(int value);
 		static bool nextIsInt(const std::wstring &);
 		static bool nextIsString(const std::wstring &);
 
