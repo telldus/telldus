@@ -30,6 +30,7 @@ Event *EventHandler::addEvent() {
 }
 
 bool EventHandler::removeEvent(EventBase *event) {
+	return true;
 }
 
 void EventHandler::signal(Event *event) {

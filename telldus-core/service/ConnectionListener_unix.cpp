@@ -39,7 +39,7 @@ void ConnectionListener::run(){
 	//Timeout for select
 
 	SOCKET_T serverSocket;
-	struct sockaddr_un remote, name;
+	struct sockaddr_un name;
 	socklen_t len;
 	serverSocket = socket(PF_LOCAL, SOCK_STREAM, 0);
 	if (serverSocket < 0) {

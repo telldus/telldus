@@ -9,7 +9,7 @@
 using namespace TelldusCore;
 
 int connectWrapper(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
-	connect(sockfd, addr, addrlen);
+	return connect(sockfd, addr, addrlen);
 }
 
 class Socket::PrivateData {
@@ -53,7 +53,7 @@ std::wstring Socket::read() {
 	char inbuf[BUFSIZE];
 	memset(inbuf, '\0', sizeof(inbuf));
 	
-	size_t inlen = recv(d->socket, inbuf, BUFSIZE - 1, 0);
+	recv(d->socket, inbuf, BUFSIZE - 1, 0);
 
 	std::string msg(inbuf);
 	return std::wstring(msg.begin(), msg.end());
