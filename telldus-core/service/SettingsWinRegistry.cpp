@@ -200,7 +200,7 @@ bool Settings::setStringSetting(int intDeviceId, const std::wstring &name, const
 	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_WRITE, &hk);
 				
 	if (lnExists == ERROR_SUCCESS){
-		int length = (int)value.length();
+		int length = (int)value.length() * sizeof(wchar_t);
 		RegSetValueEx(hk, name.c_str(), 0, REG_SZ, (LPBYTE)value.c_str(), length+1);
 	}
 	RegCloseKey(hk);
