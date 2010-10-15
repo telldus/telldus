@@ -7,6 +7,7 @@
 #include "ProtocolIkea.h"
 #include "ProtocolNexa.h"
 #include "ProtocolRisingSun.h"
+#include "ProtocolSartano.h"
 
 #include <algorithm>
 #include <string>
@@ -104,6 +105,10 @@ Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 	} else if (comparei(protocolname, L"risingsun")) {
 		return new ProtocolRisingSun();
 
+	} else if (comparei(protocolname, L"sartano")) {
+		return new ProtocolSartano();
+
+
 	}/* else if (wcscasecmp(protocolname.c_str(), L"silvanchip") == 0) {
 		prot = new ProtocolSilvanChip(deviceId, modelname);
 		((ProtocolSilvanChip*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
@@ -114,10 +119,6 @@ Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 		prot = new ProtocolWaveman(deviceId, modelname);
 		((ProtocolWaveman*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
 		((ProtocolWaveman*)prot)->setUnit(settings.getDeviceParameter(deviceId, "unit"));
-
-	} else if (wcscasecmp(protocolname.c_str(), L"Sartano") == 0) {
-		prot = new ProtocolSartano(deviceId, modelname);
-		((ProtocolSartano*)prot)->setCode(settings.getDeviceParameter(deviceId, "code"));
 
 
 	} else if (wcscasecmp(protocolname.c_str(), L"upm") == 0) {

@@ -28,6 +28,8 @@ SET( telldus-service_protocol_SRCS
 	ProtocolNexa.cpp
 	ProtocolRisingSun.h
 	ProtocolRisingSun.cpp
+	ProtocolSartano.h
+	ProtocolSartano.cpp
 )
 SET( telldus-service_HDRS
 	ClientCommunicationHandler.h
