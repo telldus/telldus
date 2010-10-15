@@ -48,6 +48,14 @@ int Device::getLastSentCommand(int methodsSupported){
 
 }
 
+int Device::getMethods() const {
+	Protocol *p = this->retrieveProtocol();
+	if (p) {
+		return p->methods();
+	}
+	return 0;
+}
+
 void Device::setLastSentCommand(int command, std::wstring value){
 	d->state = command;
 	d->stateValue = value;

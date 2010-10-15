@@ -15,6 +15,7 @@ public:
 	int doAction(int action, unsigned char data, Controller *controller);
 	std::wstring getStateValue();
 	int getLastSentCommand(int methodsSupported);
+	int getMethods() const;
 	std::wstring getModel();
 	void setModel(const std::wstring &model);
 	std::wstring getName();
