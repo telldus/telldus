@@ -1,8 +1,19 @@
 #include "ProtocolNexa.h"
 
 int ProtocolNexa::methods() const {
-	//TODO
-	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;
+	if (comparei(model(), L"codeswitch")) {
+		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
+
+	} else if (comparei(model(), L"selflearning-switch")) {
+		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN);
+
+	} else if (comparei(model(), L"selflearning-dimmer")) {
+		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_DIM | TELLSTICK_LEARN);
+
+	} else if (comparei(model(), L"bell")) {
+		return TELLSTICK_BELL;
+	}
+	return 0;
 }
 
 std::string ProtocolNexa::getStringForMethod(int method, unsigned char data, Controller *) {
