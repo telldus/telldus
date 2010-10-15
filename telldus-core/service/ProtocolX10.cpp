@@ -1,5 +1,8 @@
 #include "ProtocolX10.h"
 
+int ProtocolX10::methods() const {
+	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;
+}
 
 std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Controller *controller) {
 	const unsigned char S = 59, L = 169;

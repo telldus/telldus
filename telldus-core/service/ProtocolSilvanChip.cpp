@@ -1,5 +1,9 @@
 #include "ProtocolSilvanChip.h"
 
+int ProtocolSilvanChip::methods() const {
+	return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN;
+}
+
 std::string ProtocolSilvanChip::getStringForMethod(int method, unsigned char data, Controller *controller) {
 	const unsigned char S = 100;
 	const unsigned char L = 255;

@@ -1,5 +1,9 @@
 #include "ProtocolFuhaote.h"
 
+int ProtocolFuhaote::methods() const {
+	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;
+}
+
 std::string ProtocolFuhaote::getStringForMethod(int method, unsigned char, Controller *) {
 	const char S = 19;
 	const char L = 58;

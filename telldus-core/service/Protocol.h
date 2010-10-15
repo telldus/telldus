@@ -17,7 +17,7 @@ public:
 
 	static Protocol *getProtocolInstance(std::wstring &protocolname);
 
-	int methods() const; //TODO: should be abstract
+	virtual int methods() const = 0;
 	std::wstring model() const;
 	void setModel(const std::wstring &model);
 	void setParameters(ParameterMap &parameterList);

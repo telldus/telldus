@@ -1,5 +1,9 @@
 #include "ProtocolEverflourish.h"
 
+int ProtocolEverflourish::methods() const {
+	return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN;
+}
+
 std::string ProtocolEverflourish::getStringForMethod(int method, unsigned char, Controller *) {
 	unsigned int deviceCode = this->getIntParameter(L"house", 0, 16383);
 	unsigned int intCode = this->getIntParameter(L"unit", 1, 4)-1;

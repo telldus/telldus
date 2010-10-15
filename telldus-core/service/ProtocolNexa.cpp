@@ -1,5 +1,10 @@
 #include "ProtocolNexa.h"
 
+int ProtocolNexa::methods() const {
+	//TODO
+	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;
+}
+
 std::string ProtocolNexa::getStringForMethod(int method, unsigned char data, Controller *) {
 	if (!comparei(model(), L"codeswitch")) {
 		return getStringSelflearning(method, data);

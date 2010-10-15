@@ -1,5 +1,9 @@
 #include "ProtocolSartano.h"
 
+int ProtocolSartano::methods() const {
+	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;
+}
+
 std::string ProtocolSartano::getStringForMethod(int method, unsigned char, Controller *) {
 	
 	std::string strReturn("S");

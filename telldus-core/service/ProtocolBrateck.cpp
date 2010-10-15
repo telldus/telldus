@@ -1,5 +1,9 @@
 #include "ProtocolBrateck.h"
 
+int ProtocolBrateck::methods() const {
+	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;
+}
+
 std::string ProtocolBrateck::getStringForMethod(int method, unsigned char, Controller *) {
 	const char S = '!';
 	const char L = 'V';

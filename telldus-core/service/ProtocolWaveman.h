@@ -5,6 +5,7 @@
 
 class ProtocolWaveman : public ProtocolNexa {
 public:
+	int methods() const;
 	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller);
 
 protected:

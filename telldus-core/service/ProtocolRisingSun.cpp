@@ -1,5 +1,10 @@
 #include "ProtocolRisingSun.h"
 
+int ProtocolRisingSun::methods() const {
+	//TODO
+	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;
+}
+
 std::string ProtocolRisingSun::getStringForMethod(int method, unsigned char data, Controller *controller) {
 	if (comparei(model(), L"selflearning")) {
 		return getStringSelflearning(method);

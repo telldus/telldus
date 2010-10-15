@@ -1,5 +1,9 @@
 #include "ProtocolUpm.h"
 
+int ProtocolUpm::methods() const {
+	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;
+}
+
 std::string ProtocolUpm::getStringForMethod(int method, unsigned char, Controller *) {
 	const char S = ';';
 	const char L = '~';
