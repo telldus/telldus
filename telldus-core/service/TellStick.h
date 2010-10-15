@@ -28,6 +28,7 @@ public:
 	
 	virtual int firmwareVersion();
 	bool isOpen() const;
+	bool isSameAsDescriptor(const TellStickDescriptor &d) const;
 	virtual int send( const std::string &message );
 	
 	static std::list<TellStickDescriptor> findAll();

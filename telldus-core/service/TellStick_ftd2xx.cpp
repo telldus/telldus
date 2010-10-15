@@ -18,12 +18,17 @@
 class TellStick::PrivateData {
 public:
 	bool open;
+	int vid, pid;
+	std::string serial;
 	FT_HANDLE ftHandle;
 };
 
 TellStick::TellStick( const TellStickDescriptor &td ) {
 	d = new PrivateData;
 	d->open = false;
+	d->vid = td.vid;
+	d->pid = td.pid;
+	d->serial = td.serial;
 
 	char *tempSerial = new char[td.serial.size()+1];
 #ifdef _WINDOWS
@@ -65,6 +70,19 @@ int TellStick::firmwareVersion() {
 
 bool TellStick::isOpen() const {
 	return d->open;
+}
+
+bool TellStick::isSameAsDescriptor(const TellStickDescriptor &td) const {
+	if (td.vid != d->vid) {
+		return false;
+	}
+	if (td.pid != d->pid) {
+		return false;
+	}
+	if (td.serial != d->serial) {
+		return false;
+	}
+	return true;
 }
 
 int TellStick::send( const std::string &strMessage ) {
