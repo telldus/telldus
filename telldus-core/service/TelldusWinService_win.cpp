@@ -2,6 +2,7 @@
 #include "TelldusMain.h"
 
 #include <Dbt.h>
+#include <string>
 
 int g_argc;
 char **g_argv;
@@ -38,45 +39,69 @@ DWORD WINAPI TelldusWinService::serviceControlHandler( DWORD controlCode, DWORD 
 			SetServiceStatus( serviceStatusHandle, &serviceStatus );
 
 			return NO_ERROR;
-
-		case SERVICE_CONTROL_DEVICEEVENT:
-			if (dwEventType != DBT_DEVICEARRIVAL && dwEventType != DBT_DEVICEREMOVECOMPLETE) {
-				return ERROR_CALL_NOT_IMPLEMENTED;
-			}
-			
-			PDEV_BROADCAST_DEVICEINTERFACE pDevInf = reinterpret_cast<PDEV_BROADCAST_DEVICEINTERFACE>(lpEventData);
-			if (!pDevInf) {
-				return ERROR_CALL_NOT_IMPLEMENTED;
-			}
-
-//			TelldusCore::logMessage(QString::fromWCharArray(pDevInf->dbcc_name));
-
-/*			QRegExp rx("USB#VID_([0-9A-Fa-f]+)&PID_([0-9A-Fa-f]+)", Qt::CaseInsensitive);
-			if (rx.indexIn(QString::fromWCharArray(pDevInf->dbcc_name)) < 0) {
-				TelldusCore::logMessage("No match");
-				return 0;
-			}
-			
-			int vid = strtol(rx.cap(1).toLocal8Bit(), 0, 16);
-			int pid = strtol(rx.cap(2).toLocal8Bit(), 0, 16);
-			
-			if (dwEventType == DBT_DEVICEARRIVAL) {
-				TelldusCore::logMessage(QString("Insert %1 %2").arg(vid).arg(pid));
-				emit deviceInserted(vid, pid, "");
-			} else {
-				TelldusCore::logMessage(QString("Remove %1").arg(rx.cap(3)));
-				emit deviceRemoved(vid, pid, "");
-			}*/
-
-			return NO_ERROR;
 	}
 	return ERROR_CALL_NOT_IMPLEMENTED;
+}
+
+DWORD WINAPI TelldusWinService::deviceNotificationHandler( DWORD controlCode, DWORD dwEventType, LPVOID lpEventData ) {
+	if (controlCode != SERVICE_CONTROL_DEVICEEVENT) {
+		return ERROR_CALL_NOT_IMPLEMENTED;
+	}
+
+	if (dwEventType != DBT_DEVICEARRIVAL && dwEventType != DBT_DEVICEREMOVECOMPLETE) {
+		return ERROR_CALL_NOT_IMPLEMENTED;
+	}
+	
+	PDEV_BROADCAST_DEVICEINTERFACE pDevInf = reinterpret_cast<PDEV_BROADCAST_DEVICEINTERFACE>(lpEventData);
+	if (!pDevInf) {
+		return ERROR_CALL_NOT_IMPLEMENTED;
+	}
+
+	std::wstring name(pDevInf->dbcc_name);
+
+	//Parse VID
+	size_t posStart = name.find(L"VID_");
+	if (posStart == std::wstring::npos) {
+		return ERROR_CALL_NOT_IMPLEMENTED;
+	}
+	posStart += 4;
+	size_t posEnd = name.find(L'&', posStart);
+	if (posEnd == std::wstring::npos) {
+		return ERROR_CALL_NOT_IMPLEMENTED;
+	}
+	std::wstring strVID = name.substr(posStart, posEnd-posStart);
+
+	//Parse PID
+	posStart = name.find(L"PID_");
+	if (posStart == std::wstring::npos) {
+		return ERROR_CALL_NOT_IMPLEMENTED;
+	}
+	posStart += 4;
+	posEnd = name.find(L'#', posStart);
+	if (posEnd == std::wstring::npos) {
+		return ERROR_CALL_NOT_IMPLEMENTED;
+	}
+	std::wstring strPID = name.substr(posStart, posEnd-posStart);
+
+	long int vid = strtol(std::string(strVID.begin(), strVID.end()).c_str(), NULL, 16);
+	long int pid = strtol(std::string(strPID.begin(), strPID.end()).c_str(), NULL, 16);
+	
+	if (dwEventType == DBT_DEVICEARRIVAL) {
+		//TODO
+	} else {
+		//TODO
+	}
+
+	return NO_ERROR;
 }
 
 DWORD WINAPI TelldusWinService::serviceControlHandler( DWORD controlCode, DWORD dwEventType, LPVOID lpEventData, LPVOID lpContext ) {
 	TelldusWinService *instance = reinterpret_cast<TelldusWinService *>(lpContext);
 	if (!instance) {
 		return ERROR_CALL_NOT_IMPLEMENTED;
+	}
+	if (controlCode == SERVICE_CONTROL_DEVICEEVENT) {
+		return instance->deviceNotificationHandler(controlCode, dwEventType, lpEventData);
 	}
 	return instance->serviceControlHandler(controlCode, dwEventType, lpEventData);
 }
@@ -105,12 +130,12 @@ void WINAPI TelldusWinService::serviceMain( DWORD argc, TCHAR* argv[] ) {
 		instance.serviceStatus.dwCurrentState = SERVICE_RUNNING;
 		SetServiceStatus( instance.serviceStatusHandle, &instance.serviceStatus );
 
+		// Register for device notification
 		DEV_BROADCAST_DEVICEINTERFACE devInterface;
 		ZeroMemory( &devInterface, sizeof(devInterface) );
 		devInterface.dbcc_size = sizeof(DEV_BROADCAST_DEVICEINTERFACE);
 		devInterface.dbcc_devicetype = DBT_DEVTYP_DEVICEINTERFACE;
 		devInterface.dbcc_classguid = GUID_DEVINTERFACE_USBRAW;
-
 		HDEVNOTIFY deviceNotificationHandle = RegisterDeviceNotificationW(instance.serviceStatusHandle, &devInterface, DEVICE_NOTIFY_SERVICE_HANDLE);
 
 		//Start our main-loop

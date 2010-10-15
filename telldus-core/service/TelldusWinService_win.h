@@ -22,6 +22,7 @@ protected:
 	void stop();
 
 	DWORD WINAPI serviceControlHandler( DWORD controlCode, DWORD dwEventType, LPVOID lpEventData );
+	DWORD WINAPI deviceNotificationHandler( DWORD controlCode, DWORD dwEventType, LPVOID lpEventData );
 
 private:
 	TelldusMain *tm;
