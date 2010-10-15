@@ -1,5 +1,6 @@
 #include "ControllerManager.h"
 #include "Controller.h"
+#include "Mutex.h"
 #include "TellStick.h"
 
 #include <map>
@@ -10,7 +11,8 @@ typedef std::map<int, Controller *> ControllerMap;
 class ControllerManager::PrivateData {
 public:
 	int lastControllerId;
-	ControllerMap controllers;	//TODO: Lock for this AND lock in controls, for send etc
+	ControllerMap controllers;	//TODO: lock in controls, for send etc
+	TelldusCore::Mutex mutex;
 };
 
 ControllerManager::ControllerManager(){
@@ -27,6 +29,7 @@ ControllerManager::~ControllerManager(void) {
 }
 
 Controller *ControllerManager::getBestControllerById(int id) {
+	TelldusCore::MutexLocker locker(&d->mutex);
 	if (!d->controllers.size()) {
 		return 0;
 	}
@@ -39,6 +42,7 @@ Controller *ControllerManager::getBestControllerById(int id) {
 }
 
 void ControllerManager::loadControllers() {
+	TelldusCore::MutexLocker locker(&d->mutex);
 	std::list<TellStickDescriptor> list = TellStick::findAll();
 	std::list<TellStickDescriptor>::iterator it = list.begin();
 	for(; it != list.end(); ++it) {
