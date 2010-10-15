@@ -25,6 +25,7 @@ class EventBase {
 public:
 	virtual ~EventBase();
 	
+	void popSignal();
 	bool isSignaled();
 	void signal();
 	virtual void signal(EventData *);

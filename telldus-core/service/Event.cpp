@@ -41,6 +41,13 @@ void EventBase::clearHandler() {
 	d->handler = 0;
 }
 
+void EventBase::popSignal() {
+	EventData *data = this->takeSignal();
+	if (data) {
+		delete data;
+	}
+}
+
 EventHandler *EventBase::handler() const {
 	return d->handler;
 }
