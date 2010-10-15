@@ -10,6 +10,7 @@
 #include "ProtocolSartano.h"
 #include "ProtocolSilvanChip.h"
 #include "ProtocolUpm.h"
+#include "ProtocolWaveman.h"
 
 #include <algorithm>
 #include <string>
@@ -116,15 +117,11 @@ Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 	} else if (comparei(protocolname, L"upm")) {
 		return new ProtocolUpm();
 		
-
-	}/* else if (wcscasecmp(protocolname.c_str(), L"Waveman") == 0) {
-		prot = new ProtocolWaveman(deviceId, modelname);
-		((ProtocolWaveman*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
-		((ProtocolWaveman*)prot)->setUnit(settings.getDeviceParameter(deviceId, "unit"));
-
+	} else if (comparei(protocolname, L"waveman")) {
+		return new ProtocolWaveman();
 
 	
-	} else if (wcscasecmp(protocolname.c_str(), L"x10") == 0) {
+	}/* else if (wcscasecmp(protocolname.c_str(), L"x10") == 0) {
 		prot = new ProtocolX10(deviceId, modelname);
 		((ProtocolX10*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
 		((ProtocolX10*)prot)->setUnit(settings.getDeviceParameter(deviceId, "unit"));

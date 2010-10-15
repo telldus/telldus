@@ -11,6 +11,7 @@ public:
 protected:
 	std::string getStringSelflearning(int method, unsigned char data);
 	std::string getStringCodeSwitch(int method);
+	virtual std::string getOffCode() const;
 	static std::string getCodeSwitchTuple(int code);
 };
 

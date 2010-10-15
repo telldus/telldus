@@ -18,7 +18,7 @@ std::string ProtocolNexa::getStringCodeSwitch(int method) {
 	if (method == TELLSTICK_TURNON) {
 		strReturn.append("$k$k$kk$$kk$$kk$$k+");
 	} else if (method == TELLSTICK_TURNOFF) {
-		strReturn.append("$k$k$kk$$kk$$k$k$k+");
+		strReturn.append(this->getOffCode());
 	} else {
 		return "";
 	}
@@ -100,4 +100,8 @@ std::string ProtocolNexa::getCodeSwitchTuple(int intCode) {
 		intCode >>= 1;
 	}
 	return strReturn;
+}
+
+std::string ProtocolNexa::getOffCode() const {
+	return "$k$k$kk$$kk$$k$k$k+";
 }
