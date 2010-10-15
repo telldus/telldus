@@ -10,6 +10,9 @@ public:
 	void start();
 	void stop();
 
+	//Thread safe!
+	void deviceInsertedOrRemoved(int vid, int pid, bool inserted);
+
 private:
 	class PrivateData;
 	PrivateData *d;

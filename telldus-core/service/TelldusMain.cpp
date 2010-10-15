@@ -8,22 +8,39 @@
 #include <stdio.h>
 #include <list>
 
+class DeviceEventData : public EventDataBase {
+public:
+	int vid, pid;
+	bool inserted;
+};
+
 class TelldusMain::PrivateData {
 public:
 	EventHandler eventHandler;
-	Event *stopEvent;
+	Event *stopEvent, *deviceChangeEvent;
 };
 
 TelldusMain::TelldusMain(void)
 {
 	d = new PrivateData;
 	d->stopEvent = d->eventHandler.addEvent();
+	d->deviceChangeEvent = d->eventHandler.addEvent();
 }
 
 TelldusMain::~TelldusMain(void) {
+	delete d->deviceChangeEvent;
 	delete d->stopEvent;
 	delete d;
 }
+
+void TelldusMain::deviceInsertedOrRemoved(int vid, int pid, bool inserted) {
+	DeviceEventData *data = new DeviceEventData;
+	data->vid = vid;
+	data->pid = pid;
+	data->inserted = inserted;
+	d->deviceChangeEvent->signal(data);
+}
+
 
 void TelldusMain::start(void) {
 	Event *clientEvent = d->eventHandler.addEvent();
@@ -49,6 +66,15 @@ void TelldusMain::start(void) {
 				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(data->socket, handlerEvent, &deviceManager);
 				clientCommunication->start();
 				clientCommunicationHandlerList.push_back(clientCommunication);
+			}
+			delete eventData;
+		}
+
+		if (d->deviceChangeEvent->isSignaled()) {
+			EventData *eventData = d->deviceChangeEvent->takeSignal();
+			DeviceEventData *data = reinterpret_cast<DeviceEventData*>(eventData);
+			if (data) {
+				controllerManager.deviceInsertedOrRemoved(data->vid, data->pid, data->inserted);
 			}
 			delete eventData;
 		}
