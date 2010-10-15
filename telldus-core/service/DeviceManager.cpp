@@ -324,41 +324,6 @@ int DeviceManager::getPreferredControllerId(int deviceId){
 	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 }
 
-int DeviceManager::removeDevice(int deviceId){
-	
-	Device *device = 0;
-	{
-		TelldusCore::MutexLocker deviceLocker(&d->lock);
-		if(!d->set.removeDevice(deviceId)){		//remove from register/settings
-			return TELLSTICK_ERROR_UNKNOWN;
-		}
-
-		if (!d->devices.size()) {
-				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
-		DeviceMap::iterator it = d->devices.find(deviceId);
-		if (it != d->devices.end()) {
-			device = it->second;
-			d->devices.erase(it);	//remove from list, keep reference
-		}
-		else{
-			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
-	}
-	{TelldusCore::MutexLocker lock(device);}	//waiting for device lock, if it's aquired, just unlock again. Device is removed from list, and cannot be accessed from anywhere else
-	delete device;
-
-	//1 lås lista
-	//2 ta bort från registret
-	//4 plocka ut device ur lista
-	//* Lås upp lista
-	//3 vänta på device lås
-	//{TelldusCore::MutexLocker(&device);}
-	//6 delete device
-
-	return TELLSTICK_DEVICE_REMOVED;
-}
-
 int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 	Device *device = 0;
 	{ 
@@ -404,3 +369,51 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 		return TELLSTICK_ERROR_NOT_FOUND;
 	}
 }
+
+int DeviceManager::removeDevice(int deviceId){
+	
+	Device *device = 0;
+	{
+		TelldusCore::MutexLocker deviceLocker(&d->lock);
+		if(!d->set.removeDevice(deviceId)){		//remove from register/settings
+			return TELLSTICK_ERROR_UNKNOWN;
+		}
+
+		if (!d->devices.size()) {
+				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+		}
+		DeviceMap::iterator it = d->devices.find(deviceId);
+		if (it != d->devices.end()) {
+			device = it->second;
+			d->devices.erase(it);	//remove from list, keep reference
+		}
+		else{
+			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+		}
+	}
+	{TelldusCore::MutexLocker lock(device);}	//waiting for device lock, if it's aquired, just unlock again. Device is removed from list, and cannot be accessed from anywhere else
+	delete device;
+
+	//1 lås lista
+	//2 ta bort från registret
+	//4 plocka ut device ur lista
+	//* Lås upp lista
+	//3 vänta på device lås
+	//{TelldusCore::MutexLocker(&device);}
+	//6 delete device
+
+	return TELLSTICK_DEVICE_REMOVED;
+}
+
+int DeviceManager::sendRawCommand(std::wstring command, int reserved){
+	
+	//TODO test this!
+	Controller *controller = d->controllerManager->getBestControllerById(-1);
+	if(controller){
+		return controller->send(std::string(command.begin(), command.end()));
+	}
+	else{
+		return TELLSTICK_ERROR_NOT_FOUND;
+	}
+}
+

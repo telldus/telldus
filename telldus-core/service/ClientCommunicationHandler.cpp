@@ -180,7 +180,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	} else if (function == L"tdSendRawCommand") {
 		std::wstring command = TelldusCore::Message::takeString(&msg);
 		int reserved = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0;	//tdSendRawCommand(command.c_str(), reserved);
+		(*intReturn) = d->deviceManager->sendRawCommand(command, reserved);
 		
 	} else if (function == L"tdConnectTellStickController") {
 		int vid = TelldusCore::Message::takeInt(&msg);

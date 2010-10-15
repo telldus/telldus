@@ -26,9 +26,10 @@ public:
 	std::wstring getDeviceStateValue(int deviceId);
 	int getDeviceType(int deviceId);
 	int getPreferredControllerId(int deviceId);
-	int removeDevice(int deviceId);
 	int doAction(int deviceId, int action, unsigned char data);
-
+	int removeDevice(int deviceId);
+	int sendRawCommand(std::wstring command, int reserved);
+	
 private:
 
 	void fillDevices(void);
