@@ -30,6 +30,7 @@ public:
 	bool isOpen() const;
 	bool isSameAsDescriptor(const TellStickDescriptor &d) const;
 	virtual int send( const std::string &message );
+	bool stillConnected() const;
 	
 	static std::list<TellStickDescriptor> findAll();
 	
