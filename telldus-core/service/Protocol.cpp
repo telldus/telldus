@@ -32,6 +32,10 @@ Protocol::~Protocol(void) {
 	delete d;
 }
 
+int Protocol::methods() const {
+	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;
+}
+
 std::wstring Protocol::model() const {
 	std::wstring strModel = d->model;
 	//Strip anything after : if it is found

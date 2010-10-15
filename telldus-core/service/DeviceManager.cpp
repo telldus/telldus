@@ -107,10 +107,28 @@ std::wstring DeviceManager::getDeviceStateValue(int deviceId){
 }
 
 int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
+	Device *device = 0;
+	{ 
+		//devices locked
+		TelldusCore::MutexLocker devicesLocker(&d->lock);
+		
+		if (!d->devices.size()) {
+			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+		}
+		DeviceMap::iterator it = d->devices.find(deviceId);
+		if (it != d->devices.end()) {
+			it->second->lock();	//device locked TODO
+			device = it->second;
+		}
+		//devices unlocked
+	}
 
-	//TODO:
-	//when implemented in protocols, get a device and look in its protocol for methods
-	return 63;	//TODO
+	if (!device) {
+		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;	//not found
+	}
+	int methods = device->getMethods();
+	device->unlock();
+	return Device::maskUnsupportedMethods(methods, methodsSupported);
 
 }
 
@@ -335,7 +353,7 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 		}
 		DeviceMap::iterator it = d->devices.find(deviceId);
 		if (it != d->devices.end()) {
-			it->second->lock();	//device locked TODO, nog här...
+			it->second->lock();	//device locked
 			device = it->second;
 		}
 		//devices unlocked
