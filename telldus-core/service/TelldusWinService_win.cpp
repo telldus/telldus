@@ -1,8 +1,5 @@
 #include "TelldusWinService_win.h"
 #include "TelldusMain.h"
-//#include "TelldusCore.h"
-//#include <QCoreApplication>
-//#include <QRegExp>
 
 #include <Dbt.h>
 
@@ -17,35 +14,15 @@ TelldusWinService::TelldusWinService()
 	:tm(0)
 {
 	tm = new TelldusMain();
-
-	//setServiceDescription("A Telldus service for managing TellStick Duo.");
 }
 
 TelldusWinService::~TelldusWinService() {
-}
-
-void TelldusWinService::start() {
-//	tc = new TelldusCore();
-
-//	connect(this, SIGNAL(deviceInserted(int,int,const QString &)), tc, SLOT(deviceInserted(int,int,const QString &)));
-//	connect(this, SIGNAL(deviceRemoved(int,int,const QString &)), tc, SLOT(deviceRemoved(int,int,const QString &)));
-
-	//app->quit();
-
+	delete tm;
 }
 
 
 void TelldusWinService::stop() {
-	//running = false;
 	tm->stop();
-	//if(tm){
-	//	delete tm;
-	//}
-	//tm = 0;
-//	if (tc) {
-//		delete tc;
-//	}
-//	tc = 0;
 }
 
 DWORD WINAPI TelldusWinService::serviceControlHandler( DWORD controlCode, DWORD dwEventType, LPVOID lpEventData ) {
@@ -60,7 +37,6 @@ DWORD WINAPI TelldusWinService::serviceControlHandler( DWORD controlCode, DWORD 
 			serviceStatus.dwCurrentState = SERVICE_STOP_PENDING;
 			SetServiceStatus( serviceStatusHandle, &serviceStatus );
 
-//			QCoreApplication::quit();
 			return NO_ERROR;
 
 		case SERVICE_CONTROL_DEVICEEVENT:
@@ -107,8 +83,6 @@ DWORD WINAPI TelldusWinService::serviceControlHandler( DWORD controlCode, DWORD 
 
 void WINAPI TelldusWinService::serviceMain( DWORD argc, TCHAR* argv[] ) {
 	TelldusWinService instance;
-//	QCoreApplication app(g_argc, g_argv);
-
 
 	// initialise service status
 	instance.serviceStatus.dwServiceType = SERVICE_WIN32;
@@ -127,7 +101,6 @@ void WINAPI TelldusWinService::serviceMain( DWORD argc, TCHAR* argv[] ) {
 		SetServiceStatus( instance.serviceStatusHandle, &instance.serviceStatus );
 
 		// running
-		instance.start();
 		instance.serviceStatus.dwControlsAccepted |= (SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN);
 		instance.serviceStatus.dwCurrentState = SERVICE_RUNNING;
 		SetServiceStatus( instance.serviceStatusHandle, &instance.serviceStatus );
@@ -140,25 +113,9 @@ void WINAPI TelldusWinService::serviceMain( DWORD argc, TCHAR* argv[] ) {
 
 		HDEVNOTIFY deviceNotificationHandle = RegisterDeviceNotificationW(instance.serviceStatusHandle, &devInterface, DEVICE_NOTIFY_SERVICE_HANDLE);
 
-		if (!deviceNotificationHandle) {
-//			TelldusCore::logMessage(QString("Fail RegisterDeviceNotification"));
-		}
-
-		//TelldusCore::logMessage(QString("Main thread waiting for service to stop"));
-		
-		//TelldusMain tm;
-		//tm = new TelldusMain();
-		//tm.start();
+		//Start our main-loop
 		instance.tm->start();
 		
-		//while(instance.running) {
-		//	Sleep(1000);
-		//}
-
-
-//		app.exec();
-		//TelldusCore::logMessage(QString("Main thread waited, shutting down"));
-
 		// service was stopped
 		instance.serviceStatus.dwCurrentState = SERVICE_STOP_PENDING;
 		SetServiceStatus( instance.serviceStatusHandle, &instance.serviceStatus );
