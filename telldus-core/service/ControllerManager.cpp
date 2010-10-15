@@ -28,6 +28,11 @@ ControllerManager::~ControllerManager(void) {
 	delete d;
 }
 
+void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, bool inserted) {
+	TelldusCore::MutexLocker locker(&d->mutex);
+	//TODO:
+}
+
 Controller *ControllerManager::getBestControllerById(int id) {
 	TelldusCore::MutexLocker locker(&d->mutex);
 	if (!d->controllers.size()) {

@@ -8,6 +8,8 @@ public:
 	ControllerManager(void);
 	~ControllerManager(void);
 
+	void deviceInsertedOrRemoved(int vid, int pid, bool inserted);
+
 	Controller *getBestControllerById(int id);
 
 protected:
