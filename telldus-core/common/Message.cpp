@@ -48,6 +48,13 @@ std::wstring Message::charToWstring(const char *value) {
 	return st.str();
 }
 
+std::wstring Message::charUnsignedToWstring(const unsigned char value) {
+	//todo move?
+	std::wstringstream st;
+	st << value;
+	return st.str();
+}
+
 std::wstring Message::intToWstring(int value) {
 	//todo	move?
 	std::wstringstream st;

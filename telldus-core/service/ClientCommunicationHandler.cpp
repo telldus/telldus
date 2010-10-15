@@ -93,12 +93,11 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	} else if (function == L"tdLastSentCommand") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		int methodsSupported = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 0;	// tdLastSentCommand(deviceId, methodsSupported); TODO
+		(*intReturn) = d->deviceManager->getDeviceLastSentCommand(deviceId, methodsSupported);
 
 	} else if (function == L"tdLastSentValue") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
-		const char *value = "";	//tdLastSentValue(deviceId);	TODO
-		(*wstringReturn) =  TelldusCore::Message::charToWstring(value);
+		(*wstringReturn) = d->deviceManager->getDeviceStateValue(deviceId);
 
 	} else if(function == L"tdGetNumberOfDevices"){
 

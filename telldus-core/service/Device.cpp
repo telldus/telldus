@@ -9,6 +9,8 @@ public:
 	Protocol *protocol;
 	std::wstring protocolName;
 	int preferredControllerId;
+	int state;
+	std::wstring stateValue;
 };
 
 Device::Device(int id)
@@ -17,6 +19,7 @@ Device::Device(int id)
 	d = new PrivateData;
 	d->protocol = 0;
 	d->preferredControllerId = 0;
+	d->state = 0;
 	//när något uppdateras, spara också till registret
 	//obs, kunna hantera om alla värden inte är satta
 }
@@ -29,6 +32,27 @@ Device::~Device(void) {
 /**
 * Get-/Set-methods
 */
+
+int Device::getLastSentCommand(int methodsSupported){
+	
+	int lastSentCommand = Device::maskUnsupportedMethods(d->state, methodsSupported);
+	
+	if (lastSentCommand == TELLSTICK_BELL) {
+		//Bell is not a state
+		lastSentCommand = TELLSTICK_TURNOFF;
+	}
+	if (lastSentCommand == 0) {
+		lastSentCommand = TELLSTICK_TURNOFF;
+	}
+	return lastSentCommand;
+
+}
+
+void Device::setLastSentCommand(int command, std::wstring value){
+	d->state = command;
+	d->stateValue = value;
+}
+
 std::wstring Device::getModel(){
 	return d->model;
 }
@@ -69,6 +93,10 @@ void Device::setProtocolName(const std::wstring &protocolName){
 	d->protocolName = protocolName;
 }
 
+std::wstring Device::getStateValue(){
+	return d->stateValue;
+}
+
 /**
 * End Get-/Set
 */
@@ -78,9 +106,9 @@ int Device::doAction(int action, unsigned char data, Controller *controller) {
 	Protocol *p = this->retrieveProtocol();
 	if(p){
 		std::string code = p->getStringForMethod(action, data, controller);
-		controller->send(code);
+		return controller->send(code);
 	}
-	return 0;
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 Protocol* Device::retrieveProtocol() {
@@ -96,4 +124,13 @@ Protocol* Device::retrieveProtocol() {
 	}
 
 	return 0;
+}
+
+int Device::maskUnsupportedMethods(int methods, int supportedMethods) {
+	// Bell -> On
+	if ((methods & TELLSTICK_BELL) && !(supportedMethods & TELLSTICK_BELL)) {
+		methods |= TELLSTICK_TURNON;
+	}
+	//Cut of the rest of the unsupported methods we don't have a fallback for
+	return methods & supportedMethods;
 }

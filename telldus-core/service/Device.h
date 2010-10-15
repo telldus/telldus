@@ -12,6 +12,9 @@ public:
 	Device(int id);
 	~Device(void);
 
+	int doAction(int action, unsigned char data, Controller *controller);
+	std::wstring getStateValue();
+	int getLastSentCommand(int methodsSupported);
 	std::wstring getModel();
 	void setModel(const std::wstring &model);
 	std::wstring getName();
@@ -22,10 +25,12 @@ public:
 	void setPreferredControllerId(int controllerId);
 	std::wstring getProtocolName();
 	void setProtocolName(const std::wstring &name);
-	int doAction(int action, unsigned char data, Controller *controller);
+	void setStateValue(int stateValue);
+	void setLastSentCommand(int command, std::wstring value);
+
+	static int maskUnsupportedMethods(int methods, int supportedMethods);
 	
 private:
-
 	Protocol *retrieveProtocol();
 
 	class PrivateData;

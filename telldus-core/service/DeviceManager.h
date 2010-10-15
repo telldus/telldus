@@ -12,6 +12,8 @@ public:
 	int getNumberOfDevices(void);
 	int addDevice();
 	int getDeviceId(int deviceIndex);
+	int getDeviceLastSentCommand(int deviceId, int methodsSupported);
+	int setDeviceLastSentCommand(int deviceId, int command,  std::wstring value);
 	std::wstring getDeviceModel(int deviceId);
 	int setDeviceModel(int deviceId, std::wstring model);
 	std::wstring getDeviceName(int deviceId);
@@ -20,6 +22,7 @@ public:
 	int setDeviceParameter(int deviceId, std::wstring name, std::wstring value);
 	std::wstring getDeviceProtocol(int deviceId);
 	int setDeviceProtocol(int deviceId, std::wstring name);
+	std::wstring getDeviceStateValue(int deviceId);
 	int getDeviceType(int deviceId);
 	int getPreferredControllerId(int deviceId);
 	int removeDevice(int deviceId);
