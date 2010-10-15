@@ -185,16 +185,16 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int vid = TelldusCore::Message::takeInt(&msg);
 		int pid = TelldusCore::Message::takeInt(&msg);
 		std::wstring serial = TelldusCore::Message::takeString(&msg);
-		//tdConnectTellStickController(vid, pid, serial.c_str());
-		(*wstringReturn) = L"";
+		d->deviceManager->connectTellStickController(vid, pid, serial);
+		//TODO, return what?
 		//TODO, signal event? Or done in other place?
 
 	} else if (function == L"tdDisconnectTellStickController") {
 		int vid = TelldusCore::Message::takeInt(&msg);
 		int pid = TelldusCore::Message::takeInt(&msg);
 		std::wstring serial = TelldusCore::Message::takeString(&msg);
-		//tdDisconnectTellStickController(vid, pid, serial.c_str());
-		(*wstringReturn) = L"";
+		d->deviceManager->disconnectTellStickController(vid, pid, serial);
+		//TODO, return what?
 		//TODO, signal event? Or done in other place?
 
 	}
