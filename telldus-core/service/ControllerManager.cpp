@@ -38,7 +38,7 @@ Controller *ControllerManager::getBestControllerById(int id) {
 	if (!d->controllers.size()) {
 		return 0;
 	}
-	ControllerMap::iterator it = d->controllers.find(id);
+	ControllerMap::const_iterator it = d->controllers.find(id);
 	if (it != d->controllers.end()) {
 		return it->second;
 	}
