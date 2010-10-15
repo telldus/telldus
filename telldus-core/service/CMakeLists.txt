@@ -32,6 +32,8 @@ SET( telldus-service_protocol_SRCS
 	ProtocolSartano.cpp
 	ProtocolSilvanChip.h
 	ProtocolSilvanChip.cpp
+	ProtocolUpm.h
+	ProtocolUpm.cpp
 )
 SET( telldus-service_HDRS
 	ClientCommunicationHandler.h

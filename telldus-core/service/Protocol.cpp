@@ -9,6 +9,7 @@
 #include "ProtocolRisingSun.h"
 #include "ProtocolSartano.h"
 #include "ProtocolSilvanChip.h"
+#include "ProtocolUpm.h"
 
 #include <algorithm>
 #include <string>
@@ -112,6 +113,8 @@ Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 	} else if (comparei(protocolname, L"silvanchip")) {
 		return new ProtocolSilvanChip();
 
+	} else if (comparei(protocolname, L"upm")) {
+		return new ProtocolUpm();
 		
 
 	}/* else if (wcscasecmp(protocolname.c_str(), L"Waveman") == 0) {
@@ -120,10 +123,6 @@ Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 		((ProtocolWaveman*)prot)->setUnit(settings.getDeviceParameter(deviceId, "unit"));
 
 
-	} else if (wcscasecmp(protocolname.c_str(), L"upm") == 0) {
-		prot = new ProtocolUpm(deviceId, modelname);
-		((ProtocolUpm*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
-		((ProtocolUpm*)prot)->setUnit(settings.getDeviceParameter(deviceId, "unit"));
 	
 	} else if (wcscasecmp(protocolname.c_str(), L"x10") == 0) {
 		prot = new ProtocolX10(deviceId, modelname);
