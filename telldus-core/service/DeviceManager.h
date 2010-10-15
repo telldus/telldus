@@ -14,6 +14,7 @@ public:
 	int getDeviceId(int deviceIndex);
 	int getDeviceLastSentCommand(int deviceId, int methodsSupported);
 	int setDeviceLastSentCommand(int deviceId, int command,  std::wstring value);
+	int getDeviceMethods(int deviceId, int methodsSupported);
 	std::wstring getDeviceModel(int deviceId);
 	int setDeviceModel(int deviceId, std::wstring model);
 	std::wstring getDeviceName(int deviceId);

@@ -106,6 +106,14 @@ std::wstring DeviceManager::getDeviceStateValue(int deviceId){
 	return L"UNKNOWN";	//TODO, what?
 }
 
+int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
+
+	//TODO:
+	//when implemented in protocols, get a device and look in its protocol for methods
+	return 63;	//TODO
+
+}
+
 std::wstring DeviceManager::getDeviceModel(int deviceId){
 	
 	TelldusCore::MutexLocker deviceLocker(&d->lock);

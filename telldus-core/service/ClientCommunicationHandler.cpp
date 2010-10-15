@@ -155,7 +155,6 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		//TODO, signal event
 
 	} else if (function == L"tdAddDevice") {
-		//TODO: Lock
 		if(d->deviceManager->addDevice()){
 			(*intReturn) = 1;
 			//TODO: signalEvent, or do that from where this is called? Or even inside addDevice?
@@ -171,7 +170,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	} else if (function == L"tdMethods") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		int intMethodsSupported = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) = 63;	// tdMethods(deviceId, intMethodsSupported);
+		(*intReturn) =  d->deviceManager->getDeviceMethods(deviceId, intMethodsSupported);
 
 	} else if (function == L"tdGetErrorString") {
 		int intErrorNo = TelldusCore::Message::takeInt(&msg);
