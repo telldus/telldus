@@ -31,7 +31,7 @@ public:
 	static int maskUnsupportedMethods(int methods, int supportedMethods);
 	
 private:
-	Protocol *retrieveProtocol();
+	Protocol *retrieveProtocol() const;
 
 	class PrivateData;
 	PrivateData *d;

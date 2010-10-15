@@ -111,7 +111,7 @@ int Device::doAction(int action, unsigned char data, Controller *controller) {
 	return TELLSTICK_ERROR_UNKNOWN;
 }
 
-Protocol* Device::retrieveProtocol() {
+Protocol* Device::retrieveProtocol() const {
 	if (d->protocol) {
 		return d->protocol;
 	}
