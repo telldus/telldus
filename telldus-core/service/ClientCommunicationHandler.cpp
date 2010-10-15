@@ -173,9 +173,8 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		(*intReturn) =  d->deviceManager->getDeviceMethods(deviceId, intMethodsSupported);
 
 	} else if (function == L"tdGetErrorString") {
-		int intErrorNo = TelldusCore::Message::takeInt(&msg);
-		const char *response = "Default error string";	//tdGetErrorString(intErrorNo);
-		(*wstringReturn) = TelldusCore::Message::charToWstring(response);
+		int errorNo = TelldusCore::Message::takeInt(&msg);
+		(*wstringReturn) = getErrorString(errorNo);
 
 	} else if (function == L"tdSendRawCommand") {
 		std::wstring command = TelldusCore::Message::takeString(&msg);
@@ -204,3 +203,24 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	}
 }
 
+std::wstring ClientCommunicationHandler::getErrorString(int errorNo){
+	//TODO should this be here? 
+	const int numResponses = 8;
+	const char *responses[numResponses] = {
+		"Success",
+		"TellStick not found",
+		"Permission denied",
+		"Device not found",
+		"The method you tried to use is not supported by the device",
+		"An error occurred while communicating with TellStick",
+		"Could not connect to the Telldus Service",
+		"Received an unknown response"
+	};
+	std::string strReturn;
+	errorNo = abs(errorNo); //We don't use negative values here.
+	if (errorNo >= numResponses) {
+		return L"Unknown error";
+	} else {
+		return TelldusCore::Message::charToWstring(responses[errorNo]);
+	}
+}

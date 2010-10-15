@@ -23,7 +23,7 @@ protected:
 private:
 	class PrivateData;
 	PrivateData *d;
-	//std::wstring parseMessage(const std::wstring &clientMessage);
+	std::wstring getErrorString(int errorNo);
 	void parseMessage(const std::wstring &clientMessage, int *intReturn, std::wstring *wstringReturn);
 };
 
