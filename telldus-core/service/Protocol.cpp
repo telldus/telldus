@@ -8,6 +8,7 @@
 #include "ProtocolNexa.h"
 #include "ProtocolRisingSun.h"
 #include "ProtocolSartano.h"
+#include "ProtocolSilvanChip.h"
 
 #include <algorithm>
 #include <string>
@@ -108,14 +109,12 @@ Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 	} else if (comparei(protocolname, L"sartano")) {
 		return new ProtocolSartano();
 
-
-	}/* else if (wcscasecmp(protocolname.c_str(), L"silvanchip") == 0) {
-		prot = new ProtocolSilvanChip(deviceId, modelname);
-		((ProtocolSilvanChip*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
+	} else if (comparei(protocolname, L"silvanchip")) {
+		return new ProtocolSilvanChip();
 
 		
 
-	} else if (wcscasecmp(protocolname.c_str(), L"Waveman") == 0) {
+	}/* else if (wcscasecmp(protocolname.c_str(), L"Waveman") == 0) {
 		prot = new ProtocolWaveman(deviceId, modelname);
 		((ProtocolWaveman*)prot)->setHouse(settings.getDeviceParameter(deviceId, "house"));
 		((ProtocolWaveman*)prot)->setUnit(settings.getDeviceParameter(deviceId, "unit"));
