@@ -36,6 +36,8 @@ SET( telldus-service_protocol_SRCS
 	ProtocolUpm.cpp
 	ProtocolWaveman.h
 	ProtocolWaveman.cpp
+	ProtocolX10.h
+	ProtocolX10.cpp
 )
 SET( telldus-service_HDRS
 	ClientCommunicationHandler.h
