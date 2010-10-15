@@ -29,8 +29,16 @@ ControllerManager::~ControllerManager(void) {
 }
 
 void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, bool inserted) {
-	TelldusCore::MutexLocker locker(&d->mutex);
-	//TODO:
+	if (vid != 0x1781) {
+		return;
+	}
+	if (pid != 0x0C30 && pid != 0x0C31) {
+		return;
+	}
+	if (inserted) {
+		loadControllers();
+		return;
+	}
 }
 
 Controller *ControllerManager::getBestControllerById(int id) {
