@@ -37,7 +37,19 @@ void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, bool inserted)
 	}
 	if (inserted) {
 		loadControllers();
-		return;
+	} else {
+		TelldusCore::MutexLocker locker(&d->mutex);
+		for(ControllerMap::const_iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
+			TellStick *tellstick = reinterpret_cast<TellStick*>(it->second);
+			if (!tellstick) {
+				continue;
+			}
+			if (!tellstick->stillConnected()) {
+				d->controllers.erase(it);
+				delete tellstick;
+				break;
+			}
+		}
 	}
 }
 
