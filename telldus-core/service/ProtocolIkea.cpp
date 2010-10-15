@@ -1,5 +1,8 @@
 #include "ProtocolIkea.h"
 
+#include <stdlib.h>
+#include <string.h>
+
 std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Controller *) {
 	int intSystem = this->getIntParameter(L"system", 1, 16)-1;
 	int intFadeStyle = comparei(this->getStringParameter(L"fade", L"true"), L"true");
