@@ -1,7 +1,9 @@
 #include "ProtocolRisingSun.h"
 
 int ProtocolRisingSun::methods() const {
-	//TODO
+	if (comparei(model(), L"selflearning")) {
+		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN);
+	}
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;
 }
 
