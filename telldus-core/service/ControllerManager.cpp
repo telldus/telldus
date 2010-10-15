@@ -48,10 +48,31 @@ Controller *ControllerManager::getBestControllerById(int id) {
 
 void ControllerManager::loadControllers() {
 	TelldusCore::MutexLocker locker(&d->mutex);
+
 	std::list<TellStickDescriptor> list = TellStick::findAll();
+
 	std::list<TellStickDescriptor>::iterator it = list.begin();
 	for(; it != list.end(); ++it) {
 		printf("Found (%i/%i): %s\n", (*it).vid, (*it).pid, (*it).serial.c_str());
+
+		//Most backend only report non-opened devices.
+		//If they don't make sure we don't open them twice
+		bool found = false;
+		ControllerMap::const_iterator cit = d->controllers.begin();
+		for(; cit != d->controllers.end(); ++cit) {
+			TellStick *tellstick = reinterpret_cast<TellStick*>(cit->second);
+			if (!tellstick) {
+				continue;
+			}
+			if (tellstick->isSameAsDescriptor(*it)) {
+				found = true;
+				break;
+			}
+		}
+		if (found) {
+			continue;
+		}
+
 		TellStick *controller = new TellStick(*it);
 		if (!controller->isOpen()) {
 			delete controller;
