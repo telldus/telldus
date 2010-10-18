@@ -2,6 +2,7 @@
 #define CLIENT_H
 
 #include "Message.h"
+#include "telldus-core.h"
 
 namespace TelldusCore {
 	class Client{
@@ -10,6 +11,11 @@ namespace TelldusCore {
 
 		static Client *getInstance();
 		static void close();
+
+		int registerDeviceEvent( TDDeviceEvent eventFunction, void *context );
+		int registerDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context );
+		int registerRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context );
+		bool unregisterCallback( int callbackId );
 
 		static bool getBoolFromService(const Message &msg);
 		static int getIntegerFromService(const Message &msg);

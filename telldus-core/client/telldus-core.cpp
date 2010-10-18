@@ -76,21 +76,24 @@ void WINAPI tdInit(void) {
 }
 
 int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
-	return 0;
+	Client *client = Client::getInstance();
+	return client->registerDeviceEvent( eventFunction, context );
 }
 
 int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context ) {
-	return 0;
+	Client *client = Client::getInstance();
+	return client->registerRawDeviceEvent( eventFunction, context );
 }
 
 int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context) {
-	return 0;
+	Client *client = Client::getInstance();
+	return client->registerDeviceChangeEvent( eventFunction, context );
 }
 
 int WINAPI tdUnregisterCallback( int callbackId ) {
-	return TELLSTICK_SUCCESS;
+	Client *client = Client::getInstance();
+	return client->unregisterCallback( callbackId );
 }
-
 
 /**
  * Close the library and clean up the cache it uses.
