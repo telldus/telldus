@@ -4,32 +4,18 @@ ENDIF(COMMAND cmake_policy)
 
 ######## Non configurable options  ########
 SET( telldus-core_SRCS
+	Client.cpp
 	telldus-core.cpp
-	)
+)
 
 SET( telldus-core_HDRS
+	Client.h
 )
 SET( telldus-core_PUB_HDRS
 	telldus-core.h
 )
 
 
-OPTION(USE_FTD2XX_RATHER_THEN_LIBFTDI "Link against ftd2xx even if libftdi is the preferred one" OFF)
-IF (APPLE OR WIN32 OR USE_FTD2XX_RATHER_THEN_LIBFTDI)
-	FIND_LIBRARY(FTD2XX_LIBRARY ftd2xx)
-	SET( telldus-core_LIBRARIES
-		${telldus-core_LIBRARIES}
-		${FTD2XX_LIBRARY}
-	)
-	ADD_DEFINITIONS( -DLIBFTD2XX )
-ELSE (APPLE OR WIN32 OR USE_FTD2XX_RATHER_THEN_LIBFTDI)
-	FIND_LIBRARY(FTDI_LIBRARY ftdi)
-	SET( telldus-core_LIBRARIES
-		${telldus-core_LIBRARIES}
-		${FTDI_LIBRARY}
-	)
-	ADD_DEFINITIONS( -DLIBFTDI )
-ENDIF (APPLE OR WIN32 OR USE_FTD2XX_RATHER_THEN_LIBFTDI)
 
 INCLUDE_DIRECTORIES(
 	${CMAKE_CURRENT_SOURCE_DIR}/../common
