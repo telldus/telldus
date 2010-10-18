@@ -4,13 +4,17 @@
 namespace TelldusCore {
 	class Client{
 	public:
-		Client();
 		~Client(void);
 
+		static Client *getInstance();
+		static void close();
+
 	private:
+		Client();
+
 		class PrivateData;
 		PrivateData *d;
-		
+		static Client *instance;
 	};
 }
 

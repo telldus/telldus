@@ -6,6 +6,7 @@
 
 #include "telldus-core.h"
 #include "common.h"
+#include "Client.h"
 #include "Message.h"
 #include "Socket.h"
 #include <stdlib.h>
@@ -68,9 +69,8 @@
  * Error code. An unkown error has occurred.
  */
 
-#define MAX_LOADSTRING 100
-
 void WINAPI tdInit(void) {
+	TelldusCore::Client::getInstance(); //Create the manager-object
 }
 
 int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
@@ -95,6 +95,7 @@ int WINAPI tdUnregisterCallback( int callbackId ) {
  * This should be called when the library is not supposed to be used anymore
  **/
 void WINAPI tdClose(void) {
+	Client::close();
 }
 
 /**

@@ -8,6 +8,8 @@ public:
 	Socket eventSocket;
 };
 
+Client *Client::instance = 0;
+
 Client::Client() {
 	d = new PrivateData;
 	d->eventSocket.connect(L"TelldusEvents");
@@ -15,4 +17,17 @@ Client::Client() {
 
 Client::~Client(void) {
 	delete d;
+}
+
+void Client::close() {
+	if (Client::instance != 0) {
+		delete Client::instance;
+	}
+}
+
+Client *Client::getInstance() {
+	if (Client::instance == 0) {
+		Client::instance = new Client();
+	}
+	return Client::instance;
 }
