@@ -111,13 +111,17 @@ void Socket::write(const std::wstring &msg){
 	result = WaitForSingleObject(writeEvent, 10000);
 	if (result == WAIT_TIMEOUT) {
 		CloseHandle(writeEvent);
-		//d->connected = false;
+		d->connected = false;
 		return;
 	}
 	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &bytesWritten, false);
 	CloseHandle(writeEvent);
 	if (!fSuccess) {
-		//d->connected = false;
+		d->connected = false;
 		return;	
 	}
+}
+
+bool Socket::isConnected(){
+	return d->connected;
 }

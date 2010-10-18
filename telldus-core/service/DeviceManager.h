@@ -3,11 +3,12 @@
 
 #include "Device.h"
 #include "ControllerManager.h"
+#include "EventUpdateManager.h"
 
 class DeviceManager
 {
 public:
-	DeviceManager(ControllerManager *controllerManager);
+	DeviceManager(ControllerManager *controllerManager, Event *deviceUpdateEvent);
 	~DeviceManager(void);
 	int getNumberOfDevices(void);
 	int addDevice();

@@ -1,7 +1,9 @@
 #include "EventUpdateManager.h"
 
-#include "Socket.h"
+#include "ConnectionListener.h"
 #include "EventHandler.h"
+#include "Message.h"
+#include "Socket.h"
 
 #include <list>
 
@@ -12,6 +14,7 @@ public:
 	EventHandler eventHandler;
 	Event *stopEvent, *updateEvent, *clientConnectEvent;
 	SocketList clients;
+	ConnectionListener *eventUpdateClientListener;
 };
 
 EventUpdateManager::EventUpdateManager()
@@ -21,6 +24,7 @@ EventUpdateManager::EventUpdateManager()
 	d->stopEvent = d->eventHandler.addEvent();
 	d->updateEvent = d->eventHandler.addEvent();
 	d->clientConnectEvent = d->eventHandler.addEvent();
+	d->eventUpdateClientListener = new ConnectionListener(L"TelldusEvents", d->clientConnectEvent);
 }
 
 EventUpdateManager::~EventUpdateManager(void) {
@@ -28,7 +32,7 @@ EventUpdateManager::~EventUpdateManager(void) {
 	wait();
 	delete d->stopEvent;
 	delete d->updateEvent;
-	delete d->clientConnectEvent;
+	delete d->eventUpdateClientListener;
 	
 	for (SocketList::iterator it = d->clients.begin(); it != d->clients.end(); ++it) {
 		delete(*it);
@@ -42,10 +46,6 @@ Event *EventUpdateManager::retrieveUpdateEvent(){
 	return d->updateEvent;
 }
 
-Event *EventUpdateManager::retrieveClientConnectEvent(){
-	return d->clientConnectEvent;
-}
-
 void EventUpdateManager::run(){
 
 	while(!d->stopEvent->isSignaled()){
@@ -54,32 +54,58 @@ void EventUpdateManager::run(){
 		}
 
 		if(d->clientConnectEvent->isSignaled()){
-			//lägg till ny klient
+			//new client added
+			EventData *eventData = d->clientConnectEvent->takeSignal();
+			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventData);
+			if(data){
+				d->clients.push_back(data->socket);
+			}
 		}
 		else if(d->updateEvent->isSignaled()){
-			//event har inträffat
-			//datan innehåller informationen om eventet som har skickats
-			//Finns i eventDatan: int eventDeviceChanges, int eventChangeType, int eventMethod, int deviceType, int deviceId
+			//device event, signal all clients
 			EventData *eventData = d->updateEvent->takeSignal();
 			EventUpdateData *data = reinterpret_cast<EventUpdateData*>(eventData);
-			
-			sendMessageToClients(data);	
+			if(data){
+				sendMessageToClients(data);
+			}
 		}
 	}
 }
 
 void EventUpdateManager::sendMessageToClients(EventUpdateData *data){
-	/*
-	for(){
-		if(isalive){
+			
+	for(SocketList::iterator it = d->clients.begin(); it != d->clients.end();){
+		
+		if((*it)->isConnected()){
+			
+			TelldusCore::Message msg;
+			
+			if(data->messageType == L"TDDeviceEvent"){
+				msg.addArgument("TDDeviceEvent");
+				msg.addArgument(data->deviceId);
+				msg.addArgument(data->eventMethod);
+				msg.addArgument(data->eventValue);	//string
+			}
+			else if(data->messageType == L"TDDeviceChangeEvent"){
+				msg.addArgument("TDDeviceChangeEvent");
+				msg.addArgument(data->deviceId);
+				msg.addArgument(data->eventDeviceChanges);
+				msg.addArgument(data->eventChangeType);
+			}
+			else if(data->messageType == L"TDRawDeviceEvent"){
+				msg.addArgument("TDRawDeviceEvent");
+				msg.addArgument(data->eventValue);	//string
+				msg.addArgument(data->controllerId);
+			}
+
+			(*it)->write(msg);
 			
 			it++;
 		}
 		else{
-			//ta bort
+			//connection is dead, remove it
 			delete *it;
-			it = ngt.erase(it);
+			it = d->clients.erase(it);
 		}
 	}
-	*/
 }

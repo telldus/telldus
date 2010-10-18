@@ -6,11 +6,13 @@
 
 class EventUpdateData : public EventDataBase {
 public:
+	std::wstring messageType;
+	int controllerId;
+	int deviceId;
+	int eventChangeType;
 	int eventDeviceChanges;
 	int eventMethod;
-	int eventChangeType;
-	int deviceType;
-	int deviceId;
+	std::wstring eventValue;
 };
 
 class EventUpdateManager  : public TelldusCore::Thread

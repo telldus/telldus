@@ -13,11 +13,13 @@ public:
 	 Settings set;
 	 TelldusCore::Mutex lock;
 	 ControllerManager *controllerManager;
+	 Event *deviceUpdateEvent;
 };
 
-DeviceManager::DeviceManager(ControllerManager *controllerManager){
+DeviceManager::DeviceManager(ControllerManager *controllerManager, Event *deviceUpdateEvent){
 	d = new PrivateData;
 	d->controllerManager = controllerManager;
+	d->deviceUpdateEvent = deviceUpdateEvent;
 	fillDevices();
 }
 
@@ -371,7 +373,6 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;	//not found
 	}
 	
-	//TODO: Get controller here (controllermanager -> locks its own list, controller -> lock for send etc)
 	Controller *controller = d->controllerManager->getBestControllerById(this->getPreferredControllerId(deviceId));
 	if(controller){
 		int retval = device->doAction(action, data, controller);
@@ -385,7 +386,13 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 				TelldusCore::MutexLocker deviceLocker(&d->lock);
 				d->set.setDeviceState(deviceId, action, datastring);
 			}
-			//TODO: Signal event, status change?
+			
+			EventUpdateData *eventData = new EventUpdateData();
+			eventData->messageType = L"TDDeviceEvent";
+			eventData->eventMethod = action;
+			eventData->deviceId = deviceId;
+			eventData->eventValue = datastring;
+			d->deviceUpdateEvent->signal(eventData);
 		}
 		device->unlock();
 		return retval;
