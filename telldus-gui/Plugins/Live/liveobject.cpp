@@ -118,7 +118,11 @@ void LiveObject::readyRead() {
 		d->registered = true;
 		emit registered();
 	} else if (msg.name() == "notregistered") {
-		d->registerUrl = msg.argument(0);
+		LiveMessageToken token = msg.arg(0);
+		if (token.valueType != LiveMessageToken::Dictionary) {
+			return;
+		}
+		d->registerUrl = token.dictVal["url"].stringVal;
 		emit notRegistered();
 	} else {
 		emit messageReceived(&msg);
