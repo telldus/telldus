@@ -36,5 +36,5 @@ inline char *wrapStdString( const std::string &string) {
 }
 
 inline char *wrapStdWstring( const std::wstring &wstring) {
-	return wrapStdString(std::string(wstring.begin(), wstring.end()));
+	return wrapStdString(std::string(wstring.begin(), wstring.end()));	//TODO
 }

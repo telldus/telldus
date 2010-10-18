@@ -63,7 +63,7 @@ Settings::~Settings(void)
 */
 std::wstring Settings::getSetting(const std::wstring &strName) const {
 	if (d->cfg > 0) {
-		std::string setting(cfg_getstr(d->cfg, std::string(strName.begin(), strName.end()).c_str()));
+		std::string setting(cfg_getstr(d->cfg, std::string(strName.begin(), strName.end()).c_str()));	//TODO, safer conversion (other places in this file as well)
 		return std::wstring(setting.begin(), setting.end());
 	}
 	return L"";

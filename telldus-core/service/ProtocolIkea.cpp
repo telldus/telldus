@@ -25,7 +25,7 @@ std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Co
 		return "";
 	}
 
-	std::string strUnits(wstrUnits.begin(), wstrUnits.end());
+	std::string strUnits(wstrUnits.begin(), wstrUnits.end());	//TODO
 	int intUnits = 0; //Start without any units
 
 	char *tempUnits = new char[strUnits.size()+1];
