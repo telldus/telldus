@@ -37,12 +37,12 @@ com.telldus.live = function() {
 	}
 	
 	function messageReceived(msg) {
-	    if (msg.name() == "turnon") {
-	        com.telldus.core.turnOn( msg.argument(0) );
-	    } else if (msg.name() == "turnoff") {
-	        com.telldus.core.turnOff( msg.argument(0) );
-	    }
-	    print("Received: " + msg.name());
+		if (msg.name() == "turnon") {
+			com.telldus.core.turnOn( msg.argument(0).intVal() );
+		} else if (msg.name() == "turnoff") {
+			com.telldus.core.turnOff( msg.argument(0).intVal() );
+		}
+		print("Received: " + msg.name());
 	}
 	
 	function registered() {
