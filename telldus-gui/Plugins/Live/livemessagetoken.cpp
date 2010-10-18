@@ -97,7 +97,11 @@ void LiveMessageTokenScriptWrapper::add(LiveMessageTokenScriptWrapper *t) {
 }
 
 void LiveMessageTokenScriptWrapper::set(const QString &key, int value) {
-	this->set(key, QString::number(value));
+	p_token.valueType = LiveMessageToken::Dictionary;
+	LiveMessageToken token;
+	token.valueType = LiveMessageToken::Int;
+	token.intVal = value;
+	p_token.dictVal[key] = token;
 }
 
 void LiveMessageTokenScriptWrapper::set(const QString &key, const QString &value) {
