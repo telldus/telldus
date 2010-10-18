@@ -19,7 +19,7 @@ QByteArray LiveMessageToken::toByteArray() const {
 		foreach(LiveMessageToken token, listVal) {
 			retVal.append(token.toByteArray());
 		}
-		retVal.append("e");
+		retVal.append("s");
 		return retVal;
 	} else if (valueType == Dictionary) {
 		QByteArray retVal("h");
@@ -30,7 +30,7 @@ QByteArray LiveMessageToken::toByteArray() const {
 			retVal.append(key.toByteArray());
 			retVal.append(it.value().toByteArray());
 		}
-		retVal.append("e");
+		retVal.append("s");
 		return retVal;
 	}
 	return QString("%1:%2").arg(stringVal.length(), 0, 16).arg(stringVal).toLocal8Bit();
@@ -49,7 +49,6 @@ LiveMessageToken LiveMessageToken::parseToken(const QByteArray &string, int* sta
 			qDebug() << "Error in" << string;
 			return d;
 		}
-		qDebug() << "String" << index << string;
 		bool ok;
 		int length = string.mid((*start), index - (*start)).toInt(&ok, 16);
 		if (!ok) {
@@ -58,8 +57,6 @@ LiveMessageToken LiveMessageToken::parseToken(const QByteArray &string, int* sta
 		d.stringVal = string.mid(index+1, length);
 		d.valueType = LiveMessageToken::String;
 		(*start) = index + length + 1;
-
-		qDebug() << "String found:" << d.stringVal;
 	}
 	return d;
 }
