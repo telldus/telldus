@@ -114,6 +114,16 @@ void LiveMessageTokenScriptWrapper::add(LiveMessageTokenScriptWrapper *t) {
 	p_token.listVal << t->p_token;
 }
 
+int LiveMessageTokenScriptWrapper::getInt(const QString &key, int defaultValue) {
+	if (p_token.valueType != LiveMessageToken::Dictionary) {
+		return defaultValue;
+	}
+	if (!p_token.dictVal.contains(key)) {
+		return defaultValue;
+	}
+	return p_token.dictVal[key].intVal;
+}
+
 int LiveMessageTokenScriptWrapper::intVal() const {
 	return p_token.intVal;
 }
