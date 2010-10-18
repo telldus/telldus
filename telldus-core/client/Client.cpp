@@ -31,3 +31,13 @@ Client *Client::getInstance() {
 	}
 	return Client::instance;
 }
+
+int Client::getIntegerFromService(const Message &msg) {
+	Socket s;
+	s.connect(L"TelldusClient");
+	s.write(msg.data());
+
+	std::wstring response = s.read();
+	return Message::takeInt(&response);
+}
+

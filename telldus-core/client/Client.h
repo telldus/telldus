@@ -1,6 +1,8 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
+#include "Message.h"
+
 namespace TelldusCore {
 	class Client{
 	public:
@@ -8,6 +10,8 @@ namespace TelldusCore {
 
 		static Client *getInstance();
 		static void close();
+
+		static int getIntegerFromService(const Message &msg);
 
 	private:
 		Client();

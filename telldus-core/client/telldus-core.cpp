@@ -95,7 +95,7 @@ int WINAPI tdUnregisterCallback( int callbackId ) {
  * This should be called when the library is not supposed to be used anymore
  **/
 void WINAPI tdClose(void) {
-	Client::close();
+	TelldusCore::Client::close();
 }
 
 /**
@@ -204,9 +204,7 @@ char * WINAPI tdLastSentValue( int intDeviceId ) {
  * @returns an integer of the total number of devices configured
  */
 int WINAPI tdGetNumberOfDevices(void){
-	
-	TelldusCore::Message msg(L"tdGetNumberOfDevices");	
-	return msg.getClientIntegerFromSocket();
+	return TelldusCore::Client::getIntegerFromService(TelldusCore::Message(L"tdGetNumberOfDevices"));
 }
 
 /**
