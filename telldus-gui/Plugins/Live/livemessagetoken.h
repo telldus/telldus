@@ -33,6 +33,8 @@ public:
 public slots:
 	void add(LiveMessageTokenScriptWrapper *token);
 
+	int intVal() const;
+
 	void set(const QString &key, int value);
 	void set(const QString &key, const QString &value);
 	
