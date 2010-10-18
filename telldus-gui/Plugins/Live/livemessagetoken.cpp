@@ -97,6 +97,11 @@ LiveMessageTokenScriptWrapper::LiveMessageTokenScriptWrapper()
 {
 }
 
+LiveMessageTokenScriptWrapper::LiveMessageTokenScriptWrapper(LiveMessageToken token)
+	:QObject(), p_token(token)
+{
+}
+
 LiveMessageTokenScriptWrapper::~LiveMessageTokenScriptWrapper() {
 }
 

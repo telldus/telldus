@@ -26,6 +26,7 @@ class LiveMessageTokenScriptWrapper : public QObject {
 	Q_OBJECT
 public:
 	LiveMessageTokenScriptWrapper();
+	LiveMessageTokenScriptWrapper(LiveMessageToken token);
 	virtual ~LiveMessageTokenScriptWrapper();
 
 	LiveMessageToken token() const;
