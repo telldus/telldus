@@ -13,7 +13,8 @@ LiveMessageToken::LiveMessageToken(const QString &value) {
 
 QByteArray LiveMessageToken::toByteArray() const {
 	if (valueType == Int) {
-		return QString("i%1e").arg(intVal).toLocal8Bit();
+		return QString("i%1s").arg(intVal, 0, 16).toLocal8Bit();
+
 	} else if (valueType == List) {
 		QByteArray retVal("l");
 		foreach(LiveMessageToken token, listVal) {
@@ -21,6 +22,7 @@ QByteArray LiveMessageToken::toByteArray() const {
 		}
 		retVal.append("s");
 		return retVal;
+
 	} else if (valueType == Dictionary) {
 		QByteArray retVal("h");
 		QHashIterator<QString, LiveMessageToken> it(dictVal);
