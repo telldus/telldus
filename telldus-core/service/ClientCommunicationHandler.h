@@ -12,7 +12,7 @@ class ClientCommunicationHandler : public TelldusCore::Thread
 {
 public:
 	ClientCommunicationHandler();
-	ClientCommunicationHandler(TelldusCore::Socket *clientSocket, Event *event, DeviceManager *deviceManager);
+	ClientCommunicationHandler(TelldusCore::Socket *clientSocket, Event *event, DeviceManager *deviceManager, Event *deviceUpdateEvent);
 	~ClientCommunicationHandler(void);
 
 	bool isDone();

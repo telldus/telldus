@@ -15,15 +15,6 @@ public:
 	bool inserted;
 };
 
-class EventUpdateData : public EventDataBase {
-public:
-	int eventDeviceChanges;
-	int eventMethod;
-	int eventChangeType;
-	int deviceType;
-	int deviceId;
-};
-
 class TelldusMain::PrivateData {
 public:
 	EventHandler eventHandler;
@@ -59,8 +50,11 @@ void TelldusMain::start(void) {
 	ControllerManager controllerManager;
 	DeviceManager deviceManager(&controllerManager);
 	EventUpdateManager eventUpdateManager;
+	Event *deviceUpdateEvent = eventUpdateManager.retrieveUpdateEvent();
+	Event *clientConnectUpdateEvent = eventUpdateManager.retrieveClientConnectEvent();
 	
 	ConnectionListener clientListener(L"TelldusClient", clientEvent);
+	ConnectionListener eventUpdateClientListener(L"TelldusEvent", clientConnectUpdateEvent);
 	
 	std::list<ClientCommunicationHandler *> clientCommunicationHandlerList;
 
@@ -74,7 +68,7 @@ void TelldusMain::start(void) {
 			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventData);
 			if (data) {
 				Event *handlerEvent = d->eventHandler.addEvent();
-				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(data->socket, handlerEvent, &deviceManager);
+				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(data->socket, handlerEvent, &deviceManager, deviceUpdateEvent);
 				clientCommunication->start();
 				clientCommunicationHandlerList.push_back(clientCommunication);
 			}
@@ -86,20 +80,6 @@ void TelldusMain::start(void) {
 			DeviceEventData *data = reinterpret_cast<DeviceEventData*>(eventData);
 			if (data) {
 				controllerManager.deviceInsertedOrRemoved(data->vid, data->pid, data->inserted);
-			}
-			delete eventData;
-		}
-
-		if(updateEvent->isSignaled()){
-
-			//till egen tråd, ett ngt-handler-objekt...
-			//en lyssnare som lyssnar efter nya connections
-			//lagra sockets...
-			//tråd... gör trådsäkert... 
-			EventData *eventData = updateEvent->takeSignal();
-			EventUpdateData *data = reinterpret_cast<EventUpdateData*>(eventData);
-			if(data){
-				eventUpdateManager.sendUpdateMessage(data->eventDeviceChanges, data->eventChangeType, data->eventMethod, data->deviceType, data->deviceId);
 			}
 			delete eventData;
 		}
