@@ -4,6 +4,7 @@
 #include "ClientCommunicationHandler.h"
 #include "DeviceManager.h"
 #include "ControllerManager.h"
+#include "EventUpdateManager.h"
 
 #include <stdio.h>
 #include <list>
@@ -12,6 +13,15 @@ class DeviceEventData : public EventDataBase {
 public:
 	int vid, pid;
 	bool inserted;
+};
+
+class EventUpdateData : public EventDataBase {
+public:
+	int eventDeviceChanges;
+	int eventMethod;
+	int eventChangeType;
+	int deviceType;
+	int deviceId;
 };
 
 class TelldusMain::PrivateData {
@@ -44,13 +54,14 @@ void TelldusMain::deviceInsertedOrRemoved(int vid, int pid, bool inserted) {
 
 void TelldusMain::start(void) {
 	Event *clientEvent = d->eventHandler.addEvent();
+	Event *updateEvent = d->eventHandler.addEvent();
 	
 	ControllerManager controllerManager;
 	DeviceManager deviceManager(&controllerManager);
+	EventUpdateManager eventUpdateManager;
 	
 	ConnectionListener clientListener(L"TelldusClient", clientEvent);
-	//TODO: eventlistener
-
+	
 	std::list<ClientCommunicationHandler *> clientCommunicationHandlerList;
 
 	while(!d->stopEvent->isSignaled()) {
@@ -79,6 +90,19 @@ void TelldusMain::start(void) {
 			delete eventData;
 		}
 
+		if(updateEvent->isSignaled()){
+
+			//till egen tråd, ett ngt-handler-objekt...
+			//en lyssnare som lyssnar efter nya connections
+			//lagra sockets...
+			//tråd... gör trådsäkert... 
+			EventData *eventData = updateEvent->takeSignal();
+			EventUpdateData *data = reinterpret_cast<EventUpdateData*>(eventData);
+			if(data){
+				eventUpdateManager.sendUpdateMessage(data->eventDeviceChanges, data->eventChangeType, data->eventMethod, data->deviceType, data->deviceId);
+			}
+			delete eventData;
+		}
 
 		for ( std::list<ClientCommunicationHandler *>::iterator it = clientCommunicationHandlerList.begin(); it != clientCommunicationHandlerList.end(); ){
 			if ((*it)->isDone()){
