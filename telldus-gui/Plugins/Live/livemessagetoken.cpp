@@ -50,7 +50,11 @@ LiveMessageToken LiveMessageToken::parseToken(const QByteArray &string, int* sta
 			qDebug() << "Error in" << string;
 			return d;
 		}
-		d.intVal = string.mid((*start), index-(*start)).toInt();
+		bool ok;
+		d.intVal = string.mid((*start), index-(*start)).toInt(&ok, 16);
+		if (!ok) {
+			return d;
+		}
 		d.valueType = LiveMessageToken::Int;
 		(*start) = index + 1;
 		return d;
