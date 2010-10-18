@@ -126,18 +126,8 @@ std::string Message::wideToString(const std::wstring &input){
 }
 
 bool Message::getClientBoolFromSocket(){
-	//TODO: move
-	return getClientIntegerFromSocket() == 1;
-}
-
-int Message::getClientIntegerFromSocket(){
-	//TODO: move
-	Socket s;
-	s.connect(L"TelldusClient");
-	s.write(this->data());
-
-	std::wstring response = s.read();
-	return takeInt(&response);
+	//TODO: implement
+	return false; //getClientIntegerFromSocket() == 1;
 }
 
 std::wstring Message::getClientWStringFromSocket(){
