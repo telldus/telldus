@@ -13,6 +13,7 @@ namespace TelldusCore {
 
 		static bool getBoolFromService(const Message &msg);
 		static int getIntegerFromService(const Message &msg);
+		static std::wstring getWStringFromService(const Message &msg);
 
 	private:
 		Client();

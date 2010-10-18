@@ -13,8 +13,6 @@ namespace TelldusCore {
 		void addArgument(const std::wstring &);
 		void addArgument(int);
 		void addArgument(const char *);
-
-		std::wstring getClientWStringFromSocket();
 				
 		static std::wstring charToWstring(const char *value);
 		static std::wstring charUnsignedToWstring(const unsigned char value);

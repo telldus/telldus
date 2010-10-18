@@ -197,7 +197,7 @@ int WINAPI tdLastSentCommand(int intDeviceId, int methodsSupported ) {
 char * WINAPI tdLastSentValue( int intDeviceId ) {
 	Message msg(L"tdLastSentValue");	
 	msg.addArgument(intDeviceId);
-	std::wstring strReturn = msg.getClientWStringFromSocket();
+	std::wstring strReturn = Client::getWStringFromService(msg);
 	return wrapStdWstring(strReturn);
 }
 
@@ -246,7 +246,7 @@ int WINAPI tdGetDeviceType(int intDeviceId) {
 char * WINAPI tdGetName(int intDeviceId){
 	Message msg(L"tdGetName");	
 	msg.addArgument(intDeviceId);
-	std::wstring strReturn = msg.getClientWStringFromSocket();
+	std::wstring strReturn =  Client::getWStringFromService(msg);
 	return wrapStdWstring(strReturn);
 }
 
@@ -271,7 +271,7 @@ bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
 char* WINAPI tdGetProtocol(int intDeviceId){
 	Message msg(L"tdGetProtocol");	
 	msg.addArgument(intDeviceId);
-	std::wstring strReturn = msg.getClientWStringFromSocket();
+	std::wstring strReturn =  Client::getWStringFromService(msg);
 	return wrapStdWstring(strReturn);
 }
 
@@ -298,7 +298,7 @@ bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
 char* WINAPI tdGetModel(int intDeviceId){
 	Message msg(L"tdGetModel");	
 	msg.addArgument(intDeviceId);
-	std::wstring strReturn = msg.getClientWStringFromSocket();
+	std::wstring strReturn = Client::getWStringFromService(msg);
 	return wrapStdWstring(strReturn);
 }
 
@@ -343,7 +343,7 @@ char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const c
 	msg.addArgument(intDeviceId);
 	msg.addArgument(strName);
 	msg.addArgument(defaultValue);
-	std::wstring strReturn = msg.getClientWStringFromSocket();
+	std::wstring strReturn = Client::getWStringFromService(msg);
 	return wrapStdWstring(strReturn);
 }
 
@@ -448,7 +448,7 @@ void WINAPI tdConnectTellStickController(int vid, int pid, const char *serial) {
 	msg.addArgument(vid);
 	msg.addArgument(pid);
 	msg.addArgument(serial);
-	msg.getClientWStringFromSocket();
+	Client::getWStringFromService(msg);
 }
 
 void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial) {
@@ -456,7 +456,7 @@ void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial
 	msg.addArgument(vid);
 	msg.addArgument(pid);
 	msg.addArgument(serial);
-	msg.getClientWStringFromSocket();
+	Client::getWStringFromService(msg);
 }
 
 

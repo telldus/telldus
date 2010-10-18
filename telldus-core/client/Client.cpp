@@ -32,6 +32,10 @@ Client *Client::getInstance() {
 	return Client::instance;
 }
 
+bool Client::getBoolFromService(const Message &msg) {
+	return getIntegerFromService(msg) == 1;
+}
+
 int Client::getIntegerFromService(const Message &msg) {
 	Socket s;
 	s.connect(L"TelldusClient");
@@ -41,6 +45,11 @@ int Client::getIntegerFromService(const Message &msg) {
 	return Message::takeInt(&response);
 }
 
-bool Client::getBoolFromService(const Message &msg) {
-	return getIntegerFromService(msg) == 1;
+std::wstring Client::getWStringFromService(const Message &msg) {
+	Socket s;
+	s.connect(L"TelldusClient");
+	s.write(msg.data());
+
+	std::wstring response = s.read();
+	return Message::takeString(&response);
 }

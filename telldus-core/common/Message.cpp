@@ -124,13 +124,3 @@ std::string Message::wideToString(const std::wstring &input){
 	return strReturn;
 
 }
-
-std::wstring Message::getClientWStringFromSocket(){
-	//TODO: move
-	Socket s;
-	s.connect(L"TelldusClient");
-	s.write(this->data());
-
-	std::wstring response = s.read();
-	return takeString(&response);
-}
