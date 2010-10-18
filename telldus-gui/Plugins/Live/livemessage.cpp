@@ -39,15 +39,20 @@ void LiveMessage::appendToken(LiveMessageTokenScriptWrapper *argument) {
 	this->append(argument->token());
 }
 
-QByteArray LiveMessage::argument(int index) const {
+LiveMessageToken LiveMessage::arg(int index) const {
 	if (index + 1 >= d->args.count()) {
 		return "";
 	}
-	return d->args.at(index +1 ).stringVal.toLocal8Bit();
+	return d->args.at(index +1 );
 }
 
+LiveMessageTokenScriptWrapper *LiveMessage::argument(int index) const {
+	return new LiveMessageTokenScriptWrapper(arg(index));
+}
+
+
 QString LiveMessage::name() const {
-	return this->argument(-1).toLower();
+	return this->arg(-1).stringVal.toLower();
 }
 
 QByteArray LiveMessage::toByteArray() const {

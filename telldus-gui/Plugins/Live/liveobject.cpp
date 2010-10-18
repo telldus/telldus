@@ -105,9 +105,9 @@ void LiveObject::readyRead() {
 	qDebug() << ba;
 	LiveMessage envelope = LiveMessage::fromByteArray(ba);
 	QString signature = envelope.name();
-	LiveMessage msg = LiveMessage::fromByteArray(envelope.argument(0));
+	LiveMessage msg = LiveMessage::fromByteArray(envelope.arg(0).stringVal.toLocal8Bit());
 
-	if (signatureForMessage(envelope.argument(0)) != signature) {
+	if (signatureForMessage(envelope.arg(0).stringVal.toLocal8Bit()) != signature) {
 		qDebug() << "HASH mismatch!" << msg.name();
 		return;
 	}
