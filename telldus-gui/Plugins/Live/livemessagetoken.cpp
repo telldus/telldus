@@ -45,6 +45,22 @@ LiveMessageToken LiveMessageToken::parseToken(const QByteArray &string, int* sta
 	}
 	if (string[(*start)] == 'i') { //Int
 		qDebug() << "INT!";
+
+	} else if (string[(*start)] == 'h') { //Dictionary
+		++(*start);
+		while((*start) < string.length() && string[(*start)] != 's') {
+			LiveMessageToken keyToken(LiveMessageToken::parseToken(string, start));
+			if (keyToken.valueType == LiveMessageToken::Invalid) {
+				break;
+			}
+			LiveMessageToken valueToken(LiveMessageToken::parseToken(string, start));
+			if (valueToken.valueType == LiveMessageToken::Invalid) {
+				break;
+			}
+			d.valueType = LiveMessageToken::Dictionary;
+			d.dictVal[keyToken.stringVal] = valueToken;
+			++(*start);
+		}
 	} else { //String
 		int index = string.indexOf(':', (*start));
 		if (index < 0) {
