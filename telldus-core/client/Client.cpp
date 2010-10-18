@@ -37,19 +37,19 @@ bool Client::getBoolFromService(const Message &msg) {
 }
 
 int Client::getIntegerFromService(const Message &msg) {
-	Socket s;
-	s.connect(L"TelldusClient");
-	s.write(msg.data());
-
-	std::wstring response = s.read();
+	std::wstring response = sendToService(msg);
 	return Message::takeInt(&response);
 }
 
 std::wstring Client::getWStringFromService(const Message &msg) {
+	std::wstring response = sendToService(msg);
+	return Message::takeString(&response);
+}
+
+std::wstring Client::sendToService(const Message &msg) {
 	Socket s;
 	s.connect(L"TelldusClient");
 	s.write(msg.data());
 
-	std::wstring response = s.read();
-	return Message::takeString(&response);
+	return s.read();
 }

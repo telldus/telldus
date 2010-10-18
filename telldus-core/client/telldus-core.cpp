@@ -363,7 +363,7 @@ int WINAPI tdAddDevice(){
  * @returns \c true on success, \c false otherwise.
  */
 bool WINAPI tdRemoveDevice(int intDeviceId){
-	Message msg(L"tdRemoveDevice");	
+	Message msg(L"tdRemoveDevice");
 	msg.addArgument(intDeviceId);
 	return Client::getBoolFromService(msg);
 }
@@ -388,7 +388,7 @@ bool WINAPI tdRemoveDevice(int intDeviceId){
  * @sa TELLSTICK_DIM
  */
 int WINAPI tdMethods(int id, int methodsSupported){
-	Message msg(L"tdMethods");	
+	Message msg(L"tdMethods");
 	msg.addArgument(id);
 	msg.addArgument(methodsSupported);
 	return Client::getIntegerFromService(msg);
@@ -436,7 +436,7 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
  * @returns TELLSTICK_SUCCESS on success or one of the errorcodes on failure
  */
 int WINAPI tdSendRawCommand(const char *command, int reserved) {
-	Message msg(L"tdSendRawCommand");	
+	Message msg(L"tdSendRawCommand");
 	msg.addArgument(command);
 	msg.addArgument(reserved);
 	return Client::getIntegerFromService(msg);
@@ -444,7 +444,7 @@ int WINAPI tdSendRawCommand(const char *command, int reserved) {
 
 
 void WINAPI tdConnectTellStickController(int vid, int pid, const char *serial) {
-	Message msg(L"tdConnectTellStickController");	
+	Message msg(L"tdConnectTellStickController");
 	msg.addArgument(vid);
 	msg.addArgument(pid);
 	msg.addArgument(serial);
@@ -452,7 +452,7 @@ void WINAPI tdConnectTellStickController(int vid, int pid, const char *serial) {
 }
 
 void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial) {
-	Message msg(L"tdDisconnectTellStickController");	
+	Message msg(L"tdDisconnectTellStickController");
 	msg.addArgument(vid);
 	msg.addArgument(pid);
 	msg.addArgument(serial);

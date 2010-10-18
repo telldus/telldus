@@ -17,6 +17,7 @@ namespace TelldusCore {
 
 	private:
 		Client();
+		static std::wstring sendToService(const Message &msg);
 
 		class PrivateData;
 		PrivateData *d;
