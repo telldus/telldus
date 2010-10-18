@@ -44,7 +44,16 @@ LiveMessageToken LiveMessageToken::parseToken(const QByteArray &string, int* sta
 		return d;
 	}
 	if (string[(*start)] == 'i') { //Int
-		qDebug() << "INT!";
+		++(*start);
+		int index = string.indexOf('s', (*start));
+		if (index < 0) {
+			qDebug() << "Error in" << string;
+			return d;
+		}
+		d.intVal = string.mid((*start), index-(*start)).toInt();
+		d.valueType = LiveMessageToken::Int;
+		(*start) = index + 1;
+		return d;
 
 	} else if (string[(*start)] == 'h') { //Dictionary
 		++(*start);
