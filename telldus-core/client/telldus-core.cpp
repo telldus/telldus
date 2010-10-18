@@ -261,7 +261,7 @@ bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
 	Message msg(L"tdSetName");	
 	msg.addArgument(intDeviceId);
 	msg.addArgument(strNewName);
-	return msg.getClientBoolFromSocket();
+	return Client::getBoolFromService(msg);
 }
 
 /**
@@ -288,7 +288,7 @@ bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
 	Message msg(L"tdSetProtocol");	
 	msg.addArgument(intDeviceId);
 	msg.addArgument(strProtocol);
-	return msg.getClientBoolFromSocket();
+	return Client::getBoolFromService(msg);
 }
 
 /**
@@ -313,7 +313,7 @@ bool WINAPI tdSetModel(int intDeviceId, const char *strModel){
 	Message msg(L"tdSetModel");	
 	msg.addArgument(intDeviceId);
 	msg.addArgument(strModel);
-	return msg.getClientBoolFromSocket();
+	return Client::getBoolFromService(msg);
 }
 
 /**
@@ -329,7 +329,7 @@ bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const cha
 	msg.addArgument(intDeviceId);
 	msg.addArgument(strName);
 	msg.addArgument(strValue);
-	return msg.getClientBoolFromSocket();
+	return Client::getBoolFromService(msg);
 }
 
 /**
@@ -365,7 +365,7 @@ int WINAPI tdAddDevice(){
 bool WINAPI tdRemoveDevice(int intDeviceId){
 	Message msg(L"tdRemoveDevice");	
 	msg.addArgument(intDeviceId);
-	return msg.getClientBoolFromSocket();
+	return Client::getBoolFromService(msg);
 }
 
 /**

@@ -41,3 +41,6 @@ int Client::getIntegerFromService(const Message &msg) {
 	return Message::takeInt(&response);
 }
 
+bool Client::getBoolFromService(const Message &msg) {
+	return getIntegerFromService(msg) == 1;
+}

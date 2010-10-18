@@ -125,11 +125,6 @@ std::string Message::wideToString(const std::wstring &input){
 
 }
 
-bool Message::getClientBoolFromSocket(){
-	//TODO: implement
-	return false; //getClientIntegerFromSocket() == 1;
-}
-
 std::wstring Message::getClientWStringFromSocket(){
 	//TODO: move
 	Socket s;

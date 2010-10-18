@@ -11,6 +11,7 @@ namespace TelldusCore {
 		static Client *getInstance();
 		static void close();
 
+		static bool getBoolFromService(const Message &msg);
 		static int getIntegerFromService(const Message &msg);
 
 	private:

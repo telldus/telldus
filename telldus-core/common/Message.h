@@ -14,7 +14,6 @@ namespace TelldusCore {
 		void addArgument(int);
 		void addArgument(const char *);
 
-		bool getClientBoolFromSocket();
 		std::wstring getClientWStringFromSocket();
 				
 		static std::wstring charToWstring(const char *value);
