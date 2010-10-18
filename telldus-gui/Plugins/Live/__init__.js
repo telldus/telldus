@@ -4,6 +4,7 @@ com.telldus.live = function() {
     var socket = null;
     var menuId = 0;
     var isRegistered = false;
+    var supportedMethods = 0;
 	
 	function init() {
 		socket = new LiveSocket();
@@ -45,11 +46,12 @@ com.telldus.live = function() {
 		print("Received: " + msg.name());
 	}
 	
-	function registered() {
+	function registered(msg) {
 	    if (menuId > 0) {
 	        com.telldus.systray.removeMenuItem(menuId);
 	        menuId = 0;
 	    }
+	    supportedMethods = msg.getInt('supportedMethods');
 	    isRegistered = true;
         sendDevicesReport();
 	}
@@ -65,6 +67,9 @@ com.telldus.live = function() {
 		    device = new LiveMessageToken();
 		    device.set('id', deviceList[i].id);
 		    device.set('name', deviceList[i].name);
+		    device.set('methods', com.telldus.core.methods(deviceList[i].id, supportedMethods) );
+		    device.set('state', com.telldus.core.lastSentCommand(deviceList[i].id, supportedMethods) );
+		    device.set('stateValue', com.telldus.core.lastSentValue(deviceList[i].id, supportedMethods) );
 		    list.add(device);
 		}
 		msg.appendToken(list);

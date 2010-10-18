@@ -31,7 +31,7 @@ signals:
 	void disconnected();
 	void messageReceived(LiveMessage *message);
 	void notRegistered();
-	void registered();
+	void registered(LiveMessageTokenScriptWrapper *params);
 
 private slots:
 	void p_connected();

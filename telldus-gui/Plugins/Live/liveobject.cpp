@@ -116,7 +116,7 @@ void LiveObject::readyRead() {
 		return;
 	} else if (msg.name() == "registered") {
 		d->registered = true;
-		emit registered();
+		emit registered(msg.argument(0));
 	} else if (msg.name() == "notregistered") {
 		LiveMessageToken token = msg.arg(0);
 		if (token.valueType != LiveMessageToken::Dictionary) {
