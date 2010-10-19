@@ -72,8 +72,8 @@ LiveMessageToken LiveMessageToken::parseToken(const QByteArray &string, int* sta
 			}
 			d.valueType = LiveMessageToken::Dictionary;
 			d.dictVal[keyToken.stringVal] = valueToken;
-			++(*start);
 		}
+		++(*start);
 	} else { //String
 		int index = string.indexOf(':', (*start));
 		if (index < 0) {
