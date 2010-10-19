@@ -17,7 +17,7 @@ public:
 	QTimer timer;
 	bool registered;
 	QUrl registerUrl;
-	QString mac, hashMethod;
+	QString uuid, hashMethod;
 	QCA::Initializer qcaInit;
 	QNetworkAccessManager *manager;
 	QList<Server> serverList;
@@ -64,7 +64,7 @@ LiveObject::~LiveObject() {
 }
 
 void LiveObject::activate() {
-	if (d->mac == "" || d->socket->state() != QAbstractSocket::ConnectedState || !d->registerUrl.isValid()) {
+	if (d->uuid == "" || d->socket->state() != QAbstractSocket::ConnectedState || !d->registerUrl.isValid()) {
 		return;
 	}
 	if (!QDesktopServices::openUrl(d->registerUrl)) {
@@ -123,6 +123,9 @@ void LiveObject::readyRead() {
 			return;
 		}
 		d->registerUrl = token.dictVal["url"].stringVal;
+		d->uuid = token.dictVal["uuid"].stringVal;
+		QSettings s;
+		s.setValue("Live/UUID", d->uuid);
 		emit notRegistered();
 	} else {
 		emit messageReceived(&msg);
@@ -156,18 +159,16 @@ void LiveObject::sendMessage(LiveMessage *message) {
 }
 
 void LiveObject::p_connected() {
-	//Lets find out our mac-address
-	QNetworkInterface iface = interfaceFromAddress(d->socket->localAddress());
-	if (!iface.isValid()) {
-		return;
-	}
-	d->timer.start();
-	d->mac = iface.hardwareAddress().replace(":","");
+	//Lets find out our uuid
+	QSettings settings;
+	d->uuid = settings.value("Live/UUID", "").toString();
+
+	d->timer.start(); //For pings
 	LiveMessage msg("Register");
 
 	LiveMessageToken token;
 	token.valueType = LiveMessageToken::Dictionary;
-	token.dictVal["mac"] = LiveMessageToken(d->mac);
+	token.dictVal["uuid"] = LiveMessageToken(d->uuid);
 	token.dictVal["key"] = LiveMessageToken(TELLDUS_LIVE_PUBLIC_KEY);
 	token.dictVal["hash"] = LiveMessageToken(d->hashMethod);
 	msg.append(token);
@@ -286,16 +287,3 @@ LiveMessageToken LiveObject::generateVersionToken() {
 #endif
 	return token;
 }
-
-QNetworkInterface LiveObject::interfaceFromAddress( const QHostAddress &address ) {
-	QList<QNetworkInterface> interfaceList = QNetworkInterface::allInterfaces();
-	foreach (QNetworkInterface i, interfaceList) {
-		foreach(QNetworkAddressEntry a, i.addressEntries()) {
-			if(a.ip() == address) {
-				return i;
-			}
-		}
-	}
-	return QNetworkInterface();
-}
-
