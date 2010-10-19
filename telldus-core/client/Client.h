@@ -3,23 +3,32 @@
 
 #include "Message.h"
 #include "telldus-core.h"
+#include "Thread.h"
 
 namespace TelldusCore {
-	class Client{
+	class Client : public Thread
+	{
 	public:
 		~Client(void);
 
 		static Client *getInstance();
 		static void close();
-
+		
+		void callbackDeviceEvent(int deviceId, int deviceState, const std::wstring &deviceStateValue);
+		void callbackDeviceChangeEvent(int deviceId, int eventDeviceChanges, int eventChangeType);
+		void callbackRawEvent(std::wstring command, int controllerId);
 		int registerDeviceEvent( TDDeviceEvent eventFunction, void *context );
 		int registerDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context );
 		int registerRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context );
+		void stopThread(void);
 		bool unregisterCallback( int callbackId );
 
 		static bool getBoolFromService(const Message &msg);
 		static int getIntegerFromService(const Message &msg);
 		static std::wstring getWStringFromService(const Message &msg);
+
+	protected:
+			void run(void);
 
 	private:
 		Client();

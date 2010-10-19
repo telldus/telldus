@@ -389,7 +389,7 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 			
 			EventUpdateData *eventData = new EventUpdateData();
 			eventData->messageType = L"TDDeviceEvent";
-			eventData->eventMethod = action;
+			eventData->eventState = action;
 			eventData->deviceId = deviceId;
 			eventData->eventValue = datastring;
 			d->deviceUpdateEvent->signal(eventData);

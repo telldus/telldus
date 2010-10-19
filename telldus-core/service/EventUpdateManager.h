@@ -11,7 +11,7 @@ public:
 	int deviceId;
 	int eventChangeType;
 	int eventDeviceChanges;
-	int eventMethod;
+	int eventState;
 	std::wstring eventValue;
 };
 

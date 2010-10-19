@@ -8,7 +8,6 @@
 
 #include <stdio.h>
 #include <list>
-#include <windows.h>	//TODO DEBUG
 
 class DeviceEventData : public EventDataBase {
 public:
@@ -44,7 +43,6 @@ void TelldusMain::deviceInsertedOrRemoved(int vid, int pid, bool inserted) {
 }
 
 void TelldusMain::start(void) {
-	Sleep(6000);
 	Event *clientEvent = d->eventHandler.addEvent();
 	Event *updateEvent = d->eventHandler.addEvent();
 	

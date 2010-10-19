@@ -83,7 +83,7 @@ void EventUpdateManager::sendMessageToClients(EventUpdateData *data){
 			if(data->messageType == L"TDDeviceEvent"){
 				msg.addArgument("TDDeviceEvent");
 				msg.addArgument(data->deviceId);
-				msg.addArgument(data->eventMethod);
+				msg.addArgument(data->eventState);
 				msg.addArgument(data->eventValue);	//string
 			}
 			else if(data->messageType == L"TDDeviceChangeEvent"){

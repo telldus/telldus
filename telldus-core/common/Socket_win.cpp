@@ -11,13 +11,16 @@ using namespace TelldusCore;
 class Socket::PrivateData {
 public:
 	HANDLE hPipe;
+	HANDLE readEvent;
 	bool connected;
+	bool running;
 };
 
 Socket::Socket() {
 	d = new PrivateData;
 	d->hPipe = INVALID_HANDLE_VALUE;
 	d->connected = false;
+	d->running = true;
 }
 
 Socket::Socket(SOCKET_T hPipe)
@@ -25,10 +28,13 @@ Socket::Socket(SOCKET_T hPipe)
 	d = new PrivateData;
 	d->hPipe = hPipe;
 	d->connected = true;
+	d->running = true;
 }
 
 
 Socket::~Socket(void){
+	d->running = false;
+	SetEvent(d->readEvent);	//signal for break
 	if (d->hPipe != INVALID_HANDLE_VALUE) {
 		CloseHandle(d->hPipe);
 	}
@@ -66,33 +72,45 @@ void Socket::connect(const std::wstring &server){
 	d->connected = true;
 }
 
+void Socket::stopReadWait(){
+	d->running = false;
+	SetEvent(d->readEvent);
+}
+
 std::wstring Socket::read() {
 	wchar_t buf[BUFSIZE];
 	int result;
 	DWORD cbBytesRead = 0;
 	OVERLAPPED oOverlap; 
-	HANDLE readEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
-	oOverlap.hEvent = readEvent;
+
+	d->readEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
+	oOverlap.hEvent = d->readEvent;
 	BOOL fSuccess = false;
 
 	memset(&buf, 0, BUFSIZE);
 
 	ReadFile( d->hPipe, &buf, sizeof(wchar_t)*BUFSIZE, &cbBytesRead, &oOverlap);
 
-	result = WaitForSingleObject(oOverlap.hEvent, 10000);
+	result = WaitForSingleObject(oOverlap.hEvent, 20000);
+
+	if(!d->running){
+		CloseHandle(d->readEvent);
+		return L"";
+	}
+
 	if (result == WAIT_TIMEOUT) {
-		CloseHandle(readEvent);
+		CloseHandle(d->readEvent);
 		return L"";
 	}
 	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &cbBytesRead, false);
 	if (!fSuccess) {
 		DWORD err = GetLastError();
 		if (err == ERROR_BROKEN_PIPE) {
-			//TODO: Connection closed
+			d->connected = false;
 		}
 		buf[0] = 0;
 	}
-	CloseHandle(readEvent);
+	CloseHandle(d->readEvent);
 	return buf;
 }
 

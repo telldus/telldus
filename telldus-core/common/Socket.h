@@ -21,6 +21,7 @@ namespace TelldusCore {
 		void connect(const std::wstring &server);
 		bool isConnected();
 		std::wstring read();
+		void stopReadWait();
 		void write(const std::wstring &msg);
 		
 	private:
