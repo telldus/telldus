@@ -7,5 +7,8 @@ IF (WIN32)
 	INCLUDE_DIRECTORIES(
 		${QCA_PATH}/../include/QtCrypto/
 	)
-
+ELSEIF (APPLE)
+	INCLUDE_DIRECTORIES(
+                ${QCA_LIBRARY}/Headers
+        )
 ENDIF (WIN32)
