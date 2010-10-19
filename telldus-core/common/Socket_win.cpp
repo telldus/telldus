@@ -24,7 +24,7 @@ Socket::Socket(SOCKET_T hPipe)
 {
 	d = new PrivateData;
 	d->hPipe = hPipe;
-	
+	d->connected = true;
 }
 
 
