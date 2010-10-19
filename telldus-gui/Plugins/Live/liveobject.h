@@ -43,6 +43,7 @@ private slots:
 	void serverAssignReply(QNetworkReply*);
 
 private:
+	void refreshServerList();
 	void sendMessage(const LiveMessage &message);
 	QByteArray signatureForMessage( const QByteArray &message );
 	static LiveMessageToken generateVersionToken();

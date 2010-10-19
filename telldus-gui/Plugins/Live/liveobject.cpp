@@ -81,14 +81,10 @@ void LiveObject::activate() {
 
 void LiveObject::connectToServer() {
 	if (d->serverList.isEmpty()) {
-		qDebug() << "No servers to connect to, refresh list";
-		d->manager->get(QNetworkRequest(QUrl(TELLDUS_LIVE_URI)));
+		this->refreshServerList();
 	} else if (d->serverRefreshTime.secsTo(QDateTime::currentDateTime()) > 300) { //Valid 5 min
-		qDebug() << "Serverlist to old, refresh";
-		d->serverList.clear();
-		d->manager->get(QNetworkRequest(QUrl(TELLDUS_LIVE_URI)));
+		this->refreshServerList();
 	} else {
-		qDebug() << "Serverlist still valid, time:" << d->serverRefreshTime.secsTo(QDateTime::currentDateTime());
 		d->socket->abort();
 		PrivateData::Server server = d->serverList.takeFirst();
 		qDebug() << "Connecting to" << server.address;
@@ -130,6 +126,16 @@ void LiveObject::readyRead() {
 	} else {
 		emit messageReceived(&msg);
 	}
+}
+
+void LiveObject::refreshServerList() {
+	d->serverList.clear();
+	QUrl url(TELLDUS_LIVE_URI);
+	QPair<QString, QString> version("protocolVersion", "1");
+	QList<QPair<QString, QString>> query;
+	query.append(version);
+	url.setQueryItems(query);
+	d->manager->get(QNetworkRequest(url));
 }
 
 void LiveObject::pingServer() {
