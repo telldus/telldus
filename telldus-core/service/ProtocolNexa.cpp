@@ -17,10 +17,12 @@ int ProtocolNexa::methods() const {
 }
 
 std::string ProtocolNexa::getStringForMethod(int method, unsigned char data, Controller *) {
-	if (!comparei(model(), L"codeswitch")) {
-		return getStringSelflearning(method, data);
+	if (comparei(model(), L"codeswitch")) {
+		return getStringCodeSwitch(method);
+	} else if (comparei(model(), L"bell")) {
+		return getStringBell();
 	}
-	return getStringCodeSwitch(method);
+	return getStringSelflearning(method, data);
 }
 
 std::string ProtocolNexa::getStringCodeSwitch(int method) {
@@ -38,6 +40,17 @@ std::string ProtocolNexa::getStringCodeSwitch(int method) {
 	} else {
 		return "";
 	}
+	return strReturn;
+}
+
+std::string ProtocolNexa::getStringBell() {
+	std::string strReturn = "S";
+
+	std::wstring house = getStringParameter(L"house", L"A");
+	int intHouse = house[0] - L'A';
+	strReturn.append(getCodeSwitchTuple(intHouse));
+	strReturn.append("$kk$$kk$$kk$$k$k"); //Unit 7
+	strReturn.append("$kk$$kk$$kk$$kk$$k+"); //Bell
 	return strReturn;
 }
 

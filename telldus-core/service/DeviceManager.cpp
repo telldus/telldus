@@ -378,7 +378,16 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 		int retval = device->doAction(action, data, controller);
 		if(retval == TELLSTICK_SUCCESS){
 			std::wstring datastring = TelldusCore::Message::charUnsignedToWstring(data);
-			device->setLastSentCommand(action, datastring);
+			if (action != TELLSTICK_BELL) {
+				device->setLastSentCommand(action, datastring);
+				//TODO: This should maybe be done someware else since the event could be triggered by a TellStick Duo aswell
+				EventUpdateData *eventData = new EventUpdateData();
+				eventData->messageType = L"TDDeviceEvent";
+				eventData->eventState = action;
+				eventData->deviceId = deviceId;
+				eventData->eventValue = datastring;
+				d->deviceUpdateEvent->signal(eventData);
+			}
 			device->unlock();
 			{
 				//new lock, for setting (all other locks are unlocked)
@@ -387,12 +396,7 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 				d->set.setDeviceState(deviceId, action, datastring);
 			}
 			
-			EventUpdateData *eventData = new EventUpdateData();
-			eventData->messageType = L"TDDeviceEvent";
-			eventData->eventState = action;
-			eventData->deviceId = deviceId;
-			eventData->eventValue = datastring;
-			d->deviceUpdateEvent->signal(eventData);
+			
 		}
 		device->unlock();
 		return retval;
