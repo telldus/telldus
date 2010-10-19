@@ -17,7 +17,7 @@ public:
 
 	QByteArray toByteArray() const;
 
-	static LiveMessage fromByteArray(const QByteArray &ba);
+	static LiveMessage *fromByteArray(const QByteArray &ba);
 	LiveMessageToken arg(int index) const;
 
 public slots:

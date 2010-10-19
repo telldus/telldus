@@ -41,7 +41,7 @@ void LiveMessage::appendToken(LiveMessageTokenScriptWrapper *argument) {
 
 LiveMessageToken LiveMessage::arg(int index) const {
 	if (index + 1 >= d->args.count()) {
-		return "";
+		return LiveMessageToken("");
 	}
 	return d->args.at(index +1 );
 }
@@ -64,7 +64,7 @@ QByteArray LiveMessage::toByteArray() const {
 }
 
 
-LiveMessage LiveMessage::fromByteArray(const QByteArray &ba) {
+LiveMessage *LiveMessage::fromByteArray(const QByteArray &ba) {
 	int start = 0;
 	QList<LiveMessageToken> list;
 	while (start < ba.length()) {
@@ -74,5 +74,5 @@ LiveMessage LiveMessage::fromByteArray(const QByteArray &ba) {
 		}
 		list.append(d);
 	}
-	return LiveMessage(list);
+	return new LiveMessage(list);
 }
