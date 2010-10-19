@@ -110,6 +110,8 @@ void LiveObject::readyRead() {
 
 	if (msg.name() == "") {
 		return;
+	} else if (msg.name() == "disconnect") {
+		this->disconnect();
 	} else if (msg.name() == "registered") {
 		d->registered = true;
 		emit registered(msg.argument(0));
