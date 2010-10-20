@@ -8,7 +8,7 @@
 
 class LiveMessageToken {
 public:
-	enum Type {Invalid, Int, String, List, Dictionary};
+	enum Type {Invalid, Int, String, Base64, List, Dictionary};
 
 	LiveMessageToken();
 	LiveMessageToken(const QString &value);

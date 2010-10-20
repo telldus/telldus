@@ -35,7 +35,17 @@ QByteArray LiveMessageToken::toByteArray() const {
 		retVal.append("s");
 		return retVal;
 	}
-	return QString("%1:%2").arg(stringVal.length(), 0, 16).arg(stringVal).toLocal8Bit();
+	//String or Base64 encoded string
+	QByteArray retVal;
+	QByteArray string = stringVal.toUtf8();
+	if (valueType == Base64) {
+		string = string.toBase64();
+		retVal.append('u');
+	}
+	retVal.append(QByteArray::number(string.length(),16));
+	retVal.append(':');
+	retVal.append(string);
+	return retVal;
 }
 
 LiveMessageToken LiveMessageToken::parseToken(const QByteArray &string, int* start) {
@@ -85,7 +95,7 @@ LiveMessageToken LiveMessageToken::parseToken(const QByteArray &string, int* sta
 		if (!ok) {
 			return d;
 		}
-		d.stringVal = string.mid(index+1, length);
+		d.stringVal = QString::fromUtf8(string.mid(index+1, length));
 		d.valueType = LiveMessageToken::String;
 		(*start) = index + length + 1;
 	}
@@ -138,5 +148,8 @@ void LiveMessageTokenScriptWrapper::set(const QString &key, int value) {
 
 void LiveMessageTokenScriptWrapper::set(const QString &key, const QString &value) {
 	p_token.valueType = LiveMessageToken::Dictionary;
-	p_token.dictVal[key] = LiveMessageToken(value);
+	LiveMessageToken token;
+	token.valueType = LiveMessageToken::Base64;
+	token.stringVal = value;
+	p_token.dictVal[key] = token;
 }
