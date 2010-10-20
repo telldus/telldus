@@ -1,6 +1,7 @@
 #include "Client.h"
 #include "Socket.h"
 #include "Mutex.h"
+#include "Common.h"
 
 #include <list>
 
@@ -125,8 +126,17 @@ void Client::run(){
 	//listen here
 	d->eventSocket.connect(L"TelldusEvents");
 
-	while(d->running && d->eventSocket.isConnected()){
-	//TODO hm, isConnected, never gets the chance of reconnect here... Should maybe retry every something seconds
+	while(d->running){
+	
+		if(!d->eventSocket.isConnected()){
+			d->eventSocket.connect(L"TelldusEvents");	//try to reconnect to service
+			if(!d->eventSocket.isConnected()){
+				//reconnect didn't succeed, wait a while and try again
+				msleep(2000);
+				continue;
+			}
+		}
+
 		std::wstring clientMessage = d->eventSocket.read();
 		if(clientMessage != L""){
 			//a message arrived

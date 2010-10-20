@@ -155,7 +155,7 @@ bool Settings::removeDevice(int intDeviceId){
 	long lngSuccess64 = RegDeleteKeyEx(d->rootKey, strCompleteRegPath.c_str(), KEY_WOW64_64KEY, 0);
 
 	if(lngSuccess32 == ERROR_SUCCESS || lngSuccess64 == ERROR_SUCCESS){
-		//one of the deletions succeded
+		//one of the deletions succeeded
 		return true;
 	}
 
