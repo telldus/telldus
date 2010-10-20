@@ -25,6 +25,7 @@ private:
 	PrivateData *d;
 	std::wstring getErrorString(int errorNo);
 	void parseMessage(const std::wstring &clientMessage, int *intReturn, std::wstring *wstringReturn);
+	void sendDeviceSignal(int deviceId, int eventDeviceChanges, int eventChangeType);
 };
 
 #endif //CLIENTCOMMUNICATIONHANDLER_H

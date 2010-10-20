@@ -316,7 +316,7 @@ int DeviceManager::addDevice(){
 	if(!d->devices[id]){
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
-	return TELLSTICK_DEVICE_ADDED;
+	return id;
 }
 
 int DeviceManager::getDeviceId(int deviceIndex) {
@@ -394,9 +394,7 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 				//TODO, it MAY be inconsistency between stored values and device values here... change something?
 				TelldusCore::MutexLocker deviceLocker(&d->lock);
 				d->set.setDeviceState(deviceId, action, datastring);
-			}
-			
-			
+			}		
 		}
 		device->unlock();
 		return retval;

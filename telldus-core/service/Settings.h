@@ -39,6 +39,7 @@ private:
 	
 	class PrivateData;
 	PrivateData *d;
+
 };
 
 #endif

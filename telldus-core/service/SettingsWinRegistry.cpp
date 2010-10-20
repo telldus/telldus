@@ -146,18 +146,20 @@ int Settings::getNextDeviceId() const {
 * Remove a device
 */
 bool Settings::removeDevice(int intDeviceId){
-	bool blnSuccess = true;
-
+	
 	std::wostringstream ssRegPath; 
 	ssRegPath << d->strRegPathDevice << intDeviceId;
 	std::wstring strCompleteRegPath = ssRegPath.str();
 
-	long lngSuccess = RegDeleteKeyEx(d->rootKey, strCompleteRegPath.c_str(), KEY_WOW64_32KEY|KEY_WOW64_64KEY, 0);
-	if(lngSuccess != ERROR_SUCCESS){
-		blnSuccess = false;
+	long lngSuccess32 = RegDeleteKeyEx(d->rootKey, strCompleteRegPath.c_str(), KEY_WOW64_32KEY, 0);
+	long lngSuccess64 = RegDeleteKeyEx(d->rootKey, strCompleteRegPath.c_str(), KEY_WOW64_64KEY, 0);
+
+	if(lngSuccess32 == ERROR_SUCCESS || lngSuccess64 == ERROR_SUCCESS){
+		//one of the deletions succeded
+		return true;
 	}
 
-	return blnSuccess;
+	return false;
 }
 
 std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &name, bool parameter) const {

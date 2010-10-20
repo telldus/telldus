@@ -120,8 +120,8 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring name = TelldusCore::Message::takeString(&msg);
 		(*intReturn) = d->deviceManager->setDeviceName(deviceId, name);
-		//TODO, signal event
-
+		sendDeviceSignal(deviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_NAME);
+		
 	} else if (function == L"tdGetProtocol") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		(*wstringReturn) = d->deviceManager->getDeviceProtocol(deviceId);
@@ -130,7 +130,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring protocol = TelldusCore::Message::takeString(&msg);
 		(*intReturn) = d->deviceManager->setDeviceProtocol(deviceId, protocol);
-		//TODO, signal event
+		sendDeviceSignal(deviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_PROTOCOL);
 
 	} else if (function == L"tdGetModel") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
@@ -140,7 +140,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring model = TelldusCore::Message::takeString(&msg);
 		(*intReturn) = d->deviceManager->setDeviceModel(deviceId, model);
-		//TODO, signal event
+		sendDeviceSignal(deviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_MODEL);
 
 	} else if (function == L"tdGetDeviceParameter") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
@@ -152,26 +152,25 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring name = TelldusCore::Message::takeString(&msg);
 		std::wstring value = TelldusCore::Message::takeString(&msg);
-		(*intReturn) = 0;	d->deviceManager->setDeviceParameter(deviceId, name, value);
-		//TODO, signal event
+		(*intReturn) = d->deviceManager->setDeviceParameter(deviceId, name, value);
 
 	} else if (function == L"tdAddDevice") {
-		if(d->deviceManager->addDevice()){
-			(*intReturn) = 1;
-			//TODO: signalEvent, or do that from where this is called? Or even inside addDevice?
+		(*intReturn) = d->deviceManager->addDevice();
+		if((*intReturn) >= 0){
+			sendDeviceSignal((*intReturn), TELLSTICK_DEVICE_ADDED, 0);
 		}
 
 	} else if (function == L"tdRemoveDevice") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
-		if(d->deviceManager->removeDevice(deviceId)){
-			(*intReturn) = 1;
-			//TODO: signalEvent, or do that from where this is called? Or even inside removeDevice?
+		(*intReturn) = d->deviceManager->removeDevice(deviceId);
+		if((*intReturn) == TELLSTICK_DEVICE_REMOVED){
+			sendDeviceSignal(deviceId, TELLSTICK_DEVICE_REMOVED, 0);
 		}
 
 	} else if (function == L"tdMethods") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		int intMethodsSupported = TelldusCore::Message::takeInt(&msg);
-		(*intReturn) =  d->deviceManager->getDeviceMethods(deviceId, intMethodsSupported);
+		(*intReturn) = d->deviceManager->getDeviceMethods(deviceId, intMethodsSupported);
 
 	} else if (function == L"tdGetErrorString") {
 		int errorNo = TelldusCore::Message::takeInt(&msg);
@@ -181,23 +180,22 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		std::wstring command = TelldusCore::Message::takeString(&msg);
 		int reserved = TelldusCore::Message::takeInt(&msg);
 		(*intReturn) = d->deviceManager->sendRawCommand(command, reserved);
+		EventUpdateData *eventData = new EventUpdateData();
+		eventData->messageType = L"TDRawDeviceEvent";
+		eventData->controllerId = -1;
+		eventData->eventValue = command;
+		d->deviceUpdateEvent->signal(eventData);
 		
 	} else if (function == L"tdConnectTellStickController") {
 		int vid = TelldusCore::Message::takeInt(&msg);
 		int pid = TelldusCore::Message::takeInt(&msg);
 		std::wstring serial = TelldusCore::Message::takeString(&msg);
 		d->deviceManager->connectTellStickController(vid, pid, serial);
-		//TODO, return what?
-		//TODO, signal event? Or done in other place?
-
 	} else if (function == L"tdDisconnectTellStickController") {
 		int vid = TelldusCore::Message::takeInt(&msg);
 		int pid = TelldusCore::Message::takeInt(&msg);
 		std::wstring serial = TelldusCore::Message::takeString(&msg);
 		d->deviceManager->disconnectTellStickController(vid, pid, serial);
-		//TODO, return what?
-		//TODO, signal event? Or done in other place?
-
 	}
 	else{
 		(*intReturn) = TELLSTICK_ERROR_UNKNOWN;
@@ -224,4 +222,14 @@ std::wstring ClientCommunicationHandler::getErrorString(int errorNo){
 	} else {
 		return TelldusCore::Message::charToWstring(responses[errorNo]);
 	}
+}
+
+void ClientCommunicationHandler::sendDeviceSignal(int deviceId, int eventDeviceChanges, int eventChangeType){
+	
+	EventUpdateData *eventData = new EventUpdateData();
+	eventData->messageType = L"TDDeviceChangeEvent";
+	eventData->deviceId = deviceId;
+	eventData->eventDeviceChanges = eventDeviceChanges;
+	eventData->eventChangeType = eventChangeType;
+	d->deviceUpdateEvent->signal(eventData);
 }
