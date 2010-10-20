@@ -99,24 +99,24 @@ void LiveObject::disconnect() {
 void LiveObject::readyRead() {
 	QByteArray ba = d->socket->readAll();
 	qDebug() << ba;
-	LiveMessage envelope = LiveMessage::fromByteArray(ba);
-	QString signature = envelope.name();
-	LiveMessage msg = LiveMessage::fromByteArray(envelope.arg(0).stringVal.toLocal8Bit());
+	QScopedPointer<LiveMessage> envelope(LiveMessage::fromByteArray(ba));
+	QString signature = envelope->name();
+	QScopedPointer<LiveMessage> msg(LiveMessage::fromByteArray(envelope->arg(0).stringVal.toLocal8Bit()));
 
-	if (signatureForMessage(envelope.arg(0).stringVal.toLocal8Bit()) != signature) {
-		qDebug() << "HASH mismatch!" << msg.name();
+	if (signatureForMessage(envelope->arg(0).stringVal.toLocal8Bit()) != signature) {
+		qDebug() << "HASH mismatch!" << msg->name();
 		return;
 	}
 
-	if (msg.name() == "") {
+	if (msg->name() == "") {
 		return;
-	} else if (msg.name() == "disconnect") {
+	} else if (msg->name() == "disconnect") {
 		this->disconnect();
-	} else if (msg.name() == "registered") {
+	} else if (msg->name() == "registered") {
 		d->registered = true;
-		emit registered(msg.argument(0));
-	} else if (msg.name() == "notregistered") {
-		LiveMessageToken token = msg.arg(0);
+		emit registered(msg->argument(0));
+	} else if (msg->name() == "notregistered") {
+		LiveMessageToken token = msg->arg(0);
 		if (token.valueType != LiveMessageToken::Dictionary) {
 			return;
 		}
@@ -126,7 +126,7 @@ void LiveObject::readyRead() {
 		s.setValue("Live/UUID", d->uuid);
 		emit notRegistered();
 	} else {
-		emit messageReceived(&msg);
+		emit messageReceived(msg.data());
 	}
 }
 
@@ -134,7 +134,7 @@ void LiveObject::refreshServerList() {
 	d->serverList.clear();
 	QUrl url(TELLDUS_LIVE_URI);
 	QPair<QString, QString> version("protocolVersion", "1");
-	QList<QPair<QString, QString>> query;
+	QList<QPair<QString, QString> > query;
 	query.append(version);
 	url.setQueryItems(query);
 	d->manager->get(QNetworkRequest(url));
@@ -272,7 +272,7 @@ LiveMessageToken LiveObject::generateVersionToken() {
 	token.valueType = LiveMessageToken::Dictionary;
 	token.dictVal["protocol"] = LiveMessageToken("1");
 	token.dictVal["version"] = LiveMessageToken(TELLDUS_CENTER_VERSION);
-#ifdef Q_WS_WIN
+#if defined(Q_WS_WIN)
 	token.dictVal["os"] = LiveMessageToken("windows");
 	switch (QSysInfo::WindowsVersion) {
 		case QSysInfo::WV_XP:
@@ -290,8 +290,21 @@ LiveMessageToken LiveObject::generateVersionToken() {
 		default:
 			token.dictVal["os-version"] = LiveMessageToken("unknown");
 	}
+#elif defined(Q_OS_MAC)
+	token.dictVal["os"] = LiveMessageToken("macosx");
+	switch (QSysInfo::MacintoshVersion) {
+		case QSysInfo::MV_LEOPARD:
+			token.dictVal["os-version"] = LiveMessageToken("leopard");
+			break;
+		case QSysInfo::MV_SNOWLEOPARD:
+			token.dictVal["os-version"] = LiveMessageToken("snowleopard");
+			break;
+		default:
+			token.dictVal["os-version"] = LiveMessageToken("unknown");
+	 }
 #else
 	token.dictVal["os"] = LiveMessageToken("unknown");
+	token.dictVal["os-version"] = LiveMessageToken("");
 #endif
 	return token;
 }

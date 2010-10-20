@@ -58,6 +58,7 @@ IF(Plugin_SRCS)
 	ADD_LIBRARY(${Plugin_NAME} SHARED
 		${Plugin_SRCS}
 		${Plugin_HDRS}
+		${Plugin_MOC_HDRS}
 		${Plugin_MOC_SRCS}
 		${Plugin_MOC_HDRS}
 		${Plugin_FILES}
