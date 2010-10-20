@@ -8,6 +8,7 @@
 
 #include <stdio.h>
 #include <list>
+#include <memory>
 
 class DeviceEventData : public EventDataBase {
 public:
@@ -45,8 +46,9 @@ void TelldusMain::deviceInsertedOrRemoved(int vid, int pid, bool inserted) {
 void TelldusMain::start(void) {
 	Event *clientEvent = d->eventHandler.addEvent();
 	Event *updateEvent = d->eventHandler.addEvent();
+	std::auto_ptr<Event> dataEvent(d->eventHandler.addEvent());
 	
-	ControllerManager controllerManager;
+	ControllerManager controllerManager(dataEvent.get());
 	EventUpdateManager eventUpdateManager;
 	Event *deviceUpdateEvent = eventUpdateManager.retrieveUpdateEvent();
 	eventUpdateManager.start();
@@ -80,6 +82,14 @@ void TelldusMain::start(void) {
 				controllerManager.deviceInsertedOrRemoved(data->vid, data->pid, data->inserted);
 			}
 			delete eventData;
+		}
+
+		if (dataEvent->isSignaled()) {
+			std::auto_ptr<EventData> eventData(dataEvent->takeSignal());
+			ControllerEventData *data = reinterpret_cast<ControllerEventData*>(eventData.get());
+			if (data) {
+				//TODO: Handle the message
+			}
 		}
 
 		for ( std::list<ClientCommunicationHandler *>::iterator it = clientCommunicationHandlerList.begin(); it != clientCommunicationHandlerList.end(); ){

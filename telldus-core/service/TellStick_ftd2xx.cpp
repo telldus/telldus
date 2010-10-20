@@ -28,7 +28,9 @@ public:
 
 };
 
-TellStick::TellStick( const TellStickDescriptor &td ) {
+TellStick::TellStick(Event *event, const TellStickDescriptor &td ) 
+	:Controller(event)
+{
 	d = new PrivateData;
 	d->eh = CreateEvent( NULL, false, false, NULL );
 	d->open = false;
@@ -108,7 +110,7 @@ void TellStick::processData( const std::string &data ) {
 			if (d->message.substr(0,2).compare("+V") == 0) {
 				//TODO save the firmware version
 			} else if (d->message.substr(0,2).compare("+R") == 0) {
-				//TODO
+				this->publishData(d->message);
 			}
 			d->message.clear();
 		} else { // Append the character

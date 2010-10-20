@@ -12,16 +12,18 @@ class ControllerManager::PrivateData {
 public:
 	int lastControllerId;
 	ControllerMap controllers;	//TODO: lock in controls, for send etc
+	Event *event;
 	TelldusCore::Mutex mutex;
 };
 
-ControllerManager::ControllerManager(){
+ControllerManager::ControllerManager(Event *event){
 	d = new PrivateData;
 	d->lastControllerId = 0;
+	d->event = event;
 	this->loadControllers();
 }
 
-ControllerManager::~ControllerManager(void) {
+ControllerManager::~ControllerManager() {
 	for (ControllerMap::iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
 		delete( it->second );
 	}
@@ -93,7 +95,7 @@ void ControllerManager::loadControllers() {
 			continue;
 		}
 
-		TellStick *controller = new TellStick(*it);
+		TellStick *controller = new TellStick(d->event, *it);
 		if (!controller->isOpen()) {
 			delete controller;
 			continue;
