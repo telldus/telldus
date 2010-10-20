@@ -1,6 +1,8 @@
 #include "ClientCommunicationHandler.h"
 #include "Message.h"
 
+#include <stdlib.h>
+
 class ClientCommunicationHandler::PrivateData {
 public:
 	TelldusCore::Socket *clientSocket;
