@@ -13,6 +13,7 @@
 #define TELLSTICK_H
 
 #include "Controller.h"
+#include "Thread.h"
 #include <list>
 
 class TellStickDescriptor {
@@ -21,7 +22,7 @@ public:
 	int vid, pid;
 };
 
-class TellStick : public Controller {
+class TellStick : public Controller, public TelldusCore::Thread {
 public:	
 	TellStick(const TellStickDescriptor &d);
 	virtual ~TellStick();
@@ -35,8 +36,9 @@ public:
 	static std::list<TellStickDescriptor> findAll();
 	
 protected:
+	void processData( const std::string &data );
+	void run();
 	void setBaud( int baud );
-
 
 private:
 	static std::list<TellStickDescriptor> findAllByVIDPID( int vid, int pid );

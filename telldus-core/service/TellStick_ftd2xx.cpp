@@ -10,6 +10,7 @@
 //
 //
 #include "TellStick.h"
+#include "Mutex.h"
 #include "../client/telldus-core.h"
 #include <string.h>
 
@@ -17,17 +18,24 @@
 
 class TellStick::PrivateData {
 public:
-	bool open;
-	int vid, pid;
-	std::string serial;
+	bool open, running;
+	int vid, pid, fwVersion;
+	std::string serial, message;
 	FT_HANDLE ftHandle;
+	TelldusCore::Mutex mutex;
+
+	HANDLE eh;
+
 };
 
 TellStick::TellStick( const TellStickDescriptor &td ) {
 	d = new PrivateData;
+	d->eh = CreateEvent( NULL, false, false, NULL );
 	d->open = false;
+	d->running = false;
 	d->vid = td.vid;
 	d->pid = td.pid;
+	d->fwVersion = 0;
 	d->serial = td.serial;
 
 	char *tempSerial = new char[td.serial.size()+1];
@@ -51,10 +59,17 @@ TellStick::TellStick( const TellStickDescriptor &td ) {
 		} else {
  			setBaud(4800);
 		}
+		this->start();
 	}
 }
 
 TellStick::~TellStick() {
+	if (d->running) {
+		TelldusCore::MutexLocker locker(&d->mutex);
+		d->running = false;
+		SetEvent(d->eh);
+	}
+	this->wait();
 	if (d->open) {
 	}
 	delete d;
@@ -65,7 +80,7 @@ void TellStick::setBaud( int baud ) {
 }
 
 int TellStick::firmwareVersion() {
-	return 1;
+	return d->fwVersion;
 }
 
 bool TellStick::isOpen() const {
@@ -85,11 +100,59 @@ bool TellStick::isSameAsDescriptor(const TellStickDescriptor &td) const {
 	return true;
 }
 
+void TellStick::processData( const std::string &data ) {
+	for (unsigned int i = 0; i < data.length(); ++i) {
+		if (data[i] == 13) { // Skip \r
+			continue;
+		} else if (data[i] == 10) { // \n found
+			if (d->message.substr(0,2).compare("+V") == 0) {
+				//TODO save the firmware version
+			} else if (d->message.substr(0,2).compare("+R") == 0) {
+				//TODO
+			}
+			d->message.clear();
+		} else { // Append the character
+			d->message.append( 1, data[i] );
+		}
+	}
+}
+
+void TellStick::run() {
+	d->running = true;
+	DWORD dwBytesInQueue = 0;
+	DWORD dwBytesRead = 0;
+	char *buf = 0;
+
+	while(1) {
+		FT_SetEventNotification(d->ftHandle, FT_EVENT_RXCHAR, d->eh);
+		WaitForSingleObject(d->eh,INFINITE);
+
+		TelldusCore::MutexLocker locker(&d->mutex);
+		if (!d->running) {
+			break;
+		}
+		FT_GetQueueStatus(d->ftHandle, &dwBytesInQueue);
+		if (dwBytesInQueue < 1) {
+			continue;
+		}
+		buf = (char*)malloc(sizeof(buf) * (dwBytesInQueue+1));
+		memset(buf, 0, dwBytesInQueue+1);
+		FT_Read(d->ftHandle, buf, dwBytesInQueue, &dwBytesRead);
+		processData( buf );
+		free(buf);
+	}
+}
+
 int TellStick::send( const std::string &strMessage ) {
 	if (!d->open) {
 		return TELLSTICK_ERROR_NOT_FOUND;
 	}
 	bool c = true;
+
+	//This lock does two things
+	// 1 Prevents two calls from different threads to this function
+	// 2 Prevents our running thread from receiving the data we are interested in here
+	TelldusCore::MutexLocker(&d->mutex);
 
 	char *tempMessage = (char *)malloc(sizeof(char) * (strMessage.size()+1));
 #ifdef _WINDOWS
