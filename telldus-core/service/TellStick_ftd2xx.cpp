@@ -129,19 +129,25 @@ void TellStick::run() {
 		FT_SetEventNotification(d->ftHandle, FT_EVENT_RXCHAR, d->eh);
 		WaitForSingleObject(d->eh,INFINITE);
 
-		TelldusCore::MutexLocker locker(&d->mutex);
-		if (!d->running) {
-			break;
+		{
+			d->mutex.lock();
+			//TelldusCore::MutexLocker locker(&d->mutex);
+			if (!d->running) {
+				d->mutex.unlock();
+				break;
+			}
+			FT_GetQueueStatus(d->ftHandle, &dwBytesInQueue);
+			if (dwBytesInQueue < 1) {
+				d->mutex.unlock();
+				continue;
+			}
+			buf = (char*)malloc(sizeof(buf) * (dwBytesInQueue+1));
+			memset(buf, 0, dwBytesInQueue+1);
+			FT_Read(d->ftHandle, buf, dwBytesInQueue, &dwBytesRead);
+			processData( buf );
+			free(buf);
+			d->mutex.unlock();
 		}
-		FT_GetQueueStatus(d->ftHandle, &dwBytesInQueue);
-		if (dwBytesInQueue < 1) {
-			continue;
-		}
-		buf = (char*)malloc(sizeof(buf) * (dwBytesInQueue+1));
-		memset(buf, 0, dwBytesInQueue+1);
-		FT_Read(d->ftHandle, buf, dwBytesInQueue, &dwBytesRead);
-		processData( buf );
-		free(buf);
 	}
 }
 
@@ -154,7 +160,8 @@ int TellStick::send( const std::string &strMessage ) {
 	//This lock does two things
 	// 1 Prevents two calls from different threads to this function
 	// 2 Prevents our running thread from receiving the data we are interested in here
-	TelldusCore::MutexLocker(&d->mutex);
+	d->mutex.lock();
+	//TelldusCore::MutexLocker(&d->mutex);
 
 	char *tempMessage = (char *)malloc(sizeof(char) * (strMessage.size()+1));
 #ifdef _WINDOWS
@@ -184,6 +191,7 @@ int TellStick::send( const std::string &strMessage ) {
 		}
 	}
 
+	d->mutex.unlock();
 	if (!c) {
 		return TELLSTICK_ERROR_COMMUNICATION;
 	}
