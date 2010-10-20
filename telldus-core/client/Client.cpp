@@ -46,7 +46,6 @@ Client::~Client(void) {
 	{
 		TelldusCore::MutexLocker locker(&d->mutex);
 	}
-	//TODO empty event lists?
 	delete d;
 }
 

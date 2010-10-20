@@ -91,8 +91,8 @@ std::wstring Socket::read() {
 
 	ReadFile( d->hPipe, &buf, sizeof(wchar_t)*BUFSIZE, &cbBytesRead, &oOverlap);
 
-	result = WaitForSingleObject(oOverlap.hEvent, 20000);
-
+	result = WaitForSingleObject(oOverlap.hEvent, INFINITE);
+	
 	if(!d->running){
 		CloseHandle(d->readEvent);
 		return L"";
@@ -126,7 +126,7 @@ void Socket::write(const std::wstring &msg){
 	
 	WriteFile(d->hPipe, msg.data(), (DWORD)msg.length()*sizeof(wchar_t), &bytesWritten, &oOverlap);
 
-	result = WaitForSingleObject(writeEvent, 10000);
+	result = WaitForSingleObject(writeEvent, 500);
 	if (result == WAIT_TIMEOUT) {
 		CloseHandle(writeEvent);
 		d->connected = false;
