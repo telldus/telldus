@@ -15,7 +15,8 @@ SET( telldus-core_PUB_HDRS
 	telldus-core.h
 )
 
-
+FIND_PACKAGE(Threads)
+LIST(APPEND telldus-core_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
 
 INCLUDE_DIRECTORIES(
 	${CMAKE_CURRENT_SOURCE_DIR}/../common
@@ -78,7 +79,7 @@ ADD_LIBRARY(${telldus-core_TARGET} SHARED
 TARGET_LINK_LIBRARIES( ${telldus-core_TARGET}	${telldus-core_LIBRARIES} )
 
 SET_PROPERTY(TARGET ${telldus-core_TARGET}
-	PROPERTY FRAMEWORK TRUE	
+	PROPERTY FRAMEWORK TRUE
 )
 SET_PROPERTY(TARGET ${telldus-core_TARGET}
 	PROPERTY PUBLIC_HEADER ${telldus-core_PUB_HDRS}
@@ -108,7 +109,7 @@ IF (UNIX AND NOT APPLE)
 	SET(SYSCONF_INSTALL_DIR "/etc" CACHE PATH "The sysconfig install dir (default prefix/etc)" )
 	SET(STATE_INSTALL_DIR	"/var/state" CACHE PATH "The directory to store state information of the devices" )
 	SET(UDEV_RULES_DIR	"/etc/udev/rules.d" CACHE PATH "The directory where udev store its rules" )
-	
+
 	INSTALL(FILES tellstick.conf
 		DESTINATION ${SYSCONF_INSTALL_DIR}
 	)
