@@ -334,19 +334,12 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 	Controller *controller = d->controllerManager->getBestControllerById(this->getPreferredControllerId(deviceId));
 	if(controller){
 		int retval = device->doAction(action, data, controller);
-		if(retval == TELLSTICK_SUCCESS){
+		if(retval == TELLSTICK_SUCCESS) {
 			std::wstring datastring = TelldusCore::Message::charUnsignedToWstring(data);
-			if (action != TELLSTICK_BELL) {
+			if (this->triggerDeviceStateChange(deviceId, action, datastring)) {
 				device->setLastSentCommand(action, datastring);
-				//TODO: This should maybe be done someware else since the event could be triggered by a TellStick Duo aswell
-				EventUpdateData *eventData = new EventUpdateData();
-				eventData->messageType = L"TDDeviceEvent";
-				eventData->eventState = action;
-				eventData->deviceId = deviceId;
-				eventData->eventValue = datastring;
-				d->deviceUpdateEvent->signal(eventData);
+				d->set.setDeviceState(deviceId, action, datastring);
 			}
-			d->set.setDeviceState(deviceId, action, datastring);
 		}
 		return retval;
 	} else {
@@ -393,3 +386,16 @@ int DeviceManager::sendRawCommand(std::wstring command, int reserved){
 	}
 }
 
+bool DeviceManager::triggerDeviceStateChange(int deviceId, int intDeviceState, const std::wstring &strDeviceStateValue ) {
+	if ( intDeviceState == TELLSTICK_BELL || intDeviceState == TELLSTICK_LEARN) {
+		return false;
+	}
+
+	EventUpdateData *eventData = new EventUpdateData();
+	eventData->messageType = L"TDDeviceEvent";
+	eventData->eventState = intDeviceState;
+	eventData->deviceId = deviceId;
+	eventData->eventValue = strDeviceStateValue;
+	d->deviceUpdateEvent->signal(eventData);
+	return true;
+}

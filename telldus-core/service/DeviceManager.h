@@ -34,7 +34,7 @@ public:
 	int sendRawCommand(std::wstring command, int reserved);
 	
 private:
-
+	bool triggerDeviceStateChange(int deviceId, int intDeviceState, const std::wstring &strDeviceStateValue );
 	void fillDevices(void);
 	
 	class PrivateData;
