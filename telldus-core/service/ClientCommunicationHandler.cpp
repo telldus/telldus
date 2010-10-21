@@ -1,5 +1,6 @@
 #include "ClientCommunicationHandler.h"
 #include "Message.h"
+#include "Strings.h"
 
 #include <stdlib.h>
 
@@ -222,7 +223,7 @@ std::wstring ClientCommunicationHandler::getErrorString(int errorNo){
 	if (errorNo >= numResponses) {
 		return L"Unknown error";
 	} else {
-		return TelldusCore::Message::charToWstring(responses[errorNo]);
+		return TelldusCore::charToWstring(responses[errorNo]);
 	}
 }
 

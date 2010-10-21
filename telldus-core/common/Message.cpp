@@ -1,5 +1,6 @@
 #include "Message.h"
 #include "Socket.h"
+#include "Strings.h"
 #include <sstream>
 #include <wctype.h>
 #include <stdlib.h>
@@ -38,7 +39,7 @@ void Message::addArgument(int value) {
 }
 
 void Message::addArgument(const char *value) {
-	this->addArgument(charToWstring(value));
+	this->addArgument(TelldusCore::charToWstring(value));
 }
 
 std::wstring Message::charToWstring(const char *value) {
