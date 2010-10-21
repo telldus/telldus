@@ -31,7 +31,6 @@ ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clie
 ClientCommunicationHandler::~ClientCommunicationHandler(void)
 {
 	wait();
-	delete(d->event);
 	delete(d->clientSocket);
 	delete d;
 }
@@ -223,7 +222,7 @@ std::wstring ClientCommunicationHandler::getErrorString(int errorNo){
 	if (errorNo >= numResponses) {
 		return L"Unknown error";
 	} else {
-		return TelldusCore::charToWstring(responses[errorNo]);
+		return  TelldusCore::charToWstring(responses[errorNo]);
 	}
 }
 

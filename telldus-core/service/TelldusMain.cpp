@@ -58,6 +58,8 @@ void TelldusMain::start(void) {
 	
 	std::list<ClientCommunicationHandler *> clientCommunicationHandlerList;
 
+	std::auto_ptr<Event> handlerEvent(d->eventHandler.addEvent());
+
 	while(!d->stopEvent->isSignaled()) {
 		if (!d->eventHandler.waitForAny()) {
 			continue;
@@ -67,8 +69,7 @@ void TelldusMain::start(void) {
 			EventData *eventData = clientEvent->takeSignal();
 			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventData);
 			if (data) {
-				Event *handlerEvent = d->eventHandler.addEvent();
-				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(data->socket, handlerEvent, &deviceManager, deviceUpdateEvent);
+				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(data->socket, handlerEvent.get(), &deviceManager, deviceUpdateEvent);
 				clientCommunication->start();
 				clientCommunicationHandlerList.push_back(clientCommunication);
 			}
@@ -92,12 +93,16 @@ void TelldusMain::start(void) {
 			}
 		}
 
-		for ( std::list<ClientCommunicationHandler *>::iterator it = clientCommunicationHandlerList.begin(); it != clientCommunicationHandlerList.end(); ){
-			if ((*it)->isDone()){
-				delete *it;
-				it = clientCommunicationHandlerList.erase(it);
-			} else {
-				++it;
+		if(handlerEvent->isSignaled()){
+			handlerEvent->popSignal();
+			for ( std::list<ClientCommunicationHandler *>::iterator it = clientCommunicationHandlerList.begin(); it != clientCommunicationHandlerList.end(); ){
+				if ((*it)->isDone()){
+					delete *it;
+					it = clientCommunicationHandlerList.erase(it);
+					
+				} else {
+					++it;
+				}
 			}
 		}
 	}
