@@ -25,18 +25,18 @@ DeviceManager::DeviceManager(ControllerManager *controllerManager, Event *device
 
 DeviceManager::~DeviceManager(void) {
 	
-	TelldusCore::MutexLocker deviceLocker(&d->lock);
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	for (DeviceMap::iterator it = d->devices.begin(); it != d->devices.end(); ++it) {
-		{TelldusCore::MutexLocker lock(it->second);}	//aquire lock, and release it, just to see that the device it's not in use anywhere
+		{TelldusCore::MutexLocker deviceLocker(it->second);}	//aquire lock, and release it, just to see that the device it's not in use anywhere
 		delete(it->second);
 	}
 	delete d;
 }
 
 void DeviceManager::fillDevices(){
-	TelldusCore::MutexLocker deviceLocker(&d->lock);
 	int numberOfDevices = d->set.getNumberOfDevices();
-
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
+	
 	for (int i = 0; i < numberOfDevices; ++i) {
 		int id = d->set.getDeviceId(i);
 		d->devices[id] = new Device(id);
@@ -55,13 +55,13 @@ void DeviceManager::fillDevices(){
 }
 
 int DeviceManager::getDeviceLastSentCommand(int deviceId, int methodsSupported){
-	TelldusCore::MutexLocker deviceLocker(&d->lock);
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
-		//TODO: Is it ok NOT to get a lock here? Should be, since the list is locked, and it's an fast operation?
+		TelldusCore::MutexLocker deviceLocker(it->second);
 		return it->second->getLastSentCommand(methodsSupported);
 	}
 	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
@@ -69,38 +69,30 @@ int DeviceManager::getDeviceLastSentCommand(int deviceId, int methodsSupported){
 
 int DeviceManager::setDeviceLastSentCommand(int deviceId, int command, std::wstring value)
 {	
-	//TODO: check this locking, ok?
-	Device *device = 0;
-	{
-		TelldusCore::MutexLocker deviceLocker(&d->lock);
-		if (!d->devices.size()) {
-				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
-		DeviceMap::iterator it = d->devices.find(deviceId);
-		if (it != d->devices.end()) {
-			device = it->second;
-			d->set.setDeviceState(deviceId, command,value);
-		}
-		else{
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
+	if (!d->devices.size()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
 	}
-	if(device){
-		TelldusCore::MutexLocker lock(device);
-		device->setLastSentCommand(command, value);
+	DeviceMap::iterator it = d->devices.find(deviceId);
+	if (it != d->devices.end()) {
+		TelldusCore::MutexLocker deviceLocker(it->second);
+		d->set.setDeviceState(deviceId, command,value);
+		it->second->setLastSentCommand(command, value);
 	}
-	
+	else{
+		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+	}
 	return TELLSTICK_SUCCESS;
 }
 
 std::wstring DeviceManager::getDeviceStateValue(int deviceId){
-	TelldusCore::MutexLocker deviceLocker(&d->lock);
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return L"UNKNOWN";	//TODO, what?
 	}
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
-		//TODO: Is it ok NOT to get a lock here? Should be, since the list is locked, and it's an fast operation?
+		TelldusCore::MutexLocker deviceLocker(it->second);
 		return it->second->getStateValue();
 	}
 	return L"UNKNOWN";	//TODO, what?
@@ -110,14 +102,14 @@ int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
 	Device *device = 0;
 	{ 
 		//devices locked
-		TelldusCore::MutexLocker devicesLocker(&d->lock);
+		TelldusCore::MutexLocker deviceListLocker(&d->lock);
 		
 		if (!d->devices.size()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
 		DeviceMap::iterator it = d->devices.find(deviceId);
 		if (it != d->devices.end()) {
-			it->second->lock();	//device locked TODO
+			TelldusCore::MutexLocker deviceLocker(it->second);
 			device = it->second;
 		}
 		//devices unlocked
@@ -134,13 +126,13 @@ int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
 
 std::wstring DeviceManager::getDeviceModel(int deviceId){
 	
-	TelldusCore::MutexLocker deviceLocker(&d->lock);
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return L"UNKNOWN";	//TODO, what?
 	}
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
-		//TODO: Is it ok NOT to get a lock here? Should be, since the list is locked, and it's an fast operation?
+		TelldusCore::MutexLocker deviceLocker(it->second);
 		return it->second->getModel();
 	}
 	return L"UNKNOWN";	//TODO, what?
@@ -148,40 +140,32 @@ std::wstring DeviceManager::getDeviceModel(int deviceId){
 
 int DeviceManager::setDeviceModel(int deviceId, std::wstring model)
 {	
-	//TODO: check this locking, ok?
-	Device *device = 0;
-	{
-		TelldusCore::MutexLocker deviceLocker(&d->lock);
-		if (!d->devices.size()) {
-				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
-		DeviceMap::iterator it = d->devices.find(deviceId);
-		if (it != d->devices.end()) {
-			device = it->second;
-			d->set.setModel(deviceId, model);
-		}
-		else{
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
+	if (!d->devices.size()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
 	}
-	if(device){
-		TelldusCore::MutexLocker lock(device);
-		device->setModel(model);
-		//TODO Reset protocol here?
+	DeviceMap::iterator it = d->devices.find(deviceId);
+	if (it != d->devices.end()) {
+		TelldusCore::MutexLocker deviceLocker(it->second);
+		d->set.setModel(deviceId, model);
+		it->second->setModel(model);
 	}
-	
+	else{
+		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+	}
+
 	return TELLSTICK_SUCCESS;
 }
 
 std::wstring DeviceManager::getDeviceName(int deviceId){
 	
-	TelldusCore::MutexLocker deviceLocker(&d->lock);
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return L"UNKNOWN";	//TODO, what?
 	}
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
-		//TODO: Is it ok NOT to get a lock here? Should be, since the list is locked, and it's an fast operation?
+		TelldusCore::MutexLocker deviceLocker(it->second);
 		return it->second->getName();
 	}
 	return L"UNKNOWN";	//TODO, what?
@@ -189,25 +173,18 @@ std::wstring DeviceManager::getDeviceName(int deviceId){
 
 int DeviceManager::setDeviceName(int deviceId, std::wstring name){
 	
-	//TODO: check this locking, ok?
-	Device *device = 0;
-	{
-		TelldusCore::MutexLocker deviceLocker(&d->lock);
-		if (!d->devices.size()) {
-				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
-		DeviceMap::iterator it = d->devices.find(deviceId);
-		if (it != d->devices.end()) {
-			device = it->second;
-			d->set.setName(deviceId, name);
-		}
-		else{
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
+	if (!d->devices.size()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
 	}
-	if(device){
-		TelldusCore::MutexLocker lock(device);
-		device->setName(name);
+	DeviceMap::iterator it = d->devices.find(deviceId);
+	if (it != d->devices.end()) {
+		TelldusCore::MutexLocker deviceLocker(it->second);
+		d->set.setName(deviceId, name);
+		it->second->setName(name);
+	}
+	else{
+		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
 	
 	return TELLSTICK_SUCCESS;
@@ -215,13 +192,13 @@ int DeviceManager::setDeviceName(int deviceId, std::wstring name){
 
 std::wstring DeviceManager::getDeviceParameter(int deviceId, std::wstring name, std::wstring defaultValue){
 	
-	TelldusCore::MutexLocker deviceLocker(&d->lock);
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return defaultValue;
 	}
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()){
-		//TODO: Is it ok NOT to get a lock here? Should be, since the list is locked, and it's an fast operation?
+		TelldusCore::MutexLocker deviceLocker(it->second);
 		std::wstring returnString = it->second->getParameter(name);
 		if(returnString != L""){
 			return returnString;
@@ -232,40 +209,32 @@ std::wstring DeviceManager::getDeviceParameter(int deviceId, std::wstring name, 
 
 int DeviceManager::setDeviceParameter(int deviceId, std::wstring name, std::wstring value)
 {	
-	//TODO: check this locking, ok?
-	Device *device = 0;
-	{
-		TelldusCore::MutexLocker deviceLocker(&d->lock);
-		if (!d->devices.size()) {
-				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
-		DeviceMap::iterator it = d->devices.find(deviceId);
-		if (it != d->devices.end()) {
-			device = it->second;
-			d->set.setDeviceParameter(deviceId, name, value);
-		}
-		else{
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
+	if (!d->devices.size()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
 	}
-	if(device){
-		TelldusCore::MutexLocker lock(device);
-		device->setParameter(name, value);
-		//TODO Reset protocol here?
+	DeviceMap::iterator it = d->devices.find(deviceId);
+	if (it != d->devices.end()) {
+		TelldusCore::MutexLocker deviceLocker(it->second);
+		d->set.setDeviceParameter(deviceId, name, value);
+		it->second->setParameter(name, value);
 	}
-	
+	else{
+		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+	}
+
 	return TELLSTICK_SUCCESS;
 }
 
 std::wstring DeviceManager::getDeviceProtocol(int deviceId){
 	
-	TelldusCore::MutexLocker deviceLocker(&d->lock);
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return L"UNKNOWN";	//TODO, what?
 	}
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
-		//TODO: Is it ok NOT to get a lock here? Should be, since the list is locked, and it's an fast operation?
+		TelldusCore::MutexLocker deviceLocker(it->second);
 		return it->second->getProtocolName();
 	}
 	return L"UNKNOWN";	//TODO, what?
@@ -273,43 +242,36 @@ std::wstring DeviceManager::getDeviceProtocol(int deviceId){
 
 int DeviceManager::setDeviceProtocol(int deviceId, std::wstring protocol)
 {	
-	//TODO: check this locking, ok?
-	Device *device = 0;
-	{
-		TelldusCore::MutexLocker deviceLocker(&d->lock);
-		if (!d->devices.size()) {
-				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
-		DeviceMap::iterator it = d->devices.find(deviceId);
-		if (it != d->devices.end()) {
-			device = it->second;
-			d->set.setProtocol(deviceId, protocol);
-		}
-		else{
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
+	if (!d->devices.size()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
 	}
-	if(device){
-		TelldusCore::MutexLocker lock(device);
-		device->setProtocolName(protocol);
+	DeviceMap::iterator it = d->devices.find(deviceId);
+	if (it != d->devices.end()) {
+		TelldusCore::MutexLocker deviceLocker(it->second);
+		d->set.setProtocol(deviceId, protocol);
+		it->second->setProtocolName(protocol);
 	}
-	
+	else{
+		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+	}
+
 	return TELLSTICK_SUCCESS;
 }
 
 int DeviceManager::getNumberOfDevices(){
-	TelldusCore::MutexLocker deviceLocker(&d->lock);
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	return (int)d->devices.size();
 }
 
 int DeviceManager::addDevice(){
-	TelldusCore::MutexLocker deviceLocker(&d->lock);
 	
 	int id = d->set.addDevice();
 	if(id == -1){
 		return TELLSTICK_ERROR_UNKNOWN;
 	}
 
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	d->devices[id] = new Device(id);
 	if(!d->devices[id]){
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
@@ -318,7 +280,6 @@ int DeviceManager::addDevice(){
 }
 
 int DeviceManager::getDeviceId(int deviceIndex) {
-	TelldusCore::MutexLocker deviceLocker(&d->lock);
 	return d->set.getDeviceId(deviceIndex);
 }
 
@@ -329,14 +290,14 @@ int DeviceManager::getDeviceType(int deviceId){
 
 int DeviceManager::getPreferredControllerId(int deviceId){
 	
-	TelldusCore::MutexLocker deviceLocker(&d->lock);
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	
 	if (!d->devices.size()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
-		//TODO: Is it ok NOT to get a lock here? Should be, since the list is locked, and it's an fast operation?
+		TelldusCore::MutexLocker deviceLocker(it->second);
 		return it->second->getPreferredControllerId();
 	}
 	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
@@ -354,7 +315,7 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 	Device *device = 0;
 	{ 
 		//devices locked
-		TelldusCore::MutexLocker deviceLocker(&d->lock);
+		TelldusCore::MutexLocker deviceListLocker(&d->lock);
 		
 		if (!d->devices.size()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
@@ -408,11 +369,11 @@ int DeviceManager::removeDevice(int deviceId){
 	
 	Device *device = 0;
 	{
-		TelldusCore::MutexLocker deviceLocker(&d->lock);
 		if(!d->set.removeDevice(deviceId)){		//remove from register/settings
 			return TELLSTICK_ERROR_UNKNOWN;
 		}
 
+		TelldusCore::MutexLocker deviceListLocker(&d->lock);
 		if (!d->devices.size()) {
 				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
@@ -427,14 +388,6 @@ int DeviceManager::removeDevice(int deviceId){
 	}
 	{TelldusCore::MutexLocker lock(device);}	//waiting for device lock, if it's aquired, just unlock again. Device is removed from list, and cannot be accessed from anywhere else
 	delete device;
-
-	//1 lås lista
-	//2 ta bort från registret
-	//4 plocka ut device ur lista
-	//* Lås upp lista
-	//3 vänta på device lås
-	//{TelldusCore::MutexLocker(&device);}
-	//6 delete device
 
 	return TELLSTICK_DEVICE_REMOVED;
 }

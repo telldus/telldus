@@ -11,7 +11,7 @@ typedef std::map<int, Controller *> ControllerMap;
 class ControllerManager::PrivateData {
 public:
 	int lastControllerId;
-	ControllerMap controllers;	//TODO: lock in controls, for send etc
+	ControllerMap controllers;
 	Event *event;
 	TelldusCore::Mutex mutex;
 };
