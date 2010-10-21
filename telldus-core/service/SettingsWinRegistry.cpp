@@ -36,7 +36,8 @@ Settings::~Settings(void) {
 * Return the number of stored devices
 */
 int Settings::getNumberOfDevices(void) const {
-	
+	TelldusCore::MutexLocker locker(&mutex);
+
 	int intNumberOfDevices = 0;
 	HKEY hk;
 	
@@ -57,6 +58,8 @@ int Settings::getNumberOfDevices(void) const {
 
 
 int Settings::getDeviceId(int intDeviceIndex) const {
+	TelldusCore::MutexLocker locker(&mutex);
+
 	int intReturn = -1;
 	HKEY hk;
 	
@@ -79,7 +82,8 @@ int Settings::getDeviceId(int intDeviceIndex) const {
 /*
 * Add a new device
 */
-int Settings::addDevice(){
+int Settings::addDevice() {
+	TelldusCore::MutexLocker locker(&mutex);
 
 	int intDeviceId = -1;
 	HKEY hk;
@@ -104,6 +108,7 @@ int Settings::addDevice(){
 * Get next available device id
 */
 int Settings::getNextDeviceId() const {
+	//Private, no locks needed
 	int intReturn = -1;
 	HKEY hk;
 	DWORD dwDisp;
@@ -145,7 +150,8 @@ int Settings::getNextDeviceId() const {
 /*
 * Remove a device
 */
-bool Settings::removeDevice(int intDeviceId){
+bool Settings::removeDevice(int intDeviceId) {
+	TelldusCore::MutexLocker locker(&mutex);
 	
 	std::wostringstream ssRegPath; 
 	ssRegPath << d->strRegPathDevice << intDeviceId;

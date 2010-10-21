@@ -2,6 +2,7 @@
 #define SETTINGS_H
 
 #include <string>
+#include "Mutex.h"
 
 class Settings {
 public:
@@ -39,7 +40,7 @@ private:
 	
 	class PrivateData;
 	PrivateData *d;
-
+	mutable TelldusCore::Mutex mutex;
 };
 
 #endif
