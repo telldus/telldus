@@ -38,7 +38,7 @@ ClientCommunicationHandler::~ClientCommunicationHandler(void)
 void ClientCommunicationHandler::run(){
 	//run thread
 	
-	std::wstring clientMessage = d->clientSocket->read();
+	std::wstring clientMessage = d->clientSocket->read(2000);	//TODO changed this to a timeout, see if that works better
 
 	int intReturn;
 	std::wstring strReturn;
