@@ -11,6 +11,7 @@
 //
 
 #include "Mutex.h"
+#include "common.h"
 
 using namespace TelldusCore;
 
@@ -48,7 +49,13 @@ Mutex::~Mutex() {
 			
 void Mutex::lock() {
 #ifdef _WINDOWS
-	EnterCriticalSection(&d->mutex);
+	//What we would want is to use EnterCriticalSection instead of our loop.
+	//For some reason Windows doesn't always let our thread enter the critical section
+	//even when another thread leaves the critical section
+	//This loop seems to fix the problem.
+	while(!TryEnterCriticalSection(&d->mutex)) {
+		msleep(5);
+	}
 #else
 	pthread_mutex_lock(&d->mutex);
 #endif
