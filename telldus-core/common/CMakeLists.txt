@@ -6,6 +6,7 @@ ENDIF(COMMAND cmake_policy)
 SET( telldus-common_SRCS
 	Message.cpp
 	Mutex.cpp
+	Strings.cpp
 	Thread.cpp
 )
 
@@ -14,6 +15,7 @@ SET( telldus-common_HDRS
 	Message.h
 	Mutex.h
 	Socket.h
+	Strings.h
 	Thread.h
 )
 
