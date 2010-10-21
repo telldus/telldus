@@ -69,6 +69,18 @@ void Mutex::unlock() {
 #endif
 }
 
+		
+void LoggedMutex::lock() {
+	debuglog(GetCurrentThreadId(), "Locking");
+	Mutex::lock();
+	debuglog(GetCurrentThreadId(), "Locked");
+}
+
+void LoggedMutex::unlock() {
+	debuglog(GetCurrentThreadId(), "Unlocking");
+	Mutex::unlock();
+	debuglog(GetCurrentThreadId(), "Unlocked");
+}
 
 MutexLocker::MutexLocker(Mutex *m)
 	:mutex(m) 

@@ -18,12 +18,17 @@ namespace TelldusCore {
 		Mutex();
 		virtual ~Mutex();
 			
-		void lock();
-		void unlock();
+		virtual void lock();
+		virtual void unlock();
 						
 	private:
 		class PrivateData;
 		PrivateData *d;
+	};
+	class LoggedMutex : public Mutex {
+	public:
+		void lock();
+		void unlock();
 	};
 	
 	class MutexLocker {
