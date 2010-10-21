@@ -313,24 +313,23 @@ void DeviceManager::disconnectTellStickController(int vid, int pid, std::wstring
 
 int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 	Device *device = 0;
+	//On the stack and will be released if we have a device lock.
+	std::auto_ptr<TelldusCore::MutexLocker> deviceLocker(0);
 	{ 
-		//devices locked
+		//devicelist locked
 		TelldusCore::MutexLocker deviceListLocker(&d->lock);
 		
 		if (!d->devices.size()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
 		DeviceMap::iterator it = d->devices.find(deviceId);
-		if (it != d->devices.end()) {
-			it->second->lock();	//device locked
-			device = it->second;
+		if (it == d->devices.end()) {
+			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;	//not found
 		}
-		//devices unlocked
-	}
-
-	if (!device) {
-		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;	//not found
-	}
+		//device locked
+		deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(new TelldusCore::MutexLocker(it->second));
+		device = it->second;
+	} //devicelist unlocked
 	
 	Controller *controller = d->controllerManager->getBestControllerById(this->getPreferredControllerId(deviceId));
 	if(controller){
@@ -347,20 +346,10 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 				eventData->eventValue = datastring;
 				d->deviceUpdateEvent->signal(eventData);
 			}
-			device->unlock();
-			{
-				//new lock, for setting (all other locks are unlocked)
-				//TODO, it MAY be inconsistency between stored values and device values here... change something?
-				TelldusCore::MutexLocker deviceLocker(&d->lock);
-				d->set.setDeviceState(deviceId, action, datastring);
-			}		
-		} else {
-			device->unlock();
+			d->set.setDeviceState(deviceId, action, datastring);
 		}
 		return retval;
-	}
-	else{
-		device->unlock();
+	} else {
 		return TELLSTICK_ERROR_NOT_FOUND;
 	}
 }
