@@ -102,6 +102,7 @@ std::wstring DeviceManager::getDeviceStateValue(int deviceId){
 }
 
 int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
+	//TODO maybe handle the device lock as in doAction()?
 	Device *device = 0;
 	{ 
 		//devices locked
