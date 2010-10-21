@@ -1,7 +1,10 @@
 #include "DeviceManager.h"
+#include "ControllerMessage.h"
 #include "Mutex.h"
 #include "Settings.h"
+#include "Strings.h"
 #include "Message.h"
+#include "common.h"
 
 #include <map>
 
@@ -372,6 +375,32 @@ int DeviceManager::removeDevice(int deviceId){
 	delete device;
 
 	return TELLSTICK_DEVICE_REMOVED;
+}
+
+void DeviceManager::handleControllerMessage(const ControllerEventData &eventData) {
+	//Trigger raw-event
+	EventUpdateData *eventUpdateData = new EventUpdateData();
+	eventUpdateData->messageType = L"TDRawDeviceEvent";
+	eventUpdateData->controllerId = 0; //TODO add the real controller-id
+	eventUpdateData->eventValue = TelldusCore::charToWstring(eventData.msg.c_str());
+	d->deviceUpdateEvent->signal(eventUpdateData);
+
+	ControllerMessage msg(eventData.msg);
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
+	for (DeviceMap::iterator it = d->devices.begin(); it != d->devices.end(); ++it) {
+		TelldusCore::MutexLocker deviceLocker(it->second);
+		if (!TelldusCore::comparei(it->second->getProtocolName(), msg.protocol())) {
+			continue;
+		}
+		if (! (it->second->getMethods() & msg.method())) {
+			continue;
+		}
+		//TODO: Check the parameters to see if it matches
+
+		//First save the last sent command, this also triggers the callback to the client
+		//TODO
+	}
+
 }
 
 int DeviceManager::sendRawCommand(std::wstring command, int reserved){

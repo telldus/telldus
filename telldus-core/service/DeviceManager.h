@@ -32,6 +32,8 @@ public:
 	int doAction(int deviceId, int action, unsigned char data);
 	int removeDevice(int deviceId);
 	int sendRawCommand(std::wstring command, int reserved);
+
+	void handleControllerMessage(const ControllerEventData &event);
 	
 private:
 	bool triggerDeviceStateChange(int deviceId, int intDeviceState, const std::wstring &strDeviceStateValue );
