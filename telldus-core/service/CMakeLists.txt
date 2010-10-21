@@ -7,6 +7,7 @@ SET( telldus-service_SRCS
 	ClientCommunicationHandler.cpp
 	Controller.cpp
 	ControllerManager.cpp
+	ControllerMessage.cpp
 	Device.cpp
 	DeviceManager.cpp
 	Event.cpp
@@ -45,6 +46,7 @@ SET( telldus-service_HDRS
 	ConnectionListener.h
 	Controller.h
 	ControllerManager.h
+	ControllerMessage.h
 	Device.h
 	DeviceManager.h
 	Event.h
