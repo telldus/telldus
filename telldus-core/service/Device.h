@@ -30,6 +30,7 @@ public:
 	void setLastSentCommand(int command, std::wstring value);
 
 	static int maskUnsupportedMethods(int methods, int supportedMethods);
+	static int methodId( const std::string &methodName );
 	
 private:
 	Protocol *retrieveProtocol() const;

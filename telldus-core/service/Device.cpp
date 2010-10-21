@@ -142,3 +142,19 @@ int Device::maskUnsupportedMethods(int methods, int supportedMethods) {
 	//Cut of the rest of the unsupported methods we don't have a fallback for
 	return methods & supportedMethods;
 }
+
+int Device::methodId( const std::string &methodName ) {
+	if (methodName.compare("turnon") == 0) {
+		return TELLSTICK_TURNON;
+	}
+	if (methodName.compare("turnoff") == 0) {
+		return TELLSTICK_TURNOFF;
+	}
+	if (methodName.compare("bell") == 0) {
+		return TELLSTICK_BELL;
+	}
+	if (methodName.compare("dim") == 0) {
+		return TELLSTICK_DIM;
+	}
+	return 0;
+}
