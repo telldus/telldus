@@ -78,6 +78,10 @@ void Socket::stopReadWait(){
 }
 
 std::wstring Socket::read() {
+	return read(INFINITE);
+}
+
+std::wstring Socket::read(int timeout){
 	wchar_t buf[BUFSIZE];
 	int result;
 	DWORD cbBytesRead = 0;
@@ -91,7 +95,7 @@ std::wstring Socket::read() {
 
 	ReadFile( d->hPipe, &buf, sizeof(wchar_t)*BUFSIZE, &cbBytesRead, &oOverlap);
 
-	result = WaitForSingleObject(oOverlap.hEvent, INFINITE);
+	result = WaitForSingleObject(oOverlap.hEvent, timeout);
 	
 	if(!d->running){
 		CloseHandle(d->readEvent);

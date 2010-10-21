@@ -167,7 +167,7 @@ std::wstring Client::sendToService(const Message &msg) {
 	s.connect(L"TelldusClient");
 	s.write(msg.data());
 
-	return s.read();
+	return s.read(500);
 }
 
 void Client::stopThread(){
