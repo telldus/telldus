@@ -76,18 +76,6 @@ int Protocol::getIntParameter(const std::wstring &name, int min, int max) const 
 	return intValue;
 }
 
-/**
-* This method doesn't support all locales
-*/
-bool Protocol::comparei(std::wstring stringA , std::wstring stringB)
-{
-	//move?
-	transform(stringA.begin(), stringA.end(), stringA.begin(), toupper);
-	transform(stringB.begin(), stringB.end(), stringB.begin(), toupper);
-
-	return stringA == stringB;
-}
-
 Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 	
 	if(TelldusCore::comparei(protocolname, L"arctech")){

@@ -27,7 +27,6 @@ public:
 protected:
 	std::wstring getStringParameter(const std::wstring &name, const std::wstring &defaultValue = L"") const;
 	int getIntParameter(const std::wstring &name, int min, int max) const;
-	static bool comparei(std::wstring stringA , std::wstring stringB);
 
 private:
 	class PrivateData;
