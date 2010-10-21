@@ -93,8 +93,6 @@ int DeviceManager::setDeviceLastSentCommand(int deviceId, int command, std::wstr
 	return TELLSTICK_SUCCESS;
 }
 
-
-
 std::wstring DeviceManager::getDeviceStateValue(int deviceId){
 	TelldusCore::MutexLocker deviceLocker(&d->lock);
 	if (!d->devices.size()) {
@@ -395,8 +393,9 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 				TelldusCore::MutexLocker deviceLocker(&d->lock);
 				d->set.setDeviceState(deviceId, action, datastring);
 			}		
+		} else {
+			device->unlock();
 		}
-		device->unlock();
 		return retval;
 	}
 	else{
