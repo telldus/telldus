@@ -13,8 +13,7 @@
 #include "ProtocolWaveman.h"
 #include "ProtocolX10.h"
 
-#include <algorithm>
-#include <string>
+#include "Strings.h"
 #include <sstream>
 
 class Protocol::PrivateData {
@@ -91,37 +90,37 @@ bool Protocol::comparei(std::wstring stringA , std::wstring stringB)
 
 Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
 	
-	if(comparei(protocolname, L"arctech")){
+	if(TelldusCore::comparei(protocolname, L"arctech")){
 		return new ProtocolNexa();
 
-	} else if (comparei(protocolname, L"brateck")) {
+	} else if (TelldusCore::comparei(protocolname, L"brateck")) {
 		return new ProtocolBrateck();
 
-	} else if (comparei(protocolname, L"everflourish")) {
+	} else if (TelldusCore::comparei(protocolname, L"everflourish")) {
 		return new ProtocolEverflourish();
 
-	} else if (comparei(protocolname, L"fuhaote")) {
+	} else if (TelldusCore::comparei(protocolname, L"fuhaote")) {
 		return new ProtocolFuhaote();
 
-	} else if (comparei(protocolname, L"ikea")) {
+	} else if (TelldusCore::comparei(protocolname, L"ikea")) {
 		return new ProtocolIkea();
 
-	} else if (comparei(protocolname, L"risingsun")) {
+	} else if (TelldusCore::comparei(protocolname, L"risingsun")) {
 		return new ProtocolRisingSun();
 
-	} else if (comparei(protocolname, L"sartano")) {
+	} else if (TelldusCore::comparei(protocolname, L"sartano")) {
 		return new ProtocolSartano();
 
-	} else if (comparei(protocolname, L"silvanchip")) {
+	} else if (TelldusCore::comparei(protocolname, L"silvanchip")) {
 		return new ProtocolSilvanChip();
 
-	} else if (comparei(protocolname, L"upm")) {
+	} else if (TelldusCore::comparei(protocolname, L"upm")) {
 		return new ProtocolUpm();
 		
-	} else if (comparei(protocolname, L"waveman")) {
+	} else if (TelldusCore::comparei(protocolname, L"waveman")) {
 		return new ProtocolWaveman();
 	
-	} else if (comparei(protocolname, L"x10")) {
+	} else if (TelldusCore::comparei(protocolname, L"x10")) {
 		return new ProtocolX10();
 	}
 

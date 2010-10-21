@@ -1,25 +1,26 @@
 #include "ProtocolNexa.h"
+#include "Strings.h"
 
 int ProtocolNexa::methods() const {
-	if (comparei(model(), L"codeswitch")) {
+	if (TelldusCore::comparei(model(), L"codeswitch")) {
 		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
 
-	} else if (comparei(model(), L"selflearning-switch")) {
+	} else if (TelldusCore::comparei(model(), L"selflearning-switch")) {
 		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN);
 
-	} else if (comparei(model(), L"selflearning-dimmer")) {
+	} else if (TelldusCore::comparei(model(), L"selflearning-dimmer")) {
 		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_DIM | TELLSTICK_LEARN);
 
-	} else if (comparei(model(), L"bell")) {
+	} else if (TelldusCore::comparei(model(), L"bell")) {
 		return TELLSTICK_BELL;
 	}
 	return 0;
 }
 
 std::string ProtocolNexa::getStringForMethod(int method, unsigned char data, Controller *) {
-	if (comparei(model(), L"codeswitch")) {
+	if (TelldusCore::comparei(model(), L"codeswitch")) {
 		return getStringCodeSwitch(method);
-	} else if (comparei(model(), L"bell")) {
+	} else if (TelldusCore::comparei(model(), L"bell")) {
 		return getStringBell();
 	}
 	return getStringSelflearning(method, data);

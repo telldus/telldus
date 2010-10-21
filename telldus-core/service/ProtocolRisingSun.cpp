@@ -1,14 +1,15 @@
 #include "ProtocolRisingSun.h"
+#include "Strings.h"
 
 int ProtocolRisingSun::methods() const {
-	if (comparei(model(), L"selflearning")) {
+	if (TelldusCore::comparei(model(), L"selflearning")) {
 		return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN);
 	}
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;
 }
 
 std::string ProtocolRisingSun::getStringForMethod(int method, unsigned char data, Controller *controller) {
-	if (comparei(model(), L"selflearning")) {
+	if (TelldusCore::comparei(model(), L"selflearning")) {
 		return getStringSelflearning(method);
 	}
 	return getStringCodeSwitch(method);

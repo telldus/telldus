@@ -1,4 +1,5 @@
 #include "ProtocolIkea.h"
+#include "Strings.h"
 
 #include <stdlib.h>
 #include <string.h>
@@ -9,7 +10,7 @@ int ProtocolIkea::methods() const {
 
 std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Controller *) {
 	int intSystem = this->getIntParameter(L"system", 1, 16)-1;
-	int intFadeStyle = comparei(this->getStringParameter(L"fade", L"true"), L"true");
+	int intFadeStyle = TelldusCore::comparei(this->getStringParameter(L"fade", L"true"), L"true");
 	std::wstring wstrUnits = this->getStringParameter(L"units", L"");
 
 	if (method == TELLSTICK_TURNON) {
