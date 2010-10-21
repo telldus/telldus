@@ -10,6 +10,7 @@ SET( telldus-common_SRCS
 )
 
 SET( telldus-common_HDRS
+	common.h
 	Message.h
 	Mutex.h
 	Socket.h

@@ -13,6 +13,7 @@
 #else
 #include <unistd.h>
 #endif
+#include <fstream>
 #include <stdlib.h>
 #include <string.h>
 #include <string>
@@ -23,6 +24,24 @@ inline void msleep( const int msec) {
 #else
 	usleep(msec*1000);
 #endif
+}
+
+inline void debuglog(const int intMessage, const std::string strMessage){
+		
+    static bool firstRun = true;
+    std::ofstream file;
+    std::string filename("C:/log_locks.txt");
+    if (firstRun) {
+            file.open(filename.c_str(), std::ios::out);
+            firstRun = false;
+    } else {
+            file.open(filename.c_str(), std::ios::out | std::ios::app);
+    }
+   
+    file << intMessage << " - " << strMessage << "\n";
+    file.flush();
+    file.close();
+
 }
 
 inline char *wrapStdString( const std::string &string) {
