@@ -110,7 +110,7 @@ void TellStick::processData( const std::string &data ) {
 			if (d->message.substr(0,2).compare("+V") == 0) {
 				//TODO save the firmware version
 			} else if (d->message.substr(0,2).compare("+R") == 0) {
-				this->publishData(d->message);
+				this->publishData(d->message.substr(2));
 			}
 			d->message.clear();
 		} else { // Append the character
