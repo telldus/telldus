@@ -55,16 +55,16 @@ void EventUpdateManager::run(){
 
 		if(d->clientConnectEvent->isSignaled()){
 			//new client added
-			EventData *eventData = d->clientConnectEvent->takeSignal();
-			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventData);
+			std::auto_ptr<EventData> eventData(d->clientConnectEvent->takeSignal());
+			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventData.get());
 			if(data){
 				d->clients.push_back(data->socket);
 			}
 		}
 		else if(d->updateEvent->isSignaled()){
 			//device event, signal all clients
-			EventData *eventData = d->updateEvent->takeSignal();
-			EventUpdateData *data = reinterpret_cast<EventUpdateData*>(eventData);
+			std::auto_ptr<EventData> eventData(d->updateEvent->takeSignal());
+			EventUpdateData *data = reinterpret_cast<EventUpdateData*>(eventData.get());
 			if(data){
 				sendMessageToClients(data);
 			}
