@@ -22,6 +22,7 @@ public:
 #ifdef _WINDOWS
 	HANDLE thread;
 	DWORD threadId;
+	bool running;
 #else
 	pthread_t thread;
 #endif
@@ -38,6 +39,7 @@ Thread::~Thread() {
 
 void Thread::start() {
 #ifdef _WINDOWS
+	d->running = true;
 	d->thread = CreateThread(NULL, 0, (LPTHREAD_START_ROUTINE)&Thread::exec, this, 0, &d->threadId);
 #else
 	pthread_create(&d->thread, NULL, &Thread::exec, this );
@@ -49,7 +51,9 @@ bool Thread::wait() {
 		return true;
 	}
 #ifdef _WINDOWS
-	WaitForSingleObject(d->thread, INFINITE);
+	while(d->running) {
+		WaitForSingleObject(d->thread, 200);
+	}
 	CloseHandle(d->thread);
 #else
 	pthread_join(d->thread, 0);
@@ -61,6 +65,8 @@ void *Thread::exec( void *ptr ) {
 	Thread *t = reinterpret_cast<Thread *>(ptr);
 	if (t) {
 		t->run();
+		t->d->running = false;
 	}
+	ExitThread(0);
 	return 0;
 }
