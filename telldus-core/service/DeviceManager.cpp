@@ -102,30 +102,20 @@ std::wstring DeviceManager::getDeviceStateValue(int deviceId){
 }
 
 int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
-	//TODO maybe handle the device lock as in doAction()?
-	Device *device = 0;
-	{ 
-		//devices locked
-		TelldusCore::MutexLocker deviceListLocker(&d->lock);
-		
-		if (!d->devices.size()) {
-			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
-		DeviceMap::iterator it = d->devices.find(deviceId);
-		if (it != d->devices.end()) {
-			TelldusCore::MutexLocker deviceLocker(it->second);
-			device = it->second;
-		}
-		//devices unlocked
+	//devices locked
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
+	
+	if (!d->devices.size()) {
+		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+	}
+	DeviceMap::iterator it = d->devices.find(deviceId);
+	if (it != d->devices.end()) {
+		TelldusCore::MutexLocker deviceLocker(it->second);
+		int methods = it->second->getMethods();
+		return Device::maskUnsupportedMethods(methods, methodsSupported);
 	}
 
-	if (!device) {
-		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;	//not found
-	}
-	int methods = device->getMethods();
-	device->unlock();
-	return Device::maskUnsupportedMethods(methods, methodsSupported);
-
+	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 }
 
 std::wstring DeviceManager::getDeviceModel(int deviceId){
