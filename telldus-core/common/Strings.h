@@ -6,6 +6,7 @@
 namespace TelldusCore {
 	std::wstring charToWstring(const char *value);
 	bool comparei(std::wstring stringA, std::wstring stringB);
+	std::string wideToString(const std::wstring &input);
 }
 
 #endif //STRING_H
