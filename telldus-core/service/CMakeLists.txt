@@ -71,11 +71,13 @@ IF (APPLE) #### Mac OS X ####
 	SET( telldus-service_TARGET	TelldusService )
 	FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
 	FIND_LIBRARY(IOKIT_LIBRARY IOKit)
+	ADD_DEFINITIONS( -DLIBFTD2XX )
 	
 	SET( telldus-service_LIBRARIES
 		${telldus-service_LIBRARIES}
 		${COREFOUNDATION_LIBRARY}
 		${IOKIT_LIBRARY}
+		${FTD2XX_LIBRARY}
 		TelldusCommon
 	)
 	LIST(APPEND telldus-service_SRCS
@@ -84,6 +86,7 @@ IF (APPLE) #### Mac OS X ####
 		Event_unix.cpp
 		EventHandler_unix.cpp
 		SettingsCoreFoundationPreferences.cpp
+		TellStick_ftd2xx.cpp
 	)
 	
 ELSEIF (WIN32) #### Windows ####
