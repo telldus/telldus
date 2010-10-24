@@ -80,9 +80,10 @@ IF (APPLE) #### Mac OS X ####
 	)
 	LIST(APPEND telldus-service_SRCS
 		main_unix.cpp
+		ConnectionListener_unix.cpp
 		Event_unix.cpp
 		EventHandler_unix.cpp
-		ConnectionListener_unix.cpp
+		SettingsCoreFoundationPreferences.cpp
 	)
 	
 ELSEIF (WIN32) #### Windows ####
