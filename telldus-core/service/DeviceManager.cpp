@@ -399,7 +399,7 @@ int DeviceManager::sendRawCommand(std::wstring command, int reserved){
 	//TODO test this!
 	Controller *controller = d->controllerManager->getBestControllerById(-1);
 	if(controller){
-		return controller->send(TelldusCore::Message::wideToString(command));	// std::string(command.begin(), command.end()));
+		return controller->send(TelldusCore::wideToString(command));	// std::string(command.begin(), command.end()));
 	}
 	else{
 		return TELLSTICK_ERROR_NOT_FOUND;
