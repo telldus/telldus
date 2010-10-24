@@ -1,5 +1,6 @@
 #include "Client.h"
 #include "Socket.h"
+#include "Strings.h"
 #include "Mutex.h"
 #include "Common.h"
 
@@ -66,7 +67,7 @@ Client *Client::getInstance() {
 void Client::callbackDeviceEvent(int deviceId, int deviceState, const std::wstring &deviceStateValue){
 	TelldusCore::MutexLocker locker(&d->mutex);
 	for(DeviceEventList::const_iterator callback_it = d->deviceEventList.begin(); callback_it != d->deviceEventList.end(); ++callback_it) {
-		(*callback_it).event(deviceId, deviceState, Message::wideToString(deviceStateValue).c_str(), (*callback_it).id, (*callback_it).context);
+		(*callback_it).event(deviceId, deviceState, TelldusCore::wideToString(deviceStateValue).c_str(), (*callback_it).id, (*callback_it).context);
 	}
 }
 
@@ -80,7 +81,7 @@ void Client::callbackDeviceChangeEvent(int deviceId, int eventDeviceChanges, int
 void Client::callbackRawEvent(std::wstring command, int controllerId){
 	TelldusCore::MutexLocker locker(&d->mutex);
 	for(RawDeviceEventList::const_iterator callback_it = d->rawDeviceEventList.begin(); callback_it != d->rawDeviceEventList.end(); ++callback_it) {
-		(*callback_it).event(Message::wideToString(command).c_str(), controllerId, (*callback_it).id, (*callback_it).context);
+		(*callback_it).event(TelldusCore::wideToString(command).c_str(), controllerId, (*callback_it).id, (*callback_it).context);
 	}
 }
 
@@ -203,3 +204,4 @@ bool Client::unregisterCallback( int callbackId ) {
 	
 	return false;
 }
+
