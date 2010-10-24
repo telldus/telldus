@@ -99,22 +99,3 @@ int Message::wideToInteger(const std::wstring &input){
 	inputstream >> retval;
 	return retval;
 }
-
-std::string Message::wideToString(const std::wstring &input){
-
-	//return std::string(input.begin(), input.end());	//TODO, change this conversion method
-
-	std::string strReturn;
-
-	size_t len = input.length();
-	char* convPointer = new char[len + 1];
-
-	wcstombs(convPointer, input.c_str(), len + 1);
-
-	strReturn = convPointer;
-
-	delete [] convPointer;
-
-	return strReturn;
-
-}
