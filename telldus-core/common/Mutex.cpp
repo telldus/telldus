@@ -71,15 +71,23 @@ void Mutex::unlock() {
 
 		
 void LoggedMutex::lock() {
+#ifdef _WINDOWS
 	debuglog(GetCurrentThreadId(), "Locking");
+#endif
 	Mutex::lock();
+#ifdef _WINDOWS
 	debuglog(GetCurrentThreadId(), "Locked");
+#endif
 }
 
 void LoggedMutex::unlock() {
+#ifdef _WINDOWS
 	debuglog(GetCurrentThreadId(), "Unlocking");
+#endif
 	Mutex::unlock();
+#ifdef _WINDOWS
 	debuglog(GetCurrentThreadId(), "Unlocked");
+#endif
 }
 
 MutexLocker::MutexLocker(Mutex *m)
