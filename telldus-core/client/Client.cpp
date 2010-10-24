@@ -166,6 +166,11 @@ void Client::run(){
 std::wstring Client::sendToService(const Message &msg) {
 	Socket s;
 	s.connect(L"TelldusClient");
+	if (!s.isConnected()) { //Connection failed
+		TelldusCore::Message msg;
+		msg.addArgument(TELLSTICK_ERROR_CONNECTING_SERVICE);
+		return msg;
+	}
 	s.write(msg.data());
 
 	return s.read(1000);
