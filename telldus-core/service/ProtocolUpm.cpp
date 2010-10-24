@@ -10,8 +10,8 @@ std::string ProtocolUpm::getStringForMethod(int method, unsigned char, Controlle
 	const char START[] = {S,0};
 	const char B1[] = {L,S,0};
 	const char B0[] = {S,L,0};
-	const char BON[] = {S,L,L,S,0};
-	const char BOFF[] = {S,L,S,L,0};
+	//const char BON[] = {S,L,L,S,0};
+	//const char BOFF[] = {S,L,S,L,0};
 
 	int intUnit = this->getIntParameter(L"unit", 1, 4)-1;
 	std::string strReturn;
