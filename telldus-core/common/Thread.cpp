@@ -19,10 +19,10 @@ using namespace TelldusCore;
 
 class TelldusCore::ThreadPrivate {
 public:
+	bool running;
 #ifdef _WINDOWS
 	HANDLE thread;
 	DWORD threadId;
-	bool running;
 #else
 	pthread_t thread;
 #endif
@@ -67,6 +67,8 @@ void *Thread::exec( void *ptr ) {
 		t->run();
 		t->d->running = false;
 	}
+#ifdef _WINDOWS
 	ExitThread(0);
+#endif
 	return 0;
 }
