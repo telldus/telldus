@@ -24,15 +24,27 @@ public:
 	FT_HANDLE ftHandle;
 	TelldusCore::Mutex mutex;
 
+#ifdef _WINDOWS
 	HANDLE eh;
-
+#else
+//#include <unistd.h>
+	struct {
+		pthread_cond_t eCondVar;
+		pthread_mutex_t eMutex;
+	} eh;
+#endif
 };
 
 TellStick::TellStick(Event *event, const TellStickDescriptor &td ) 
 	:Controller(event)
 {
 	d = new PrivateData;
+#ifdef _WINDOWS
 	d->eh = CreateEvent( NULL, false, false, NULL );
+#else
+	pthread_mutex_init(&d->eh.eMutex, NULL);
+	pthread_cond_init(&d->eh.eCondVar, NULL);
+#endif
 	d->open = false;
 	d->running = false;
 	d->vid = td.vid;
@@ -69,7 +81,11 @@ TellStick::~TellStick() {
 	if (d->running) {
 		TelldusCore::MutexLocker locker(&d->mutex);
 		d->running = false;
+#ifdef _WINDOWS
 		SetEvent(d->eh);
+#else
+		pthread_cond_broadcast(&d->eh.eCondVar);
+#endif
 	}
 	this->wait();
 	if (d->open) {
@@ -126,9 +142,16 @@ void TellStick::run() {
 	char *buf = 0;
 
 	while(1) {
+#ifdef _WINDOWS
 		FT_SetEventNotification(d->ftHandle, FT_EVENT_RXCHAR, d->eh);
 		WaitForSingleObject(d->eh,INFINITE);
-
+#else
+		FT_SetEventNotification(d->ftHandle, FT_EVENT_RXCHAR, (PVOID)&d->eh);
+		pthread_mutex_lock(&d->eh.eMutex);
+		pthread_cond_wait(&d->eh.eCondVar, &d->eh.eMutex);
+		pthread_mutex_unlock(&d->eh.eMutex);
+#endif
+		
 		TelldusCore::MutexLocker locker(&d->mutex);
 		if (!d->running) {
 			break;
