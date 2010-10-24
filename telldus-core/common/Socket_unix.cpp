@@ -57,6 +57,10 @@ bool Socket::isConnected(){
 	return d->connected;
 }
 
+std::wstring Socket::read(int) {
+	return this->read();
+}
+
 std::wstring Socket::read() {
 	//TODO set d->conneted to false if something goes wrong
 	char inbuf[BUFSIZE];
