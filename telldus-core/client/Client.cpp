@@ -138,7 +138,7 @@ void Client::run(){
 			}
 		}
 
-		std::wstring clientMessage = d->eventSocket.read();
+		std::wstring clientMessage = d->eventSocket.read(5000);	//testing 5 second timeout
 		if(clientMessage != L""){
 			//a message arrived
 			std::wstring type = Message::takeString(&clientMessage);

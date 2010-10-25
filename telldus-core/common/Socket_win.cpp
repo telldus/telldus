@@ -98,11 +98,13 @@ std::wstring Socket::read(int timeout){
 	result = WaitForSingleObject(oOverlap.hEvent, timeout);
 	
 	if(!d->running){
+		CancelIo(d->hPipe);
 		CloseHandle(d->readEvent);
 		return L"";
 	}
 
 	if (result == WAIT_TIMEOUT) {
+		CancelIo(d->hPipe);
 		CloseHandle(d->readEvent);
 		return L"";
 	}
@@ -114,6 +116,8 @@ std::wstring Socket::read(int timeout){
 		}
 		buf[0] = 0;
 	}
+
+	CancelIo(d->hPipe);	//TODO maybe remove this row
 	CloseHandle(d->readEvent);
 	return buf;
 }
@@ -132,6 +136,7 @@ void Socket::write(const std::wstring &msg){
 
 	result = WaitForSingleObject(writeEvent, 500);
 	if (result == WAIT_TIMEOUT) {
+		CancelIo(d->hPipe);
 		CloseHandle(writeEvent);
 		d->connected = false;
 		return;
@@ -139,6 +144,7 @@ void Socket::write(const std::wstring &msg){
 	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &bytesWritten, false);
 	CloseHandle(writeEvent);
 	if (!fSuccess) {
+		CancelIo(d->hPipe);
 		d->connected = false;
 		return;	
 	}
