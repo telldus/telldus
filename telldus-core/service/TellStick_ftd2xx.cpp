@@ -11,6 +11,7 @@
 //
 #include "TellStick.h"
 #include "Mutex.h"
+#include "Strings.h"
 #include "../client/telldus-core.h"
 #include <string.h>
 
@@ -124,7 +125,7 @@ void TellStick::processData( const std::string &data ) {
 			continue;
 		} else if (data[i] == 10) { // \n found
 			if (d->message.substr(0,2).compare("+V") == 0) {
-				//TODO save the firmware version
+				d->fwVersion = TelldusCore::charToInteger(d->message.substr(2).c_str());
 			} else if (d->message.substr(0,2).compare("+R") == 0) {
 				this->publishData(d->message.substr(2));
 			}
