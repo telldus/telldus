@@ -79,6 +79,10 @@ std::wstring Device::getParameter(const std::wstring &key){
 	return d->parameterList[key];
 }
 
+std::list<std::wstring> Device::getParametersForProtocol() const {
+	return Protocol::getParametersForProtocol(getProtocolName());
+}
+
 void Device::setParameter(const std::wstring &key, const std::wstring &value){
 	d->parameterList[key] = value;
 }

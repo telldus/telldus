@@ -5,6 +5,7 @@
 #include "Mutex.h"
 #include "Protocol.h"
 #include <string>
+#include <list>
 
 class Device : public TelldusCore::Mutex
 {
@@ -21,6 +22,7 @@ public:
 	std::wstring getName();
 	void setName(const std::wstring &name);
 	std::wstring getParameter(const std::wstring &key);
+	std::list<std::wstring> getParametersForProtocol() const;
 	void setParameter(const std::wstring &key, const std::wstring &value);
 	int getPreferredControllerId();
 	void setPreferredControllerId(int controllerId);
