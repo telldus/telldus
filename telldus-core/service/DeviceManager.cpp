@@ -386,7 +386,7 @@ void DeviceManager::handleControllerMessage(const ControllerEventData &eventData
 		if (! (it->second->getMethods() & msg.method())) {
 			continue;
 		}
-		//TODO: Check the parameters to see if it matches
+		std::list<std::wstring> parameters = it->second->getParametersForProtocol();
 
 		//First save the last sent command, this also triggers the callback to the client
 		//TODO
