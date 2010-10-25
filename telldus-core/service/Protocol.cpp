@@ -118,5 +118,47 @@ Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname){
 std::list<std::wstring> Protocol::getParametersForProtocol(const std::wstring &protocolName) {
 	std::list<std::wstring> parameters;
 
+	if(TelldusCore::comparei(protocolName, L"arctech")){
+		parameters.push_back(L"house");
+		parameters.push_back(L"unit");
+
+	} else if (TelldusCore::comparei(protocolName, L"brateck")) {
+		parameters.push_back(L"house");
+
+	} else if (TelldusCore::comparei(protocolName, L"everflourish")) {
+		parameters.push_back(L"house");
+		parameters.push_back(L"unit");
+
+	} else if (TelldusCore::comparei(protocolName, L"fuhaote")) {
+		parameters.push_back(L"code");
+
+	} else if (TelldusCore::comparei(protocolName, L"ikea")) {
+		parameters.push_back(L"system");
+		parameters.push_back(L"units");
+		parameters.push_back(L"fade");
+
+	} else if (TelldusCore::comparei(protocolName, L"risingsun")) {
+		parameters.push_back(L"house");
+		parameters.push_back(L"unit");
+
+	} else if (TelldusCore::comparei(protocolName, L"sartano")) {
+		parameters.push_back(L"code");
+
+	} else if (TelldusCore::comparei(protocolName, L"silvanchip")) {
+		parameters.push_back(L"house");
+
+	} else if (TelldusCore::comparei(protocolName, L"upm")) {
+		parameters.push_back(L"house");
+		parameters.push_back(L"unit");
+		
+	} else if (TelldusCore::comparei(protocolName, L"waveman")) {
+		parameters.push_back(L"house");
+		parameters.push_back(L"unit");
+	
+	} else if (TelldusCore::comparei(protocolName, L"x10")) {
+		parameters.push_back(L"house");
+		parameters.push_back(L"unit");
+	}
+
 	return parameters;
 }
