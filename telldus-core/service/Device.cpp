@@ -20,8 +20,6 @@ Device::Device(int id)
 	d->protocol = 0;
 	d->preferredControllerId = 0;
 	d->state = 0;
-	//när något uppdateras, spara också till registret
-	//obs, kunna hantera om alla värden inte är satta
 }
 
 Device::~Device(void) {
