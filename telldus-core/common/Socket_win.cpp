@@ -117,7 +117,7 @@ std::wstring Socket::read(int timeout){
 		buf[0] = 0;
 	}
 
-	CancelIo(d->hPipe);	//TODO maybe remove this row
+	CancelIo(d->hPipe);
 	CloseHandle(d->readEvent);
 	return buf;
 }
