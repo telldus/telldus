@@ -372,7 +372,7 @@ void DeviceManager::handleControllerMessage(const ControllerEventData &eventData
 	//Trigger raw-event
 	EventUpdateData *eventUpdateData = new EventUpdateData();
 	eventUpdateData->messageType = L"TDRawDeviceEvent";
-	eventUpdateData->controllerId = 0; //TODO add the real controller-id, when implemented
+	eventUpdateData->controllerId = eventData.controllerId;
 	eventUpdateData->eventValue = TelldusCore::charToWstring(eventData.msg.c_str());
 	d->deviceUpdateEvent->signal(eventUpdateData);
 
@@ -403,7 +403,7 @@ void DeviceManager::handleControllerMessage(const ControllerEventData &eventData
 
 		if (this->triggerDeviceStateChange(it->first, msg.method(), L"")) {
 			d->set.setDeviceState(it->first, msg.method(), L"");
-			setDeviceLastSentCommand(it->first, msg.method(), L"");	//TODO value, when implemented
+			setDeviceLastSentCommand(it->first, msg.method(), L"");
 		}
 		break;
 	}
@@ -411,7 +411,6 @@ void DeviceManager::handleControllerMessage(const ControllerEventData &eventData
 
 int DeviceManager::sendRawCommand(std::wstring command, int reserved){
 	
-	//TODO test this!
 	Controller *controller = d->controllerManager->getBestControllerById(-1);
 	if(controller){
 		return controller->send(TelldusCore::wideToString(command));

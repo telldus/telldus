@@ -3,11 +3,13 @@
 class Controller::PrivateData {
 public:
 	Event *event;
+	int id;
 };
 
-Controller::Controller(Event *event){
+Controller::Controller(int id, Event *event){
 	d = new PrivateData;
 	d->event = event;
+	d->id = id;
 }
 
 Controller::~Controller(){
@@ -17,5 +19,6 @@ Controller::~Controller(){
 void Controller::publishData(const std::string &msg) const {
 	ControllerEventData *data = new ControllerEventData;
 	data->msg = msg;
+	data->controllerId = d->id;
 	d->event->signal(data);
 }

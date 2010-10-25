@@ -95,12 +95,13 @@ void ControllerManager::loadControllers() {
 			continue;
 		}
 
-		TellStick *controller = new TellStick(d->event, *it);
+		int controllerId = d->lastControllerId-1;
+		TellStick *controller = new TellStick(controllerId, d->event, *it);
 		if (!controller->isOpen()) {
 			delete controller;
 			continue;
 		}
-		d->lastControllerId--;
+		d->lastControllerId = controllerId;
 		d->controllers[d->lastControllerId] = controller;
 	}
 	printf("List containing %i controllers\n", (int)d->controllers.size());

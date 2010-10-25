@@ -7,6 +7,7 @@
 class ControllerEventData : public EventDataBase {
 public:
 	std::string msg;
+	int controllerId;
 };
 
 class Controller {
@@ -17,7 +18,7 @@ public:
 	virtual int send( const std::string &message ) = 0;
 
 protected:
-	Controller(Event *event);
+	Controller(int id, Event *event);
 	void publishData(const std::string &data) const;
 
 private:

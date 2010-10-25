@@ -36,8 +36,8 @@ public:
 #endif
 };
 
-TellStick::TellStick(Event *event, const TellStickDescriptor &td ) 
-	:Controller(event)
+TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &td ) 
+	:Controller(controllerId, event)
 {
 	d = new PrivateData;
 #ifdef _WINDOWS
