@@ -89,7 +89,7 @@ void TelldusMain::start(void) {
 			std::auto_ptr<EventData> eventData(dataEvent->takeSignal());
 			ControllerEventData *data = reinterpret_cast<ControllerEventData*>(eventData.get());
 			if (data) {
-				//TODO: Handle the message
+				deviceManager.handleControllerMessage(*data);
 			}
 		}
 
