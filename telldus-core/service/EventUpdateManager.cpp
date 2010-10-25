@@ -6,6 +6,7 @@
 #include "Socket.h"
 
 #include <list>
+#include <memory>
 
 typedef std::list<TelldusCore::Socket *> SocketList;
 

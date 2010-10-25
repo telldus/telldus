@@ -6,7 +6,6 @@
 //
 
 #ifdef _WINDOWS
-#include "Strings.h"
 #include <windows.h>
 #include <ole2.h>
 #define strcasecmp _stricmp
@@ -14,6 +13,7 @@
 #else
 #include <unistd.h>
 #endif
+#include "Strings.h"
 #include <fstream>
 #include <stdlib.h>
 #include <string.h>

@@ -7,6 +7,7 @@
 #include "common.h"
 
 #include <map>
+#include <memory>
 
 typedef std::map<int, Device *> DeviceMap;
 
