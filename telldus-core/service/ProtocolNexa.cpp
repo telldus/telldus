@@ -56,10 +56,10 @@ std::string ProtocolNexa::getStringBell() {
 }
 
 std::string ProtocolNexa::getStringSelflearning(int method, unsigned char level) {
-	const char START[] = {'T',127,255,24,1,0};
+	const unsigned char START[] = {'T',127,255,24,1,0};
 //	const char START[] = {'T',130,255,26,24,0};
 
-	std::string strMessage(START);
+	std::string strMessage(reinterpret_cast<const char*>(START));
 	strMessage.append(1,(method == TELLSTICK_DIM ? 147 : 132)); //Number of pulses
 	int intHouse = getIntParameter(L"house", 1, 67108863);
 	int intCode = getIntParameter(L"unit", 1, 16)-1;
