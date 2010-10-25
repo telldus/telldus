@@ -124,7 +124,6 @@ std::wstring Device::getStateValue(){
 */
 
 int Device::doAction(int action, unsigned char data, Controller *controller) {
-	//TODO where to check for supported methods?
 	Protocol *p = this->retrieveProtocol();
 	if(p){
 		std::string code = p->getStringForMethod(action, data, controller);

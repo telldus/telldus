@@ -22,8 +22,6 @@ bool TelldusCore::comparei(std::wstring stringA, std::wstring stringB) {
 
 std::string TelldusCore::wideToString(const std::wstring &input) {
 	
-	//return std::string(input.begin(), input.end());	//TODO, change this conversion method
-	
 	std::string strReturn;
 	
 	size_t len = input.length();

@@ -372,7 +372,7 @@ void DeviceManager::handleControllerMessage(const ControllerEventData &eventData
 	//Trigger raw-event
 	EventUpdateData *eventUpdateData = new EventUpdateData();
 	eventUpdateData->messageType = L"TDRawDeviceEvent";
-	eventUpdateData->controllerId = 0; //TODO add the real controller-id
+	eventUpdateData->controllerId = 0; //TODO add the real controller-id, when implemented
 	eventUpdateData->eventValue = TelldusCore::charToWstring(eventData.msg.c_str());
 	d->deviceUpdateEvent->signal(eventUpdateData);
 
@@ -414,7 +414,7 @@ int DeviceManager::sendRawCommand(std::wstring command, int reserved){
 	//TODO test this!
 	Controller *controller = d->controllerManager->getBestControllerById(-1);
 	if(controller){
-		return controller->send(TelldusCore::wideToString(command));	// std::string(command.begin(), command.end()));
+		return controller->send(TelldusCore::wideToString(command));
 	}
 	else{
 		return TELLSTICK_ERROR_NOT_FOUND;
