@@ -8,6 +8,7 @@ public:
 	ControllerMessage(const std::string &rawMessage);
 	virtual ~ControllerMessage();
 
+	std::string getParameter(const std::string &key);
 	int method() const;
 	std::wstring protocol() const;
 

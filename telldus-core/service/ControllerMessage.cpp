@@ -46,3 +46,11 @@ int ControllerMessage::method() const {
 std::wstring ControllerMessage::protocol() const {
 	return TelldusCore::charToWstring(d->protocol.c_str());
 }
+
+std::string ControllerMessage::getParameter(const std::string &key){
+	std::map<std::string, std::string>::iterator it = d->parameters.find(key);
+	if (it == d->parameters.end()) {
+		return "";
+	}
+	return d->parameters[key];
+}

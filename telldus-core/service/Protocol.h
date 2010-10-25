@@ -17,7 +17,7 @@ public:
 	virtual ~Protocol(void);
 
 	static Protocol *getProtocolInstance(const std::wstring &protocolname);
-	static std::list<std::wstring> getParametersForProtocol(const std::wstring &protocolName);
+	static std::list<std::string> getParametersForProtocol(const std::wstring &protocolName);
 
 	virtual int methods() const = 0;
 	std::wstring model() const;

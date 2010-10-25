@@ -22,7 +22,7 @@ public:
 	std::wstring getName();
 	void setName(const std::wstring &name);
 	std::wstring getParameter(const std::wstring &key);
-	std::list<std::wstring> getParametersForProtocol() const;
+	std::list<std::string> getParametersForProtocol() const;
 	void setParameter(const std::wstring &key, const std::wstring &value);
 	int getPreferredControllerId();
 	void setPreferredControllerId(int controllerId);

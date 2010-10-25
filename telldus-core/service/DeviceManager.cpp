@@ -386,12 +386,27 @@ void DeviceManager::handleControllerMessage(const ControllerEventData &eventData
 		if (! (it->second->getMethods() & msg.method())) {
 			continue;
 		}
-		std::list<std::wstring> parameters = it->second->getParametersForProtocol();
 
-		//First save the last sent command, this also triggers the callback to the client
-		//TODO
+		std::list<std::string> parameters = it->second->getParametersForProtocol();
+		bool thisDevice = true;
+		for (std::list<std::string>::iterator paramIt = parameters.begin(); paramIt != parameters.end(); ++paramIt){
+			//TODO more efficient conversion/compare? wstring or not?
+			if(!TelldusCore::comparei(it->second->getParameter(TelldusCore::charToWstring((*paramIt).c_str())), TelldusCore::charToWstring(msg.getParameter(*paramIt).c_str()))){
+				thisDevice = false;
+				break;
+			}
+		}
+
+		if(!thisDevice){
+			continue;
+		}
+
+		if (this->triggerDeviceStateChange(it->first, msg.method(), L"")) {
+			d->set.setDeviceState(it->first, msg.method(), L"");
+			setDeviceLastSentCommand(it->first, msg.method(), L"");	//TODO value, when implemented
+		}
+		break;
 	}
-
 }
 
 int DeviceManager::sendRawCommand(std::wstring command, int reserved){

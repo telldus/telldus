@@ -76,10 +76,14 @@ void Device::setName(const std::wstring &name){
 }
 
 std::wstring Device::getParameter(const std::wstring &key){
+	ParameterMap::iterator it = d->parameterList.find(key);
+	if (it == d->parameterList.end()) {
+		return L"";
+	}
 	return d->parameterList[key];
 }
 
-std::list<std::wstring> Device::getParametersForProtocol() const {
+std::list<std::string> Device::getParametersForProtocol() const {
 	return Protocol::getParametersForProtocol(getProtocolName());
 }
 
