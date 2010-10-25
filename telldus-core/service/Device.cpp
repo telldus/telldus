@@ -64,6 +64,10 @@ std::wstring Device::getModel(){
 }
 
 void Device::setModel(const std::wstring &model){
+	if(d->protocol){
+		delete(d->protocol);
+		d->protocol = 0;
+	}
 	d->model = model;
 }
 
@@ -104,6 +108,10 @@ std::wstring Device::getProtocolName() const {
 }
 
 void Device::setProtocolName(const std::wstring &protocolName){
+	if(d->protocol){
+		delete(d->protocol);
+		d->protocol = 0;
+	}
 	d->protocolName = protocolName;
 }
 
@@ -116,7 +124,7 @@ std::wstring Device::getStateValue(){
 */
 
 int Device::doAction(int action, unsigned char data, Controller *controller) {
-	//TODO, where to check for supported methods?
+	//TODO where to check for supported methods?
 	Protocol *p = this->retrieveProtocol();
 	if(p){
 		std::string code = p->getStringForMethod(action, data, controller);
