@@ -76,7 +76,7 @@ int Protocol::getIntParameter(const std::wstring &name, int min, int max) const 
 	return intValue;
 }
 
-Protocol *Protocol::getProtocolInstance(std::wstring &protocolname){
+Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname){
 	
 	if(TelldusCore::comparei(protocolname, L"arctech")){
 		return new ProtocolNexa();
