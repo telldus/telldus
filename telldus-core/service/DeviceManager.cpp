@@ -91,14 +91,14 @@ int DeviceManager::setDeviceLastSentCommand(int deviceId, int command, std::wstr
 std::wstring DeviceManager::getDeviceStateValue(int deviceId){
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
-			return L"UNKNOWN";	//TODO, what?
+			return L"UNKNOWN";
 	}
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
 		TelldusCore::MutexLocker deviceLocker(it->second);
 		return it->second->getStateValue();
 	}
-	return L"UNKNOWN";	//TODO, what?
+	return L"UNKNOWN";
 }
 
 int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
@@ -122,14 +122,14 @@ std::wstring DeviceManager::getDeviceModel(int deviceId){
 	
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
-			return L"UNKNOWN";	//TODO, what?
+			return L"UNKNOWN";
 	}
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
 		TelldusCore::MutexLocker deviceLocker(it->second);
 		return it->second->getModel();
 	}
-	return L"UNKNOWN";	//TODO, what?
+	return L"UNKNOWN";
 }
 
 int DeviceManager::setDeviceModel(int deviceId, std::wstring model)
@@ -155,14 +155,14 @@ std::wstring DeviceManager::getDeviceName(int deviceId){
 	
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
-			return L"UNKNOWN";	//TODO, what?
+			return L"UNKNOWN";
 	}
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
 		TelldusCore::MutexLocker deviceLocker(it->second);
 		return it->second->getName();
 	}
-	return L"UNKNOWN";	//TODO, what?
+	return L"UNKNOWN";
 }
 
 int DeviceManager::setDeviceName(int deviceId, std::wstring name){
@@ -224,14 +224,14 @@ std::wstring DeviceManager::getDeviceProtocol(int deviceId){
 	
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
-			return L"UNKNOWN";	//TODO, what?
+			return L"UNKNOWN";
 	}
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
 		TelldusCore::MutexLocker deviceLocker(it->second);
 		return it->second->getProtocolName();
 	}
-	return L"UNKNOWN";	//TODO, what?
+	return L"UNKNOWN";
 }
 
 int DeviceManager::setDeviceProtocol(int deviceId, std::wstring protocol)
