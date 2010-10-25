@@ -115,3 +115,8 @@ Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname){
 	return 0;
 }
 
+std::list<std::wstring> Protocol::getParametersForProtocol(const std::wstring &protocolName) {
+	std::list<std::wstring> parameters;
+
+	return parameters;
+}
