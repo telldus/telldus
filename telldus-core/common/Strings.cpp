@@ -10,6 +10,14 @@ std::wstring TelldusCore::charToWstring(const char *value) {
 	return st.str();
 }
 
+int TelldusCore::charToInteger(const char *input){
+	std::stringstream inputstream;
+	inputstream << input;
+	int retval;
+	inputstream >> retval;
+	return retval;
+}
+
 /**
 * This method doesn't support all locales
 */
