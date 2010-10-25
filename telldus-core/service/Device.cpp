@@ -91,7 +91,7 @@ void Device::setPreferredControllerId(int controllerId){
 	d->preferredControllerId = controllerId;
 }
 
-std::wstring Device::getProtocolName(){
+std::wstring Device::getProtocolName() const {
 	return d->protocolName;
 }
 

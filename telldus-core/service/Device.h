@@ -24,7 +24,7 @@ public:
 	void setParameter(const std::wstring &key, const std::wstring &value);
 	int getPreferredControllerId();
 	void setPreferredControllerId(int controllerId);
-	std::wstring getProtocolName();
+	std::wstring getProtocolName() const;
 	void setProtocolName(const std::wstring &name);
 	void setStateValue(int stateValue);
 	void setLastSentCommand(int command, std::wstring value);
