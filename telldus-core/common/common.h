@@ -6,6 +6,7 @@
 //
 
 #ifdef _WINDOWS
+#include "Strings.h"
 #include <windows.h>
 #include <ole2.h>
 #define strcasecmp _stricmp
@@ -55,5 +56,5 @@ inline char *wrapStdString( const std::string &string) {
 }
 
 inline char *wrapStdWstring( const std::wstring &wstring) {
-	return wrapStdString(std::string(wstring.begin(), wstring.end()));	//TODO
+	return wrapStdString(TelldusCore::wideToString(wstring));
 }
