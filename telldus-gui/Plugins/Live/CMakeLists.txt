@@ -34,6 +34,6 @@ SET( Plugin_LIBRARIES ${QCA_LIBRARY} )
 
 SET(TELLDUS_LIVE_PUBLIC_KEY	""	CACHE STRING "Telldus Live! public key")
 SET(TELLDUS_LIVE_PRIVATE_KEY	""	CACHE STRING "Telldus Live! private key")
-SET(TELLDUS_LIVE_URI	"http://api.telldus.com/server/assign"	CACHE STRING "Telldus Live! Connection URI")
+SET(TELLDUS_LIVE_URI	"https://api.telldus.com/server/assign"	CACHE STRING "Telldus Live! Connection URI")
 
 INCLUDE( ../TelldusCenterPlugin.cmake NO_POLICY_SCOPE )
