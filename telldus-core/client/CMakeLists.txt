@@ -48,7 +48,8 @@ ELSEIF (WIN32)
 	#IF (NOT CMAKE_CL_64)
 		LIST(APPEND telldus-core_SRCS
 			libtelldus-core.def
-		)
+			${CMAKE_CURRENT_SOURCE_DIR}/telldus-core.rc.in
+			${CMAKE_CURRENT_BINARY_DIR}/telldus-core.rc
 	#ENDIF(NOT CMAKE_CL_64)
 	ADD_DEFINITIONS(
 		-D_WINDOWS
