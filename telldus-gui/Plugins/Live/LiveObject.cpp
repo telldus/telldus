@@ -37,7 +37,7 @@ LiveObject::LiveObject( QScriptEngine *engine, QObject * parent )
 	d = new PrivateData;
 	d->hashMethod = "sha1";
 	foreach(QString hash, QStringList() << "sha512" << "sha256") {
-		if (QCA::isSupported(hash.toLocal8Bit())) {
+		if (QCA::isSupported(hash.toUtf8())) {
 			d->hashMethod = hash;
 			break;
 		}
