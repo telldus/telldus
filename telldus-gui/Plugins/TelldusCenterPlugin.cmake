@@ -36,15 +36,17 @@ IF(Plugin_PATH)
 	)
 	IF (APPLE)
 		SET(Plugin_PATH "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Plugins/script/${path}")
-	ELSE (APPLE)
+	ELIF (WINDOWS)
 		SET(Plugin_PATH "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/Plugins/script/${path}")
+	ELSE (APPLE)
+		SET(Plugin_PATH "${CMAKE_BINARY_DIR}/TelldusCenter/Plugins/script/${path}")
 	ENDIF (APPLE)
-	
+
 	LIST(APPEND translation_sources
 		"${CMAKE_CURRENT_SOURCE_DIR}/__init__.js"
 	)
 	LIST(APPEND Plugin_FILES "${CMAKE_CURRENT_SOURCE_DIR}/__init__.js")
-	
+
 ENDIF(Plugin_PATH)
 
 IF (UPDATE_TRANSLATIONS)
@@ -66,15 +68,19 @@ IF(Plugin_SRCS)
 		${Plugin_QM}
 	)
 	TARGET_LINK_LIBRARIES( ${Plugin_NAME}	${Plugin_LIBRARIES} )
-	
+
 	IF (APPLE)
 		SET_TARGET_PROPERTIES(${Plugin_NAME} PROPERTIES
 			LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Plugins/script
 			PREFIX "../"
 		)
-	ELSE (APPLE)
+	ELSEIF (WINDOWS)
 		SET_TARGET_PROPERTIES(${Plugin_NAME} PROPERTIES
 			PREFIX "Plugins/script/"
+		)
+	ELSE (APPLE)
+		SET_TARGET_PROPERTIES(${Plugin_NAME} PROPERTIES
+			LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/TelldusCenter/Plugins/script
 		)
 	ENDIF (APPLE)
 ELSE(Plugin_SRCS)
