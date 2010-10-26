@@ -326,7 +326,7 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 		device = it->second;
 	} //devicelist unlocked
 	
-	Controller *controller = d->controllerManager->getBestControllerById(this->getPreferredControllerId(deviceId));
+	Controller *controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
 	if(controller){
 		int retval = device->doAction(action, data, controller);
 		if(retval == TELLSTICK_SUCCESS) {

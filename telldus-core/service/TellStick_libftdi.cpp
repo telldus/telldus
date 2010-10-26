@@ -81,10 +81,49 @@ bool TellStick::isSameAsDescriptor(const TellStickDescriptor &td) const {
 }
 
 void TellStick::run() {
-	//TODO
+	//todo
 }
 
-int TellStick::send( const std::string &message ) {
+int TellStick::send( const std::string &strMessage ) {
+	if (!d->open) {
+		return TELLSTICK_ERROR_NOT_FOUND;
+	}
+      
+	bool c = true;
+	unsigned char *tempMessage = new unsigned char[strMessage.size()];
+	memcpy(tempMessage, strMessage.c_str(), strMessage.size());
+
+	int ret;
+	ret = ftdi_write_data( &d->ftHandle, tempMessage, strMessage.length() ) ;
+	if(ret < 0) {
+		c = false;
+	} else if(ret != strMessage.length()) {
+		fprintf(stderr, "wierd send length? retval %i instead of %d\n",
+		ret, (int)strMessage.length());
+	}
+	
+	delete[] tempMessage;
+	
+	int retrycnt = 500;
+	unsigned char in;
+	while(c && --retrycnt) {
+		ret = ftdi_read_data( &d->ftHandle, &in, 1);
+		if (ret > 0) {
+			if (in == '\n') {
+				break;
+			}
+		} else if(ret == 0) { // No data available
+			usleep(100);
+		} else { //Error
+			c = false;
+		}
+	}
+	if (!retrycnt) {
+		c = false;
+	}
+	if (!c) {
+		return TELLSTICK_ERROR_COMMUNICATION;
+	}
 	return TELLSTICK_SUCCESS;
 }
 
