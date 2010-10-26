@@ -30,11 +30,11 @@ Device::Device(int id, int supportedMethods, QObject *parent)
 	if (id > 0) {
 		d->state = tdLastSentCommand(id, supportedMethods);
 		char *value = tdLastSentValue(id);
-		d->stateValue = QString::fromLocal8Bit(value);
+		d->stateValue = QString::fromUtf8(value);
 		tdReleaseString(value);
 
 		char *name = tdGetName(id);
-		d->name = QString::fromLocal8Bit( name );
+		d->name = QString::fromUtf8( name );
 		tdReleaseString( name );
 
 		d->methods = tdMethods(id, supportedMethods);
@@ -42,7 +42,7 @@ Device::Device(int id, int supportedMethods, QObject *parent)
 		d->model = tdGetModel(id);
 
 		char *protocol = tdGetProtocol(id);
-		d->protocol = QString::fromLocal8Bit( protocol );
+		d->protocol = QString::fromUtf8( protocol );
 		tdReleaseString( protocol );
 	}
 
@@ -86,7 +86,7 @@ void Device::setParameter( const QString &name, const QString &value ) {
 
 QString Device::parameter( const QString &name, const QString &defaultValue ) const {
 	if (!d->settings.contains(name)) {
-		char *p = tdGetDeviceParameter(d->id, name.toLocal8Bit(), defaultValue.toLocal8Bit());
+		char *p = tdGetDeviceParameter(d->id, name.toUtf8(), defaultValue.toUtf8());
 		d->settings[name] = p;
 		tdReleaseString(p);
 	}
@@ -125,23 +125,23 @@ void Device::save() {
 
 	if (d->nameChanged || deviceIsAdded) {
 		d->nameChanged = false;
-		tdSetName(d->id, d->name.toLocal8Bit());
+		tdSetName(d->id, d->name.toUtf8());
 	}
 
 	if (d->modelChanged || deviceIsAdded) {
-		tdSetModel(d->id, d->model.toLocal8Bit());
+		tdSetModel(d->id, d->model.toUtf8());
 		d->modelChanged = false;
 	}
 
 	if (d->protocolChanged || deviceIsAdded) {
-		tdSetProtocol(d->id, d->protocol.toLocal8Bit());
+		tdSetProtocol(d->id, d->protocol.toUtf8());
 		d->protocolChanged = false;
 	}
 
 	//Save all parameters
 	for( QHash<QString, QString>::const_iterator it = d->settings.begin(); it != d->settings.end(); ++it) {
-		QByteArray name(it.key().toLocal8Bit() );
-		QByteArray value(it.value().toLocal8Bit() );
+		QByteArray name(it.key().toUtf8() );
+		QByteArray value(it.value().toUtf8() );
 		tdSetDeviceParameter(d->id, name.constData(), value.constData());
 	}
 	d->settings.clear();
@@ -197,7 +197,7 @@ void Device::deviceChangedSlot(int deviceId, int eventId, int changeType) {
 				break;
 			}
 			char *name = tdGetName(d->id);
-			d->name = QString::fromLocal8Bit( name );
+			d->name = QString::fromUtf8( name );
 			tdReleaseString( name );
 			emit nameChanged( d->id, d->name );
 			break;
