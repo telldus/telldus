@@ -36,7 +36,7 @@ IF(Plugin_PATH)
 	)
 	IF (APPLE)
 		SET(Plugin_PATH "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Plugins/script/${path}")
-	ELIF (WINDOWS)
+	ELIF (WIN32)
 		SET(Plugin_PATH "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/Plugins/script/${path}")
 	ELSE (APPLE)
 		SET(Plugin_PATH "${CMAKE_BINARY_DIR}/TelldusCenter/Plugins/script/${path}")
@@ -74,7 +74,7 @@ IF(Plugin_SRCS)
 			LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Plugins/script
 			PREFIX "../"
 		)
-	ELSEIF (WINDOWS)
+	ELSEIF (WIN32)
 		SET_TARGET_PROPERTIES(${Plugin_NAME} PROPERTIES
 			PREFIX "Plugins/script/"
 		)
