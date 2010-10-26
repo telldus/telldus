@@ -404,7 +404,7 @@ void DeviceManager::handleControllerMessage(const ControllerEventData &eventData
 
 		if (this->triggerDeviceStateChange(it->first, msg.method(), L"")) {
 			d->set.setDeviceState(it->first, msg.method(), L"");
-			setDeviceLastSentCommand(it->first, msg.method(), L"");
+			it->second->setLastSentCommand(msg.method(), L""); 
 		}
 		break;
 	}

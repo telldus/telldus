@@ -16,6 +16,17 @@
 #include <stdio.h>
 
 #include <ftdi.h>
+#include "Thread.h"
+#include "Mutex.h"
+#include "Strings.h"
+
+#include <unistd.h>
+	
+typedef struct _EVENT_HANDLE {
+	pthread_cond_t eCondVar;
+	pthread_mutex_t eMutex;
+} EVENT_HANDLE;
+typedef int DWORD;
 
 class TellStick::PrivateData {
 public:
@@ -23,6 +34,9 @@ public:
 	int vid, pid, fwVersion;
 	std::string serial, message;
 	ftdi_context ftHandle;
+	EVENT_HANDLE eh;
+	bool running;
+	TelldusCore::Mutex mutex;
 };
 
 TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &td )
@@ -34,6 +48,7 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 	d->pid = td.pid;
 	d->fwVersion = 0;
 	d->serial = td.serial;
+	d->running = false;
 
 	ftdi_init(&d->ftHandle);
 
@@ -47,11 +62,21 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 	ftdi_disable_bitbang( &d->ftHandle );
 
 	if (d->open) {
-// 		setBaud(4800);
+		
+		if (td.pid == 0x0C31) {
+			this->setBaud(9600);
+		} else {
+ 			this->setBaud(4800);
+		}
+		this->start();
 	}
 }
 
 TellStick::~TellStick() {
+	if (d->running) {
+		stop();
+	}
+	
 	if (d->open) {
 		ftdi_usb_close(&d->ftHandle);
 		ftdi_deinit(&d->ftHandle);
@@ -80,8 +105,45 @@ bool TellStick::isSameAsDescriptor(const TellStickDescriptor &td) const {
 	return true;
 }
 
+void TellStick::processData( const std::string &data ) {
+	for (unsigned int i = 0; i < data.length(); ++i) {
+		if (data[i] == 13) { // Skip \r
+			continue;
+		} else if (data[i] == 10) { // \n found
+			if (d->message.substr(0,2).compare("+V") == 0) {
+				//parent->fwVersion = atoi(message.substr(2).c_str());
+				//printf("Firmware version: %s\n", message.substr(2).c_str());
+				d->fwVersion = TelldusCore::charToInteger(d->message.substr(2).c_str());  //TODO used?
+			} else if (d->message.substr(0,2).compare("+R") == 0) {
+				this->publishData(d->message.substr(2));
+			}
+			d->message.clear();
+		} else { // Append the character
+			d->message.append( 1, data[i] );
+		}
+	}
+}
+
 void TellStick::run() {
-	//todo
+	int dwBytesRead = 0;
+	unsigned char buf[100];     // = 0;
+	
+	pthread_mutex_init(&d->eh.eMutex, NULL);
+	pthread_cond_init(&d->eh.eCondVar, NULL);
+	
+	{
+		TelldusCore::MutexLocker locker(&d->mutex);
+		d->running = true;
+	}
+	
+	while(1) {
+		usleep(1000);
+		dwBytesRead = ftdi_read_data(&d->ftHandle, buf, 100);
+		if (dwBytesRead < 1) {
+			continue;
+		}
+		processData( reinterpret_cast<char *>(&buf) );
+	}
 }
 
 int TellStick::send( const std::string &strMessage ) {
@@ -125,6 +187,13 @@ int TellStick::send( const std::string &strMessage ) {
 		return TELLSTICK_ERROR_COMMUNICATION;
 	}
 	return TELLSTICK_SUCCESS;
+}
+
+void TellStick::setBaud(int baud) {
+	int ret = ftdi_set_baudrate(&d->ftHandle, baud);
+	if(ret != 0) {
+		fprintf(stderr, "set Baud failed, retval %i\n", ret);
+	}
 }
 
 std::list<TellStickDescriptor> TellStick::findAll() {
@@ -191,4 +260,17 @@ std::list<TellStickDescriptor> TellStick::findAllByVIDPID( int vid, int pid ) {
 	ftdi_deinit(&ftdic);
 
 	return retval;
+}
+
+void TellStick::stop() {
+	if (d->running) {
+		{
+			TelldusCore::MutexLocker locker(&d->mutex);
+				d->running = false;
+		}
+		//Unlock the wait-condition
+	
+		pthread_cond_broadcast(&d->eh.eCondVar);
+	}
+	this->wait();
 }

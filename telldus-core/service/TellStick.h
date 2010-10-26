@@ -39,6 +39,7 @@ protected:
 	void processData( const std::string &data );
 	void run();
 	void setBaud( int baud );
+	void stop();
 
 private:
 	static std::list<TellStickDescriptor> findAllByVIDPID( int vid, int pid );
