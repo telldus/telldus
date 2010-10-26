@@ -1,7 +1,7 @@
-#include "liveplugin.h"
-#include "livemessage.h"
-#include "livemessagetoken.h"
-#include "liveobject.h"
+#include "LivePlugin.h"
+#include "LiveMessage.h"
+#include "LiveMessageToken.h"
+#include "LiveObject.h"
 #include <QScriptEngine>
 #include <QDebug>
 
