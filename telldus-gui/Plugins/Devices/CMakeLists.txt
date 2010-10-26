@@ -15,14 +15,14 @@ SET( Plugin_PATH "com.telldus.gui" )
 
 IF (WINDOWS)
 	SET( Plugin_LIBRARIES
-		${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/TelldusGui.lib 
+		${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/TelldusGui.lib
 	)
 ELSE (WINDOWS)
 	FIND_PACKAGE(TelldusCore REQUIRED)
-	FIND_LIBRARY( TELLDUSGUI_LIBRARY telldus-gui )
 
 	SET( Plugin_LIBRARIES
 		${TELLDUSGUI_LIBRARY}
+		${CMAKE_BINARY_DIR}/TelldusGui/libtelldus-gui.so
 	)
 ENDIF (WINDOWS)
 
