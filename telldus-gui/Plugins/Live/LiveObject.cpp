@@ -302,6 +302,9 @@ LiveMessageToken LiveObject::generateVersionToken() {
 		default:
 			token.dictVal["os-version"] = LiveMessageToken("unknown");
 	 }
+#elif defined(Q_OS_LINUX)
+	token.dictVal["os"] = LiveMessageToken("linux");
+	token.dictVal["os-version"] = LiveMessageToken("unknown");
 #else
 	token.dictVal["os"] = LiveMessageToken("unknown");
 	token.dictVal["os-version"] = LiveMessageToken("");
