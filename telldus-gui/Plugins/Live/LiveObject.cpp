@@ -1,5 +1,5 @@
-#include "liveobject.h"
-#include "livemessagetoken.h"
+#include "LiveObject.h"
+#include "LiveMessageToken.h"
 #include "config.h"
 #include <QtNetwork>
 #include <QtCore>
@@ -154,7 +154,7 @@ void LiveObject::sendMessage(const LiveMessage &message) {
 	QByteArray body = message.toByteArray();
 	LiveMessage msg(signatureForMessage(body));
 	msg.append(body);
-	
+
 	d->socket->write(msg.toByteArray());
 	d->socket->flush();
 }
@@ -259,7 +259,7 @@ QByteArray LiveObject::signatureForMessage( const QByteArray &message ) {
 		signature.update(TELLDUS_LIVE_PRIVATE_KEY);
 		return signature.final().toByteArray().toHex();
 	}
-	
+
 	//Fallback to builtin function
 	QCryptographicHash signature( QCryptographicHash::Sha1 );
 	signature.addData(message);

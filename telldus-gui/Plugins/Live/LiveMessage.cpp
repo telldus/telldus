@@ -1,5 +1,5 @@
-#include "livemessage.h"
-#include "livemessagetoken.h"
+#include "LiveMessage.h"
+#include "LiveMessageToken.h"
 
 #include <QVariant>
 #include <QDebug>

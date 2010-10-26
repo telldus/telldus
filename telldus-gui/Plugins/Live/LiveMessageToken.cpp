@@ -1,9 +1,9 @@
-#include "livemessagetoken.h"
+#include "LiveMessageToken.h"
 
 #include <QDebug>
 
 LiveMessageToken::LiveMessageToken() {
-	valueType = Invalid; 
+	valueType = Invalid;
 }
 
 LiveMessageToken::LiveMessageToken(const QString &value) {

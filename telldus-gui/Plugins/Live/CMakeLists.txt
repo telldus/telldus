@@ -4,22 +4,22 @@ SET( Plugin_NAME "TelldusLive" )
 SET( Plugin_PATH "com.telldus.live" )
 
 SET( Plugin_SRCS
-	livemessage.cpp
-	livemessagetoken.cpp
-	liveobject.cpp
-	liveplugin.cpp
+	LiveMessage.cpp
+	LiveMessageToken.cpp
+	LiveObject.cpp
+	LivePlugin.cpp
 )
 
 SET( Plugin_HDRS
-	liveplugin.h
+	LivePlugin.h
 	${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
 	${CMAKE_CURRENT_BINARY_DIR}/parsed/config.h
 )
 
 SET( Plugin_MOC_HDRS
-	livemessagetoken.h
-	livemessage.h
-	liveobject.h
+	LiveMessageToken.h
+	LiveMessage.h
+	LiveObject.h
 )
 
 CONFIGURE_FILE(
