@@ -101,9 +101,9 @@ void LiveObject::readyRead() {
 	qDebug() << ba;
 	QScopedPointer<LiveMessage> envelope(LiveMessage::fromByteArray(ba));
 	QString signature = envelope->name();
-	QScopedPointer<LiveMessage> msg(LiveMessage::fromByteArray(envelope->arg(0).stringVal.toLocal8Bit()));
+	QScopedPointer<LiveMessage> msg(LiveMessage::fromByteArray(envelope->arg(0).stringVal.toUtf8()));
 
-	if (signatureForMessage(envelope->arg(0).stringVal.toLocal8Bit()) != signature) {
+	if (signatureForMessage(envelope->arg(0).stringVal.toUtf8()) != signature) {
 		qDebug() << "HASH mismatch!" << msg->name();
 		return;
 	}
@@ -253,7 +253,7 @@ void LiveObject::serverAssignReply( QNetworkReply *r ) {
 }
 
 QByteArray LiveObject::signatureForMessage( const QByteArray &message ) {
-	if (QCA::isSupported(d->hashMethod.toLocal8Bit())) {
+	if (QCA::isSupported(d->hashMethod.toUtf8())) {
 		QCA::Hash signature(d->hashMethod);
 		signature.update(message);
 		signature.update(TELLDUS_LIVE_PRIVATE_KEY);

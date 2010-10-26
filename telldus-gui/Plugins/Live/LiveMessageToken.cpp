@@ -13,7 +13,7 @@ LiveMessageToken::LiveMessageToken(const QString &value) {
 
 QByteArray LiveMessageToken::toByteArray() const {
 	if (valueType == Int) {
-		return QString("i%1s").arg(intVal, 0, 16).toLocal8Bit();
+		return QString("i%1s").arg(intVal, 0, 16).toUtf8();
 
 	} else if (valueType == List) {
 		QByteArray retVal("l");
