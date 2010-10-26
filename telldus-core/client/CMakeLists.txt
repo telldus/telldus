@@ -45,16 +45,22 @@ ELSEIF (WIN32)
 	LIST(APPEND telldus-core_LIBRARIES
 		${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/TelldusCommon.lib
 	)
-	#IF (NOT CMAKE_CL_64)
-		LIST(APPEND telldus-core_SRCS
+	CONFIGURE_FILE(
+		${CMAKE_CURRENT_SOURCE_DIR}/telldus-core.rc.in
+		${CMAKE_CURRENT_BINARY_DIR}/telldus-core.rc
+	)
+	LIST(APPEND telldus-core_SRCS
 			libtelldus-core.def
 			${CMAKE_CURRENT_SOURCE_DIR}/telldus-core.rc.in
 			${CMAKE_CURRENT_BINARY_DIR}/telldus-core.rc
-	#ENDIF(NOT CMAKE_CL_64)
+	)
 	ADD_DEFINITIONS(
 		-D_WINDOWS
 		-DTELLDUSCORE_EXPORTS
 	)
+	IF (CMAKE_CL_64)
+		ADD_DEFINITIONS(-D_CL64)
+	ENDIF(CMAKE_CL_64)
 ELSE (APPLE)
 	#### Linux ####
 	SET( telldus-core_TARGET	telldus-core )

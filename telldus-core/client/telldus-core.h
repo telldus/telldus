@@ -11,7 +11,11 @@
 
 #ifdef _WINDOWS
 	#if defined(TELLDUSCORE_EXPORTS)
-		#define TELLSTICK_API __declspec(dllexport)
+		#if defined(_CL64)
+			#define TELLSTICK_API
+		#else
+			#define TELLSTICK_API __declspec(dllexport)
+		#endif
 	#else
 		#define TELLSTICK_API __declspec(dllimport)
 	#endif
