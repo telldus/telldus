@@ -41,7 +41,7 @@ int TelldusCoreObject::getDeviceId(int index) const {
 
 QString TelldusCoreObject::getName(int deviceId) const {
 	char *name = tdGetName(deviceId);
-	QString strName = QString::fromLocal8Bit(name);
+	QString strName = QString::fromUtf8(name);
 	tdReleaseString(name);
 	return strName;
 }
@@ -52,7 +52,7 @@ int TelldusCoreObject::lastSentCommand( int deviceId, int methodsSupported ) {
 
 QString TelldusCoreObject::lastSentValue( int deviceId ) {
 	char *value = tdLastSentValue(deviceId);
-	QString strValue = QString::fromLocal8Bit(value);
+	QString strValue = QString::fromUtf8(value);
 	tdReleaseString(value);
 	return strValue;
 }
@@ -79,7 +79,7 @@ int TelldusCoreObject::turnOff(int deviceId) {
 
 void TelldusCoreObject::triggerError(int deviceId, int errorId) {
 	char *errorString = tdGetErrorString( errorId );
-	QString message = QString::fromLocal8Bit( errorString );
+	QString message = QString::fromUtf8( errorString );
 	tdReleaseString(errorString);
 	emit errorOccurred(deviceId, errorId, message);
 }
@@ -95,7 +95,7 @@ void WINAPI TelldusCoreObject::deviceChangeEventCallback(int deviceId, int event
 void WINAPI TelldusCoreObject::deviceEventCallback(int deviceId, int method, const char *data, int callbackId, void *context) {
 	TelldusCoreObject *parent = static_cast<TelldusCoreObject *>(context);
 	if (parent) {
-		emit parent->deviceEvent(deviceId, method, QString::fromLocal8Bit(data));
+		emit parent->deviceEvent(deviceId, method, QString::fromUtf8(data));
 	}
 }
 
