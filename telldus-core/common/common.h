@@ -28,21 +28,25 @@ inline void msleep( const int msec) {
 }
 
 inline void debuglog(const int intMessage, const std::string strMessage){
-		
-    static bool firstRun = true;
-    std::ofstream file;
-    std::string filename("C:/log_locks.txt");
-    if (firstRun) {
-            file.open(filename.c_str(), std::ios::out);
-            firstRun = false;
-    } else {
-            file.open(filename.c_str(), std::ios::out | std::ios::app);
-    }
-   
-    file << intMessage << " - " << strMessage << "\n";
-    file.flush();
-    file.close();
+#ifdef _WINDOWS
+	static bool firstRun = true;
+	std::ofstream file;
+	std::string filename("C:/log_locks.txt");
+	if (firstRun) {
+		file.open(filename.c_str(), std::ios::out);
+		firstRun = false;
+	} else {
+		file.open(filename.c_str(), std::ios::out | std::ios::app);
+	}
 
+	file << "[" << GetCurrentThreadId() << "] " << intMessage << " - " << strMessage << "\n";
+	file.flush();
+	file.close();
+
+#else
+	pthread_t thread = pthread_self();
+	printf("[%i] %i - %s\n", (int)thread, intMessage, strMessage.c_str());
+#endif
 }
 
 inline char *wrapStdString( const std::string &string) {
