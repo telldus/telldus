@@ -17,6 +17,13 @@ std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Cont
 
 	std::wstring strHouse = getStringParameter(L"house", L"A");
 	int intHouse = strHouse[0] - L'A';
+	if (intHouse < 0) {
+		intHouse = 0;
+	} else if (intHouse > 15) {
+		intHouse = 15;
+	}
+	//Translate it
+	intHouse = HOUSES[intHouse];
 	int intCode = getIntParameter(L"unit", 1, 16)-1;
 
 	for( int i = 0; i < 4; ++i ) {
@@ -31,7 +38,7 @@ std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Cont
 	}
 	strReturn.append( B0 );
 	strComplement.append( B1 );
-	
+
 	if (intCode >= 8) {
 		strReturn.append(B1);
 		strComplement.append(B0);
@@ -39,15 +46,15 @@ std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Cont
 		strReturn.append(B0);
 		strComplement.append(B1);
 	}
-	
+
 	strReturn.append( B0 );
 	strComplement.append( B1 );
 	strReturn.append( B0 );
 	strComplement.append( B1 );
-	
+
 	strReturn.append( strComplement );
 	strComplement = "";
-	
+
 	strReturn.append( B0 );
 	strComplement.append( B1 );
 
@@ -58,7 +65,7 @@ std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Cont
 		strReturn.append(B0);
 		strComplement.append(B1);
 	}
-	
+
 	if (method == TELLSTICK_TURNON) {
 		strReturn.append(B0);
 		strComplement.append(B1);
@@ -68,7 +75,7 @@ std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Cont
 	} else {
 		return "";
 	}
-	
+
 	if (intCode & 1) { //Bit 0 of intCode
 		strReturn.append(B1);
 		strComplement.append(B0);
@@ -76,7 +83,7 @@ std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Cont
 		strReturn.append(B0);
 		strComplement.append(B1);
 	}
-	
+
 	if (intCode >> 1 & 1) { //Bit 1 of intCode
 		strReturn.append(B1);
 		strComplement.append(B0);
