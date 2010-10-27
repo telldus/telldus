@@ -45,17 +45,16 @@ void TelldusMain::deviceInsertedOrRemoved(int vid, int pid, bool inserted) {
 
 void TelldusMain::start(void) {
 	Event *clientEvent = d->eventHandler.addEvent();
-	Event *updateEvent = d->eventHandler.addEvent();
 	std::auto_ptr<Event> dataEvent(d->eventHandler.addEvent());
-	
+
 	ControllerManager controllerManager(dataEvent.get());
 	EventUpdateManager eventUpdateManager;
 	Event *deviceUpdateEvent = eventUpdateManager.retrieveUpdateEvent();
 	eventUpdateManager.start();
 	DeviceManager deviceManager(&controllerManager, deviceUpdateEvent);
-	
+
 	ConnectionListener clientListener(L"TelldusClient", clientEvent);
-	
+
 	std::list<ClientCommunicationHandler *> clientCommunicationHandlerList;
 
 	std::auto_ptr<Event> handlerEvent(d->eventHandler.addEvent());
@@ -99,7 +98,7 @@ void TelldusMain::start(void) {
 				if ((*it)->isDone()){
 					delete *it;
 					it = clientCommunicationHandlerList.erase(it);
-					
+
 				} else {
 					++it;
 				}
