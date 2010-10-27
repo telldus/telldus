@@ -32,6 +32,9 @@ Socket::Socket(SOCKET_T socket)
 }
 
 Socket::~Socket(void) {
+	if(d->socket){
+		close(d->socket);
+	}
 	delete d;
 }
 
