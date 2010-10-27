@@ -7,6 +7,7 @@
 
 #include <stdio.h>
 #include <unistd.h>
+#include <errno.h>
 
 class ConnectionListener::PrivateData {
 public:
@@ -75,6 +76,9 @@ void ConnectionListener::run(){
 			continue;
 		}
 		SOCKET_T clientSocket = accept(serverSocket, NULL, NULL);
+		if(clientSocket == -1){
+				printf("error %i\n", errno); 
+		}
 
 		ConnectionListenerEventData *data = new ConnectionListenerEventData();
 		data->socket = new TelldusCore::Socket(clientSocket);
