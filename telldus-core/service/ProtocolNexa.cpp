@@ -23,6 +23,10 @@ std::string ProtocolNexa::getStringForMethod(int method, unsigned char data, Con
 	} else if (TelldusCore::comparei(model(), L"bell")) {
 		return getStringBell();
 	}
+	if ((method == TELLSTICK_TURNON) && TelldusCore::comparei(model(), L"selflearning-dimmer")) {
+		//Workaround for not letting a dimmer do into "dimming mode"
+		return getStringSelflearning(TELLSTICK_DIM, 255);
+	}
 	return getStringSelflearning(method, data);
 }
 
@@ -63,13 +67,13 @@ std::string ProtocolNexa::getStringSelflearning(int method, unsigned char level)
 	strMessage.append(1,(method == TELLSTICK_DIM ? 147 : 132)); //Number of pulses
 	int intHouse = getIntParameter(L"house", 1, 67108863);
 	int intCode = getIntParameter(L"unit", 1, 16)-1;
-		
+
 	std::string m;
 	for (int i = 25; i >= 0; --i) {
 		m.append( intHouse & 1 << i ? "10" : "01" );
 	}
 	m.append("01"); //Group
-	
+
 	//On/off
 	if (method == TELLSTICK_DIM) {
 		m.append("00");
@@ -80,22 +84,22 @@ std::string ProtocolNexa::getStringSelflearning(int method, unsigned char level)
 	} else {
 		return "";
 	}
-	
+
 	for (int i = 3; i >= 0; --i) {
 		m.append( intCode & 1 << i ? "10" : "01" );
 	}
-	
+
 	if (method == TELLSTICK_DIM) {
 		unsigned char newLevel = level/16;
 		for (int i = 3; i >= 0; --i) {
 			m.append(newLevel & 1 << i ? "10" : "01");
 		}
 	}
-	
+
 	//The number of data is odd.
 	//Add this to make it even, otherwise the following loop will not work
-	m.append("0"); 
-	
+	m.append("0");
+
 	unsigned char code = 9; //b1001, startcode
 	for (unsigned int i = 0; i < m.length(); ++i) {
 		code <<= 4;
@@ -111,7 +115,7 @@ std::string ProtocolNexa::getStringSelflearning(int method, unsigned char level)
 		}
 	}
 	strMessage.append("+");
-	
+
 // 	for( int i = 0; i < strMessage.length(); ++i ) {
 // 		printf("%i,", (unsigned char)strMessage[i]);
 // 	}
