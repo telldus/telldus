@@ -15,10 +15,9 @@
 
 using namespace TelldusCore;
 
-
 #ifdef _WINDOWS
 	#include <windows.h>
-	typedef CRITICAL_SECTION MUTEX_T;
+	typedef HANDLE MUTEX_T;
 #else
 	#include <pthread.h>
 	typedef pthread_mutex_t MUTEX_T;
@@ -32,7 +31,7 @@ public:
 Mutex::Mutex() {
 	d = new PrivateData;
 #ifdef _WINDOWS
-	InitializeCriticalSection(&d->mutex);
+	d->mutex = CreateMutex(NULL, FALSE, NULL);
 #else
 	pthread_mutex_init(&d->mutex, NULL);
 #endif
@@ -40,7 +39,7 @@ Mutex::Mutex() {
 
 Mutex::~Mutex() {
 #ifdef _WINDOWS
-	DeleteCriticalSection(&d->mutex);
+	CloseHandle(d->mutex);
 #else
 	pthread_mutex_destroy(&d->mutex);
 #endif
@@ -49,13 +48,7 @@ Mutex::~Mutex() {
 			
 void Mutex::lock() {
 #ifdef _WINDOWS
-	//What we would want is to use EnterCriticalSection instead of our loop.
-	//For some reason Windows doesn't always let our thread enter the critical section
-	//even when another thread leaves the critical section
-	//This loop seems to fix the problem.
-	while(!TryEnterCriticalSection(&d->mutex)) {
-		msleep(5);
-	}
+	WaitForSingleObject(d->mutex, INFINITE);
 #else
 	pthread_mutex_lock(&d->mutex);
 #endif
@@ -63,7 +56,7 @@ void Mutex::lock() {
 
 void Mutex::unlock() {
 #ifdef _WINDOWS
-	LeaveCriticalSection(&d->mutex);
+	ReleaseMutex(d->mutex);
 #else
 	pthread_mutex_unlock(&d->mutex);
 #endif
