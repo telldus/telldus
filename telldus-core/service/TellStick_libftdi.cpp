@@ -21,7 +21,7 @@
 #include "Strings.h"
 
 #include <unistd.h>
-	
+
 typedef struct _EVENT_HANDLE {
 	pthread_cond_t eCondVar;
 	pthread_mutex_t eMutex;
@@ -62,11 +62,11 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 	ftdi_disable_bitbang( &d->ftHandle );
 
 	if (d->open) {
-		
+
 		if (td.pid == 0x0C31) {
 			this->setBaud(9600);
 		} else {
- 			this->setBaud(4800);
+			this->setBaud(4800);
 		}
 		this->start();
 	}
@@ -76,7 +76,7 @@ TellStick::~TellStick() {
 	if (d->running) {
 		stop();
 	}
-	
+
 	if (d->open) {
 		ftdi_usb_close(&d->ftHandle);
 		ftdi_deinit(&d->ftHandle);
@@ -127,16 +127,16 @@ void TellStick::processData( const std::string &data ) {
 void TellStick::run() {
 	int dwBytesRead = 0;
 	unsigned char buf[100];     // = 0;
-	
+
 	pthread_mutex_init(&d->eh.eMutex, NULL);
 	pthread_cond_init(&d->eh.eCondVar, NULL);
-	
+
 	{
 		TelldusCore::MutexLocker locker(&d->mutex);
 		d->running = true;
 	}
-	
-	while(1) {
+
+	while(d->running) { //TODO check libftdi doc how to do this best
 		usleep(1000);
 		dwBytesRead = ftdi_read_data(&d->ftHandle, buf, 100);
 		if (dwBytesRead < 1) {
@@ -150,7 +150,7 @@ int TellStick::send( const std::string &strMessage ) {
 	if (!d->open) {
 		return TELLSTICK_ERROR_NOT_FOUND;
 	}
-      
+
 	bool c = true;
 	unsigned char *tempMessage = new unsigned char[strMessage.size()];
 	memcpy(tempMessage, strMessage.c_str(), strMessage.size());
@@ -163,9 +163,9 @@ int TellStick::send( const std::string &strMessage ) {
 		fprintf(stderr, "wierd send length? retval %i instead of %d\n",
 		ret, (int)strMessage.length());
 	}
-	
+
 	delete[] tempMessage;
-	
+
 	int retrycnt = 500;
 	unsigned char in;
 	while(c && --retrycnt) {
@@ -269,7 +269,7 @@ void TellStick::stop() {
 				d->running = false;
 		}
 		//Unlock the wait-condition
-	
+
 		pthread_cond_broadcast(&d->eh.eCondVar);
 	}
 	this->wait();
