@@ -12,7 +12,7 @@ std::string ProtocolFuhaote::getStringForMethod(int method, unsigned char, Contr
 	const char OFF[] = {S,L,S,L,S,L,L,S,0};
 	const char ON[]  = {S,L,L,S,S,L,S,L,0};
 
-	std::string strReturn;
+	std::string strReturn = "S";
 	std::wstring strCode = this->getStringParameter(L"code", L"");
 	if (strCode == L"") {
 		return "";
