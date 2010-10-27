@@ -15,5 +15,6 @@ int main(int argc, char **argv) {
 	signal(SIGINT, shutdownHandler);
 
 	tm.start();
+	printf("telldusd stopped gracefully\n");
 	return 0;
 }
