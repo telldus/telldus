@@ -146,7 +146,6 @@ void TellStick::run() {
 		memset(buf, 0, sizeof(buf));
 		dwBytesRead = ftdi_read_data(&d->ftHandle, buf, sizeof(buf));
 		if (dwBytesRead < 1) {
-			//printf("No data, continue\n");
 			continue;
 		}
 		processData( reinterpret_cast<char *>(&buf) );
@@ -165,7 +164,7 @@ int TellStick::send( const std::string &strMessage ) {
 	//This lock does two things
 	// 1 Prevents two calls from different threads to this function
 	// 2 Prevents our running thread from receiving the data we are interested in here
-	TelldusCore::MutexLocker(&d->mutex);
+	TelldusCore::MutexLocker locker(&d->mutex);
 
 	int ret;
 	ret = ftdi_write_data( &d->ftHandle, tempMessage, strMessage.length() ) ;
