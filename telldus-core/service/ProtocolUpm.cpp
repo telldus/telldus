@@ -26,7 +26,7 @@ std::string ProtocolUpm::getStringForMethod(int method, unsigned char, Controlle
 		code >>= 1;
 	}
 	strReturn.insert(0, START); //Startcode, first
-	
+
 	code = 0;
 	if (method == TELLSTICK_TURNON) {
 		code += 2;
@@ -35,7 +35,7 @@ std::string ProtocolUpm::getStringForMethod(int method, unsigned char, Controlle
 	}
 	code <<= 2;
 	code += intUnit;
-	
+
 	int check1 = 0, check2 = 0;
 	for( size_t i = 0; i < 6; ++i ) {
 		if (code & 1) {
@@ -52,7 +52,7 @@ std::string ProtocolUpm::getStringForMethod(int method, unsigned char, Controlle
 		}
 		code >>= 1;
 	}
-	
+
 	if (check1 % 2 == 0) {
 		strReturn.append(B0);
 	} else {
@@ -63,6 +63,9 @@ std::string ProtocolUpm::getStringForMethod(int method, unsigned char, Controlle
 	} else {
 		strReturn.append(B1);
 	}
+
+	strReturn.insert(0, "S");
+	strReturn.append("+");
 	return strReturn;
 }
 
