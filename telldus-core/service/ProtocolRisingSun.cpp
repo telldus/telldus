@@ -83,8 +83,8 @@ std::string ProtocolRisingSun::getStringSelflearning(int method) {
 
 std::string ProtocolRisingSun::getStringCodeSwitch(int method) {
 	std::string strReturn = "S.e";
-	strReturn.append(getCodeSwitchTuple(this->getIntParameter(L"house", 1, 4)));
-	strReturn.append(getCodeSwitchTuple(this->getIntParameter(L"unit", 1, 4)));
+	strReturn.append(getCodeSwitchTuple(this->getIntParameter(L"house", 1, 4)-1));
+	strReturn.append(getCodeSwitchTuple(this->getIntParameter(L"unit", 1, 4)-1));
 	if (method == TELLSTICK_TURNON) {
 		strReturn.append("e..ee..ee..ee..e+");
 	} else if (method == TELLSTICK_TURNOFF) {
