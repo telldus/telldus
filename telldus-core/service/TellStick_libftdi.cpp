@@ -51,6 +51,7 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 	d->running = false;
 
 	ftdi_init(&d->ftHandle);
+	ftdi_set_interface(&d->ftHandle, INTERFACE_ANY);
 
 	int ret = ftdi_usb_open_desc(&d->ftHandle, td.vid, td.pid, NULL, td.serial.c_str());
 	if (ret < 0) {
@@ -126,7 +127,7 @@ void TellStick::processData( const std::string &data ) {
 
 void TellStick::run() {
 	int dwBytesRead = 0;
-	unsigned char buf[100];     // = 0;
+	unsigned char buf[1024];     // = 0;
 
 	pthread_mutex_init(&d->eh.eMutex, NULL);
 	pthread_cond_init(&d->eh.eCondVar, NULL);
@@ -142,8 +143,10 @@ void TellStick::run() {
 		if (!d->running) {
 			break;
 		}
-		dwBytesRead = ftdi_read_data(&d->ftHandle, buf, 100);
+		memset(buf, 0, sizeof(buf));
+		dwBytesRead = ftdi_read_data(&d->ftHandle, buf, sizeof(buf));
 		if (dwBytesRead < 1) {
+			//printf("No data, continue\n");
 			continue;
 		}
 		processData( reinterpret_cast<char *>(&buf) );
