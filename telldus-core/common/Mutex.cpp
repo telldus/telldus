@@ -1,7 +1,7 @@
 //
 // C++ Implementation: Thread
 //
-// Description: 
+// Description:
 //
 //
 // Author: Micke Prag <micke.prag@telldus.se>, (C) 2009
@@ -45,7 +45,7 @@ Mutex::~Mutex() {
 #endif
 	delete d;
 }
-			
+
 void Mutex::lock() {
 #ifdef _WINDOWS
 	WaitForSingleObject(d->mutex, INFINITE);
@@ -62,29 +62,21 @@ void Mutex::unlock() {
 #endif
 }
 
-		
+
 void LoggedMutex::lock() {
-#ifdef _WINDOWS
-	debuglog(GetCurrentThreadId(), "Locking");
-#endif
+	debuglog(0, "Locking");
 	Mutex::lock();
-#ifdef _WINDOWS
-	debuglog(GetCurrentThreadId(), "Locked");
-#endif
+	debuglog(0, "Locked");
 }
 
 void LoggedMutex::unlock() {
-#ifdef _WINDOWS
-	debuglog(GetCurrentThreadId(), "Unlocking");
-#endif
+	debuglog(0, "Unlocking");
 	Mutex::unlock();
-#ifdef _WINDOWS
-	debuglog(GetCurrentThreadId(), "Unlocked");
-#endif
+	debuglog(0, "Unlocked");
 }
 
 MutexLocker::MutexLocker(Mutex *m)
-	:mutex(m) 
+	:mutex(m)
 {
 	mutex->lock();
 }
