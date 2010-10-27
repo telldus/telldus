@@ -68,16 +68,15 @@ INCLUDE_DIRECTORIES(
 ######## Platforms-specific, non configurable  ########
 
 IF (APPLE) #### Mac OS X ####
+	SET(DEFAULT_FTDI_ENGINE "ftd2xx")
 	SET( telldus-service_TARGET	TelldusService )
 	FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
 	FIND_LIBRARY(IOKIT_LIBRARY IOKit)
-	ADD_DEFINITIONS( -DLIBFTD2XX )
-	
+
 	SET( telldus-service_LIBRARIES
 		${telldus-service_LIBRARIES}
 		${COREFOUNDATION_LIBRARY}
 		${IOKIT_LIBRARY}
-		${FTD2XX_LIBRARY}
 		TelldusCommon
 	)
 	LIST(APPEND telldus-service_SRCS
@@ -86,20 +85,18 @@ IF (APPLE) #### Mac OS X ####
 		Event_unix.cpp
 		EventHandler_unix.cpp
 		SettingsCoreFoundationPreferences.cpp
-		TellStick_ftd2xx.cpp
 	)
-	
+
 ELSEIF (WIN32) #### Windows ####
+	SET(DEFAULT_FTDI_ENGINE "ftd2xx")
 	SET( telldus-service_TARGET	TelldusService )
-	FIND_LIBRARY(FTD2XX_LIBRARY ftd2xx)
-	ADD_DEFINITIONS( -DUNICODE -DLIBFTD2XX )
+	ADD_DEFINITIONS( -DUNICODE )
 	ADD_DEFINITIONS( /Zc:wchar_t- ) # Treat wchar_t as Built-in Type' = No
 	SET(CMAKE_EXE_LINKER_FLAGS
 		"${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE"
 	)
 	LIST(APPEND telldus-service_LIBRARIES
 		${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/TelldusCommon.lib
-		${FTD2XX_LIBRARY}
 	)
 	LIST(APPEND telldus-service_SRCS
 		ConnectionListener_win.cpp
@@ -108,16 +105,15 @@ ELSEIF (WIN32) #### Windows ####
 		main_win.cpp
 		SettingsWinRegistry.cpp
 		TelldusWinService_win.cpp
-		TellStick_ftd2xx.cpp
 	)
 	LIST(APPEND telldus-service_HDRS
 		TelldusWinService_win.h
 	)
 
 ELSE (APPLE) #### Linux ####
+	SET(DEFAULT_FTDI_ENGINE "libftdi")
 	FIND_LIBRARY(CONFUSE_LIBRARY confuse)
-	FIND_LIBRARY(FTDI_LIBRARY ftdi)
-	ADD_DEFINITIONS( -D_CONFUSE -DLIBFTDI )
+	ADD_DEFINITIONS( -D_CONFUSE )
 
 	SET( telldus-service_TARGET	telldusd )
 	LIST(APPEND telldus-service_SRCS
@@ -126,14 +122,25 @@ ELSE (APPLE) #### Linux ####
 		EventHandler_unix.cpp
 		main_unix.cpp
 		SettingsConfuse.cpp
-		TellStick_libftdi.cpp
 	)
 	LIST(APPEND telldus-service_LIBRARIES
 		${CONFUSE_LIBRARY}
-		${FTDI_LIBRARY}
 		telldus-common
 	)
 ENDIF (APPLE)
+
+SET(FTDI_ENGINE ${DEFAULT_FTDI_ENGINE} CACHE STRING "Which FTDI engine to use. This could be either 'libftdi' or 'ftd2xx'")
+IF (FTDI_ENGINE STREQUAL "ftd2xx")
+	FIND_LIBRARY(FTD2XX_LIBRARY ftd2xx)
+	ADD_DEFINITIONS( -DLIBFTD2XX )
+	LIST(APPEND telldus-service_SRCS TellStick_ftd2xx.cpp )
+	LIST(APPEND telldus-service_LIBRARIES ${FTD2XX_LIBRARY})
+ELSE (FTDI_ENGINE STREQUAL "ftd2xx")
+	FIND_LIBRARY(FTDI_LIBRARY ftdi)
+	ADD_DEFINITIONS( -DLIBFTDI )
+	LIST(APPEND telldus-service_SRCS TellStick_libftdi.cpp )
+	LIST(APPEND telldus-service_LIBRARIES ${FTDI_LIBRARY})
+ENDIF (FTDI_ENGINE STREQUAL "ftd2xx")
 
 ######## Configuring  ########
 
