@@ -20,6 +20,7 @@ protected:
 private:
 	class PrivateData;
 	PrivateData *d;
+	bool listIsSignalled();
 	
 	friend class Event;
 };
