@@ -39,6 +39,7 @@ const char* VAR_CONFIG_FILE = "/var/state/telldus-core.conf";
 */
 Settings::Settings(void)
 {
+	TelldusCore::MutexLocker locker(&mutex);
 	d = new PrivateData;
 	readConfig(&d->cfg);
 	readVarConfig(&d->var_cfg);
@@ -49,6 +50,7 @@ Settings::Settings(void)
 */
 Settings::~Settings(void)
 {
+	TelldusCore::MutexLocker locker(&mutex);
 	if (d->cfg > 0) {
 		cfg_free(d->cfg);
 	}
@@ -62,6 +64,7 @@ Settings::~Settings(void)
 * Return a setting
 */
 std::wstring Settings::getSetting(const std::wstring &strName) const {
+	TelldusCore::MutexLocker locker(&mutex);
 	if (d->cfg > 0) {
 		std::string setting(cfg_getstr(d->cfg, std::string(strName.begin(), strName.end()).c_str()));	//TODO, safer conversion (other places in this file as well)
 		return std::wstring(setting.begin(), setting.end());
@@ -73,6 +76,7 @@ std::wstring Settings::getSetting(const std::wstring &strName) const {
 * Return the number of stored devices
 */
 int Settings::getNumberOfDevices(void) const {
+	TelldusCore::MutexLocker locker(&mutex);
 	if (d->cfg > 0) {
 		return cfg_size(d->cfg, "device");
 	}
@@ -83,6 +87,7 @@ int Settings::getDeviceId(int intDeviceIndex) const {
 	if (intDeviceIndex >= getNumberOfDevices()) { //Out of bounds
 		return -1;
 	}
+	TelldusCore::MutexLocker locker(&mutex);
 	cfg_t *cfg_device = cfg_getnsec(d->cfg, "device", intDeviceIndex);
 	int id = cfg_getint(cfg_device, "id");
 	return id;
@@ -92,6 +97,7 @@ int Settings::getDeviceId(int intDeviceIndex) const {
 * Add a new device
 */
 int Settings::addDevice(){
+	TelldusCore::MutexLocker locker(&mutex);
 	int intDeviceId = getNextDeviceId();
 
 	FILE *fp = fopen(CONFIG_FILE, "w");
@@ -109,6 +115,7 @@ int Settings::addDevice(){
 * Get next available device id
 */
 int Settings::getNextDeviceId() const {
+	//Private, no locks needed
 	int intDeviceId = 0;
 	cfg_t *cfg_device;
 	for (int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
@@ -125,6 +132,7 @@ int Settings::getNextDeviceId() const {
 * Remove a device
 */
 bool Settings::removeDevice(int intDeviceId){
+	TelldusCore::MutexLocker locker(&mutex);
 	bool blnSuccess = true;
 	FILE *fp = fopen(CONFIG_FILE, "w");
 
@@ -157,6 +165,7 @@ bool Settings::removeDevice(int intDeviceId){
 }
 
 bool Settings::setDeviceState( int intDeviceId, int intDeviceState, const std::wstring &strDeviceStateValue ) {
+	TelldusCore::MutexLocker locker(&mutex);
 	if (d->var_cfg == 0) {
 		return false;
 	}
@@ -169,6 +178,10 @@ bool Settings::setDeviceState( int intDeviceId, int intDeviceState, const std::w
 			cfg_setstr(cfg_device, "stateValue", std::string(strDeviceStateValue.begin(), strDeviceStateValue.end()).c_str());
 
 			FILE *fp = fopen(VAR_CONFIG_FILE, "w");
+			//TODO debugtest
+			if(fp == 0){
+				return false;
+			}
 			cfg_print(d->var_cfg, fp);
 			fclose(fp);
 			return true;
@@ -194,6 +207,7 @@ bool Settings::setDeviceState( int intDeviceId, int intDeviceState, const std::w
 }
 
 int Settings::getDeviceState( int intDeviceId ) const {
+	TelldusCore::MutexLocker locker(&mutex);
 	if (d->var_cfg == 0) {
 		return false;
 	}
@@ -209,6 +223,7 @@ int Settings::getDeviceState( int intDeviceId ) const {
 }
 
 std::wstring Settings::getDeviceStateValue( int intDeviceId ) const {
+	TelldusCore::MutexLocker locker(&mutex);
 	if (d->var_cfg == 0) {
 		return false;
 	}
@@ -225,6 +240,7 @@ std::wstring Settings::getDeviceStateValue( int intDeviceId ) const {
 }
 
 std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &name, bool parameter) const {
+	//already locked
 	if (d->cfg == 0) {
 		return L"";
 	}
@@ -247,6 +263,7 @@ std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &nam
 }
 
 bool Settings::setStringSetting(int intDeviceId, const std::wstring &name, const std::wstring &value, bool parameter) {
+	//already locked
 	if (d->cfg == 0) {
 		return false;
 	}
@@ -270,6 +287,7 @@ bool Settings::setStringSetting(int intDeviceId, const std::wstring &name, const
 }
 
 int Settings::getIntSetting(int intDeviceId, const std::wstring &name, bool parameter) const {
+	//already locked
 	if (d->cfg == 0) {
 		return 0;
 	}
@@ -287,6 +305,7 @@ int Settings::getIntSetting(int intDeviceId, const std::wstring &name, bool para
 }
 
 bool Settings::setIntSetting(int intDeviceId, const std::wstring &name, int value, bool parameter) {
+	//already locked
 	if (d->cfg == 0) {
 		return false;
 	}
