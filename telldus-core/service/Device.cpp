@@ -32,9 +32,9 @@ Device::~Device(void) {
 */
 
 int Device::getLastSentCommand(int methodsSupported){
-	
+
 	int lastSentCommand = Device::maskUnsupportedMethods(d->state, methodsSupported);
-	
+
 	if (lastSentCommand == TELLSTICK_BELL) {
 		//Bell is not a state
 		lastSentCommand = TELLSTICK_TURNOFF;
@@ -127,6 +127,9 @@ int Device::doAction(int action, unsigned char data, Controller *controller) {
 	Protocol *p = this->retrieveProtocol();
 	if(p){
 		std::string code = p->getStringForMethod(action, data, controller);
+		if (code == "") {
+			return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+		}
 		return controller->send(code);
 	}
 	return TELLSTICK_ERROR_UNKNOWN;
@@ -136,7 +139,7 @@ Protocol* Device::retrieveProtocol() const {
 	if (d->protocol) {
 		return d->protocol;
 	}
-	
+
 	d->protocol = Protocol::getProtocolInstance(d->protocolName);
 	if(d->protocol){
 		d->protocol->setModel(d->model);
