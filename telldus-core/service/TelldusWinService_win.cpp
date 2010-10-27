@@ -3,6 +3,7 @@
 
 #include <Dbt.h>
 #include <string>
+#include <algorithm>
 
 int g_argc;
 char **g_argv;
@@ -58,6 +59,7 @@ DWORD WINAPI TelldusWinService::deviceNotificationHandler( DWORD controlCode, DW
 	}
 
 	std::wstring name(pDevInf->dbcc_name);
+	transform(name.begin(), name.end(), name.begin(), toupper);
 
 	//Parse VID
 	size_t posStart = name.find(L"VID_");
