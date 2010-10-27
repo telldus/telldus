@@ -157,10 +157,9 @@ bool Settings::removeDevice(int intDeviceId) {
 	ssRegPath << d->strRegPathDevice << intDeviceId;
 	std::wstring strCompleteRegPath = ssRegPath.str();
 
-	long lngSuccess32 = RegDeleteKeyEx(d->rootKey, strCompleteRegPath.c_str(), KEY_WOW64_32KEY, 0);
-	long lngSuccess64 = RegDeleteKeyEx(d->rootKey, strCompleteRegPath.c_str(), KEY_WOW64_64KEY, 0);
+	long lngSuccess = RegDeleteKey(d->rootKey, strCompleteRegPath.c_str());
 
-	if(lngSuccess32 == ERROR_SUCCESS || lngSuccess64 == ERROR_SUCCESS){
+	if(lngSuccess == ERROR_SUCCESS){
 		//one of the deletions succeeded
 		return true;
 	}
