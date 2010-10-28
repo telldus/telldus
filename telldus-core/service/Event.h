@@ -3,12 +3,13 @@
 
 class EventHandler;
 #include "Thread.h"
-#include <tr1/memory>
 
 #ifdef _WINDOWS
 	#include <windows.h>
+	#include <memory>
 	typedef HANDLE EVENT_T;
 #else
+	#include <tr1/memory>
 	typedef void* EVENT_T;
 #endif
 
