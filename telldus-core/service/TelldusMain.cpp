@@ -65,27 +65,25 @@ void TelldusMain::start(void) {
 		}
 		if (clientEvent->isSignaled()) {
 			//New client connection
-			EventData *eventData = clientEvent->takeSignal();
-			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventData);
+			EventDataRef eventDataRef = clientEvent->takeSignal();
+			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventDataRef.get());
 			if (data) {
 				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(data->socket, handlerEvent.get(), &deviceManager, deviceUpdateEvent);
 				clientCommunication->start();
 				clientCommunicationHandlerList.push_back(clientCommunication);
 			}
-			delete eventData;
 		}
 
 		if (d->deviceChangeEvent->isSignaled()) {
-			EventData *eventData = d->deviceChangeEvent->takeSignal();
-			DeviceEventData *data = reinterpret_cast<DeviceEventData*>(eventData);
+			EventDataRef eventDataRef = d->deviceChangeEvent->takeSignal();
+			DeviceEventData *data = reinterpret_cast<DeviceEventData*>(eventDataRef.get());
 			if (data) {
 				controllerManager.deviceInsertedOrRemoved(data->vid, data->pid, data->inserted);
 			}
-			delete eventData;
 		}
 
 		if (dataEvent->isSignaled()) {
-			std::auto_ptr<EventData> eventData(dataEvent->takeSignal());
+			EventDataRef eventData = dataEvent->takeSignal();
 			ControllerEventData *data = reinterpret_cast<ControllerEventData*>(eventData.get());
 			if (data) {
 				deviceManager.handleControllerMessage(*data);

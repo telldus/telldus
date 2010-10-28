@@ -3,6 +3,7 @@
 
 class EventHandler;
 #include "Thread.h"
+#include <tr1/memory>
 
 #ifdef _WINDOWS
 	#include <windows.h>
@@ -22,6 +23,8 @@ public:
 	virtual bool isValid() const;
 };
 
+typedef std::tr1::shared_ptr<EventData> EventDataRef;
+
 class EventBase {
 public:
 	virtual ~EventBase();
@@ -30,7 +33,7 @@ public:
 	bool isSignaled();
 	void signal();
 	virtual void signal(EventData *);
-	EventData *takeSignal();
+	EventDataRef takeSignal();
 
 protected:
 	EventBase(EventHandler *handler);

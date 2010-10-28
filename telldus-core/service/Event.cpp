@@ -19,7 +19,7 @@ class EventBase::PrivateData {
 public:
 	TelldusCore::Mutex mutex;
 	EventHandler *handler;
-	std::list<EventData *> eventDataList;
+	std::list<EventDataRef> eventDataList;
 };
 
 EventBase::EventBase(EventHandler *handler) {
@@ -31,11 +31,6 @@ EventBase::~EventBase(void) {
 	if (d->handler) {
 		d->handler->removeEvent(this);
 	}
-	//If we have signals left, make sure we delete the data
-	std::list<EventData *>::const_iterator it = d->eventDataList.begin();
-	for(; it != d->eventDataList.end(); ++it) {
-		delete(*it);
-	}
 	delete d;
 }
 
@@ -45,10 +40,7 @@ void EventBase::clearHandler() {
 }
 
 void EventBase::popSignal() {
-	EventData *data = this->takeSignal();
-	if (data) {
-		delete data;
-	}
+	this->takeSignal();
 }
 
 EventHandler *EventBase::handler() const {
@@ -67,24 +59,20 @@ void EventBase::signal() {
 void EventBase::signal(EventData *eventData) {
 	{
 		TelldusCore::MutexLocker locker(&d->mutex);
-		d->eventDataList.push_back(eventData);
+		d->eventDataList.push_back(EventDataRef(eventData));
 	}
 	sendSignal();
 }
 
-EventData *EventBase::takeSignal() {
+EventDataRef EventBase::takeSignal() {
 	TelldusCore::MutexLocker locker(&d->mutex);
 	if (d->eventDataList.size() == 0) {
-		return 0;
+		return EventDataRef(new EventData());
 	}
-	EventData *data = d->eventDataList.front();
+	EventDataRef data = d->eventDataList.front();
 	d->eventDataList.pop_front();
 	if (d->eventDataList.size() == 0) {
 		this->clearSignal();
-	}
-	if (!data->isValid()) {
-		delete data;
-		return 0;
 	}
 	return data;
 }

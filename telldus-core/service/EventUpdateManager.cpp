@@ -34,11 +34,11 @@ EventUpdateManager::~EventUpdateManager(void) {
 	delete d->stopEvent;
 	delete d->updateEvent;
 	delete d->eventUpdateClientListener;
-	
+
 	for (SocketList::iterator it = d->clients.begin(); it != d->clients.end(); ++it) {
 		delete(*it);
 	}
-		
+
 	delete d;
 }
 
@@ -56,7 +56,7 @@ void EventUpdateManager::run(){
 
 		if(d->clientConnectEvent->isSignaled()){
 			//new client added
-			std::auto_ptr<EventData> eventData(d->clientConnectEvent->takeSignal());
+			EventDataRef eventData = d->clientConnectEvent->takeSignal();
 			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventData.get());
 			if(data){
 				d->clients.push_back(data->socket);
@@ -64,7 +64,7 @@ void EventUpdateManager::run(){
 		}
 		else if(d->updateEvent->isSignaled()){
 			//device event, signal all clients
-			std::auto_ptr<EventData> eventData(d->updateEvent->takeSignal());
+			EventDataRef eventData = d->updateEvent->takeSignal();
 			EventUpdateData *data = reinterpret_cast<EventUpdateData*>(eventData.get());
 			if(data){
 				sendMessageToClients(data);
@@ -74,13 +74,13 @@ void EventUpdateManager::run(){
 }
 
 void EventUpdateManager::sendMessageToClients(EventUpdateData *data){
-			
+
 	for(SocketList::iterator it = d->clients.begin(); it != d->clients.end();){
-		
+
 		if((*it)->isConnected()){
-			
+
 			TelldusCore::Message msg;
-			
+
 			if(data->messageType == L"TDDeviceEvent"){
 				msg.addArgument("TDDeviceEvent");
 				msg.addArgument(data->deviceId);
@@ -100,7 +100,7 @@ void EventUpdateManager::sendMessageToClients(EventUpdateData *data){
 			}
 
 			(*it)->write(msg);
-			
+
 			it++;
 		}
 		else{
