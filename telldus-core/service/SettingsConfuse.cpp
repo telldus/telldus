@@ -225,7 +225,7 @@ int Settings::getDeviceState( int intDeviceId ) const {
 std::wstring Settings::getDeviceStateValue( int intDeviceId ) const {
 	TelldusCore::MutexLocker locker(&mutex);
 	if (d->var_cfg == 0) {
-		return false;
+		return L"";
 	}
 	cfg_t *cfg_device;
 	for (int i = 0; i < cfg_size(d->var_cfg, "device"); ++i) {
