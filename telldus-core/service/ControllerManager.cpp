@@ -104,5 +104,4 @@ void ControllerManager::loadControllers() {
 		d->lastControllerId = controllerId;
 		d->controllers[d->lastControllerId] = controller;
 	}
-	printf("List containing %i controllers\n", (int)d->controllers.size());
 }
