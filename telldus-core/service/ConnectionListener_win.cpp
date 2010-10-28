@@ -14,10 +14,10 @@ public:
 	SECURITY_ATTRIBUTES sa;
 	HANDLE hEvent;
 	bool running;
-	Event *waitEvent;
+	EventRef waitEvent;
 };
 
-ConnectionListener::ConnectionListener(const std::wstring &name, Event *waitEvent)
+ConnectionListener::ConnectionListener(const std::wstring &name, EventRef waitEvent)
 {
 	d = new PrivateData;
 	d->hEvent = 0;
@@ -79,7 +79,6 @@ ConnectionListener::~ConnectionListener(void) {
 		SetEvent(d->hEvent);
 	}
 	wait();
-	delete d->waitEvent;
 	delete d;
 }
 
