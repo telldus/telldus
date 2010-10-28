@@ -9,7 +9,6 @@ public:
 	virtual ~EventHandler(void);
 
 	EventRef addEvent();
-	bool removeEvent(EventBase *event);
 
 	bool waitForAny();
 

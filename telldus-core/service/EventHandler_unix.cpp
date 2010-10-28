@@ -26,6 +26,7 @@ EventHandler::~EventHandler(void) {
 
 	std::list<EventRef>::const_iterator it = d->eventList.begin();
 	for(; it != d->eventList.end(); ++it) {
+		//We clear the handler if someone else still has a reference to the event
 		(*it)->clearHandler();
 	}
 
@@ -49,17 +50,6 @@ bool EventHandler::listIsSignalled(){
 		}
 	}
 	return false;
-}
-
-bool EventHandler::removeEvent(EventBase *eventBase) {
-	Event *event = reinterpret_cast<Event *>(eventBase);
-	if (!event) {
-		return false;
-	}
-	TelldusCore::MutexLocker locker(&d->listMutex);
-	//TODO!
-	//d->eventList.remove(event);
-	return true;
 }
 
 void EventHandler::signal(Event *event) {

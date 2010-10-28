@@ -88,7 +88,7 @@ void TelldusMain::start(void) {
 			}
 		}
 
-		if(handlerEvent->isSignaled()){
+		if (handlerEvent->isSignaled()) {
 			handlerEvent->popSignal();
 			for ( std::list<ClientCommunicationHandler *>::iterator it = clientCommunicationHandlerList.begin(); it != clientCommunicationHandlerList.end(); ){
 				if ((*it)->isDone()){

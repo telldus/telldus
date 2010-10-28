@@ -28,9 +28,6 @@ EventBase::EventBase(EventHandler *handler) {
 }
 
 EventBase::~EventBase(void) {
-	if (d->handler) {
-		d->handler->removeEvent(this);
-	}
 	delete d;
 }
 
