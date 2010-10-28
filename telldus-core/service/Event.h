@@ -13,6 +13,7 @@ class EventHandler;
 
 class EventData {
 public:
+	virtual ~EventData();
 	virtual bool isValid() const;
 };
 
@@ -24,7 +25,7 @@ public:
 class EventBase {
 public:
 	virtual ~EventBase();
-	
+
 	void popSignal();
 	bool isSignaled();
 	void signal();
@@ -52,12 +53,12 @@ protected:
 	EVENT_T retrieveNative();
 	virtual void clearSignal();
 	virtual void sendSignal();
-	
+
 private:
 	class PrivateData;
 	PrivateData *d;
-	
-friend class EventHandler;	
+
+friend class EventHandler;
 };
 
 #endif //EVENT_H

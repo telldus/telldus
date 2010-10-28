@@ -4,6 +4,9 @@
 
 #include <list>
 
+EventData::~EventData() {
+}
+
 bool EventData::isValid() const {
 	return false;
 };
