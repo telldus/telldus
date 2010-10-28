@@ -1,5 +1,7 @@
 #include "Socket.h"
 
+#include "Mutex.h"
+
 #include <stdio.h>
 #include <sys/socket.h>
 #include <sys/un.h>
@@ -17,6 +19,7 @@ public:
 	SOCKET_T socket;
 	bool connected;
 	fd_set infds;
+	Mutex mutex;
 };
 
 Socket::Socket() {
@@ -56,11 +59,13 @@ void Socket::connect(const std::wstring &server) {
 	if (connectWrapper(d->socket, (struct sockaddr *)&remote, len) == -1) {
 		return;
 	}
-
+	
+	TelldusCore::MutexLocker locker(&d->mutex);
 	d->connected = true;
 }
 
 bool Socket::isConnected(){
+	TelldusCore::MutexLocker locker(&d->mutex);
 	return d->connected;
 }
 
@@ -74,7 +79,7 @@ std::wstring Socket::read() {
 	memset(inbuf, '\0', sizeof(inbuf));
 
 	FD_SET(d->socket, &d->infds);
-	while(d->connected) {
+	while(isConnected()) {
 		tv.tv_sec = 1;
 
 		int response = select(d->socket+1, &d->infds, NULL, NULL, &tv);
@@ -85,6 +90,7 @@ std::wstring Socket::read() {
 
 		int received = recv(d->socket, inbuf, BUFSIZE - 1, 0);
 		if (received <= 0) {
+			TelldusCore::MutexLocker locker(&d->mutex);
 			d->connected = false;
 		}
 		break;
@@ -95,7 +101,7 @@ std::wstring Socket::read() {
 }
 
 void Socket::stopReadWait(){
-	//TODO, lock?
+	TelldusCore::MutexLocker locker(&d->mutex);
 	d->connected = false;
 }
 
@@ -103,6 +109,7 @@ void Socket::write(const std::wstring &msg) {
 	std::string newMsg(msg.begin(), msg.end());
 	int sent = send(d->socket, newMsg.c_str(), newMsg.length(), 0);
 	if (sent < 0) {
+		TelldusCore::MutexLocker locker(&d->mutex);
 		d->connected = false;
 	}
 }
