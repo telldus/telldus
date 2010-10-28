@@ -80,7 +80,9 @@ void Socket::stopReadWait(){
 }
 
 void Socket::write(const std::wstring &msg) {
-	//TODO set d->conneted to false if something goes wrong
 	std::string newMsg(msg.begin(), msg.end());
-	send(d->socket, newMsg.c_str(), newMsg.length(), 0);
+	int sent = send(d->socket, newMsg.c_str(), newMsg.length(), 0);
+	if (sent < 0) {
+		d->connected = false;
+	}
 }
