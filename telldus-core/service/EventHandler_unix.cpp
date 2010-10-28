@@ -10,7 +10,7 @@ class EventHandler::PrivateData {
 public:
 	pthread_cond_t event;
 	pthread_mutex_t mutex;
-	std::list<Event *> eventList;
+	std::list<EventRef> eventList;
 	TelldusCore::Mutex listMutex;
 };
 
@@ -23,17 +23,17 @@ EventHandler::EventHandler() {
 EventHandler::~EventHandler(void) {
 	pthread_mutex_destroy(&d->mutex);
 	pthread_cond_destroy(&d->event);
-	
-	std::list<Event *>::const_iterator it = d->eventList.begin();
+
+	std::list<EventRef>::const_iterator it = d->eventList.begin();
 	for(; it != d->eventList.end(); ++it) {
-		delete(*it);
+		(*it)->clearHandler();
 	}
-	
+
 	delete d;
 }
 
-Event *EventHandler::addEvent() {
-	Event *event = new Event(this);
+EventRef EventHandler::addEvent() {
+	EventRef event(new Event(this));
 	TelldusCore::MutexLocker locker(&d->listMutex);
 	d->eventList.push_back(event);
 	return event;
@@ -41,8 +41,8 @@ Event *EventHandler::addEvent() {
 
 bool EventHandler::listIsSignalled(){
 	TelldusCore::MutexLocker locker(&d->listMutex);
-	
-	std::list<Event *>::const_iterator it = d->eventList.begin();
+
+	std::list<EventRef>::const_iterator it = d->eventList.begin();
 	for(; it != d->eventList.end(); ++it) {
 		if((*it)->isSignaled()){
 			return true;
@@ -51,9 +51,14 @@ bool EventHandler::listIsSignalled(){
 	return false;
 }
 
-bool EventHandler::removeEvent(EventBase *event) {
+bool EventHandler::removeEvent(EventBase *eventBase) {
+	Event *event = reinterpret_cast<Event *>(eventBase);
+	if (!event) {
+		return false;
+	}
 	TelldusCore::MutexLocker locker(&d->listMutex);
-	d->eventList.remove((Event*)event);
+	//TODO!
+	//d->eventList.remove(event);
 	return true;
 }
 

@@ -13,7 +13,7 @@ typedef std::list<TelldusCore::Socket *> SocketList;
 class EventUpdateManager::PrivateData {
 public:
 	EventHandler eventHandler;
-	Event *stopEvent, *updateEvent, *clientConnectEvent;
+	EventRef stopEvent, updateEvent, clientConnectEvent;
 	SocketList clients;
 	ConnectionListener *eventUpdateClientListener;
 };
@@ -31,8 +31,6 @@ EventUpdateManager::EventUpdateManager()
 EventUpdateManager::~EventUpdateManager(void) {
 	d->stopEvent->signal();
 	wait();
-	delete d->stopEvent;
-	delete d->updateEvent;
 	delete d->eventUpdateClientListener;
 
 	for (SocketList::iterator it = d->clients.begin(); it != d->clients.end(); ++it) {
@@ -42,7 +40,7 @@ EventUpdateManager::~EventUpdateManager(void) {
 	delete d;
 }
 
-Event *EventUpdateManager::retrieveUpdateEvent(){
+EventRef EventUpdateManager::retrieveUpdateEvent(){
 
 	return d->updateEvent;
 }

@@ -8,7 +8,7 @@
 class DeviceManager
 {
 public:
-	DeviceManager(ControllerManager *controllerManager, Event *deviceUpdateEvent);
+	DeviceManager(ControllerManager *controllerManager, EventRef deviceUpdateEvent);
 	~DeviceManager(void);
 	int getNumberOfDevices(void);
 	int addDevice();
@@ -34,11 +34,11 @@ public:
 	int sendRawCommand(std::wstring command, int reserved);
 
 	void handleControllerMessage(const ControllerEventData &event);
-	
+
 private:
 	bool triggerDeviceStateChange(int deviceId, int intDeviceState, const std::wstring &strDeviceStateValue );
 	void fillDevices(void);
-	
+
 	class PrivateData;
 	PrivateData *d;
 };

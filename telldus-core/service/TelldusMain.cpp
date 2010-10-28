@@ -19,7 +19,7 @@ public:
 class TelldusMain::PrivateData {
 public:
 	EventHandler eventHandler;
-	Event *stopEvent, *deviceChangeEvent;
+	EventRef stopEvent, deviceChangeEvent;
 };
 
 TelldusMain::TelldusMain(void)
@@ -30,8 +30,6 @@ TelldusMain::TelldusMain(void)
 }
 
 TelldusMain::~TelldusMain(void) {
-	delete d->deviceChangeEvent;
-	delete d->stopEvent;
 	delete d;
 }
 
@@ -44,12 +42,12 @@ void TelldusMain::deviceInsertedOrRemoved(int vid, int pid, bool inserted) {
 }
 
 void TelldusMain::start(void) {
-	Event *clientEvent = d->eventHandler.addEvent();
-	std::auto_ptr<Event> dataEvent(d->eventHandler.addEvent());
+	EventRef clientEvent = d->eventHandler.addEvent();
+	EventRef dataEvent = d->eventHandler.addEvent();
 
 	ControllerManager controllerManager(dataEvent.get());
 	EventUpdateManager eventUpdateManager;
-	Event *deviceUpdateEvent = eventUpdateManager.retrieveUpdateEvent();
+	EventRef deviceUpdateEvent = eventUpdateManager.retrieveUpdateEvent();
 	eventUpdateManager.start();
 	DeviceManager deviceManager(&controllerManager, deviceUpdateEvent);
 
@@ -57,7 +55,7 @@ void TelldusMain::start(void) {
 
 	std::list<ClientCommunicationHandler *> clientCommunicationHandlerList;
 
-	std::auto_ptr<Event> handlerEvent(d->eventHandler.addEvent());
+	EventRef handlerEvent = d->eventHandler.addEvent();
 
 	while(!d->stopEvent->isSignaled()) {
 		if (!d->eventHandler.waitForAny()) {
@@ -68,7 +66,7 @@ void TelldusMain::start(void) {
 			EventDataRef eventDataRef = clientEvent->takeSignal();
 			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventDataRef.get());
 			if (data) {
-				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(data->socket, handlerEvent.get(), &deviceManager, deviceUpdateEvent);
+				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(data->socket, handlerEvent, &deviceManager, deviceUpdateEvent);
 				clientCommunication->start();
 				clientCommunicationHandlerList.push_back(clientCommunication);
 			}

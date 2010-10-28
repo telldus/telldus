@@ -21,8 +21,8 @@ public:
 	EventUpdateManager(void);
 	~EventUpdateManager(void);
 
-	Event *retrieveUpdateEvent();
-	Event *retrieveClientConnectEvent();
+	EventRef retrieveUpdateEvent();
+	EventRef retrieveClientConnectEvent();
 
 protected:
 	void run();

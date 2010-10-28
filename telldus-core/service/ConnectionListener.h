@@ -17,7 +17,7 @@ public:
 
 class ConnectionListener : public TelldusCore::Thread {
 public:
-	ConnectionListener(const std::wstring &name, Event *waitEvent);
+	ConnectionListener(const std::wstring &name, EventRef waitEvent);
 	virtual ~ConnectionListener(void);
 
 protected:

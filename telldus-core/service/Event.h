@@ -64,4 +64,6 @@ private:
 friend class EventHandler;
 };
 
+typedef std::tr1::shared_ptr<Event> EventRef;
+
 #endif //EVENT_H

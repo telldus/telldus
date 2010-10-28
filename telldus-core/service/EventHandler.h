@@ -1,17 +1,16 @@
 #ifndef EVENTHANDLER_H
 #define EVENTHANDLER_H
 
-class Event;
-class EventBase;
+#include "Event.h"
 
 class EventHandler {
 public:
 	EventHandler();
 	virtual ~EventHandler(void);
 
-	Event *addEvent();
+	EventRef addEvent();
 	bool removeEvent(EventBase *event);
-	
+
 	bool waitForAny();
 
 protected:
@@ -21,7 +20,7 @@ private:
 	class PrivateData;
 	PrivateData *d;
 	bool listIsSignalled();
-	
+
 	friend class Event;
 };
 

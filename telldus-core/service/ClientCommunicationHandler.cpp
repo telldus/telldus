@@ -7,7 +7,7 @@
 class ClientCommunicationHandler::PrivateData {
 public:
 	TelldusCore::Socket *clientSocket;
-	Event *event, *deviceUpdateEvent;
+	EventRef event, deviceUpdateEvent;
 	bool done;
 	DeviceManager *deviceManager;
 };
@@ -16,7 +16,7 @@ ClientCommunicationHandler::ClientCommunicationHandler(){
 
 }
 
-ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clientSocket, Event *event, DeviceManager *deviceManager, Event *deviceUpdateEvent)
+ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clientSocket, EventRef event, DeviceManager *deviceManager, EventRef deviceUpdateEvent)
 	:Thread()
 {
 	d = new PrivateData;
@@ -25,7 +25,7 @@ ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clie
 	d->done = false;
 	d->deviceManager = deviceManager;
 	d->deviceUpdateEvent = deviceUpdateEvent;
-	
+
 }
 
 ClientCommunicationHandler::~ClientCommunicationHandler(void)
@@ -37,16 +37,16 @@ ClientCommunicationHandler::~ClientCommunicationHandler(void)
 
 void ClientCommunicationHandler::run(){
 	//run thread
-	
+
 	std::wstring clientMessage = d->clientSocket->read(2000);
 
 	int intReturn;
 	std::wstring strReturn;
 	strReturn = L"";
 	parseMessage(clientMessage, &intReturn, &strReturn);
-	
+
 	TelldusCore::Message msg;
-	
+
 	if(strReturn == L""){
 		msg.addArgument(intReturn);
 	}
@@ -72,7 +72,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	(*wstringReturn) = L"";
 	std::wstring msg(clientMessage);	//Copy
 	std::wstring function(TelldusCore::Message::takeString(&msg));
-	
+
 	if (function == L"tdTurnOn") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_TURNON, 0);
@@ -109,7 +109,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	} else if (function == L"tdGetDeviceId") {
 		int deviceIndex = TelldusCore::Message::takeInt(&msg);
 		(*intReturn) = d->deviceManager->getDeviceId(deviceIndex);
-	
+
 	} else if (function == L"tdGetDeviceType") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		(*intReturn) = d->deviceManager->getDeviceType(deviceId);
@@ -123,7 +123,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		std::wstring name = TelldusCore::Message::takeString(&msg);
 		(*intReturn) = d->deviceManager->setDeviceName(deviceId, name);
 		sendDeviceSignal(deviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_NAME);
-		
+
 	} else if (function == L"tdGetProtocol") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		(*wstringReturn) = d->deviceManager->getDeviceProtocol(deviceId);
@@ -183,7 +183,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		eventData->controllerId = -1;
 		eventData->eventValue = command;
 		d->deviceUpdateEvent->signal(eventData);
-		
+
 	} else if (function == L"tdConnectTellStickController") {
 		int vid = TelldusCore::Message::takeInt(&msg);
 		int pid = TelldusCore::Message::takeInt(&msg);
@@ -201,7 +201,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 }
 
 void ClientCommunicationHandler::sendDeviceSignal(int deviceId, int eventDeviceChanges, int eventChangeType){
-	
+
 	EventUpdateData *eventData = new EventUpdateData();
 	eventData->messageType = L"TDDeviceChangeEvent";
 	eventData->deviceId = deviceId;

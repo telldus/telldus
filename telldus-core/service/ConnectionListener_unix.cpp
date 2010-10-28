@@ -11,16 +11,16 @@
 
 class ConnectionListener::PrivateData {
 public:
-	Event *waitEvent;
+	EventRef waitEvent;
 	std::string name;
 	bool running;
 };
 
-ConnectionListener::ConnectionListener(const std::wstring &name, Event *waitEvent)
+ConnectionListener::ConnectionListener(const std::wstring &name, EventRef waitEvent)
 {
 	d = new PrivateData;
 	d->waitEvent = waitEvent;
-	
+
 	d->name = "/tmp/" + std::string(name.begin(), name.end());
 	d->running = true;
 
@@ -30,7 +30,6 @@ ConnectionListener::ConnectionListener(const std::wstring &name, Event *waitEven
 ConnectionListener::~ConnectionListener(void) {
 	d->running = false;
 	this->wait();
-	delete d->waitEvent;
 	delete d;
 }
 
@@ -58,7 +57,7 @@ void ConnectionListener::run(){
 	fd_set infds;
 	FD_ZERO(&infds);
 	FD_SET(serverSocket, &infds);
-	
+
 	while(d->running) {
 		tv.tv_sec = 5;
 
@@ -77,7 +76,7 @@ void ConnectionListener::run(){
 		}
 		SOCKET_T clientSocket = accept(serverSocket, NULL, NULL);
 		if(clientSocket == -1){
-				printf("error %i\n", errno); 
+				printf("error %i\n", errno);
 		}
 
 		ConnectionListenerEventData *data = new ConnectionListenerEventData();
