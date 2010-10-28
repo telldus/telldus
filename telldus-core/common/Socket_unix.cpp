@@ -16,18 +16,21 @@ class Socket::PrivateData {
 public:
 	SOCKET_T socket;
 	bool connected;
+	fd_set infds;
 };
 
 Socket::Socket() {
 	d = new PrivateData;
 	d->socket = 0;
 	d->connected = false;
+	FD_ZERO(&d->infds);
 }
 
 Socket::Socket(SOCKET_T socket)
 {
 	d = new PrivateData;
 	d->socket = socket;
+	FD_ZERO(&d->infds);
 	d->connected = true;
 }
 
@@ -53,6 +56,7 @@ void Socket::connect(const std::wstring &server) {
 	if (connectWrapper(d->socket, (struct sockaddr *)&remote, len) == -1) {
 		return;
 	}
+
 	d->connected = true;
 }
 
@@ -65,18 +69,34 @@ std::wstring Socket::read(int) {
 }
 
 std::wstring Socket::read() {
-	//TODO set d->conneted to false if something goes wrong
+	struct timeval tv = { 1, 0 };
 	char inbuf[BUFSIZE];
 	memset(inbuf, '\0', sizeof(inbuf));
 
-	recv(d->socket, inbuf, BUFSIZE - 1, 0);
+	FD_SET(d->socket, &d->infds);
+	while(d->connected) {
+		tv.tv_sec = 1;
+
+		int response = select(d->socket+1, &d->infds, NULL, NULL, &tv);
+		if (response <= 0) {
+			FD_SET(d->socket, &d->infds);
+			continue;
+		}
+
+		int received = recv(d->socket, inbuf, BUFSIZE - 1, 0);
+		if (received <= 0) {
+			d->connected = false;
+		}
+		break;
+	}
 
 	std::string msg(inbuf);
 	return std::wstring(msg.begin(), msg.end());
 }
 
 void Socket::stopReadWait(){
-	//TODO:
+	//TODO, lock?
+	d->connected = false;
 }
 
 void Socket::write(const std::wstring &msg) {
