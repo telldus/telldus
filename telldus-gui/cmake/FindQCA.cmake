@@ -10,6 +10,6 @@ IF (WIN32)
 
 ELSE(WIN32)
 	#Maybe not so pretty, should be done better
-	INCLUDE_DIRECTORIES( /usr/include/qca2/QtCrypto/ )
+	INCLUDE_DIRECTORIES( /usr/include/qca2/QtCrypto/ /usr/include/QtCrypto/ )
 
 ENDIF (WIN32)
