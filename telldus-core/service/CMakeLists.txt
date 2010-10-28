@@ -56,7 +56,7 @@ SET( telldus-service_HDRS
 	TellStick.h
 	EventUpdateManager.h
 )
-FIND_PACKAGE(Threads)
+FIND_PACKAGE(Threads REQUIRED)
 LIST(APPEND telldus-service_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
 
 INCLUDE_DIRECTORIES(
