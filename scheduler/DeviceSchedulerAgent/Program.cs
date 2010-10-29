@@ -22,8 +22,6 @@ namespace DeviceSchedulerAgent
             try
             {
 
-                
-
                 //Makesure that we have all data loaded. 
                 DataStorage data = LoadData();
 
@@ -44,16 +42,23 @@ namespace DeviceSchedulerAgent
                     {
                         Device item = handler.Find(action.DeviceID);
 
-                        if (action.TurnOn)
-                            handler.TurnOnWithDelay(item);
-                        else
-                            handler.TurnOffWithDelay(item);
+						if (item != null)
+						{
+							if (action.TurnOn)
+								handler.TurnOnWithDelay(item);
+							else
+								handler.TurnOffWithDelay(item);
+						}
+						else
+						{
+							MessageBox.Show("Device could not be found. Please make sure that TelldusService is running and no device scheduled for turn on/off has been removed.", "Telldus scheduler");
+						}
                     }
 
                 }
                 else
                 {
-                    MessageBox.Show("Programmet kunde inte hitta något jobb.");
+					MessageBox.Show("No scheduled jobs could be found.", "Telldus scheduler");
                 }
             }
             catch (Exception ex)
