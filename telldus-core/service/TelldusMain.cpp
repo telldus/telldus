@@ -4,29 +4,24 @@
 #include "ClientCommunicationHandler.h"
 #include "DeviceManager.h"
 #include "ControllerManager.h"
+#include "ControllerListener.h"
 #include "EventUpdateManager.h"
 
 #include <stdio.h>
 #include <list>
 #include <memory>
 
-class DeviceEventData : public EventDataBase {
-public:
-	int vid, pid;
-	bool inserted;
-};
-
 class TelldusMain::PrivateData {
 public:
 	EventHandler eventHandler;
-	EventRef stopEvent, deviceChangeEvent;
+	EventRef stopEvent, controllerChangeEvent;
 };
 
 TelldusMain::TelldusMain(void)
 {
 	d = new PrivateData;
 	d->stopEvent = d->eventHandler.addEvent();
-	d->deviceChangeEvent = d->eventHandler.addEvent();
+	d->controllerChangeEvent = d->eventHandler.addEvent();
 }
 
 TelldusMain::~TelldusMain(void) {
@@ -34,11 +29,11 @@ TelldusMain::~TelldusMain(void) {
 }
 
 void TelldusMain::deviceInsertedOrRemoved(int vid, int pid, bool inserted) {
-	DeviceEventData *data = new DeviceEventData;
+	ControllerChangeEventData *data = new ControllerChangeEventData;
 	data->vid = vid;
 	data->pid = pid;
 	data->inserted = inserted;
-	d->deviceChangeEvent->signal(data);
+	d->controllerChangeEvent->signal(data);
 }
 
 void TelldusMain::start(void) {
@@ -56,6 +51,12 @@ void TelldusMain::start(void) {
 	std::list<ClientCommunicationHandler *> clientCommunicationHandlerList;
 
 	EventRef handlerEvent = d->eventHandler.addEvent();
+	
+#ifdef _MACOSX
+	//This is only needed on OS X
+	ControllerListener controllerListener(d->controllerChangeEvent);
+#endif
+	
 
 	while(!d->stopEvent->isSignaled()) {
 		if (!d->eventHandler.waitForAny()) {
@@ -72,9 +73,9 @@ void TelldusMain::start(void) {
 			}
 		}
 
-		if (d->deviceChangeEvent->isSignaled()) {
-			EventDataRef eventDataRef = d->deviceChangeEvent->takeSignal();
-			DeviceEventData *data = reinterpret_cast<DeviceEventData*>(eventDataRef.get());
+		if (d->controllerChangeEvent->isSignaled()) {
+			EventDataRef eventDataRef = d->controllerChangeEvent->takeSignal();
+			ControllerChangeEventData *data = reinterpret_cast<ControllerChangeEventData*>(eventDataRef.get());
 			if (data) {
 				controllerManager.deviceInsertedOrRemoved(data->vid, data->pid, data->inserted);
 			}
