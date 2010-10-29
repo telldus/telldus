@@ -45,6 +45,7 @@ SET( telldus-service_HDRS
 	ClientCommunicationHandler.h
 	ConnectionListener.h
 	Controller.h
+	ControllerListener.h
 	ControllerManager.h
 	ControllerMessage.h
 	Device.h
@@ -70,6 +71,7 @@ INCLUDE_DIRECTORIES(
 IF (APPLE) #### Mac OS X ####
 	SET(DEFAULT_FTDI_ENGINE "ftd2xx")
 	SET( telldus-service_TARGET	TelldusService )
+	ADD_DEFINITIONS( -D_MACOSX )
 	FIND_LIBRARY(COREFOUNDATION_LIBRARY CoreFoundation)
 	FIND_LIBRARY(IOKIT_LIBRARY IOKit)
 
@@ -82,6 +84,7 @@ IF (APPLE) #### Mac OS X ####
 	LIST(APPEND telldus-service_SRCS
 		main_unix.cpp
 		ConnectionListener_unix.cpp
+		ControllerListener_mac.cpp
 		Event_unix.cpp
 		EventHandler_unix.cpp
 		SettingsCoreFoundationPreferences.cpp
