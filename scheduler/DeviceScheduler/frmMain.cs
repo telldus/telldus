@@ -207,20 +207,32 @@ namespace DeviceScheduler
         private void ConfigUnits()
         {
             RegistryKey key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\Telldus");
-            string path = key.GetValue("UninstallString").ToString();
+			if (key == null)
+			{
+				key = Registry.LocalMachine.OpenSubKey(@"SOFTWARE\Wow6432Node\Microsoft\Windows\CurrentVersion\Uninstall\Telldus");	//64 bit (windows 7)
+			}
+			if (key != null)
+			{
+				string path = key.GetValue("UninstallString").ToString();
 
-            path = System.IO.Path.GetDirectoryName(path);
+				path = System.IO.Path.GetDirectoryName(path);
 
-            Cursor = Cursors.WaitCursor;
+				Cursor = Cursors.WaitCursor;
 
-            System.Diagnostics.Process proc = new System.Diagnostics.Process();
-            string filename = System.IO.Path.Combine(path, "TelldusCenter.exe");
-            proc.StartInfo.FileName = filename;
-            proc.StartInfo.WorkingDirectory = path;
-            proc.Start();
+				System.Diagnostics.Process proc = new System.Diagnostics.Process();
+				string filename = System.IO.Path.Combine(path, "TelldusCenter.exe");
+				proc.StartInfo.FileName = filename;
+				proc.StartInfo.WorkingDirectory = path;
+				proc.Start();
 
 
-            Cursor = Cursors.Default;
+				Cursor = Cursors.Default;
+			}
+			else
+			{
+				MessageBox.Show("Path to TelldusCenter.exe cannot be found in Windows Registry. Please open TelldusCenter manually to configure devices.",
+			   "", MessageBoxButtons.OK, MessageBoxIcon.Error);
+			}
         }
 
         private void toolManageDevices_Click(object sender, EventArgs e)
