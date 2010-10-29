@@ -24,16 +24,19 @@ namespace DeviceHandler
         private static extern int tdGetDeviceId(int value);
 
         [DllImport("TelldusCore.dll")]
-        private static extern string tdGetName(int value);
+        private static unsafe extern char* tdGetName(int value);
 
         [DllImport("TelldusCore.dll")]
-        private static extern string tdGetProtocol(int value);
+        private static unsafe extern char* tdGetProtocol(int value);
 
         [DllImport("TelldusCore.dll")]
         private static extern int tdGetNumberOfDevices();
 
         [DllImport("TelldusCore.dll")]
         private static extern int tdClose();
+
+		[DllImport("TelldusCore.dll")]
+		private static unsafe extern void tdReleaseString(char* value);
         #endregion
 
         private List<Device> m_Devices = new List<Device>();
@@ -104,6 +107,38 @@ namespace DeviceHandler
             return result;
         }
 
+		/// <summary>
+		/// Get name for device, as a string
+		/// </summary>
+		/// <param name="deviceId"></param>
+		/// <returns></returns>
+		private static unsafe string getName(int deviceId)
+		{
+			char* name = tdGetName(deviceId);
+
+			string returnstring = System.Text.Encoding.UTF8.GetString(System.Text.Encoding.Unicode.GetBytes(new string(name)));
+
+			tdReleaseString(name);
+			return returnstring;
+
+		}
+
+		/// <summary>
+		/// Get protocol for device, as a string
+		/// </summary>
+		/// <param name="deviceId"></param>
+		/// <returns></returns>
+		private static unsafe string getProtocol(int deviceId)
+		{
+			char* name = tdGetProtocol(deviceId);
+
+			string returnstring = System.Text.Encoding.UTF8.GetString(System.Text.Encoding.Unicode.GetBytes(new string(name)));
+
+			tdReleaseString(name);
+			return returnstring;
+
+		}
+
         /// <summary>
         /// Loads all known devices into a collection.
         /// </summary>
@@ -119,8 +154,8 @@ namespace DeviceHandler
                 {
                     //Collect information from the driver.
                     int deviceID = tdGetDeviceId(i);
-                    string deviceName = tdGetName(deviceID);
-                    string deviceProtocol = tdGetProtocol(deviceID);
+					string deviceName = getName(deviceID);
+					string deviceProtocol = getProtocol(deviceID);
 
                     m_Devices.Add(new Device(deviceID, deviceName, deviceProtocol));
                 }
