@@ -22,6 +22,7 @@ public:
 	io_iterator_t			gAddedIter;
 	EventRef				event;
 	
+	void addUsbFilter(int vid, int pid);
 	static void DeviceAdded(void *refCon, io_iterator_t iterator);
 	static void DeviceNotification(void *refCon, io_service_t service, natural_t messageType, void *messageArgument);
 };
@@ -41,50 +42,52 @@ ControllerListener::~ControllerListener() {
 }
 
 void ControllerListener::run() {
-	CFMutableDictionaryRef 	matchingDict;
     CFRunLoopSourceRef		runLoopSource;
-    CFNumberRef				numberRef;
-	kern_return_t			kr;
-	long					usbVendor = 0x1781;
-    long					usbProduct = 0x0c30;
-	
-	matchingDict = IOServiceMatching(kIOUSBDeviceClassName);	// Interested in instances of class
-	// IOUSBDevice and its subclasses
-	
-	if (matchingDict == NULL) {
-		return;
-	}
-	
-	// Create a CFNumber for the idVendor and set the value in the dictionary
-    numberRef = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &usbVendor);
-    CFDictionarySetValue(matchingDict, CFSTR(kUSBVendorID), numberRef);
-    CFRelease(numberRef);
-    
-    // Create a CFNumber for the idProduct and set the value in the dictionary
-    numberRef = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &usbProduct);
-    CFDictionarySetValue(matchingDict, CFSTR(kUSBProductID), numberRef);
-    CFRelease(numberRef);
-    numberRef = NULL;
-	
+			
 	d->gNotifyPort = IONotificationPortCreate(kIOMasterPortDefault);
     runLoopSource = IONotificationPortGetRunLoopSource(d->gNotifyPort);
     
 	d->gRunLoop = CFRunLoopGetCurrent();
     CFRunLoopAddSource(d->gRunLoop, runLoopSource, kCFRunLoopDefaultMode);
     
-    // Now set up a notification to be called when a device is first matched by I/O Kit.
-    kr = IOServiceAddMatchingNotification(d->gNotifyPort,					// notifyPort
+	d->addUsbFilter(0x1781, 0x0c30);
+	d->addUsbFilter(0x1781, 0x0c31);
+	
+	CFRunLoopRun();
+}
+
+void ControllerListener::PrivateData::addUsbFilter(int vid, int pid) {
+    CFNumberRef				numberRef;
+	kern_return_t			kr;
+	CFMutableDictionaryRef 	matchingDict;
+
+	matchingDict = IOServiceMatching(kIOUSBDeviceClassName);	// Interested in instances of class
+	                                                            // IOUSBDevice and its subclasses
+	if (matchingDict == NULL) {
+		return;
+	}
+	
+	// Create a CFNumber for the idVendor and set the value in the dictionary
+	numberRef = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &vid);
+	CFDictionarySetValue(matchingDict, CFSTR(kUSBVendorID), numberRef);
+	CFRelease(numberRef);
+    
+	// Create a CFNumber for the idProduct and set the value in the dictionary
+	numberRef = CFNumberCreate(kCFAllocatorDefault, kCFNumberSInt32Type, &pid);
+	CFDictionarySetValue(matchingDict, CFSTR(kUSBProductID), numberRef);
+	CFRelease(numberRef);
+	
+	// Now set up a notification to be called when a device is first matched by I/O Kit.
+	kr = IOServiceAddMatchingNotification(gNotifyPort,					// notifyPort
                                           kIOFirstMatchNotification,	// notificationType
                                           matchingDict,					// matching
                                           PrivateData::DeviceAdded,					// callback
                                           this,							// refCon
-                                          &d->gAddedIter					// notification
-                                          );	
-	
-	
+                                          &gAddedIter					// notification
+                                          );
 	// Iterate once to get already-present devices and arm the notification    
-	PrivateData::DeviceAdded(this, d->gAddedIter);	
-	CFRunLoopRun();
+	PrivateData::DeviceAdded(this, gAddedIter);	
+
 }
 
 void ControllerListener::PrivateData::DeviceNotification(void *refCon, io_service_t service, natural_t messageType, void *messageArgument) {
@@ -123,11 +126,11 @@ void ControllerListener::PrivateData::DeviceAdded(void *refCon, io_iterator_t it
 	io_service_t		usbDevice;
 	kern_return_t		kr;
 	
-	ControllerListener *parent = reinterpret_cast<ControllerListener*> (refCon);
+	PrivateData *pd = reinterpret_cast<PrivateData*> (refCon);
 	
 	while ((usbDevice = IOIteratorNext(iterator))) {
 		TellStickData *tsd = new TellStickData;
-		tsd->event = parent->d->event;
+		tsd->event = pd->event;
 		
 		// Get the serial number
 		CFStringRef serialRef = reinterpret_cast<CFStringRef>(IORegistryEntryCreateCFProperty(  usbDevice, CFSTR("USB Serial Number" ), kCFAllocatorDefault, 0 ));
@@ -155,7 +158,7 @@ void ControllerListener::PrivateData::DeviceAdded(void *refCon, io_iterator_t it
 		
 		// Register for an interest notification of this device being removed. Use a reference to our
         // private data as the refCon which will be passed to the notification callback.
-        kr = IOServiceAddInterestNotification(parent->d->gNotifyPort, usbDevice, kIOGeneralInterest, DeviceNotification, tsd, &(tsd->notification));
+        kr = IOServiceAddInterestNotification(pd->gNotifyPort, usbDevice, kIOGeneralInterest, DeviceNotification, tsd, &(tsd->notification));
 		
 		CFIndex size = CFStringGetLength(serialNumberAsCFString);
 		char *s = new char[size+1];
