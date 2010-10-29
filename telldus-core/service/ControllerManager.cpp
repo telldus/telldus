@@ -41,18 +41,26 @@ void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, bool inserted)
 		loadControllers();
 	} else {
 		TelldusCore::MutexLocker locker(&d->mutex);
-		for(ControllerMap::iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
-			TellStick *tellstick = reinterpret_cast<TellStick*>(it->second);
-			if (!tellstick) {
-				continue;
-			}
-			if (!tellstick->stillConnected()) {
-				d->controllers.erase(it);
-				delete tellstick;
-				break;
+		bool again = true;
+		while(again) {
+			again = false;
+			for(ControllerMap::iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
+				TellStick *tellstick = reinterpret_cast<TellStick*>(it->second);
+				if (!tellstick) {
+					continue;
+				}
+				if (!tellstick->stillConnected()) {
+					printf("Controller lost\n");
+					d->controllers.erase(it);
+					delete tellstick;
+					again=true;
+					break;
+				}
 			}
 		}
 	}
+	printf("List contains %i controllers\n", (int)d->controllers.size());
+
 }
 
 Controller *ControllerManager::getBestControllerById(int id) {
@@ -75,8 +83,6 @@ void ControllerManager::loadControllers() {
 
 	std::list<TellStickDescriptor>::iterator it = list.begin();
 	for(; it != list.end(); ++it) {
-		printf("Found (%i/%i): %s\n", (*it).vid, (*it).pid, (*it).serial.c_str());
-
 		//Most backend only report non-opened devices.
 		//If they don't make sure we don't open them twice
 		bool found = false;
@@ -101,6 +107,7 @@ void ControllerManager::loadControllers() {
 			delete controller;
 			continue;
 		}
+		printf("Found (%i/%i): %s\n", (*it).vid, (*it).pid, (*it).serial.c_str());
 		d->lastControllerId = controllerId;
 		d->controllers[d->lastControllerId] = controller;
 	}
