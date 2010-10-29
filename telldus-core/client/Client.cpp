@@ -139,7 +139,7 @@ void Client::run(){
 		}
 
 		std::wstring clientMessage = d->eventSocket.read(5000);	//testing 5 second timeout
-		if(clientMessage != L""){
+		while(clientMessage != L""){
 			//a message arrived
 			std::wstring type = Message::takeString(&clientMessage);
 			if(type == L"TDDeviceChangeEvent"){
@@ -158,6 +158,9 @@ void Client::run(){
 				std::wstring command = Message::takeString(&clientMessage);
 				int controllerId = Message::takeInt(&clientMessage);
 				callbackRawEvent(command, controllerId);
+			}
+			else{
+				clientMessage = L"";  //cleanup, if message contained garbage/unhandled data
 			}
 		}
 	}
