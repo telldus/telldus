@@ -114,7 +114,7 @@ void TellStick::processData( const std::string &data ) {
 			if (d->message.substr(0,2).compare("+V") == 0) {
 				//parent->fwVersion = atoi(message.substr(2).c_str());
 				//printf("Firmware version: %s\n", message.substr(2).c_str());
-				d->fwVersion = TelldusCore::charToInteger(d->message.substr(2).c_str());  //TODO used?
+				d->fwVersion = TelldusCore::charToInteger(d->message.substr(2).c_str());
 			} else if (d->message.substr(0,2).compare("+R") == 0) {
 				this->publishData(d->message.substr(2));
 			}

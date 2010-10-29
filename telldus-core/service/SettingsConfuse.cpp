@@ -178,7 +178,6 @@ bool Settings::setDeviceState( int intDeviceId, int intDeviceState, const std::w
 			cfg_setstr(cfg_device, "stateValue", std::string(strDeviceStateValue.begin(), strDeviceStateValue.end()).c_str());
 
 			FILE *fp = fopen(VAR_CONFIG_FILE, "w");
-			//TODO debugtest
 			if(fp == 0){
 				return false;
 			}
