@@ -43,9 +43,11 @@ inline void debuglog(const int intMessage, const std::string strMessage){
 	file.flush();
 	file.close();
 
-#else
+#elif !defined(_MACOSX)
 	pthread_t thread = pthread_self();
 	printf("[%i] %i - %s\n", (int)thread, intMessage, strMessage.c_str());
+#else
+	printf("%i - %s\n", intMessage, strMessage.c_str());
 #endif
 }
 
