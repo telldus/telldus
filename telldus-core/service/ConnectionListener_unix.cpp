@@ -4,6 +4,9 @@
 #include <string>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <sys/types.h>
+#include <sys/stat.h>
+
 
 #include <stdio.h>
 #include <unistd.h>
@@ -30,6 +33,7 @@ ConnectionListener::ConnectionListener(const std::wstring &name, EventRef waitEv
 ConnectionListener::~ConnectionListener(void) {
 	d->running = false;
 	this->wait();
+	unlink(d->name.c_str());
 	delete d;
 }
 
@@ -52,6 +56,9 @@ void ConnectionListener::run(){
 	int size = SUN_LEN(&name);
 	bind(serverSocket, (struct sockaddr *)&name, size);
 	listen(serverSocket, 5);
+	
+	//Change permissions to allow everyone
+	chmod(d->name.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
 	len = sizeof(struct sockaddr_un);
 
 	fd_set infds;
