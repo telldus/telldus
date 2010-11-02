@@ -82,16 +82,32 @@ void Client::callbackDeviceEvent(int deviceId, int deviceState, const std::wstri
 }
 
 void Client::callbackDeviceChangeEvent(int deviceId, int eventDeviceChanges, int eventChangeType){
-	TelldusCore::MutexLocker locker(&d->mutex);
-	for(DeviceChangeList::const_iterator callback_it = d->deviceChangeEventList.begin(); callback_it != d->deviceChangeEventList.end(); ++callback_it) {
-		(*callback_it).event(deviceId, eventDeviceChanges, eventChangeType, (*callback_it).id, (*callback_it).context);
+	std::list<std::tr1::shared_ptr<TDDeviceChangeEventDispatcher> > list;
+	{
+		TelldusCore::MutexLocker locker(&d->mutex);
+		for(DeviceChangeList::const_iterator callback_it = d->deviceChangeEventList.begin(); callback_it != d->deviceChangeEventList.end(); ++callback_it) {
+			std::tr1::shared_ptr<TDDeviceChangeEventDispatcher> ptr(new TDDeviceChangeEventDispatcher(*callback_it, deviceId, eventDeviceChanges, eventChangeType));
+			list.push_back(ptr);
+		}
+	}
+	std::list<std::tr1::shared_ptr<TDDeviceChangeEventDispatcher> >::const_iterator it = list.begin();
+	for (; it != list.end(); ++it) {
+		(*it)->wait();
 	}
 }
 
 void Client::callbackRawEvent(std::wstring command, int controllerId){
-	TelldusCore::MutexLocker locker(&d->mutex);
-	for(RawDeviceEventList::const_iterator callback_it = d->rawDeviceEventList.begin(); callback_it != d->rawDeviceEventList.end(); ++callback_it) {
-		(*callback_it).event(TelldusCore::wideToString(command).c_str(), controllerId, (*callback_it).id, (*callback_it).context);
+	std::list<std::tr1::shared_ptr<TDRawDeviceEventDispatcher> > list;
+	{
+		TelldusCore::MutexLocker locker(&d->mutex);
+		for(RawDeviceEventList::const_iterator callback_it = d->rawDeviceEventList.begin(); callback_it != d->rawDeviceEventList.end(); ++callback_it) {
+			std::tr1::shared_ptr<TDRawDeviceEventDispatcher> ptr(new TDRawDeviceEventDispatcher(*callback_it, TelldusCore::wideToString(command), controllerId));
+			list.push_back(ptr);
+		}
+	}
+	std::list<std::tr1::shared_ptr<TDRawDeviceEventDispatcher> >::const_iterator it = list.begin();
+	for (; it != list.end(); ++it) {
+		(*it)->wait();
 	}
 }
 

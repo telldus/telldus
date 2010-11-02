@@ -38,6 +38,23 @@ namespace TelldusCore {
 		int deviceId, method;
 		std::string strData;
 	};
+	class TDDeviceChangeEventDispatcher : public CallbackDispatcher<TDDeviceChangeEvent> {
+	public:
+		TDDeviceChangeEventDispatcher(const CallbackStruct<TDDeviceChangeEvent> &data, int deviceId, int changeEvent, int changeType);
+	protected:
+		virtual void run();
+	private:
+		int deviceId, changeEvent, changeType;
+	};
+	class TDRawDeviceEventDispatcher : public CallbackDispatcher<TDRawDeviceEvent> {
+	public:
+		TDRawDeviceEventDispatcher(const CallbackStruct<TDRawDeviceEvent> &data, const std::string &strData, int controllerId);
+	protected:
+		virtual void run();
+	private:
+		int controllerId;
+		std::string strData;
+	};
 }
 
 #endif //CALLBACKDISPATCHER_H
