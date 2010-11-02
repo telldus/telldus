@@ -5,6 +5,7 @@
 #include <stdio.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <math.h>
 
 #define BUFSIZE 512
 
@@ -69,21 +70,24 @@ bool Socket::isConnected(){
 	return d->connected;
 }
 
-std::wstring Socket::read(int) {
-	return this->read();
+std::wstring Socket::read() {
+	return this->read(0);
 }
 
-std::wstring Socket::read() {
-	struct timeval tv = { 1, 0 };
+std::wstring Socket::read(int timeout) {
+	struct timeval tv;
 	char inbuf[BUFSIZE];
 	memset(inbuf, '\0', sizeof(inbuf));
 
 	FD_SET(d->socket, &d->infds);
 	while(isConnected()) {
-		tv.tv_sec = 1;
+		tv.tv_sec = floor(timeout / 1000.0);
+		tv.tv_usec = timeout % 1000;
 
 		int response = select(d->socket+1, &d->infds, NULL, NULL, &tv);
-		if (response <= 0) {
+		if (response == 0 && timeout > 0) {
+			return L"";
+		} else if (response <= 0) {
 			FD_SET(d->socket, &d->infds);
 			continue;
 		}
