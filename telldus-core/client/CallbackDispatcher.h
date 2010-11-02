@@ -21,37 +21,35 @@ namespace TelldusCore {
 		void *context;
 	};
 	
-	template <typename T> class CallbackDispatcher: public Thread {
-	public:
-		CallbackDispatcher(const CallbackStruct<T> &data);
-		virtual ~CallbackDispatcher();
-	protected:
-		CallbackStruct<T> d;
-	};
-	
-	class TDDeviceEventDispatcher : public CallbackDispatcher<TDDeviceEvent> {
+	class TDDeviceEventDispatcher : public Thread {
 	public:
 		TDDeviceEventDispatcher(const CallbackStruct<TDDeviceEvent> &data, int deviceId, int method, const std::string &strData);
+		virtual ~TDDeviceEventDispatcher();
 	protected:
 		virtual void run();
 	private:
+		CallbackStruct<TDDeviceEvent> d;
 		int deviceId, method;
 		std::string strData;
 	};
-	class TDDeviceChangeEventDispatcher : public CallbackDispatcher<TDDeviceChangeEvent> {
+	class TDDeviceChangeEventDispatcher : public Thread {
 	public:
 		TDDeviceChangeEventDispatcher(const CallbackStruct<TDDeviceChangeEvent> &data, int deviceId, int changeEvent, int changeType);
+		virtual ~TDDeviceChangeEventDispatcher();
 	protected:
 		virtual void run();
 	private:
+		CallbackStruct<TDDeviceChangeEvent> d;
 		int deviceId, changeEvent, changeType;
 	};
-	class TDRawDeviceEventDispatcher : public CallbackDispatcher<TDRawDeviceEvent> {
+	class TDRawDeviceEventDispatcher : public Thread {
 	public:
 		TDRawDeviceEventDispatcher(const CallbackStruct<TDRawDeviceEvent> &data, const std::string &strData, int controllerId);
+		virtual ~TDRawDeviceEventDispatcher();
 	protected:
 		virtual void run();
 	private:
+		CallbackStruct<TDRawDeviceEvent> d;
 		int controllerId;
 		std::string strData;
 	};

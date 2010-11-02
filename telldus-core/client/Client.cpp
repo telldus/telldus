@@ -75,10 +75,6 @@ void Client::callbackDeviceEvent(int deviceId, int deviceState, const std::wstri
 			list.push_back(ptr);
 		}
 	}
-	std::list<std::tr1::shared_ptr<TDDeviceEventDispatcher> >::const_iterator it = list.begin();
-	for (; it != list.end(); ++it) {
-		(*it)->wait();
-	}
 }
 
 void Client::callbackDeviceChangeEvent(int deviceId, int eventDeviceChanges, int eventChangeType){
@@ -90,10 +86,6 @@ void Client::callbackDeviceChangeEvent(int deviceId, int eventDeviceChanges, int
 			list.push_back(ptr);
 		}
 	}
-	std::list<std::tr1::shared_ptr<TDDeviceChangeEventDispatcher> >::const_iterator it = list.begin();
-	for (; it != list.end(); ++it) {
-		(*it)->wait();
-	}
 }
 
 void Client::callbackRawEvent(std::wstring command, int controllerId){
@@ -104,10 +96,6 @@ void Client::callbackRawEvent(std::wstring command, int controllerId){
 			std::tr1::shared_ptr<TDRawDeviceEventDispatcher> ptr(new TDRawDeviceEventDispatcher(*callback_it, TelldusCore::wideToString(command), controllerId));
 			list.push_back(ptr);
 		}
-	}
-	std::list<std::tr1::shared_ptr<TDRawDeviceEventDispatcher> >::const_iterator it = list.begin();
-	for (; it != list.end(); ++it) {
-		(*it)->wait();
 	}
 }
 
