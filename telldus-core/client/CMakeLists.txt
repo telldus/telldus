@@ -4,11 +4,13 @@ ENDIF(COMMAND cmake_policy)
 
 ######## Non configurable options  ########
 SET( telldus-core_SRCS
+	CallbackDispatcher.cpp
 	Client.cpp
 	telldus-core.cpp
 )
 
 SET( telldus-core_HDRS
+	CallbackDispatcher.h
 	Client.h
 )
 SET( telldus-core_PUB_HDRS

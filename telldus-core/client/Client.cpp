@@ -1,18 +1,20 @@
 #include "Client.h"
+#include "CallbackDispatcher.h"
 #include "Socket.h"
 #include "Strings.h"
 #include "Mutex.h"
 #include "common.h"
 
 #include <list>
+#ifdef _WINDOWS
+#include <memory>
+#else
+#include <tr1/memory>
+#endif
+
 
 using namespace TelldusCore;
 
-template <typename T> struct CallbackStruct {
-	T event;
-	int id;
-	void *context;
-};
 typedef CallbackStruct<TDDeviceEvent> DeviceEvent;
 typedef CallbackStruct<TDDeviceChangeEvent> DeviceChangeEvent;
 typedef CallbackStruct<TDRawDeviceEvent> RawDeviceEvent;
@@ -65,9 +67,17 @@ Client *Client::getInstance() {
 }
 
 void Client::callbackDeviceEvent(int deviceId, int deviceState, const std::wstring &deviceStateValue){
-	TelldusCore::MutexLocker locker(&d->mutex);
-	for(DeviceEventList::const_iterator callback_it = d->deviceEventList.begin(); callback_it != d->deviceEventList.end(); ++callback_it) {
-		(*callback_it).event(deviceId, deviceState, TelldusCore::wideToString(deviceStateValue).c_str(), (*callback_it).id, (*callback_it).context);
+	std::list<std::tr1::shared_ptr<TDDeviceEventDispatcher> > list;
+	{
+		TelldusCore::MutexLocker locker(&d->mutex);
+		for(DeviceEventList::const_iterator callback_it = d->deviceEventList.begin(); callback_it != d->deviceEventList.end(); ++callback_it) {
+			std::tr1::shared_ptr<TDDeviceEventDispatcher> ptr(new TDDeviceEventDispatcher(*callback_it, deviceId, deviceState, TelldusCore::wideToString(deviceStateValue)));
+			list.push_back(ptr);
+		}
+	}
+	std::list<std::tr1::shared_ptr<TDDeviceEventDispatcher> >::const_iterator it = list.begin();
+	for (; it != list.end(); ++it) {
+		(*it)->wait();
 	}
 }
 
