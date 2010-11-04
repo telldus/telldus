@@ -233,6 +233,16 @@ namespace TelldusWrapper
 		}
 
 		/// <summary>
+		///   Close the library and clean up the cache it uses.
+		///   This should be called when the library is not supposed to be used anymore.
+		///   Do not use when this has been instantiated, will be closed in destructor then, only on static methods.
+		/// </summary>
+		public static void tdClose()
+		{
+			UnmanagedImport.tdClose();
+		}
+
+		/// <summary>
 		/// Dims a device.
 		/// Make sure the device supports this by calling tdMethods() before any calls to this function.
 		/// </summary>
