@@ -9,15 +9,6 @@ namespace TelldusWrapper
 		int lastEventID = 0;
 		Dictionary<int, Object> callbackFunctionReferenceList = new Dictionary<int, Object>();	//this prevents errors in "unknown module" due to callback functions being garbage collected since there are no reference to them
 
-		//TODO: reference the correct DLL
-		//TODO: compile towards correct platform (x86/64?) "Any" working?
-		//TODO: kommentera... både wrapper och exempel...
-		//TODO: kommentera i början av filen...
-		//error handling? Or just throw it upwards?
-		//close och init (om den skulle göras alls) görs här i wrappern, de exporteras inte vidare... eller ska de? Inte heller connected/disconnected tellstick
-		//TODO, use getNumberOfDevices as an example, outside the wrapper, service not running = -6, handle this here or later? Negative values = error
-		//throwing System.DllNotFoundException if dll's not ready... Handle here or in program? Might aswell keep that error message
-			
 
 		//Device methods
 		public const int TELLSTICK_TURNON = 1;
@@ -483,7 +474,7 @@ namespace TelldusWrapper
 				{
 					rawListenerContextHandle = GCHandle.Alloc(obj);
 
-					registeredRawListenerFunctionId = UnmanagedImport.tdRegisterRawDeviceEvent(listeningFunctionDelegate, (void*)GCHandle.ToIntPtr(rawListenerContextHandle));	//TODO context here or above?
+					registeredRawListenerFunctionId = UnmanagedImport.tdRegisterRawDeviceEvent(listeningFunctionDelegate, (void*)GCHandle.ToIntPtr(rawListenerContextHandle));
 				}
 				else
 				{
