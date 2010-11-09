@@ -1,5 +1,4 @@
 #include "ProtocolYidong.h"
-#include <stdio.h>
 
 std::string ProtocolYidong::getStringForMethod(int method, unsigned char, Controller *) {
 	int intCode = this->getIntParameter(L"unit", 1, 4);
@@ -21,6 +20,5 @@ std::string ProtocolYidong::getStringForMethod(int method, unsigned char, Contro
 	}
 
 	strCode.append(L"110");
-	printf("Code: %s\n", std::string(strCode.begin(), strCode.end()).c_str());
 	return getStringForCode(strCode, method);
 }
