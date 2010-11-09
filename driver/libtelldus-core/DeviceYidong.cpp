@@ -26,9 +26,9 @@ int DeviceYidong::methods(){
 
 bool DeviceYidong::setUnit(const std::string &newUnit) {
 	if (newUnit.length() > 0) {
-		intCode = atoi(newUnit.c_str()) - 1;
+		intCode = atoi(newUnit.c_str());
 	} else {
-		intCode = 0;
+		intCode = 1;
 	}
 	return true;
 }
