@@ -24,6 +24,7 @@ SET( telldus-gui_SRCS
 	devicesettingnexabell.cpp
 	devicesettingrisingsun.cpp
 	devicesettingsartano.cpp
+	devicesettingunitcode.cpp
 	devicesettingupm.cpp
 	devicesetting.cpp
 	methodwidget.cpp
@@ -50,6 +51,7 @@ SET( telldus-gui_MOC_HDRS
 	devicesettingnexabell.h
 	devicesettingrisingsun.h
 	devicesettingsartano.h
+	devicesettingunitcode.h
 	devicesettingupm.h
 	devicesetting.h
 	methodwidget.h
@@ -59,6 +61,8 @@ SET( telldus-gui_MOC_HDRS
 QT4_WRAP_CPP(  telldus-gui_MOC_SRCS  ${telldus-gui_MOC_HDRS} )
 QT4_AUTOMOC (  ${telldus-gui_SRCS} )
 QT4_ADD_RESOURCES  (telldus-gui_RSRCS   telldusgui.qrc  data/${BRANDING}/resources.qrc         )
+
+LIST(APPEND telldus-gui_RSRCS data/${BRANDING}/devices.xml)
 
 SET( telldus-gui_LIBRARIES
 	${QT_LIBRARIES}
