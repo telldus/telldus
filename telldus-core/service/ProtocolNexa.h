@@ -6,7 +6,7 @@
 
 class ProtocolNexa : public Protocol {
 public:
-	int methods() const;
+	virtual int methods() const;
 	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller);
 
 protected:
@@ -15,6 +15,7 @@ protected:
 	std::string getStringBell();
 	virtual std::string getOffCode() const;
 	static std::string getCodeSwitchTuple(int code);
+	static std::string getStringSelflearningForCode(int house, int unit, int method, unsigned char data);
 };
 
 #endif //PROTOCOLNEXA_H
