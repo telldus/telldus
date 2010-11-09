@@ -23,6 +23,7 @@ SET( telldus-core_SRCS
 	DeviceUpm.cpp
 	DeviceWaveman.cpp
 	DeviceX10.cpp
+	DeviceYidong.cpp
 	Controller.cpp
 	Manager.cpp
 	Settings.cpp

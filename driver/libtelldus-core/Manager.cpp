@@ -24,6 +24,7 @@
 #include "DeviceUndefined.h"
 #include "DeviceUpm.h"
 #include "DeviceX10.h"
+#include "DeviceYidong.h"
 
 #include "Controller.h"
 #ifdef TELLSTICK_DUO
@@ -149,6 +150,11 @@ Device *Manager::getDevice(int intDeviceId){
 			dev = new DeviceX10(intDeviceId, strModel, strName);
 			((DeviceX10*)dev)->setHouse(settings.getDeviceParameter(intDeviceId, "house"));
 			((DeviceX10*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "unit"));
+#endif		
+#ifdef PROTOCOL_YIDONG
+		} else if (strcasecmp(protocol.c_str(), "yidong") == 0) {
+			dev = new DeviceYidong(intDeviceId, strModel, strName);
+			((DeviceYidong*)dev)->setUnit(settings.getDeviceParameter(intDeviceId, "unit"));
 #endif		
 		} else {
 			//This is a dummy device needed when the parameters isn't setup correctly.
