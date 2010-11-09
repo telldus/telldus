@@ -24,6 +24,9 @@
 			<device model="codeswitch:elro" protocol="sartano" widget="2" image="elro" name="Code Switch">Code Switch</device>
 			<device model="codeswitch:elro-ab600" protocol="arctech" widget="1" image="elro-ab600" name="Code Switch - System AB600">Code Switch - System AB600</device>
 		</vendor>
+		<vendor name="Goobay" image="goobay">
+			<device model="goobay:goobay" protocol="yidong" widget="13" image="goobay" name="Code Switch">Code Switch</device>
+		</vendor>
 		<vendor name="GAO" image="gao">
 			<!--<text>http://www.everflourish.com.cn/</text> -->
 			<device model="codeswitch:gao" protocol="risingsun" widget="10" image="gao_cs" name="Code Switch">Code Switch</device>

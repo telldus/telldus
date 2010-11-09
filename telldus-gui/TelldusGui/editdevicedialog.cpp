@@ -11,6 +11,7 @@
 #include "devicesettingnexabell.h"
 #include "devicesettingrisingsun.h"
 #include "devicesettingsartano.h"
+#include "devicesettingunitcode.h"
 #include "devicesettingupm.h"
 
 #include <QVBoxLayout>
@@ -118,7 +119,7 @@ EditDeviceDialog::EditDeviceDialog(Device *d, QWidget *parent, Qt::WFlags flags)
 	deviceSettings[12] = new DeviceSettingArctechSelflearning(device, this);
 	((DeviceSettingArctechSelflearning *)deviceSettings[12])->setRemoteMinMax(1,33554432);
 	((DeviceSettingArctechSelflearning *)deviceSettings[12])->setUnitMinMax(1,16);
-
+	deviceSettings[13] = new DeviceSettingUnitcode(device, this);
 	
 	foreach( DeviceSetting *s, deviceSettings ) {
 		settingsLayout->addWidget( s );
