@@ -29,6 +29,9 @@
 			<device model="codeswitch:gao" protocol="risingsun" widget="10" image="gao_cs" name="Code Switch">Code Switch</device>
 			<device model="selflearning-switch:gao" protocol="everflourish" widget="11" image="gao_sl" name="Self Learning on/off">Self Learning on/off</device>
 		</vendor>
+		<vendor name="Goobay (experimental)" image="goobay">
+			<device model="goobay:goobay" protocol="yidong" widget="13" image="goobay" name="Code Switch">Code Switch</device>
+		</vendor>
 		<vendor name="HomeEasy" image="homeeasy">
 			<!--<text>http://www.homeeasy.eu/home.php</text>-->
 			<device model="codeswitch:homeeasy" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
