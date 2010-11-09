@@ -20,6 +20,8 @@ SET( telldus-service_protocol_SRCS
 	Protocol.cpp
 	ProtocolBrateck.h
 	ProtocolBrateck.cpp
+	ProtocolComen.h
+	ProtocolComen.cpp
 	ProtocolEverflourish.h
 	ProtocolEverflourish.cpp
 	ProtocolFuhaote.h

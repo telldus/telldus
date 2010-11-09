@@ -2,6 +2,7 @@
 #include "../client/telldus-core.h"
 
 #include "ProtocolBrateck.h"
+#include "ProtocolComen.h"
 #include "ProtocolEverflourish.h"
 #include "ProtocolFuhaote.h"
 #include "ProtocolIkea.h"
@@ -85,6 +86,9 @@ Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname){
 	} else if (TelldusCore::comparei(protocolname, L"brateck")) {
 		return new ProtocolBrateck();
 
+	} else if (TelldusCore::comparei(protocolname, L"comen")) {
+		return new ProtocolComen();
+
 	} else if (TelldusCore::comparei(protocolname, L"everflourish")) {
 		return new ProtocolEverflourish();
 
@@ -128,6 +132,10 @@ std::list<std::string> Protocol::getParametersForProtocol(const std::wstring &pr
 
 	} else if (TelldusCore::comparei(protocolName, L"brateck")) {
 		parameters.push_back("house");
+
+	} else if (TelldusCore::comparei(protocolName, L"comen")) {
+		parameters.push_back("house");
+		parameters.push_back("unit");
 
 	} else if (TelldusCore::comparei(protocolName, L"everflourish")) {
 		parameters.push_back("house");
