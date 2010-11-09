@@ -8,6 +8,9 @@ class ProtocolSartano : public Protocol
 public:
 	int methods() const;
 	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller);
+
+protected:
+	std::string getStringForCode(const std::wstring &code, int method);
 };
 
 #endif //PROTOCOLSARTANO_H
