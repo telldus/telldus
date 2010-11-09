@@ -16,5 +16,6 @@
 	#define PROTOCOL_IKEA
 	#define PROTOCOL_UPM
 	#define PROTOCOL_X10
+	#define PROTOCOL_YIDONG
 #endif
 
