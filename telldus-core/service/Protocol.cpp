@@ -12,6 +12,7 @@
 #include "ProtocolUpm.h"
 #include "ProtocolWaveman.h"
 #include "ProtocolX10.h"
+#include "ProtocolYidong.h"
 
 #include "Strings.h"
 #include <sstream>
@@ -24,7 +25,7 @@ public:
 
 Protocol::Protocol(){
 
-	d = new PrivateData;	
+	d = new PrivateData;
 }
 
 Protocol::~Protocol(void) {
@@ -35,7 +36,7 @@ std::wstring Protocol::model() const {
 	std::wstring strModel = d->model;
 	//Strip anything after : if it is found
 	size_t pos = strModel.find(L":");
-	if (pos != std::wstring::npos) { 
+	if (pos != std::wstring::npos) {
 		strModel = strModel.substr(0, pos);
 	}
 
@@ -77,7 +78,7 @@ int Protocol::getIntParameter(const std::wstring &name, int min, int max) const 
 }
 
 Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname){
-	
+
 	if(TelldusCore::comparei(protocolname, L"arctech")){
 		return new ProtocolNexa();
 
@@ -104,12 +105,15 @@ Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname){
 
 	} else if (TelldusCore::comparei(protocolname, L"upm")) {
 		return new ProtocolUpm();
-		
+
 	} else if (TelldusCore::comparei(protocolname, L"waveman")) {
 		return new ProtocolWaveman();
-	
+
 	} else if (TelldusCore::comparei(protocolname, L"x10")) {
 		return new ProtocolX10();
+
+	} else if (TelldusCore::comparei(protocolname, L"yidong")) {
+		return new ProtocolYidong();
 	}
 
 	return 0;
@@ -150,13 +154,16 @@ std::list<std::string> Protocol::getParametersForProtocol(const std::wstring &pr
 	} else if (TelldusCore::comparei(protocolName, L"upm")) {
 		parameters.push_back("house");
 		parameters.push_back("unit");
-		
+
 	} else if (TelldusCore::comparei(protocolName, L"waveman")) {
 		parameters.push_back("house");
 		parameters.push_back("unit");
-	
+
 	} else if (TelldusCore::comparei(protocolName, L"x10")) {
 		parameters.push_back("house");
+		parameters.push_back("unit");
+
+	} else if (TelldusCore::comparei(protocolName, L"yidong")) {
 		parameters.push_back("unit");
 	}
 
