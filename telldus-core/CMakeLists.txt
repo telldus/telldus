@@ -24,9 +24,8 @@ IF (WIN32)
 	SET(SIGN_FILES FALSE CACHE BOOL "Sign the generated files. This requires a certificate to be installed on the computer!")
 ENDIF (WIN32)
 
-SET(BUILD_RFCMD		FALSE	CACHE BOOL "Build rfcmd")
-
 SET(BUILD_TDTOOL	TRUE	CACHE BOOL "Build tdtool")
+SET(BUILD_TDADMIN	TRUE	CACHE BOOL "Build tdadmin")
 
 SET(GENERATE_MAN	FALSE	CACHE	BOOL "Enable generation of man-files")
 
@@ -42,7 +41,6 @@ ADD_SUBDIRECTORY(client)
 IF(BUILD_TDTOOL)
 	ADD_SUBDIRECTORY(tdtool)
 ENDIF(BUILD_TDTOOL)
-
-IF(BUILD_RFCMD)
-# 	ADD_SUBDIRECTORY(rfcmd)
-ENDIF(BUILD_RFCMD)
+IF(BUILD_TDADMIN)
+	ADD_SUBDIRECTORY(tdadmin)
+ENDIF(BUILD_TDADMIN)
