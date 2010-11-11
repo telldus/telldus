@@ -172,6 +172,7 @@ IF (APPLE)
 ENDIF (APPLE)
 
 IF (UNIX AND NOT APPLE)
+	INSTALL(TARGETS ${telldus-service_TARGET} RUNTIME DESTINATION sbin)
 	SET(SYSCONF_INSTALL_DIR "/etc" CACHE PATH "The sysconfig install dir (default prefix/etc)" )
 	SET(STATE_INSTALL_DIR	"/var/state" CACHE PATH "The directory to store state information of the devices" )
 
