@@ -1,0 +1,2 @@
+BUS=="usb", ID_VENDOR_ID=="1781" RUN+="${CMAKE_INSTALL_PREFIX}/share/telldus-core/helpers/udev.sh"
+

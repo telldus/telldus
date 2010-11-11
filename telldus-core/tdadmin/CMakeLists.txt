@@ -50,3 +50,17 @@ IF (UNIX)
 ENDIF (UNIX)
 
 INSTALL(TARGETS tdadmin RUNTIME DESTINATION sbin)
+
+IF (UNIX AND NOT APPLE)
+	SET(UDEV_RULES_DIR	"/etc/udev/rules.d" CACHE PATH "The directory where udev store its rules" )
+	CONFIGURE_FILE(
+		${CMAKE_CURRENT_SOURCE_DIR}/05-tellstick.rules
+		${CMAKE_BINARY_DIR}/parsed/05-tellstick.rules
+	)
+	INSTALL(FILES ${CMAKE_BINARY_DIR}/parsed/05-tellstick.rules
+		DESTINATION ${UDEV_RULES_DIR}
+	)
+	INSTALL(PROGRAMS udev.sh
+		DESTINATION share/telldus-core/helpers/
+	)
+ENDIF (UNIX AND NOT APPLE)
