@@ -114,19 +114,3 @@ IF (UNIX)
 	)
 ENDIF (UNIX)
 
-IF (UNIX AND NOT APPLE)
-	SET(SYSCONF_INSTALL_DIR "/etc" CACHE PATH "The sysconfig install dir (default prefix/etc)" )
-	SET(STATE_INSTALL_DIR	"/var/state" CACHE PATH "The directory to store state information of the devices" )
-	SET(UDEV_RULES_DIR	"/etc/udev/rules.d" CACHE PATH "The directory where udev store its rules" )
-
-	INSTALL(FILES tellstick.conf
-		DESTINATION ${SYSCONF_INSTALL_DIR}
-	)
-	INSTALL(FILES telldus-core.conf
-		DESTINATION ${STATE_INSTALL_DIR}
-		PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_WRITE WORLD_READ WORLD_WRITE
-	)
-	INSTALL(FILES 99-tellstick.rules
-		DESTINATION ${UDEV_RULES_DIR}
-	)
-ENDIF (UNIX AND NOT APPLE)
