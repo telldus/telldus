@@ -86,7 +86,7 @@ IF (APPLE) #### Mac OS X ####
 		TelldusCommon
 	)
 	LIST(APPEND telldus-service_SRCS
-		main_unix.cpp
+		main_mac.cpp
 		ConnectionListener_unix.cpp
 		ControllerListener_mac.cpp
 		Event_unix.cpp
