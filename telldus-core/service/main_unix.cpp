@@ -33,6 +33,7 @@ void signalHandler(int sig) {
 
 int main(int argc, char **argv) {
 	pid_t pid, sid;
+	FILE *fd;
 	
 	pid = fork();
 	if (pid < 0) {
@@ -50,6 +51,15 @@ int main(int argc, char **argv) {
 		
 	/* Change the file mode mask */
 	umask(0);
+	
+	/* Record the pid */
+	fd = fopen(PID_FILE,"w");
+	if (!fd) {
+		syslog(LOG_ERR, "Could not write pid file");
+		exit(EXIT_FAILURE);
+	}
+	fprintf(fd,"%d\n",getpid());
+	fclose(fd);
 	
 	sid = setsid();
 	
