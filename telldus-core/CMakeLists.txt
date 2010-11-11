@@ -24,8 +24,13 @@ IF (WIN32)
 	SET(SIGN_FILES FALSE CACHE BOOL "Sign the generated files. This requires a certificate to be installed on the computer!")
 ENDIF (WIN32)
 
-SET(BUILD_TDTOOL	TRUE	CACHE BOOL "Build tdtool")
-SET(BUILD_TDADMIN	TRUE	CACHE BOOL "Build tdadmin")
+IF (WIN32)
+	SET(TOOLS_DEFAULT FALSE)
+ELSE (WIN32)
+	SET(TOOLS_DEFAULT TRUE)
+ENDIF (WIN32)	
+SET(BUILD_TDTOOL	${TOOLS_DEFAULT}	CACHE BOOL "Build tdtool")
+SET(BUILD_TDADMIN	${TOOLS_DEFAULT}	CACHE BOOL "Build tdadmin")
 
 SET(GENERATE_MAN	FALSE	CACHE	BOOL "Enable generation of man-files")
 
