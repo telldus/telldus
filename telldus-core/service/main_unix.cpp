@@ -56,7 +56,6 @@ int main(int argc, char **argv) {
 	fd = fopen(PID_FILE,"w");
 	if (!fd) {
 		syslog(LOG_ERR, "Could not write pid file");
-		exit(EXIT_FAILURE);
 	}
 	fprintf(fd,"%d\n",getpid());
 	fclose(fd);
@@ -72,6 +71,8 @@ int main(int argc, char **argv) {
 	if ((chdir("/")) < 0) {
 		exit(EXIT_FAILURE);
 	}
+
+	//TODO: Reduce our permissions (change user)
 
 	close(STDIN_FILENO);
 	close(STDOUT_FILENO);
