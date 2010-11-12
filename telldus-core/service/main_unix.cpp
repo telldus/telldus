@@ -41,6 +41,16 @@ int main(int argc, char **argv) {
 	}
 	if (pid > 0) {
 		//We are the parent
+		//Let the parent store the clients pid,
+		//This way anyone starting the daemon can read the pidfile immediately
+
+		/* Record the pid */
+		fd = fopen(PID_FILE,"w");
+		if (!fd) {
+			syslog(LOG_ERR, "Could not write pid file");
+		}
+		fprintf(fd,"%d\n",pid);
+		fclose(fd);
 		exit(EXIT_SUCCESS);
 	}
 
@@ -51,14 +61,6 @@ int main(int argc, char **argv) {
 
 	/* Change the file mode mask */
 	umask(0);
-
-	/* Record the pid */
-	fd = fopen(PID_FILE,"w");
-	if (!fd) {
-		syslog(LOG_ERR, "Could not write pid file");
-	}
-	fprintf(fd,"%d\n",getpid());
-	fclose(fd);
 
 	sid = setsid();
 
