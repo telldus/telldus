@@ -91,11 +91,3 @@ int Message::takeInt(std::wstring *message) {
 	message->erase(0, index+1);
 	return value;
 }
-
-int Message::wideToInteger(const std::wstring &input){
-	std::wstringstream inputstream;
-	inputstream << input;
-	int retval;
-	inputstream >> retval;
-	return retval;
-}

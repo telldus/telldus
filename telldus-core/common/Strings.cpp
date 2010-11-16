@@ -28,6 +28,14 @@ bool TelldusCore::comparei(std::wstring stringA, std::wstring stringB) {
 	return stringA == stringB;
 }
 
+int TelldusCore::wideToInteger(const std::wstring &input){
+	std::wstringstream inputstream;
+	inputstream << input;
+	int retval;
+	inputstream >> retval;
+	return retval;
+}
+
 std::string TelldusCore::wideToString(const std::wstring &input) {
 	
 	std::string strReturn;

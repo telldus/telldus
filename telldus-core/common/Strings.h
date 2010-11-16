@@ -8,6 +8,8 @@ namespace TelldusCore {
 	int charToInteger(const char *value);
 	bool comparei(std::wstring stringA, std::wstring stringB);
 	std::string wideToString(const std::wstring &input);
+
+	int wideToInteger(const std::wstring &input);
 }
 
 #endif //STRING_H
