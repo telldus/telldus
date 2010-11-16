@@ -5,6 +5,7 @@
 #include "ProtocolComen.h"
 #include "ProtocolEverflourish.h"
 #include "ProtocolFuhaote.h"
+#include "ProtocolGroup.h"
 #include "ProtocolIkea.h"
 #include "ProtocolNexa.h"
 #include "ProtocolRisingSun.h"
@@ -118,6 +119,13 @@ Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname){
 
 	} else if (TelldusCore::comparei(protocolname, L"yidong")) {
 		return new ProtocolYidong();
+
+	} else if (TelldusCore::comparei(protocolname, L"group")) {
+		return new ProtocolGroup();
+	}
+
+	else if (TelldusCore::comparei(protocolname, L"scene")) {
+		return new ProtocolGroup();	//TODO
 	}
 
 	return 0;
@@ -125,7 +133,6 @@ Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname){
 
 std::list<std::string> Protocol::getParametersForProtocol(const std::wstring &protocolName) {
 	std::list<std::string> parameters;
-
 	if(TelldusCore::comparei(protocolName, L"arctech")){
 		parameters.push_back("house");
 		parameters.push_back("unit");
@@ -173,6 +180,12 @@ std::list<std::string> Protocol::getParametersForProtocol(const std::wstring &pr
 
 	} else if (TelldusCore::comparei(protocolName, L"yidong")) {
 		parameters.push_back("unit");
+	
+	} else if (TelldusCore::comparei(protocolName, L"group")) {
+		parameters.push_back("devices");
+	
+	}  else if (TelldusCore::comparei(protocolName, L"scene")) {
+		//parameters.push_back("unit");	//TODO
 	}
 
 	return parameters;

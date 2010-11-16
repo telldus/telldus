@@ -119,6 +119,13 @@ std::wstring Device::getStateValue(){
 	return d->stateValue;
 }
 
+int Device::getType(){
+	if(d->model == L"group"){
+		return TELLSTICK_TYPE_GROUP;
+	}
+	return TELLSTICK_TYPE_DEVICE;
+}
+
 /**
 * End Get-/Set
 */

@@ -30,6 +30,7 @@ public:
 	void setProtocolName(const std::wstring &name);
 	void setStateValue(int stateValue);
 	void setLastSentCommand(int command, std::wstring value);
+	int getType();
 
 	static int maskUnsupportedMethods(int methods, int supportedMethods);
 	static int methodId( const std::string &methodName );

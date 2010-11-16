@@ -8,6 +8,7 @@
 
 #include <map>
 #include <memory>
+#include <sstream>
 
 typedef std::map<int, Device *> DeviceMap;
 
@@ -56,6 +57,7 @@ void DeviceManager::fillDevices(){
 		d->devices[id]->setParameter(L"units", d->set.getDeviceParameter(id, L"units"));
 		d->devices[id]->setParameter(L"fade", d->set.getDeviceParameter(id, L"fade"));
 		d->devices[id]->setParameter(L"system", d->set.getDeviceParameter(id, L"system"));
+		d->devices[id]->setParameter(L"devices", d->set.getDeviceParameter(id, L"devices"));
 	}
 }
 
@@ -112,9 +114,33 @@ int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
 	}
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
-		TelldusCore::MutexLocker deviceLocker(it->second);
-		int methods = it->second->getMethods();
-		return Device::maskUnsupportedMethods(methods, methodsSupported);
+		
+		int type;
+		int methods;
+		std::wstring deviceIds;
+
+		{
+			//TODO: better way to lock (release)
+			TelldusCore::MutexLocker deviceLocker(it->second);
+			type = it->second->getType();
+			methods = it->second->getMethods();
+			deviceIds = it->second->getParameter(L"devices");
+		}
+		if(type == TELLSTICK_TYPE_GROUP){
+
+			//get all methods that some device in the groups supports
+			std::wstring buffer;
+			std::wstringstream ss(deviceIds);
+
+			while(ss >> buffer){
+				int deviceId = TelldusCore::wideToInteger(buffer);
+				methods |= getDeviceMethods(deviceId, methodsSupported);
+			}
+			return methods;
+		}
+		else{
+			return Device::maskUnsupportedMethods(methods, methodsSupported);
+		}
 	}
 
 	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
@@ -281,7 +307,16 @@ int DeviceManager::getDeviceId(int deviceIndex) {
 
 int DeviceManager::getDeviceType(int deviceId){
 
-	return TELLSTICK_TYPE_DEVICE;
+TelldusCore::MutexLocker deviceListLocker(&d->lock);
+	if (!d->devices.size()) {
+		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+	}
+	DeviceMap::iterator it = d->devices.find(deviceId);
+	if (it != d->devices.end()) {
+		TelldusCore::MutexLocker deviceLocker(it->second);
+		return it->second->getType();
+	}
+	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 }
 
 int DeviceManager::getPreferredControllerId(int deviceId){
@@ -327,20 +362,54 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 		device = it->second;
 	} //devicelist unlocked
 
-	Controller *controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
-	if(controller){
-		int retval = device->doAction(action, data, controller);
-		if(retval == TELLSTICK_SUCCESS) {
-			std::wstring datastring = TelldusCore::Message::charUnsignedToWstring(data);
-			if (this->triggerDeviceStateChange(deviceId, action, datastring)) {
-				device->setLastSentCommand(action, datastring);
-				d->set.setDeviceState(deviceId, action, datastring);
-			}
+	int retval = TELLSTICK_ERROR_UNKNOWN;
+
+	if(device->getType() == TELLSTICK_TYPE_GROUP){
+		deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(0);	//TODO better way? Must unlock here somehow though...
+		retval = doGroupAction(device->getParameter(L"devices"), action, data);
+		if(device != NULL){	//TODO, some kind of test here... that device still exists...
+			deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(new TelldusCore::MutexLocker(device));	//TODO this isn't good either, device may have been deleted etc
 		}
-		return retval;
-	} else {
-		return TELLSTICK_ERROR_NOT_FOUND;
+		else{
+			retval = TELLSTICK_ERROR_UNKNOWN;
+		}
 	}
+	else{
+		Controller *controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
+		if(controller){
+			retval = device->doAction(action, data, controller);
+		} else {
+			return TELLSTICK_ERROR_NOT_FOUND;
+		}
+	}
+	if(retval == TELLSTICK_SUCCESS) {
+		std::wstring datastring = TelldusCore::Message::charUnsignedToWstring(data);
+		if (this->triggerDeviceStateChange(deviceId, action, datastring)) {
+			device->setLastSentCommand(action, datastring);
+			d->set.setDeviceState(deviceId, action, datastring);
+		}
+	}
+	return retval;
+}
+
+int DeviceManager::doGroupAction(const std::wstring deviceIds, int action, unsigned char data){
+	int retval = TELLSTICK_SUCCESS;	//TODO or no devices found?
+
+	std::wstring buffer;
+	std::wstringstream ss(deviceIds);
+
+	while(ss >> buffer){
+		int deviceId = TelldusCore::wideToInteger(buffer);
+		int deviceReturnValue = doAction(deviceId, action, data);
+
+		if(retval == TELLSTICK_SUCCESS){
+			//if error(s), return the first error, but still try to continue the action with the other devices
+			//quite possible that some device don't support the current method
+			retval = deviceReturnValue;
+		}
+		
+	}
+	return retval;
 }
 
 int DeviceManager::removeDevice(int deviceId){
