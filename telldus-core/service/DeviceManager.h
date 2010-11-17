@@ -36,7 +36,8 @@ public:
 	void handleControllerMessage(const ControllerEventData &event);
 
 private:
-	int doGroupAction(const std::wstring deviceIds, int action, unsigned char data);
+	int doGroupAction(const std::wstring deviceIds, int action, unsigned char data, const std::wstring protocol);
+	int executeScene(std::wstring singledevice);
 	bool triggerDeviceStateChange(int deviceId, int intDeviceState, const std::wstring &strDeviceStateValue );
 	void fillDevices(void);
 

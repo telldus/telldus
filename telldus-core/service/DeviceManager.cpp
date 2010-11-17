@@ -118,6 +118,7 @@ int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
 		int type;
 		int methods;
 		std::wstring deviceIds;
+		std::wstring protocol;
 
 		{
 			//TODO: better way to lock (release)
@@ -125,8 +126,9 @@ int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
 			type = it->second->getType();
 			methods = it->second->getMethods();
 			deviceIds = it->second->getParameter(L"devices");
+			protocol = it->second->getProtocolName();
 		}
-		if(type == TELLSTICK_TYPE_GROUP){
+		if(type == TELLSTICK_TYPE_GROUP && protocol != L"scene"){	//TODO would really like to be able to do this on protocol level instead of comparing protocol name here
 
 			//get all methods that some device in the groups supports
 			std::wstring buffer;
@@ -363,10 +365,13 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 	} //devicelist unlocked
 
 	int retval = TELLSTICK_ERROR_UNKNOWN;
+	std::wstring protocol = L"";
 
 	if(device->getType() == TELLSTICK_TYPE_GROUP){
+		std::wstring devices = device->getParameter(L"devices");
+		protocol = device->getProtocolName();
 		deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(0);	//TODO better way? Must unlock here somehow though...
-		retval = doGroupAction(device->getParameter(L"devices"), action, data);
+		retval = doGroupAction(devices, action, data, protocol);
 		if(device != NULL){	//TODO, some kind of test here... that device still exists...
 			deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(new TelldusCore::MutexLocker(device));	//TODO this isn't good either, device may have been deleted etc
 		}
@@ -382,7 +387,7 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 			return TELLSTICK_ERROR_NOT_FOUND;
 		}
 	}
-	if(retval == TELLSTICK_SUCCESS) {
+	if(retval == TELLSTICK_SUCCESS && protocol != L"scene") {	//TODO move this check, or make a "scene constant" or something else, to make this more general
 		std::wstring datastring = TelldusCore::Message::charUnsignedToWstring(data);
 		if (this->triggerDeviceStateChange(deviceId, action, datastring)) {
 			device->setLastSentCommand(action, datastring);
@@ -392,15 +397,25 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 	return retval;
 }
 
-int DeviceManager::doGroupAction(const std::wstring deviceIds, int action, unsigned char data){
+int DeviceManager::doGroupAction(const std::wstring devices, int action, unsigned char data, const std::wstring protocol){
 	int retval = TELLSTICK_SUCCESS;	//TODO or no devices found?
 
-	std::wstring buffer;
-	std::wstringstream ss(deviceIds);
+	std::wstring singledevice;
+	std::wstringstream devicesstream(devices);
 
-	while(ss >> buffer){
-		int deviceId = TelldusCore::wideToInteger(buffer);
-		int deviceReturnValue = doAction(deviceId, action, data);
+	while(std::getline(devicesstream, singledevice, L',')){
+
+		int deviceReturnValue = TELLSTICK_SUCCESS;
+		
+		if(protocol == L"scene" && (action == TELLSTICK_TURNON || action == TELLSTICK_EXECUTE)){	//TODO action check neccessary?
+			deviceReturnValue = executeScene(singledevice);
+		}
+		else if(protocol == L"group"){
+			int deviceId = TelldusCore::wideToInteger(singledevice);
+			if(deviceId > 0){	//todo, check, never 0 for devices, right?
+				deviceReturnValue = doAction(deviceId, action, data);
+			}
+		}
 
 		if(retval == TELLSTICK_SUCCESS){
 			//if error(s), return the first error, but still try to continue the action with the other devices
@@ -410,6 +425,44 @@ int DeviceManager::doGroupAction(const std::wstring deviceIds, int action, unsig
 		
 	}
 	return retval;
+}
+
+int DeviceManager::executeScene(std::wstring singledevice){
+	
+	/*std::wstring deviceIdPart = L"";
+	std::wstring methodPart = L"";
+	std::wstring dataPart = L"";
+	*/
+	std::wstringstream devicestream(singledevice);
+	
+	const int deviceParameterLength = 3;
+	std::wstring deviceParts[deviceParameterLength] = {L"", L"", L""};
+	std::wstring devicePart = L"";
+	int i = 0;
+	while(std::getline(devicestream, devicePart, L':') && i < deviceParameterLength){
+		deviceParts[i] = devicePart;
+		i++;
+	}
+
+	if(deviceParts[0] == L"" || deviceParts[1] == L""){
+		return TELLSTICK_ERROR_UNKNOWN;	//malformed or missing parameter
+	}
+	
+	int deviceId = TelldusCore::wideToInteger(deviceParts[0]);
+	int method = Device::methodId(TelldusCore::wideToString(deviceParts[1]));	//support methodparts both in the form of integers (e.g. TELLSTICK_TURNON) or text (e.g. "turnon")
+	if(method == 0){
+		method = TelldusCore::wideToInteger(deviceParts[1]);
+	}
+	unsigned char devicedata = 0;
+	if(deviceParts[2] != L""){
+		devicedata = TelldusCore::wideToInteger(deviceParts[2]);
+	}
+	
+	if(deviceId > 0 && method > 0){	//check for format error in parameter "devices"
+		return doAction(deviceId, method, devicedata);
+	}
+
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 int DeviceManager::removeDevice(int deviceId){
@@ -492,7 +545,7 @@ int DeviceManager::sendRawCommand(std::wstring command, int reserved){
 }
 
 bool DeviceManager::triggerDeviceStateChange(int deviceId, int intDeviceState, const std::wstring &strDeviceStateValue ) {
-	if ( intDeviceState == TELLSTICK_BELL || intDeviceState == TELLSTICK_LEARN) {
+	if ( intDeviceState == TELLSTICK_BELL || intDeviceState == TELLSTICK_LEARN || intDeviceState == TELLSTICK_EXECUTE) {
 		return false;
 	}
 

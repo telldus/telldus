@@ -10,6 +10,7 @@
 #include "ProtocolNexa.h"
 #include "ProtocolRisingSun.h"
 #include "ProtocolSartano.h"
+#include "ProtocolScene.h"
 #include "ProtocolSilvanChip.h"
 #include "ProtocolUpm.h"
 #include "ProtocolWaveman.h"
@@ -125,7 +126,7 @@ Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname){
 	}
 
 	else if (TelldusCore::comparei(protocolname, L"scene")) {
-		return new ProtocolGroup();	//TODO
+		return new ProtocolScene();
 	}
 
 	return 0;
@@ -185,7 +186,7 @@ std::list<std::string> Protocol::getParametersForProtocol(const std::wstring &pr
 		parameters.push_back("devices");
 	
 	}  else if (TelldusCore::comparei(protocolName, L"scene")) {
-		//parameters.push_back("unit");	//TODO
+		parameters.push_back("devices");
 	}
 
 	return parameters;

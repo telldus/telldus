@@ -162,6 +162,12 @@ int Device::maskUnsupportedMethods(int methods, int supportedMethods) {
 	if ((methods & TELLSTICK_BELL) && !(supportedMethods & TELLSTICK_BELL)) {
 		methods |= TELLSTICK_TURNON;
 	}
+
+	// Execute -> On
+	if ((methods & TELLSTICK_EXECUTE) && !(supportedMethods & TELLSTICK_EXECUTE)) {	//TODO ok everywhere?
+		methods |= TELLSTICK_TURNON;
+	}
+
 	//Cut of the rest of the unsupported methods we don't have a fallback for
 	return methods & supportedMethods;
 }
@@ -178,6 +184,9 @@ int Device::methodId( const std::string &methodName ) {
 	}
 	if (methodName.compare("dim") == 0) {
 		return TELLSTICK_DIM;
+	}
+	if (methodName.compare("execute") == 0) {
+		return TELLSTICK_EXECUTE;
 	}
 	return 0;
 }

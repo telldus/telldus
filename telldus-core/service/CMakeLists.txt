@@ -36,6 +36,8 @@ SET( telldus-service_protocol_SRCS
 	ProtocolRisingSun.cpp
 	ProtocolSartano.h
 	ProtocolSartano.cpp
+	ProtocolScene.h
+	ProtocolScene.cpp
 	ProtocolSilvanChip.h
 	ProtocolSilvanChip.cpp
 	ProtocolUpm.h
