@@ -33,6 +33,12 @@ using namespace TelldusCore;
  * @def TELLSTICK_EXECUTE
  * Device-flag for devices (scenes) supporting the tdExecute() call.
  *
+ * @def TELLSTICK_UP
+ * Device-flag for devices supporting the tdUp() call.
+ *
+ * @def TELLSTICK_DOWN
+ * Device-flag for devices supporting the tdDown() call.
+ *
  * @def TELLSTICK_LEARN
  * Device-flag for devices supporting the tdLearn() call.
  * 
@@ -177,6 +183,30 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
  */
 int WINAPI tdExecute(int intDeviceId){
 	Message msg(L"tdExecute");	
+	msg.addArgument(intDeviceId);
+	return Client::getIntegerFromService(msg);
+}
+
+/**
+ * Send "up" command to device.
+ * Make sure the device group supports this by calling tdMethods() before any
+ * call to this function.
+ * @param intDeviceId The device id to send the command to
+ */
+int WINAPI tdUp(int intDeviceId){
+	Message msg(L"tdUp");	
+	msg.addArgument(intDeviceId);
+	return Client::getIntegerFromService(msg);
+}
+
+/**
+ * Send "down" command to device.
+ * Make sure the device group supports this by calling tdMethods() before any
+ * call to this function.
+ * @param intDeviceId The device id to send the command to
+ */
+int WINAPI tdDown(int intDeviceId){
+	Message msg(L"tdDown");	
 	msg.addArgument(intDeviceId);
 	return Client::getIntegerFromService(msg);
 }
@@ -405,6 +435,8 @@ bool WINAPI tdRemoveDevice(int intDeviceId){
  * @sa TELLSTICK_TOGGLE
  * @sa TELLSTICK_DIM
  * @sa TELLSTICK_EXECUTE
+ * @sa TELLSTICK_UP
+ * @sa TELLSTICK_DOWN
  */
 int WINAPI tdMethods(int id, int methodsSupported){
 	Message msg(L"tdMethods");

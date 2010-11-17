@@ -168,6 +168,16 @@ int Device::maskUnsupportedMethods(int methods, int supportedMethods) {
 		methods |= TELLSTICK_TURNON;
 	}
 
+	// Up -> Off
+	if ((methods & TELLSTICK_UP) && !(supportedMethods & TELLSTICK_UP)) {
+		methods |= TELLSTICK_TURNOFF;
+	}
+	
+	// Down -> On
+	if ((methods & TELLSTICK_DOWN) && !(supportedMethods & TELLSTICK_DOWN)) {
+		methods |= TELLSTICK_TURNON;
+	}
+
 	//Cut of the rest of the unsupported methods we don't have a fallback for
 	return methods & supportedMethods;
 }
@@ -187,6 +197,12 @@ int Device::methodId( const std::string &methodName ) {
 	}
 	if (methodName.compare("execute") == 0) {
 		return TELLSTICK_EXECUTE;
+	}
+	if (methodName.compare("up") == 0) {
+		return TELLSTICK_UP;
+	}
+	if (methodName.compare("down") == 0) {
+		return TELLSTICK_DOWN;
 	}
 	return 0;
 }

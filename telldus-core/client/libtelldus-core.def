@@ -45,4 +45,6 @@ EXPORTS
 
 	tdRegisterDeviceChangeEvent @32
 	tdExecute @33
+	tdUp @34
+	tdDown @35
 	
