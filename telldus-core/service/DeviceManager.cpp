@@ -131,11 +131,11 @@ int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
 		if(type == TELLSTICK_TYPE_GROUP && protocol != L"scene"){	//TODO would really like to be able to do this on protocol level instead of comparing protocol name here
 
 			//get all methods that some device in the groups supports
-			std::wstring buffer;
-			std::wstringstream ss(deviceIds);
+			std::wstring deviceIdBuffer;
+			std::wstringstream devicesstream(deviceIds);
 
-			while(ss >> buffer){
-				int deviceId = TelldusCore::wideToInteger(buffer);
+			while(std::getline(devicesstream, deviceIdBuffer, L',')){
+				int deviceId = TelldusCore::wideToInteger(deviceIdBuffer);
 				methods |= getDeviceMethods(deviceId, methodsSupported);
 			}
 			return methods;
@@ -387,7 +387,8 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 			return TELLSTICK_ERROR_NOT_FOUND;
 		}
 	}
-	if(retval == TELLSTICK_SUCCESS && protocol != L"scene") {	//TODO move this check, or make a "scene constant" or something else, to make this more general
+	if(retval == TELLSTICK_SUCCESS && protocol != L"scene" && device->getMethods() & action) {	//TODO move this check, or make a "scene constant" or something else, to make this more general
+		//if method isn't explicitly supported by device, but used anyway as a fallback (i.e. bell), don't change state
 		std::wstring datastring = TelldusCore::Message::charUnsignedToWstring(data);
 		if (this->triggerDeviceStateChange(deviceId, action, datastring)) {
 			device->setLastSentCommand(action, datastring);
