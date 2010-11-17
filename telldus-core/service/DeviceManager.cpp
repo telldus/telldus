@@ -133,10 +133,17 @@ int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
 			//get all methods that some device in the groups supports
 			std::wstring deviceIdBuffer;
 			std::wstringstream devicesstream(deviceIds);
+			methods = 0;
 
 			while(std::getline(devicesstream, deviceIdBuffer, L',')){
 				int deviceId = TelldusCore::wideToInteger(deviceIdBuffer);
-				methods |= getDeviceMethods(deviceId, methodsSupported);
+				int deviceMethods = getDeviceMethods(deviceId, methodsSupported);
+				if(deviceMethods > 0){
+					debuglog(deviceId, "DEVICE ID");
+					debuglog(deviceMethods, "DEVICE METHODS");
+					methods |= deviceMethods;
+					debuglog(methods, "METHODS");
+				}
 			}
 			return methods;
 		}
