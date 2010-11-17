@@ -371,7 +371,7 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 		std::wstring devices = device->getParameter(L"devices");
 		protocol = device->getProtocolName();
 		deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(0);	//TODO better way? Must unlock here somehow though...
-		retval = doGroupAction(devices, action, data, protocol);
+		retval = doGroupAction(devices, action, data, protocol, deviceId);
 		if(device != NULL){	//TODO, some kind of test here... that device still exists...
 			deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(new TelldusCore::MutexLocker(device));	//TODO this isn't good either, device may have been deleted etc
 		}
@@ -397,7 +397,7 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 	return retval;
 }
 
-int DeviceManager::doGroupAction(const std::wstring devices, int action, unsigned char data, const std::wstring protocol){
+int DeviceManager::doGroupAction(const std::wstring devices, int action, unsigned char data, const std::wstring protocol, int groupDeviceId){
 	int retval = TELLSTICK_SUCCESS;	//TODO or no devices found?
 
 	std::wstring singledevice;
@@ -408,12 +408,18 @@ int DeviceManager::doGroupAction(const std::wstring devices, int action, unsigne
 		int deviceReturnValue = TELLSTICK_SUCCESS;
 		
 		if(protocol == L"scene" && (action == TELLSTICK_TURNON || action == TELLSTICK_EXECUTE)){	//TODO action check neccessary?
-			deviceReturnValue = executeScene(singledevice);
+			deviceReturnValue = executeScene(singledevice, groupDeviceId);
 		}
 		else if(protocol == L"group"){
 			int deviceId = TelldusCore::wideToInteger(singledevice);
-			if(deviceId > 0){	//todo, check, never 0 for devices, right?
+			if(deviceId == groupDeviceId){
+				deviceReturnValue = TELLSTICK_ERROR_UNKNOWN;	//avoid infinite loops if this group itself has been added to its devices
+			}
+			else if(deviceId > 0){	//todo, check, never 0 for devices, right?
 				deviceReturnValue = doAction(deviceId, action, data);
+			}
+			else{
+				deviceReturnValue = TELLSTICK_ERROR_DEVICE_NOT_FOUND;	//Probably incorrectly formatted parameter
 			}
 		}
 
@@ -427,12 +433,8 @@ int DeviceManager::doGroupAction(const std::wstring devices, int action, unsigne
 	return retval;
 }
 
-int DeviceManager::executeScene(std::wstring singledevice){
+int DeviceManager::executeScene(std::wstring singledevice, int groupDeviceId){
 	
-	/*std::wstring deviceIdPart = L"";
-	std::wstring methodPart = L"";
-	std::wstring dataPart = L"";
-	*/
 	std::wstringstream devicestream(singledevice);
 	
 	const int deviceParameterLength = 3;
@@ -449,6 +451,9 @@ int DeviceManager::executeScene(std::wstring singledevice){
 	}
 	
 	int deviceId = TelldusCore::wideToInteger(deviceParts[0]);
+	if(deviceId == groupDeviceId){
+		return TELLSTICK_ERROR_UNKNOWN;	//the scene itself has been added to its devices, avoid infinite loop
+	}
 	int method = Device::methodId(TelldusCore::wideToString(deviceParts[1]));	//support methodparts both in the form of integers (e.g. TELLSTICK_TURNON) or text (e.g. "turnon")
 	if(method == 0){
 		method = TelldusCore::wideToInteger(deviceParts[1]);
