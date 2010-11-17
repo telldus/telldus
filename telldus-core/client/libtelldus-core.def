@@ -44,4 +44,5 @@ EXPORTS
 	tdDisconnectTellStickController @31
 
 	tdRegisterDeviceChangeEvent @32
+	tdExecute @33
 	

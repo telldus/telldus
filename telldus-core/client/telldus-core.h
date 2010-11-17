@@ -48,6 +48,7 @@ extern "C" {
 	TELLSTICK_API int WINAPI tdTurnOff(int intDeviceId);
 	TELLSTICK_API int WINAPI tdBell(int intDeviceId);
 	TELLSTICK_API int WINAPI tdDim(int intDeviceId, unsigned char level);
+	TELLSTICK_API int WINAPI tdExecute(int intDeviceId);
 	TELLSTICK_API int WINAPI tdLearn(int intDeviceId);
 	TELLSTICK_API int WINAPI tdMethods(int id, int methodsSupported);
 	TELLSTICK_API int WINAPI tdLastSentCommand( int intDeviceId, int methodsSupported );
@@ -88,6 +89,7 @@ extern "C" {
 #define TELLSTICK_TOGGLE	8
 #define TELLSTICK_DIM		16
 #define TELLSTICK_LEARN		32
+#define TELLSTICK_EXECUTE	64
 
 //Error codes
 #define TELLSTICK_SUCCESS 0

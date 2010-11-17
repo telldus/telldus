@@ -30,6 +30,9 @@ using namespace TelldusCore;
  * @def TELLSTICK_DIM
  * Device-flag for devices supporting the tdDim() call.
  * 
+ * @def TELLSTICK_EXECUTE
+ * Device-flag for devices (scenes) supporting the tdExecute() call.
+ *
  * @def TELLSTICK_LEARN
  * Device-flag for devices supporting the tdLearn() call.
  * 
@@ -163,6 +166,18 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
 	Message msg(L"tdDim");	
 	msg.addArgument(intDeviceId);
 	msg.addArgument(level);
+	return Client::getIntegerFromService(msg);
+}
+
+/**
+ * Execute a scene action.
+ * Make sure the device group supports this by calling tdMethods() before any
+ * call to this function.
+ * @param intDeviceId The id to execute
+ */
+int WINAPI tdExecute(int intDeviceId){
+	Message msg(L"tdExecute");	
+	msg.addArgument(intDeviceId);
 	return Client::getIntegerFromService(msg);
 }
 
@@ -389,6 +404,7 @@ bool WINAPI tdRemoveDevice(int intDeviceId){
  * @sa TELLSTICK_BELL
  * @sa TELLSTICK_TOGGLE
  * @sa TELLSTICK_DIM
+ * @sa TELLSTICK_EXECUTE
  */
 int WINAPI tdMethods(int id, int methodsSupported){
 	Message msg(L"tdMethods");
