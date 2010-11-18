@@ -13,7 +13,7 @@ inline double round(double x) {
 }
 #endif
 
-const int SUPPORTED_METHODS = TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL | TELLSTICK_DIM | TELLSTICK_LEARN;
+const int SUPPORTED_METHODS = TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL | TELLSTICK_DIM | TELLSTICK_LEARN | TELLSTICK_EXECUTE | TELLSTICK_UP | TELLSTICK_DOWN;
 
 
 DeviceModel::DeviceModel(QObject *parent)
@@ -64,6 +64,10 @@ QVariant DeviceModel::data(const QModelIndex &index, int role) const {
 					return tr("on");
 				case TELLSTICK_TURNOFF:
 					return tr("off");
+				case TELLSTICK_UP:
+					return tr("up");
+				case TELLSTICK_DOWN:
+					return tr("down");
 				case TELLSTICK_DIM:
 					int value = (int)round(device->lastSentValue().toFloat()/255*100);
 					return tr("%1%").arg(value);

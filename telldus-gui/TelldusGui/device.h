@@ -44,6 +44,9 @@ public slots:
 	void turnOn();
 	void bell();
 	void dim(unsigned char level);
+	void execute();
+	void up();
+	void down();
 	void learn();
 
 signals:

@@ -159,6 +159,18 @@ void Device::bell() {
 	triggerEvent( tdBell( d->id ) );
 }
 
+void Device::execute() {
+	triggerEvent( tdExecute( d->id ) );
+}
+
+void Device::up() {
+	triggerEvent( tdUp( d->id ) );
+}
+
+void Device::down() {
+	triggerEvent( tdDown( d->id ) );
+}
+
 void Device::dim(unsigned char level) {
 	triggerEvent( tdDim( d->id, level ) );
 }

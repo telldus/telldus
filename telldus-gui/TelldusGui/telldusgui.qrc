@@ -10,5 +10,8 @@
         <file>images/state_dimmed_25.png</file>
         <file>images/state_dimmed_50.png</file>
         <file>images/state_dimmed_75.png</file>
+				<file>images/execute.png</file>
+				<file>images/up.png</file>
+				<file>images/down.png</file>
     </qresource>
 </RCC>

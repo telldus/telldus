@@ -12,7 +12,8 @@ class MethodWidget::PrivateData {
 public:
 	Device *device;
 	QToolButton *turnOff, *turnOn, *bell, *learn,
-	            *dim25, *dim50, *dim75;
+	            *dim25, *dim50, *dim75,
+				*execute, *up, *down, *stop;
 };
 
 MethodWidget::MethodWidget( Device *device, QWidget *parent )
@@ -27,6 +28,10 @@ MethodWidget::MethodWidget( Device *device, QWidget *parent )
 	d->turnOn = new QToolButton( this );
 	d->bell = new QToolButton( this );
 	d->learn = new QToolButton( this );
+	d->execute = new QToolButton( this );
+	d->up = new QToolButton( this );
+	d->down = new QToolButton( this );
+	d->stop = new QToolButton( this );
 
 //	this->setAutoFillBackground( true );
 	QHBoxLayout *layout = new QHBoxLayout(this);
@@ -57,6 +62,22 @@ MethodWidget::MethodWidget( Device *device, QWidget *parent )
 	d->bell->setIcon( QIcon(":/images/bell.png") );
 	d->bell->setVisible( false );
 	layout->addWidget( d->bell );
+
+	d->execute->setIcon( QIcon(":/images/execute.png") );
+	d->execute->setVisible( false );
+	layout->addWidget( d->execute );
+
+	d->up->setIcon( QIcon(":/images/up.png") );
+	d->up->setVisible( false );
+	layout->addWidget( d->up );
+
+	d->down->setIcon( QIcon(":/images/down.png") );
+	d->down->setVisible( false );
+	layout->addWidget( d->down );
+
+	d->stop->setIcon( QIcon(":/images/state_2.png") );	//TODO
+	d->stop->setVisible( false );
+	layout->addWidget( d->stop );
 	
 	layout->addStretch();
 
@@ -72,6 +93,11 @@ MethodWidget::MethodWidget( Device *device, QWidget *parent )
 	connect(d->turnOn, SIGNAL(clicked()), device, SLOT(turnOn()));
 	connect(d->bell, SIGNAL(clicked()), device, SLOT(bell()));
 	connect(d->learn, SIGNAL(clicked()), device, SLOT(learn()));
+	connect(d->execute, SIGNAL(clicked()), device, SLOT(execute()));
+	connect(d->up, SIGNAL(clicked()), device, SLOT(up()));
+	connect(d->down, SIGNAL(clicked()), device, SLOT(down()));
+	connect(d->stop, SIGNAL(clicked()), device, SLOT(turnOff()));
+
 
 	updateMethods(device->methods());
 }
@@ -88,6 +114,10 @@ void MethodWidget::updateMethods(int newMethods) {
 	d->turnOn->setVisible( newMethods & TELLSTICK_TURNON );
 	d->bell->setVisible( newMethods & TELLSTICK_BELL );
 	d->learn->setVisible( newMethods & TELLSTICK_LEARN );
+	d->execute->setVisible( newMethods & TELLSTICK_EXECUTE );
+	d->up->setVisible( newMethods & TELLSTICK_UP );
+	d->down->setVisible( newMethods & TELLSTICK_DOWN );
+	d->stop->setVisible( newMethods & TELLSTICK_STOP );
 }
 
 void MethodWidget::dim() {
