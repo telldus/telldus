@@ -1,7 +1,7 @@
 #include "ProtocolBrateck.h"
 
 int ProtocolBrateck::methods() const {
-	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;
+	return TELLSTICK_UP | TELLSTICK_DOWN | TELLSTICK_STOP;
 }
 
 std::string ProtocolBrateck::getStringForMethod(int method, unsigned char, Controller *) {
@@ -11,7 +11,7 @@ std::string ProtocolBrateck::getStringForMethod(int method, unsigned char, Contr
 	const char BX[] = {S,L,L,S,0};
 	const char B0[] = {S,L,S,L,0};
 	const char BUP[]   = {L,S,L,S,S,L,S,L,S,L,S,L,S,L,S,L,S,0};
-	//const char BSTOP[] = {S,L,S,L,L,S,L,S,S,L,S,L,S,L,S,L,S,0};
+	const char BSTOP[] = {S,L,S,L,L,S,L,S,S,L,S,L,S,L,S,L,S,0};
 	const char BDOWN[] = {S,L,S,L,S,L,S,L,S,L,S,L,L,S,L,S,S,0};
 
 	std::string strReturn;
@@ -35,6 +35,8 @@ std::string ProtocolBrateck::getStringForMethod(int method, unsigned char, Contr
 		strReturn.append(BUP);
 	} else if (method == TELLSTICK_TURNOFF) {
 		strReturn.append(BDOWN);
+	} else if (method == TELLSTICK_STOP) {
+		strReturn.append(BSTOP);
 	} else {
 		return "";
 	}
