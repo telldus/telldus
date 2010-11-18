@@ -136,13 +136,14 @@ int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
 			methods = 0;
 
 			while(std::getline(devicesstream, deviceIdBuffer, L',')){
-				int deviceId = TelldusCore::wideToInteger(deviceIdBuffer);
-				int deviceMethods = getDeviceMethods(deviceId, methodsSupported);
+				int deviceIdInGroup = TelldusCore::wideToInteger(deviceIdBuffer);
+				if(deviceId == deviceIdInGroup){
+					//group exists in group, avoid infinite loop
+					continue;
+				}
+				int deviceMethods = getDeviceMethods(deviceIdInGroup, methodsSupported);
 				if(deviceMethods > 0){
-					debuglog(deviceId, "DEVICE ID");
-					debuglog(deviceMethods, "DEVICE METHODS");
 					methods |= deviceMethods;
-					debuglog(methods, "METHODS");
 				}
 			}
 			return methods;
@@ -379,12 +380,29 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 		protocol = device->getProtocolName();
 		deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(0);	//TODO better way? Must unlock here somehow though...
 		retval = doGroupAction(devices, action, data, protocol, deviceId);
-		if(device != NULL){	//TODO, some kind of test here... that device still exists...
-			deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(new TelldusCore::MutexLocker(device));	//TODO this isn't good either, device may have been deleted etc
-		}
-		else{
-			retval = TELLSTICK_ERROR_UNKNOWN;
-		}
+		
+		{
+			//reaquire device lock, make sure it still exists
+			//devicelist locked
+			TelldusCore::MutexLocker deviceListLocker(&d->lock);
+
+			if (!d->devices.size()) {
+				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+			}
+			DeviceMap::iterator it = d->devices.find(deviceId);
+			if (it == d->devices.end()) {
+				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;	//not found
+			}
+			//device locked
+			deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(new TelldusCore::MutexLocker(it->second));
+			device = it->second;
+		} //devicelist unlocked
+					//if(device != NULL){	//TODO, some kind of test here... that device still exists...
+					//	deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(new TelldusCore::MutexLocker(device));	//TODO this isn't good either, device may have been deleted etc
+				//}
+				//else{
+					//retval = TELLSTICK_ERROR_UNKNOWN;
+				//}
 	}
 	else{
 		Controller *controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
