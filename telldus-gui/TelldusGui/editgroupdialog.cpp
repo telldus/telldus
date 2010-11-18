@@ -13,6 +13,12 @@
 #include <QDialogButtonBox>
 #include <QDebug>
 
+#include <QLineEdit>
+#include <QFormLayout>
+#include <QLabel>
+#include <QMessageBox>
+
+
 class ProxyModel : public QSortFilterProxyModel {
 public:
 	ProxyModel( QObject * parent = 0 );
@@ -22,21 +28,41 @@ public:
 	void showAllRows();
 	void hideRow( int row );
 	void showRow( int row );
+	QString getShownIds();
+
 protected:
 	virtual bool filterAcceptsRow ( int source_row, const QModelIndex & source_parent ) const;
 private:
 	QSet<int> rows;
 };
 
-EditGroupDialog::EditGroupDialog(Device *d, DeviceModel *m, QWidget *parent, Qt::WFlags flags)
+class EditGroupDialog::PrivateData {
+public:
+	QLineEdit *nameLineEdit;
+	
+};
+
+
+EditGroupDialog::EditGroupDialog(Device *devicein, DeviceModel *m, QWidget *parent, Qt::WFlags flags)
 		:QDialog(parent, flags),
-		device(d),
-		model(m)
+		device(devicein),
+		model(m),
+		d(new PrivateData)
 {
 	QVBoxLayout *layout = new QVBoxLayout(this);
 
 	QHBoxLayout *mainLayout = new QHBoxLayout;
 
+	QHBoxLayout *nameLayout = new QHBoxLayout;
+	QLabel *nameLabel = new QLabel(this);
+	nameLabel->setText( tr("&Name:") );
+	d->nameLineEdit = new QLineEdit(device->name(),  this );
+	nameLabel->setBuddy(d->nameLineEdit);
+	nameLayout->addWidget(nameLabel);
+	nameLayout->addWidget(d->nameLineEdit);
+	nameLayout->addStretch();
+	layout->addLayout(nameLayout);
+	
 	availableProxyModel = new ProxyModel( this );
 	availableProxyModel->setSourceModel( model );
 	availableProxyModel->showAllRows();
@@ -72,6 +98,7 @@ EditGroupDialog::EditGroupDialog(Device *d, DeviceModel *m, QWidget *parent, Qt:
 
 	addedProxyModel = new ProxyModel( this );
 	addedProxyModel->setSourceModel( model );
+	setDevicesVisible();
 
 	addedListView = new QTableView( this );
 	addedListView->setAlternatingRowColors( true );
@@ -97,9 +124,31 @@ EditGroupDialog::EditGroupDialog(Device *d, DeviceModel *m, QWidget *parent, Qt:
 EditGroupDialog::~EditGroupDialog() {
 }
 
+void EditGroupDialog::setDevicesVisible(){
+	QString devicesstring = device->parameter("devices", "");
+	QList<int> devices;
+	foreach(QString device, devicesstring.split(",")) {
+		devices << device.toInt();
+	}
+
+	for (int i = 0; i < model->rowCount(); ++i){
+		int id = model->deviceId(model->index(i, 0));
+		if (id == device->id()) {
+			//shouldnt be able to add itself, check that here
+			availableProxyModel->hideRow(i);
+		} else if (devices.contains(id)) {
+			availableProxyModel->hideRow(i);
+			addedProxyModel->showRow(i);
+		}
+	}
+
+	
+}
+
 void EditGroupDialog::addClicked() {
 	int row = availableProxyModel->mapToSource( availableListView->currentIndex() ).row();
 	availableProxyModel->hideRow(row);
+
 	addedProxyModel->showRow(row);
 }
 
@@ -111,15 +160,21 @@ void EditGroupDialog::removeClicked() {
 
 void EditGroupDialog::okClicked() {
 
-//	if (!item || !item->isDevice()) {
-//		QMessageBox msgBox;
-//		msgBox.setText( tr("You must choose a device") );
-//		msgBox.setInformativeText( tr("Please select the device you have.") );
-//		msgBox.setIcon( QMessageBox::Critical );
-//		msgBox.setStandardButtons( QMessageBox::Ok );
-//		msgBox.exec();
-//		return;
-//	}
+	if (d->nameLineEdit->text().trimmed() == "") {
+		QMessageBox msgBox;
+		msgBox.setText( tr("The device must have a name.") );
+		msgBox.setInformativeText( tr("Please fill in a name in the field under 'Name'") );
+		msgBox.setIcon( QMessageBox::Critical );
+		msgBox.setStandardButtons( QMessageBox::Ok );
+		msgBox.exec();
+		d->nameLineEdit->setFocus();
+		return;
+	}
+	device->setName( d->nameLineEdit->text().trimmed() );
+	device->setModel("group");
+	device->setProtocol("group");
+	QString shownIds = addedProxyModel->getShownIds();
+	device->setParameter("devices", shownIds);
 	this->accept();
 }
 
@@ -145,6 +200,21 @@ void ProxyModel::showAllRows() {
 	}
 }
 
+QString ProxyModel::getShownIds(){
+	QStringList addedIds;
+	foreach (int index, rows){	//TODO why does this crash when debugging? Unsafe?
+		if(index >= 0){	//TODO why can this be 
+			DeviceModel *model = reinterpret_cast<DeviceModel *>(this->sourceModel());
+			if (model) {
+				int deviceId = model->deviceId(model->index(index, 0));
+				addedIds << QString::number(deviceId);
+			}
+		}
+	}
+
+	return addedIds.join(",");
+}
+
 void ProxyModel::hideRow( int row ) {
 	if (rows.contains(row)) {
 		rows.remove(row);
@@ -153,6 +223,7 @@ void ProxyModel::hideRow( int row ) {
 }
 
 void ProxyModel::showRow( int row ) {
+	
 	if (!rows.contains(row)) {
 		rows.insert(row);
 		invalidateFilter();

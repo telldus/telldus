@@ -44,8 +44,8 @@ DeviceWidget::DeviceWidget(QWidget *parent) :
 	addToolButton.setIcon( QIcon( ":/images/list-add.png" ) );
 	addToolButton.setText( tr("New") );
 	addToolButton.setToolButtonStyle( Qt::ToolButtonTextBesideIcon );
-	//addToolButton.setPopupMode( QToolButton::MenuButtonPopup );
-	//addToolButton.setMenu( newMenu );
+	addToolButton.setPopupMode( QToolButton::MenuButtonPopup );
+	addToolButton.setMenu( newMenu );
 	connect(&addToolButton, SIGNAL(clicked()), this, SLOT(addDevice()));
 	buttonLayout->addWidget( &addToolButton );
 
@@ -100,16 +100,17 @@ void DeviceWidget::addDevice() {
 }
 
 void DeviceWidget::addGroup() {
-	/*Device *device = model.newDevice();
-
-	EditGroupDialog *dialog = new EditGroupDialog(device, &model);
+	//Device *device = model.newDevice();
+	Device device(0, 0);
+	
+	EditGroupDialog *dialog = new EditGroupDialog(&device, &model);
 	if (dialog->exec() == QDialog::Accepted) {
-		device->save();
+		device.save();
 	} else {
-		delete device;
+		//delete device;
 	}
 
-	delete dialog;*/
+	delete dialog;
 }
 
 void DeviceWidget::deleteDevice() {

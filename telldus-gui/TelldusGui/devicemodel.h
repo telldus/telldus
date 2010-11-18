@@ -21,20 +21,21 @@ public:
 
 	Device *device( const QModelIndex & );
 	int deviceId( const QModelIndex & );
-
+	
 signals:
 	void deviceChange(int deviceId, int, int);
 	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
 	void eventTriggered( const QString &name, const QString &title );
 
 private slots:
-	void deviceStateChanged( int deviceId );
 	void deviceChanged( int deviceId, int, int );
+	void deviceStateChanged( int deviceId );
 	void nameChanged ( int, const QString& );
 
+
 private:
-	void triggerCellUpdate(int row, int column);
 	int rowForId( int deviceId ) const;
+	void triggerCellUpdate(int row, int column);
 // 	static void deviceEvent(int deviceId, int method, const char *data, int callbackId, void *context);
 	static void WINAPI deviceChangeEvent(int deviceId, int, int, int, void *);
 	

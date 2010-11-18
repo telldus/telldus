@@ -16,13 +16,14 @@ class EditGroupDialog : public QDialog
 public:
 	EditGroupDialog(Device *device, DeviceModel *model, QWidget *parent = 0, Qt::WFlags flags = 0);
 	virtual ~EditGroupDialog();
-
+	
 private slots:
 	void availableListActivated(const QModelIndex &);
 	void addedListActivated(const QModelIndex &);
 	void addClicked();
 	void removeClicked();
 	void okClicked();
+	void setDevicesVisible();
 
 private:
 	QToolButton *addToolButton, *removeToolButton;
@@ -30,6 +31,9 @@ private:
 	Device *device;
 	DeviceModel *model;
 	ProxyModel *availableProxyModel, *addedProxyModel;
+	
+	class PrivateData;
+	PrivateData *d;
 };
 
 #endif // EDITGROUPDIALOG_H
