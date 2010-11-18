@@ -441,7 +441,7 @@ int DeviceManager::doGroupAction(const std::wstring devices, int action, unsigne
 			if(deviceId == groupDeviceId){
 				deviceReturnValue = TELLSTICK_ERROR_UNKNOWN;	//avoid infinite loops if this group itself has been added to its devices
 			}
-			else if(deviceId > 0){	//todo, check, never 0 for devices, right?
+			else if(deviceId != 0){
 				deviceReturnValue = doAction(deviceId, action, data);
 			}
 			else{
