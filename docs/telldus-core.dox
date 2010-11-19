@@ -66,7 +66,7 @@
  * in the rest of the program.
  *
  * The next two lines of code queries the device for it's name with a call to
- * tdGetName() and then displays it to stdout. Finally we must relase the
+ * tdGetName() and then displays it to stdout. Finally we must release the
  * resource after we are done with it by calling tdReleaseString() on any
  * \c char pointer returned by telldus-core.
  *
@@ -165,10 +165,11 @@
  *
  * \subsection sec_bu_device_state Device states
  *
- * Since TellStick only has a transmitter and not a receiver the communation is
+ * Since controllable devices only have a receiver and not a transmitter the communication is
  * one-way. This means that telldus-core will never know for sure which
  * state a reciever has. Instead, the library remembers which command was last
- * sent. In this way it "emulates" a two-way communication.
+ * sent. Either sent from the TellStick itself, or sent from another controller (e.g. a remote control)
+ * captured by the Tellstick Duo. In this way it "emulates" a two-way communication.
  *
  * To query the device state, use the function tdLastSentCommand()
  *
@@ -254,8 +255,6 @@
  * configured.
  *
  * \subsection sec_events_example Example
- *
- * \example events/main.cpp
  *
  * \section sec_other_languages Notes using other languages than C/C++
  *
