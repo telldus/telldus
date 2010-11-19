@@ -187,7 +187,7 @@ void WINAPI DeviceModel::deviceChangeEvent(int deviceId, int eventId, int change
 	if (!model) {
 		return;
 	}
-	emit model->deviceChanged(deviceId, eventId, changeType);
+	emit model->deviceChange(deviceId, eventId, changeType);
 }
 
 /*void DeviceModel::connectDeviceSignals( Device *device ) const {
