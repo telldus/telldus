@@ -128,7 +128,7 @@ int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
 			deviceIds = it->second->getParameter(L"devices");
 			protocol = it->second->getProtocolName();
 		}
-		if(type == TELLSTICK_TYPE_GROUP && protocol != L"scene"){	//TODO would really like to be able to do this on protocol level instead of comparing protocol name here
+		if(type == TELLSTICK_TYPE_GROUP){
 
 			//get all methods that some device in the groups supports
 			std::wstring deviceIdBuffer;
@@ -373,13 +373,11 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 	} //devicelist unlocked
 
 	int retval = TELLSTICK_ERROR_UNKNOWN;
-	std::wstring protocol = L"";
-
-	if(device->getType() == TELLSTICK_TYPE_GROUP){
+	
+	if(device->getType() == TELLSTICK_TYPE_GROUP || device->getType() == TELLSTICK_TYPE_SCENE){
 		std::wstring devices = device->getParameter(L"devices");
-		protocol = device->getProtocolName();
-		deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(0);	//TODO better way? Must unlock here somehow though...
-		retval = doGroupAction(devices, action, data, protocol, deviceId);
+		deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(0);
+		retval = doGroupAction(devices, action, data, device->getType(), deviceId);
 		
 		{
 			//reaquire device lock, make sure it still exists
@@ -397,12 +395,6 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 			deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(new TelldusCore::MutexLocker(it->second));
 			device = it->second;
 		} //devicelist unlocked
-					//if(device != NULL){	//TODO, some kind of test here... that device still exists...
-					//	deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(new TelldusCore::MutexLocker(device));	//TODO this isn't good either, device may have been deleted etc
-				//}
-				//else{
-					//retval = TELLSTICK_ERROR_UNKNOWN;
-				//}
 	}
 	else{
 		Controller *controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
@@ -412,7 +404,7 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 			return TELLSTICK_ERROR_NOT_FOUND;
 		}
 	}
-	if(retval == TELLSTICK_SUCCESS && protocol != L"scene" && device->getMethods() & action) {	//TODO move this check, or make a "scene constant" or something else, to make this more general
+	if(retval == TELLSTICK_SUCCESS && device->getType() != TELLSTICK_TYPE_SCENE && device->getMethods() & action) {
 		//if method isn't explicitly supported by device, but used anyway as a fallback (i.e. bell), don't change state
 		std::wstring datastring = TelldusCore::Message::charUnsignedToWstring(data);
 		if (this->triggerDeviceStateChange(deviceId, action, datastring)) {
@@ -423,7 +415,7 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 	return retval;
 }
 
-int DeviceManager::doGroupAction(const std::wstring devices, int action, unsigned char data, const std::wstring protocol, int groupDeviceId){
+int DeviceManager::doGroupAction(const std::wstring devices, const int action, const unsigned char data, const int type, const int groupDeviceId){
 	int retval = TELLSTICK_SUCCESS;	//TODO or no devices found?
 
 	std::wstring singledevice;
@@ -433,10 +425,10 @@ int DeviceManager::doGroupAction(const std::wstring devices, int action, unsigne
 
 		int deviceReturnValue = TELLSTICK_SUCCESS;
 		
-		if(protocol == L"scene" && (action == TELLSTICK_TURNON || action == TELLSTICK_EXECUTE)){	//TODO action check neccessary?
+		if(type == TELLSTICK_TYPE_SCENE && (action == TELLSTICK_TURNON || action == TELLSTICK_EXECUTE)){
 			deviceReturnValue = executeScene(singledevice, groupDeviceId);
 		}
-		else if(protocol == L"group"){
+		else if(type == TELLSTICK_TYPE_GROUP){
 			int deviceId = TelldusCore::wideToInteger(singledevice);
 			if(deviceId == groupDeviceId){
 				deviceReturnValue = TELLSTICK_ERROR_UNKNOWN;	//avoid infinite loops if this group itself has been added to its devices

@@ -120,8 +120,11 @@ std::wstring Device::getStateValue(){
 }
 
 int Device::getType(){
-	if(d->model == L"group"){
+	if(d->protocolName == L"group"){
 		return TELLSTICK_TYPE_GROUP;
+	}
+	else if(d->protocolName == L"scene"){
+		return TELLSTICK_TYPE_SCENE;
 	}
 	return TELLSTICK_TYPE_DEVICE;
 }
@@ -203,6 +206,9 @@ int Device::methodId( const std::string &methodName ) {
 	}
 	if (methodName.compare("down") == 0) {
 		return TELLSTICK_DOWN;
+	}
+	if (methodName.compare("stop") == 0) {
+		return TELLSTICK_STOP;
 	}
 	return 0;
 }
