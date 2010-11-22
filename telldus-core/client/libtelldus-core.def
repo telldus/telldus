@@ -47,4 +47,5 @@ EXPORTS
 	tdExecute @33
 	tdUp @34
 	tdDown @35
+	tdStop @36
 	

@@ -39,6 +39,9 @@ using namespace TelldusCore;
  * @def TELLSTICK_DOWN
  * Device-flag for devices supporting the tdDown() call.
  *
+ * @def TELLSTICK_STOP
+ * Device-flag for devices supporting the tdStop() call.
+ *
  * @def TELLSTICK_LEARN
  * Device-flag for devices supporting the tdLearn() call.
  * 
@@ -47,6 +50,9 @@ using namespace TelldusCore;
  * 
  * @def TELLSTICK_TYPE_GROUP
  * Device type of a device which contains other devices.
+ * 
+ * @def TELLSTICK_TYPE_SCENE
+ * Device type of a device which contains other devices that are sent different commands when executed (i.e. one device turns on, another turns off).
  * 
  * @def TELLSTICK_SUCCESS
  * Error code. Returned when the command succeeded.
@@ -177,7 +183,7 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
 
 /**
  * Execute a scene action.
- * Make sure the device group supports this by calling tdMethods() before any
+ * Make sure the device supports this by calling tdMethods() before any
  * call to this function.
  * @param intDeviceId The id to execute
  */
@@ -189,7 +195,7 @@ int WINAPI tdExecute(int intDeviceId){
 
 /**
  * Send "up" command to device.
- * Make sure the device group supports this by calling tdMethods() before any
+ * Make sure the device supports this by calling tdMethods() before any
  * call to this function.
  * @param intDeviceId The device id to send the command to
  */
@@ -201,12 +207,24 @@ int WINAPI tdUp(int intDeviceId){
 
 /**
  * Send "down" command to device.
- * Make sure the device group supports this by calling tdMethods() before any
+ * Make sure the device supports this by calling tdMethods() before any
  * call to this function.
  * @param intDeviceId The device id to send the command to
  */
 int WINAPI tdDown(int intDeviceId){
 	Message msg(L"tdDown");	
+	msg.addArgument(intDeviceId);
+	return Client::getIntegerFromService(msg);
+}
+
+/**
+ * Send "stop" command to device.
+ * Make sure the device supports this by calling tdMethods() before any
+ * call to this function.
+ * @param intDeviceId The device id to stop
+ */
+int WINAPI tdStop(int intDeviceId){
+	Message msg(L"tdStop");	
 	msg.addArgument(intDeviceId);
 	return Client::getIntegerFromService(msg);
 }
@@ -278,7 +296,7 @@ int WINAPI tdGetDeviceId(int intDeviceIndex){
 
 /**
  * Returns which type the device is. The device could be either
- * TELLSTICK_TYPE_DEVICE or TELLSTICK_TYPE_GROUP
+ * TELLSTICK_TYPE_DEVICE, TELLSTICK_TYPE_GROUP or TELLSTICK_TYPE_SCENE
  */
 int WINAPI tdGetDeviceType(int intDeviceId) {
 	Message msg(L"tdGetDeviceType");	
@@ -437,6 +455,7 @@ bool WINAPI tdRemoveDevice(int intDeviceId){
  * @sa TELLSTICK_EXECUTE
  * @sa TELLSTICK_UP
  * @sa TELLSTICK_DOWN
+ * @sa TELLSTICK_STOP
  */
 int WINAPI tdMethods(int id, int methodsSupported){
 	Message msg(L"tdMethods");

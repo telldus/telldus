@@ -51,6 +51,7 @@ extern "C" {
 	TELLSTICK_API int WINAPI tdExecute(int intDeviceId);
 	TELLSTICK_API int WINAPI tdUp(int intDeviceId);
 	TELLSTICK_API int WINAPI tdDown(int intDeviceId);
+	TELLSTICK_API int WINAPI tdStop(int intDeviceId);
 	TELLSTICK_API int WINAPI tdLearn(int intDeviceId);
 	TELLSTICK_API int WINAPI tdMethods(int id, int methodsSupported);
 	TELLSTICK_API int WINAPI tdLastSentCommand( int intDeviceId, int methodsSupported );
@@ -94,6 +95,7 @@ extern "C" {
 #define TELLSTICK_EXECUTE	64
 #define TELLSTICK_UP		128
 #define TELLSTICK_DOWN		256
+#define TELLSTICK_STOP		512
 
 //Error codes
 #define TELLSTICK_SUCCESS 0
@@ -109,6 +111,7 @@ extern "C" {
 //Device typedef
 #define TELLSTICK_TYPE_DEVICE	1
 #define TELLSTICK_TYPE_GROUP	2
+#define TELLSTICK_TYPE_SCENE	3
 
 //Device changes
 #define TELLSTICK_DEVICE_ADDED			1
