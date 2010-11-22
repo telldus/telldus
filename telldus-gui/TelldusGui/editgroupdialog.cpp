@@ -171,7 +171,6 @@ void EditGroupDialog::okClicked() {
 		return;
 	}
 	device->setName( d->nameLineEdit->text().trimmed() );
-	device->setModel("group");
 	device->setProtocol("group");
 	QString shownIds = addedProxyModel->getShownIds();
 	device->setParameter("devices", shownIds);
