@@ -171,6 +171,11 @@ void Device::down() {
 	triggerEvent( tdDown( d->id ) );
 }
 
+void Device::stops() {
+	triggerEvent( tdStop( d->id ) );
+}
+
+
 void Device::dim(unsigned char level) {
 	triggerEvent( tdDim( d->id, level ) );
 }
