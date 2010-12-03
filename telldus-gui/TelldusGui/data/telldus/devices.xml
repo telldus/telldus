@@ -1,7 +1,11 @@
-<?xml version="1.0" encoding="utf8" ?>
+<?xml version="1.0" encoding="utf-8" ?>
 <devices>
 	<type name="Remote Switches" expanded="true">
 		<!--<text></text> -->
+    <vendor name="Bye Bye Standby" image="byebyelogo">
+      <!--<text></text>-->
+      <device model="codeswitch:byebyestandby" protocol="arctech" widget="1" image="byebye" name="Code Switch">Code Switch</device>
+    </vendor>
 		<vendor name="Chacon" image="chacon">
 			<!--<text></text>-->
 			<device model="codeswitch:chacon" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
