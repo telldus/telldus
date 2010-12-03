@@ -5,7 +5,7 @@
 #include <string.h>
 
 int ProtocolIkea::methods() const {
-	return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN;
+	return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_DIM;
 }
 
 std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Controller *) {
