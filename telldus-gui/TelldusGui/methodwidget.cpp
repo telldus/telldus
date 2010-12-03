@@ -39,11 +39,11 @@ MethodWidget::MethodWidget( Device *device, QWidget *parent )
 	
 	layout->addStretch();
 
-	connect(device, SIGNAL(methodsChanged(int)), this, SLOT(updateMethods(int)));
-	connect(turnOff, SIGNAL(clicked()), device, SLOT(turnOff()));
-	connect(turnOn, SIGNAL(clicked()), device, SLOT(turnOn()));
-	connect(bell, SIGNAL(clicked()), device, SLOT(bell()));
-	connect(learn, SIGNAL(clicked()), device, SLOT(learn()));
+	connect(device, SIGNAL(methodsChanged(int)), this, SLOT(updateMethods(int)), Qt::QueuedConnection);
+	connect(turnOff, SIGNAL(clicked()), device, SLOT(turnOff()), Qt::QueuedConnection);
+	connect(turnOn, SIGNAL(clicked()), device, SLOT(turnOn()), Qt::QueuedConnection);
+	connect(bell, SIGNAL(clicked()), device, SLOT(bell()), Qt::QueuedConnection);
+	connect(learn, SIGNAL(clicked()), device, SLOT(learn()), Qt::QueuedConnection);
 
 	updateMethods(device->methods());
 }
