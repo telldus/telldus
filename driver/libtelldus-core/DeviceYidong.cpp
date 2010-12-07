@@ -1,4 +1,5 @@
 #include "DeviceYidong.h"
+#include <stdlib.h>
 
 using namespace TelldusCore;
 
