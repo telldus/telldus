@@ -1,3 +1,9 @@
+telldus-core (2.0.4-2) unstable; urgency=low
+
+  * Compiled with lower libstdc++6 version
+
+ -- Micke Prag <micke.prag@telldus.se>  Tue, 10 Dec 2010 14:02:00 +0200
+
 telldus-core (2.0.4-1) unstable; urgency=low
 
   * New upstream version
