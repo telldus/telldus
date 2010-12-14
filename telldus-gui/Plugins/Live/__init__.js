@@ -3,6 +3,7 @@ __setupPackage__( __extension__ );
 com.telldus.live = function() {
     var socket = null;
     var menuId = 0;
+    var separatorId = 0;
     var isRegistered = false;
     var supportedMethods = 0;
 	
@@ -17,12 +18,11 @@ com.telldus.live = function() {
 	}
 	
 	function notRegistered() {
-	    isRegistered = false;
-   		if (com.telldus.systray) {
-   		    com.telldus.systray.addSeparator();
+		isRegistered = false;
+		if (com.telldus.systray && !menuId) {
+			separatorId = com.telldus.systray.addSeparator();
 			menuId = com.telldus.systray.addMenuItem( "Activate Telldus Live!" );
 			com.telldus.systray.menuItem(menuId).triggered.connect(socket.activate);
-		    com.telldus.systray.addSeparator();
 		}
 	}
 	
@@ -53,7 +53,9 @@ com.telldus.live = function() {
 	function registered(msg) {
 	    if (menuId > 0) {
 	        com.telldus.systray.removeMenuItem(menuId);
+	        com.telldus.systray.removeMenuItem(separatorId);
 	        menuId = 0;
+	        separatorId = 0;
 	    }
 	    supportedMethods = msg.getInt('supportedMethods');
 	    isRegistered = true;
