@@ -43,7 +43,7 @@ com.telldus.live = function() {
 		} else if (msg.name() == "turnoff") {
 			com.telldus.core.turnOff( msg.argument(0).intVal() );
 		} else if (msg.name() == "dim") {
-			com.telldus.core.dim( msg.argument(0).intVal(), msg.argument(0).intVal() );
+			com.telldus.core.dim( msg.argument(0).intVal(), msg.argument(1).intVal() );
 		} else if (msg.name() == "bell") {
 			com.telldus.core.bell( msg.argument(0).intVal() );
 		}
