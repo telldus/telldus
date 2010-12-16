@@ -16,6 +16,14 @@ public:
 signals:
 
 public slots:
+	int setInterval(const QScriptValue &expression, int delay);
+	void clearInterval(int timerId);
+
+	int setTimeout(const QScriptValue &expression, int delay);
+	void clearTimeout(int timerId);
+
+protected:
+	void timerEvent(QTimerEvent *event);
 
 private slots:
 	void scriptException( const QScriptValue &exception );

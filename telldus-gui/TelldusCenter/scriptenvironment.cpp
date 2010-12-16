@@ -1,12 +1,16 @@
 #include "scriptenvironment.h"
 #include <QScriptEngine>
+#include <QScriptValueIterator>
 #include <QStringList>
+#include <QTimerEvent>
 
 #include <QDebug>
 
 class ScriptEnvironment::PrivateData {
 public:
 	QScriptEngine scriptEngine;
+	QHash<int, QScriptValue> intervalHash;
+	QHash<int, QScriptValue> timeoutHash;
 };
 
 ScriptEnvironment::ScriptEnvironment(QObject *parent) :
@@ -17,6 +21,22 @@ ScriptEnvironment::ScriptEnvironment(QObject *parent) :
 	connect(&d->scriptEngine, SIGNAL(signalHandlerException(const QScriptValue &)), this, SLOT(scriptException(const QScriptValue&)));
 	d->scriptEngine.installTranslatorFunctions();
 
+	//Self is our new global object
+	QScriptValue self = d->scriptEngine.newQObject(this, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
+
+	{
+		//Copy everything from our old global object
+		QScriptValueIterator it(d->scriptEngine.globalObject());
+		while (it.hasNext()) {
+			it.next();
+			self.setProperty(it.scriptName(), it.value(), it.flags());
+		}
+	}
+	self.setProperty("self", self);
+	d->scriptEngine.setGlobalObject(self);
+
+	//Collect garbage (ie our old global object)
+	d->scriptEngine.collectGarbage();
 }
 
 ScriptEnvironment::~ScriptEnvironment() {
@@ -34,4 +54,51 @@ void ScriptEnvironment::scriptException(const QScriptValue & exception) {
 		qDebug() << row;
 	}
 	d->scriptEngine.clearExceptions();
+}
+
+void ScriptEnvironment::timerEvent(QTimerEvent *event) {
+	int id = event->timerId();
+
+	QScriptValue expression = d->intervalHash.value(id);
+	if (!expression.isValid()) {
+		expression = d->timeoutHash.value(id);
+		if (expression.isValid()) {
+			//Clear oneshot
+			this->clearTimeout(id);
+		}
+	}
+
+	if (expression.isString()) {
+		d->scriptEngine.evaluate(expression.toString());
+	} else if (expression.isFunction()) {
+		expression.call();
+	}
+}
+
+int ScriptEnvironment::setTimeout(const QScriptValue &expression, int delay) {
+	if (expression.isString() || expression.isFunction()) {
+		int timerId = startTimer(delay);
+		d->timeoutHash.insert(timerId, expression);
+		return timerId;
+	}
+	return -1;
+}
+
+void ScriptEnvironment::clearTimeout(int timerId) {
+	killTimer(timerId);
+	d->timeoutHash.remove(timerId);
+}
+
+int ScriptEnvironment::setInterval(const QScriptValue &expression, int delay) {
+	if (expression.isString() || expression.isFunction()) {
+		int timerId = startTimer(delay);
+		d->intervalHash.insert(timerId, expression);
+		return timerId;
+	}
+	return -1;
+}
+
+void ScriptEnvironment::clearInterval(int timerId) {
+	killTimer(timerId);
+	d->intervalHash.remove(timerId);
 }
