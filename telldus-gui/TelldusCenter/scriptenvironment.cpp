@@ -77,6 +77,9 @@ void ScriptEnvironment::timerEvent(QTimerEvent *event) {
 
 int ScriptEnvironment::setTimeout(const QScriptValue &expression, int delay) {
 	if (expression.isString() || expression.isFunction()) {
+		if (delay < 0) {
+			delay = 0;
+		}
 		int timerId = startTimer(delay);
 		d->timeoutHash.insert(timerId, expression);
 		return timerId;
@@ -91,6 +94,9 @@ void ScriptEnvironment::clearTimeout(int timerId) {
 
 int ScriptEnvironment::setInterval(const QScriptValue &expression, int delay) {
 	if (expression.isString() || expression.isFunction()) {
+		if (delay < 0) {
+			delay = 0;
+		}
 		int timerId = startTimer(delay);
 		d->intervalHash.insert(timerId, expression);
 		return timerId;
