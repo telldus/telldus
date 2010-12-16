@@ -11,6 +11,7 @@ endif(COMMAND cmake_policy)
 SET( telldus-center_SRCS
 	main.cpp
 	mainwindow.cpp
+	scriptenvironment.cpp
 	tellduscenterapplication.cpp
 	AutoUpdater.cpp
 	message.cpp
@@ -26,6 +27,7 @@ SET( telldus-center_HDRS
 
 SET( telldus-center_MOC_HDRS
 	mainwindow.h
+	scriptenvironment.h
 	tellduscenterapplication.h
 	message.h
 )

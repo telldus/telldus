@@ -18,7 +18,7 @@ class TelldusCenterApplication : public QtSingleApplication
 public:
 	TelldusCenterApplication(int &argc, char **argv);
 	virtual ~TelldusCenterApplication();
-	
+
 	void initialize();
 
 #if defined(Q_WS_MAC)
@@ -32,7 +32,7 @@ public:
 	void loadToolbar();
 
 	static TelldusCenterApplication *instance();
-	
+
 
 signals:
 	void allDoneLoading();
@@ -47,7 +47,6 @@ public slots:
 	void showMainWindow();
 
 private slots:
-	void scriptException( const QScriptValue &exception );
 	void msgReceived ( const QString & message );
 
 private:

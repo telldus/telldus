@@ -3,12 +3,13 @@
 #include <QDir>
 #include <QIcon>
 #include <QPluginLoader>
-#include <QScriptEngine>
 #include <QTranslator>
+#include <QScriptEngine>
 
 #include <QDebug>
 #include "tellduscenterplugin.h"
 #include "plugintree.h"
+#include "scriptenvironment.h"
 
 class TelldusCenterPlugin;
 
@@ -19,7 +20,7 @@ class TelldusCenterApplicationPrivate {
 public:
 	PluginList plugins;
 	MainWindow *mainWindow;
-	QScriptEngine scriptEngine;
+	ScriptEnvironment scriptEnvironment;
 };
 
 TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
@@ -36,11 +37,8 @@ TelldusCenterApplication::~TelldusCenterApplication() {
 
 void TelldusCenterApplication::initialize() {
 	d->mainWindow = new MainWindow( );
-	
+
 	this->setActivationWindow(d->mainWindow, false);
-	
-	connect(&d->scriptEngine, SIGNAL(signalHandlerException(const QScriptValue &)), this, SLOT(scriptException(const QScriptValue&)));
-	d->scriptEngine.installTranslatorFunctions();
 
 	loadPlugins();
 	loadScripts();
@@ -57,7 +55,7 @@ PluginList TelldusCenterApplication::plugins() const {
 }
 
 QScriptValue TelldusCenterApplication::mainWindow() {
-	QScriptValue value = d->scriptEngine.newQObject(d->mainWindow);
+	QScriptValue value = d->scriptEnvironment.engine()->newQObject(d->mainWindow);
 	return value;
 }
 
@@ -102,11 +100,11 @@ void TelldusCenterApplication::loadPlugins() {
 
 	this->setLibraryPaths( QStringList(pluginsDir.absolutePath()) );
 
-	QScriptValue object = d->scriptEngine.newQObject(this);
-	d->scriptEngine.globalObject().setProperty("application", object);
+	QScriptValue object = d->scriptEnvironment.engine()->newQObject(this);
+	d->scriptEnvironment.engine()->globalObject().setProperty("application", object);
 
-	QScriptValue mainWindowObject = d->scriptEngine.newQObject(d->mainWindow);
-	d->scriptEngine.globalObject().property("application").setProperty("mainwindow", mainWindowObject);
+	QScriptValue mainWindowObject = d->scriptEnvironment.engine()->newQObject(d->mainWindow);
+	d->scriptEnvironment.engine()->globalObject().property("application").setProperty("mainwindow", mainWindowObject);
 
 	foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
 		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
@@ -132,7 +130,7 @@ void TelldusCenterApplication::loadPlugin(QObject *plugin) {
 }
 
 void TelldusCenterApplication::loadScripts() {
-	foreach (QString extension, d->scriptEngine.availableExtensions()) {
+	foreach (QString extension, d->scriptEnvironment.engine()->availableExtensions()) {
 		if (extension.startsWith("...")) {
 			continue;
 		}
@@ -151,13 +149,13 @@ void TelldusCenterApplication::loadScripts() {
 			}
 			this->installTranslator(translator);
 		}
-		
-		d->scriptEngine.importExtension( extension );
-		if (d->scriptEngine.hasUncaughtException()) {
-			qDebug() << QString("Error in %1:%2:").arg(extension).arg(d->scriptEngine.uncaughtExceptionLineNumber())
-					<< d->scriptEngine.uncaughtException().toString();
+
+		d->scriptEnvironment.engine()->importExtension( extension );
+		if (d->scriptEnvironment.engine()->hasUncaughtException()) {
+			qDebug() << QString("Error in %1:%2:").arg(extension).arg(d->scriptEnvironment.engine()->uncaughtExceptionLineNumber())
+					<< d->scriptEnvironment.engine()->uncaughtException().toString();
 		}
-		d->scriptEngine.clearExceptions();
+		d->scriptEnvironment.engine()->clearExceptions();
 	}
 }
 
@@ -183,16 +181,6 @@ void TelldusCenterApplication::addWidget( const QString &page, const QIcon &icon
 
 TelldusCenterApplication *TelldusCenterApplication::instance() {
 	return (static_cast<TelldusCenterApplication *>(QCoreApplication::instance()));
-}
-
-
-void TelldusCenterApplication::scriptException(const QScriptValue & exception) {
-	qDebug() << "ScriptException:" << d->scriptEngine.uncaughtExceptionLineNumber() << exception.toString();
-	qDebug() << "Backtrace:";
-	foreach( QString row, d->scriptEngine.uncaughtExceptionBacktrace() ) {
-		qDebug() << row;
-	}
-	d->scriptEngine.clearExceptions();
 }
 
 void TelldusCenterApplication::msgReceived(const QString & message) {
