@@ -11,6 +11,7 @@ com.telldus.scheduler = function() {
 	var EVENTTYPE_ABSOLUTE = 0;
 	var EVENTTYPE_SUNRISE = 1;
 	var EVENTTYPE_SUNSET = 2;
+	var EVENTTYPE_RELOAD = 3;
 
 	
 	//1. hämta redan satta jobb
@@ -57,6 +58,9 @@ com.telldus.scheduler = function() {
 	// hur kommer net:en + schemaläggare att fungera? Kommer det att finnas en webvariant?
 	//jobben i listan = deviceid (även grupp/scen såklart), action, värde. En enda / jobb, får grupperas med grupper/scener om man vill att mer ska hända på en ggn
 
+	//TODO obs, om något jobb existerar, lägg till 1 nytt jobb som körs vid nästa sommartid/vintertid och bara laddar om befintliga jobb... Listan måste ju göras om då. (EVENTTYPE_RELOAD)
+	//TODO fem-minuter-bakåt-grejen
+	//"repeat", t.ex. om villkor inte uppfylls så vill man göra ett nytt försök, även det får vara en funktion i extended scen/makro. if->false->tryAgainAfterXSeconds...
 	
 	// gränssnittet... hur...?
 	//
@@ -120,12 +124,8 @@ com.telldus.scheduler = function() {
 				
 				var currentEventRuntimeTimestamp = 0;
 				if(events[i].type == EVENTTYPE_ABSOLUTE){
-					//var fuzzinessinterval = events[i].fuzzinessBefore + events[i].fuzzinessAfter;
 					currentEventRuntimeTimestamp = events[i].time;
-					if(events[i].fuzzinessAfter != 0 || events[i].fuzzinessBefore != 0){
-						var fuzziness = Math.floor((events[i].fuzzinessAfter - events[i].fuzzinessBefore)*Math.random()) + events[i].fuzzinessBefore + 1; //TODO check when result is a negative value
-						currentEventRuntimeTimestamp += (fuzziness * 1000);
-					}
+					currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, events[i].fuzzinessBefore, events[i].fuzzinessAfter);
 				}
 				else if(events[i].type == EVENTTYPE_SUNRISE || events[i].type == EVENTTYPE_SUNSET){
 					
@@ -134,10 +134,8 @@ com.telldus.scheduler = function() {
 					currentEventRuntimeTimestamp += (events[i].offset * 1000);
 					print("Timestampet: " + currentEventRuntimeTimestamp);
 					
-					if(events[i].fuzzinessAfter != 0 || events[i].fuzzinessBefore != 0){
-						var fuzziness = Math.floor((events[i].fuzzinessAfter - events[i].fuzzinessBefore)*Math.random()) + events[i].fuzzinessBefore + 1; //TODO check when result is a negative value
-						currentEventRuntimeTimestamp += (fuzziness * 1000);
-					}
+					currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, events[i].fuzzinessBefore, events[i].fuzzinessAfter);
+					
 					print("Timestampet: " + currentEventRuntimeTimestamp);
 				}
 				
@@ -173,6 +171,16 @@ com.telldus.scheduler = function() {
 		}
 		
 		return joblist;
+	}
+	
+	function fuzzify(currentTimestamp, fuzzinessBefore, fuzzinessAfter){
+		if(fuzzinessAfter != 0 || fuzzinessBefore != 0){
+			var interval = fuzzinessAfter + fuzzinessBefore;
+			var rand =  Math.random(); //TODO random enough?
+			var fuzziness = Math.floor((interval+1) * rand);
+			currentTimestamp += (fuzziness * 1000);
+		}
+		return currentTimestamp;
 	}
 	
 	function getSunUpDownForDate(datetimestamp, sun, long, lat){
@@ -221,10 +229,10 @@ com.telldus.scheduler = function() {
 	function Event(id){
 		this.id = 1;
 		this.value = new Date("December 16, 2010").getTime(); //day of week, day of month, day interval or specific date...
-		this.fuzzinessBefore = 60;
-		this.fuzzinessAfter = 60;
+		this.fuzzinessBefore = 2;
+		this.fuzzinessAfter = 0;
 		this.type = EVENTTYPE_SUNSET;
-		this.offset = -800;
+		this.offset = 0;
 		this.time = ""; //"" since using sunset...
 	}
 
