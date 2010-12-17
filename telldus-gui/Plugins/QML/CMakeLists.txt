@@ -5,10 +5,15 @@ SET( Plugin_NAME "QMLLoader" )
 
 SET( Plugin_SRCS
 	qmlplugin.cpp
+	qmlview.cpp
 )
 
 SET( Plugin_HDRS
 	qmlplugin.h
+)
+
+SET( Plugin_MOC_HDRS
+	qmlview.h
 )
 
 SET( Plugin_PATH "com.telldus.qml" )
