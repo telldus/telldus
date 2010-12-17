@@ -7,12 +7,15 @@ __postInit__ = function() {
 com.telldus.scheduler = function() {
 
 	var JOBTYPE_ABSOLUTE = 0;
-	
+	var JOBTYPE_RECURRING_DAY = 1;
+	var JOBTYPE_RECURRING_WEEK = 2;
+	var JOBTYPE_RECURRING_MONTH = 3;
+	var JOBTYPE_RELOAD = 4; //for summer/winter time, any better ideas?
+
 	var EVENTTYPE_ABSOLUTE = 0;
 	var EVENTTYPE_SUNRISE = 1;
 	var EVENTTYPE_SUNSET = 2;
-	var EVENTTYPE_RELOAD = 3;
-
+	
 	
 	//1. hämta redan satta jobb
 	//(kolla om något jobb borde ha körts sedan förra ggn (och att det inte kördes då))
@@ -103,7 +106,8 @@ com.telldus.scheduler = function() {
 				default:
 					break;
 			}
-		}	
+		}
+		//TODO set som last run (i lagringen)
 	};
 	
 	function loadJobs(){
@@ -113,64 +117,87 @@ com.telldus.scheduler = function() {
 		//Hur hämta!?!?! (eller snarare, var spara?)
 		var job1 = new Job(1);
 		var job2 = new Job(2);
-		//foreach job:
-		var nextRunTime = 0;
-		if(job1.type == JOBTYPE_ABSOLUTE){
-			//hämta alla events i detta jobb
-			//kan man bryta ut och återanvända en del kanske?
-			//fuzzinessiseringen kan bli en metod iaf...
-			var events = job1.events;
-			for(var i=0;i<events.length;i++){
-				
-				var currentEventRuntimeTimestamp = 0;
-				if(events[i].type == EVENTTYPE_ABSOLUTE){
-					currentEventRuntimeTimestamp = events[i].time;
-					currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, events[i].fuzzinessBefore, events[i].fuzzinessAfter);
-				}
-				else if(events[i].type == EVENTTYPE_SUNRISE || events[i].type == EVENTTYPE_SUNSET){
+		var storedJobs = new Array();
+		storedJobs.push(job1); //TODO
+		storedJobs.push(job2);
+		
+		for(var j=0;j<storedJobs.length;j++){
+			var job = storedJobs[j];
+			var nextRunTime = 0;
+			if(job.type == JOBTYPE_ABSOLUTE){
+				//hämta alla events i detta jobb (absolut = kan vara flera absoluta datum och tidpunkter på ett jobb)
+				var events = job.events;
+				for(var i=0;i<events.length;i++){
 					
-					currentEventRuntimeTimestamp = getSunUpDownForDate(events[i].value, events[i].type, 55.7, 13.1833); //TODO Long/lat
-					print("Timestampet: " + currentEventRuntimeTimestamp);
-					currentEventRuntimeTimestamp += (events[i].offset * 1000);
-					print("Timestampet: " + currentEventRuntimeTimestamp);
-					
-					currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, events[i].fuzzinessBefore, events[i].fuzzinessAfter);
-					
-					print("Timestampet: " + currentEventRuntimeTimestamp);
-				}
-				
-				if(nextRunTime == 0 || currentEventRuntimeTimestamp < nextRunTime){
-					nextRunTime = currentEventRuntimeTimestamp;
+					nextRunTime = getNextEventRunTime(nextRunTime, events[i], events[i].value);
 				}
 			}
+			else if(job.type == JOBTYPE_RECURRING_DAY){
+				//varje dag eller varannan dag eller så...
+				//känns som att max ett event är aktuellt här (kör detta jobb en ggn varje/varannan/var x:e dag alltså)
+				//kan väl ändras i framtiden annars
+				var events = job.events;
+				if(events.length > 0){
+					var event = events[0];
+					var lastRun = job.lastRun;
+					var date = new Date(0,0,0);
+					var lastRunDate = new Date(0,0,0); //TODO, this correct? "empty" date...
+					
+					if(lastRun > 0){
+						lastRunDate = new Date(lastRun);	
+					}
+					else{
+						lastRunDate = new Date(); //Now
+					}
+					
+					date.setYear(lastRunDate.getFullYear());
+					date.setMonth(lastRunDate.getMonth());
+					date.setDay(lastRunDate.getDate());
+					
+					date = date.getTime() + event.value;   //add interval  TODO obs, kan ju bli idag eller i morgon om tiden redan har passerats idag...
+					nextRunTime = getNextEventRunTime(0, event, date);
+					if(nextRunTime < new Date().getTime()){
+						nextRunTime = getNextEventRunTime(0, event, new Date(date).addDay(interval).getTime()); //already passed this time today, try again after "interval" days 
+					}
+				}
+			}
+			
+			print("NEXTRUNTIME: " + nextRunTime);
+			
+			joblist.push(new RunJob(job.id, nextRunTime, job.type, job.device, job.method, job.value));
 		}
-		
-		//nextRunTime = nextRunTime.setDate('2010-01-01 23:59:00');
-		//nextRunTime = new Date("July 27, 2010 23:59:00");
-		//nextRunTime = nextRunTime.getTime();
-		
-		var nextRunTime1 = new Date("July 27, 2012 23:59:00");
-		nextRunTime1 = nextRunTime1.getTime();
-		var nextRunTime2 = new Date("July 27, 2011 23:59:00");
-		nextRunTime2 = nextRunTime2.getTime();
-		
-		print("NEXTRUNTIME: " + nextRunTime);
-		
-		//listan ska vara ordnad
-		joblist.push(new RunJob(job1.id, nextRunTime, job1.device, job1.method, job1.value));
-		joblist.push(new RunJob(2, nextRunTime1, job1.device, job1.method, job1.value));
-		joblist.push(new RunJob(3, nextRunTime2, job1.device, job1.method, job1.value));
-		
-		for(var i=0;i<joblist.length;i++){
-			print(joblist[i].id + ": " + joblist[i].nextRunTime);
-		}
-		print("after sort");
+			
 		joblist.sort(compareTime);
 		for(var i=0;i<joblist.length;i++){
 			print(joblist[i].id + ": " + joblist[i].nextRunTime);
 		}
 		
 		return joblist;
+	}
+	
+	function getNextEventRunTime(nextRunTime, event, date){
+		var currentEventRuntimeTimestamp = 0;
+		if(event.type == EVENTTYPE_ABSOLUTE){
+			currentEventRuntimeTimestamp = event.time + date;
+			currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, event.fuzzinessBefore, event.fuzzinessAfter);
+		}
+		else if(event.type == EVENTTYPE_SUNRISE || event.type == EVENTTYPE_SUNSET){
+			
+			currentEventRuntimeTimestamp = getSunUpDownForDate(date, event.type, 55.7, 13.1833); //TODO Long/lat
+			print("Timestampet: " + currentEventRuntimeTimestamp);
+			currentEventRuntimeTimestamp += (event.offset * 1000);
+			print("Timestampet: " + currentEventRuntimeTimestamp);
+			
+			currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, event.fuzzinessBefore, event.fuzzinessAfter);
+			
+			print("Timestampet: " + currentEventRuntimeTimestamp);
+		}
+		
+		if((nextRunTime == 0 || currentEventRuntimeTimestamp < nextRunTime) && nextRunTime > new Date().getTime()){   //earlier than other events, but later than "now"
+			nextRunTime = currentEventRuntimeTimestamp;
+		}
+		
+		return nextRunTime;
 	}
 	
 	function fuzzify(currentTimestamp, fuzzinessBefore, fuzzinessAfter){
@@ -186,13 +213,10 @@ com.telldus.scheduler = function() {
 	function getSunUpDownForDate(datetimestamp, sun, long, lat){
 	
 		date = new Date(datetimestamp);
-		//date = "Thu Dec 16 2010 12:57:47 GMT+0100 (CET)";
 		print("Date: " + date);
-		//print(new Date(date));
-		print(com.telldus.suncalculator);
 		var timevalues = com.telldus.suncalculator.riseset(date, long, lat);
 		if(timevalues[2] && timevalues[2] != ""){
-			return ""; //no sun up or down, do nothing
+			return ""; //no sun up or down this day, do nothing
 		}
 		print("Time values: " + timevalues[0]);
 		var hourminute;
@@ -216,30 +240,36 @@ com.telldus.scheduler = function() {
 		this.name = "testnamn";
 		this.type = JOBTYPE_ABSOLUTE;
 		this.startdate = "2010-01-01"; //format?
-		this.lastrun = "";
+		this.lastrun = 0;
 		this.device = 1;
 		this.method = 1;
 		this.value = "";
 		var events = new Array();
 		//foreach stored event...
-		events.push(new Event());
+		events.push(new Event(1));
+		events.push(new Event(2));
 		this.events =  events;
 	}
 
 	function Event(id){
-		this.id = 1;
-		this.value = new Date("December 16, 2010").getTime(); //day of week, day of month, day interval or specific date...
+		this.id = id;
+		if(id == 1){
+			this.value = new Date("December 16, 2010").getTime(); //day of week, day of month, day interval or specific date...
+		}
+		else{
+			this.value = new Date("December 17, 2010").getTime(); //day of week, day of month, day interval or specific date...	
+		}
 		this.fuzzinessBefore = 2;
 		this.fuzzinessAfter = 0;
 		this.type = EVENTTYPE_SUNSET;
 		this.offset = 0;
-		this.time = ""; //"" since using sunset...
+		this.time = 0; //"" since using sunset... Timestamp
 	}
 
-	function RunJob(id, nextRunTime, device, method, value){
-		print (nextRunTime);
+	function RunJob(id, nextRunTime, type, device, method, value){
 		this.id = id;
 		this.nextRunTime = nextRunTime;
+		this.type = type;
 		this.device = device;
 		this.method = method;
 		this.value = value;
