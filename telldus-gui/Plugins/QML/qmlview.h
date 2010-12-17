@@ -9,7 +9,7 @@ class QMLView : public QDeclarativeView
 {
 	Q_OBJECT
 public:
-	QMLView(const QDir &dir);
+	QMLView(const QDir &dir, const QScriptValue &object);
 	virtual ~QMLView();
 
 signals:

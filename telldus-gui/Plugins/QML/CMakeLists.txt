@@ -4,6 +4,7 @@ SET( Plugin_NAME "QMLLoader" )
 
 
 SET( Plugin_SRCS
+	scriptfunctionwrapper.cpp
 	qmlplugin.cpp
 	qmlview.cpp
 )
@@ -13,6 +14,7 @@ SET( Plugin_HDRS
 )
 
 SET( Plugin_MOC_HDRS
+	scriptfunctionwrapper.h
 	qmlview.h
 )
 

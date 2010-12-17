@@ -1,18 +1,31 @@
 #include "qmlview.h"
+#include "scriptfunctionwrapper.h"
 #include <QDeclarativeContext>
+#include <QScriptValueIterator>
 #include <QVariant>
-#include <QDebug>
 
 class QMLView::PrivateData {
 public:
 	QDir baseDir;
 };
 
-QMLView::QMLView(const QDir &dir) :
+QMLView::QMLView(const QDir &dir, const QScriptValue &object) :
 	QDeclarativeView()
 {
 	d = new PrivateData;
 	d->baseDir = dir;
+
+	QDeclarativeContext *context = this->rootContext();
+	QScriptValueIterator it(object);
+
+	while (it.hasNext()) {
+		it.next();
+		if (it.value().isFunction()) {
+			context->setContextProperty(it.name(), new ScriptFunctionWrapper(object, it.name(), this));
+		} else {
+			context->setContextProperty(it.name(), it.value().toVariant());
+		}
+	}
 }
 
 QMLView::~QMLView() {
@@ -24,11 +37,6 @@ void QMLView::load(const QString &filename) {
 }
 
 void QMLView::setProperty( const QString & name, const QScriptValue &value ) {
-	qDebug() << "Setting property" << name << "to" << value.toString();
-
 	QDeclarativeContext *context = this->rootContext();
 	context->setContextProperty(name, value.toVariant());
-
-	//QVariant v = value.toVariant();
-	//qDebug() << v;
 }
