@@ -77,8 +77,6 @@ com.telldus.scheduler = function() {
 		var runid = 1; //id som kommer tillbaka från c++ (timer)-delen
 		var runJobFunc = function(){ runJob(joblist[0].id); };
 		var now = new Date().getTime();
-		print ("Now:" + new Date(now));
-		print("Then:" + new Date(nextRunTime));
 		var delay = nextRunTime - now;
 		print("Delay: " + delay);
 		setTimeout(runJobFunc, delay);
@@ -96,13 +94,18 @@ com.telldus.scheduler = function() {
 		}
 		if(runJob != null){
 			switch(runJob.method){
-				case 1:
-					//TODO: get constants from somewhere
+				case com.telldus.core.TELLSTICK_TURNON:
 					com.telldus.core.turnOn(runJob.id);
 					break;
-				case 2:
+				case com.telldus.core.TELLSTICK_TURNOFF:
 					com.telldus.core.turnOff(runJob.id);
 					break;
+				case com.telldus.core.TELLSTICK_DIM:
+					com.telldus.core.dim(runJob.id, runJob.value);
+					break;
+				case com.telldus.core.TELLSTICK_BELL:
+					com.telldus.core.bell(runJob.id);
+					break;	
 				default:
 					break;
 			}
@@ -176,28 +179,25 @@ com.telldus.scheduler = function() {
 					returnDate = zeroTime(returnDate);
 					
 					nextTempRunTime = getNextEventRunTime(0, events[i], returnDate.getTime());
-					print(nextTempRunTime);
 					if(nextTempRunTime < new Date().getTime()){ //event happened today, already passed, add to next week instead
-						print("NEXT WEEK: " + returnDate);
 						returnDate.setDate(returnDate.getDate() + 7);
 						nextRunTime = getNextEventRunTime(nextRunTime, events[i], returnDate.getTime());	
 					}
 					else{
 						nextRunTime = nextTempRunTime;
 					}
-					
 				}
 			}
+			else if(job.type == JOBTYPE_RECURRING_MONTH){
+				//TODO
+			}
 			
-			print("NEXTRUNTIME: " + new Date(nextRunTime));
+			print("Runtime for job: " + new Date(nextRunTime));
 			
 			joblist.push(new RunJob(job.id, nextRunTime, job.type, job.device, job.method, job.value));
 		}
 			
 		joblist.sort(compareTime);
-		for(var i=0;i<joblist.length;i++){
-			print(joblist[i].id + ": " + joblist[i].nextRunTime);
-		}
 		
 		return joblist;
 	}
@@ -213,24 +213,17 @@ com.telldus.scheduler = function() {
 	function getNextEventRunTime(nextRunTime, event, date){
 		var currentEventRuntimeTimestamp = 0;
 		if(event.type == EVENTTYPE_ABSOLUTE){
-			print("Time: " + event.time + " Date: " + new Date(date));
 			currentEventRuntimeTimestamp = event.time + date;
 			currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, event.fuzzinessBefore, event.fuzzinessAfter);
 		}
 		else if(event.type == EVENTTYPE_SUNRISE || event.type == EVENTTYPE_SUNSET){
-			
 			currentEventRuntimeTimestamp = getSunUpDownForDate(date, event.type, 55.7, 13.1833); //TODO Long/lat
-			print("Timestampet: " + currentEventRuntimeTimestamp);
 			currentEventRuntimeTimestamp += (event.offset * 1000);
-			print("Timestampet: " + currentEventRuntimeTimestamp);
 			
 			currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, event.fuzzinessBefore, event.fuzzinessAfter);		
 		}
 		
-		print("Timestampet: " + new Date(currentEventRuntimeTimestamp));
-		
 		if((nextRunTime == 0 || currentEventRuntimeTimestamp < nextRunTime) && currentEventRuntimeTimestamp > new Date().getTime()){   //earlier than other events, but later than "now"
-			print("currentEventRuntimeTimestamp: " + currentEventRuntimeTimestamp);
 			nextRunTime = currentEventRuntimeTimestamp;
 		}
 		
@@ -250,12 +243,10 @@ com.telldus.scheduler = function() {
 	function getSunUpDownForDate(datetimestamp, sun, long, lat){
 	
 		date = new Date(datetimestamp);
-		print("Date: " + date);
 		var timevalues = com.telldus.suncalculator.riseset(date, long, lat);
 		if(timevalues[2] && timevalues[2] != ""){
 			return ""; //no sun up or down this day, do nothing
 		}
-		print("Time values: " + timevalues[0]);
 		var hourminute;
 		if(sun == EVENTTYPE_SUNRISE){
 			hourminute = timevalues[0].split(':');
@@ -265,7 +256,6 @@ com.telldus.scheduler = function() {
 		}
 		date.setHours(hourminute[0]);
 		date.setMinutes(hourminute[1]);
-		print("Date after:" + date);
 		return date.getTime();
 	
 	}
