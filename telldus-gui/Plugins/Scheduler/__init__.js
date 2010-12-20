@@ -77,6 +77,7 @@ com.telldus.scheduler = function() {
 		var runid = 1; //id som kommer tillbaka från c++ (timer)-delen
 		var runJobFunc = function(){ runJob(joblist[0].id); };
 		var now = new Date().getTime();
+		print("Next: " + new Date(nextRunTime));
 		var delay = nextRunTime - now;
 		print("Delay: " + delay);
 		setTimeout(runJobFunc, delay);
@@ -189,7 +190,41 @@ com.telldus.scheduler = function() {
 				}
 			}
 			else if(job.type == JOBTYPE_RECURRING_MONTH){
-				//TODO
+				//TODO test this
+				var events = job.events;
+				var time;
+				if(events.length > 0){
+					time = getEventRunTime(events[0], new Date(0)); //get time-timestamp only, same for every day
+				}
+				for(var i=0;i<events.length;i++){
+					//plocka fram nästa månadsdag med nummer x, kan vara idag också, i aktuell månad...
+					
+					var daymonth = events[i].value.split('-'); //month-day
+					var month = daymonth[0];
+					var day = daymonth[1];
+					var now = new Date();
+					print("Month: " + month + " Day: " + day + " Year: " + now);
+					
+					if((32 - new Date(now.getFullYear(), month, 32).getDate()) < day){
+						if(month != 1 && day != 29){
+							break; //this day doesn't exist for this month (at least not this year (leap year...))
+						}
+					}
+					
+					var nextdate = getNextLeapYearSafeDate(now.getFullYear(), month, day, time);
+					
+					print("DATE: " + new Date(nextdate));
+					
+					if(nextdate < new Date().getTime()){ //event already happened this year, add to next year instead
+						var tempdate = new Date(nextdate);
+						tempdate.setYear(now.getFullYear() + 1);
+						print(tempdate);
+						nextdate = tempdate.getTime();
+					}
+					if(nextRunTime == 0 || nextRunTime > nextdate){
+						nextRunTime = nextdate;
+					}
+				}
 			}
 			
 			print("Runtime for job: " + new Date(nextRunTime));
@@ -202,6 +237,25 @@ com.telldus.scheduler = function() {
 		return joblist;
 	}
 	
+	function getNextLeapYearSafeDate(year, month, day, time){
+		if(month == 1 && day == 29){
+			//get leap year
+			for(var i=0;i<5;i++){
+				if(new Date(year+i,1,29).getDate() == 29){
+					//this is a leap year
+					datetimestamp = new Date(year+1, 1, 29).getTime() + time; //add time of day
+					if(datetimestamp > new Date().getTime()){ //else, this was a leap year, but already passed for this year
+						return datetimestamp;
+					}
+				}
+			}
+		}
+		else{
+			print("TIME: " + time);
+			return new Date(year, month, day).getTime() + time; //add time of day
+		}
+	}
+	
 	function zeroTime(date){
 		date.setHours(0);
 		date.setMinutes(0);
@@ -211,6 +265,16 @@ com.telldus.scheduler = function() {
 	}
 	
 	function getNextEventRunTime(nextRunTime, event, date){
+		
+		var currentEventRuntimeTimestamp = getEventRunTime(event, date);
+		if((nextRunTime == 0 || currentEventRuntimeTimestamp < nextRunTime) && currentEventRuntimeTimestamp > new Date().getTime()){   //earlier than other events, but later than "now"
+			nextRunTime = currentEventRuntimeTimestamp;
+		}
+		
+		return nextRunTime;
+	}
+	
+	function getEventRunTime(event, date){
 		var currentEventRuntimeTimestamp = 0;
 		if(event.type == EVENTTYPE_ABSOLUTE){
 			currentEventRuntimeTimestamp = event.time + date;
@@ -219,15 +283,10 @@ com.telldus.scheduler = function() {
 		else if(event.type == EVENTTYPE_SUNRISE || event.type == EVENTTYPE_SUNSET){
 			currentEventRuntimeTimestamp = getSunUpDownForDate(date, event.type, 55.7, 13.1833); //TODO Long/lat
 			currentEventRuntimeTimestamp += (event.offset * 1000);
-			
 			currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, event.fuzzinessBefore, event.fuzzinessAfter);		
 		}
 		
-		if((nextRunTime == 0 || currentEventRuntimeTimestamp < nextRunTime) && currentEventRuntimeTimestamp > new Date().getTime()){   //earlier than other events, but later than "now"
-			nextRunTime = currentEventRuntimeTimestamp;
-		}
-		
-		return nextRunTime;
+		return currentEventRuntimeTimestamp;
 	}
 	
 	function fuzzify(currentTimestamp, fuzzinessBefore, fuzzinessAfter){
@@ -265,7 +324,7 @@ com.telldus.scheduler = function() {
 		//one job can have several events... more occurencies...
 		this.id = 1;
 		this.name = "testnamn";
-		this.type = JOBTYPE_RECURRING_DAY;
+		this.type = JOBTYPE_RECURRING_MONTH;
 		this.startdate = "2010-01-01"; //format? Gör om till timestamp. Obs, används inte ännu, om det ska användas, se till att kolla detta också överallt
 		this.lastrun = 0;
 		this.device = 1;
@@ -281,10 +340,10 @@ com.telldus.scheduler = function() {
 	function Event(id){
 		this.id = id;
 		if(id == 1){
-			this.value = 4; //day of week, day of month, day interval or specific date...
+			this.value = "05-10"; //day of week, day of month, day interval or specific date... Individual values for each type instead?
 		}
 		else{
-			this.value = 1; //day of week, day of month, day interval or specific date...	
+			this.value = "12-12"; //day of week, day of month, day interval or specific date...	
 		}
 		this.fuzzinessBefore = 2;
 		this.fuzzinessAfter = 0;
