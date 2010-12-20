@@ -41,7 +41,7 @@ QVariant Settings::value( const QString &key, const QVariant &defaultValue ) con
 		int size = d->s.beginReadArray(key);
 		for (int i = 0; i < size; ++i) {
 			d->s.setArrayIndex(i);
-			list.append(d->s.value(QString::number(i)));
+			list.append(this->value(QString::number(i)));
 		}
 		d->s.endArray();
 		return list;
