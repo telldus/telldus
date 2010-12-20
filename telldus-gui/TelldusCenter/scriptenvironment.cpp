@@ -1,4 +1,5 @@
 #include "scriptenvironment.h"
+#include "configurationdialog.h"
 #include <QScriptEngine>
 #include <QScriptValueIterator>
 #include <QStringList>
@@ -34,6 +35,13 @@ ScriptEnvironment::ScriptEnvironment(QObject *parent) :
 	}
 	self.setProperty("self", self);
 	d->scriptEngine.setGlobalObject(self);
+
+	QScriptValue application = d->scriptEngine.newQObject(parent);
+	d->scriptEngine.globalObject().setProperty("application", application);
+
+	//Create configuration dialog
+	QScriptValue configurationDialogObject = d->scriptEngine.newQObject(new ConfigurationDialog(), QScriptEngine::ScriptOwnership, QScriptEngine::ExcludeSuperClassContents);
+	d->scriptEngine.globalObject().property("application").setProperty("configuration", configurationDialogObject);
 
 	//Collect garbage (ie our old global object)
 	d->scriptEngine.collectGarbage();

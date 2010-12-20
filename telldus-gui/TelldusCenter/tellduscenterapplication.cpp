@@ -20,7 +20,7 @@ class TelldusCenterApplicationPrivate {
 public:
 	PluginList plugins;
 	MainWindow *mainWindow;
-	ScriptEnvironment scriptEnvironment;
+	ScriptEnvironment *scriptEnvironment;
 };
 
 TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
@@ -28,6 +28,7 @@ TelldusCenterApplication::TelldusCenterApplication(int &argc, char **argv)
 {
 	d = new TelldusCenterApplicationPrivate;
 	connect(this, SIGNAL(messageReceived(const QString &)), this, SLOT(msgReceived(const QString &)));
+	d->scriptEnvironment = new ScriptEnvironment(this);
 }
 
 TelldusCenterApplication::~TelldusCenterApplication() {
@@ -36,7 +37,7 @@ TelldusCenterApplication::~TelldusCenterApplication() {
 }
 
 void TelldusCenterApplication::initialize() {
-	d->mainWindow = new MainWindow( );
+	d->mainWindow = new MainWindow( d->scriptEnvironment );
 
 	this->setActivationWindow(d->mainWindow, false);
 
@@ -55,7 +56,7 @@ PluginList TelldusCenterApplication::plugins() const {
 }
 
 QScriptValue TelldusCenterApplication::mainWindow() {
-	QScriptValue value = d->scriptEnvironment.engine()->newQObject(d->mainWindow);
+	QScriptValue value = d->scriptEnvironment->engine()->newQObject(d->mainWindow);
 	return value;
 }
 
@@ -100,11 +101,8 @@ void TelldusCenterApplication::loadPlugins() {
 
 	this->setLibraryPaths( QStringList(pluginsDir.absolutePath()) );
 
-	QScriptValue object = d->scriptEnvironment.engine()->newQObject(this);
-	d->scriptEnvironment.engine()->globalObject().setProperty("application", object);
-
-	QScriptValue mainWindowObject = d->scriptEnvironment.engine()->newQObject(d->mainWindow);
-	d->scriptEnvironment.engine()->globalObject().property("application").setProperty("mainwindow", mainWindowObject);
+	QScriptValue mainWindowObject = d->scriptEnvironment->engine()->newQObject(d->mainWindow);
+	d->scriptEnvironment->engine()->globalObject().property("application").setProperty("mainwindow", mainWindowObject);
 
 	foreach (QString fileName, pluginsDir.entryList(QDir::Files)) {
 		QPluginLoader loader(pluginsDir.absoluteFilePath(fileName));
@@ -130,7 +128,7 @@ void TelldusCenterApplication::loadPlugin(QObject *plugin) {
 }
 
 void TelldusCenterApplication::loadScripts() {
-	foreach (QString extension, d->scriptEnvironment.engine()->availableExtensions()) {
+	foreach (QString extension, d->scriptEnvironment->engine()->availableExtensions()) {
 		if (extension.startsWith("...")) {
 			continue;
 		}
@@ -150,12 +148,12 @@ void TelldusCenterApplication::loadScripts() {
 			this->installTranslator(translator);
 		}
 
-		d->scriptEnvironment.engine()->importExtension( extension );
-		if (d->scriptEnvironment.engine()->hasUncaughtException()) {
-			qDebug() << QString("Error in %1:%2:").arg(extension).arg(d->scriptEnvironment.engine()->uncaughtExceptionLineNumber())
-					<< d->scriptEnvironment.engine()->uncaughtException().toString();
+		d->scriptEnvironment->engine()->importExtension( extension );
+		if (d->scriptEnvironment->engine()->hasUncaughtException()) {
+			qDebug() << QString("Error in %1:%2:").arg(extension).arg(d->scriptEnvironment->engine()->uncaughtExceptionLineNumber())
+					<< d->scriptEnvironment->engine()->uncaughtException().toString();
 		}
-		d->scriptEnvironment.engine()->clearExceptions();
+		d->scriptEnvironment->engine()->clearExceptions();
 	}
 }
 

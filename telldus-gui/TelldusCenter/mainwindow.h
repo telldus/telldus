@@ -6,6 +6,7 @@
 
 class QToolBar;
 class Message;
+class ScriptEnvironment;
 
 class MainWindowPrivate;
 
@@ -14,7 +15,7 @@ class MainWindow : public QMainWindow
 	Q_OBJECT
 
 public:
-	MainWindow(QWidget *parent = 0, Qt::WFlags flags = 0);
+	MainWindow(ScriptEnvironment *env, QWidget *parent = 0, Qt::WFlags flags = 0);
 	~MainWindow();
 
 public slots:
@@ -25,6 +26,7 @@ protected:
 
 private slots:
 	void slotAboutApplication();
+	void slotConfigure();
 	void slotPagesClick();
 
 private:

@@ -9,12 +9,14 @@
 #include <QSettings>
 #include <QVBoxLayout>
 #include <QCloseEvent>
+#include <QScriptEngine>
 #include <QDebug>
 
 #include "tellduscenterapplication.h"
 #include "tellduscenterplugin.h"
 #include "message.h"
 #include "plugintree.h"
+#include "scriptenvironment.h"
 
 #define VERSION_STRING_HELPER(X) #X
 #define VERSION_STRING(X) VERSION_STRING_HELPER(X)
@@ -26,15 +28,17 @@ public:
 	QStackedLayout *stackedLayout;
 	PluginTree pluginTree;
 	QActionGroup *pagesActionGroup;
+	ScriptEnvironment *env;
 };
 
-MainWindow::MainWindow(QWidget *parent, Qt::WFlags flags)
+MainWindow::MainWindow(ScriptEnvironment *env, QWidget *parent, Qt::WFlags flags)
 	: QMainWindow(parent, flags)
 {
 	d = new MainWindowPrivate;
 	d->pagesActionGroup = new QActionGroup( this );
 	d->message = new Message();
 	connect(qApp, SIGNAL(showMessage(QString,QString,QString)), d->message, SLOT(showMessage(QString,QString,QString)));
+	d->env = env;
 
 	//setAttribute(Qt::WA_DeleteOnClose, true);
 
@@ -81,6 +85,8 @@ void MainWindow::setupMenu() {
 
 	// File
 	QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
+	QAction *config = fileMenu->addAction(tr("&Configure"), this, SLOT(slotConfigure()));
+	fileMenu->addSeparator();
 	QAction *quit = fileMenu->addAction(tr("&Quit"), qApp, SLOT(quit()));
 	quit->setMenuRole( QAction::QuitRole );
 
@@ -128,6 +134,10 @@ void MainWindow::slotAboutApplication() {
 	QMessageBox::about(this, tr("About Telldus Center"),
 					   tr("<center><img src=':/images/TelldusCenter_128.png' width=128 height=128 /><h2>Telldus Center %1</h2>"
 						  "<p>Copyright &copy; 2010 Telldus Technologies AB<p></center>").arg(VERSION_STRING(VERSION)));
+}
+
+void MainWindow::slotConfigure() {
+	d->env->engine()->evaluate("application.configuration.open();");
 }
 
 void MainWindow::slotPagesClick() {

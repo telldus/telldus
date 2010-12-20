@@ -9,6 +9,7 @@ endif(COMMAND cmake_policy)
 
 ######## Non configurable options  ########
 SET( telldus-center_SRCS
+	configurationdialog.cpp
 	main.cpp
 	mainwindow.cpp
 	scriptenvironment.cpp
@@ -26,6 +27,7 @@ SET( telldus-center_HDRS
 )
 
 SET( telldus-center_MOC_HDRS
+	configurationdialog.h
 	mainwindow.h
 	scriptenvironment.h
 	tellduscenterapplication.h
