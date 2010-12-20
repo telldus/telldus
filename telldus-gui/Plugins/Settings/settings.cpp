@@ -1,17 +1,17 @@
 #include "settings.h"
 #include <QSettings>
-#include <QDebug>
+#include <QStringList>
 
 class Settings::PrivateData {
 public:
-	QString extension;
+	QSettings s;
 };
 
 Settings::Settings(const QString &extensionName) :
 	QObject()
 {
 	d = new PrivateData;
-	d->extension = extensionName;
+	d->s.beginGroup(extensionName);
 }
 
 Settings::~Settings() {
@@ -19,13 +19,32 @@ Settings::~Settings() {
 }
 
 void Settings::setValue( const QString & key, const QVariant & value ) {
-	QSettings s;
-	s.beginGroup(d->extension);
-	s.setValue(key, value);
+	if (value.type() == QVariant::List) {
+		QVariantList list = value.toList();
+		d->s.beginWriteArray(key);
+		for (int i = 0; i < list.size(); ++i) {
+			d->s.setArrayIndex(i);
+			this->setValue(QString::number(i), list.at(i));
+		}
+		d->s.endArray();
+
+	} else {
+		d->s.setValue(key, value);
+	}
 }
 
 QVariant Settings::value( const QString &key, const QVariant &defaultValue ) const {
-	QSettings s;
-	s.beginGroup(d->extension);
-	return s.value(key, defaultValue);
+	//First, find out if it is an array
+	if (d->s.childGroups().contains(key)) {
+		//Array or dict
+		QVariantList list;
+		int size = d->s.beginReadArray(key);
+		for (int i = 0; i < size; ++i) {
+			d->s.setArrayIndex(i);
+			list.append(d->s.value(QString::number(i)));
+		}
+		d->s.endArray();
+		return list;
+	}
+	return d->s.value(key, defaultValue);
 }
