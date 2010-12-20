@@ -40,7 +40,7 @@ ScriptEnvironment::ScriptEnvironment(QObject *parent) :
 	d->scriptEngine.globalObject().setProperty("application", application);
 
 	//Create configuration dialog
-	QScriptValue configurationDialogObject = d->scriptEngine.newQObject(new ConfigurationDialog(), QScriptEngine::ScriptOwnership, QScriptEngine::ExcludeSuperClassContents);
+	QScriptValue configurationDialogObject = d->scriptEngine.newQObject(new ConfigurationDialog(&d->scriptEngine), QScriptEngine::ScriptOwnership, QScriptEngine::ExcludeSuperClassContents);
 	d->scriptEngine.globalObject().property("application").setProperty("configuration", configurationDialogObject);
 
 	//Collect garbage (ie our old global object)
