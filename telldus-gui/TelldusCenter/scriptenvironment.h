@@ -16,6 +16,7 @@ public:
 signals:
 
 public slots:
+	void include(const QString &filename);
 	int setInterval(const QScriptValue &expression, int delay);
 	void clearInterval(int timerId);
 

@@ -2,6 +2,7 @@
 #include "configurationdialog.h"
 #include <QScriptEngine>
 #include <QScriptValueIterator>
+#include <QScriptContextInfo>
 #include <QStringList>
 #include <QTimerEvent>
 
@@ -62,6 +63,23 @@ void ScriptEnvironment::scriptException(const QScriptValue & exception) {
 		qDebug() << row;
 	}
 	d->scriptEngine.clearExceptions();
+}
+
+void ScriptEnvironment::include(const QString &filename) {
+	QScriptContextInfo info(d->scriptEngine.currentContext()->parentContext());
+	QFileInfo fileinfo(info.fileName());
+	QDir dir = fileinfo.dir();
+
+	QFile file(dir.filePath(filename));
+	file.open(QFile::ReadOnly);
+	QString fileContents = file.readAll();
+	file.close();
+
+	QScriptContext *ctx = d->scriptEngine.currentContext();
+
+	ctx->setActivationObject(ctx->parentContext()->activationObject());
+
+	d->scriptEngine.evaluate(fileContents, dir.filePath(filename));
 }
 
 void ScriptEnvironment::timerEvent(QTimerEvent *event) {
