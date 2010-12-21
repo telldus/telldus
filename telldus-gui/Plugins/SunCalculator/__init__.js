@@ -35,9 +35,6 @@ com.telldus.suncalculator = function() {
 		lat = 55 + 68.93/60.0;
 		lon = 13 + 21.23/60.0;
 		
-		lat = 56 + 14.88/60.0;
-		lon = 13 + 35.38/60.0;
-		
 		print("FOR 1: " + lat + "_____" + lon);
 		
 		var k;
@@ -205,8 +202,6 @@ com.telldus.suncalculator = function() {
 	// (Van Flandern & Pulkkinen, 1979)
 	function sun( jd, ct )
 	{
-		jd = 4001.4583333333335;
-		ct = 1.109555099247091;
 		var g, lo, s, u, v, w;
 		
 		lo = 0.779072 + 0.00273790931*jd;
