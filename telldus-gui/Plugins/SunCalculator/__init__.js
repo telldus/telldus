@@ -22,8 +22,24 @@ com.telldus.suncalculator = function() {
 	var VHz = [0.0, 0.0, 0.0];
 
 	// calculate sunrise and sunset times
-	function riseset(date, lat, lon )
+	function riseset(date)
 	{
+		var settings = new com.telldus.settings();
+		var lat = 56.1488; //55.6893; //default
+		var lon = 13.3538; //13.2123; //default
+		lat = settings.value("latitude", lat);
+		lon = settings.value("longitude", lon);
+		date = new Date(2010, 11, 20);
+		print("DATET" + date);
+		
+		lat = 55 + 68.93/60.0;
+		lon = 13 + 21.23/60.0;
+		
+		lat = 56 + 14.88/60.0;
+		lon = 13 + 35.38/60.0;
+		
+		print("FOR 1: " + lat + "_____" + lon);
+		
 		var k;
 		var zone = Math.round(date.getTimezoneOffset()/60);
 		var jd = julian_day(date) - 2451545;           // Julian day relative to Jan 1.5, 2000
@@ -76,6 +92,8 @@ com.telldus.suncalculator = function() {
 		var values = new Array();
 		values.push(sunrisevalue);
 		values.push(sunsetvalue);
+		print("SUNSETVALUE: " + sunsetvalue);
+		print("FOR: " + lat + "_____" + lon*360);
 		values.push(message);
 		return values;
 	}
@@ -312,7 +330,13 @@ com.telldus.suncalculator = function() {
 		return real;
 	}
 	
+	function setLocation(longitude, latitude){
+		settings.setValue("longitude", longitude);
+		settings.setValue("latitude", latitude);	
+	}
+	
 	return { //Public functions
-		riseset: riseset
+		riseset: riseset,
+		setLocation: setLocation
 	}
 }();
