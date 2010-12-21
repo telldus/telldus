@@ -10,11 +10,13 @@ com.telldus.scheduler = function() {
 	var JOBTYPE_RECURRING_DAY = 1;
 	var JOBTYPE_RECURRING_WEEK = 2;
 	var JOBTYPE_RECURRING_MONTH = 3;
-	var JOBTYPE_RELOAD = 4; //for summer/winter time, any better ideas?
+	var JOBTYPE_RELOAD = 4; //TODO for summer/winter time, any better ideas?
 
 	var EVENTTYPE_ABSOLUTE = 0;
 	var EVENTTYPE_SUNRISE = 1;
 	var EVENTTYPE_SUNSET = 2;
+	
+	var storedJobs;
 	
 	
 	//1. hämta redan satta jobb
@@ -66,39 +68,31 @@ com.telldus.scheduler = function() {
 	//TODO reload...?
 	//TODO ordna upp
 	//TODO funktionerna, rätt placerade nu, eller ngn som eg. tillhör bara en subklass?
+	//TODO ta bort absoluta events efter att de har passerats?
 	//"repeat", t.ex. om villkor inte uppfylls så vill man göra ett nytt försök, även det får vara en funktion i extended scen/makro. if->false->tryAgainAfterXSeconds...
 	
 	// gränssnittet... hur...?
 	//
+	//new job, v:
+	/*
+	 * id: 1,
+			name: "testnamn",
+			type: JOBTYPE_RECURRING_MONTH,
+			startdate: "2010-01-01", //TODO enforce:a där det är relevant. Format? Gör om till timestamp. Obs, används inte ännu, om det ska användas, se till att kolla detta också överallt
+			lastrun: 0,
+			device: 1,
+			method: 1,
+			value: ""
+	*/
+	
 	function init(){
-		var joblist = loadJobs(); //TODO reload jobs on every job change
-		if(joblist.length <= 0){
-			return; //no jobs, abort
-		}
-		var nextRunTime = joblist[0].nextRunTime;
-		
-		//TODO:
-		var runid = 1; //id som kommer tillbaka från c++ (timer)-delen
-		var runJobFunc = function(){ runJob(joblist[0].id); };
-		var now = new Date().getTime();
-		print("Next: " + new Date(nextRunTime));
-		var delay = nextRunTime - now;
-		print("Delay: " + delay);
-		setTimeout(runJobFunc, delay); //start the timer
+		loadJobs(); //load jobs from permanent storage
+		calculateJobs(); //TODO recalculate jobs on every run/change, reload jobs on every job change
 	}
 	
-	function runJob(runid) {
-		//should be the first one, but do a check
-		print("RunJob: " + runid);
-		var runJob = null;
-		for(var i=0;i<joblist.length;i++){
-			if(joblist[i].id == runid){
-				runJob = joblist[i];
-				break;
-			}
-		}
+	function runJob(runJob) {
 		var success = 0;
-		if(runJob != null){
+		if(runJob){
 			switch(runJob.method){
 				case com.telldus.core.TELLSTICK_TURNON:
 					success = com.telldus.core.turnOn(runJob.id);
@@ -118,62 +112,97 @@ com.telldus.scheduler = function() {
 		}
 		
 		if(success){
-			updateLastRun(runid, new Date().getTime());
+			updateLastRun(runJob.id, new Date().getTime());
 		}
-		loadJobs();
+		sleep(1);
+		print("Job run");
+		calculateJobs();
 	};
-	
-	function saveJob(id){
-		var job = new Job(id);
-		//TODO set properties
-		var settings = new com.telldus.settings();
-		var storedJobs = settings.value("jobs", "");
-		
-		if(!storedJobs){
-			storedJobs = {}; //initialize new
-		}
-		
-		storedJobs[id] = job;
-		
-		settings.setValue("jobs", storedJobs);
-	}
 	
 	function updateLastRun(id, lastRun){
 		var settings = new com.telldus.settings();
-		var storedJobs = settings.value("jobs", "");
-		storedJobs[id].lastrun = lastRun;
-		settings.setValue("jobs", storedJobs);
+		var jobs = settings.value("jobs", "");
+		jobs[id].lastrun = lastRun; //update permanent storage
+		settings.setValue("jobs", jobs);
+		
+		storedJobs[id].lastrun = lastRun; //update current list
 	}
 	
-	function loadJobs(){
-		/*
-		saveJob(1); //TODO, do this when saving something...
-		saveJob(2);
-		saveJob(3);
-		updateLastRun(2, "2005-05-05");
-		*/
-		print("Loading jobs");
-		
+	function calculateJobs(){
+		print("Calculate jobs");
 		var joblist = new Array();
-		//get all jobs from permanent storage
-		var settings = new com.telldus.settings();
-		var storedJobs = settings.value("jobs", "");
-		
-		//for(var j=0;j<storedJobs.length;j++){
 		for(var key in storedJobs){
 			var job = storedJobs[key];
-			print("LASTRUN: " + job.lastrun);
-			print(key + ": " + job.lastrun);
-			//var nextRunTime = job.getNextRunTime();
-			var nextRunTime = 0;
-			//print("Runtime for job: " + new Date(nextRunTime));
+			print("Key: " + key);
+			print("Job: " + job.v.name);
+			var nextRunTime = job.getNextRunTime();
+			print(new Date(nextRunTime));
 			
 			joblist.push(new RunJob(job.id, nextRunTime, job.type, job.device, job.method, job.value));
 		}
 			
 		joblist.sort(compareTime);
 		
-		return joblist;
+		if(joblist.length <= 0){
+			print("No jobs");
+			return; //no jobs, abort
+		}
+		var nextRunTime = joblist[0].nextRunTime;
+		
+		var runJobFunc = function(){ runJob(joblist[0]); };
+		var now = new Date().getTime();
+		var delay = nextRunTime - now;
+		print("Runtime: " + new Date(nextRunTime));
+		print("Delay: " + delay);
+		setTimeout(runJobFunc, delay); //start the timer
+	}
+	
+	function loadJobs(){
+		print("Loading jobs");
+			
+		//TODO temp - creating events
+		var newRecurringMonthJob = getJob({id: 1, name: "testnamn8", type: JOBTYPE_RECURRING_MONTH, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
+		newRecurringMonthJob.addEvent(new Event(2));
+		
+		newRecurringMonthJob.save();
+	
+		storedJobs = {};
+		//get all jobs from permanent storage
+		var settings = new com.telldus.settings();
+		var storedJobsData = settings.value("jobs", "");
+		
+		for(var key in storedJobsData){
+			var jobdata = storedJobsData[key];
+			var job = getJob(jobdata);
+			print("Jobbdata: " + jobdata.name);
+			print("JOBBET: " + job.v.name);
+			storedJobs[key] = job;
+		}
+		updateLastRun(newRecurringMonthJob.v.id, "2005-05-05"); //TODO remove
+	}
+	
+	function getJob(jobdata){
+		//factory function... typ
+		var job = new Job();
+		switch(jobdata.type){
+			case JOBTYPE_ABSOLUTE:
+				job = new JobAbsolute(jobdata);
+				break; 
+			case JOBTYPE_RECURRING_DAY:
+				job = new JobRecurringDay(jobdata);
+				break; 
+			case JOBTYPE_RECURRING_WEEK:
+				job = new JobRecurringWeek(jobdata);
+				break; 
+			case JOBTYPE_RECURRING_MONTH:
+				job = new JobRecurringMonth(jobdata);
+				break; 	
+			//TODO reload-job
+			default:
+				break;
+		}
+		job.v = jobdata;
+		return job;
 	}
 	
 	function getNextLeapYearSafeDate(year, month, day, event){
@@ -207,6 +236,7 @@ com.telldus.scheduler = function() {
 		
 		var currentEventRuntimeTimestamp = getEventRunTime(event, date);
 		if((nextRunTime == 0 || currentEventRuntimeTimestamp < nextRunTime) && currentEventRuntimeTimestamp > new Date().getTime()){   //earlier than other events, but later than "now"
+			//TODO later than "now" could be later than "now - 5 minutes" if settings says so, if reboot for example (and in that case check last run)
 			nextRunTime = currentEventRuntimeTimestamp;
 		}
 		
@@ -261,65 +291,86 @@ com.telldus.scheduler = function() {
 	
 	}
 	
-	function Job(id) {
-		//hämta detta
-		//one job can have several events... more occurencies...
-		this.id = 1;
-		this.name = "testnamn";
-		this.type = JOBTYPE_RECURRING_MONTH;
-		this.startdate = "2010-01-01"; //TODO enforce:a där det är relevant. Format? Gör om till timestamp. Obs, används inte ännu, om det ska användas, se till att kolla detta också överallt
-		this.lastrun = 0;
-		this.device = 1;
-		this.method = 1;
-		this.value = "";
-		
+	function Job(jobdata) {
+		if(jobdata){
+			this.v = jobdata;
+		}
+		else{
+			this.v = {};
+		}
+	}
+	
+	Job.prototype.addEvent = function(event){
+		if(!this.v.events){
+			this.v.events = {};
+		}
+		this.v.events[event.id] = event;
 	}
 	
 	Job.prototype.getNextRunTime = function(){
 		return 0; //default
 	}
 	
-	function JobAbsolute(id){
-		this.Job(id);
-		this.type = JOBTYPE_ABSOLUTE; //TODO, remove this, shouldnt be neccessary later on
+	Job.prototype.save = function(){
+		//TODO set properties
+		var settings = new com.telldus.settings();
+		var jobs = settings.value("jobs", "");
+		
+		if(!jobs){
+			jobs = {}; //initialize new
+		}
+		
+		jobs[this.v.id] = this.v;
+		
+		settings.setValue("jobs", jobs);
+	}
+	
+	function JobAbsolute(jobdata){
+		//this.Job(jobdata);
+		/*
+		this.v.type = JOBTYPE_ABSOLUTE;
 		var events = new Array();
 		//foreach stored event...
 		events.push(new Event(1)); //TODO
 		//events.push(new Event(2));
-		this.events = events;
+		this.v.events = events;
+		*/
 	}
 	
-	function JobRecurringDay(id){
-		this.Job(id);
-		this.type = JOBTYPE_RECURRING_DAY;
-		this.event = new Event(1); //TODO id
+	function JobRecurringDay(jobdata){
+		//this.Job(jobdata);
+		/*this.v.type = JOBTYPE_RECURRING_DAY;
+		this.v.event = new Event(1); //TODO id
+		*/
 	}
 	
-	function JobRecurringWeek(id){
-		this.Job(id);
-		this.type = JOBTYPE_RECURRING_WEEK;
+	function JobRecurringWeek(jobdata){
+		//this.Job(jobdata);
+		/*this.v.type = JOBTYPE_RECURRING_WEEK;
 		var events = new Array();
 		//foreach stored event...
 		events.push(new Event(1)); //TODO
 		//events.push(new Event(2));
-		this.events = events;
+		this.v.events = events;
+		*/
 	}
 	
-	function JobRecurringMonth(id){
-		this.Job(id);
-		this.type = JOBTYPE_RECURRING_MONTH;
+	function JobRecurringMonth(jobdata){
+		//this.Job(jobdata);
+		/*this.v.type = JOBTYPE_RECURRING_MONTH;
 		var events = new Array();
 		//foreach stored event...
 		events.push(new Event(1)); //TODO
 		//events.push(new Event(2));
-		this.events = events;
+		this.v.events = events;
 		//this.time = 30000; hm, using events instead for now
+		*/
 	}
 	
-	JobAbsolute.prototype = Job.prototype;
-	JobRecurringDay.prototype = Job.prototype;
-	JobRecurringWeek.prototype = Job.prototype;
-	JobRecurringMonth.prototype = Job.prototype;
+	JobAbsolute.prototype = new Job(); //Job.prototype;
+	JobRecurringDay.prototype = new Job(); //Job.prototype;
+	JobRecurringWeek.prototype = new Job(); //Job.prototype;
+	JobRecurringMonth.prototype = new Job(); //Job.prototype;
 	
 	JobAbsolute.prototype.getNextRunTime = function(){
 		//TODO like this, or more like this.getNextRunTime = function(name){  inside the class?
@@ -327,9 +378,13 @@ com.telldus.scheduler = function() {
 		//kan vara flera absoluta datum och tidpunkter på ett jobb)
 		//var events = job.events;
 		var nextRunTime = 0;
-		for(var i=0;i<this.events.length;i++){
-			nextRunTime = getNextEventRunTime(nextRunTime, this.events[i], this.events[i].value);
+		if(!this.v.events){
+			return 0;
 		}
+		for(var i=0;i<this.v.events.length;i++){
+			nextRunTime = getNextEventRunTime(nextRunTime, this.v.events[i], this.v.events[i].value);
+		}
+		print("Well 1: " + new Date(nextRunTime));
 		return nextRunTime;
 	}
 	
@@ -340,57 +395,71 @@ com.telldus.scheduler = function() {
 		var nextRunTime = 0;
 		var date;
 			
-		if(this.lastRun > 0){
+		if(this.v.lastRun > 0){
 			var lastRunDate = new Date(this.lastRun);	
 			date = new Date(lastRunDate.getFullYear(), lastRunDate.getMonth(), lastRunDate.getDate());
-			date = date.getTime() + this.event.value;   //add interval
+			date = date.getTime() + this.v.event.value;   //add interval
 		}
 		else{
 			var now = new Date(); //Now
 			date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 		}
 		
-		nextRunTime = getNextEventRunTime(0, this.event, date);
+		nextRunTime = getNextEventRunTime(0, this.v.event, date);
 		if(nextRunTime < new Date().getTime()){
 			var runTime = new Date(date);
-			runTime.setDate(runTime.getDate() + this.event.value);
-			nextRunTime = getNextEventRunTime(0, this.event, runTime.getTime()); //already passed this time today, try again after "interval" days 
+			runTime.setDate(runTime.getDate() + this.v.event.value);
+			nextRunTime = getNextEventRunTime(0, this.v.event, runTime.getTime()); //already passed this time today, try again after "interval" days 
 		}
+		print("Well 2: " + new Date(nextRunTime));
+		
 		return nextRunTime;
 	}
 	
 	JobRecurringWeek.prototype.getNextRunTime = function(){
 		var nextRunTime = 0;
-		for(var i=0;i<this.events.length;i++){
+		if(!this.v.events){
+			return 0;
+		}
+		for(var i=0;i<this.v.events.length;i++){
 			//plocka fram nästa veckodag med nummer x, kan vara idag också
 			var returnDate = new Date();
 			var returnDay = returnDate.getDay();
-			if (this.events[i].value !== returnDay) {
-				returnDate.setDate(returnDate.getDate() + (this.events[i].value + (7 - returnDay)) % 7);
+			if (this.v.events[i].value !== returnDay) {
+				returnDate.setDate(returnDate.getDate() + (this.v.events[i].value + (7 - returnDay)) % 7);
 			}
 			
 			returnDate = zeroTime(returnDate);
 			
-			nextTempRunTime = getNextEventRunTime(0, this.events[i], returnDate.getTime());
+			nextTempRunTime = getNextEventRunTime(0, this.v.events[i], returnDate.getTime());
 			if(nextTempRunTime < new Date().getTime()){ //event happened today, already passed, add to next week instead
 				returnDate.setDate(returnDate.getDate() + 7);
-				nextRunTime = getNextEventRunTime(nextRunTime, this.events[i], returnDate.getTime());	
+				nextRunTime = getNextEventRunTime(nextRunTime, this.v.events[i], returnDate.getTime());	
 			}
 			else{
 				nextRunTime = nextTempRunTime;
 			}
 		}
+		print("Well 3: " + new Date(nextRunTime));
+		
 		return nextRunTime;
 	}
 	
 	JobRecurringMonth.prototype.getNextRunTime = function(){
 		//TODO test this
 		var nextRunTime = 0;
-		
-		for(var i=0;i<this.events.length;i++){
+		print("Name: " + this.v.name);
+		if(!this.v.events){
+			return 0;
+		}
+		for(var key in this.v.events){
+		//for(var i=0;i<this.v.events.length;i++){
 			//plocka fram nästa månadsdag med nummer x, kan vara idag också, i aktuell månad...
 			
-			var daymonth = this.events[i].value.split('-'); //month-day
+			if(this.v.events[key].value.toString().indexOf("-") == -1){ //make sure value is of correct format
+				continue;
+			}
+			var daymonth = this.v.events[key].value.split('-'); //month-day
 			var month = daymonth[0];
 			var day = daymonth[1];
 			var now = new Date();
@@ -402,7 +471,7 @@ com.telldus.scheduler = function() {
 			}
 			
 			print("NEXTDATE: " + month);
-			var nextdate = getNextLeapYearSafeDate(now.getFullYear(), month, day, this.events[i]);
+			var nextdate = getNextLeapYearSafeDate(now.getFullYear(), month, day, this.v.events[key]);
 			print("NEXTDATE: " + new Date(nextdate));
 			
 			if(nextdate < new Date().getTime()){ //event already happened this year, add to next year instead
@@ -415,9 +484,10 @@ com.telldus.scheduler = function() {
 				nextRunTime = nextdate;
 			}
 		}
+		print("Well 4: " + new Date(nextRunTime));
+		
 		return nextRunTime;
 	}
-	
 	
 	function Event(id){
 		this.id = id;
@@ -425,7 +495,7 @@ com.telldus.scheduler = function() {
 			this.value = "11-21"; //day of week, day of month, day interval or specific date... Individual values for each type instead?
 		}
 		else{
-			this.value = new Date().getTime(); //day of week, day of month, day interval or specific date...	
+			this.value = "11-22"; //day of week, day of month, day interval or specific date...	
 		}
 		this.fuzzinessBefore = 0;
 		this.fuzzinessAfter = 0;
@@ -444,7 +514,8 @@ com.telldus.scheduler = function() {
 	}	
 
 	return { //Public functions
-		jobList: loadJobs,
+		loadJobs: loadJobs,
+		calculateJobs: calculateJobs,
 		init:init
 	}
 }();
