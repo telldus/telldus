@@ -5,10 +5,31 @@
 #include <QDialogButtonBox>
 #include <QListWidget>
 #include <QPushButton>
+#include <QScrollBar>
 
 #include <QUiLoader>
 #include <QScriptEngine>
 #include <QScriptContextInfo>
+
+/**
+ * Special version of a QListWidget that has the width of the first column as
+ * minimum size.
+ */
+class CategoryListWidget : public QListWidget {
+public:
+	CategoryListWidget(QWidget *parent = 0) : QListWidget(parent) {
+		setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
+		setSelectionMode(QAbstractItemView::SingleSelection);
+		setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
+	}
+
+	virtual QSize sizeHint() const {
+		int width = sizeHintForColumn(0) + frameWidth() * 2 + 5;
+		if (verticalScrollBar()->isVisible())
+			width += verticalScrollBar()->width();
+		return QSize(width, 100);
+	}
+};
 
 class ConfigurationDialog::PrivateData {
 public:
@@ -29,7 +50,7 @@ ConfigurationDialog::ConfigurationDialog(QScriptEngine *engine, QWidget *parent)
 
 	QHBoxLayout *mainLayout = new QHBoxLayout();
 
-	d->listWidget = new QListWidget(this);
+	d->listWidget = new CategoryListWidget(this);
 	connect(d->listWidget, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(currentItemChanged(QListWidgetItem*,QListWidgetItem*)));
 	mainLayout->addWidget(d->listWidget);
 
