@@ -105,6 +105,7 @@ com.telldus.scheduler = function() {
 		}
 		var job = joblist.shift(); //get first job in list (and remove it from the list)
 		var nextRunTime = job.nextRunTime;
+		print("Will run " + storedJobs[job.id].v.name + " when the time is right");
 		
 		if(nextRunTime == 0){
 			//something is wrong
@@ -126,7 +127,8 @@ com.telldus.scheduler = function() {
 		var success = 0;
 		print("Job id: " + runJob.id);
 		if(runJob){
-			switch(runJob.method){
+			var method = parseInt(runJob.method);
+			switch(method){
 				case com.telldus.core.TELLSTICK_TURNON:
 					success = com.telldus.core.turnOn(runJob.id);
 					break;
@@ -195,10 +197,12 @@ com.telldus.scheduler = function() {
 		print("Loading jobs");
 			
 		//TODO temp - creating events
+		/*
 		var newRecurringMonthJob = getJob({id: 3, name: "testnamn10", type: JOBTYPE_RECURRING_MONTH, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
 		newRecurringMonthJob.addEvent(new Event(2));
 		newRecurringMonthJob.save();
-	
+		*/
+		
 		storedJobs = {};
 		//get all jobs from permanent storage
 		var settings = new com.telldus.settings();
@@ -215,7 +219,9 @@ com.telldus.scheduler = function() {
 	function getJob(jobdata){
 		//factory function... typ
 		var job = new Job();
-		switch(jobdata.type){
+		var type = parseInt(jobdata.type);
+		
+		switch(type){
 			case JOBTYPE_ABSOLUTE:
 				job = new JobAbsolute(jobdata);
 				break; 
@@ -337,6 +343,7 @@ com.telldus.scheduler = function() {
 	}
 	
 	Job.prototype.getNextRunTime = function(){
+		print("getNextRunTime default");
 		return 0; //default
 	}
 	
@@ -402,7 +409,7 @@ com.telldus.scheduler = function() {
 	JobRecurringMonth.prototype = new Job(); //Job.prototype;
 	
 	JobAbsolute.prototype.getNextRunTime = function(){
-		//TODO like this, or more like this.getNextRunTime = function(name){  inside the class?
+		print("getNextRunTime absolute");
 		//Get all events in this job (absolute = 
 		//kan vara flera absoluta datum och tidpunkter på ett jobb)
 		//var events = job.events;
@@ -417,6 +424,7 @@ com.telldus.scheduler = function() {
 	}
 	
 	JobRecurringDay.prototype.getNextRunTime = function(){
+		print("getNextRunTime day");
 		//Recurring day (every day, every other day or every x day)
 		//only one event/job (at the moment at least)
 		//TODO test this
@@ -444,6 +452,7 @@ com.telldus.scheduler = function() {
 	}
 	
 	JobRecurringWeek.prototype.getNextRunTime = function(){
+		print("getNextRunTime week");
 		var nextRunTime = 0;
 		if(!this.v.events){
 			return 0;
@@ -472,6 +481,7 @@ com.telldus.scheduler = function() {
 	}
 	
 	JobRecurringMonth.prototype.getNextRunTime = function(){
+		print("getNextRunTime month");
 		//TODO test this
 		var nextRunTime = 0;
 		if(!this.v.events){

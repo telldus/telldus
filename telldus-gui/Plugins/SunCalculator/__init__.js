@@ -34,8 +34,6 @@ com.telldus.suncalculator = function() {
 		lat = 55 + 68.93/60.0;
 		lon = 13 + 21.23/60.0;
 		
-		print("FOR 1: " + lat + "_____" + lon);
-		
 		var k;
 		var zone = Math.round(date.getTimezoneOffset()/60);
 		var jd = julian_day(date) - 2451545;           // Julian day relative to Jan 1.5, 2000
