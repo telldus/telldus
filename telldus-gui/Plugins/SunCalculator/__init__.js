@@ -29,7 +29,6 @@ com.telldus.suncalculator = function() {
 		var lon = 13.3538; //13.2123; //default
 		lat = settings.value("latitude", lat);
 		lon = settings.value("longitude", lon);
-		date = new Date(2010, 11, 20);
 		
 		lat = 55 + 68.93/60.0;
 		lon = 13 + 21.23/60.0;
