@@ -67,14 +67,12 @@ com.telldus.scheduler = function() {
 	//TODO obs, om något jobb existerar, lägg till 1 nytt jobb som körs vid nästa sommartid/vintertid och bara laddar om befintliga jobb... Listan måste ju göras om då. (EVENTTYPE_RELOAD)
 	//TODO fem-minuter-bakåt-grejen
 	//TODO reload...?
-	//TODO ordna upp
+	//TODO ordna upp, dela upp i flera filer
 	//TODO funktionerna, rätt placerade nu, eller ngn som eg. tillhör bara en subklass?
 	//TODO ta bort absoluta events efter att de har passerats?
-	//TODO om två jobb är inställda EXAKT samtidigt... så kan de missas vid omkalkylering
-	//gör istället: inte calculate:a om, utan bara ta nästa i listan...
-	//kalkylera om - bara vid ngn ändring...
-	//jo, måste räkna om, för det nyss körda eventet kanske är det som borde köras härnäst igen...
-	//fast kanske ändå, räkna om det nyss köra eventet, lägg till i listan, ordna listan igen...
+	//TODO functions for remove event and job
+	//TODO how to create new jobs and their events? Needs different arguments (all in v) but...
+	//TODO varför 16:11 för testnamn11? Kolla...
 	
 	//"repeat", t.ex. om villkor inte uppfylls så vill man göra ett nytt försök, även det får vara en funktion i extended scen/makro. if->false->tryAgainAfterXSeconds...
 	
@@ -110,7 +108,7 @@ com.telldus.scheduler = function() {
 		if(nextRunTime == 0){
 			//something is wrong
 			print("Something is wrong");
-			updateJobInList(job.id); //This will just recalculate the job, and probably return 0 again, but updateJobInList won't add it to the list in that case
+			updateJobInList(job.id); //This will just recalculate the job, and probably return 0 again, but updateJobInList won't add it to the list in that case (shouldnt end up here at all now actually)
 			runNextJob();
 			return;
 		}
@@ -186,7 +184,10 @@ com.telldus.scheduler = function() {
 			var job = storedJobs[key];
 			var nextRunTime = job.getNextRunTime();
 			print("Run time: " + new Date(nextRunTime));
-			
+			if(nextRunTime == 0){
+				print("Will not run");
+				return;
+			}
 			joblist.push(new RunJob(job.v.id, nextRunTime, job.v.type, job.v.device, job.v.method, job.v.value));
 		}
 			
@@ -195,14 +196,19 @@ com.telldus.scheduler = function() {
 	
 	function loadJobs(){
 		print("Loading jobs");
-			
+		//TODO hur ska id på event och job sättas för nya jobb/events?
+		//eventid är bara unika inom respektive jobb...
 		//TODO temp - creating events
 		/*
-		var newRecurringMonthJob = getJob({id: 3, name: "testnamn10", type: JOBTYPE_RECURRING_MONTH, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
-		newRecurringMonthJob.addEvent(new Event(2));
+		var newRecurringMonthJob = getJob({id: 4, name: "testnamn12", type: JOBTYPE_RECURRING_DAY, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
+		newRecurringMonthJob.addEvent(new Event({id: 0, value: 10, fuzzinessBefore: 0, fuzzinessAfter: 0, type: EVENTTYPE_SUNSET, offset: 0, time: 0}));
 		newRecurringMonthJob.save();
-		*/
 		
+		var newAbsoluteJob = getJob({id: 5, name: "testnamn11", type: JOBTYPE_ABSOLUTE, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
+		newAbsoluteJob.addEvent(new Event({id: 1, value: new Date(2010,11,22).getTime(), fuzzinessBefore: 0, fuzzinessAfter: 30, type: EVENTTYPE_SUNSET, offset: 0, time: 0}));
+		newAbsoluteJob.addEvent(new Event({id: 2, value: new Date(2010,11,23).getTime(), fuzzinessBefore: 0, fuzzinessAfter: 30, type: EVENTTYPE_SUNSET, offset: 0, time: 0}));
+		newAbsoluteJob.save();
+		*/		
 		storedJobs = {};
 		//get all jobs from permanent storage
 		var settings = new com.telldus.settings();
@@ -213,6 +219,7 @@ com.telldus.scheduler = function() {
 			var job = getJob(jobdata);
 			storedJobs[key] = job;
 		}
+		
 		//updateLastRun(newRecurringMonthJob.v.id, "2005-05-05"); //TODO remove
 	}
 	
@@ -282,14 +289,14 @@ com.telldus.scheduler = function() {
 	
 	function getEventRunTime(event, date){
 		var currentEventRuntimeTimestamp = 0;
-		if(event.type == EVENTTYPE_ABSOLUTE){
-			currentEventRuntimeTimestamp = event.time + date;
-			currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, event.fuzzinessBefore, event.fuzzinessAfter);
+		if(event.d.type == EVENTTYPE_ABSOLUTE){
+			currentEventRuntimeTimestamp = event.d.time + date;
+			currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, event.d.fuzzinessBefore, event.d.fuzzinessAfter);
 		}
-		else if(event.type == EVENTTYPE_SUNRISE || event.type == EVENTTYPE_SUNSET){
-			currentEventRuntimeTimestamp = getSunUpDownForDate(date, event.type);
-			currentEventRuntimeTimestamp += (event.offset * 1000);
-			currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, event.fuzzinessBefore, event.fuzzinessAfter);		
+		else if(event.d.type == EVENTTYPE_SUNRISE || event.d.type == EVENTTYPE_SUNSET){
+			currentEventRuntimeTimestamp = getSunUpDownForDate(date, event.d.type);
+			currentEventRuntimeTimestamp += (event.d.offset * 1000);
+			currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, event.d.fuzzinessBefore, event.d.fuzzinessAfter);		
 		}
 		
 		return currentEventRuntimeTimestamp;
@@ -300,6 +307,7 @@ com.telldus.scheduler = function() {
 			var interval = fuzzinessAfter + fuzzinessBefore;
 			var rand =  Math.random(); //TODO random enough?
 			var fuzziness = Math.floor((interval+1) * rand);
+			fuzziness = fuzziness - fuzzinessBefore;
 			currentTimestamp += (fuzziness * 1000);
 		}
 		return currentTimestamp;
@@ -321,7 +329,6 @@ com.telldus.scheduler = function() {
 		}
 		date.setHours(hourminute[0]);
 		date.setMinutes(hourminute[1]);
-		print("Formatted date: " + date);
 		return date.getTime();
 	
 	}
@@ -339,7 +346,7 @@ com.telldus.scheduler = function() {
 		if(!this.v.events){
 			this.v.events = {};
 		}
-		this.v.events[event.id] = event;
+		this.v.events[event.d.id] = event;
 	}
 	
 	Job.prototype.getNextRunTime = function(){
@@ -417,8 +424,8 @@ com.telldus.scheduler = function() {
 		if(!this.v.events){
 			return 0;
 		}
-		for(var i=0;i<this.v.events.length;i++){
-			nextRunTime = getNextEventRunTime(nextRunTime, this.v.events[i], this.v.events[i].value);
+		for(var key in this.v.events){
+			nextRunTime = getNextEventRunTime(nextRunTime, this.v.events[key], parseInt(this.v.events[key].d.value));
 		}
 		return nextRunTime;
 	}
@@ -434,18 +441,17 @@ com.telldus.scheduler = function() {
 		if(this.v.lastRun > 0){
 			var lastRunDate = new Date(this.lastRun);	
 			date = new Date(lastRunDate.getFullYear(), lastRunDate.getMonth(), lastRunDate.getDate());
-			date = date.getTime() + this.v.event.value;   //add interval
+			date = date.getTime() + this.v.events[0].d.value;   //add interval
 		}
 		else{
 			var now = new Date(); //Now
 			date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 		}
-		
-		nextRunTime = getNextEventRunTime(0, this.v.event, date);
+		nextRunTime = getNextEventRunTime(0, this.v.events[0], date.getTime());
 		if(nextRunTime < new Date().getTime()){
 			var runTime = new Date(date);
-			runTime.setDate(runTime.getDate() + this.v.event.value);
-			nextRunTime = getNextEventRunTime(0, this.v.event, runTime.getTime()); //already passed this time today, try again after "interval" days 
+			runTime.setDate(runTime.getDate() + parseInt(this.v.events[0].d.value));
+			nextRunTime = getNextEventRunTime(0, this.v.events[0], runTime.getTime()); //already passed this time today, try again after "interval" days 
 		}
 		
 		return nextRunTime;
@@ -457,20 +463,20 @@ com.telldus.scheduler = function() {
 		if(!this.v.events){
 			return 0;
 		}
-		for(var i=0;i<this.v.events.length;i++){
+		for(var key in this.v.events){
 			//plocka fram nästa veckodag med nummer x, kan vara idag också
 			var returnDate = new Date();
 			var returnDay = returnDate.getDay();
-			if (this.v.events[i].value !== returnDay) {
-				returnDate.setDate(returnDate.getDate() + (this.v.events[i].value + (7 - returnDay)) % 7);
+			if (this.v.events[key].d.value !== returnDay) {
+				returnDate.setDate(returnDate.getDate() + (parseInt(this.v.events[key].d.value) + (7 - returnDay)) % 7);
 			}
 			
 			returnDate = zeroTime(returnDate);
 			
-			nextTempRunTime = getNextEventRunTime(0, this.v.events[i], returnDate.getTime());
+			nextTempRunTime = getNextEventRunTime(0, this.v.events[key], returnDate.getTime());
 			if(nextTempRunTime < new Date().getTime()){ //event happened today, already passed, add to next week instead
 				returnDate.setDate(returnDate.getDate() + 7);
-				nextRunTime = getNextEventRunTime(nextRunTime, this.v.events[i], returnDate.getTime());	
+				nextRunTime = getNextEventRunTime(nextRunTime, this.v.events[key], returnDate.getTime());	
 			}
 			else{
 				nextRunTime = nextTempRunTime;
@@ -488,13 +494,11 @@ com.telldus.scheduler = function() {
 			return 0;
 		}
 		for(var key in this.v.events){
-		//for(var i=0;i<this.v.events.length;i++){
-			//plocka fram nästa månadsdag med nummer x, kan vara idag också, i aktuell månad...
-			
-			if(this.v.events[key].value.toString().indexOf("-") == -1){ //make sure value is of correct format
+			//get next x day of month, may be today, for the current month
+			if(this.v.events[key].d.value.toString().indexOf("-") == -1){ //make sure value is of correct format
 				continue;
 			}
-			var daymonth = this.v.events[key].value.split('-'); //month-day
+			var daymonth = this.v.events[key].d.value.split('-'); //month-day
 			var month = daymonth[0];
 			var day = daymonth[1];
 			var now = new Date();
@@ -520,23 +524,16 @@ com.telldus.scheduler = function() {
 		return nextRunTime;
 	}
 	
-	function Event(id){
-		this.id = id;
-		if(id == 1){
-			this.value = "11-21"; //day of week, day of month, day interval or specific date... Individual values for each type instead?
+	function Event(data){
+		if(data){
+			this.d = data;
 		}
 		else{
-			this.value = "11-22"; //day of week, day of month, day interval or specific date...	
+			this.d = {};
 		}
-		this.fuzzinessBefore = 0;
-		this.fuzzinessAfter = 0;
-		this.type = EVENTTYPE_SUNSET;
-		this.offset = 0;
-		this.time = 0; //"" since using sunset... Timestamp
 	}
 
 	function RunJob(id, nextRunTime, type, device, method, value){
-		print("New run job: " + id);
 		this.id = id;
 		this.nextRunTime = nextRunTime;
 		this.type = type;
