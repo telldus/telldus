@@ -17,6 +17,7 @@ com.telldus.scheduler = function() {
 	var EVENTTYPE_SUNSET = 2;
 	
 	var storedJobs;
+	var joblist;
 	
 	
 	//1. hämta redan satta jobb
@@ -69,6 +70,12 @@ com.telldus.scheduler = function() {
 	//TODO ordna upp
 	//TODO funktionerna, rätt placerade nu, eller ngn som eg. tillhör bara en subklass?
 	//TODO ta bort absoluta events efter att de har passerats?
+	//TODO om två jobb är inställda EXAKT samtidigt... så kan de missas vid omkalkylering
+	//gör istället: inte calculate:a om, utan bara ta nästa i listan...
+	//kalkylera om - bara vid ngn ändring...
+	//jo, måste räkna om, för det nyss körda eventet kanske är det som borde köras härnäst igen...
+	//fast kanske ändå, räkna om det nyss köra eventet, lägg till i listan, ordna listan igen...
+	
 	//"repeat", t.ex. om villkor inte uppfylls så vill man göra ett nytt försök, även det får vara en funktion i extended scen/makro. if->false->tryAgainAfterXSeconds...
 	
 	// gränssnittet... hur...?
@@ -88,10 +95,36 @@ com.telldus.scheduler = function() {
 	function init(){
 		loadJobs(); //load jobs from permanent storage
 		calculateJobs(); //TODO recalculate jobs on every run/change, reload jobs on every job change
+		runNextJob();
+	}
+	
+	function runNextJob(){
+		if(joblist.length <= 0){
+			print("No jobs");
+			return; //no jobs, abort
+		}
+		var job = joblist.shift(); //get first job in list (and remove it from the list)
+		var nextRunTime = job.nextRunTime;
+		
+		if(nextRunTime == 0){
+			//something is wrong
+			print("Something is wrong");
+			updateJobInList(job.id); //This will just recalculate the job, and probably return 0 again, but updateJobInList won't add it to the list in that case
+			runNextJob();
+			return;
+		}
+		
+		var runJobFunc = function(){ runJob(job); };
+		var now = new Date().getTime();
+		var delay = nextRunTime - now;
+		print("Runtime: " + new Date(nextRunTime));
+		print("Delay: " + delay);
+		setTimeout(runJobFunc, delay); //start the timer
 	}
 	
 	function runJob(runJob) {
 		var success = 0;
+		print("Job id: " + runJob.id);
 		if(runJob){
 			switch(runJob.method){
 				case com.telldus.core.TELLSTICK_TURNON:
@@ -114,9 +147,9 @@ com.telldus.scheduler = function() {
 		if(success){
 			updateLastRun(runJob.id, new Date().getTime());
 		}
-		sleep(1);
-		print("Job run");
-		calculateJobs();
+		print("Job run " + runJob.id);
+		updateJobInList(runJob.id);
+		runNextJob();
 	};
 	
 	function updateLastRun(id, lastRun){
@@ -128,42 +161,42 @@ com.telldus.scheduler = function() {
 		storedJobs[id].lastrun = lastRun; //update current list
 	}
 	
+	function updateJobInList(id){
+		var job = storedJobs[id];
+		var nextRunTime = job.getNextRunTime();
+		print("Time updated: " + new Date(nextRunTime));
+		
+		if(nextRunTime == 0){
+			return;
+		}
+		
+		joblist.push(new RunJob(job.v.id, nextRunTime, job.v.type, job.v.device, job.v.method, job.v.value));
+		
+		joblist.sort(compareTime);
+	}
+	
 	function calculateJobs(){
 		print("Calculate jobs");
-		var joblist = new Array();
+		if(!joblist){
+			joblist = new Array();
+		}
 		for(var key in storedJobs){
 			var job = storedJobs[key];
-			print("Key: " + key);
-			print("Job: " + job.v.name);
 			var nextRunTime = job.getNextRunTime();
-			print(new Date(nextRunTime));
+			print("Run time: " + new Date(nextRunTime));
 			
-			joblist.push(new RunJob(job.id, nextRunTime, job.type, job.device, job.method, job.value));
+			joblist.push(new RunJob(job.v.id, nextRunTime, job.v.type, job.v.device, job.v.method, job.v.value));
 		}
 			
 		joblist.sort(compareTime);
-		
-		if(joblist.length <= 0){
-			print("No jobs");
-			return; //no jobs, abort
-		}
-		var nextRunTime = joblist[0].nextRunTime;
-		
-		var runJobFunc = function(){ runJob(joblist[0]); };
-		var now = new Date().getTime();
-		var delay = nextRunTime - now;
-		print("Runtime: " + new Date(nextRunTime));
-		print("Delay: " + delay);
-		setTimeout(runJobFunc, delay); //start the timer
 	}
 	
 	function loadJobs(){
 		print("Loading jobs");
 			
 		//TODO temp - creating events
-		var newRecurringMonthJob = getJob({id: 1, name: "testnamn8", type: JOBTYPE_RECURRING_MONTH, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
+		var newRecurringMonthJob = getJob({id: 3, name: "testnamn10", type: JOBTYPE_RECURRING_MONTH, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
 		newRecurringMonthJob.addEvent(new Event(2));
-		
 		newRecurringMonthJob.save();
 	
 		storedJobs = {};
@@ -174,11 +207,9 @@ com.telldus.scheduler = function() {
 		for(var key in storedJobsData){
 			var jobdata = storedJobsData[key];
 			var job = getJob(jobdata);
-			print("Jobbdata: " + jobdata.name);
-			print("JOBBET: " + job.v.name);
 			storedJobs[key] = job;
 		}
-		updateLastRun(newRecurringMonthJob.v.id, "2005-05-05"); //TODO remove
+		//updateLastRun(newRecurringMonthJob.v.id, "2005-05-05"); //TODO remove
 	}
 	
 	function getJob(jobdata){
@@ -250,9 +281,7 @@ com.telldus.scheduler = function() {
 			currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, event.fuzzinessBefore, event.fuzzinessAfter);
 		}
 		else if(event.type == EVENTTYPE_SUNRISE || event.type == EVENTTYPE_SUNSET){
-			print("NEW DATE: " + new Date(date));
 			currentEventRuntimeTimestamp = getSunUpDownForDate(date, event.type);
-			print("NEW DATE: " + new Date(currentEventRuntimeTimestamp));
 			currentEventRuntimeTimestamp += (event.offset * 1000);
 			currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, event.fuzzinessBefore, event.fuzzinessAfter);		
 		}
@@ -384,7 +413,6 @@ com.telldus.scheduler = function() {
 		for(var i=0;i<this.v.events.length;i++){
 			nextRunTime = getNextEventRunTime(nextRunTime, this.v.events[i], this.v.events[i].value);
 		}
-		print("Well 1: " + new Date(nextRunTime));
 		return nextRunTime;
 	}
 	
@@ -411,7 +439,6 @@ com.telldus.scheduler = function() {
 			runTime.setDate(runTime.getDate() + this.v.event.value);
 			nextRunTime = getNextEventRunTime(0, this.v.event, runTime.getTime()); //already passed this time today, try again after "interval" days 
 		}
-		print("Well 2: " + new Date(nextRunTime));
 		
 		return nextRunTime;
 	}
@@ -440,7 +467,6 @@ com.telldus.scheduler = function() {
 				nextRunTime = nextTempRunTime;
 			}
 		}
-		print("Well 3: " + new Date(nextRunTime));
 		
 		return nextRunTime;
 	}
@@ -448,7 +474,6 @@ com.telldus.scheduler = function() {
 	JobRecurringMonth.prototype.getNextRunTime = function(){
 		//TODO test this
 		var nextRunTime = 0;
-		print("Name: " + this.v.name);
 		if(!this.v.events){
 			return 0;
 		}
@@ -470,21 +495,17 @@ com.telldus.scheduler = function() {
 				}
 			}
 			
-			print("NEXTDATE: " + month);
 			var nextdate = getNextLeapYearSafeDate(now.getFullYear(), month, day, this.v.events[key]);
-			print("NEXTDATE: " + new Date(nextdate));
 			
 			if(nextdate < new Date().getTime()){ //event already happened this year, add to next year instead
 				var tempdate = new Date(nextdate);
 				tempdate.setYear(now.getFullYear() + 1);
-				print(tempdate);
 				nextdate = tempdate.getTime();
 			}
 			if(nextRunTime == 0 || nextRunTime > nextdate){
 				nextRunTime = nextdate;
 			}
 		}
-		print("Well 4: " + new Date(nextRunTime));
 		
 		return nextRunTime;
 	}
@@ -505,6 +526,7 @@ com.telldus.scheduler = function() {
 	}
 
 	function RunJob(id, nextRunTime, type, device, method, value){
+		print("New run job: " + id);
 		this.id = id;
 		this.nextRunTime = nextRunTime;
 		this.type = type;
@@ -516,6 +538,7 @@ com.telldus.scheduler = function() {
 	return { //Public functions
 		loadJobs: loadJobs,
 		calculateJobs: calculateJobs,
+		runNextJob: runNextJob, //TODO which methods should be exposed? Should some of these methods always call another?
 		init:init
 	}
 }();
