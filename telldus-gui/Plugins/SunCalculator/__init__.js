@@ -30,7 +30,6 @@ com.telldus.suncalculator = function() {
 		lat = settings.value("latitude", lat);
 		lon = settings.value("longitude", lon);
 		date = new Date(2010, 11, 20);
-		print("DATET" + date);
 		
 		lat = 55 + 68.93/60.0;
 		lon = 13 + 21.23/60.0;
@@ -89,8 +88,6 @@ com.telldus.suncalculator = function() {
 		var values = new Array();
 		values.push(sunrisevalue);
 		values.push(sunsetvalue);
-		print("SUNSETVALUE: " + sunsetvalue);
-		print("FOR: " + lat + "_____" + lon*360);
 		values.push(message);
 		return values;
 	}
