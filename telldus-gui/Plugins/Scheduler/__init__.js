@@ -18,6 +18,7 @@ com.telldus.scheduler = function() {
 	
 	var storedJobs;
 	var joblist;
+	var timerid;
 	
 	
 	//1. hämta redan satta jobb
@@ -71,7 +72,12 @@ com.telldus.scheduler = function() {
 	//TODO funktionerna, rätt placerade nu, eller ngn som eg. tillhör bara en subklass?
 	//TODO ta bort absoluta events efter att de har passerats?
 	//TODO functions for remove event and job
-	//TODO how to create new jobs and their events? Needs different arguments (all in v) but...
+	//TODO how to create new jobs and their events? Needs different arguments (all in v) but... And/or check the correct formatting of data...
+	//TODO inte ladda jobb här, bara "add job" här...
+	//TODO hur ska event användas med det här nya? Add event och sådär liksom?
+	//TODO testa execute-funktionen med annat...
+	//det enda varje jobb har är en updateLastRun-method (som kan override:as) och en getNextRunTime (som ska override:as)
+	//Schemaläggaren (denna) exponerar metoderna "addJob", "removeJob" och updateJob?
 	
 	//"repeat", t.ex. om villkor inte uppfylls så vill man göra ett nytt försök, även det får vara en funktion i extended scen/makro. if->false->tryAgainAfterXSeconds...
 	
@@ -80,89 +86,78 @@ com.telldus.scheduler = function() {
 	
 	function init(){
 		loadJobs(); //load jobs from permanent storage
-		calculateJobs(); //TODO recalculate jobs on every run/change, reload jobs on every job change
-		runNextJob();
+		//calculateJobs(); //TODO recalculate jobs on every run/change, reload jobs on every job change
+		//runNextJob();
 	}
 	
 	function runNextJob(){
+		clearTimeout(timerid);
+		print("Timer interrupted");
 		if(joblist.length <= 0){
 			print("No jobs");
 			return; //no jobs, abort
 		}
 		var job = joblist.shift(); //get first job in list (and remove it from the list)
 		var nextRunTime = job.nextRunTime;
-		print("Will run " + storedJobs[job.id].v.name + " when the time is right");
+		print("Will run " + storedJobs[job.id].v.name + " when the time is right"); //Note not all will have a name
 		
 		if(nextRunTime == 0){
 			//something is wrong
 			print("Something is wrong");
 			updateJobInList(job.id); //This will just recalculate the job, and probably return 0 again, but updateJobInList won't add it to the list in that case (shouldnt end up here at all now actually)
-			runNextJob();
 			return;
 		}
 		
-		var runJobFunc = function(){ runJob(job); };
+		var runJobFunc = function(){ runJob(job.id); };
 		var now = new Date().getTime();
 		var delay = nextRunTime - now;
 		print("Runtime: " + new Date(nextRunTime));
 		print("Delay: " + delay);
-		setTimeout(runJobFunc, delay); //start the timer
+		timerid = setTimeout(runJobFunc, delay); //start the timer
+		print("Has started a job wait");
 	}
 	
-	function runJob(runJob) {
-		var success = 0;
-		print("Job id: " + runJob.id);
-		if(runJob){
-			var method = parseInt(runJob.method);
-			switch(method){
-				case com.telldus.core.TELLSTICK_TURNON:
-					success = com.telldus.core.turnOn(runJob.id);
-					break;
-				case com.telldus.core.TELLSTICK_TURNOFF:
-					success = com.telldus.core.turnOff(runJob.id);
-					break;
-				case com.telldus.core.TELLSTICK_DIM:
-					success = com.telldus.core.dim(runJob.id, runJob.value);
-					break;
-				case com.telldus.core.TELLSTICK_BELL:
-					success = com.telldus.core.bell(runJob.id);
-					break;	
-				default:
-					break;
-			}
-		}
-		
+	function runJob(id){
+		print("Running job, will execute");
+		var success = storedJobs[id].execute();
 		if(success){
-			updateLastRun(runJob.id, new Date().getTime());
+			updateLastRun(id, new Date().getTime());
 		}
-		print("Job run " + runJob.id);
-		updateJobInList(runJob.id);
-		runNextJob();
-	};
+		print("Job run, after delay " + id);
+		updateJobInList(id);	
+	}
 	
 	function updateLastRun(id, lastRun){
+		/*
 		var settings = new com.telldus.settings();
 		var jobs = settings.value("jobs", "");
 		jobs[id].lastrun = lastRun; //update permanent storage
 		settings.setValue("jobs", jobs);
-		
+		*/
+		//TODO... this will not be stored of course, how to do that?
 		storedJobs[id].lastrun = lastRun; //update current list
 	}
 	
 	function updateJobInList(id){
 		var job = storedJobs[id];
 		var nextRunTime = job.getNextRunTime();
-		print("Time updated: " + new Date(nextRunTime));
+		print("Time updated to: " + new Date(nextRunTime));
 		
 		if(nextRunTime == 0){
 			return;
 		}
 		
-		joblist.push(new RunJob(job.v.id, nextRunTime, job.v.type, job.v.device, job.v.method, job.v.value));
+		if(!joblist){
+			joblist = new Array();
+		}
+		
+		joblist.push(new RunJob(id, nextRunTime));   //, job.v.type, job.v.device, job.v.method, job.v.value));
 		
 		joblist.sort(compareTime);
+		runNextJob();
 	}
 	
+	/*
 	function calculateJobs(){
 		print("Calculate jobs");
 		if(!joblist){
@@ -180,25 +175,27 @@ com.telldus.scheduler = function() {
 		}
 			
 		joblist.sort(compareTime);
+		runNextJob();
 	}
+	*/
 	
 	function loadJobs(){
 		print("Loading jobs");
+		//TODO detta ska inte göras från denna plugin, utan från respektive...
 		//TODO hur ska id på event och job sättas för nya jobb/events?
 		//eventid är bara unika inom respektive jobb...
 		//TODO temp - creating events
-		//TODO datum i new date? 11 eller 12?
-		/*
+		
 		var newRecurringMonthJob = getJob({id: 4, name: "testnamn14", type: JOBTYPE_RECURRING_WEEK, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
-		newRecurringMonthJob.addEvent(new Event({id: 0, value: 3, fuzzinessBefore: 0, fuzzinessAfter: 0, type: EVENTTYPE_SUNSET, offset: 0, time: 0}));
+		newRecurringMonthJob.addEvent(new Event({id: 0, value: 3, fuzzinessBefore: 0, fuzzinessAfter: 0, type: EVENTTYPE_ABSOLUTE, offset: 0, time: 54760}));
 		newRecurringMonthJob.save();
 		
 		var newAbsoluteJob = getJob({id: 5, name: "testnamn15", type: JOBTYPE_RECURRING_MONTH, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
-		newAbsoluteJob.addEvent(new Event({id: 1, value: "11-24", fuzzinessBefore: 0, fuzzinessAfter: 30, type: EVENTTYPE_ABSOLUTE, offset: 0, time: 43200}));
-		newAbsoluteJob.addEvent(new Event({id: 2, value: "11-05", fuzzinessBefore: 0, fuzzinessAfter: 30, type: EVENTTYPE_SUNSET, offset: 0, time: 0}));
+		newAbsoluteJob.addEvent(new Event({id: 1, value: "11-23", fuzzinessBefore: 0, fuzzinessAfter: 0, type: EVENTTYPE_ABSOLUTE, offset: 0, time: 54670}));
+		newAbsoluteJob.addEvent(new Event({id: 2, value: "11-03", fuzzinessBefore: 0, fuzzinessAfter: 0, type: EVENTTYPE_ABSOLUTE, offset: 0, time: 54730}));
 		newAbsoluteJob.save();
-		*/		
-		storedJobs = {};
+				
+		storedJobs = new Array();
 		//get all jobs from permanent storage
 		var settings = new com.telldus.settings();
 		var storedJobsData = settings.value("jobs", "");
@@ -206,7 +203,7 @@ com.telldus.scheduler = function() {
 		for(var key in storedJobsData){
 			var jobdata = storedJobsData[key];
 			var job = getJob(jobdata);
-			storedJobs[key] = job;
+			com.telldus.scheduler.addJob(job);
 		}
 		
 		//updateLastRun(newRecurringMonthJob.v.id, "2005-05-05"); //TODO remove
@@ -214,6 +211,7 @@ com.telldus.scheduler = function() {
 	
 	function getJob(jobdata){
 		//factory function... typ
+		//TODO Även denna ska bort (iaf härifrån), för denna lagring/hämtning ska ske i respektive plugin eller gui sedan...
 		var job = new Job();
 		var type = parseInt(jobdata.type);
 		
@@ -236,6 +234,22 @@ com.telldus.scheduler = function() {
 		}
 		job.v = jobdata;
 		return job;
+	}
+	
+	function addJob(job){
+		var key = storedJobs.push(job)-1;
+		print("Add job");
+		updateJobInList(key);
+		return key;
+	}
+	
+	function removeJob(id){
+		storedJobs.splice(id,1);
+	}
+	
+	function updateJob(key, job){
+		storedJobs[key] = job;
+		updateJobInList(key);
 	}
 	
 	function getNextLeapYearSafeDate(year, month, day, event){
@@ -330,6 +344,30 @@ com.telldus.scheduler = function() {
 			this.v = {};
 		}
 	}
+	
+	Job.prototype.execute = function(){
+		//may be overridden if other than device manipulation should be performed
+		var success = 0;
+		print("Job id: " + this.id);
+		var method = parseInt(this.method);
+		switch(method){
+			case com.telldus.core.TELLSTICK_TURNON:
+				success = com.telldus.core.turnOn(this.id);
+				break;
+			case com.telldus.core.TELLSTICK_TURNOFF:
+				success = com.telldus.core.turnOff(this.id);
+				break;
+			case com.telldus.core.TELLSTICK_DIM:
+				success = com.telldus.core.dim(this.id, this.value);
+				break;
+			case com.telldus.core.TELLSTICK_BELL:
+				success = com.telldus.core.bell(this.id);
+				break;	
+			default:
+				break;
+		}
+		return success;
+	};
 	
 	Job.prototype.addEvent = function(event){
 		if(!this.v.events){
@@ -502,7 +540,6 @@ com.telldus.scheduler = function() {
 					break; //this day doesn't exist for this month (at least not this year (leap year...))
 				}
 			}
-			print("TESTDATE: " + new Date(now.getFullYear(), month, day));
 			var nextdate = getNextLeapYearSafeDate(now.getFullYear(), month, day, this.v.events[key]);
 			
 			if(nextdate < new Date().getTime()){ //event already happened this year, add to next year instead
@@ -538,9 +575,9 @@ com.telldus.scheduler = function() {
 	}	
 
 	return { //Public functions
-		loadJobs: loadJobs,
-		calculateJobs: calculateJobs,
-		runNextJob: runNextJob, //TODO which methods should be exposed? Should some of these methods always call another?
+		addJob: addJob,
+		removeJob: removeJob,
+		//runNextJob: runNextJob, //TODO which methods should be exposed? Should some of these methods always call another?
 		init:init
 	}
 }();
