@@ -72,23 +72,11 @@ com.telldus.scheduler = function() {
 	//TODO ta bort absoluta events efter att de har passerats?
 	//TODO functions for remove event and job
 	//TODO how to create new jobs and their events? Needs different arguments (all in v) but...
-	//TODO varför 16:11 för testnamn11? Kolla...
 	
 	//"repeat", t.ex. om villkor inte uppfylls så vill man göra ett nytt försök, även det får vara en funktion i extended scen/makro. if->false->tryAgainAfterXSeconds...
 	
 	// gränssnittet... hur...?
 	//
-	//new job, v:
-	/*
-	 * id: 1,
-			name: "testnamn",
-			type: JOBTYPE_RECURRING_MONTH,
-			startdate: "2010-01-01", //TODO enforce:a där det är relevant. Format? Gör om till timestamp. Obs, används inte ännu, om det ska användas, se till att kolla detta också överallt
-			lastrun: 0,
-			device: 1,
-			method: 1,
-			value: ""
-	*/
 	
 	function init(){
 		loadJobs(); //load jobs from permanent storage
@@ -199,14 +187,15 @@ com.telldus.scheduler = function() {
 		//TODO hur ska id på event och job sättas för nya jobb/events?
 		//eventid är bara unika inom respektive jobb...
 		//TODO temp - creating events
+		//TODO datum i new date? 11 eller 12?
 		/*
-		var newRecurringMonthJob = getJob({id: 4, name: "testnamn12", type: JOBTYPE_RECURRING_DAY, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
-		newRecurringMonthJob.addEvent(new Event({id: 0, value: 10, fuzzinessBefore: 0, fuzzinessAfter: 0, type: EVENTTYPE_SUNSET, offset: 0, time: 0}));
+		var newRecurringMonthJob = getJob({id: 4, name: "testnamn14", type: JOBTYPE_RECURRING_WEEK, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
+		newRecurringMonthJob.addEvent(new Event({id: 0, value: 3, fuzzinessBefore: 0, fuzzinessAfter: 0, type: EVENTTYPE_SUNSET, offset: 0, time: 0}));
 		newRecurringMonthJob.save();
 		
-		var newAbsoluteJob = getJob({id: 5, name: "testnamn11", type: JOBTYPE_ABSOLUTE, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
-		newAbsoluteJob.addEvent(new Event({id: 1, value: new Date(2010,11,22).getTime(), fuzzinessBefore: 0, fuzzinessAfter: 30, type: EVENTTYPE_SUNSET, offset: 0, time: 0}));
-		newAbsoluteJob.addEvent(new Event({id: 2, value: new Date(2010,11,23).getTime(), fuzzinessBefore: 0, fuzzinessAfter: 30, type: EVENTTYPE_SUNSET, offset: 0, time: 0}));
+		var newAbsoluteJob = getJob({id: 5, name: "testnamn15", type: JOBTYPE_RECURRING_MONTH, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
+		newAbsoluteJob.addEvent(new Event({id: 1, value: "11-24", fuzzinessBefore: 0, fuzzinessAfter: 30, type: EVENTTYPE_ABSOLUTE, offset: 0, time: 43200}));
+		newAbsoluteJob.addEvent(new Event({id: 2, value: "11-05", fuzzinessBefore: 0, fuzzinessAfter: 30, type: EVENTTYPE_SUNSET, offset: 0, time: 0}));
 		newAbsoluteJob.save();
 		*/		
 		storedJobs = {};
@@ -290,13 +279,13 @@ com.telldus.scheduler = function() {
 	function getEventRunTime(event, date){
 		var currentEventRuntimeTimestamp = 0;
 		if(event.d.type == EVENTTYPE_ABSOLUTE){
-			currentEventRuntimeTimestamp = event.d.time + date;
-			currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, event.d.fuzzinessBefore, event.d.fuzzinessAfter);
+			currentEventRuntimeTimestamp = (event.d.time*1000) + date;
+			currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, parseInt(event.d.fuzzinessBefore), parseInt(event.d.fuzzinessAfter));
 		}
 		else if(event.d.type == EVENTTYPE_SUNRISE || event.d.type == EVENTTYPE_SUNSET){
-			currentEventRuntimeTimestamp = getSunUpDownForDate(date, event.d.type);
+			currentEventRuntimeTimestamp = getSunUpDownForDate(date, parseInt(event.d.type));
 			currentEventRuntimeTimestamp += (event.d.offset * 1000);
-			currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, event.d.fuzzinessBefore, event.d.fuzzinessAfter);		
+			currentEventRuntimeTimestamp = fuzzify(currentEventRuntimeTimestamp, parseInt(event.d.fuzzinessBefore), parseInt(event.d.fuzzinessAfter));		
 		}
 		
 		return currentEventRuntimeTimestamp;
@@ -464,11 +453,16 @@ com.telldus.scheduler = function() {
 			return 0;
 		}
 		for(var key in this.v.events){
-			//plocka fram nästa veckodag med nummer x, kan vara idag också
+			//get next correct day of week, may be today too
+			var weekday = parseInt(this.v.events[key].d.value);
+			if(weekday > 6 || weekday <0){
+				print("Incorrect weekday value");
+				continue;
+			}
 			var returnDate = new Date();
 			var returnDay = returnDate.getDay();
-			if (this.v.events[key].d.value !== returnDay) {
-				returnDate.setDate(returnDate.getDate() + (parseInt(this.v.events[key].d.value) + (7 - returnDay)) % 7);
+			if (weekday !== returnDay) {
+				returnDate.setDate(returnDate.getDate() + (weekday + (7 - returnDay)) % 7);
 			}
 			
 			returnDate = zeroTime(returnDate);
@@ -508,7 +502,7 @@ com.telldus.scheduler = function() {
 					break; //this day doesn't exist for this month (at least not this year (leap year...))
 				}
 			}
-			
+			print("TESTDATE: " + new Date(now.getFullYear(), month, day));
 			var nextdate = getNextLeapYearSafeDate(now.getFullYear(), month, day, this.v.events[key]);
 			
 			if(nextdate < new Date().getTime()){ //event already happened this year, add to next year instead
@@ -516,6 +510,7 @@ com.telldus.scheduler = function() {
 				tempdate.setYear(now.getFullYear() + 1);
 				nextdate = tempdate.getTime();
 			}
+			print("Candidate date: " + new Date(nextdate));
 			if(nextRunTime == 0 || nextRunTime > nextdate){
 				nextRunTime = nextdate;
 			}
