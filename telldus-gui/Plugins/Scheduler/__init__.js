@@ -19,6 +19,7 @@ com.telldus.scheduler = function() {
 	var storedJobs;
 	var joblist;
 	var timerid;
+	var queuedJob;
 	
 	
 	//1. hämta redan satta jobb
@@ -97,9 +98,16 @@ com.telldus.scheduler = function() {
 			print("No jobs");
 			return; //no jobs, abort
 		}
+		if(queuedJob){
+			//put the currently queued job back in the list, so that it can be compared again
+			print("Queued job is something, put it back in list");
+			joblist.push(queuedJob);
+			joblist.sort(compareTime);
+		}
+		
 		var job = joblist.shift(); //get first job in list (and remove it from the list)
+		queuedJob = job; //put it in list, to keep track of current job
 		var nextRunTime = job.nextRunTime;
-		print("Will run " + storedJobs[job.id].v.name + " when the time is right"); //Note not all will have a name
 		
 		if(nextRunTime == 0){
 			//something is wrong
@@ -111,7 +119,8 @@ com.telldus.scheduler = function() {
 		var runJobFunc = function(){ runJob(job.id); };
 		var now = new Date().getTime();
 		var delay = nextRunTime - now;
-		print("Runtime: " + new Date(nextRunTime));
+		print("Will run " + storedJobs[job.id].v.name + " at " + new Date(nextRunTime)); //Note not all will have a name
+		print("(Now is " + new Date() + ")");
 		print("Delay: " + delay);
 		timerid = setTimeout(runJobFunc, delay); //start the timer
 		print("Has started a job wait");
@@ -119,6 +128,7 @@ com.telldus.scheduler = function() {
 	
 	function runJob(id){
 		print("Running job, will execute");
+		queuedJob = null;
 		var success = storedJobs[id].execute();
 		if(success){
 			updateLastRun(id, new Date().getTime());
@@ -185,14 +195,20 @@ com.telldus.scheduler = function() {
 		//TODO hur ska id på event och job sättas för nya jobb/events?
 		//eventid är bara unika inom respektive jobb...
 		//TODO temp - creating events
+		var now = new Date();
+		var time1 = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
+		print(time1); // 48880
+		time2 = time1 + 30;
+		time3 = time1 + 60;
+		time1 = time1 + 50;
 		
 		var newRecurringMonthJob = getJob({id: 4, name: "testnamn14", type: JOBTYPE_RECURRING_WEEK, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
-		newRecurringMonthJob.addEvent(new Event({id: 0, value: 3, fuzzinessBefore: 0, fuzzinessAfter: 0, type: EVENTTYPE_ABSOLUTE, offset: 0, time: 54760}));
+		newRecurringMonthJob.addEvent(new Event({id: 0, value: 1, fuzzinessBefore: 0, fuzzinessAfter: 0, type: EVENTTYPE_ABSOLUTE, offset: 0, time: time1}));
 		newRecurringMonthJob.save();
 		
 		var newAbsoluteJob = getJob({id: 5, name: "testnamn15", type: JOBTYPE_RECURRING_MONTH, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
-		newAbsoluteJob.addEvent(new Event({id: 1, value: "11-23", fuzzinessBefore: 0, fuzzinessAfter: 0, type: EVENTTYPE_ABSOLUTE, offset: 0, time: 54670}));
-		newAbsoluteJob.addEvent(new Event({id: 2, value: "11-03", fuzzinessBefore: 0, fuzzinessAfter: 0, type: EVENTTYPE_ABSOLUTE, offset: 0, time: 54730}));
+		newAbsoluteJob.addEvent(new Event({id: 1, value: "00-03", fuzzinessBefore: 0, fuzzinessAfter: 0, type: EVENTTYPE_ABSOLUTE, offset: 0, time: time2}));
+		newAbsoluteJob.addEvent(new Event({id: 2, value: "00-03", fuzzinessBefore: 0, fuzzinessAfter: 0, type: EVENTTYPE_ABSOLUTE, offset: 0, time: time3}));
 		newAbsoluteJob.save();
 				
 		storedJobs = new Array();
@@ -203,7 +219,7 @@ com.telldus.scheduler = function() {
 		for(var key in storedJobsData){
 			var jobdata = storedJobsData[key];
 			var job = getJob(jobdata);
-			com.telldus.scheduler.addJob(job);
+			com.telldus.scheduler.addJob(job); //TODO, use different function than this = only sort list afterwards (one time) and dont start timer until all initial are added
 		}
 		
 		//updateLastRun(newRecurringMonthJob.v.id, "2005-05-05"); //TODO remove
@@ -348,20 +364,21 @@ com.telldus.scheduler = function() {
 	Job.prototype.execute = function(){
 		//may be overridden if other than device manipulation should be performed
 		var success = 0;
-		print("Job id: " + this.id);
+		print("Job id: " + this.v.id);
+		id = this.v.id;
 		var method = parseInt(this.method);
 		switch(method){
 			case com.telldus.core.TELLSTICK_TURNON:
-				success = com.telldus.core.turnOn(this.id);
+				success = com.telldus.core.turnOn(id);
 				break;
 			case com.telldus.core.TELLSTICK_TURNOFF:
-				success = com.telldus.core.turnOff(this.id);
+				success = com.telldus.core.turnOff(id);
 				break;
 			case com.telldus.core.TELLSTICK_DIM:
-				success = com.telldus.core.dim(this.id, this.value);
+				success = com.telldus.core.dim(id, this.v.value);
 				break;
 			case com.telldus.core.TELLSTICK_BELL:
-				success = com.telldus.core.bell(this.id);
+				success = com.telldus.core.bell(id);
 				break;	
 			default:
 				break;
@@ -381,6 +398,7 @@ com.telldus.scheduler = function() {
 		return 0; //default
 	}
 	
+	//TODO move
 	Job.prototype.save = function(){
 		//TODO set properties
 		var settings = new com.telldus.settings();
