@@ -74,7 +74,7 @@ int DeviceManager::getDeviceLastSentCommand(int deviceId, int methodsSupported){
 	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 }
 
-int DeviceManager::setDeviceLastSentCommand(int deviceId, int command, std::wstring value)
+int DeviceManager::setDeviceLastSentCommand(int deviceId, int command, const std::wstring &value)
 {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
@@ -170,7 +170,7 @@ std::wstring DeviceManager::getDeviceModel(int deviceId){
 	return L"UNKNOWN";
 }
 
-int DeviceManager::setDeviceModel(int deviceId, std::wstring model)
+int DeviceManager::setDeviceModel(int deviceId, const std::wstring &model)
 {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
@@ -203,7 +203,7 @@ std::wstring DeviceManager::getDeviceName(int deviceId){
 	return L"UNKNOWN";
 }
 
-int DeviceManager::setDeviceName(int deviceId, std::wstring name){
+int DeviceManager::setDeviceName(int deviceId, const std::wstring &name){
 
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
@@ -222,7 +222,7 @@ int DeviceManager::setDeviceName(int deviceId, std::wstring name){
 	return TELLSTICK_SUCCESS;
 }
 
-std::wstring DeviceManager::getDeviceParameter(int deviceId, std::wstring name, std::wstring defaultValue){
+std::wstring DeviceManager::getDeviceParameter(int deviceId, const std::wstring &name, const std::wstring &defaultValue){
 
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
@@ -239,7 +239,7 @@ std::wstring DeviceManager::getDeviceParameter(int deviceId, std::wstring name, 
 	return defaultValue;
 }
 
-int DeviceManager::setDeviceParameter(int deviceId, std::wstring name, std::wstring value)
+int DeviceManager::setDeviceParameter(int deviceId, const std::wstring &name, const std::wstring &value)
 {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
@@ -272,7 +272,7 @@ std::wstring DeviceManager::getDeviceProtocol(int deviceId){
 	return L"UNKNOWN";
 }
 
-int DeviceManager::setDeviceProtocol(int deviceId, std::wstring protocol)
+int DeviceManager::setDeviceProtocol(int deviceId, const std::wstring &protocol)
 {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
@@ -344,11 +344,11 @@ int DeviceManager::getPreferredControllerId(int deviceId){
 	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 }
 
-void DeviceManager::connectTellStickController(int vid, int pid, std::wstring serial){
+void DeviceManager::connectTellStickController(int vid, int pid, const std::wstring &serial){
 	d->controllerManager->deviceInsertedOrRemoved(vid, pid, true);
 }
 
-void DeviceManager::disconnectTellStickController(int vid, int pid, std::wstring serial){
+void DeviceManager::disconnectTellStickController(int vid, int pid, const std::wstring &serial){
 	d->controllerManager->deviceInsertedOrRemoved(vid, pid, false);
 }
 
@@ -556,7 +556,7 @@ void DeviceManager::handleControllerMessage(const ControllerEventData &eventData
 	}
 }
 
-int DeviceManager::sendRawCommand(std::wstring command, int reserved){
+int DeviceManager::sendRawCommand(const std::wstring &command, int reserved){
 
 	Controller *controller = d->controllerManager->getBestControllerById(-1);
 	if(controller){
