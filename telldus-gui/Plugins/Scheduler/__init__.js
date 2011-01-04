@@ -8,11 +8,11 @@ __postInit__ = function() {
 
 com.telldus.scheduler = function() {
 
-	var JOBTYPE_ABSOLUTE = 0;
+	var JOBTYPE_ABSOLUTE = 0; //jobtypes? Not here at least...
 	var JOBTYPE_RECURRING_DAY = 1;
 	var JOBTYPE_RECURRING_WEEK = 2;
 	var JOBTYPE_RECURRING_MONTH = 3;
-	var JOBTYPE_RELOAD = 4; //TODO for summer/winter time, any better ideas?
+	//var JOBTYPE_RELOAD = 4; //for summer/winter time
 
 	var EVENTTYPE_ABSOLUTE = 0;
 	var EVENTTYPE_SUNRISE = 1;
@@ -67,24 +67,13 @@ com.telldus.scheduler = function() {
 	// solen går upp/ner +/- visst antal minuter...
 	// hur kommer net:en + schemaläggare att fungera? Kommer det att finnas en webvariant?
 	//jobben i listan = deviceid (även grupp/scen såklart), action, värde. En enda / jobb, får grupperas med grupper/scener om man vill att mer ska hända på en ggn
-
-	//TODO obs, om något jobb existerar, lägg till 1 nytt jobb som körs vid nästa sommartid/vintertid och bara laddar om befintliga jobb... Listan måste ju göras om då. (EVENTTYPE_RELOAD)
-	//TODO fem-minuter-bakåt-grejen
-	//TODO reload...?
-	//TODO ordna upp, dela upp i flera filer
-	//TODO funktionerna, rätt placerade nu, eller ngn som eg. tillhör bara en subklass?
-	//TODO ta bort absoluta events efter att de har passerats?
-	//TODO functions for remove event and job
-	//TODO how to create new jobs and their events? Needs different arguments (all in v) but... And/or check the correct formatting of data...
-	//TODO inte ladda jobb här, bara "add job" här...
-	//TODO hur ska event användas med det här nya? Add event och sådär liksom?
-	//TODO testa execute-funktionen med annat...
-	//TODO borde inte använda associative arrays... Objects istället...
-	//TODO startdate
-	//det enda varje jobb har är en updateLastRun-method (som kan override:as) och en getNextRunTime (som ska override:as)
-	//Schemaläggaren (denna) exponerar metoderna "addJob", "removeJob" och updateJob?
-	
 	//"repeat", t.ex. om villkor inte uppfylls så vill man göra ett nytt försök, även det får vara en funktion i extended scen/makro. if->false->tryAgainAfterXSeconds...
+	
+	//TODO ordna upp, dela upp i flera filer, inte ladda jobb här (per plugin istället), bara "add job" här...
+	//TODO ta bort absoluta events efter att de har passerats? Kan inte göras härifrån, får på ngt sätt ske därifrån de sparas/laddas
+	//TODO startdate
+	//det enda varje jobb har är getNextRunTime (som ska override:as)
+	
 	
 	// gränssnittet... hur...?
 	//
@@ -132,9 +121,10 @@ com.telldus.scheduler = function() {
 		print("Running job, will execute");
 		queuedJob = null;
 		var success = storedJobs.get(id).execute();
-		if(success){
+		//if(success){
+			//update last run even if not successful, else it may become an infinite loop (if using pastGracePeriod)
 			updateLastRun(id, new Date().getTime());
-		}
+		//}
 		print("Job run, after delay " + id);
 		updateJobInList(id);	
 	}
@@ -147,7 +137,8 @@ com.telldus.scheduler = function() {
 		settings.setValue("jobs", jobs);
 		*/
 		//TODO... this will not be stored of course, how to do that?
-		storedJobs.get(id).lastrun = lastRun; //update current list
+		print("Update last run: " + id + " to " + lastRun);
+		storedJobs.get(id).v.lastRun = lastRun; //update current list
 	}
 	
 	function updateJobInList(id){
@@ -188,28 +179,6 @@ com.telldus.scheduler = function() {
 		}
 	}
 	
-	/*
-	function calculateJobs(){
-		print("Calculate jobs");
-		if(!joblist){
-			joblist = new Array();
-		}
-		for(var key in storedJobs){
-			var job = storedJobs[key];
-			var nextRunTime = job.getNextRunTime();
-			print("Run time: " + new Date(nextRunTime));
-			if(nextRunTime == 0){
-				print("Will not run");
-				return;
-			}
-			joblist.push(new RunJob(job.v.id, nextRunTime, job.v.type, job.v.device, job.v.method, job.v.value));
-		}
-			
-		joblist.sort(compareTime);
-		runNextJob();
-	}
-	*/
-	
 	function recalculateAllJobs(){
 		print("Recalculating all jobs");
 		
@@ -239,15 +208,15 @@ com.telldus.scheduler = function() {
 		var now = new Date();
 		var time1 = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
 		print(time1); // 48880
-		time2 = time1 + 300;
-		time3 = time1 + 600;
-		time1 = time1 + 500;
+		time2 = time1 + 30;
+		time3 = time1 - 60;
+		time1 = time1 + 50;
 		
-		var newRecurringMonthJob = getJob({id: 4, name: "testnamn14", type: JOBTYPE_RECURRING_WEEK, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
+		var newRecurringMonthJob = getJob({id: 4, name: "testnamn14", type: JOBTYPE_RECURRING_WEEK, startdate: "2010-01-01", lastRun: 0, device: 1, method: 1, value: ""});
 		newRecurringMonthJob.addEvent(new Event({id: 0, value: 2, fuzzinessBefore: 0, fuzzinessAfter: 0, type: EVENTTYPE_ABSOLUTE, offset: 0, time: time1}));
 		newRecurringMonthJob.save();
 		
-		var newAbsoluteJob = getJob({id: 5, name: "testnamn15", type: JOBTYPE_RECURRING_MONTH, startdate: "2010-01-01", lastrun: 0, device: 1, method: 1, value: ""});
+		var newAbsoluteJob = getJob({id: 5, name: "testnamn15", type: JOBTYPE_RECURRING_MONTH, startdate: "2010-01-01", lastRun: 0, device: 1, method: 1, value: "", pastGracePeriod: 90000});
 		newAbsoluteJob.addEvent(new Event({id: 1, value: "00-04", fuzzinessBefore: 0, fuzzinessAfter: 0, type: EVENTTYPE_ABSOLUTE, offset: 0, time: time2}));
 		newAbsoluteJob.addEvent(new Event({id: 2, value: "00-04", fuzzinessBefore: 0, fuzzinessAfter: 0, type: EVENTTYPE_ABSOLUTE, offset: 0, time: time3}));
 		newAbsoluteJob.save();
@@ -303,6 +272,14 @@ com.telldus.scheduler = function() {
 		return key;
 	}
 	
+	function updateJob(key, job){
+		if(!storedJobs.contains(key)){
+			return;
+		}
+		storedJobs.update(key, job);
+		updateJobInList(key);
+	}
+	
 	function removeJob(id){
 		storedJobs.remove(id);
 		updateJobInList(id);
@@ -351,11 +328,18 @@ com.telldus.scheduler = function() {
 		return date;			
 	}
 	
-	function getNextEventRunTime(nextRunTime, event, date){
+	/*
+	* pastGracePeriod - optional, run events that should have been run, for example, 5 minutes ago,
+	* but wasn't, because of a reboot or similar (in ms)
+	* note, must in that case have checked last run	 
+	*/
+	function getNextEventRunTime(nextRunTime, event, date, pastGracePeriod){
+		if(!pastGracePeriod){
+			var pastGracePeriod = 0;
+		}
 		
 		var currentEventRuntimeTimestamp = getEventRunTime(event, date);
-		if((nextRunTime == 0 || currentEventRuntimeTimestamp < nextRunTime) && currentEventRuntimeTimestamp > new Date().getTime()){   //earlier than other events, but later than "now"
-			//TODO later than "now" could be later than "now - 5 minutes" if settings says so, if reboot for example (and in that case check last run)
+		if((nextRunTime == 0 || currentEventRuntimeTimestamp < nextRunTime) && currentEventRuntimeTimestamp > (new Date().getTime() - pastGracePeriod)){   //earlier than other events, but later than "now"
 			nextRunTime = currentEventRuntimeTimestamp;
 		}
 		
@@ -469,56 +453,49 @@ com.telldus.scheduler = function() {
 		settings.setValue("jobs", jobs);
 	}
 	
+	function getGracePeriod(v){
+		var pastGracePeriod = 0;
+		var lastRun = 0;
+		if(v.lastRun){
+			lastRun = v.lastRun;
+		}
+		if(v.pastGracePeriod){
+			var timeSinceLastRun = (new Date().getTime() - lastRun);
+			if(timeSinceLastRun > v.pastGracePeriod){
+				pastGracePeriod = v.pastGracePeriod;
+			}
+			else{
+				pastGracePeriod = timeSinceLastRun;
+			}
+		}
+			
+		return pastGracePeriod;
+	}
+	
 	function JobAbsolute(jobdata){
-		//this.Job(jobdata);
-		/*
-		this.v.type = JOBTYPE_ABSOLUTE;
-		var events = new Array();
-		//foreach stored event...
-		events.push(new Event(1)); //TODO
-		//events.push(new Event(2));
-		this.v.events = events;
-		*/
+		
 	}
 	
 	function JobRecurringDay(jobdata){
-		//this.Job(jobdata);
-		/*this.v.type = JOBTYPE_RECURRING_DAY;
-		this.v.event = new Event(1); //TODO id
-		*/
+		
 	}
 	
 	function JobRecurringWeek(jobdata){
-		//this.Job(jobdata);
-		/*this.v.type = JOBTYPE_RECURRING_WEEK;
-		var events = new Array();
-		//foreach stored event...
-		events.push(new Event(1)); //TODO
-		//events.push(new Event(2));
-		this.v.events = events;
-		*/
+		
 	}
 	
 	function JobRecurringMonth(jobdata){
-		//this.Job(jobdata);
-		/*this.v.type = JOBTYPE_RECURRING_MONTH;
-		var events = new Array();
-		//foreach stored event...
-		events.push(new Event(1)); //TODO
-		//events.push(new Event(2));
-		this.v.events = events;
-		//this.time = 30000; hm, using events instead for now
-		*/
+		
 	}
 	
-	//keep here
+	//keep this here
 	function JobDaylightSavingReload(){
 	}
 	
-	JobAbsolute.prototype = new Job(); //Job.prototype;
-	JobRecurringDay.prototype = new Job(); //Job.prototype;
-	JobRecurringWeek.prototype = new Job(); //Job.prototype;
-	JobRecurringMonth.prototype = new Job(); //Job.prototype;
+	JobAbsolute.prototype = new Job(); 
+	JobRecurringDay.prototype = new Job(); 
+	JobRecurringWeek.prototype = new Job(); 
+	JobRecurringMonth.prototype = new Job(); 
 	JobDaylightSavingReload.prototype = new Job();
 	
 	JobDaylightSavingReload.prototype.getNextRunTime = function(){
@@ -536,12 +513,10 @@ com.telldus.scheduler = function() {
 	JobDaylightSavingReload.prototype.execute = function(){
 		//override default
 		print("Daylight savings job");
-		//1. Make sure this job is run "last", if other jobs are set to be runt the same second
-		//2. sleep for one second, to avoid strange calculations
-		setTimeout(recalculateAllJobs(), 1);
-		//this may lead to that things that should be executed exactly at 3.00 when moving time forward one hour won't run, but that
-		//is the only case
-		//TODO recalculate all stored jobs
+		//TODO Make sure this job is run "last", if other jobs are set to be runt the same second
+		setTimeout(recalculateAllJobs(), 1); //sleep for one ms, to avoid strange calculations
+		//this may lead to that things that should be executed exactly at 3.00 when
+		//moving time forward one hour won't run, but that should be the only case
 		return 0;
 	};
 	
@@ -551,11 +526,15 @@ com.telldus.scheduler = function() {
 		//kan vara flera absoluta datum och tidpunkter på ett jobb)
 		//var events = job.events;
 		var nextRunTime = 0;
+			
 		if(!this.v.events){
 			return 0;
 		}
+		
+		var pastGracePeriod = getGracePeriod(this.v);
+		
 		for(var key in this.v.events){
-			nextRunTime = getNextEventRunTime(nextRunTime, this.v.events[key], parseInt(this.v.events[key].d.value));
+			nextRunTime = getNextEventRunTime(nextRunTime, this.v.events[key], parseInt(this.v.events[key].d.value), pastGracePeriod);
 		}
 		return nextRunTime;
 	}
@@ -566,8 +545,9 @@ com.telldus.scheduler = function() {
 		//only one event/job (at the moment at least)
 		//TODO test this
 		var nextRunTime = 0;
+		var pastGracePeriod = getGracePeriod(this.v);
 		var date;
-			
+		
 		if(this.v.lastRun > 0){
 			var lastRunDate = new Date(this.lastRun);	
 			date = new Date(lastRunDate.getFullYear(), lastRunDate.getMonth(), lastRunDate.getDate());
@@ -577,11 +557,11 @@ com.telldus.scheduler = function() {
 			var now = new Date(); //Now
 			date = new Date(now.getFullYear(), now.getMonth(), now.getDate());
 		}
-		nextRunTime = getNextEventRunTime(0, this.v.events[0], date.getTime());
+		nextRunTime = getNextEventRunTime(0, this.v.events[0], date.getTime(), pastGracePeriod);
 		if(nextRunTime < new Date().getTime()){
 			var runTime = new Date(date);
 			runTime.setDate(runTime.getDate() + parseInt(this.v.events[0].d.value));
-			nextRunTime = getNextEventRunTime(0, this.v.events[0], runTime.getTime()); //already passed this time today, try again after "interval" days 
+			nextRunTime = getNextEventRunTime(0, this.v.events[0], runTime.getTime(), pastGracePeriod); //already passed this time today, try again after "interval" days 
 		}
 		
 		return nextRunTime;
@@ -593,6 +573,9 @@ com.telldus.scheduler = function() {
 		if(!this.v.events){
 			return 0;
 		}
+		
+		var pastGracePeriod = getGracePeriod(this.v);
+		
 		for(var key in this.v.events){
 			//get next correct day of week, may be today too
 			var weekday = parseInt(this.v.events[key].d.value);
@@ -608,10 +591,10 @@ com.telldus.scheduler = function() {
 			
 			returnDate = zeroTime(returnDate);
 			
-			nextTempRunTime = getNextEventRunTime(0, this.v.events[key], returnDate.getTime());
+			nextTempRunTime = getNextEventRunTime(0, this.v.events[key], returnDate.getTime(), pastGracePeriod);
 			if(nextTempRunTime < new Date().getTime()){ //event happened today, already passed, add to next week instead
 				returnDate.setDate(returnDate.getDate() + 7);
-				nextRunTime = getNextEventRunTime(nextRunTime, this.v.events[key], returnDate.getTime());	
+				nextRunTime = getNextEventRunTime(nextRunTime, this.v.events[key], returnDate.getTime(), pastGracePeriod);	
 			}
 			else{
 				nextRunTime = nextTempRunTime;
@@ -628,6 +611,9 @@ com.telldus.scheduler = function() {
 		if(!this.v.events){
 			return 0;
 		}
+		
+		var pastGracePeriod = getGracePeriod(this.v);
+		
 		for(var key in this.v.events){
 			//get next x day of month, may be today, for the current month
 			if(!this.v.events[key].d.value || this.v.events[key].d.value.toString().indexOf("-") == -1){ //make sure value is of correct format
@@ -645,7 +631,7 @@ com.telldus.scheduler = function() {
 			}
 			var nextdate = getNextLeapYearSafeDate(now.getFullYear(), month, day, this.v.events[key]);
 			
-			if(nextdate < new Date().getTime()){ //event already happened this year, add to next year instead
+			if((nextdate + pastGracePeriod) < new Date().getTime()){ //event already happened this year, add to next year instead
 				var tempdate = new Date(nextdate);
 				tempdate.setYear(now.getFullYear() + 1);
 				nextdate = tempdate.getTime();
@@ -710,6 +696,8 @@ com.telldus.scheduler = function() {
 	return { //Public functions
 		addJob: addJob,
 		removeJob: removeJob,
+		updateJob: updateJob,
+		//TODO getNextRunForJob? For all?
 		init:init //TODO change this
 	}
 }();
