@@ -107,7 +107,7 @@ com.telldus.scheduler = function() {
 		var runJobFunc = function(){ runJob(job.id); };
 		var now = new Date().getTime();
 		var delay = nextRunTime - now;
-		print("Will run " + storedJobs.get(job.id).v.name + " at " + new Date(nextRunTime)); //Note not all will have a name
+		print("Will run " + storedJobs.get(job.id).v.name + " (" + job.id + ") at " + new Date(nextRunTime)); //Note not all will have a name
 		print("(Now is " + new Date() + ")");
 		print("Delay: " + delay);
 		timerid = setTimeout(runJobFunc, delay); //start the timer
@@ -118,10 +118,6 @@ com.telldus.scheduler = function() {
 		print("Running job, will execute");
 		queuedJob = null;
 		var success = storedJobs.get(id).execute();
-		//if(success){
-			//update last run even if not successful, else it may become an infinite loop (if using pastGracePeriod)
-			updateLastRun(id, new Date().getTime());
-		//}
 		print("Job run, after delay " + id);
 		updateJobInList(id);	
 	}
@@ -418,6 +414,11 @@ com.telldus.scheduler = function() {
 			default:
 				break;
 		}
+		//if(success){
+			//update last run even if not successful, else it may become an infinite loop (if using pastGracePeriod)
+			com.telldus.scheduler.updateLastRun(id, new Date().getTime());
+			//TODO update storage too
+		//}
 		return success;
 	};
 	
@@ -702,9 +703,10 @@ com.telldus.scheduler = function() {
 	}	
 
 	return { //Public functions
-		addJob: addJob,
-		removeJob: removeJob,
-		updateJob: updateJob,
+		addJob: addJob, //job, returns: storage id
+		removeJob: removeJob, //storage id
+		updateJob: updateJob, //storage id, job
+		updateLastRun: updateLastRun, //id, datetimestamp
 		//TODO getNextRunForJob? For all? (to see when job is due to run next)
 		init:init //TODO change this
 	}
