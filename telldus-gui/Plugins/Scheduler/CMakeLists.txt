@@ -6,5 +6,6 @@ SET( Plugin_NAME "scheduler" )
 
 SET( Plugin_PATH "com.telldus.scheduler" )
 SET( Plugin_EXTRA "DaylightSavingTime.js")
+SET( Plugin_EXTRA "DefaultJobTypes.js")
 
 INCLUDE( ../TelldusCenterPlugin.cmake NO_POLICY_SCOPE )
