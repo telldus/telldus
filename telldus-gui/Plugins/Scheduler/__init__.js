@@ -71,7 +71,6 @@ com.telldus.scheduler = function() {
 	
 	//TODO ordna upp, dela upp i flera filer, inte ladda jobb här (per plugin istället), bara "add job" här...
 	//TODO ta bort absoluta events efter att de har passerats? Kan inte göras härifrån, får på ngt sätt ske därifrån de sparas/laddas
-	//TODO update last run, i respektive executemetod... bara?
 	//det enda varje jobb har är getNextRunTime (som ska override:as) (och ev. updateLastRun)
 
 	
@@ -497,6 +496,11 @@ com.telldus.scheduler = function() {
 	JobDaylightSavingReload.prototype.getNextRunTime = function(){
 		print("getNextRunTime DaylightSaving");
 		var dst = DstDetect();
+		if(dst[0] == ""){
+			//not using dst in this timezone, still add it to the lists to keep it consistent (will be added as 1/1 1970)
+			print("Not using timezone");
+			return 0;
+		}
 		var now = new Date().getTime();
 		var time = dst[0].getTime();
 		if(now > time){
