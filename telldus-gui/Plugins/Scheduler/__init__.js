@@ -6,70 +6,24 @@ __postInit__ = function() {
 	
 com.telldus.scheduler = function() {
 	
-	var storedJobs = new MappedList();
-	var joblist;
-	var timerid;
-	var queuedJob;
+	var storedJobs = new MappedList();  //all jobs, added by "addJob"
+	var joblist; //sorted list containing next run time (and id) for all storedJobs
+	var timerid; //id of currently running timer, used when timer should be aborted
+	var queuedJob; //job currently in running timer, is already removed from joblist
 	
-	
-	//1. hämta redan satta jobb
-	//(kolla om något jobb borde ha körts sedan förra ggn (och att det inte kördes då))
-	//2. räkna ut när de ska köras nästa ggn, inkludera solens upp/nergång, fuzziness etc
-	//3. ordna i lista, spara undan första tidsvärdet enkelt åtkomligt
-	//4. kör tills tidsvärdet <= timestamp, kolla en ggn/sekund...
-	
-	// räkna om varje ggn ngn ändring sker med tider, läggs till/tas bort...
-
-
-	//hur ska jobb sparas?
-	//vilka typer av tider ska finnas?
-	// absoluta värden - ett enda tillfälle
-	// fr.o.m viss tidpunkt:
-	// återkommande, viss tid varje dag
-	// återkommande, viss tid vissa veckodagar (ev. var x:e vecka) (samlat i ett jobb, eller samma tid för alla markerade dagar?)
-	// återkommande, viss tid vissa dagar i månaden (datum och "siste", eventuellt (är detta någonsin intressant för tellstickstyrning?) första-andra-tredje-fjärde-sista veckodagen i månaden)
-	// återkommande, viss tid var x:e dag (hyfsat enkelt att implementera, men är detta intressant för tellstickstyrning?)
-	// fuzzy på alla, x min före och x min efter (kan klart sättas till noll), vid TelldusCenter-start slumpas ett absolutvärde inom detta intervall fram
-	// solens upp/nedgång kan väljas som tidpunkt på alla dagar
-	// viss tid från viss action bestäms från den actionen, om t.ex. en scen ska utföra ngt efter en viss tid så får den göra ett exakt-tid-tillägg (hur det ska fungera vet jag inte, 
-			//men tycker att scener ska kunna innehålla tidsfördröjningar mha detta... Men hur återuppta scen liksom? Kanske kunde man låta "värde" i en scen vara from vilket steg det ska
-			//återupptas? Varför inte? I framtiden alltså. Execute får alltså ett värde (default inget = från start))
-	// varje jobbtidpunkt måste alltså lagras som: 
-	// ----------------------------
-	// typ - dagintervall (det normala, 1), - viss veckodag (lista med aktiva veckodagar), - viss dag i månaden, speciellt värde för "den siste", - speciella tidpunkt(er)
-	// varje dag/tidpunkt kan ha följande värden (om man gör det per dag):
-		// fuzzy innan
-		// fuzzy efter
-		// använd solens uppgång/nedgång/absolut tidpunkt
-		// på/avdrag från solens upp/nedgång
-	// startdag
-	// tid för föregående körning, om någon
-	// -------------------------------
-	// Framtidssäkring: condition för t.ex. väderstation - nej, inga conditions finns ännu... vill man ha det i framtiden?
-	// typ, när schemat ska exekveras, kolla om ngt är uppfyllt... Nej, det får i så fall ske i en scen (inte scen, något annat mellansteg i TelldusCenter (inte tellduscore)...
-	// när scenen körs, kolla väderdata, om det är gråmulet=tänd, annars kör scen som pausar i 30 minuter och tänder då...
-	// Samma sak med villkoret "hemma" och "borta"... Det får vara per scen (mellanstegsscen). Andra events (t.ex. rörelsekontrollevents) vill ju vara villkorade på precis samma sätt,
-	// alltså kör scenen om villkoret är "borta" eller temperatur < -10...
-	// Och en mellanstegsscen kan (ska kunna innehålla) en "stopscen" som ska köras en viss tid senare (t.ex. låta ljuset vara igång i 2 minuter, sedan släcka), då skapar scenen
-	// ett nytt schemajobb med argumentet +2 minuter...
-	// solen går upp/ner +/- visst antal minuter...
-	// hur kommer net:en + schemaläggare att fungera? Kommer det att finnas en webvariant?
-	//jobben i listan = deviceid (även grupp/scen såklart), action, värde. En enda / jobb, får grupperas med grupper/scener om man vill att mer ska hända på en ggn
-	//"repeat", t.ex. om villkor inte uppfylls så vill man göra ett nytt försök, även det får vara en funktion i extended scen/makro. if->false->tryAgainAfterXSeconds...
-	
-	//TODO ordna upp, dela upp i flera filer, inte ladda jobb här (per plugin istället), bara "add job" här...
-	//var ska "job" och "event" vara? Går det att ha inne i scheduler på ngt sätt? (och ändå kunna ärva utifrån)
-	//eller ha dem som egna "klasser"?
-	//ta bort loadJobs
-	//updateLastRun... måste anpassas för storage... på defaultjobben alltså...
-	//TODO ta bort absoluta events efter att de har passerats? Kan inte göras härifrån, får på ngt sätt ske därifrån de sparas/laddas
-	//det enda varje jobb har är getNextRunTime (som ska override:as) (och ev. updateLastRun)
-	//TODO nextRunTime = 0 ska ju inte köras, men negativa värden ska ju köras ibland (med graceTime)
-
+	//TODO (perhaps) run something on the LAST day of the month?
+	//TODO remove absolute events after being run... Cannot do that from here, must be done from loading/saving plugin
+	//TODO Logic in future extended scenes/macros (not here, but somewhere in telldus center): Delays - job that then continues a scene from a certain step after the delay
+	//TODO Logic in future extended scenes/macros (not here, but somewhere in telldus center): Conditions, see if certain condition is fulfilled when the schedule should
+	//     run, for example engine heater if the temperature is below 5 degrees, or turn on light if it is cloudy (if not cloudy, wait 20 minutes
+	//     Not only for schedule, other input (for example motion detectors) can be conditioned in the same way (for example, house inhabitants are set as "Gone").
+	//     Repeat, if condition is not fulfilled, try again in x seconds
+	//TODO Logic in future extended scenes/macros (not here, but somewhere in telldus center): "Stop scene", i. e. when device is turned on, automatically turn it off again after x seconds
 	
 	function init(){
 		JobDaylightSavingReload.prototype = new com.telldus.scheduler.Job();
-		loadJobs(); //load jobs from permanent storage TODO move
+		setDaylightSavingJobFunctions();
+		loadJobs(); //TODO remove this after testing is done
 	}
 	
 	
@@ -231,33 +185,35 @@ com.telldus.scheduler = function() {
 	
 	function JobDaylightSavingReload(){}
 	
-	JobDaylightSavingReload.prototype.execute = function(){
-		//override default
-		print("Daylight savings job");
-		//TODO Make sure this job is run "last", if other jobs are set to be runt the same second
-		setTimeout(recalculateAllJobs(), 1); //sleep for one ms, to avoid strange calculations
-		//this may lead to that things that should be executed exactly at 3.00 when
-		//moving time forward one hour won't run, but that should be the only case
-		return 0;
-	};
+	function setDaylightSavingJobFunctions(){
 	
-	JobDaylightSavingReload.prototype.getNextRunTime = function(){
-		print("getNextRunTime DaylightSaving");
-		var dst = DstDetect();
-		if(dst[0] == ""){
-			//not using dst in this timezone, still add it to the lists to keep it consistent (will be added as 1/1 1970)
-			print("Not using timezone");
-			return null;
+		JobDaylightSavingReload.prototype.execute = function(){
+			//override default
+			print("Daylight savings job");
+			//TODO Make sure this job is run "last", if other jobs are set to be runt the same second
+			setTimeout(recalculateAllJobs(), 1); //sleep for one ms, to avoid strange calculations
+			//this may lead to that things that should be executed exactly at 3.00 when
+			//moving time forward one hour won't run, but that should be the only case
+			return 0;
+		};
+		
+		JobDaylightSavingReload.prototype.getNextRunTime = function(){
+			print("getNextRunTime DaylightSaving");
+			var dst = DstDetect();
+			if(dst[0] == ""){
+				//not using dst in this timezone, still add it to the lists to keep it consistent (will be added as 1/1 1970)
+				print("Not using timezone");;
+				return null;
+			}
+			var now = new Date().getTime();
+			var time = dst[0].getTime();
+			if(now > time){
+				//already passed
+				time = dst[1].getTime();
+			}
+			return time;
 		}
-		var now = new Date().getTime();
-		var time = dst[0].getTime();
-		if(now > time){
-			//already passed
-			time = dst[1].getTime();
-		}
-		return time;
 	}
-	
 	
 	function MappedList() {
 		this.container = {};
@@ -321,8 +277,8 @@ com.telldus.scheduler.Job = function(jobdata) {
 com.telldus.scheduler.Job.prototype.execute = function(){
 	//may be overridden if other than device manipulation should be performed
 	var success = 0;
-	print("Job id: " + this.v.deviceid);
-	deviceid = this.v.deviceid;
+	print("Job id: " + this.v.device);
+	deviceid = this.v.device;
 	var method = parseInt(this.method);
 	switch(method){
 		case com.telldus.core.TELLSTICK_TURNON:
