@@ -148,7 +148,7 @@ function loadJobs(){
 	
 	//ID = ID for storage
 	//Key is position in list, returned from "addJob"
-	var execFunc = function(){ print("Custom execute function running"); return 42; };
+	var execFunc = function(job){ print("Custom execute function running"); print("Job: " + job.v.name); return 42; };
 	var newRecurringMonthJob = getJob({id: 4, executeFunc: execFunc, name: "testnamn14", type: com.telldus.scheduler.JOBTYPE_ABSOLUTE, startdate: startdate1, lastRun: 0, device: 1, method: 1, value: ""});
 	newRecurringMonthJob.addEvent(new Event({id: 0, value: "", fuzzinessBefore: 0, fuzzinessAfter: 0, type: com.telldus.scheduler.EVENTTYPE_ABSOLUTE, offset: 10, time: (new Date().getTime())/1000 + 20}));
 	com.telldus.scheduler.addJob(newRecurringMonthJob);

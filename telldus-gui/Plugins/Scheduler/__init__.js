@@ -283,7 +283,7 @@ com.telldus.scheduler.Job.prototype.execute = function(){
 	//may be overridden if other than device manipulation should be performed
 	var success = 0;
 	if(this.v.executeFunc != null){
-		success = this.v.executeFunc();
+		success = this.v.executeFunc(this);
 		this.updateJobLastRun();
 		return success;
 	}	
