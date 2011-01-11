@@ -282,9 +282,15 @@ com.telldus.scheduler.Job = function(jobdata) {
 com.telldus.scheduler.Job.prototype.execute = function(){
 	//may be overridden if other than device manipulation should be performed
 	var success = 0;
-	print("Job id: " + this.v.device);
+	if(this.v.executeFunc != null){
+		success = this.v.executeFunc();
+		this.updateJobLastRun();
+		return success;
+	}	
+	
 	deviceid = this.v.device;
-	var method = parseInt(this.method);
+	var method = parseInt(this.v.method);
+	print("Job id: " + this.v.device + " Method: " + method);
 	switch(method){
 		case com.telldus.core.TELLSTICK_TURNON:
 			success = com.telldus.core.turnOn(deviceid);
