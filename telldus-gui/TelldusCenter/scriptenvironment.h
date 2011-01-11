@@ -20,7 +20,7 @@ public slots:
 	int setInterval(const QScriptValue &expression, int delay);
 	void clearInterval(int timerId);
 
-	int setTimeout(const QScriptValue &expression, int delay);
+	int setTimeout(const QScriptValue &expression, qint64 delay);
 	void clearTimeout(int timerId);
 
 protected:
@@ -32,7 +32,7 @@ private slots:
 private:
 	class PrivateData;
 	PrivateData *d;
-
+	class TimerObj;
 };
 
 #endif // SCRIPTENVIRONMENT_H

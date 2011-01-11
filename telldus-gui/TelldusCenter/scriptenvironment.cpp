@@ -1,5 +1,6 @@
 #include "scriptenvironment.h"
 #include "configurationdialog.h"
+#include <limits>
 #include <QScriptEngine>
 #include <QScriptValueIterator>
 #include <QScriptContextInfo>
@@ -8,11 +9,18 @@
 
 #include <QDebug>
 
+class ScriptEnvironment::TimerObj{
+public:
+	int originalTimerId;
+	qint64 remainingDelay;
+	QScriptValue expression;
+};
+
 class ScriptEnvironment::PrivateData {
 public:
 	QScriptEngine scriptEngine;
 	QHash<int, QScriptValue> intervalHash;
-	QHash<int, QScriptValue> timeoutHash;
+	QHash<int, TimerObj*> timeoutHash;
 };
 
 ScriptEnvironment::ScriptEnvironment(QObject *parent) :
@@ -49,6 +57,9 @@ ScriptEnvironment::ScriptEnvironment(QObject *parent) :
 }
 
 ScriptEnvironment::~ScriptEnvironment() {
+	foreach(TimerObj *tim, d->timeoutHash){
+		delete tim;
+	}
 	delete d;
 }
 
@@ -87,11 +98,26 @@ void ScriptEnvironment::timerEvent(QTimerEvent *event) {
 
 	QScriptValue expression = d->intervalHash.value(id);
 	if (!expression.isValid()) {
-		expression = d->timeoutHash.value(id);
-		if (expression.isValid()) {
-			//Clear oneshot
-			this->clearTimeout(id);
+		qint64 remainingDelay = d->timeoutHash.value(id)->remainingDelay;
+		if(remainingDelay > 0){
+			qint64 delay = remainingDelay;
+			remainingDelay =  delay - std::numeric_limits<int>::max();
+			d->timeoutHash.value(id)->remainingDelay = remainingDelay;
+			if(remainingDelay > 0){
+				return;  //just run same timer again with same interval (max int)
+			}
+			
+			TimerObj *to = d->timeoutHash.value(id);
+			d->timeoutHash.remove(to->originalTimerId);
+			int newTimerId = startTimer(delay); //delay differs from last time, start a new timer
+			killTimer(id);
+			
+			d->timeoutHash.insert(newTimerId, to);
+			return;
 		}
+		
+		expression = d->timeoutHash.value(id)->expression;
+		this->clearTimeout(d->timeoutHash.value(id)->originalTimerId);	
 	}
 
 	if (expression.isString()) {
@@ -101,24 +127,58 @@ void ScriptEnvironment::timerEvent(QTimerEvent *event) {
 	}
 }
 
-int ScriptEnvironment::setTimeout(const QScriptValue &expression, int delay) {
+int ScriptEnvironment::setTimeout(const QScriptValue &expression, qint64 delay) {
 	if (expression.isString() || expression.isFunction()) {
+		
 		if (delay < 0) {
 			delay = 0;
 		}
+		
+		TimerObj *to = new TimerObj;
+		to->expression = expression;
+		to->remainingDelay = delay - std::numeric_limits<int>::max();
+		if(to->remainingDelay > 0){
+			delay = std::numeric_limits<int>::max();
+		}
 		int timerId = startTimer(delay);
-		d->timeoutHash.insert(timerId, expression);
+		to->originalTimerId = timerId;
+		
+		d->timeoutHash.insert(timerId, to);
 		return timerId;
 	}
 	return -1;
 }
 
 void ScriptEnvironment::clearTimeout(int timerId) {
+	bool found = true;
+	if(!d->timeoutHash.contains(timerId) || d->timeoutHash.value(timerId)->originalTimerId != timerId){
+		//not original timer id, find the key
+		found = false;
+		if(d->timeoutHash.count() > 0){
+			QHashIterator<int, TimerObj*> i(d->timeoutHash);
+			while(i.hasNext()){
+				i.next();
+				if(i.value()->originalTimerId == timerId){
+					timerId = i.key();
+					found = true;
+					break;
+				}
+			}
+		}
+	}
+			
 	killTimer(timerId);
+	if(!found){
+		return;
+	}
+	delete d->timeoutHash.value(timerId);
 	d->timeoutHash.remove(timerId);
 }
 
 int ScriptEnvironment::setInterval(const QScriptValue &expression, int delay) {
+	//not safe for longer intervals (as setTimeout is)
+	//if it has to be done in the future, maybe do something like this:
+	//delay/((delay/maxint)+1)=new timer that can be run over and over again, and every ((delay/maxint)+1) time, run "expression"
 	if (expression.isString() || expression.isFunction()) {
 		if (delay < 0) {
 			delay = 0;
