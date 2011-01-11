@@ -8,7 +8,7 @@ com.telldus.scheduler = function() {
 	
 	var storedJobs = new MappedList();  //all jobs, added by "addJob"
 	var joblist; //sorted list containing next run time (and id) for all storedJobs
-	var timerid; //id of currently running timer, used when timer should be aborted
+	var timerid = null; //id of currently running timer, used when timer should be aborted
 	var queuedJob; //job currently in running timer, is already removed from joblist
 	
 	//TODO (perhaps) run something on the LAST day of the month?
@@ -108,8 +108,10 @@ com.telldus.scheduler = function() {
 	}
 	
 	function runNextJob(){
-		clearTimeout(timerid);
-		print("Timer interrupted");
+		if(timerid != null){
+			clearTimeout(timerid);
+			print("Timer interrupted");
+		}
 		if(joblist.length <= 0){
 			print("No jobs");
 			return; //no jobs, abort
@@ -139,6 +141,7 @@ com.telldus.scheduler = function() {
 		print("(Now is " + new Date() + ")");
 		print("Delay: " + delay);
 		timerid = setTimeout(runJobFunc, delay); //start the timer
+		
 		print("Has started a job wait");
 	}
 	
@@ -183,7 +186,9 @@ com.telldus.scheduler = function() {
 	}
 	
 	
-	function JobDaylightSavingReload(){}
+	function JobDaylightSavingReload(){
+		this.v.name = "Daylight Saving Time job";
+	}
 	
 	function setDaylightSavingJobFunctions(){
 	
