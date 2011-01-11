@@ -53,9 +53,8 @@ function getGracePeriod(v){
 
 function getJob(jobdata){
 	//factory function... typ
-	var job = new com.telldus.scheduler.Job();
+	var job;
 	var type = parseInt(jobdata.type);
-	
 	switch(type){
 		case com.telldus.scheduler.JOBTYPE_ABSOLUTE:
 			job = new com.telldus.scheduler.JobAbsolute(jobdata);
@@ -70,9 +69,10 @@ function getJob(jobdata){
 			job = new com.telldus.scheduler.JobRecurringMonth(jobdata);
 			break; 	
 		default:
+			job = new com.telldus.scheduler.Job(jobdata);
 			break;
 	}
-	job.v = jobdata;
+	
 	return job;
 }
 
@@ -148,15 +148,20 @@ function loadJobs(){
 	
 	//ID = ID for storage
 	//Key is position in list, returned from "addJob"
-	var newRecurringMonthJob = getJob({id: 4, name: "testnamn14", type: com.telldus.scheduler.JOBTYPE_ABSOLUTE, startdate: startdate1, lastRun: 0, device: 1, method: 1, value: ""});
-	newRecurringMonthJob.addEvent(new Event({id: 0, value: "", fuzzinessBefore: 0, fuzzinessAfter: 0, type: com.telldus.scheduler.EVENTTYPE_ABSOLUTE, offset: 10, time: (new Date().getTime())/1000 + 50}));
-	newRecurringMonthJob.save();
+	var execFunc = function(){ print("Custom execute function running"); return 42; };
+	var newRecurringMonthJob = getJob({id: 4, executeFunc: execFunc, name: "testnamn14", type: com.telldus.scheduler.JOBTYPE_ABSOLUTE, startdate: startdate1, lastRun: 0, device: 1, method: 1, value: ""});
+	newRecurringMonthJob.addEvent(new Event({id: 0, value: "", fuzzinessBefore: 0, fuzzinessAfter: 0, type: com.telldus.scheduler.EVENTTYPE_ABSOLUTE, offset: 10, time: (new Date().getTime())/1000 + 20}));
+	com.telldus.scheduler.addJob(newRecurringMonthJob);
+	//newRecurringMonthJob.save();
 	
 	var newAbsoluteJob = getJob({id: 5, name: "testnamn15", type: com.telldus.scheduler.JOBTYPE_RECURRING_MONTH, startdate: startdate2, lastRun: 0, device: 1, method: 1, value: "", pastGracePeriod: 90});
 	newAbsoluteJob.addEvent(new Event({id: 1, value: "00-05", fuzzinessBefore: 0, fuzzinessAfter: 0, type: com.telldus.scheduler.EVENTTYPE_ABSOLUTE, offset: 0, time: time2}));
 	newAbsoluteJob.addEvent(new Event({id: 2, value: "00-05", fuzzinessBefore: 0, fuzzinessAfter: 0, type: com.telldus.scheduler.EVENTTYPE_ABSOLUTE, offset: 0, time: time3}));
-	newAbsoluteJob.save();
-			
+	//newAbsoluteJob.save();
+	com.telldus.scheduler.addJob(newAbsoluteJob);
+	
+	
+	/*
 	//get all jobs from permanent storage
 	var settings = new com.telldus.settings();
 	var storedJobsData = settings.value("jobs", "");
@@ -166,6 +171,7 @@ function loadJobs(){
 		var job = getJob(jobdata);
 		var tempkey = com.telldus.scheduler.addJob(job); //TODO, use different function than this = only sort list afterwards (one time) and dont start timer until all initial are added
 	}
+	*/
 }
 
 /*
@@ -219,6 +225,7 @@ com.telldus.scheduler.Job.prototype.save = function(){
  * method - action to perform on device, value - optional value to pass to method,
  * pastGracePeriod - if job run time has been missed (for example due to a reboot), run it on program startup, if it should have run
  *  within the last "pastGracePeriod" seconds
+ * executeFunc - optional, override default execute function with this one
  * type is com.telldus.scheduler.JOBTYPE_ABSOLUTE
  * Event properties:
  * id - for storage purposes (e.g. removal/update)
@@ -227,7 +234,7 @@ com.telldus.scheduler.Job.prototype.save = function(){
  * time - time and date for event run, in seconds since 1970-01-01
  * offset - time (in seconds, positive or negative) to adjust the runtime, useful if something for example should occur 20 minutes past sunrise
  */
-com.telldus.scheduler.JobAbsolute = function(jobdata){}
+com.telldus.scheduler.JobAbsolute = function(jobdata){ com.telldus.scheduler.Job.call(this, jobdata); }
 
 /*
  * Recurring job for device manipulation, same time every day or every x day ("value")
@@ -241,7 +248,7 @@ com.telldus.scheduler.JobAbsolute = function(jobdata){}
  * Extra/different event properties:
  * value - repeat every "value" day, starting from startdate,
  */
-com.telldus.scheduler.JobRecurringDay = function(jobdata){}
+com.telldus.scheduler.JobRecurringDay = function(jobdata){ com.telldus.scheduler.Job.call(this, jobdata); }
 
 /*
  * Recurring job for device manipulation, can have several events, each event has a time of day ("time") and weekday ("value", 0-6) when to run
@@ -253,7 +260,7 @@ com.telldus.scheduler.JobRecurringDay = function(jobdata){}
  * Extra/different event properties:
  * value - day of week
  */
-com.telldus.scheduler.JobRecurringWeek = function(jobdata){}
+com.telldus.scheduler.JobRecurringWeek = function(jobdata){ com.telldus.scheduler.Job.call(this, jobdata); }
 
 /*
  * Recurring job for device manipulation, each event runs on a certain date of a certain month (i.e. next run for an event will be a year later)
@@ -266,7 +273,7 @@ com.telldus.scheduler.JobRecurringWeek = function(jobdata){}
  * Extra/different event properties:
  * value - "month-day"
  */
-com.telldus.scheduler.JobRecurringMonth = function(jobdata){}
+com.telldus.scheduler.JobRecurringMonth = function(jobdata){ com.telldus.scheduler.Job.call(this, jobdata); }
 
 com.telldus.scheduler.JobAbsolute.prototype = new com.telldus.scheduler.Job(); 
 com.telldus.scheduler.JobRecurringDay.prototype = new com.telldus.scheduler.Job(); 
