@@ -4,6 +4,7 @@ __setupPackage__( __extension__ );
 include("Device.js");
 
 __postInit__ = function() {
+	include("DeviceCommands.js");
 	com.telldus.core.errorOccurred.connect( errorOccurred );
 
 	com.telldus.core.deviceList = function() {

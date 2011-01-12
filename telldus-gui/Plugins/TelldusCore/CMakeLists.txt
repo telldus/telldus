@@ -16,6 +16,7 @@ SET( Plugin_MOC_HDRS
 
 SET( Plugin_EXTRA
 	Device.js
+	DeviceCommands.js
 )
 
 FIND_PACKAGE(TelldusCore REQUIRED)
