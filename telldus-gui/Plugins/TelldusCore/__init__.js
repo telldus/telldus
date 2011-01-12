@@ -1,9 +1,11 @@
 /** TELLDUS CORE **/
 __setupPackage__( __extension__ );
 
+include("Device.js");
+
 __postInit__ = function() {
 	com.telldus.core.errorOccurred.connect( errorOccurred );
-	
+
 	com.telldus.core.deviceList = function() {
 		var devices = new Array();
 		//Load all the devices
@@ -44,7 +46,7 @@ __postInit__ = function() {
 				return;
 			}
 		}
-		
+
 // 		function deviceEvent(deviceId, method, data) {
 // 		}
 
@@ -81,9 +83,4 @@ __postInit__ = function() {
 
 function errorOccurred( deviceId, errorId, errorString ) {
 	application.showMessage("", errorString, "");
-}
-
-function Device(id) {
-	this.id = id;
-	this.name = com.telldus.core.getName(id);
 }

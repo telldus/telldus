@@ -14,6 +14,10 @@ SET( Plugin_MOC_HDRS
 	tellduscoreobject.h
 )
 
+SET( Plugin_EXTRA
+	Device.js
+)
+
 FIND_PACKAGE(TelldusCore REQUIRED)
 SET( Plugin_LIBRARIES ${TELLDUSCORE_LIBRARY} )
 INCLUDE_DIRECTORIES(
