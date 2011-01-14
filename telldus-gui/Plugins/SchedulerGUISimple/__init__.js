@@ -8,11 +8,10 @@ __postInit__ = function() {
 com.telldus.schedulersimplegui = function() {
 	
 	function init() {
-		print("START");
 		var v = new com.telldus.qml.view({});
+		v.setProperty('deviceModel', com.telldus.core.deviceList.getList());
 		v.load("main.qml");
-		//var v = new com.telldus.qml.view("");
-		application.addWidget("scheduler.simple", ":/images/devices.png", v);
+		application.addWidget("scheduler.simple", "icon.png", v);
 
 	}
 	

@@ -2,14 +2,14 @@
 import Qt 4.7
 
 
- 
+
  Item{
 	id: main
 	width: 800 //TODO how?
 	height: 600 //TODO how?
-	
+
 		//height: 200
-	
+
 	/*
 	Rectangle {
 		width:200
@@ -22,23 +22,23 @@ import Qt 4.7
 			anchors.fill: parent
 			//onClicked: container.clicked(testGrid.)
 		}
-	} 
-	 
-	 
-	Text{ 
+	}
+
+
+	Text{
 		id: testItem
 		text: "Hello world!"
 		//anchors.left: main.left
 		anchors.centerIn: parent
 		anchors.verticalCenter: main.verticalCenter
 	}
-	
+
 	Column {
-         id: testColumn
-         width: parent.width
+		 id: testColumn
+		 width: parent.width
 		 height: parent.height
-         //anchors.bottom: page.bottom; anchors.bottomMargin: 4
-         //rows: 6; columns: 1; spacing: 3
+		 //anchors.bottom: page.bottom; anchors.bottomMargin: 4
+		 //rows: 6; columns: 1; spacing: 3
 
 		Repeater{
 			model: 3
@@ -47,7 +47,7 @@ import Qt 4.7
 				width: parent.width;
 				height: 50
 				//color: "red"
-				Rectangle { border.color: "blue"; width: 100; height:parent.height; 
+				Rectangle { border.color: "blue"; width: 100; height:parent.height;
 					Text{
 						anchors.verticalCenter: parent.verticalCenter
 						anchors.horizontalCenter: parent.horizontalCenter
@@ -57,44 +57,44 @@ import Qt 4.7
 				Rectangle { border.color: "blue"; width: parent.width-100; height:parent.height; }
 			}
 		}
-	
-        Rectangle { color: "green"; width: parent.width; height:50; id: row2 }
-         Rectangle { color: "blue";  }
-         Rectangle { color: "yellow";  }
-         Rectangle { color: "steelblue";  }
-         Rectangle { color: "black";  }
-     }
-     */
-     
-     Component{
+
+		Rectangle { color: "green"; width: parent.width; height:50; id: row2 }
+		 Rectangle { color: "blue";  }
+		 Rectangle { color: "yellow";  }
+		 Rectangle { color: "steelblue";  }
+		 Rectangle { color: "black";  }
+	 }
+	 */
+
+	 Component{
 		id: listRow
 		Row{
 			id: row1
 			width: parent.width; //TODO relative
 			height: 50
 			//color: "red"
-			Rectangle { border.color: "red"; width: 100; height:parent.height; 
+			Rectangle { border.color: "red"; width: 100; height:parent.height;
 				Text{
 					anchors.verticalCenter: parent.verticalCenter
 					anchors.horizontalCenter: parent.horizontalCenter
 					//text: "Device " + (index + 1) + "Name: " + name
-				
-					text: devicename + height
+
+					text: modelData.name + height
 				}
 			}
 			Rectangle { id: "deviceRow"; border.color: "blue"; width: parent.width-100; height:parent.height;
-				
+
 				MouseArea {
 					id: deviceMouseArea
 					anchors.fill: parent
 					hoverEnabled: true
-					
+
 					//TODO ändra muspekaren kanske?
 					//onEntered: parent.border.color = onHoverColor
 					//onExited:  parent.border.color = borderColor
 					onClicked: {
 						//ny point här
-						
+
 						var component = Qt.createComponent("ActionPoint.qml")
 						var dynamicPoint = component.createObject(deviceRow)
 						//dynamicPoint.x = mouseX (blir inte kvar)
@@ -102,30 +102,30 @@ import Qt 4.7
 						dynamicPoint.x = mouseX - dynamicPoint.width/2 //xposition
 						//dynamicPoint.width = mouseX-
 						dynamicPoint.border.color = "blue"
-													
+
 						var dynamicBar = actionBar.createObject(deviceRow)
 						dynamicBar.hangOnToPoint = dynamicPoint
 						//dynamicBar.color = "blue" //TODO dependent of point type
 						//dynamicBar.anchors.left = dynamicPoint.right
 						//dynamicBar.width = 100 //TODO dependent of this and next point position
-						
+
 						//deviceRow.add(point)
 						//TODO destroy? (only to remove them if needed)
 						//TODO komponenter med stor bokstav kanske?
 						//om detta inte fungerar, testa med pathview...
 					}
-				}	
-			
+				}
+
 			}
-		
+
 			ListView.onAdd: SequentialAnimation {
 				PropertyAction { target: row1; property: "height"; value: 0 }
 				NumberAnimation { target: row1; property: "height"; to: 50; duration: 250; easing.type: Easing.InOutQuad }
 			}
-		} 
+		}
 	 }
-  
-  ListModel {
+
+	ListModel {
 		id: myModel
 		ListElement {
 			devicename: "Storsalen"
@@ -137,20 +137,20 @@ import Qt 4.7
 			devicename: "Västra uthuset"
 		}
 	}
-  
+
 	ListView {
 		id: myListView
 		anchors.fill: parent
-		model: myModel
+		model: deviceModel
 		delegate: listRow
 		//snapMode: ListView.SnapToItem
 		//highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
 		focus: true
 		footer: addButtonComponent
 		header: timeline
-     }
-     
-     Component{
+	 }
+
+	 Component{
 		id: timeline
 		Item{
 			width: parent.width
@@ -159,12 +159,12 @@ import Qt 4.7
 				height: 30
 				border.color: "red"
 				anchors.verticalCenter: parent.verticalCenter
-				
+
 				Row{
 					//x: 100
 					anchors.horizontalCenter: parent.horizontalCenter
 					anchors.horizontalCenterOffset: parent.width/24
-					
+
 					width: listRow.width
 					height: listRow.height
 					spacing: (parent.width-124)/24
@@ -180,8 +180,8 @@ import Qt 4.7
 			}
 		}
 	 }
-     
-     Component{
+
+	 Component{
 		 id: addButtonComponent
 		 //anchors { left: myListView.left; top: myListView.top; margins: 20 }
 		Row {
@@ -194,15 +194,15 @@ import Qt 4.7
 				width: 100
 				anchors.verticalCenter: parent.verticalCenter
 				anchors.verticalCenterOffset: 30
-				
+
 				property color buttonColor: "lightgrey"
-								
+
 				Text{
 					text: "Add an item"
 					anchors.verticalCenter: parent.verticalCenter
 					anchors.horizontalCenter: parent.horizontalCenter
 					anchors.margins: 2
-					
+
 				}
 				MouseArea {
 					id: buttonMouseArea
@@ -216,13 +216,13 @@ import Qt 4.7
 						})
 					}
 				}
-				
+
 				color: buttonMouseArea.pressed ? Qt.darker(buttonColor, 1.5) : buttonColor
-				
+
 			}
 		}
 	 }
-	
+
 	Component{
 		id: actionBar
 		Rectangle{
@@ -233,37 +233,37 @@ import Qt 4.7
 			color: "blue" //TODO, dependent on hangOnToPoint
 			anchors.verticalCenter: hangOnToPoint.verticalCenter
 			anchors.left: hangOnToPoint.horizontalCenter
-			
-			z: 110	   
-			/* couldnt get this to work:   
+
+			z: 110
+			/* couldnt get this to work:
 			 * (if it works later on, try to set opacity for actionPoint in this way too)
 			states: State {
 				name: "myState"; when: hangOnToPoint != undefined
-				PropertyChanges { target: barRectangle; anchors.verticalCenter: hangOnToPoint.verticalCenter; anchors.left: hangOnToPoint.horizontalCenter } 
+				PropertyChanges { target: barRectangle; anchors.verticalCenter: hangOnToPoint.verticalCenter; anchors.left: hangOnToPoint.horizontalCenter }
 				//anchors.verticalCenter: hangOnToPoint.verticalCenter
 				//anchors.left: hangOnToPoint.horizontalCenter
 			}
 			*/
 		}
 	}
-	
+
 	Dialog {
 		id: dialog
 		anchors.centerIn: parent
 		z: 150
 	}
-	
+
 	//opacity vid dimning?
 	//linjens färg etc (state) beror ju på närmaste punkt föres sort... Punkten kan finnas osynlig (tidigare dag) också...
 	//kan man liksom göra hela linjen (från en vecka tillbaka) men inte visa den? Om det är vettigt... Då hade man tom kunnat zooma en vacker dag
 	//properties, ställa in dem...
-	//fuzziness 
+	//fuzziness
 	/*
 	 *  Dialog {
-         id: dialog
-         anchors.centerIn: parent
-         z: 100
-     }
-     */
-	
+		 id: dialog
+		 anchors.centerIn: parent
+		 z: 100
+	 }
+	 */
+
 }
