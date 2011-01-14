@@ -63,6 +63,12 @@ ScriptEnvironment::~ScriptEnvironment() {
 	delete d;
 }
 
+QDir ScriptEnvironment::currentDir() const {
+	QScriptContextInfo info(d->scriptEngine.currentContext()->parentContext());
+	QFileInfo fileinfo(info.fileName());
+	return fileinfo.dir();
+}
+
 QScriptEngine *ScriptEnvironment::engine() const {
 	return &d->scriptEngine;
 }
@@ -77,9 +83,7 @@ void ScriptEnvironment::scriptException(const QScriptValue & exception) {
 }
 
 void ScriptEnvironment::include(const QString &filename) {
-	QScriptContextInfo info(d->scriptEngine.currentContext()->parentContext());
-	QFileInfo fileinfo(info.fileName());
-	QDir dir = fileinfo.dir();
+	QDir dir = this->currentDir();
 
 	QFile file(dir.filePath(filename));
 	file.open(QFile::ReadOnly);
@@ -106,18 +110,18 @@ void ScriptEnvironment::timerEvent(QTimerEvent *event) {
 			if(remainingDelay > 0){
 				return;  //just run same timer again with same interval (max int)
 			}
-			
+
 			TimerObj *to = d->timeoutHash.value(id);
 			d->timeoutHash.remove(to->originalTimerId);
 			int newTimerId = startTimer(delay); //delay differs from last time, start a new timer
 			killTimer(id);
-			
+
 			d->timeoutHash.insert(newTimerId, to);
 			return;
 		}
-		
+
 		expression = d->timeoutHash.value(id)->expression;
-		this->clearTimeout(d->timeoutHash.value(id)->originalTimerId);	
+		this->clearTimeout(d->timeoutHash.value(id)->originalTimerId);
 	}
 
 	if (expression.isString()) {
@@ -129,11 +133,11 @@ void ScriptEnvironment::timerEvent(QTimerEvent *event) {
 
 int ScriptEnvironment::setTimeout(const QScriptValue &expression, qint64 delay) {
 	if (expression.isString() || expression.isFunction()) {
-		
+
 		if (delay < 0) {
 			delay = 0;
 		}
-		
+
 		TimerObj *to = new TimerObj;
 		to->expression = expression;
 		to->remainingDelay = delay - std::numeric_limits<int>::max();
@@ -142,7 +146,7 @@ int ScriptEnvironment::setTimeout(const QScriptValue &expression, qint64 delay) 
 		}
 		int timerId = startTimer(delay);
 		to->originalTimerId = timerId;
-		
+
 		d->timeoutHash.insert(timerId, to);
 		return timerId;
 	}
@@ -166,7 +170,7 @@ void ScriptEnvironment::clearTimeout(int timerId) {
 			}
 		}
 	}
-			
+
 	killTimer(timerId);
 	if(!found){
 		return;

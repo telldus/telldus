@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QScriptValue>
+#include <QDir>
 
 class ScriptEnvironment : public QObject
 {
@@ -12,6 +13,7 @@ public:
 	~ScriptEnvironment();
 
 	QScriptEngine *engine() const;
+	QDir currentDir() const;
 
 signals:
 
