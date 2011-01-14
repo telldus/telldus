@@ -170,7 +170,16 @@ void TelldusCenterApplication::loadToolbar() {
 }
 
 void TelldusCenterApplication::addWidget( const QString &page, const QString &icon, QWidget *widget ) {
-	d->mainWindow->addWidget(page, QIcon(icon), widget);
+	QString path;
+	QFileInfo info(icon);
+	if (info.isRelative()) {
+		QDir dir = d->scriptEnvironment->currentDir();
+		path = dir.filePath(icon);
+	} else {
+		path = icon;
+	}
+
+	d->mainWindow->addWidget(page, QIcon(path), widget);
 }
 
 void TelldusCenterApplication::addWidget( const QString &page, const QIcon &icon, QWidget *widget ) {
