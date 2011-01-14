@@ -17,7 +17,6 @@ QScriptValue QMLLoadFunction(QScriptContext *context, QScriptEngine *engine) {
 	if (!context->isCalledAsConstructor()) {
 		return engine->undefinedValue();
 	}
-	QScriptValue p = context->argument(0);
 
 	//Find out the filename so we have a relative directory to load from
 	QScriptContextInfo info(context->parentContext());
