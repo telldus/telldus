@@ -1,9 +1,12 @@
 #include "qmlplugin.h"
+#include "qmlarray.h"
 #include "qmlview.h"
 #include <QScriptEngine>
 #include <QScriptContextInfo>
 #include <QFileInfo>
 #include <QDir>
+
+#include <QDebug>
 
 QMLPlugin::QMLPlugin ( QObject * parent )
 		:QScriptExtensionPlugin( parent )
@@ -26,9 +29,18 @@ QScriptValue QMLLoadFunction(QScriptContext *context, QScriptEngine *engine) {
 	return engine->newQObject(new QMLView(dir, context->argument(0)), QScriptEngine::ScriptOwnership);
 }
 
+QScriptValue QMLArrayFunction(QScriptContext *context, QScriptEngine *engine) {
+	if (!context->isCalledAsConstructor()) {
+		return engine->undefinedValue();
+	}
+	return engine->newQObject(new QMLArray(), QScriptEngine::ScriptOwnership);
+}
+
 void QMLPlugin::initialize ( const QString & key, QScriptEngine * engine ) {
 	if (key == "com.telldus.qml") {
-		engine->globalObject().property("com").property("telldus").property("qml").setProperty("view", engine->newFunction(QMLLoadFunction));
+		QScriptValue qml = engine->globalObject().property("com").property("telldus").property("qml");
+		qml.setProperty("view", engine->newFunction(QMLLoadFunction));
+		qml.setProperty("array", engine->newFunction(QMLArrayFunction));
 	}
 }
 

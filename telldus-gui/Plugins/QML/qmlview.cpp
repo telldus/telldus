@@ -7,6 +7,7 @@
 class QMLView::PrivateData {
 public:
 	QDir baseDir;
+	QScriptValue object;
 };
 
 QMLView::QMLView(const QDir &dir, const QScriptValue &object) :
@@ -14,17 +15,13 @@ QMLView::QMLView(const QDir &dir, const QScriptValue &object) :
 {
 	d = new PrivateData;
 	d->baseDir = dir;
+	d->object = object;
 
-	QDeclarativeContext *context = this->rootContext();
 	QScriptValueIterator it(object);
 
 	while (it.hasNext()) {
 		it.next();
-		if (it.value().isFunction()) {
-			context->setContextProperty(it.name(), new ScriptFunctionWrapper(object, it.name(), this));
-		} else {
-			context->setContextProperty(it.name(), it.value().toVariant());
-		}
+		this->setProperty(it.name(), it.value());
 	}
 }
 
@@ -38,5 +35,9 @@ void QMLView::load(const QString &filename) {
 
 void QMLView::setProperty( const QString & name, const QScriptValue &value ) {
 	QDeclarativeContext *context = this->rootContext();
-	context->setContextProperty(name, value.toVariant());
+	if (value.isFunction()) {
+		context->setContextProperty(name, new ScriptFunctionWrapper(d->object, name, this));
+	} else {
+		context->setContextProperty(name, value.toVariant());
+	}
 }
