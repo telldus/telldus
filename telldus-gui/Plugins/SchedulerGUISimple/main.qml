@@ -1,7 +1,6 @@
 //import QtQuick 1.0 TODO not until 4.7.1
 import Qt 4.7
-
-
+import "schedulerscripts.js" as Scripts
 
  Item{
 	id: main
@@ -105,6 +104,7 @@ import Qt 4.7
 
 						var dynamicBar = actionBar.createObject(deviceRow)
 						dynamicBar.hangOnToPoint = dynamicPoint
+						//dynamicBar.width = Scripts.getBarWidth(dynamicPoint, deviceRow.children)
 						//dynamicBar.color = "blue" //TODO dependent of point type
 						//dynamicBar.anchors.left = dynamicPoint.right
 						//dynamicBar.width = 100 //TODO dependent of this and next point position
@@ -228,22 +228,32 @@ import Qt 4.7
 		Rectangle{
 			id: barRectangle
 			property variant hangOnToPoint
-			width: 100 //TODO dependent on hangOnToPoint and next point positions
+			//width: 100 //TODO dependent on hangOnToPoint and next point positions
+						
 			height: 10
-			color: "blue" //TODO, dependent on hangOnToPoint
+			/*
+			color: hangOnToPoint.actionType //"blue" //TODO, dependent on hangOnToPoint
 			anchors.verticalCenter: hangOnToPoint.verticalCenter
 			anchors.left: hangOnToPoint.horizontalCenter
-
+			*/
 			z: 110
-			/* couldnt get this to work:
-			 * (if it works later on, try to set opacity for actionPoint in this way too)
+			
+			//state actionType
+			// couldnt get this to work:
+			// (if it works later on, try to set opacity for actionPoint in this way too)
 			states: State {
 				name: "myState"; when: hangOnToPoint != undefined
-				PropertyChanges { target: barRectangle; anchors.verticalCenter: hangOnToPoint.verticalCenter; anchors.left: hangOnToPoint.horizontalCenter }
+				PropertyChanges {
+					target: barRectangle
+					anchors.verticalCenter: hangOnToPoint.verticalCenter
+					anchors.left: hangOnToPoint.horizontalCenter
+					color: hangOnToPoint.actionType
+					width: Scripts.getBarWidth(actionBar, hangOnToPoint, hangOnToPoint.parent.children)
+				}
 				//anchors.verticalCenter: hangOnToPoint.verticalCenter
 				//anchors.left: hangOnToPoint.horizontalCenter
 			}
-			*/
+			
 		}
 	}
 

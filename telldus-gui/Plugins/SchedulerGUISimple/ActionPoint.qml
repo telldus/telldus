@@ -2,7 +2,9 @@ import Qt 4.7
 
 Rectangle{
 	id: pointRect
-	property variant xposition
+	//property variant xposition
+	property string actionType: "blue"
+	property string isPoint: "true"
 	//x: xposition
 	
 	/*
@@ -11,7 +13,8 @@ Rectangle{
 		PropertyChanges { target: pointRect; x: myListView.width - xposition } 
 	}
 	*/
-
+	
+	//use item instead of rectangle (no border then though) to make it invisible (opacity: 0)
 	width: 30
 	height: 50
 	border.color: "black"
@@ -19,15 +22,33 @@ Rectangle{
 	z: 100
 	MouseArea {
 		onClicked: {
+			if(actionType == "red"){
+				actionType = "blue"
+			}
+			else{
+				actionType = "red"
+			}
 			//pointRect.border.color: "red"
-			dialog.show("Id: " + myListView.children[0].width)
+			//Fungerar inte: for(var child in myListView.children){
+			//	dialog.show("hej?")
+			//}
+				//listmodel har iaf en count-property man kan testa om vi gör om detta till en listmodel...		
+			/*var continue = true;
+			while(continue){
+				dialog.show("Count: " + parent.parent.children[2]) //myListView.children[0].children[0].x), parent.x = punktens x, parent.parent.children = siblings... starting from 1
+				continue = false;
+			}
+			*/
+			//dialog.show("Width: " + Scripts.getBarWidth(pointRect, parent.parent.children));
+
+			dialog.show("Nice dialog with possibility to set type of action, exact time, fuzziness, offset etc") //myListView.children[0].children[0].x), parent.x = punktens x, parent.parent.children = siblings... starting from 1
 		}
 		//onPositionChange... maybe emit signal to change in row...
 		anchors.fill: parent
 		drag.target: pointRect
 		drag.axis: Drag.XAxis
 		drag.minimumX: 0
-		drag.maximumX: actionPoint.width - pointRect.width //TODO this doesn't work
+		drag.maximumX: 685 //TODO make relative!!
 		//TODO make it impossible to overlap (on release)
 	}
 	

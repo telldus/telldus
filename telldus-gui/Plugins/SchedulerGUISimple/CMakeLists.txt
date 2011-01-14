@@ -10,6 +10,7 @@ SET( Plugin_EXTRA
 	Dialog.qml
 	icon.png
 	main.qml
+	schedulerscripts.js
 )
 
 INCLUDE( ../TelldusCenterPlugin.cmake NO_POLICY_SCOPE )
