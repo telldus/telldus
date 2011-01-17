@@ -31,6 +31,13 @@ QMLView::~QMLView() {
 
 void QMLView::load(const QString &filename) {
 	this->setSource(d->baseDir.filePath(filename));
+	QSize size = this->initialSize();
+	if (size.isNull()) {
+		this->setResizeMode(QDeclarativeView::SizeRootObjectToView);
+	} else {
+		this->setResizeMode(QDeclarativeView::SizeViewToRootObject);
+		this->setMinimumSize(size);
+	}
 }
 
 void QMLView::setProperty( const QString & name, const QScriptValue &value ) {
