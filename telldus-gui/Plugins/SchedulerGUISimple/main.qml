@@ -154,11 +154,10 @@ import "schedulerscripts.js" as Scripts
 		id: timeline
 		Item{
 			width: parent.width
+			height: 15
 			Rectangle{
 				width: parent.width
-				height: 30
 				border.color: "red"
-				anchors.verticalCenter: parent.verticalCenter
 
 				Row{
 					//x: 100
