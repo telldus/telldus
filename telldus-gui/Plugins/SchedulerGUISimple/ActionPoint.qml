@@ -32,22 +32,9 @@ Rectangle{
 	//actionTypeColor: getColor()
 	
 	MouseArea {
+		id: pointRectMouseArea
 		onClicked: {
-			
-			//pointRect.border.color: "red"
-			//Fungerar inte: for(var child in myListView.children){
-			//	dialog.show("hej?")
-			//}
-				//listmodel har iaf en count-property man kan testa om vi gör om detta till en listmodel...		
-			/*var continue = true;
-			while(continue){
-				dialog.show("Count: " + parent.parent.children[2]) //myListView.children[0].children[0].x), parent.x = punktens x, parent.parent.children = siblings... starting from 1
-				continue = false;
-			}
-			*/
-			//dialog.show("Width: " + Scripts.getBarWidth(pointRect, parent.parent.children));
 			dialog.show(pointRect) //TODO om inte redan i visandes läge....
-			//dialog.show("Nice dialog with possibility to set type of action, exact time, fuzziness, offset etc") //myListView.children[0].children[0].x), parent.x = punktens x, parent.parent.children = siblings... starting from 1
 		}
 		//onPositionChange... maybe emit signal to change in row...
 		anchors.fill: parent
@@ -56,46 +43,79 @@ Rectangle{
 		drag.minimumX: 0
 		drag.maximumX: 685 //TODO make relative!!
 		//TODO make it impossible to overlap (on release)
+		//onPositionChanged: { value = (maximum - minimum) * (handle.x-2) / slider.xMax + minimum; }
 	}
 	
 	Column{
 		spacing: 10
 		Image {
-				//opacity: 1
-				id: actionImage
-				width: 20; height: 20
-				source: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices.png"
-			}
+			//opacity: 1
+			id: actionImage
+			width: 20; height: 20
+			source: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices.png"
+		}
+		
+		Rectangle{
+			id: trigger
+			
+			state: "absolute"
+			width: 20; height: 20
+			
+			//TODO state should move the point to correct place... (sunrisetime, sunsettime or absolute (stored value, the one that is dragged)
+			//drag not permitted depending on state...
+			states: [
+				State {
+					name: "sunrise"
+					PropertyChanges { target: triggerImage; source: "/home/stefan/Downloads/sunrise.png" } //TODO: images!!
+					PropertyChanges { target: pointRectMouseArea; drag.target: undefined }
+				},
+				State {
+					name: "sunset"
+					PropertyChanges { target: triggerImage; source: "/home/stefan/Downloads/sunset.png" } //TODO: images!!
+					PropertyChanges { target: pointRectMouseArea; drag.target: undefined }
+				},
+				State {
+					name: "absolute"
+					PropertyChanges { target: triggerImage; source: "/home/stefan/Downloads/11949889941371111141clock_michael_breuer_01.svg.hi.png" } //TODO: images!!
+					PropertyChanges { target: pointRectMouseArea; drag.target: parent }
+				}
+			]
 			
 			Image {
 				//triggerImage, antingen sol upp, sol ned, eller inte bild utan text m. klockslag
 				id: triggerImage
+				anchors.fill: parent
 				width: 20; height: 20
 				source: "/home/stefan/Downloads/11949889941371111141clock_michael_breuer_01.svg.hi.png"
 			}
+		}
 	}
 	
 	states: [
 		State {
 			name: "on"
-			PropertyChanges { target: pointRect; actionTypeColor: "blue"; actionTypeOpacity: 1 } 
+			PropertyChanges { target: pointRect; actionTypeColor: "blue"; actionTypeOpacity: 1 } //TODO: images!!
+			PropertyChanges { target: actionImage; source: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices.png" }
 		},
 		State{
 			name: "off"
-			PropertyChanges { target: pointRect; actionTypeColor: "red"; actionTypeOpacity: 1 }
+			PropertyChanges { target: pointRect; actionTypeColor: "gainsboro"; actionTypeOpacity: 0 }
+			PropertyChanges { target: actionImage; source: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices-bw.png" }
 		},
 		State{
 			name: "dim"
 			PropertyChanges { target: pointRect; actionTypeColor: "green"; actionTypeOpacity: 1 }
+			PropertyChanges { target: actionImage; source: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/TelldusCenter_128.png" }
 			//something opacity = dim for example
 		},
 		State{
 			name: "bell"
 			PropertyChanges { target: pointRect; actionTypeColor: getLastPointColor() }
+			PropertyChanges { target: actionImage; source: "icon.png" }
 		}
 	]
 	
-	function toggleType(){
+	function toggleType(){ //TODO other kind of selection method
 		print(pointRect.state);
 		if(pointRect.state == "on"){
 			pointRect.state = "off"
@@ -108,6 +128,19 @@ Rectangle{
 		}
 		else if(pointRect.state == "bell"){
 			pointRect.state = "on"
+		}
+	}
+	
+	function toggleTrigger(){ //TODO other kind of selection method
+		print(trigger.state);
+		if(trigger.state == "sunrise"){
+			trigger.state = "sunset";
+		}
+		else if(trigger.state == "sunset"){
+			trigger.state = "absolute";
+		}
+		else if(trigger.state == "absolute"){
+			trigger.state = "sunrise";
 		}
 	}
 	
