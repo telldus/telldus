@@ -3,8 +3,16 @@ import Qt 4.7
 Rectangle{
 	id: pointRect
 	//property variant xposition
-	property string actionType: "blue"
+	property string actionTypeColor: "blue" //TODO default value
+	property int actionType: 1 //TODO default value
+	property double actionTypeOpacity: 1
 	property string isPoint: "true"
+	property variant isLoaded
+							 
+	Component.onCompleted: {
+		//TODO useless really, still gets Cannot anchor to a null item-warning...
+		isLoaded = "true"
+	}
 	//x: xposition
 	
 	/*
@@ -20,14 +28,12 @@ Rectangle{
 	border.color: "black"
 	opacity: 0.8
 	z: 100
+	state: "on"
+	//actionTypeColor: getColor()
+	
 	MouseArea {
 		onClicked: {
-			if(actionType == "red"){
-				actionType = "blue"
-			}
-			else{
-				actionType = "red"
-			}
+			
 			//pointRect.border.color: "red"
 			//Fungerar inte: for(var child in myListView.children){
 			//	dialog.show("hej?")
@@ -40,8 +46,8 @@ Rectangle{
 			}
 			*/
 			//dialog.show("Width: " + Scripts.getBarWidth(pointRect, parent.parent.children));
-
-			dialog.show("Nice dialog with possibility to set type of action, exact time, fuzziness, offset etc") //myListView.children[0].children[0].x), parent.x = punktens x, parent.parent.children = siblings... starting from 1
+			dialog.show(pointRect) //TODO om inte redan i visandes läge....
+			//dialog.show("Nice dialog with possibility to set type of action, exact time, fuzziness, offset etc") //myListView.children[0].children[0].x), parent.x = punktens x, parent.parent.children = siblings... starting from 1
 		}
 		//onPositionChange... maybe emit signal to change in row...
 		anchors.fill: parent
@@ -67,5 +73,64 @@ Rectangle{
 				width: 20; height: 20
 				source: "/home/stefan/Downloads/11949889941371111141clock_michael_breuer_01.svg.hi.png"
 			}
+	}
+	
+	states: [
+		State {
+			name: "on"
+			PropertyChanges { target: pointRect; actionTypeColor: "blue"; actionTypeOpacity: 1 } 
+		},
+		State{
+			name: "off"
+			PropertyChanges { target: pointRect; actionTypeColor: "red"; actionTypeOpacity: 1 }
+		},
+		State{
+			name: "dim"
+			PropertyChanges { target: pointRect; actionTypeColor: "green"; actionTypeOpacity: 1 }
+			//something opacity = dim for example
+		},
+		State{
+			name: "bell"
+			PropertyChanges { target: pointRect; actionTypeColor: getLastPointColor() }
+		}
+	]
+	
+	function toggleType(){
+		print(pointRect.state);
+		if(pointRect.state == "on"){
+			pointRect.state = "off"
+		}
+		else if(pointRect.state == "off"){
+			pointRect.state = "dim"
+		}
+		else if(pointRect.state == "dim"){
+			pointRect.state = "bell"
+		}
+		else if(pointRect.state == "bell"){
+			pointRect.state = "on"
+		}
+	}
+	
+	function getLastPointColor(){
+		//get previous point:
+		var prevPoint = null;
+		var pointList = pointRect.parent.children;
+		for(var i=1;i<pointList.length;i++){
+			if (pointList[i].isPoint != undefined && pointList[i] != pointRect) {
+				if(pointList[i].x < pointRect.x && (prevPoint == null || pointList[i].x > prevPoint.x)){
+					prevPoint = pointList[i];
+				}
+			}
+		}
+		
+		//TODO Binding loop here when moving transperent point over other point
+		if(prevPoint == null || prevPoint.actionTypeOpacity == 0){
+			//no point before, no bar after either
+			actionTypeOpacity = 0
+			return "papayawhip" //just return a color, will not be used
+		}
+		
+		actionTypeOpacity = 1
+		return prevPoint.actionTypeColor
 	}
 }

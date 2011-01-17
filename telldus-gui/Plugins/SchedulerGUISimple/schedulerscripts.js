@@ -1,6 +1,6 @@
 
 function getBarWidth(currentBar, currentPointRect, pointList){
-
+	
 	var maxWidth = currentPointRect.parent.width;
 	var nextX = maxWidth
 	var halfPointWidth = currentPointRect.width / 2

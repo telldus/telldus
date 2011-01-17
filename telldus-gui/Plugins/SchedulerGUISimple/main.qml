@@ -104,6 +104,8 @@ import "schedulerscripts.js" as Scripts
 
 						var dynamicBar = actionBar.createObject(deviceRow)
 						dynamicBar.hangOnToPoint = dynamicPoint
+						
+						dialog.show(dynamicPoint) 
 						//dynamicBar.width = Scripts.getBarWidth(dynamicPoint, deviceRow.children)
 						//dynamicBar.color = "blue" //TODO dependent of point type
 						//dynamicBar.anchors.left = dynamicPoint.right
@@ -226,12 +228,13 @@ import "schedulerscripts.js" as Scripts
 			// couldnt get this to work:
 			// (if it works later on, try to set opacity for actionPoint in this way too)
 			states: State {
-				name: "myState"; when: hangOnToPoint != undefined
+				name: "myState"; when: hangOnToPoint.isLoaded != undefined && hangOnToPoint.verticalCenter != undefined  //TODO might aswell use hangOnToPoint != undefined, still get null item warning
 				PropertyChanges {
 					target: barRectangle
 					anchors.verticalCenter: hangOnToPoint.verticalCenter
 					anchors.left: hangOnToPoint.horizontalCenter
-					color: hangOnToPoint.actionType
+					color: hangOnToPoint.actionTypeColor
+					opacity: hangOnToPoint.actionTypeOpacity
 					width: Scripts.getBarWidth(actionBar, hangOnToPoint, hangOnToPoint.parent.children)
 				}
 				//anchors.verticalCenter: hangOnToPoint.verticalCenter
