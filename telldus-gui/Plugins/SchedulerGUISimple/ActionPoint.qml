@@ -8,6 +8,7 @@ Rectangle{
 	property double actionTypeOpacity: 1
 	property string isPoint: "true"
 	property variant isLoaded
+	property int xvalue
 							 
 	Component.onCompleted: {
 		//TODO useless really, still gets Cannot anchor to a null item-warning...
@@ -40,7 +41,7 @@ Rectangle{
 		anchors.fill: parent
 		drag.target: pointRect
 		drag.axis: Drag.XAxis
-		drag.minimumX: 0
+		drag.minimumX: -15 //TODO make relative
 		drag.maximumX: 685 //TODO make relative!!
 		//TODO make it impossible to overlap (on release)
 		//onPositionChanged: { value = (maximum - minimum) * (handle.x-2) / slider.xMax + minimum; }
@@ -62,24 +63,38 @@ Rectangle{
 			width: 20; height: 20
 			
 			//TODO state should move the point to correct place... (sunrisetime, sunsettime or absolute (stored value, the one that is dragged)
-			//drag not permitted depending on state...
 			states: [
 				State {
+					//TODO if no sunrise/sunset exists (arctic circle...), check so it works anyway
 					name: "sunrise"
-					PropertyChanges { target: triggerImage; source: "/home/stefan/Downloads/sunrise.png" } //TODO: images!!
+					PropertyChanges { target: triggerImage; source: "/home/stefan/Downloads/sunrise.png"; opacity: 1 } //TODO: images!!
+					PropertyChanges { target: triggerTime; opacity: 0 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: undefined }
+					PropertyChanges { target: pointRect; x: getSunRiseTime.call(pointRect.parent.width, pointRect.width) }
 				},
 				State {
 					name: "sunset"
-					PropertyChanges { target: triggerImage; source: "/home/stefan/Downloads/sunset.png" } //TODO: images!!
+					PropertyChanges { target: triggerImage; source: "/home/stefan/Downloads/sunset.png"; opacity: 1 } //TODO: images!!
+					PropertyChanges { target: triggerTime; opacity: 0 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: undefined }
+					PropertyChanges { target: pointRect; x: getSunSetTime.call(pointRect.parent.width, pointRect.width) }
 				},
 				State {
 					name: "absolute"
-					PropertyChanges { target: triggerImage; source: "/home/stefan/Downloads/11949889941371111141clock_michael_breuer_01.svg.hi.png" } //TODO: images!!
+					PropertyChanges { target: triggerImage; opacity: 0; } //TODO: images!!
+					PropertyChanges { target: triggerTime; opacity: 1 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: parent }
+					PropertyChanges { target: pointRect; x: xvalue }
 				}
 			]
+			
+			Rectangle{
+				id: triggerTime
+				width: 20; height: 20
+				Text{
+					text: getTime(pointRect.x, pointRect.width)
+				}
+			}
 			
 			Image {
 				//triggerImage, antingen sol upp, sol ned, eller inte bild utan text m. klockslag
@@ -140,6 +155,7 @@ Rectangle{
 			trigger.state = "absolute";
 		}
 		else if(trigger.state == "absolute"){
+			pointRect.xvalue = pointRect.x; //TODO right place to set it?
 			trigger.state = "sunrise";
 		}
 	}
@@ -165,5 +181,15 @@ Rectangle{
 		
 		actionTypeOpacity = 1
 		return prevPoint.actionTypeColor
+	}
+	
+	function getTime(){
+		var timeOfDay = pointRect.x + (pointRect.width/2);
+		var hourSize = pointRect.parent.width / 24;
+		print(hourSize);
+		print(timeOfDay);
+		var partOfHour = (timeOfDay % hourSize) * hourSize //TODO delar, gör om till minuter
+		print("Part: " + partOfHour);
+		return Math.floor(timeOfDay / hourSize) + ":" + partOfHour
 	}
 }
