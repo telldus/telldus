@@ -125,19 +125,6 @@ import "schedulerscripts.js" as Scripts
 		}
 	 }
 
-	ListModel {
-		id: myModel
-		ListElement {
-			devicename: "Storsalen"
-		}
-		ListElement {
-			devicename: "Förstugan"
-		}
-		ListElement {
-			devicename: "Västra uthuset"
-		}
-	}
-
 	ListView {
 		id: myListView
 		anchors.fill: parent
@@ -210,9 +197,7 @@ import "schedulerscripts.js" as Scripts
 					//onEntered: parent.border.color = onHoverColor
 					//onExited:  parent.border.color = borderColor
 					onClicked: {
-						myModel.append({
-							"devicename": "Stället"
-						})
+						addDevice.call()
 					}
 				}
 
@@ -228,7 +213,7 @@ import "schedulerscripts.js" as Scripts
 			id: barRectangle
 			property variant hangOnToPoint
 			//width: 100 //TODO dependent on hangOnToPoint and next point positions
-						
+
 			height: 10
 			/*
 			color: hangOnToPoint.actionType //"blue" //TODO, dependent on hangOnToPoint
@@ -236,7 +221,7 @@ import "schedulerscripts.js" as Scripts
 			anchors.left: hangOnToPoint.horizontalCenter
 			*/
 			z: 110
-			
+
 			//state actionType
 			// couldnt get this to work:
 			// (if it works later on, try to set opacity for actionPoint in this way too)
@@ -252,7 +237,7 @@ import "schedulerscripts.js" as Scripts
 				//anchors.verticalCenter: hangOnToPoint.verticalCenter
 				//anchors.left: hangOnToPoint.horizontalCenter
 			}
-			
+
 		}
 	}
 
