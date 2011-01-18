@@ -24,3 +24,19 @@ function pad(number, length) {
    
     return str;
 }
+
+function isMidnightDark(){
+	if(main.sunData == undefined){
+		main.sunData = getSunData.call();
+	}
+	
+	var sunrise = main.sunData[0].split(':');;
+	var sunset = main.sunData[1].split(':');
+	
+	if(sunset[0] < sunrise[0] || (sunset[0] == sunrise[0] && sunset[1] < sunrise[1])){
+		print("Rise: " + sunrise);
+		print("Set: " + sunset);
+		return false;
+	}
+	return true;
+}

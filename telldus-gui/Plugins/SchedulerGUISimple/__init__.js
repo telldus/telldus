@@ -13,7 +13,8 @@ com.telldus.schedulersimplegui = function() {
 		view = new com.telldus.qml.view({
 			addDevice: addDevice,
 			getSunRiseTime: getSunRiseTime,
-			getSunSetTime: getSunSetTime
+			getSunSetTime: getSunSetTime,
+			getSunData: getSunData
 		});
 		deviceList = new com.telldus.qml.array();
 		var list = com.telldus.core.deviceList.getList();
@@ -42,6 +43,12 @@ com.telldus.schedulersimplegui = function() {
 		}
 		var hourSize = rowWidth/24;
 		return hourSize*hourminute[0] + hourSize * (hourminute[1]/60) - pointWidth/2;
+	}
+	
+	//Raw sun data
+	function getSunData(){
+		var date = new Date;
+		return com.telldus.suncalculator.riseset(date);
 	}
 	
 	function getSunRiseTime(rowWidth, pointWidth){

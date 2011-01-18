@@ -6,6 +6,7 @@ import "schedulerscripts.js" as Scripts
 	id: main
 	width: 800 //TODO how?
 	height: 600 //TODO how?
+	property variant sunData;
 
 	Component{
 		id: listRow
@@ -86,6 +87,27 @@ import "schedulerscripts.js" as Scripts
 		Item{
 			width: parent.width
 			height: 15
+			
+			Rectangle{
+				id: morningDark
+				color: "black"
+				height: parent.height
+				border.width: 0
+				width: getMorningDarkWidth()
+				opacity: 0.1
+				x: getMorningDarkStart()
+			}
+			
+			Rectangle{
+				id: eveningDark
+				color: "black"
+				height: parent.height
+				border.width: 0
+				width: getEveningDarkWidth()
+				opacity: 0.1
+				x: getEveningDarkStart()
+			}
+			
 			Rectangle{
 				width: parent.width
 				border.color: "red"
@@ -96,7 +118,7 @@ import "schedulerscripts.js" as Scripts
 					anchors.horizontalCenterOffset: parent.width/24
 
 					width: listRow.width
-					height: listRow.height
+					height: parent.height
 					spacing: (parent.width-124)/24
 					Repeater{
 						model:24
@@ -191,7 +213,74 @@ import "schedulerscripts.js" as Scripts
 		anchors.centerIn: parent
 		z: 150
 	}
+	
+	//TODO move functions:
+	function getEveningDarkStart(){
+		if(!willSunSet){
+			return 0;
+		}
+		if(Scripts.isMidnightDark()){
+			return sunToTimeUnits(main.sunData[1]) + 100;
+		}
+		else{
+			return 0;
+		}
+	}
+	
+	function getMorningDarkStart(){
+		//TODO the day of the year when the sun "begins" not to set, will it work then?
+		if(!willSunSet){
+			return 0;
+		}
+		if(Scripts.isMidnightDark()){
+			return 100; //TODO constants
+		}
+		else{
+			return sunToTimeUnits(main.sunData[1]) + 100; //TODO constants
+		}
+	}
+	
+	function getEveningDarkWidth(){
+		if(!willSunSet){
+			return 0;
+		}
+		if(Scripts.isMidnightDark()){
+			return (main.width - 100) - sunToTimeUnits(main.sunData[1]); //TODO constant or something
+		}
+		else{
+			return 0;
+		}
+		
+	}
+	
+	function getMorningDarkWidth(){
+		if(!willSunSet){
+			return 0;
+		}
+		if(Scripts.isMidnightDark()){
+			return sunToTimeUnits(main.sunData[0]);
+		}
+		else{
+			return sunToTimeUnits(main.sunData[1]) - sunToTimeUnits(main.sunData[0]);
+		}
+	}
+	
+	function willSunSet(){
+		if(main.sunData == undefined){
+			main.sunData = getSunData.call();
+		}
+			
+		return !(main.sunData[2] && main.sunData[2] != "")
+	}
 
+	function sunToTimeUnits(suntime){
+		suntime = suntime.split(':');
+		var hourSize = (main.width - 100)/24; //TODO constant or something?
+		print("Units: " + (hourSize * suntime[0] + suntime[1]/hourSize * 60));
+		print("Size: " + hourSize);
+		print("Hour: " + suntime[0]);
+		return hourSize * suntime[0] + hourSize * suntime[1]/60;
+	}
 	//opacity vid dimning?
 	//linjens färg etc (state) beror ju på närmaste punkt föres sort... Punkten kan finnas osynlig (tidigare dag) också...
 	//kan man liksom göra hela linjen (från en vecka tillbaka) men inte visa den? Om det är vettigt... Då hade man tom kunnat zooma en vacker dag
