@@ -39,7 +39,7 @@
 		property color buttonColor: "lightgrey"
 
 		Keys.onLeftPressed: {
-			debug("Left pressed");
+			debug("Left pressed"); //TODO make it work
 			
 		}							
 		
@@ -48,8 +48,8 @@
 			anchors.verticalCenter: parent.verticalCenter
 			anchors.horizontalCenter: parent.horizontalCenter
 			anchors.margins: 2
-
 		}
+		
 		MouseArea {
 			id: buttonMouseAreaType
 			anchors.fill: parent
@@ -125,4 +125,11 @@
 
 		color: buttonMouseAreaClose.pressed ? Qt.darker(buttonColor, 1.5) : buttonColor
 	}
+	
+	Row{
+		Image{
+			
+		}
+	}
+	
  } 

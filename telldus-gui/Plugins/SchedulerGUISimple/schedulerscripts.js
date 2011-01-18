@@ -1,3 +1,12 @@
+var activeStates = new Array();
+
+function addState(state){
+	activeStates.push(state);
+}
+
+function getActiveStates(){
+	return activeStates;
+}
 
 function getBarWidth(currentBar, currentPointRect, pointList){
 	

@@ -46,7 +46,11 @@ import "schedulerscripts.js" as Scripts
 						dynamicPoint.x = mouseX - dynamicPoint.width/2 //xposition
 						//dynamicPoint.width = mouseX-
 						dynamicPoint.border.color = "blue"
-
+						dynamicPoint.addState("on");
+						dynamicPoint.addState("off");
+						dynamicPoint.addState("dim");
+						dynamicPoint.addState("bell");
+						
 						var dynamicBar = actionBar.createObject(deviceRow)
 						dynamicBar.hangOnToPoint = dynamicPoint
 						
@@ -214,7 +218,7 @@ import "schedulerscripts.js" as Scripts
 		z: 150
 	}
 	
-	//TODO move functions:
+	//TODO move functions, and test odd cases:
 	function getEveningDarkStart(){
 		if(!willSunSet){
 			return 0;
@@ -276,9 +280,6 @@ import "schedulerscripts.js" as Scripts
 	function sunToTimeUnits(suntime){
 		suntime = suntime.split(':');
 		var hourSize = (main.width - 100)/24; //TODO constant or something?
-		print("Units: " + (hourSize * suntime[0] + suntime[1]/hourSize * 60));
-		print("Size: " + hourSize);
-		print("Hour: " + suntime[0]);
 		return hourSize * suntime[0] + hourSize * suntime[1]/60;
 	}
 	//opacity vid dimning?

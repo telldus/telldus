@@ -10,6 +10,7 @@ Rectangle{
 	property string isPoint: "true"
 	property variant isLoaded
 	property int xvalue
+	//property variant activeStates: []
 							 
 	Component.onCompleted: {
 		//TODO useless really, still gets Cannot anchor to a null item-warning...
@@ -49,9 +50,16 @@ Rectangle{
      */
 	MouseArea {
 		id: pointRectMouseArea
+		acceptedButtons: Qt.LeftButton | Qt.RightButton
+		
 		onClicked: {
 			//pointRect.focus = true
-			dialog.show(pointRect) //TODO om inte redan i visandes läge....
+			if (mouse.button == Qt.RightButton){
+				pointRect.toggleType()
+			}
+			else{
+				dialog.show(pointRect) //TODO om inte redan i visandes läge....
+			}
 		}
 		
 		//onPositionChange... maybe emit signal to change in row...
@@ -111,8 +119,9 @@ Rectangle{
 			Rectangle{
 				id: triggerTime
 				width: 20; height: 20
-				anchors.horizontalCenter: parent.horizontalCenter
-				anchors.verticalCenter: parent.verticalCenter
+				anchors.centerIn: parent
+				//anchors.horizontalCenter: parent.horizontalCenter
+				//anchors.verticalCenter: parent.verticalCenter
 				Text{
 					text: getTime(pointRect.x, pointRect.width); font.pointSize: 6; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignBottom
 				}
@@ -152,7 +161,27 @@ Rectangle{
 	]
 	
 	function toggleType(){ //TODO other kind of selection method
-		print(pointRect.state);
+		var index = 0;
+		
+		var activeStates = Scripts.getActiveStates();
+		if(activeStates == undefined || activeStates.length == 0){
+			return;
+		}
+		
+		for(var i=0;i<activeStates.length;i++){
+			if (activeStates[i] == state) {
+				index = i + 1;
+				break;
+			}
+		}
+		
+		if(index == activeStates.length){
+			index = 0; //return to beginning again
+		}
+		
+		pointRect.state = activeStates[index];
+
+		/*
 		if(pointRect.state == "on"){
 			pointRect.state = "off"
 		}
@@ -165,10 +194,10 @@ Rectangle{
 		else if(pointRect.state == "bell"){
 			pointRect.state = "on"
 		}
+		*/
 	}
 	
 	function toggleTrigger(){ //TODO other kind of selection method
-		print(trigger.state);
 		if(trigger.state == "sunrise"){
 			trigger.state = "sunset";
 		}
@@ -218,5 +247,9 @@ Rectangle{
 		//print("Hours: " + hours);
 		//print("Minutes? " + partOfHour);
 		return hours + ":" + partOfHour;
+	}
+	
+	function addState(state){
+		Scripts.addState(state);
 	}
 }
