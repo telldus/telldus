@@ -1,4 +1,5 @@
 import Qt 4.7
+import "schedulerscripts.js" as Scripts
 
 Rectangle{
 	id: pointRect
@@ -30,13 +31,29 @@ Rectangle{
 	opacity: 0.8
 	z: 100
 	state: "on"
+	focus: true
 	//actionTypeColor: getColor()
 	
+	//TODO make this work:
+	/*Keys.onLeftPressed: {
+		pointRect.x = pointRect.x - 1
+	}
+	Keys.onRightPressed: {
+		pointRect.x = pointRect.x + 1
+	}
+		   
+		    Text {
+        //focus: true
+		text: pointRect.activeFocus ? "I HAVE active focus!" : "I do NOT have active focus"
+     }
+     */
 	MouseArea {
 		id: pointRectMouseArea
 		onClicked: {
+			//pointRect.focus = true
 			dialog.show(pointRect) //TODO om inte redan i visandes läge....
 		}
+		
 		//onPositionChange... maybe emit signal to change in row...
 		anchors.fill: parent
 		drag.target: pointRect
@@ -49,6 +66,8 @@ Rectangle{
 	
 	Column{
 		spacing: 10
+		anchors.horizontalCenter: parent.horizontalCenter
+				
 		Image {
 			//opacity: 1
 			id: actionImage
@@ -58,7 +77,8 @@ Rectangle{
 		
 		Rectangle{
 			id: trigger
-			
+			anchors.horizontalCenter: parent.horizontalCenter
+				
 			state: "absolute"
 			width: 20; height: 20
 			
@@ -91,13 +111,14 @@ Rectangle{
 			Rectangle{
 				id: triggerTime
 				width: 20; height: 20
+				anchors.horizontalCenter: parent.horizontalCenter
+				anchors.verticalCenter: parent.verticalCenter
 				Text{
-					text: getTime(pointRect.x, pointRect.width)
+					text: getTime(pointRect.x, pointRect.width); font.pointSize: 6; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignBottom
 				}
 			}
 			
 			Image {
-				//triggerImage, antingen sol upp, sol ned, eller inte bild utan text m. klockslag
 				id: triggerImage
 				anchors.fill: parent
 				width: 20; height: 20
@@ -184,12 +205,18 @@ Rectangle{
 	}
 	
 	function getTime(){
+		if(pointRect.parent == null){
+			return "";
+		}
 		var timeOfDay = pointRect.x + (pointRect.width/2);
 		var hourSize = pointRect.parent.width / 24;
-		print(hourSize);
-		print(timeOfDay);
-		var partOfHour = (timeOfDay % hourSize) * hourSize //TODO delar, gör om till minuter
-		print("Part: " + partOfHour);
-		return Math.floor(timeOfDay / hourSize) + ":" + partOfHour
+		var hours = Math.floor(timeOfDay / hourSize);
+		var partOfHour = ((timeOfDay - (hourSize * hours))/hourSize) * 60
+		partOfHour = Math.floor(partOfHour);
+		partOfHour = Scripts.pad(partOfHour, 2);
+		hours = Scripts.pad(hours, 2);
+		//print("Hours: " + hours);
+		//print("Minutes? " + partOfHour);
+		return hours + ":" + partOfHour;
 	}
 }

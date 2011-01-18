@@ -28,7 +28,7 @@
          anchors.centerIn: parent
          text: ""
      }
-     
+    
      Rectangle {  
 		id: circleType //TODO only types this device has...
 		height: 20
@@ -38,6 +38,11 @@
 
 		property color buttonColor: "lightgrey"
 
+		Keys.onLeftPressed: {
+			debug("Left pressed");
+			
+		}							
+		
 		Text{
 			text: "Toggle Action Type"
 			anchors.verticalCenter: parent.verticalCenter

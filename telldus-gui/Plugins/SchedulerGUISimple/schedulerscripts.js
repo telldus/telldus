@@ -14,3 +14,13 @@ function getBarWidth(currentBar, currentPointRect, pointList){
 	
 	return nextX - (currentPointRect.x + halfPointWidth);
 }
+
+function pad(number, length) {
+   
+    var str = '' + number;
+    while (str.length < length) {
+        str = '0' + str;
+    }
+   
+    return str;
+}

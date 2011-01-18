@@ -7,68 +7,12 @@ import "schedulerscripts.js" as Scripts
 	width: 800 //TODO how?
 	height: 600 //TODO how?
 
-		//height: 200
-
-	/*
-	Rectangle {
-		width:200
-		height: 200
-		id: testRectangle
-		border.color: "red"
-		//anchors.fill: parent
-		color: "blue"
-		MouseArea {
-			anchors.fill: parent
-			//onClicked: container.clicked(testGrid.)
-		}
-	}
-
-
-	Text{
-		id: testItem
-		text: "Hello world!"
-		//anchors.left: main.left
-		anchors.centerIn: parent
-		anchors.verticalCenter: main.verticalCenter
-	}
-
-	Column {
-		 id: testColumn
-		 width: parent.width
-		 height: parent.height
-		 //anchors.bottom: page.bottom; anchors.bottomMargin: 4
-		 //rows: 6; columns: 1; spacing: 3
-
-		Repeater{
-			model: 3
-			Row{
-				id: row1
-				width: parent.width;
-				height: 50
-				//color: "red"
-				Rectangle { border.color: "blue"; width: 100; height:parent.height;
-					Text{
-						anchors.verticalCenter: parent.verticalCenter
-						anchors.horizontalCenter: parent.horizontalCenter
-						text: "Device " + index
-					}
-				}
-				Rectangle { border.color: "blue"; width: parent.width-100; height:parent.height; }
-			}
-		}
-
-		Rectangle { color: "green"; width: parent.width; height:50; id: row2 }
-		 Rectangle { color: "blue";  }
-		 Rectangle { color: "yellow";  }
-		 Rectangle { color: "steelblue";  }
-		 Rectangle { color: "black";  }
-	 }
-	 */
-
-	 Component{
+	Component{
 		id: listRow
+		
 		Row{
 			id: row1
+			
 			width: parent.width; //TODO relative
 			height: 50
 			//color: "red"
@@ -132,9 +76,7 @@ import "schedulerscripts.js" as Scripts
 		anchors.fill: parent
 		model: deviceModel
 		delegate: listRow
-		//snapMode: ListView.SnapToItem
-		//highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
-		focus: true
+		//focus: true
 		footer: addButtonComponent
 		header: timeline
 	 }
@@ -262,5 +204,4 @@ import "schedulerscripts.js" as Scripts
 		 z: 100
 	 }
 	 */
-
 }

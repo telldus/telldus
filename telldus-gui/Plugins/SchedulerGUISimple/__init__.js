@@ -40,14 +40,11 @@ com.telldus.schedulersimplegui = function() {
 		else{
 			hourminute = timevalues[1].split(':');
 		}
-		print("Hourminute: " + hourminute[0]);
 		var hourSize = rowWidth/24;
-		print("Size: " + hourSize);
-		return hourSize*hourminute[0];  //TODO Only hour for now...
+		return hourSize*hourminute[0] + hourSize * (hourminute[1]/60) - pointWidth/2;
 	}
 	
 	function getSunRiseTime(rowWidth, pointWidth){
-		//TODO turn into one method
 		rowWidth = 700 //TODO
 		pointWidth = 30 //TODO
 		return getSun("rise", rowWidth, pointWidth);
