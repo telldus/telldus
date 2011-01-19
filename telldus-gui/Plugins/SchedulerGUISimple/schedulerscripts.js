@@ -24,14 +24,22 @@ function getBarWidth(currentBar, currentPointRect, pointList){
 	return nextX - (currentPointRect.x + halfPointWidth);
 }
 
-function pad(number, length) {
-   
-    var str = '' + number;
-    while (str.length < length) {
-        str = '0' + str;
-    }
-   
-    return str;
+function getPreviousState(currentPointRect, pointList){
+	
+	var prevPoint = null;
+	for(var i=0;i<pointList.length;i++){
+		if(pointList[i].isPoint != undefined && pointList[i] != currentPointRect){
+			if(pointList[i].x < currentPointRect.x && (prevPoint == null || pointList[i].x > prevPoint.x) && pointList[i].state != "bell"){ //TODO when more than "bell", make dynamic
+				prevPoint = pointList[i];
+			}
+		}
+	}
+	
+	if(prevPoint == null){
+		return "";
+	}
+	
+	return prevPoint.state;
 }
 
 function isMidnightDark(){
@@ -48,4 +56,14 @@ function isMidnightDark(){
 		return false;
 	}
 	return true;
+}
+
+function pad(number, length) {
+   
+    var str = '' + number;
+    while (str.length < length) {
+        str = '0' + str;
+    }
+   
+    return str;
 }

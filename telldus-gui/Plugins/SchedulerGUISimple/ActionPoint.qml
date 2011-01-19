@@ -7,6 +7,7 @@ Rectangle{
 	property string actionTypeColor: "blue" //TODO default value
 	property int actionType: 1 //TODO default value
 	property double actionTypeOpacity: 1
+	property string actionTypeImage: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices.png"
 	property string isPoint: "true"
 	property variant isLoaded
 	property int xvalue
@@ -80,7 +81,7 @@ Rectangle{
 			//opacity: 1
 			id: actionImage
 			width: 20; height: 20
-			source: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices.png"
+			source: pointRect.actionTypeImage
 		}
 		
 		Rectangle{
@@ -140,29 +141,29 @@ Rectangle{
 		State {
 			name: "on"
 			PropertyChanges { target: pointRect; actionTypeColor: "blue"; actionTypeOpacity: 1 } //TODO: images!!
-			PropertyChanges { target: actionImage; source: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices.png" }
+			PropertyChanges { target: pointRect; actionTypeImage: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices.png" }
 		},
 		State{
 			name: "off"
 			PropertyChanges { target: pointRect; actionTypeColor: "gainsboro"; actionTypeOpacity: 0 }
-			PropertyChanges { target: actionImage; source: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices-bw.png" }
+			PropertyChanges { target: pointRect; actionTypeImage: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices-bw.png" }
+			//PropertyChanges { target: actionImage; source: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices-bw.png" }
 		},
 		State{
 			name: "dim"
 			PropertyChanges { target: pointRect; actionTypeColor: "green"; actionTypeOpacity: 1 }
-			PropertyChanges { target: actionImage; source: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/TelldusCenter_128.png" }
+			PropertyChanges { target: pointRect; actionTypeImage: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/TelldusCenter_128.png" }
 			//something opacity = dim for example
 		},
 		State{
 			name: "bell"
 			PropertyChanges { target: pointRect; actionTypeColor: getLastPointColor() }
-			PropertyChanges { target: actionImage; source: "icon.png" }
+			PropertyChanges { target: pointRect; actionTypeImage: "icon.png" }
 		}
 	]
 	
 	function toggleType(){ //TODO other kind of selection method
 		var index = 0;
-		
 		var activeStates = Scripts.getActiveStates();
 		if(activeStates == undefined || activeStates.length == 0){
 			return;
@@ -195,6 +196,11 @@ Rectangle{
 			pointRect.state = "on"
 		}
 		*/
+	}
+	
+	function setType(name){
+		print("setting state to " + name);
+		pointRect.state = name;
 	}
 	
 	function toggleTrigger(){ //TODO other kind of selection method
@@ -251,5 +257,45 @@ Rectangle{
 	
 	function addState(state){
 		Scripts.addState(state);
+	}
+	
+	function setFirstState(firstState){
+	
+		var activeStates = Scripts.getActiveStates();
+		
+		if(activeStates == null || activeStates.length == 0){
+			//nothing to do
+			return;
+		}
+		
+		//state may already be set:
+		if(firstState != undefined && firstState != ""){
+			pointRect.state = firstState;
+			return;
+		}
+		
+		//check that device has the "off" state:
+		var exists = false;
+		for(var i=1;i<activeStates.length;i++){
+			if(activeStates[i] == "off"){
+				exists = true;
+				break;
+			}
+		}
+		
+		if(!exists){
+			//no "off", just set state to the first added state
+			pointRect.state = activeStates[0];
+			return;
+		}
+		
+		var previousState = Scripts.getPreviousState(pointRect, pointRect.parent.children);
+		if(previousState == "" || previousState == "off"){
+			//nothing on/dimmed at the moment, use first added state
+			pointRect.state = activeStates[0];
+			return;
+		}
+		
+		pointRect.state = "off"; //previous point should be "on" or "dim"														 
 	}
 }

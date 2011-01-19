@@ -3,14 +3,19 @@
  Rectangle {
      id: container
      property ActionPoint actionPoint
-
+     
      function show(actionPoint) {
-         dialogText.text = "Nice dialog with possibility to set type of action, exact time, fuzziness, offset etc"
          container.opacity = 1;
 		 container.border.color = "black"
 		 container.border.width = 2
 		 container.actionPoint = actionPoint
-     }
+		 
+		 var rootCoordinates = actionPoint.mapToItem(null, actionPoint.x, actionPoint.y);
+		 //container.x = rootCoordinates.x + actionPoint.parent.width/2 - container.width/2;
+		 container.y = rootCoordinates.y + actionPoint.height + 10;
+		 container.width = actionPoint.parent.width;
+		 container.x = (actionPoint.parent.parent.width - container.width)/2;
+	 }
 
      function hide() {
          container.opacity = 0;
@@ -19,22 +24,18 @@
      
 	 smooth: true
 	 radius: 5
-     width: dialogText.width + 120
-     height: dialogText.height + 220
+     //width: 500 //TODO
+     height: 500 // typelist.height * 2 + 50
      opacity: 0
 
-     Text {
-         id: dialogText
-         anchors.centerIn: parent
-         text: ""
-     }
-    
      Rectangle {  
 		id: circleType //TODO only types this device has...
 		height: 20
 		width: 100
 		anchors.verticalCenter: parent.verticalCenter
 		anchors.verticalCenterOffset: 0
+		anchors.left: typeList.right
+		anchors.leftMargin: 50
 
 		property color buttonColor: "lightgrey"
 
@@ -126,9 +127,83 @@
 		color: buttonMouseAreaClose.pressed ? Qt.darker(buttonColor, 1.5) : buttonColor
 	}
 	
-	Row{
+	ListView{
+		id: typeList
+		anchors.top: parent.top
+		anchors.topMargin: 20
+		anchors.left: currentType.right
+		anchors.leftMargin: 10
+		width: 100 //TODO relative
+		height: 100 //TODO relative
+		//anchors.fill: parent
+		model: typeSelection
+		delegate: typeSelectionRow
+		highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
+	
+		//TODO can these paths be turned into some kind of constants? Import from common file or something?
+		ListModel{
+			id: typeSelection
+			ListElement{
+				name: "on"
+				imagesource: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices.png"
+			}
+			ListElement{
+				name: "off"
+				imagesource: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices-bw.png"
+			}
+			ListElement{
+				name: "dim"
+				imagesource: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/TelldusCenter_128.png"
+			}
+			ListElement{
+				name: "bell"
+				imagesource: "icon.png"
+			}
+		}
+	}
+	
+	Rectangle{
+		id: currentType
+		anchors.top: parent.top
+		anchors.topMargin: 20
+		anchors.left: parent.left
+		anchors.leftMargin: 10
+		border.color: "grey"
+		border.width: 1
+		width: 120
+		height: 120
 		Image{
+			anchors.fill: parent
+			source: actionPoint.actionTypeImage  //TODO, set only when defined...
+		}
+	}
+	
+	Component{
+		id: typeSelectionRow
+		Row{
 			
+			Rectangle{
+				border.color: "grey"
+				border.width: 2
+				anchors.leftMargin: 10
+				width: 30; height: 30
+				Image{
+					anchors.fill: parent
+					//anchors.left: typeSelectionText.right
+					//anchors.leftMargin: 10
+					//anchors.centerIn: parent
+					source: imagesource
+					
+					MouseArea{
+						anchors.fill: parent
+						onClicked: {
+							//pointRect.focus = true
+							container.actionPoint.setType(name)
+							//typeList.highlight = name
+						}
+					}
+				}
+			}
 		}
 	}
 	

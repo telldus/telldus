@@ -6,7 +6,8 @@ import "schedulerscripts.js" as Scripts
 	id: main
 	width: 800 //TODO how?
 	height: 600 //TODO how?
-	property variant sunData;
+	property variant sunData
+	property string dimImageSource: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/TelldusCenter_128.png" //TODO use this somehow?
 
 	Component{
 		id: listRow
@@ -17,15 +18,17 @@ import "schedulerscripts.js" as Scripts
 			width: parent.width; //TODO relative
 			height: 50
 			//color: "red"
-			Rectangle { border.color: "red"; width: 100; height:parent.height;
+			Rectangle {
+				border.color: "red"; width: 100; height:parent.height;
 				Text{
 					anchors.verticalCenter: parent.verticalCenter
 					anchors.horizontalCenter: parent.horizontalCenter
 					//text: "Device " + (index + 1) + "Name: " + name
 
-					text: modelData.name + height
+					text: modelData.name
 				}
 			}
+			
 			Rectangle { id: "deviceRow"; border.color: "blue"; width: parent.width-100; height:parent.height;
 
 				MouseArea {
@@ -37,29 +40,25 @@ import "schedulerscripts.js" as Scripts
 					//onEntered: parent.border.color = onHoverColor
 					//onExited:  parent.border.color = borderColor
 					onClicked: {
-						//ny point här
-
+						
 						var component = Qt.createComponent("ActionPoint.qml")
 						var dynamicPoint = component.createObject(deviceRow)
-						//dynamicPoint.x = mouseX (blir inte kvar)
-					//dynamicPoint.
 						dynamicPoint.x = mouseX - dynamicPoint.width/2 //xposition
-						//dynamicPoint.width = mouseX-
 						dynamicPoint.border.color = "blue"
+						
+						//TODO different states depending on the device							
 						dynamicPoint.addState("on");
 						dynamicPoint.addState("off");
 						dynamicPoint.addState("dim");
 						dynamicPoint.addState("bell");
+						//dynamicPoint.setFirstState("dim"); //when type is a stored value
+						dynamicPoint.setFirstState();
 						
 						var dynamicBar = actionBar.createObject(deviceRow)
 						dynamicBar.hangOnToPoint = dynamicPoint
 						
 						dialog.show(dynamicPoint) 
-						//dynamicBar.width = Scripts.getBarWidth(dynamicPoint, deviceRow.children)
-						//dynamicBar.color = "blue" //TODO dependent of point type
-						//dynamicBar.anchors.left = dynamicPoint.right
-						//dynamicBar.width = 100 //TODO dependent of this and next point position
-
+						
 						//deviceRow.add(point)
 						//TODO destroy? (only to remove them if needed)
 						//TODO komponenter med stor bokstav kanske?
@@ -214,7 +213,7 @@ import "schedulerscripts.js" as Scripts
 
 	Dialog {
 		id: dialog
-		anchors.centerIn: parent
+		//anchors.centerIn: parent
 		z: 150
 	}
 	
@@ -287,11 +286,4 @@ import "schedulerscripts.js" as Scripts
 	//kan man liksom göra hela linjen (från en vecka tillbaka) men inte visa den? Om det är vettigt... Då hade man tom kunnat zooma en vacker dag
 	//properties, ställa in dem...
 	//fuzziness
-	/*
-	 *  Dialog {
-		 id: dialog
-		 anchors.centerIn: parent
-		 z: 100
-	 }
-	 */
 }
