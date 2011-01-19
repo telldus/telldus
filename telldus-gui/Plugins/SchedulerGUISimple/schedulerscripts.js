@@ -67,3 +67,20 @@ function pad(number, length) {
    
     return str;
 }
+
+function recalculateWidth(currentx, pointList){
+	var prevPoint = null;
+	for(var i=0;i<pointList.length;i++){
+		if(pointList[i].isPoint != undefined && pointList[i] != currentPointRect){
+			if(pointList[i].x < currentx && (prevPoint == null || pointList[i].x > prevPoint.x)){
+				prevPoint = pointList[i];
+			}
+		}
+	}
+	
+	if(prevPoint == null){
+		return;
+	}
+	
+	prevPoint.width = getBarWidth(prevPoint.hangOnToBar, prevPoint, pointList);
+}

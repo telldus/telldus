@@ -94,9 +94,38 @@
 
 		color: buttonMouseAreaTrigger.pressed ? Qt.darker(buttonColor, 1.5) : buttonColor
 	}
-     
-     
-	Rectangle {  //TODO create common button-class
+	
+	Rectangle {  
+		id: removePoint
+		height: 20
+		width: 100
+		anchors.horizontalCenter: circleTrigger.horizontalCenter
+		y: circleTrigger.y + 30
+		
+		property color buttonColor: "lightgrey"
+
+		Text{
+			text: "Remove action"
+			anchors.verticalCenter: parent.verticalCenter
+			anchors.horizontalCenter: parent.horizontalCenter
+			anchors.margins: 2
+
+		}
+		MouseArea {
+			id: buttonMouseAreaRemovePoint
+			anchors.fill: parent
+			hoverEnabled: true
+			//onEntered: parent.border.color = onHoverColor
+			//onExited:  parent.border.color = borderColor
+			onClicked: {
+				container.actionPoint.remove();
+			}
+		}
+
+		color: buttonMouseAreaRemovePoint.pressed ? Qt.darker(buttonColor, 1.5) : buttonColor
+	}
+	
+	Rectangle {  //TODO create common button-class (but how to differentiate action?)
 		id: closeButton
 		height: 20
 		width: 100
@@ -174,7 +203,13 @@
 		height: 120
 		Image{
 			anchors.fill: parent
-			source: actionPoint.actionTypeImage  //TODO, set only when defined...
+			id: mainImage
+			states: State {
+				name: "typeLoaded"; when: actionPoint.actionTypeImage != undefined
+				PropertyChanges { target: mainImage
+					source: actionPoint.actionTypeImage
+				}
+			}
 		}
 	}
 	

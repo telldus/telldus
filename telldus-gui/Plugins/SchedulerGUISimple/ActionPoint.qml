@@ -11,6 +11,7 @@ Rectangle{
 	property string isPoint: "true"
 	property variant isLoaded
 	property int xvalue
+	property variant hangOnToBar
 	//property variant activeStates: []
 							 
 	Component.onCompleted: {
@@ -297,5 +298,17 @@ Rectangle{
 		}
 		
 		pointRect.state = "off"; //previous point should be "on" or "dim"														 
+	}
+	
+	function remove(){
+		//TODO kanske inte här, utan i listan?
+		//destroy den här, men också ta bort linjen samt räkna om linjen från punkten före...
+		if(pointRect.hangOnToBar != null){
+			hangOnToBar.destroy();
+		}
+		var x = pointRect.x;
+		var pointList = pointRect.parent.children;
+		pointRect.destroy();
+		Scripts.recalculateWidth(x, pointList);
 	}
 }
