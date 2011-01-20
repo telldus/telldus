@@ -3,7 +3,6 @@
 
 #include <QObject>
 #include <QScriptValue>
-#include <QVariant>
 
 class ScriptFunctionWrapper : public QObject
 {
@@ -16,7 +15,9 @@ signals:
 	void titleChanged();
 
 public slots:
-	QVariant call();
+	QScriptValue call();
+	QScriptValue callWith(const QScriptValue &val);
+
 
 private:
 	class PrivateData;
