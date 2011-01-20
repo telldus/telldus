@@ -4,6 +4,10 @@
 	id: container
 	property ActionPoint actionPoint
 	 
+	MouseArea{
+		anchors.fill: parent
+	}
+	
 	Component.onCompleted: {
 		//create default actionPoint, to avoid null values and binding errors
 		var component = Qt.createComponent("ActionPoint.qml")
