@@ -352,6 +352,8 @@
 		model: typeSelection
 		delegate: typeSelectionRow
 		highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
+		snapMode: ListView.SnapToItem
+		interactive: false
 	
 		//TODO can these paths be turned into some kind of constants? Import from common file or something?
 		ListModel{

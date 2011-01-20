@@ -28,7 +28,7 @@ import "schedulerscripts.js" as Scripts
 			}
 			
 			Rectangle { id: "deviceRow"; border.color: "blue"; width: parent.width-100; height:parent.height;
-
+				clip: true
 				MouseArea {
 					id: deviceMouseArea
 					anchors.fill: parent
@@ -81,6 +81,8 @@ import "schedulerscripts.js" as Scripts
 		//focus: true
 		footer: addButtonComponent
 		header: timeline
+		snapMode: ListView.SnapToItem
+		interactive: false
 	 }
 
 	 Component{
