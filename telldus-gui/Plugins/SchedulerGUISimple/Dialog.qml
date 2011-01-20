@@ -12,7 +12,7 @@
 		//create default actionPoint, to avoid null values and binding errors
 		var component = Qt.createComponent("ActionPoint.qml")
 		var dynamicPoint = component.createObject(container)
-		dynamicPoint.opacity = 0
+		dynamicPoint.opacity = 0  //TODO why not use "visible"? Test that...
 		dynamicPoint.width = 0
 		dynamicPoint.height = 0
 		container.actionPoint = dynamicPoint
@@ -204,10 +204,17 @@
 			TextInput{
 				id: inputFuzzyBeforeText
 				anchors.fill: parent
-				maximumLength: 4
+				maximumLength: 5
+				validator: IntValidator{bottom: 0; top: 10080;} //0 to a week...
 				selectByMouse: true
 				color: "#151515"; selectionColor: "mediumseagreen"
-				text: "0" //container.actionPoint.fuzzyBefore
+				text: actionPoint.fuzzyBefore
+			}
+			
+			Binding {
+				target: actionPoint
+				property: "fuzzyBefore"
+				value: inputFuzzyBeforeText.text
 			}
 		}
 		
@@ -223,7 +230,8 @@
 			TextInput{
 				id: inputFuzzyAfterText
 				anchors.fill: parent
-				maximumLength: 4
+				maximumLength: 5
+				validator: IntValidator{bottom: 0; top: 10080;} //0 to a week...
 				selectByMouse: true
 				color: "#151515"; selectionColor: "mediumseagreen"
 				text: actionPoint.fuzzyAfter

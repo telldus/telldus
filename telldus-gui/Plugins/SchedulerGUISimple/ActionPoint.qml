@@ -11,13 +11,16 @@ Rectangle{
 	property string isPoint: "true"
 	property variant isLoaded
 	property int xvalue
-	property variant hangOnToBar
-	property int fuzzyBefore: 0
+	//property variant hangOnToBar
+	property int fuzzyBefore: 100
 	property int fuzzyAfter: 55
 	
 	Component.onCompleted: {
 		//TODO useless really, still gets Cannot anchor to a null item-warning...
 		isLoaded = "true"
+		var dynamicBar = actionBar.createObject(pointRect)
+		dynamicBar.hangOnToPoint = pointRect
+		//pointRect.hangOnToBar = dynamicBar
 	}
 	//x: xposition
 	
@@ -32,7 +35,7 @@ Rectangle{
 	width: 30
 	height: 50
 	border.color: "black"
-	opacity: 0.8
+	opacity: 1 //0.8
 	z: 100
 	state: "on"
 	focus: true
@@ -123,7 +126,7 @@ Rectangle{
 				width: 20; height: 20
 				anchors.centerIn: parent
 				Text{
-					text: fuzzyAfter //TODO debug getTime(pointRect.x, pointRect.width); font.pointSize: 6; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignBottom
+					text: getTime(pointRect.x, pointRect.width); font.pointSize: 6; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignBottom
 				}
 			}
 			
@@ -158,6 +161,45 @@ Rectangle{
 			PropertyChanges { target: pointRect; actionTypeImage: imageActionBell }
 		}
 	]
+	
+	Rectangle{
+		width: fuzzyAfter + fuzzyBefore
+		height: constBarHeight
+		anchors.verticalCenter: parent.verticalCenter
+		x: parent.width/2 - fuzzyBefore
+		opacity: 0.2
+		z: 140
+		
+		Image{
+			anchors.fill: parent
+			fillMode: Image.Tile
+			source: "fuzzy.png"
+		}
+	}
+	
+	Component{
+		id: actionBar
+		Rectangle{
+			id: barRectangle
+			property variant hangOnToPoint
+			
+			height: constBarHeight
+			z: 110
+
+			states: State {
+				name: "pointLoaded"; when: pointRect.parent != null && pointRect.isLoaded != undefined && pointRect.verticalCenter != undefined  //TODO might aswell use hangOnToPoint != undefined, still get null item warning
+				PropertyChanges {
+					target: barRectangle
+					anchors.verticalCenter: pointRect.verticalCenter
+					anchors.left: pointRect.horizontalCenter
+					color: pointRect.actionTypeColor
+					opacity: pointRect.actionTypeOpacity
+					width: Scripts.getNextAndPrevBarWidth(actionBar, pointRect, pointRect.parent.children); //getBarWidth(actionBar, hangOnToPoint, hangOnToPoint.parent.children)
+				}
+			}
+
+		}
+	}
 	
 	function toggleType(){ //TODO other kind of selection method
 		var index = 0;
@@ -300,8 +342,6 @@ Rectangle{
 	}
 	
 	function remove(){
-		//TODO kanske inte här, utan i listan?
-		//destroy den här, men också ta bort linjen samt räkna om linjen från punkten före...
 		if(pointRect.hangOnToBar != null){
 			hangOnToBar.destroy();
 		}

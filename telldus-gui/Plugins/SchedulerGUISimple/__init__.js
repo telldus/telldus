@@ -32,6 +32,8 @@ com.telldus.schedulersimplegui = function() {
 		view.setProperty("imageActionBell", "bell.png");
 		view.setProperty("imageInfo", "info.png");
 		
+		view.setProperty("constBarHeight", 10);
+		
 		view.load("main.qml");
 		application.addWidget("scheduler.simple", "icon.png", view);
 

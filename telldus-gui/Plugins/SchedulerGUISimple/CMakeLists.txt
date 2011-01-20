@@ -19,6 +19,7 @@ SET( Plugin_EXTRA
 	dim.png
 	bell.png
 	info.png
+	fuzzy.png
 )
 
 INCLUDE( ../TelldusCenterPlugin.cmake NO_POLICY_SCOPE )

@@ -22,8 +22,7 @@ import "schedulerscripts.js" as Scripts
 				Text{
 					anchors.verticalCenter: parent.verticalCenter
 					anchors.horizontalCenter: parent.horizontalCenter
-					//text: "Device " + (index + 1) + "Name: " + name
-
+					
 					text: modelData.name
 				}
 			}
@@ -53,16 +52,15 @@ import "schedulerscripts.js" as Scripts
 						//dynamicPoint.setFirstState("dim"); //when type is a stored value
 						dynamicPoint.setFirstState();
 						
+						/*
 						var dynamicBar = actionBar.createObject(deviceRow)
 						dynamicBar.hangOnToPoint = dynamicPoint
 						dynamicPoint.hangOnToBar = dynamicBar
+						*/
 						
 						dialog.show(dynamicPoint) 
 						
-						//deviceRow.add(point)
-						//TODO destroy? (only to remove them if needed)
 						//TODO komponenter med stor bokstav kanske?
-						//om detta inte fungerar, testa med pathview...
 					}
 				}
 
@@ -137,13 +135,10 @@ import "schedulerscripts.js" as Scripts
 	 }
 
 	 Component{
-		 id: addButtonComponent
-		 //anchors { left: myListView.left; top: myListView.top; margins: 20 }
+		id: addButtonComponent
 		Row {
 			id: addButton
-			//anchors.fill: parent
-			//spacing: 10
-
+			
 			Rectangle {
 				height: 20
 				width: 100
@@ -162,9 +157,6 @@ import "schedulerscripts.js" as Scripts
 				MouseArea {
 					id: buttonMouseArea
 					anchors.fill: parent
-					//hoverEnabled: true
-					//onEntered: parent.border.color = onHoverColor
-					//onExited:  parent.border.color = borderColor
 					onClicked: {
 						addDevice.call()
 					}
@@ -176,44 +168,8 @@ import "schedulerscripts.js" as Scripts
 		}
 	 }
 
-	Component{
-		id: actionBar
-		Rectangle{
-			id: barRectangle
-			property variant hangOnToPoint
-			//width: 100 //TODO dependent on hangOnToPoint and next point positions
-
-			height: 10
-			/*
-			color: hangOnToPoint.actionType //"blue" //TODO, dependent on hangOnToPoint
-			anchors.verticalCenter: hangOnToPoint.verticalCenter
-			anchors.left: hangOnToPoint.horizontalCenter
-			*/
-			z: 110
-
-			//state actionType
-			// couldnt get this to work:
-			// (if it works later on, try to set opacity for actionPoint in this way too)
-			states: State {
-				name: "pointLoaded"; when: hangOnToPoint.isLoaded != undefined && hangOnToPoint.verticalCenter != undefined  //TODO might aswell use hangOnToPoint != undefined, still get null item warning
-				PropertyChanges {
-					target: barRectangle
-					anchors.verticalCenter: hangOnToPoint.verticalCenter
-					anchors.left: hangOnToPoint.horizontalCenter
-					color: hangOnToPoint.actionTypeColor
-					opacity: hangOnToPoint.actionTypeOpacity
-					width: Scripts.getNextAndPrevBarWidth(actionBar, hangOnToPoint, hangOnToPoint.parent.children); //getBarWidth(actionBar, hangOnToPoint, hangOnToPoint.parent.children)
-				}
-				//anchors.verticalCenter: hangOnToPoint.verticalCenter
-				//anchors.left: hangOnToPoint.horizontalCenter
-			}
-
-		}
-	}
-
 	Dialog {
 		id: dialog
-		//anchors.centerIn: parent
 		z: 150
 	}
 	
