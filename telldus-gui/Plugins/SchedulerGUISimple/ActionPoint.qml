@@ -309,6 +309,7 @@ Rectangle{
 		pointRect.isPoint = "false"
 		var pointList = pointRect.parent.children;
 		pointRect.destroy();
+		dialog.hide();
 		//Scripts.recalculateWidth(x, pointList);
 	}
 }
