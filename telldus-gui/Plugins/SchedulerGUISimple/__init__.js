@@ -22,6 +22,16 @@ com.telldus.schedulersimplegui = function() {
 			deviceList.push(list[i]);
 		}
 		view.setProperty('deviceModel', deviceList);
+		//set images:
+		view.setProperty("imageTriggerSunrise", "sunrise.png");
+		view.setProperty("imageTriggerSunset", "sunset.png");
+		view.setProperty("imageTriggerAbsolute", "absolute.png");
+		view.setProperty("imageActionOn", "on.png");
+		view.setProperty("imageActionOff", "off.png");
+		view.setProperty("imageActionDim", "dim.png");
+		view.setProperty("imageActionBell", "bell.png");
+		view.setProperty("imageInfo", "info.png");
+		
 		view.load("main.qml");
 		application.addWidget("scheduler.simple", "icon.png", view);
 

@@ -200,7 +200,7 @@
 			TextInput{
 				id: inputFuzzyBeforeText
 				anchors.fill: parent
-				maximumLength: 5
+				maximumLength: 4
 				selectByMouse: true
 				color: "#151515"; selectionColor: "mediumseagreen"
 				text: "0" //container.actionPoint.fuzzyBefore
@@ -219,7 +219,7 @@
 			TextInput{
 				id: inputFuzzyAfterText
 				anchors.fill: parent
-				maximumLength: 5
+				maximumLength: 4
 				selectByMouse: true
 				color: "#151515"; selectionColor: "mediumseagreen"
 				text: actionPoint.fuzzyAfter
@@ -238,7 +238,9 @@
 			anchors.leftMargin: 5
 			anchors.verticalCenter: textFuzzyBeforeUnit.verticalCenter
 			
-			source: "icon.png" //TODO info-icon
+			source: imageInfo
+			width: 15
+			height: 15
 			
 			MouseArea{
 				anchors.fill: parent
@@ -259,7 +261,9 @@
 			anchors.leftMargin: 5
 			anchors.verticalCenter: textFuzzyAfterUnit.verticalCenter
 			
-			source: "icon.png" //TODO info-icon
+			source: imageInfo
+			width: 15
+			height: 15
 			
 			MouseArea{
 				anchors.fill: parent
@@ -342,19 +346,19 @@
 			id: typeSelection
 			ListElement{
 				name: "on"
-				imagesource: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices.png"
+				imagesource: "on.png" //TODO cannot use javascript properties here... do in some other way, maybe a list with names here?
 			}
 			ListElement{
 				name: "off"
-				imagesource: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices-bw.png"
+				imagesource: "off.png"
 			}
 			ListElement{
 				name: "dim"
-				imagesource: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/TelldusCenter_128.png"
+				imagesource: "dim.png"
 			}
 			ListElement{
 				name: "bell"
-				imagesource: "icon.png"
+				imagesource: "bell.png"
 			}
 		}
 	}
@@ -373,13 +377,6 @@
 			anchors.fill: parent
 			id: mainImage
 			source: actionPoint.actionTypeImage
-			/*states: State {
-				name: "typeLoaded"; when: actionPoint.actionTypeImage != undefined
-				PropertyChanges { target: mainImage
-					source: actionPoint.actionTypeImage
-				}
-			}
-			*/
 		}
 	}
 	

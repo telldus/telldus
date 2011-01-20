@@ -7,8 +7,7 @@ import "schedulerscripts.js" as Scripts
 	width: 800 //TODO how?
 	height: 600 //TODO how?
 	property variant sunData
-	property string dimImageSource: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/TelldusCenter_128.png" //TODO use this somehow?
-
+	
 	Component{
 		id: listRow
 		

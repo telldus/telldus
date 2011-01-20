@@ -97,21 +97,21 @@ Rectangle{
 				State {
 					//TODO if no sunrise/sunset exists (arctic circle...), check so it works anyway
 					name: "sunrise"
-					PropertyChanges { target: triggerImage; source: "/home/stefan/Downloads/sunrise.png"; opacity: 1 } //TODO: images!!
+					PropertyChanges { target: triggerImage; source: imageTriggerSunrise; opacity: 1 }
 					PropertyChanges { target: triggerTime; opacity: 0 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: undefined }
 					PropertyChanges { target: pointRect; x: getSunRiseTime.call(pointRect.parent.width, pointRect.width) }
 				},
 				State {
 					name: "sunset"
-					PropertyChanges { target: triggerImage; source: "/home/stefan/Downloads/sunset.png"; opacity: 1 } //TODO: images!!
+					PropertyChanges { target: triggerImage; source: imageTriggerSunset; opacity: 1 }
 					PropertyChanges { target: triggerTime; opacity: 0 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: undefined }
 					PropertyChanges { target: pointRect; x: getSunSetTime.call(pointRect.parent.width, pointRect.width) }
 				},
 				State {
 					name: "absolute"
-					PropertyChanges { target: triggerImage; opacity: 0; } //TODO: images!!
+					PropertyChanges { target: triggerImage; opacity: 0; }
 					PropertyChanges { target: triggerTime; opacity: 1 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: parent }
 					PropertyChanges { target: pointRect; x: xvalue }
@@ -122,8 +122,6 @@ Rectangle{
 				id: triggerTime
 				width: 20; height: 20
 				anchors.centerIn: parent
-				//anchors.horizontalCenter: parent.horizontalCenter
-				//anchors.verticalCenter: parent.verticalCenter
 				Text{
 					text: fuzzyAfter //TODO debug getTime(pointRect.x, pointRect.width); font.pointSize: 6; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignBottom
 				}
@@ -133,7 +131,7 @@ Rectangle{
 				id: triggerImage
 				anchors.fill: parent
 				width: 20; height: 20
-				source: "/home/stefan/Downloads/11949889941371111141clock_michael_breuer_01.svg.hi.png"
+				source: imageTriggerAbsolute
 			}
 		}
 	}
@@ -142,24 +140,22 @@ Rectangle{
 		State {
 			name: "on"
 			PropertyChanges { target: pointRect; actionTypeColor: "blue"; actionTypeOpacity: 1 } //TODO: images!!
-			PropertyChanges { target: pointRect; actionTypeImage: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices.png" }
+			PropertyChanges { target: pointRect; actionTypeImage: imageActionOn }
 		},
 		State{
 			name: "off"
 			PropertyChanges { target: pointRect; actionTypeColor: "gainsboro"; actionTypeOpacity: 0 }
-			PropertyChanges { target: pointRect; actionTypeImage: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices-bw.png" }
-			//PropertyChanges { target: actionImage; source: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices-bw.png" }
+			PropertyChanges { target: pointRect; actionTypeImage: imageActionOff }
 		},
 		State{
 			name: "dim"
 			PropertyChanges { target: pointRect; actionTypeColor: "green"; actionTypeOpacity: 1 }
-			PropertyChanges { target: pointRect; actionTypeImage: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/TelldusCenter_128.png" }
-			//something opacity = dim for example
+			PropertyChanges { target: pointRect; actionTypeImage: imageActionDim }
 		},
 		State{
 			name: "bell"
 			PropertyChanges { target: pointRect; actionTypeColor: getLastPointColor() }
-			PropertyChanges { target: pointRect; actionTypeImage: "icon.png" }
+			PropertyChanges { target: pointRect; actionTypeImage: imageActionBell }
 		}
 	]
 	

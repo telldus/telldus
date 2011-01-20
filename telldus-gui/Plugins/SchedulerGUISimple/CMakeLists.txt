@@ -11,6 +11,14 @@ SET( Plugin_EXTRA
 	icon.png
 	main.qml
 	schedulerscripts.js
+	absolute.png
+	sunrise.png
+	sunset.png
+	on.png
+	off.png
+	dim.png
+	bell.png
+	info.png
 )
 
 INCLUDE( ../TelldusCenterPlugin.cmake NO_POLICY_SCOPE )
