@@ -1,21 +1,40 @@
  import Qt 4.7
 
  Rectangle {
-     id: container
-     property ActionPoint actionPoint
+	id: container
+	property ActionPoint actionPoint
+	 
+	Component.onCompleted: {
+		//create default actionPoint, to avoid null values and binding errors
+		var component = Qt.createComponent("ActionPoint.qml")
+		var dynamicPoint = component.createObject(container)
+		dynamicPoint.opacity = 0
+		dynamicPoint.width = 0
+		dynamicPoint.height = 0
+		container.actionPoint = dynamicPoint
+	}
+	
+	/*
+	states: State{
+		name: "visible"; when: actionPoint.fuzzyAfter != undefined
+		PropertyChanges{
+			target: container; fuzzyAfter: actionPoint.fuzzyAfter
+		}
+	}
+	*/
      
-     function show(actionPoint) {
-         container.opacity = 1;
-		 container.border.color = "black"
-		 container.border.width = 2
-		 container.actionPoint = actionPoint
-		 
-		 var rootCoordinates = actionPoint.mapToItem(null, actionPoint.x, actionPoint.y);
-		 //container.x = rootCoordinates.x + actionPoint.parent.width/2 - container.width/2;
-		 container.y = rootCoordinates.y + actionPoint.height + 10;
-		 container.width = actionPoint.parent.width;
-		 container.x = (actionPoint.parent.parent.width - container.width)/2;
-	 }
+	function show(actionPoint) {
+		container.opacity = 1;
+		container.border.color = "black"
+		container.border.width = 2
+		container.actionPoint = actionPoint
+		
+		var rootCoordinates = actionPoint.mapToItem(null, actionPoint.x, actionPoint.y);
+		//container.x = rootCoordinates.x + actionPoint.parent.width/2 - container.width/2;
+		container.y = rootCoordinates.y + actionPoint.height + 10;
+		container.width = actionPoint.parent.width;
+		container.x = (actionPoint.parent.parent.width - container.width)/2;
+	}
 
      function hide() {
          container.opacity = 0;
@@ -54,7 +73,7 @@
 		MouseArea {
 			id: buttonMouseAreaType
 			anchors.fill: parent
-			hoverEnabled: true
+			//hoverEnabled: true
 			//onEntered: parent.border.color = onHoverColor
 			//onExited:  parent.border.color = borderColor
 			onClicked: {
@@ -84,7 +103,7 @@
 		MouseArea {
 			id: buttonMouseAreaTrigger
 			anchors.fill: parent
-			hoverEnabled: true
+			//hoverEnabled: true
 			//onEntered: parent.border.color = onHoverColor
 			//onExited:  parent.border.color = borderColor
 			onClicked: {
@@ -114,7 +133,7 @@
 		MouseArea {
 			id: buttonMouseAreaRemovePoint
 			anchors.fill: parent
-			hoverEnabled: true
+			//hoverEnabled: true
 			//onEntered: parent.border.color = onHoverColor
 			//onExited:  parent.border.color = borderColor
 			onClicked: {
@@ -123,6 +142,155 @@
 		}
 
 		color: buttonMouseAreaRemovePoint.pressed ? Qt.darker(buttonColor, 1.5) : buttonColor
+	}
+	
+	Rectangle{
+		id: fuzzyPanel
+		height: 100
+		width: 80
+		
+		anchors.left: removePoint.right
+		anchors.leftMargin: 10
+		anchors.top: parent.top
+		anchors.topMargin: 10
+		
+		Text{
+			id: textFuzzyBefore
+			anchors.left: parent.left
+			anchors.leftMargin: 5
+			anchors.top: parent.top
+			anchors.topMargin: 5
+			text: "Fuzzy before:"
+		}
+		
+		Text{
+			id: textFuzzyBeforeUnit
+			anchors.left: inputFuzzyBefore.right
+			anchors.leftMargin: 5
+			anchors.verticalCenter: textFuzzyBefore.verticalCenter
+			text: "seconds"
+		}
+		
+		Text{
+			id: textFuzzyAfter
+			anchors.left: parent.left
+			anchors.leftMargin: 5
+			anchors.top: textFuzzyBefore.bottom
+			anchors.topMargin: 5
+			text: "Fuzzy after:"
+		}
+		
+		Text{
+			id: textFuzzyAfterUnit
+			anchors.left: inputFuzzyBefore.right
+			anchors.leftMargin: 5
+			anchors.verticalCenter: textFuzzyAfter.verticalCenter
+			text: "seconds"
+		}
+		
+		Rectangle{
+			id: inputFuzzyBefore
+			anchors.left: textFuzzyBefore.right
+			anchors.leftMargin: 5
+			anchors.verticalCenter: textFuzzyBefore.verticalCenter
+			width: 35
+			height: textFuzzyBefore.height
+			border.width: 1
+			
+			TextInput{
+				id: inputFuzzyBeforeText
+				anchors.fill: parent
+				maximumLength: 5
+				selectByMouse: true
+				color: "#151515"; selectionColor: "mediumseagreen"
+				text: "0" //container.actionPoint.fuzzyBefore
+			}
+		}
+		
+		Rectangle{
+			id: inputFuzzyAfter
+			anchors.left: textFuzzyAfter.right
+			anchors.leftMargin: 5
+			anchors.verticalCenter: textFuzzyAfter.verticalCenter
+			width: 35
+			height: textFuzzyAfter.height
+			border.width: 1
+			
+			TextInput{
+				id: inputFuzzyAfterText
+				anchors.fill: parent
+				maximumLength: 5
+				selectByMouse: true
+				color: "#151515"; selectionColor: "mediumseagreen"
+				text: actionPoint.fuzzyAfter
+			}
+			
+			Binding {
+				target: actionPoint
+				property: "fuzzyAfter"
+				value: inputFuzzyAfterText.text
+			}
+		}
+		
+		Image{
+			//TODO turn into component?
+			anchors.left: textFuzzyBeforeUnit.right
+			anchors.leftMargin: 5
+			anchors.verticalCenter: textFuzzyBeforeUnit.verticalCenter
+			
+			source: "icon.png" //TODO info-icon
+			
+			MouseArea{
+				anchors.fill: parent
+				hoverEnabled: true
+				onEntered: {
+					infobox.opacity = 1
+					infobox.infoboxtext = "Enter a value indicating how many seconds before the set value that the action may be executed. The action will be executed at a random time within the interval."
+				}
+				onExited: {
+					infobox.opacity = 0
+				}
+			}
+		}
+		
+		Image{
+			//TODO turn into component?
+			anchors.left: textFuzzyAfterUnit.right
+			anchors.leftMargin: 5
+			anchors.verticalCenter: textFuzzyAfterUnit.verticalCenter
+			
+			source: "icon.png" //TODO info-icon
+			
+			MouseArea{
+				anchors.fill: parent
+				hoverEnabled: true
+				onEntered: {
+					infobox.opacity = 1
+					infobox.infoboxtext = "Enter a value indicating how many seconds after the set value that the action may be executed. The action will be executed at a random time within the interval."
+				}
+				onExited: {
+					infobox.opacity = 0
+				}
+			}
+		}
+		
+		Rectangle{
+			id: infobox
+			property alias infoboxtext: infoboxtext.text
+			opacity: 0
+			color: "antiquewhite"
+			width: infoboxtext.width + 4
+			height: infoboxtext.height + 4
+			border.color: "black"
+			border.width: 1
+			Text{
+				id: infoboxtext
+				anchors.centerIn: parent
+				width: 200
+				wrapMode: Text.WordWrap
+				text: ""
+			}
+		}
 	}
 	
 	Rectangle {  //TODO create common button-class (but how to differentiate action?)
@@ -145,7 +313,7 @@
 		MouseArea {
 			id: buttonMouseAreaClose
 			anchors.fill: parent
-			hoverEnabled: true
+			//hoverEnabled: true
 			//onEntered: parent.border.color = onHoverColor
 			//onExited:  parent.border.color = borderColor
 			onClicked: {
@@ -204,12 +372,14 @@
 		Image{
 			anchors.fill: parent
 			id: mainImage
-			states: State {
+			source: actionPoint.actionTypeImage
+			/*states: State {
 				name: "typeLoaded"; when: actionPoint.actionTypeImage != undefined
 				PropertyChanges { target: mainImage
 					source: actionPoint.actionTypeImage
 				}
 			}
+			*/
 		}
 	}
 	

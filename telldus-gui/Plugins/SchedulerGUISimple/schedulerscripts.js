@@ -13,14 +13,13 @@ function getBarWidth(currentBar, currentPointRect, pointList){
 	var maxWidth = currentPointRect.parent.width;
 	var nextX = maxWidth
 	var halfPointWidth = currentPointRect.width / 2
-	for(var i=1;i<pointList.length;i++){
-		if (pointList[i].isPoint != undefined) {
+	for(var i=0;i<pointList.length;i++){
+		if (pointList[i].isPoint != undefined && pointList[i].isPoint == "true") {
 			if((pointList[i].x + halfPointWidth) < nextX && (pointList[i].x - halfPointWidth) > (currentPointRect.x + halfPointWidth)){
 				nextX = pointList[i].x + halfPointWidth;
 			}
 		}
 	}
-	
 	return nextX - (currentPointRect.x + halfPointWidth);
 }
 
@@ -28,7 +27,7 @@ function getPreviousState(currentPointRect, pointList){
 	
 	var prevPoint = null;
 	for(var i=0;i<pointList.length;i++){
-		if(pointList[i].isPoint != undefined && pointList[i] != currentPointRect){
+		if(pointList[i].isPoint != undefined && pointList[i].isPoint == "true" && pointList[i] != currentPointRect){
 			if(pointList[i].x < currentPointRect.x && (prevPoint == null || pointList[i].x > prevPoint.x) && pointList[i].state != "bell"){ //TODO when more than "bell", make dynamic
 				prevPoint = pointList[i];
 			}
@@ -68,19 +67,30 @@ function pad(number, length) {
     return str;
 }
 
+function getNextAndPrevBarWidth(currentBar, currentPointRect, pointList){
+	//TODO error whn < 30 (width)
+	//recalculateWidth(currentPointRect.x, pointList);
+	return getBarWidth(currentBar, currentPointRect, pointList);
+}
+
+/*
 function recalculateWidth(currentx, pointList){
 	var prevPoint = null;
 	for(var i=0;i<pointList.length;i++){
-		if(pointList[i].isPoint != undefined && pointList[i] != currentPointRect){
+		if(pointList[i].isPoint != undefined && pointList[i].isPoint == "true"){
 			if(pointList[i].x < currentx && (prevPoint == null || pointList[i].x > prevPoint.x)){
 				prevPoint = pointList[i];
 			}
 		}
 	}
 	
-	if(prevPoint == null){
+	if(prevPoint == null || prevPoint.hangOnToBar == undefined){
 		return;
 	}
 	
-	prevPoint.width = getBarWidth(prevPoint.hangOnToBar, prevPoint, pointList);
+	var temp = getBarWidth(prevPoint.hangOnToBar, prevPoint, pointList);
+	print(temp);
+	
+	//prevPoint.hangOnToBar.width = temp;
 }
+*/

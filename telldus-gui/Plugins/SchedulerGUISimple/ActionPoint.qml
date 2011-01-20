@@ -12,8 +12,9 @@ Rectangle{
 	property variant isLoaded
 	property int xvalue
 	property variant hangOnToBar
-	//property variant activeStates: []
-							 
+	property int fuzzyBefore: 0
+	property int fuzzyAfter: 55
+	
 	Component.onCompleted: {
 		//TODO useless really, still gets Cannot anchor to a null item-warning...
 		isLoaded = "true"
@@ -71,7 +72,6 @@ Rectangle{
 		drag.minimumX: -15 //TODO make relative
 		drag.maximumX: 685 //TODO make relative!!
 		//TODO make it impossible to overlap (on release)
-		//onPositionChanged: { value = (maximum - minimum) * (handle.x-2) / slider.xMax + minimum; }
 	}
 	
 	Column{
@@ -125,7 +125,7 @@ Rectangle{
 				//anchors.horizontalCenter: parent.horizontalCenter
 				//anchors.verticalCenter: parent.verticalCenter
 				Text{
-					text: getTime(pointRect.x, pointRect.width); font.pointSize: 6; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignBottom
+					text: fuzzyAfter //TODO debug getTime(pointRect.x, pointRect.width); font.pointSize: 6; horizontalAlignment: Text.AlignHCenter; verticalAlignment: Text.AlignBottom
 				}
 			}
 			
@@ -229,7 +229,10 @@ Rectangle{
 			}
 		}
 		
+		var test = ""
 		//TODO Binding loop here when moving transperent point over other point
+		//...or just changing state to transparent
+		//something with point depending on point depending on point?
 		if(prevPoint == null || prevPoint.actionTypeOpacity == 0){
 			//no point before, no bar after either
 			actionTypeOpacity = 0
@@ -307,8 +310,9 @@ Rectangle{
 			hangOnToBar.destroy();
 		}
 		var x = pointRect.x;
+		pointRect.isPoint = "false"
 		var pointList = pointRect.parent.children;
 		pointRect.destroy();
-		Scripts.recalculateWidth(x, pointList);
+		//Scripts.recalculateWidth(x, pointList);
 	}
 }

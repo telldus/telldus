@@ -34,7 +34,7 @@ import "schedulerscripts.js" as Scripts
 				MouseArea {
 					id: deviceMouseArea
 					anchors.fill: parent
-					hoverEnabled: true
+					//hoverEnabled: true
 
 					//TODO ändra muspekaren kanske?
 					//onEntered: parent.border.color = onHoverColor
@@ -163,7 +163,7 @@ import "schedulerscripts.js" as Scripts
 				MouseArea {
 					id: buttonMouseArea
 					anchors.fill: parent
-					hoverEnabled: true
+					//hoverEnabled: true
 					//onEntered: parent.border.color = onHoverColor
 					//onExited:  parent.border.color = borderColor
 					onClicked: {
@@ -203,7 +203,7 @@ import "schedulerscripts.js" as Scripts
 					anchors.left: hangOnToPoint.horizontalCenter
 					color: hangOnToPoint.actionTypeColor
 					opacity: hangOnToPoint.actionTypeOpacity
-					width: Scripts.getBarWidth(actionBar, hangOnToPoint, hangOnToPoint.parent.children)
+					width: Scripts.getNextAndPrevBarWidth(actionBar, hangOnToPoint, hangOnToPoint.parent.children); //getBarWidth(actionBar, hangOnToPoint, hangOnToPoint.parent.children)
 				}
 				//anchors.verticalCenter: hangOnToPoint.verticalCenter
 				//anchors.left: hangOnToPoint.horizontalCenter
