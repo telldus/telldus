@@ -3,6 +3,19 @@
  Rectangle {
 	id: container
 	property ActionPoint actionPoint
+	
+	focus: true
+	Keys.onPressed: {
+		if (event.key == Qt.Key_Left) {
+			actionPoint.x = actionPoint.x - 1
+			event.accepted = true;
+		}
+		else if (event.key == Qt.Key_Right) {
+			actionPoint.x = actionPoint.x + 1
+			event.accepted = true;
+		}
+		tryme(event, "container");
+	}
 	 
 	MouseArea{
 		anchors.fill: parent
@@ -421,6 +434,10 @@
 				}
 			}
 		}
+	}
+	
+	function tryme(event, origin){
+		print("KEY: " + event.key + " Från: " + origin);
 	}
 	
  } 
