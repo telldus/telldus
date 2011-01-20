@@ -168,7 +168,7 @@
 			anchors.left: inputFuzzyBefore.right
 			anchors.leftMargin: 5
 			anchors.verticalCenter: textFuzzyBefore.verticalCenter
-			text: "seconds"
+			text: "minutes"
 		}
 		
 		Text{
@@ -182,10 +182,10 @@
 		
 		Text{
 			id: textFuzzyAfterUnit
-			anchors.left: inputFuzzyBefore.right
+			anchors.left: inputFuzzyAfter.right
 			anchors.leftMargin: 5
 			anchors.verticalCenter: textFuzzyAfter.verticalCenter
-			text: "seconds"
+			text: "minutes"
 		}
 		
 		Rectangle{
@@ -245,7 +245,7 @@
 				hoverEnabled: true
 				onEntered: {
 					infobox.opacity = 1
-					infobox.infoboxtext = "Enter a value indicating how many seconds before the set value that the action may be executed. The action will be executed at a random time within the interval."
+					infobox.infoboxtext = "Enter a value indicating how many minutes before the set value that the action may be executed. The action will be executed at a random time within the interval."
 				}
 				onExited: {
 					infobox.opacity = 0
@@ -266,7 +266,7 @@
 				hoverEnabled: true
 				onEntered: {
 					infobox.opacity = 1
-					infobox.infoboxtext = "Enter a value indicating how many seconds after the set value that the action may be executed. The action will be executed at a random time within the interval."
+					infobox.infoboxtext = "Enter a value indicating how many minutes after the set value that the action may be executed. The action will be executed at a random time within the interval."
 				}
 				onExited: {
 					infobox.opacity = 0

@@ -11,16 +11,16 @@ function getActiveStates(){
 function getBarWidth(currentBar, currentPointRect, pointList){
 	
 	var maxWidth = currentPointRect.parent.width;
-	var nextX = maxWidth
-	var halfPointWidth = currentPointRect.width / 2
+	var nextX = maxWidth - currentPointRect.width / 2
 	for(var i=0;i<pointList.length;i++){
 		if (pointList[i].isPoint != undefined && pointList[i].isPoint == "true") {
-			if((pointList[i].x + halfPointWidth) < nextX && (pointList[i].x - halfPointWidth) > (currentPointRect.x + halfPointWidth)){
-				nextX = pointList[i].x + halfPointWidth;
+			if(pointList[i].x < nextX && pointList[i].x > currentPointRect.x){
+				nextX = pointList[i].x;
 			}
 		}
 	}
-	return nextX - (currentPointRect.x + halfPointWidth);
+	
+	return (nextX - currentPointRect.x);
 }
 
 function getPreviousState(currentPointRect, pointList){
