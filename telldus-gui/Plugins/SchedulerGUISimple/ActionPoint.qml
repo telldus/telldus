@@ -3,17 +3,17 @@ import "schedulerscripts.js" as Scripts
 
 Rectangle{
 	id: pointRect
-	//property variant xposition
 	property string actionTypeColor: "blue" //TODO default value
 	property int actionType: 1 //TODO default value
 	property double actionTypeOpacity: 1
-	property string actionTypeImage: "/home/stefan/Projects/tellstick/trunk/telldus-gui/TelldusCenter/images/devices.png"
+	property string actionTypeImage: imageActionOn
 	property string isPoint: "true"
 	property variant isLoaded
 	property int xvalue
-	//property variant hangOnToBar
-	property int fuzzyBefore: 100
-	property int fuzzyAfter: 55
+	property int fuzzyBefore: 0
+	property int fuzzyAfter: 0
+	property int offset: -100
+	property alias triggerstate: trigger.state
 	
 	Component.onCompleted: {
 		//TODO useless really, still gets Cannot anchor to a null item-warning...
@@ -22,14 +22,6 @@ Rectangle{
 		dynamicBar.hangOnToPoint = pointRect
 		//pointRect.hangOnToBar = dynamicBar
 	}
-	//x: xposition
-	
-	/*
-	states: State {
-		name: "myState"; when: xposition != undefined
-		PropertyChanges { target: pointRect; x: myListView.width - xposition } 
-	}
-	*/
 	
 	//use item instead of rectangle (no border then though) to make it invisible (opacity: 0)
 	width: 30
@@ -103,14 +95,16 @@ Rectangle{
 					PropertyChanges { target: triggerImage; source: imageTriggerSunrise; opacity: 1 }
 					PropertyChanges { target: triggerTime; opacity: 0 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: undefined }
-					PropertyChanges { target: pointRect; x: getSunRiseTime.call(pointRect.parent.width, pointRect.width) }
+					PropertyChanges { target: pointRect; x: getSunRiseTime.call(pointRect.parent.width, pointRect.width) + minutesToTimelineUnits(pointRect.offset) } //TODO se nedan
+					PropertyChanges { target: dialog; offsetPanelOpacity: 1 }
 				},
 				State {
 					name: "sunset"
 					PropertyChanges { target: triggerImage; source: imageTriggerSunset; opacity: 1 }
 					PropertyChanges { target: triggerTime; opacity: 0 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: undefined }
-					PropertyChanges { target: pointRect; x: getSunSetTime.call(pointRect.parent.width, pointRect.width) }
+					PropertyChanges { target: pointRect; x: getSunSetTime.call(pointRect.parent.width, pointRect.width) + minutesToTimelineUnits(pointRect.offset) } //TODO räkna om till tidsunits
+					PropertyChanges { target: dialog; offsetPanelOpacity: 1 }
 				},
 				State {
 					name: "absolute"
@@ -118,6 +112,7 @@ Rectangle{
 					PropertyChanges { target: triggerTime; opacity: 1 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: parent }
 					PropertyChanges { target: pointRect; x: xvalue }
+					PropertyChanges { target: dialog; offsetPanelOpacity: 0 }
 				}
 			]
 			
@@ -142,7 +137,7 @@ Rectangle{
 	states: [
 		State {
 			name: "on"
-			PropertyChanges { target: pointRect; actionTypeColor: "blue"; actionTypeOpacity: 1 } //TODO: images!!
+			PropertyChanges { target: pointRect; actionTypeColor: "blue"; actionTypeOpacity: 1 } 
 			PropertyChanges { target: pointRect; actionTypeImage: imageActionOn }
 		},
 		State{
@@ -163,10 +158,10 @@ Rectangle{
 	]
 	
 	Rectangle{
-		width: fuzzyAfter + fuzzyBefore
+		width: minutesToTimelineUnits(fuzzyAfter + fuzzyBefore)
 		height: constBarHeight
 		anchors.verticalCenter: parent.verticalCenter
-		x: parent.width/2 - fuzzyBefore
+		x: parent.width/2 - minutesToTimelineUnits(fuzzyBefore)
 		opacity: 0.2
 		z: 140
 		
@@ -194,7 +189,7 @@ Rectangle{
 					anchors.left: pointRect.horizontalCenter
 					color: pointRect.actionTypeColor
 					opacity: pointRect.actionTypeOpacity
-					width: Scripts.getNextAndPrevBarWidth(actionBar, pointRect, pointRect.parent.children); //getBarWidth(actionBar, hangOnToPoint, hangOnToPoint.parent.children)
+					width: Scripts.getNextAndPrevBarWidth(actionBar, pointRect, pointRect.parent.children);
 				}
 			}
 
@@ -220,21 +215,6 @@ Rectangle{
 		}
 		
 		pointRect.state = activeStates[index];
-
-		/*
-		if(pointRect.state == "on"){
-			pointRect.state = "off"
-		}
-		else if(pointRect.state == "off"){
-			pointRect.state = "dim"
-		}
-		else if(pointRect.state == "dim"){
-			pointRect.state = "bell"
-		}
-		else if(pointRect.state == "bell"){
-			pointRect.state = "on"
-		}
-		*/
 	}
 	
 	function setType(name){
@@ -250,7 +230,7 @@ Rectangle{
 			trigger.state = "absolute";
 		}
 		else if(trigger.state == "absolute"){
-			pointRect.xvalue = pointRect.x; //TODO right place to set it?
+			pointRect.xvalue = pointRect.x;
 			trigger.state = "sunrise";
 		}
 	}
@@ -267,7 +247,6 @@ Rectangle{
 			}
 		}
 		
-		var test = ""
 		//TODO Binding loop here when moving transperent point over other point
 		//...or just changing state to transparent
 		//something with point depending on point depending on point?
@@ -292,8 +271,6 @@ Rectangle{
 		partOfHour = Math.floor(partOfHour);
 		partOfHour = Scripts.pad(partOfHour, 2);
 		hours = Scripts.pad(hours, 2);
-		//print("Hours: " + hours);
-		//print("Minutes? " + partOfHour);
 		return hours + ":" + partOfHour;
 	}
 	
@@ -350,6 +327,12 @@ Rectangle{
 		var pointList = pointRect.parent.children;
 		pointRect.destroy();
 		dialog.hide();
-		//Scripts.recalculateWidth(x, pointList);
+	}
+	
+	function minutesToTimelineUnits(minutes){
+		if(pointRect.parent == null){
+			return 0;
+		}
+		return pointRect.parent.width/24 * (minutes/60);
 	}
 }

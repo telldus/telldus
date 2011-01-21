@@ -19,7 +19,6 @@ function getBarWidth(currentBar, currentPointRect, pointList){
 			}
 		}
 	}
-	
 	return (nextX - currentPointRect.x);
 }
 
@@ -50,8 +49,6 @@ function isMidnightDark(){
 	var sunset = main.sunData[1].split(':');
 	
 	if(sunset[0] < sunrise[0] || (sunset[0] == sunrise[0] && sunset[1] < sunrise[1])){
-		print("Rise: " + sunrise);
-		print("Set: " + sunset);
 		return false;
 	}
 	return true;
@@ -68,29 +65,5 @@ function pad(number, length) {
 }
 
 function getNextAndPrevBarWidth(currentBar, currentPointRect, pointList){
-	//TODO error whn < 30 (width)
-	//recalculateWidth(currentPointRect.x, pointList);
 	return getBarWidth(currentBar, currentPointRect, pointList);
 }
-
-/*
-function recalculateWidth(currentx, pointList){
-	var prevPoint = null;
-	for(var i=0;i<pointList.length;i++){
-		if(pointList[i].isPoint != undefined && pointList[i].isPoint == "true"){
-			if(pointList[i].x < currentx && (prevPoint == null || pointList[i].x > prevPoint.x)){
-				prevPoint = pointList[i];
-			}
-		}
-	}
-	
-	if(prevPoint == null || prevPoint.hangOnToBar == undefined){
-		return;
-	}
-	
-	var temp = getBarWidth(prevPoint.hangOnToBar, prevPoint, pointList);
-	print(temp);
-	
-	//prevPoint.hangOnToBar.width = temp;
-}
-*/

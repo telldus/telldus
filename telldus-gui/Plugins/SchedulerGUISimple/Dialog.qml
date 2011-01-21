@@ -3,6 +3,7 @@
  Rectangle {
 	id: container
 	property ActionPoint actionPoint
+	property alias offsetPanelOpacity: offsetPanel.opacity
 	
 	focus: true
 	Keys.onPressed: {
@@ -31,21 +32,13 @@
 		container.actionPoint = dynamicPoint
 	}
 	
-	/*
-	states: State{
-		name: "visible"; when: actionPoint.fuzzyAfter != undefined
-		PropertyChanges{
-			target: container; fuzzyAfter: actionPoint.fuzzyAfter
-		}
-	}
-	*/
-     
 	function show(actionPoint) {
-		container.opacity = 0;
+		container.opacity = 0; //needed for fuzz/offset unbinding
 		container.border.color = "black"
 		container.border.width = 2
 		inputFuzzyBeforeText.text = actionPoint.fuzzyBefore
 		inputFuzzyAfterText.text = actionPoint.fuzzyAfter
+		inputOffsetText.text = actionPoint.offset
 		container.actionPoint = actionPoint
 		
 		var rootCoordinates = actionPoint.mapToItem(null, actionPoint.x, actionPoint.y);
@@ -250,7 +243,6 @@
 				validator: IntValidator{bottom: 0; top: 10080;} //0 to a week...
 				selectByMouse: true
 				color: "#151515"; selectionColor: "mediumseagreen"
-				//text: actionPoint.fuzzyAfter
 			}
 			
 			Binding {
@@ -322,6 +314,85 @@
 				width: 200
 				wrapMode: Text.WordWrap
 				text: ""
+			}
+		}
+	}
+	
+	Rectangle{
+		id: offsetPanel
+		height: 50
+		width: 80
+		
+		opacity: 0
+			
+		anchors.left: removePoint.right
+		anchors.leftMargin: 10
+		anchors.top: fuzzyPanel.bottom
+		anchors.topMargin: 10
+		
+		Text{
+			id: textOffset
+			anchors.left: parent.left
+			anchors.leftMargin: 5
+			anchors.top: parent.top
+			anchors.topMargin: 5
+			text: "Offset:"
+		}
+		
+		Text{
+			id: textOffsetUnit
+			anchors.left: inputOffset.right
+			anchors.leftMargin: 5
+			anchors.verticalCenter: textOffset.verticalCenter
+			text: "minutes"
+		}
+		
+		Rectangle{
+			id: inputOffset
+			property alias offsetText: inputOffsetText.text
+			anchors.left: textOffset.right
+			anchors.leftMargin: 5
+			anchors.verticalCenter: textOffset.verticalCenter
+			width: 35
+			height: textOffset.height
+			border.width: 1
+			
+			TextInput{
+				id: inputOffsetText
+				anchors.fill: parent
+				maximumLength: 4
+				validator: IntValidator{bottom: getMinimumOffset(actionPoint.triggerstate); top: getMaximumOffset(actionPoint.triggerstate);} // +/- 12 hours
+				selectByMouse: true
+				color: "#151515"; selectionColor: "mediumseagreen"
+			}
+			
+			Binding {
+				target: actionPoint
+				property: "offset"
+				value: inputOffsetText.text
+				when: container.opacity == 1
+			}
+		}
+		
+		Image{
+			anchors.left: textOffsetUnit.right
+			anchors.leftMargin: 5
+			anchors.verticalCenter: textOffsetUnit.verticalCenter
+			
+			source: imageInfo
+			width: 15
+			height: 15
+			
+			MouseArea{
+				anchors.fill: parent
+				hoverEnabled: true
+				onEntered: {
+					infobox.opacity = 1
+					infobox.infoboxtext = "Enter a positive or negative value for how many minutes before or after sunset/sunrise this action will be executed."
+				}
+				onExited: {
+					infobox.opacity = 0
+				}
 			}
 		}
 	}
@@ -443,5 +514,40 @@
 	function tryme(event, origin){
 		print("KEY: " + event.key + " Från: " + origin);
 	}
+	
+	function getMinimumOffset(state){
+		//TODO this will not work if a value is set to the highest limit, then not reentering scheduler until the sunrise/set has changed so much that the device will be hidden anyway... Not common though
+		var minutes = 0;
+		var time;
+		if(state == "sunrise"){
+			time = main.sunData[0].split(':');
+		}
+		else if(state == "sunset"){
+			time = main.sunData[1].split(':');
+		}
+		else{
+			return 0 ;
+		}
+		
+		return -1 * (parseInt(time[0], 10) * 60 + parseInt(time[1], 10));
+	}
+	
+	function getMaximumOffset(state){
+		print("state: " + state);
+		var minutes = 0;
+		var time;
+		if(state == "sunrise"){
+			time = main.sunData[0].split(':');
+		}
+		else if(state == "sunset"){
+			time = main.sunData[1].split(':');
+		}
+		else{
+			return 0 ;
+		}
+		
+		return 24 * 60 - (parseInt(time[0], 10) * 60 + parseInt(time[1], 10));
+	}
+	
 	
  } 

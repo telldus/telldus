@@ -40,7 +40,7 @@ com.telldus.schedulersimplegui = function() {
 	}
 
 	function addDevice() {
-		deviceList.push({name:'Stallet'});
+		deviceList.push({name:'Stallet istallet'});
 	}
 	
 	function getSun(riseset, rowWidth, pointWidth){
