@@ -3,7 +3,6 @@
  Rectangle {
 	id: container
 	property ActionPoint actionPoint
-	property alias offsetPanelOpacity: offsetPanel.opacity
 	
 	focus: true
 	Keys.onPressed: {
@@ -39,6 +38,7 @@
 		inputFuzzyBeforeText.text = actionPoint.fuzzyBefore
 		inputFuzzyAfterText.text = actionPoint.fuzzyAfter
 		inputOffsetText.text = actionPoint.offset
+		inputDimText.text = actionPoint.dimvalue
 		container.actionPoint = actionPoint
 		
 		var rootCoordinates = actionPoint.mapToItem(null, actionPoint.x, actionPoint.y);
@@ -323,7 +323,7 @@
 		height: 50
 		width: 80
 		
-		opacity: 0
+		opacity: actionPoint.triggerstate == "sunrise" || actionPoint.triggerstate == "sunset"
 			
 		anchors.left: removePoint.right
 		anchors.leftMargin: 10
@@ -397,6 +397,84 @@
 		}
 	}
 	
+	Rectangle{
+		id: dimPanel
+		height: 50
+		width: 80
+		
+		opacity: actionPoint.state == "dim"
+			
+		anchors.left: removePoint.right
+		anchors.leftMargin: 10
+		anchors.top: offsetPanel.bottom
+		anchors.topMargin: 10
+		
+		Text{
+			id: textDim
+			anchors.left: parent.left
+			anchors.leftMargin: 5
+			anchors.top: parent.top
+			anchors.topMargin: 5
+			text: "Dim value:"
+		}
+		
+		Text{
+			id: textDimUnit
+			anchors.left: inputDim.right
+			anchors.leftMargin: 5
+			anchors.verticalCenter: textDim.verticalCenter
+			text: "%"
+		}
+		
+		Rectangle{
+			id: inputDim
+			anchors.left: textDim.right
+			anchors.leftMargin: 5
+			anchors.verticalCenter: textDim.verticalCenter
+			width: 35
+			height: textDim.height
+			border.width: 1
+			
+			TextInput{
+				id: inputDimText
+				anchors.fill: parent
+				maximumLength: 4
+				validator: IntValidator{bottom: 0; top: 100;}
+				selectByMouse: true
+				color: "#151515"; selectionColor: "mediumseagreen"
+			}
+			
+			Binding {
+				target: actionPoint
+				property: "dimvalue"
+				value: inputDimText.text
+				when: container.opacity == 1
+			}
+		}
+		
+		Image{
+			anchors.left: inputDim.right
+			anchors.leftMargin: 5
+			anchors.verticalCenter: inputDim.verticalCenter
+			
+			source: imageInfo
+			width: 15
+			height: 15
+			
+			MouseArea{
+				anchors.fill: parent
+				hoverEnabled: true
+				onEntered: {
+					infobox.opacity = 1
+					infobox.infoboxtext = "Enter a dim percent value between 0 (no light) and 100 (full light)"
+				}
+				onExited: {
+					infobox.opacity = 0
+				}
+			}
+		}
+	}
+	
 	Rectangle {  //TODO create common button-class (but how to differentiate action?)
 		id: closeButton
 		height: 20
@@ -436,7 +514,6 @@
 		anchors.leftMargin: 10
 		width: 100 //TODO relative
 		height: 100 //TODO relative
-		//anchors.fill: parent
 		model: typeSelection
 		delegate: typeSelectionRow
 		highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
@@ -533,7 +610,6 @@
 	}
 	
 	function getMaximumOffset(state){
-		print("state: " + state);
 		var minutes = 0;
 		var time;
 		if(state == "sunrise"){
@@ -548,6 +624,4 @@
 		
 		return 24 * 60 - (parseInt(time[0], 10) * 60 + parseInt(time[1], 10));
 	}
-	
-	
  } 

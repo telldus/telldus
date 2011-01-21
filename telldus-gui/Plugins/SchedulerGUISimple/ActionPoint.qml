@@ -5,6 +5,7 @@ Rectangle{
 	id: pointRect
 	property string actionTypeColor: "blue" //TODO default value
 	property int actionType: 1 //TODO default value
+	property int dimvalue: 50  //percent, recalucluate it before use
 	property double actionTypeOpacity: 1
 	property string actionTypeImage: imageActionOn
 	property string isPoint: "true"
@@ -96,7 +97,6 @@ Rectangle{
 					PropertyChanges { target: triggerTime; opacity: 0 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: undefined }
 					PropertyChanges { target: pointRect; x: getSunRiseTime.call(pointRect.parent.width, pointRect.width) + minutesToTimelineUnits(pointRect.offset) } //TODO se nedan
-					PropertyChanges { target: dialog; offsetPanelOpacity: 1 }
 				},
 				State {
 					name: "sunset"
@@ -104,7 +104,6 @@ Rectangle{
 					PropertyChanges { target: triggerTime; opacity: 0 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: undefined }
 					PropertyChanges { target: pointRect; x: getSunSetTime.call(pointRect.parent.width, pointRect.width) + minutesToTimelineUnits(pointRect.offset) } //TODO räkna om till tidsunits
-					PropertyChanges { target: dialog; offsetPanelOpacity: 1 }
 				},
 				State {
 					name: "absolute"
@@ -112,7 +111,6 @@ Rectangle{
 					PropertyChanges { target: triggerTime; opacity: 1 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: parent }
 					PropertyChanges { target: pointRect; x: xvalue }
-					PropertyChanges { target: dialog; offsetPanelOpacity: 0 }
 				}
 			]
 			
@@ -147,7 +145,7 @@ Rectangle{
 		},
 		State{
 			name: "dim"
-			PropertyChanges { target: pointRect; actionTypeColor: "green"; actionTypeOpacity: 1 }
+			PropertyChanges { target: pointRect; actionTypeColor: "green"; actionTypeOpacity: dimvalue/100 }
 			PropertyChanges { target: pointRect; actionTypeImage: imageActionDim }
 		},
 		State{
@@ -218,7 +216,6 @@ Rectangle{
 	}
 	
 	function setType(name){
-		print("setting state to " + name);
 		pointRect.state = name;
 	}
 	
@@ -256,7 +253,7 @@ Rectangle{
 			return "papayawhip" //just return a color, will not be used
 		}
 		
-		actionTypeOpacity = 1
+		actionTypeOpacity = prevPoint.actionTypeOpacity
 		return prevPoint.actionTypeColor
 	}
 	
