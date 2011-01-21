@@ -41,22 +41,24 @@
 	*/
      
 	function show(actionPoint) {
-		container.opacity = 1;
+		container.opacity = 0;
 		container.border.color = "black"
 		container.border.width = 2
+		inputFuzzyBeforeText.text = actionPoint.fuzzyBefore
+		inputFuzzyAfterText.text = actionPoint.fuzzyAfter
 		container.actionPoint = actionPoint
 		
 		var rootCoordinates = actionPoint.mapToItem(null, actionPoint.x, actionPoint.y);
-		//container.x = rootCoordinates.x + actionPoint.parent.width/2 - container.width/2;
 		container.y = rootCoordinates.y + actionPoint.height + 10;
 		container.width = actionPoint.parent.width;
 		container.x = (actionPoint.parent.parent.width - container.width)/2;
+		container.opacity = 1;
 	}
 
-     function hide() {
-         container.opacity = 0;
+	function hide() {
+		 container.opacity = 0;
 		 container.border.width = 0
-     }
+	 }
      
 	 smooth: true
 	 radius: 5
@@ -221,13 +223,14 @@
 				validator: IntValidator{bottom: 0; top: 10080;} //0 to a week...
 				selectByMouse: true
 				color: "#151515"; selectionColor: "mediumseagreen"
-				text: actionPoint.fuzzyBefore
+				//text: actionPoint.fuzzyBefore
 			}
 			
 			Binding {
 				target: actionPoint
 				property: "fuzzyBefore"
 				value: inputFuzzyBeforeText.text
+				when: container.opacity == 1
 			}
 		}
 		
@@ -247,13 +250,14 @@
 				validator: IntValidator{bottom: 0; top: 10080;} //0 to a week...
 				selectByMouse: true
 				color: "#151515"; selectionColor: "mediumseagreen"
-				text: actionPoint.fuzzyAfter
+				//text: actionPoint.fuzzyAfter
 			}
 			
 			Binding {
 				target: actionPoint
 				property: "fuzzyAfter"
 				value: inputFuzzyAfterText.text
+				when: container.opacity == 1
 			}
 		}
 		
