@@ -59,101 +59,41 @@
      height: 500 // typelist.height * 2 + 50
      opacity: 0
 
-     Rectangle {  
-		id: circleType //TODO only types this device has...
-		height: 20
-		width: 100
+	Button{
+		id: circleType
+		text: "Toggle Action Type"
 		anchors.verticalCenter: parent.verticalCenter
 		anchors.verticalCenterOffset: 0
 		anchors.left: typeList.right
 		anchors.leftMargin: 50
-
-		property color buttonColor: "lightgrey"
-
+		onClicked: {
+			container.actionPoint.toggleType();
+		}
+		
 		Keys.onLeftPressed: {
 			debug("Left pressed"); //TODO make it work
 			
-		}							
-		
-		Text{
-			text: "Toggle Action Type"
-			anchors.verticalCenter: parent.verticalCenter
-			anchors.horizontalCenter: parent.horizontalCenter
-			anchors.margins: 2
 		}
-		
-		MouseArea {
-			id: buttonMouseAreaType
-			anchors.fill: parent
-			//hoverEnabled: true
-			//onEntered: parent.border.color = onHoverColor
-			//onExited:  parent.border.color = borderColor
-			onClicked: {
-				container.actionPoint.toggleType();
-			}
-		}
-
-		color: buttonMouseAreaType.pressed ? Qt.darker(buttonColor, 1.5) : buttonColor
 	}
 	
-	Rectangle {  
+	Button{
 		id: circleTrigger
-		height: 20
-		width: 100
+		text: "Toggle Trigger Type"
 		anchors.horizontalCenter: circleType.horizontalCenter
 		y: circleType.y + 30
-		
-		property color buttonColor: "lightgrey"
-
-		Text{
-			text: "Toggle Trigger Type"
-			anchors.verticalCenter: parent.verticalCenter
-			anchors.horizontalCenter: parent.horizontalCenter
-			anchors.margins: 2
-
+		onClicked: {
+			container.actionPoint.toggleTrigger();
 		}
-		MouseArea {
-			id: buttonMouseAreaTrigger
-			anchors.fill: parent
-			//hoverEnabled: true
-			//onEntered: parent.border.color = onHoverColor
-			//onExited:  parent.border.color = borderColor
-			onClicked: {
-				container.actionPoint.toggleTrigger();
-			}
-		}
-
-		color: buttonMouseAreaTrigger.pressed ? Qt.darker(buttonColor, 1.5) : buttonColor
 	}
 	
-	Rectangle {  
+	Button{
 		id: removePoint
-		height: 20
-		width: 100
+		text: "Remove action"
 		anchors.horizontalCenter: circleTrigger.horizontalCenter
 		y: circleTrigger.y + 30
-		
-		property color buttonColor: "lightgrey"
-
-		Text{
-			text: "Remove action"
-			anchors.verticalCenter: parent.verticalCenter
-			anchors.horizontalCenter: parent.horizontalCenter
-			anchors.margins: 2
-
+		onClicked: {
+			container.actionPoint.remove();
 		}
-		MouseArea {
-			id: buttonMouseAreaRemovePoint
-			anchors.fill: parent
-			//hoverEnabled: true
-			//onEntered: parent.border.color = onHoverColor
-			//onExited:  parent.border.color = borderColor
-			onClicked: {
-				container.actionPoint.remove();
-			}
-		}
-
-		color: buttonMouseAreaRemovePoint.pressed ? Qt.darker(buttonColor, 1.5) : buttonColor
 	}
 	
 	Rectangle{
@@ -216,7 +156,11 @@
 				validator: IntValidator{bottom: 0; top: 10080;} //0 to a week...
 				selectByMouse: true
 				color: "#151515"; selectionColor: "mediumseagreen"
-				//text: actionPoint.fuzzyBefore
+												  
+				Keys.onTabPressed: {
+					event.accepted = true;
+					inputFuzzyAfterText.focus = true;
+				}
 			}
 			
 			Binding {
@@ -243,6 +187,10 @@
 				validator: IntValidator{bottom: 0; top: 10080;} //0 to a week...
 				selectByMouse: true
 				color: "#151515"; selectionColor: "mediumseagreen"
+				Keys.onTabPressed: {
+					event.accepted = true;
+					inputFuzzyBeforeText.focus = true;
+				}
 			}
 			
 			Binding {
@@ -475,35 +423,14 @@
 		}
 	}
 	
-	Rectangle {  //TODO create common button-class (but how to differentiate action?)
+	Button{
 		id: closeButton
-		height: 20
-		width: 100
-		//anchors.horizontalCenter: circleTrigger.right
-		//anchors.horizontalCenterOffset: 30
+		text: "Close"
 		y: circleTrigger.y + 30
-
-		property color buttonColor: "lightgrey"
-
-		Text{
-			text: "Close"
-			anchors.verticalCenter: parent.verticalCenter
-			anchors.horizontalCenter: parent.horizontalCenter
-			anchors.margins: 2
-
+		x: parent.x + 30
+		onClicked: {
+			hide();
 		}
-		MouseArea {
-			id: buttonMouseAreaClose
-			anchors.fill: parent
-			//hoverEnabled: true
-			//onEntered: parent.border.color = onHoverColor
-			//onExited:  parent.border.color = borderColor
-			onClicked: {
-				hide();
-			}
-		}
-
-		color: buttonMouseAreaClose.pressed ? Qt.darker(buttonColor, 1.5) : buttonColor
 	}
 	
 	ListView{

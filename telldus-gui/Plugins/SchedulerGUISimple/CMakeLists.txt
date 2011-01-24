@@ -7,6 +7,7 @@ SET( Plugin_NAME "schedulerguisimple" )
 SET( Plugin_PATH "com.telldus.schedulerguisimple" )
 SET( Plugin_EXTRA
 	ActionPoint.qml
+	Button.qml
 	Dialog.qml
 	icon.png
 	main.qml
