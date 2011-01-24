@@ -8,7 +8,6 @@ Rectangle {
 	property color buttonColor: "lightgrey"
 	property alias text: buttonText.text
 	signal clicked()
-	//property alias event: buttonMouseArea.onClicked
 								
 	Text{
 		id: buttonText

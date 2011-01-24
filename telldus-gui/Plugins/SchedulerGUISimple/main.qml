@@ -41,7 +41,11 @@ import "schedulerscripts.js" as Scripts
 						
 						var component = Qt.createComponent("ActionPoint.qml")
 						var dynamicPoint = component.createObject(deviceRow)
-						dynamicPoint.x = mouseX - dynamicPoint.width/2 //xposition
+						//dynamicPoint.x = mouseX - dynamicPoint.width/2 //xposition
+						var hourMinute = dynamicPoint.getTimeFromPosition(mouse.x)
+						dynamicPoint.absoluteHour = hourMinute[0]
+						dynamicPoint.absoluteMinute = hourMinute[1]
+						dynamicPoint.x = dynamicPoint.getAbsoluteXValue();
 						dynamicPoint.border.color = "blue"
 						
 						//TODO different states depending on the device							

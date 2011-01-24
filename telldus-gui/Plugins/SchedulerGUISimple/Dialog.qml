@@ -1,8 +1,11 @@
  import Qt 4.7
+ import "schedulerscripts.js" as Scripts
 
  Rectangle {
 	id: container
 	property ActionPoint actionPoint
+	property alias absoluteHour: inputAbsoluteHourText.text
+	property alias absoluteMinute: inputAbsoluteMinuteText.text
 	
 	focus: true
 	Keys.onPressed: {
@@ -39,6 +42,8 @@
 		inputFuzzyAfterText.text = actionPoint.fuzzyAfter
 		inputOffsetText.text = actionPoint.offset
 		inputDimText.text = actionPoint.dimvalue
+		inputAbsoluteHourText.text = Scripts.pad(actionPoint.absoluteHour, 2)
+		inputAbsoluteMinuteText.text = Scripts.pad(actionPoint.absoluteMinute, 2)
 		container.actionPoint = actionPoint
 		
 		var rootCoordinates = actionPoint.mapToItem(null, actionPoint.x, actionPoint.y);
@@ -340,6 +345,108 @@
 				}
 				onExited: {
 					infobox.opacity = 0
+				}
+			}
+		}
+	}
+	
+	Rectangle{
+		id: absolutePanel
+		height: 50
+		width: 80
+		
+		opacity: actionPoint.triggerstate == "absolute"
+			
+		anchors.left: removePoint.right
+		anchors.leftMargin: 10
+		anchors.top: fuzzyPanel.bottom
+		anchors.topMargin: 10
+		//property alias absoluteHourText: inputAbsoluteHourText.text
+		//property alias absoluteMinuteText: inputAbsoluteMinuteText.text
+		
+		Row{
+			Text{
+				/*id: textAbsolute
+				anchors.left: parent.left
+				anchors.leftMargin: 5
+				anchors.top: parent.top
+				anchors.topMargin: 5
+				*/
+				text: "Time:"
+			}
+			
+			Rectangle{
+				id: inputAbsoluteHour
+				//property alias absoluteHour: inputAbsoluteHourText.text
+				/*anchors.left: textOffset.right
+				anchors.leftMargin: 5
+				anchors.verticalCenter: textOffset.verticalCenter
+				*/
+				width: 35
+				height: inputAbsoluteHourText.height
+				border.width: 1
+				
+				TextInput{
+					id: inputAbsoluteHourText
+					anchors.fill: parent
+					maximumLength: 4
+					validator: IntValidator{bottom: 0; top: 23;}
+					selectByMouse: true
+					color: "#151515"; selectionColor: "mediumseagreen"
+					Keys.onTabPressed: {
+						event.accepted = true;
+						inputAbsoluteMinuteText.focus = true;
+					}
+					text: "0"
+				}
+				
+				Binding {
+					target: actionPoint
+					property: "absoluteHour"
+					value: inputAbsoluteHourText.text
+					when: container.opacity == 1
+				}
+			}
+			
+			Text{
+				/*id: textOffsetUnit
+				anchors.left: inputOffset.right
+				anchors.leftMargin: 5
+				anchors.verticalCenter: textOffset.verticalCenter
+				*/
+				text: ":"
+			}
+			
+			Rectangle{
+				id: inputAbsoluteMinute
+				property alias absoluteMinute: inputAbsoluteMinuteText.text
+				/*anchors.left: textOffset.right
+				anchors.leftMargin: 5
+				anchors.verticalCenter: textOffset.verticalCenter
+				*/
+				width: 35
+				height: inputAbsoluteMinuteText.height
+				border.width: 1
+				
+				TextInput{
+					id: inputAbsoluteMinuteText
+					anchors.fill: parent
+					maximumLength: 4
+					validator: IntValidator{bottom: 0; top: 59;}
+					selectByMouse: true
+					color: "#151515"; selectionColor: "mediumseagreen"
+					Keys.onTabPressed: {
+						event.accepted = true;
+						inputAbsoluteHourText.focus = true;
+					}
+					text: "0"
+				}
+				
+				Binding {
+					target: actionPoint
+					property: "absoluteMinute"
+					value: inputAbsoluteMinuteText.text
+					when: container.opacity == 1
 				}
 			}
 		}

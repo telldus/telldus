@@ -10,10 +10,12 @@ Rectangle{
 	property string actionTypeImage: imageActionOn
 	property string isPoint: "true"
 	property variant isLoaded
-	property int xvalue
+	//property int xvalue
 	property int fuzzyBefore: 0
 	property int fuzzyAfter: 0
 	property int offset: -100
+	property int absoluteHour: parseInt(dialog.absoluteHour, 10)
+	property int absoluteMinute: parseInt(dialog.absoluteMinute, 10)
 	property alias triggerstate: trigger.state
 	
 	Component.onCompleted: {
@@ -51,23 +53,49 @@ Rectangle{
 		id: pointRectMouseArea
 		acceptedButtons: Qt.LeftButton | Qt.RightButton
 		
+		onPressed:{
+			
+		}
+		
 		onClicked: {
 			//pointRect.focus = true
 			if (mouse.button == Qt.RightButton){
 				pointRect.toggleType()
+				dialog.show(pointRect)
 			}
 			else{
-				dialog.show(pointRect) //TODO om inte redan i visandes läge....
+				dialog.show(pointRect)
 			}
 		}
 		
-		//onPositionChange... maybe emit signal to change in row...
+		onPositionChanged: {
+			var rootCoordinates = pointRect.mapToItem(pointRect.parent, mouse.x, mouse.y);
+			var hourMinute = getTimeFromPosition(rootCoordinates.x)
+			pointRect.absoluteHour = hourMinute[0]
+			pointRect.absoluteMinute = hourMinute[1]
+		}
+		
+		onReleased: {
+			dialog.show(pointRect)
+			//var rootCoordinates = pointRect.mapToItem(pointRect.parent, mouse.x, mouse.y);
+			//var hourMinute = getTimeFromPosition(rootCoordinates.x)
+			dialog.absoluteHour = Scripts.pad(pointRect.absoluteHour, 2) //Scripts.pad(hourMinute[0], 2)
+			dialog.absoluteMinute = Scripts.pad(pointRect.absoluteMinute, 2) //Scripts.pad(hourMinute[1], 2)
+		}
+		
 		anchors.fill: parent
 		drag.target: pointRect
 		drag.axis: Drag.XAxis
 		drag.minimumX: -15 //TODO make relative
 		drag.maximumX: 685 //TODO make relative!!
+		drag.filterChildren: true //TODO testing this
 		//TODO make it impossible to overlap (on release)
+		
+		states: State{
+			id: "hidden"; when: pointRectMouseArea.drag.active
+			PropertyChanges { target: pointRect; opacity: 0.5; }
+			//PropertyChanges { target: triggerTime; opacity: 0; }
+		}
 	}
 	
 	Column{
@@ -106,16 +134,18 @@ Rectangle{
 					PropertyChanges { target: pointRect; x: getSunSetTime.call(pointRect.parent.width, pointRect.width) + minutesToTimelineUnits(pointRect.offset) } //TODO räkna om till tidsunits
 				},
 				State {
-					name: "absolute"
+					name: "absolute"; when: !pointRectMouseArea.drag.active
 					PropertyChanges { target: triggerImage; opacity: 0; }
 					PropertyChanges { target: triggerTime; opacity: 1 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: parent }
-					PropertyChanges { target: pointRect; x: xvalue }
+					//PropertyChanges { target: pointRect; x: xvalue }
+					PropertyChanges { target: pointRect; x: getAbsoluteXValue() }
 				}
 			]
 			
 			Rectangle{
 				id: triggerTime
+				opacity: 1
 				width: 20; height: 20
 				anchors.centerIn: parent
 				Text{
@@ -125,6 +155,7 @@ Rectangle{
 			
 			Image {
 				id: triggerImage
+				opacity: 0
 				anchors.fill: parent
 				width: 20; height: 20
 				source: imageTriggerAbsolute
@@ -194,6 +225,14 @@ Rectangle{
 		}
 	}
 	
+	function getAbsoluteXValue(){
+		if(pointRect.parent == null){
+			return 0;
+		}
+		var hourSize = pointRect.parent.width / 24;
+		return pointRect.absoluteHour * hourSize + hourSize * (pointRect.absoluteMinute/60) - pointRect.width/2;
+	}
+	
 	function toggleType(){ //TODO other kind of selection method
 		var index = 0;
 		var activeStates = Scripts.getActiveStates();
@@ -225,9 +264,10 @@ Rectangle{
 		}
 		else if(trigger.state == "sunset"){
 			trigger.state = "absolute";
+			pointRect.x = getAbsoluteXValue();
 		}
 		else if(trigger.state == "absolute"){
-			pointRect.xvalue = pointRect.x;
+			//pointRect.xvalue = pointRect.x;
 			trigger.state = "sunrise";
 		}
 	}
@@ -261,14 +301,24 @@ Rectangle{
 		if(pointRect.parent == null){
 			return "";
 		}
-		var timeOfDay = pointRect.x + (pointRect.width/2);
+		
+		var hours = Scripts.pad(pointRect.absoluteHour, 2);
+		var minutes = Scripts.pad(pointRect.absoluteMinute, 2);
+		return hours + ":" + minutes;
+	}
+	
+	function getTimeFromPosition(mouseX){
+		if(pointRect.parent == null){
+			return [0,0];
+		}
+		var timeOfDay = mouseX; // + (pointRect.width/2);
 		var hourSize = pointRect.parent.width / 24;
 		var hours = Math.floor(timeOfDay / hourSize);
 		var partOfHour = ((timeOfDay - (hourSize * hours))/hourSize) * 60
 		partOfHour = Math.floor(partOfHour);
 		partOfHour = Scripts.pad(partOfHour, 2);
 		hours = Scripts.pad(hours, 2);
-		return hours + ":" + partOfHour;
+		return [hours, partOfHour];
 	}
 	
 	function addState(state){
