@@ -53,12 +53,7 @@ Rectangle{
 		id: pointRectMouseArea
 		acceptedButtons: Qt.LeftButton | Qt.RightButton
 		
-		onPressed:{
-			
-		}
-		
 		onClicked: {
-			//pointRect.focus = true
 			if (mouse.button == Qt.RightButton){
 				pointRect.toggleType()
 				dialog.show(pointRect)
@@ -89,15 +84,15 @@ Rectangle{
 		anchors.fill: parent
 		drag.target: pointRect
 		drag.axis: Drag.XAxis
-		drag.minimumX: -15 //TODO make relative
-		drag.maximumX: 685 //TODO make relative!!
+		drag.minimumX: -1 * pointRect.width/2
+		drag.maximumX: pointRect.parent.width - pointRect.width/2
 		drag.filterChildren: true //TODO testing this
 		//TODO make it impossible to overlap (on release)
+		//TODO drag to most right - jumps back, why?
 		
 		states: State{
 			id: "hidden"; when: pointRectMouseArea.drag.active
 			PropertyChanges { target: pointRect; opacity: 0.5; }
-			//PropertyChanges { target: triggerTime; opacity: 0; }
 		}
 	}
 	
