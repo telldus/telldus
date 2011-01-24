@@ -9,15 +9,49 @@
 	
 	focus: true
 	Keys.onPressed: {
+		
+		tryme(event, "container");
+		
+		var hours = 0;
+		var minutes = 0;
 		if (event.key == Qt.Key_Left) {
-			actionPoint.x = actionPoint.x - 1
+			//actionPoint.x = actionPoint.x - 1
+			var minutes = parseInt(inputAbsoluteMinuteText.text, 10);
+			var hours = parseInt(inputAbsoluteHourText.text, 10);
+			if(minutes == 0){
+				if(hours == 0){
+					return; //do nothing, border reached
+				}
+				hours = hours - 1;
+				minutes = 59;
+			}
+			else{
+				minutes = minutes - 1;
+			}
 			event.accepted = true;
 		}
 		else if (event.key == Qt.Key_Right) {
-			actionPoint.x = actionPoint.x + 1
+			//actionPoint.x = actionPoint.x + 1
+			var minutes = parseInt(inputAbsoluteMinuteText.text, 10);
+			var hours = parseInt(inputAbsoluteHourText.text, 10);
+			if(minutes == 59){
+				if(hours == 23){
+					return; //do nothing, border reached
+				}
+				hours = hours + 1;
+				minutes = 0;
+			}
+			else{
+				minutes = minutes + 1;
+			}
 			event.accepted = true;
 		}
-		tryme(event, "container");
+		else{
+			return;
+		}
+		
+		inputAbsoluteHourText.text = Scripts.pad(hours, 2);
+		inputAbsoluteMinuteText.text = Scripts.pad(minutes, 2);
 	}
 	 
 	MouseArea{

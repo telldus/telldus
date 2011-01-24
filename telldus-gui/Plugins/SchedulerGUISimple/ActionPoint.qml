@@ -69,10 +69,13 @@ Rectangle{
 		}
 		
 		onPositionChanged: {
+			//var rootCoordinates = pointRect.mapToItem(pointRect.parent, mouse.x, mouse.y);
 			var rootCoordinates = pointRect.mapToItem(pointRect.parent, mouse.x, mouse.y);
-			var hourMinute = getTimeFromPosition(rootCoordinates.x)
-			pointRect.absoluteHour = hourMinute[0]
-			pointRect.absoluteMinute = hourMinute[1]
+			var hourMinute = getTimeFromPosition(rootCoordinates.x - mouse.x + pointRect.width/2)
+			if((hourMinute[0] >= 0) && hourMinute[0] < 24){
+				pointRect.absoluteHour = hourMinute[0]
+				pointRect.absoluteMinute = hourMinute[1]
+			}
 		}
 		
 		onReleased: {
