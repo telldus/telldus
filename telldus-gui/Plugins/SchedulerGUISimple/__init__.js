@@ -32,7 +32,11 @@ com.telldus.schedulersimplegui = function() {
 		view.setProperty("imageActionBell", "bell.png");
 		view.setProperty("imageInfo", "info.png");
 		
+		//height/width constants
 		view.setProperty("constBarHeight", 10);
+		view.setProperty("constDeviceRowHeight", 50);
+		view.setProperty("constDeviceRowWidth", 600);
+		view.setProperty("constPointWidth", 30);
 		
 		view.load("main.qml");
 		application.addWidget("scheduler.simple", "icon.png", view);
@@ -64,14 +68,11 @@ com.telldus.schedulersimplegui = function() {
 	}
 	
 	function getSunRiseTime(rowWidth, pointWidth){
-		rowWidth = 700 //TODO
-		pointWidth = 30 //TODO
+		
 		return getSun("rise", rowWidth, pointWidth);
 	}
 	
 	function getSunSetTime(rowWidth, pointWidth){
-		rowWidth = 700 //TODO
-		pointWidth = 30 //TODO
 		return getSun("set", rowWidth, pointWidth);
 	}
 

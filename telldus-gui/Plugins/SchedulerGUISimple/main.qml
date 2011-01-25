@@ -5,18 +5,94 @@ import "schedulerscripts.js" as Scripts
  Item{
 	id: main
 	width: 800 //TODO how?
-	height: 600 //TODO how?
+	height: 700 //TODO how?
 	property variant sunData
+	property int dayListHeaderHeight: 15
+
+	Rectangle{
+		id: mainTop
+		height: 75
+		width: parent.width
+		anchors.top: parent.top
+		anchors.left: parent.left
+		Text{
+			anchors.centerIn: parent
+			text: "TESTAR"
+		}
+	}
+
+	ListView{
+		id: mainListView
+		anchors.top: mainTop.bottom
+		anchors.topMargin: 10
+		anchors.left: parent.left
+		height: parent.height //TODO
+		width: parent.width
+		//anchors.left: dayListView.left
+		header: mainListViewHeader
+		model: 1
+		orientation: ListView.Horizontal
+		delegate: listDayRow //Text { text: "TEST - per modell" }
+		interactive: false //no scroll between days in this way
+		
+		//TODO transitions:
+	}
+	
+	Component{
+		id: listDayRow
+		ListView {
+			id: dayListView
+			//anchors.top: mainListView.bottom
+			//anchors.left: parent.left
+			width: parent.width
+			height: 700 //TODO
+			
+			//anchors.fill: parent
+			model: deviceModel
+			delegate: listRow
+			//focus: true
+			//footer: addButtonComponent  //TODO move...
+			header: timeline
+			snapMode: ListView.SnapToItem
+			interactive: false //no scroll between devices at the moment
+		}
+	}
+	
+	Component{
+		id: mainListViewHeader
+		Column{
+			id: mainListViewHeaderColumn
+			anchors.left: parent.left
+			anchors.top: parent.top
+			anchors.topMargin: dayListHeaderHeight
+			width: main.width - constDeviceRowWidth
+			
+			spacing: 0
+			
+			Repeater{
+				model: deviceModel
+				Rectangle{
+					width: parent.width
+					height: constDeviceRowHeight
+					border.color: "green"
+					Text{
+						anchors.centerIn: parent
+						text: modelData.name
+					}
+				}
+			}
+		}
+	}
 	
 	Component{
 		id: listRow
 		
 		Row{
-			id: row1
+			id: mainRow
 			
-			width: parent.width; //TODO relative
-			height: 50
-			//color: "red"
+			width: constDeviceRowWidth //parent.width; //TODO relative
+			height: constDeviceRowHeight
+			/*
 			Rectangle {
 				border.color: "red"; width: 100; height:parent.height;
 				Text{
@@ -26,8 +102,8 @@ import "schedulerscripts.js" as Scripts
 					text: modelData.name
 				}
 			}
-			
-			Rectangle { id: "deviceRow"; border.color: "blue"; width: parent.width-100; height:parent.height;
+			*/
+			Rectangle { id: "deviceRow"; border.color: "blue"; width: parent.width; height: parent.height;
 				clip: true
 				MouseArea {
 					id: deviceMouseArea
@@ -56,44 +132,24 @@ import "schedulerscripts.js" as Scripts
 						//dynamicPoint.setFirstState("dim"); //when type is a stored value
 						dynamicPoint.setFirstState();
 						
-						/*
-						var dynamicBar = actionBar.createObject(deviceRow)
-						dynamicBar.hangOnToPoint = dynamicPoint
-						dynamicPoint.hangOnToBar = dynamicBar
-						*/
-						
 						dialog.show(dynamicPoint) 
-						
-						//TODO komponenter med stor bokstav kanske?
 					}
 				}
 
 			}
 
 			ListView.onAdd: SequentialAnimation {
-				PropertyAction { target: row1; property: "height"; value: 0 }
-				NumberAnimation { target: row1; property: "height"; to: 50; duration: 250; easing.type: Easing.InOutQuad }
+				PropertyAction { target: mainRow; property: "height"; value: 0 }
+				NumberAnimation { target: mainRow; property: "height"; to: 50; duration: 250; easing.type: Easing.InOutQuad }
 			}
 		}
-	 }
-
-	ListView {
-		id: myListView
-		anchors.fill: parent
-		model: deviceModel
-		delegate: listRow
-		//focus: true
-		footer: addButtonComponent
-		header: timeline
-		snapMode: ListView.SnapToItem
-		interactive: false
-	 }
-
-	 Component{
+	}
+	
+	Component{
 		id: timeline
 		Item{
-			width: parent.width
-			height: 15
+			width: constDeviceRowWidth //TODO parent.width
+			height: dayListHeaderHeight
 			
 			Rectangle{
 				id: morningDark
@@ -124,9 +180,9 @@ import "schedulerscripts.js" as Scripts
 					anchors.horizontalCenter: parent.horizontalCenter
 					anchors.horizontalCenterOffset: parent.width/24
 
-					width: listRow.width
+					width: parent.width //listRow.width
 					height: parent.height
-					spacing: (parent.width-124)/24
+					spacing: (parent.width-24)/24  //before: -124
 					Repeater{
 						model:24
 						Rectangle{
@@ -185,7 +241,7 @@ import "schedulerscripts.js" as Scripts
 			return 0;
 		}
 		if(Scripts.isMidnightDark()){
-			return sunToTimeUnits(main.sunData[1]) + 100;
+			return sunToTimeUnits(main.sunData[1]); // + 100;
 		}
 		else{
 			return 0;
@@ -198,10 +254,10 @@ import "schedulerscripts.js" as Scripts
 			return 0;
 		}
 		if(Scripts.isMidnightDark()){
-			return 100; //TODO constants
+			return 0; //100; //TODO constants
 		}
 		else{
-			return sunToTimeUnits(main.sunData[1]) + 100; //TODO constants
+			return sunToTimeUnits(main.sunData[1]); // + 100; //TODO constants
 		}
 	}
 	
@@ -210,7 +266,7 @@ import "schedulerscripts.js" as Scripts
 			return 0;
 		}
 		if(Scripts.isMidnightDark()){
-			return (main.width - 100) - sunToTimeUnits(main.sunData[1]); //TODO constant or something
+			return constDeviceRowWidth - sunToTimeUnits(main.sunData[1]); //(main.width - 100) - sunToTimeUnits(main.sunData[1]); //TODO constant or something
 		}
 		else{
 			return 0;
@@ -240,7 +296,7 @@ import "schedulerscripts.js" as Scripts
 
 	function sunToTimeUnits(suntime){
 		suntime = suntime.split(':');
-		var hourSize = (main.width - 100)/24; //TODO constant or something?
+		var hourSize = constDeviceRowWidth/24; //(main.width - 100)/24; //TODO constant or something?
 		return hourSize * suntime[0] + hourSize * suntime[1]/60;
 	}
 	//opacity vid dimning?

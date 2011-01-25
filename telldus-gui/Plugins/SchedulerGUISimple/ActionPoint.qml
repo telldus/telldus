@@ -27,8 +27,8 @@ Rectangle{
 	}
 	
 	//use item instead of rectangle (no border then though) to make it invisible (opacity: 0)
-	width: 30
-	height: 50
+	width: constPointWidth
+	height: constDeviceRowHeight
 	border.color: "black"
 	opacity: 1 //0.8
 	z: 100
@@ -85,7 +85,7 @@ Rectangle{
 		drag.target: pointRect
 		drag.axis: Drag.XAxis
 		drag.minimumX: -1 * pointRect.width/2
-		drag.maximumX: pointRect.parent.width - pointRect.width/2
+		drag.maximumX: pointRect.parent.width - pointRect.width/2  //TODO: om pointRect.parent == null, då bara 0...
 		drag.filterChildren: true //TODO testing this
 		//TODO make it impossible to overlap (on release)
 		//TODO drag to most right - jumps back, why?
@@ -122,14 +122,14 @@ Rectangle{
 					PropertyChanges { target: triggerImage; source: imageTriggerSunrise; opacity: 1 }
 					PropertyChanges { target: triggerTime; opacity: 0 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: undefined }
-					PropertyChanges { target: pointRect; x: getSunRiseTime.call(pointRect.parent.width, pointRect.width) + minutesToTimelineUnits(pointRect.offset) } //TODO se nedan
+					PropertyChanges { target: pointRect; x: getSunRiseTime.callWith(pointRect.parent.width, pointRect.width) + minutesToTimelineUnits(pointRect.offset) } //TODO se nedan
 				},
 				State {
 					name: "sunset"
 					PropertyChanges { target: triggerImage; source: imageTriggerSunset; opacity: 1 }
 					PropertyChanges { target: triggerTime; opacity: 0 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: undefined }
-					PropertyChanges { target: pointRect; x: getSunSetTime.call(pointRect.parent.width, pointRect.width) + minutesToTimelineUnits(pointRect.offset) } //TODO räkna om till tidsunits
+					PropertyChanges { target: pointRect; x: getSunSetTime.callWith(pointRect.parent.width, pointRect.width) + minutesToTimelineUnits(pointRect.offset) } //TODO räkna om till tidsunits
 				},
 				State {
 					name: "absolute"; when: !pointRectMouseArea.drag.active
