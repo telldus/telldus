@@ -15,9 +15,54 @@ import "schedulerscripts.js" as Scripts
 		width: parent.width
 		anchors.top: parent.top
 		anchors.left: parent.left
+		Rectangle{
+			anchors.right: weekDayText.left
+			anchors.verticalCenter: weekDayText.verticalCenter
+			height: 20
+			width: 20
+			border.color: "red"
+			Text{
+				anchors.centerIn: parent
+				text: "<-"
+			}
+			MouseArea{
+				anchors.fill: parent
+				onClicked: {
+					//step to prev weekday
+					//Scripts.updateEndsWith()
+					mainListView.decrementCurrentIndex()
+					//mainListView.positionViewAtIndex(mainListView.currentIndex, ListView.Center)
+					//mainListView.currentIndex = mainListView.currentIndex - 1
+				}
+			}
+		}
 		Text{
+			id: weekDayText
 			anchors.centerIn: parent
-			text: "TESTAR"
+			text: mainListView.cacheBuffer + " - " + weekModel.get(mainListView.currentIndex).name + " " + weekModel.get(mainListView.currentIndex).endsWith + " " + mainListView.currentIndex //TODO, do nicer... mainListView.currentItem.test.get(0) // test //.name //mainListView.model[mainListView.currentIndex] //currentItem.name
+			//TODO test with http://doc.qt.nokia.com/4.7-snapshot/declarative-ui-components-spinner-content-spinner-qml.html alias instead
+			
+		}
+		Rectangle{
+			anchors.left: weekDayText.right
+			anchors.verticalCenter: weekDayText.verticalCenter
+			height: 20
+			width: 20
+			border.color: "red"
+			Text{
+				anchors.centerIn: parent
+				text: "->"
+			}
+			MouseArea{
+				anchors.fill: parent
+				onClicked: {
+					//step to next weekday
+					//Scripts.updateEndsWith(mainListView)
+					mainListView.incrementCurrentIndex()
+					//mainListView.positionViewAtIndex(mainListView.currentIndex, ListView.Center)
+					//mainListView.currentIndex = mainListView.currentIndex + 1
+				}
+			}
 		}
 	}
 
@@ -27,24 +72,54 @@ import "schedulerscripts.js" as Scripts
 		anchors.topMargin: 10
 		anchors.left: parent.left
 		height: parent.height //TODO
-		width: parent.width
-		//anchors.left: dayListView.left
-		header: mainListViewHeader
-		model: 1
+		width: constDeviceRowWidth
+		//header: mainListViewHeader
+		model: weekModel
 		orientation: ListView.Horizontal
-		delegate: listDayRow //Text { text: "TEST - per modell" }
-		interactive: false //no scroll between days in this way
+		//delegate: Rectangle{ width: 600; height: 500; border.color: "black"; Text{text: "koll" + model.name} }    //listDayRow
+		delegate: listDayRow
+		interactive: false //false //TODO //no scroll between days in this way
+		clip: true
+		currentIndex: count-1
+		//cacheBuffer: 100000 //TODO remove
+		
+		onCurrentIndexChanged: {
+				
+			myScript(currentIndex)
+		}
+		//highlight: Rectangle { color: "yellow" }
+		//currentIndex: root.current
+		//preferredHighlightBegin: 80; preferredHighlightEnd: 220
+		//highlightRangeMode: ListView.ApplyRange
+		
 		
 		//TODO transitions:
+	}
+	
+	ListModel{
+		id: weekModel
+		ListElement{
+			name: "Monday"
+			endsWith: ""
+		}
+		ListElement{
+			name: "Tuesday"
+			endsWith: ""	
+		}
+		ListElement{
+			name: "Wednesday"
+			endsWith: ""	
+		}
 	}
 	
 	Component{
 		id: listDayRow
 		ListView {
 			id: dayListView
+			//property variant test: model
 			//anchors.top: mainListView.bottom
 			//anchors.left: parent.left
-			width: parent.width
+			width: constDeviceRowWidth //TODO//parent.width
 			height: 700 //TODO
 			
 			//anchors.fill: parent
@@ -55,33 +130,44 @@ import "schedulerscripts.js" as Scripts
 			header: timeline
 			snapMode: ListView.SnapToItem
 			interactive: false //no scroll between devices at the moment
+			
+			//keyNavigationWraps: true
+		
+			/*
+			states: State {
+				name: "currentItem"; when: ListView.isCurrentItem 
+				PropertyChanges { target: dayListView; height: myScript(ListView.) }  //TODO better way...
+				//ScriptAction { scriptName: "myScript" }
+			}
+			*/
 		}
 	}
 	
-	Component{
-		id: mainListViewHeader
-		Column{
-			id: mainListViewHeaderColumn
-			anchors.left: parent.left
-			anchors.top: parent.top
-			anchors.topMargin: dayListHeaderHeight
-			width: main.width - constDeviceRowWidth
-			
-			spacing: 0
-			
-			Repeater{
-				model: deviceModel
-				Rectangle{
-					width: parent.width
-					height: constDeviceRowHeight
-					border.color: "green"
-					Text{
-						anchors.centerIn: parent
-						text: modelData.name
-					}
+	//Component{
+	//	id: mainListViewHeader
+	Column{
+		id: mainListViewHeaderColumn
+		anchors.right: mainListView.left
+		anchors.top: mainListView.top
+		anchors.topMargin: dayListHeaderHeight
+		
+		width: main.width - constDeviceRowWidth
+		
+		spacing: 0
+		
+		Repeater{
+			model: deviceModel
+			Rectangle{
+				width: parent.width
+				height: constDeviceRowHeight
+				border.color: "green"
+				Text{
+					anchors.centerIn: parent
+					text: modelData.name
 				}
 			}
 		}
+	//}
 	}
 	
 	Component{
@@ -105,6 +191,7 @@ import "schedulerscripts.js" as Scripts
 			*/
 			Rectangle { id: "deviceRow"; border.color: "blue"; width: parent.width; height: parent.height;
 				clip: true
+				
 				MouseArea {
 					id: deviceMouseArea
 					anchors.fill: parent
@@ -298,6 +385,21 @@ import "schedulerscripts.js" as Scripts
 		suntime = suntime.split(':');
 		var hourSize = constDeviceRowWidth/24; //(main.width - 100)/24; //TODO constant or something?
 		return hourSize * suntime[0] + hourSize * suntime[1]/60;
+	}
+	
+	//TODO SPARA POINTLISTAN OCKSÅ! Kanske inte här, utan att man addar points till modellen och inte den fysiska listan?
+	function myScript(index){
+		
+		if(index == 0){
+			return;
+		}
+		index = index - 1; //prev index
+		var pointList = "TODO" //TODO !!!! förra dagens pointlist...
+		weekModel.setProperty(index, "endsWith", Scripts.getEndsWith(pointList, "on")) //TODO previousDayEndsWith, vad förra dagen endade med...
+		
+		//return 700;
+		print(index);
+		print("LYCKATS!!!");
 	}
 	//opacity vid dimning?
 	//linjens färg etc (state) beror ju på närmaste punkt föres sort... Punkten kan finnas osynlig (tidigare dag) också...

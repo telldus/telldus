@@ -32,7 +32,7 @@ Rectangle{
 	border.color: "black"
 	opacity: 1 //0.8
 	z: 100
-	state: "on"
+	//state: "on"
 	focus: true
 	//actionTypeColor: getColor()
 	
@@ -216,7 +216,7 @@ Rectangle{
 					anchors.left: pointRect.horizontalCenter
 					color: pointRect.actionTypeColor
 					opacity: pointRect.actionTypeOpacity
-					width: Scripts.getNextAndPrevBarWidth(actionBar, pointRect, pointRect.parent.children);
+					width: Scripts.getBarWidth(actionBar, pointRect, pointRect.parent.children, weekModel.get(mainListView.currentIndex)); //getNextAndPrevBarWidth
 				}
 			}
 
