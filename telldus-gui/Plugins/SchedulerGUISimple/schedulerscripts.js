@@ -8,6 +8,37 @@ function getActiveStates(){
 	return activeStates;
 }
 
+//Days:
+var currentDayIndex = 6; //Today...
+var days = new Array();
+
+function addDay(day){
+	days.push(day);
+}
+
+function getDays(){
+	return days;
+}
+
+function decrementCurrentDay(){
+	if(currentDayIndex == 0){ //TODO in the future, add new day instead (if 7 days)
+		return;
+	}
+	days[currentDayIndex].state = "hiddenRight";
+	currentDayIndex--;
+	days[currentDayIndex].state = "visible";
+}
+
+function incrementCurrentDay(){
+	if(currentDayIndex == days.length){
+		return; //TODO add day instead
+	}
+	days[currentDayIndex].state = "hiddenLeft";
+	currentDayIndex++;
+	days[currentDayIndex].state = "visible";	
+}
+
+//Other:
 function getBarWidth(currentBar, currentPointRect, pointList){
 	
 	var maxWidth = currentPointRect.parent.width;

@@ -9,18 +9,123 @@ import "schedulerscripts.js" as Scripts
 	property variant sunData
 	property int dayListHeaderHeight: 15
 
+	Component.onCompleted: {
+		var dynamicDay = 0;
+		for(var i=0;i<7;i++){  //One week, TODO dynamic
+			dynamicDay = dayListViewComponent.createObject(mainContent)
+			dynamicDay.state = "hiddenLeft";
+			Scripts.addDay(dynamicDay)
+			//även spara datum... ev. veckodag, eller räkna fram
+		}
+		dynamicDay.state = "visible" //set last one as visible
+	}
+
 	Rectangle{
 		id: mainTop
 		height: 75
 		width: parent.width
 		anchors.top: parent.top
 		anchors.left: parent.left
+		Rectangle{
+			anchors.right: weekDayText.left
+			anchors.verticalCenter: weekDayText.verticalCenter
+			height: 20
+			width: 20
+			border.color: "red"
+			Text{
+				anchors.centerIn: parent
+				text: "<-"
+			}
+			MouseArea{
+				anchors.fill: parent
+				onClicked: {
+					//step to prev weekday
+					//Scripts.updateEndsWith()
+					Scripts.decrementCurrentDay()
+					//mainListView.positionViewAtIndex(mainListView.currentIndex, ListView.Center)
+					//mainListView.currentIndex = mainListView.currentIndex - 1
+				}
+			}
+		}
 		Text{
+			id: weekDayText
 			anchors.centerIn: parent
 			text: "TESTAR"
+			
+		}
+		Rectangle{
+			anchors.left: weekDayText.right
+			anchors.verticalCenter: weekDayText.verticalCenter
+			height: 20
+			width: 20
+			border.color: "red"
+			Text{
+				anchors.centerIn: parent
+				text: "->"
+			}
+			MouseArea{
+				anchors.fill: parent
+				onClicked: {
+					//step to next weekday
+					//Scripts.updateEndsWith(mainListView)
+					Scripts.incrementCurrentDay()
+					//mainListView.positionViewAtIndex(mainListView.currentIndex, ListView.Center)
+					//mainListView.currentIndex = mainListView.currentIndex + 1
+				}
+			}
 		}
 	}
 
+	Row{
+		id: mainRow
+		width: parent.width
+		anchors.top: mainTop.bottom
+		anchors.left: parent.left
+			
+		Column{
+			id: mainHeader
+			//anchors.left: parent.left
+			//anchors.top: parent.top
+			//anchors.topMargin: dayListHeaderHeight
+			width: main.width - constDeviceRowWidth
+			
+			spacing: 0
+			z: 60
+			Rectangle{
+				id: filler
+				height: dayListHeaderHeight
+				width: parent.width
+				border.color: "red"
+			}
+			
+			Repeater{
+				
+				model: deviceModel
+				Rectangle{
+					width: parent.width
+					height: constDeviceRowHeight
+					border.color: "green"
+					Text{
+						anchors.centerIn: parent
+						text: modelData.name
+					}
+				}
+			}
+		}
+		
+		Rectangle{
+			id: mainContent
+			height: 700 //TODO
+			width: constDeviceRowWidth //TODO 
+			//anchors.top: parent.top
+			//anchors.left: mainListViewHeaderColumn.right
+			clip: true
+			z: 50
+		}
+		
+	}
+	
+	/*
 	ListView{
 		id: mainListView
 		anchors.top: mainTop.bottom
@@ -37,14 +142,15 @@ import "schedulerscripts.js" as Scripts
 		
 		//TODO transitions:
 	}
+	*/
 	
 	Component{
-		id: listDayRow
+		id: dayListViewComponent
 		ListView {
 			id: dayListView
 			//anchors.top: mainListView.bottom
 			//anchors.left: parent.left
-			width: parent.width
+			width: constDeviceRowWidth
 			height: 700 //TODO
 			
 			//anchors.fill: parent
@@ -55,32 +161,32 @@ import "schedulerscripts.js" as Scripts
 			header: timeline
 			snapMode: ListView.SnapToItem
 			interactive: false //no scroll between devices at the moment
-		}
-	}
-	
-	Component{
-		id: mainListViewHeader
-		Column{
-			id: mainListViewHeaderColumn
-			anchors.left: parent.left
-			anchors.top: parent.top
-			anchors.topMargin: dayListHeaderHeight
-			width: main.width - constDeviceRowWidth
+			//anchors.top: parent.top;
+			//state: "hidden" //default
 			
-			spacing: 0
-			
-			Repeater{
-				model: deviceModel
-				Rectangle{
-					width: parent.width
-					height: constDeviceRowHeight
-					border.color: "green"
-					Text{
-						anchors.centerIn: parent
-						text: modelData.name
-					}
+			states: [
+				State {
+					name: "hiddenRight"; //when: parent.left != null
+					AnchorChanges { target: dayListView; anchors.left: parent.right; anchors.right: undefined }
+					//PropertyChanges { target: dayListView; opacity: 0 }
+				},
+				State {
+					name: "hiddenLeft"; //when: parent.left != null
+					AnchorChanges { target: dayListView; anchors.left: undefined; anchors.right: parent.left }
+					//PropertyChanges { target: dayListView; opacity: 0 }
+				},
+				State {
+					name: "visible"; //when: parent.left != null
+					AnchorChanges { target: dayListView; anchors.right: undefined; anchors.left: parent.left }
+					PropertyChanges { target: dayListView; opacity: 1 }
 				}
+			]
+			
+			transitions: Transition {
+				 AnchorAnimation { easing.type: Easing.InOutQuad; duration: 1000 } //PropertyAnimation { properties: "x"; duration: 1000; easing.type: Easing.InOutQuad }
 			}
+			//TODO transition between state, animation
+			
 		}
 	}
 	
