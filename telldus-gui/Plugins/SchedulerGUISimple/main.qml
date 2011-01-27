@@ -11,13 +11,22 @@ import "schedulerscripts.js" as Scripts
 
 	Component.onCompleted: {
 		var dynamicDay = 0;
+		var startday = new Date();
+		startday.setDate(startday.getDate() - 6);
+		var weekday_name_array = new Array("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday")
 		for(var i=0;i<7;i++){  //One week, TODO dynamic
 			dynamicDay = dayListViewComponent.createObject(mainContent)
 			dynamicDay.state = "hiddenLeft";
+			var currentDay = new Date(startday);
+			currentDay.setDate(startday.getDate() + i);
+			var day = currentDay.getDay();
+			dynamicDay.dayName = weekday_name_array[day];
 			Scripts.addDay(dynamicDay)
-			//även spara datum... ev. veckodag, eller räkna fram
+			//även spara datum...? ev. räkna fram veckodag?
 		}
 		dynamicDay.state = "visible" //set last one as visible
+		weekDayText.text = Scripts.getCurrentDay().dayName
+					//weekDayText.state = "loaded"
 	}
 
 	Rectangle{
@@ -42,6 +51,7 @@ import "schedulerscripts.js" as Scripts
 					//step to prev weekday
 					//Scripts.updateEndsWith()
 					Scripts.decrementCurrentDay()
+					weekDayText.text = Scripts.getCurrentDay().dayName
 					//mainListView.positionViewAtIndex(mainListView.currentIndex, ListView.Center)
 					//mainListView.currentIndex = mainListView.currentIndex - 1
 				}
@@ -50,7 +60,12 @@ import "schedulerscripts.js" as Scripts
 		Text{
 			id: weekDayText
 			anchors.centerIn: parent
-			text: "TESTAR"
+			//text: ""
+			/*states: State{
+				name: "loaded";
+				PropertyChanges{ target: weekDayText; text: Scripts.getCurrentDay().dayName }
+			}
+			*/
 			
 		}
 		Rectangle{
@@ -69,6 +84,7 @@ import "schedulerscripts.js" as Scripts
 					//step to next weekday
 					//Scripts.updateEndsWith(mainListView)
 					Scripts.incrementCurrentDay()
+					weekDayText.text = Scripts.getCurrentDay().dayName
 					//mainListView.positionViewAtIndex(mainListView.currentIndex, ListView.Center)
 					//mainListView.currentIndex = mainListView.currentIndex + 1
 				}
@@ -148,6 +164,7 @@ import "schedulerscripts.js" as Scripts
 		id: dayListViewComponent
 		ListView {
 			id: dayListView
+			property string dayName: ""
 			//anchors.top: mainListView.bottom
 			//anchors.left: parent.left
 			width: constDeviceRowWidth
@@ -220,7 +237,7 @@ import "schedulerscripts.js" as Scripts
 					//onEntered: parent.border.color = onHoverColor
 					//onExited:  parent.border.color = borderColor
 					onClicked: {
-						
+						//print("Mainrow: " + mainRow.parent.children[0].height);
 						var component = Qt.createComponent("ActionPoint.qml")
 						var dynamicPoint = component.createObject(deviceRow)
 						//dynamicPoint.x = mouseX - dynamicPoint.width/2 //xposition

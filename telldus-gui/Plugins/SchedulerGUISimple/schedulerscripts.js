@@ -20,6 +20,21 @@ function getDays(){
 	return days;
 }
 
+function getCurrentDay(){
+	return days[currentDayIndex];
+}
+
+/*
+function getCurrentDayName(){
+	print("Hittat rätt" + currentDayIndex);
+	var day = days[currentDayIndex];
+	if(day == null){
+		return "TOMT-omt-omt";
+	}
+	return day.dayName;
+}
+*/
+
 function decrementCurrentDay(){
 	if(currentDayIndex == 0){ //TODO in the future, add new day instead (if 7 days)
 		return;
