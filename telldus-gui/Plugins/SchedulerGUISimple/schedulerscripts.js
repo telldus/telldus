@@ -8,11 +8,10 @@ function getActiveStates(){
 	return activeStates;
 }
 
-function getBarWidth(currentBar, currentPointRect, pointList, currentDay){
+function getBarWidth(currentBar, currentPointRect, pointList){
 	
-	//TODO REMOVE currentDay too, currentDay.endsWith = ""; //reset
 	var maxWidth = currentPointRect.parent.width;
-	var nextX = maxWidth - currentPointRect.width / 2;
+	var nextX = maxWidth - currentPointRect.width / 2
 	for(var i=0;i<pointList.length;i++){
 		if (pointList[i].isPoint != undefined && pointList[i].isPoint == "true") {
 			if(pointList[i].x < nextX && pointList[i].x > currentPointRect.x){
@@ -20,12 +19,6 @@ function getBarWidth(currentBar, currentPointRect, pointList, currentDay){
 			}
 		}
 	}
-	/* TODO
-	if(nextX == maxWidth - currentPointRect.width/2 && currentPointRect.state != "" && currentPointRect.state != "off"){
-		currentDay.endsWith = currentPointRect.state;
-		print("Ends with: " + currentDay.endsWith);
-	}
-	*/
 	return (nextX - currentPointRect.x);
 }
 
@@ -45,25 +38,6 @@ function getPreviousState(currentPointRect, pointList){
 	}
 	
 	return prevPoint.state;
-}
-
-function getEndsWith(pointList, previousDayEndsWith){
-	var prevPoint = null;
-	for(var i=0;i<pointList.length;i++){
-		if(pointList[i].isPoint != undefined && pointList[i].isPoint == "true"){
-			if((prevPoint == null || pointList[i].x > prevPoint.x) && pointList[i].state != "bell"){ //TODO when more than "bell", make dynamic
-				prevPoint = pointList[i];
-			}
-		}
-	}
-	
-	if(prevPoint == null){
-		return previousDayEndsWith;
-	}
-	if(prevPoint.state == "off"){
-		return "";
-	}
-	return prevPoint.state;  //only on or dim
 }
 
 function isMidnightDark(){
@@ -89,8 +63,7 @@ function pad(number, length) {
    
     return str;
 }
-/*
+
 function getNextAndPrevBarWidth(currentBar, currentPointRect, pointList){
 	return getBarWidth(currentBar, currentPointRect, pointList);
 }
-*/
