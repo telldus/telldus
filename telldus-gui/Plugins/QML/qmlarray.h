@@ -19,6 +19,8 @@ signals:
 
 public slots:
 	void push(const QScriptValue &v);
+	QVariant get(int index) const;
+
 
 private:
 	class PrivateData;
