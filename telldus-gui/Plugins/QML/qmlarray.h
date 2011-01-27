@@ -7,6 +7,7 @@
 class QMLArray : public QAbstractListModel
 {
 	Q_OBJECT
+	Q_PROPERTY(int length READ rowCount)
 public:
 	explicit QMLArray(QObject *parent = 0);
 	~QMLArray();
