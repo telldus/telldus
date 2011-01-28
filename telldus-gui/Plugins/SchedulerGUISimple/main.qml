@@ -24,6 +24,7 @@ import "schedulerscripts.js" as Scripts
 		dynamicDay.state = "visible" //set last one as visible
 		weekDayText.text = Scripts.getCurrentDayName()
 		Scripts.updateDeviceIndex();
+		Scripts.initiatePointsInGUI();
 	}
 
 	Rectangle{

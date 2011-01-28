@@ -134,12 +134,18 @@ function updateDeviceIndex(){
 	//}
 }
 
-function initiatePointsInGUI(pointList){
+function initiatePointsInGUI(){ //weekPointList){
 	//för varje point, addPointToGUI, men ju även lägga till schemajobb... alltså i __init__.js... men därifrån kan inte denna anropas...
 	//så det får väl bli varsin iteration då...
 	//weekPointList -> från __init__.js
+	var weekPointList = new Array();
+	var dummypoint = []
+	dummypoint["day"] = 3;
+	dummypoint["deviceId"] = 1;
+	weekPointList.push(dummypoint);
 	for(var i=0;i<weekPointList.length;i++){
-		addWeekPointToGUI(mainPointList[i]);
+		print("Inne");
+		addWeekPointToGUI(weekPointList[i]);
 	}
 }
 
@@ -147,6 +153,26 @@ function addWeekPointToGUI(point){
 	//lägg till point till GUI
 	var deviceId = point.deviceId;
 	var dayOfWeek = point.day;
+	print("Dayofweek: " + dayOfWeek);
+	var dayListViewComp = days[dayOfWeek];
+	print("Length: " + dayListViewComp.children[0].children.length);  //TODO export this as property instead?
+	var currentDeviceIndex = deviceIndex[deviceId];
+	var pointParent = dayListViewComp.children[0].children[currentDeviceIndex + 2];
+	print("Pointparent: " + pointParent);
+	
+	
+	var component = Qt.createComponent("ActionPoint.qml")
+	var dynamicPoint = component.createObject(pointParent)
+	dynamicPoint.absoluteHour = 12
+	dynamicPoint.absoluteMinute = 30
+	dynamicPoint.x = dynamicPoint.getAbsoluteXValue();
+	dynamicPoint.border.color = "blue"
+	dynamicPoint.addState("on");
+	dynamicPoint.addState("off");
+	dynamicPoint.addState("dim");
+	dynamicPoint.addState("bell");
+	dynamicPoint.setFirstState("dim");
+	
 	
 	//1. hitta rätt veckodag med getDay == dayOfWeek
 	//2. i denna day, hitta rätt device... deviceIndex[deviceId] = rätt index
