@@ -17,6 +17,8 @@ Rectangle{
 	property int absoluteHour: parseInt(dialog.absoluteHour, 10)
 	property int absoluteMinute: parseInt(dialog.absoluteMinute, 10)
 	property alias triggerstate: trigger.state
+	property variant parentPoint
+	property int parentPointAbsoluteHour: 0
 	
 	Component.onCompleted: {
 		//TODO useless really, still gets Cannot anchor to a null item-warning...
@@ -49,6 +51,13 @@ Rectangle{
 		text: pointRect.activeFocus ? "I HAVE active focus!" : "I do NOT have active focus"
      }
      */
+	
+	onParentPointAbsoluteHourChanged: {
+		print("Nja");
+		//pointRect.absoluteHour = parentPoint.absolutHour
+		dialog.absoluteHour = parentPointAbsoluteHour;
+	}
+	
 	MouseArea {
 		id: pointRectMouseArea
 		acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -74,11 +83,17 @@ Rectangle{
 		}
 		
 		onReleased: {
-			dialog.show(pointRect)
+			
+			dialog.show(pointRect)  //TODO not pointRect, but parentPoint if such exists
 			//var rootCoordinates = pointRect.mapToItem(pointRect.parent, mouse.x, mouse.y);
 			//var hourMinute = getTimeFromPosition(rootCoordinates.x)
 			dialog.absoluteHour = Scripts.pad(pointRect.absoluteHour, 2) //Scripts.pad(hourMinute[0], 2)
 			dialog.absoluteMinute = Scripts.pad(pointRect.absoluteMinute, 2) //Scripts.pad(hourMinute[1], 2)
+			
+			print("TESTAR!!! " + parentPoint);
+			if(parentPoint != undefined){
+				parentPoint.absoluteHour = dialog.absoluteHour;
+			}
 		}
 		
 		anchors.fill: parent
@@ -181,6 +196,10 @@ Rectangle{
 			name: "bell"
 			PropertyChanges { target: pointRect; actionTypeColor: getLastPointColor() }
 			PropertyChanges { target: pointRect; actionTypeImage: imageActionBell }
+		},
+		State{
+			name: "test"; when: pointRect.parentPoint != undefined
+			PropertyChanges{ target: pointRect; parentPointAbsoluteHour: pointRect.parentPoint.absoluteHour }
 		}
 	]
 	
@@ -228,7 +247,12 @@ Rectangle{
 			return 0;
 		}
 		var hourSize = pointRect.parent.width / 24;
-		return pointRect.absoluteHour * hourSize + hourSize * (pointRect.absoluteMinute/60) - pointRect.width/2;
+		var point = pointRect;
+		if(pointRect.parentPoint != undefined){
+			print("Different x");
+			point = pointRect.parentPoint;
+		}
+		return point.absoluteHour * hourSize + hourSize * (point.absoluteMinute/60) - point.width/2;
 	}
 	
 	function toggleType(){ //TODO other kind of selection method

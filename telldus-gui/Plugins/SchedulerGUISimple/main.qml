@@ -13,20 +13,17 @@ import "schedulerscripts.js" as Scripts
 		var dynamicDay = 0;
 		var startday = new Date();
 		startday.setDate(startday.getDate() - 6);
-		var weekday_name_array = new Array("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday")
 		for(var i=0;i<7;i++){  //One week, TODO dynamic
 			dynamicDay = dayListViewComponent.createObject(mainContent)
 			dynamicDay.state = "hiddenLeft";
 			var currentDay = new Date(startday);
 			currentDay.setDate(startday.getDate() + i);
-			var day = currentDay.getDay();
-			dynamicDay.dayName = weekday_name_array[day];
+			dynamicDay.daydate = currentDay;
 			Scripts.addDay(dynamicDay)
-			//även spara datum...? ev. räkna fram veckodag?
 		}
 		dynamicDay.state = "visible" //set last one as visible
-		weekDayText.text = Scripts.getCurrentDay().dayName
-					//weekDayText.state = "loaded"
+		weekDayText.text = Scripts.getCurrentDayName()
+		Scripts.updateDeviceIndex();
 	}
 
 	Rectangle{
@@ -51,7 +48,7 @@ import "schedulerscripts.js" as Scripts
 					//step to prev weekday
 					//Scripts.updateEndsWith()
 					Scripts.decrementCurrentDay()
-					weekDayText.text = Scripts.getCurrentDay().dayName
+					weekDayText.text = Scripts.getCurrentDayName()
 					//mainListView.positionViewAtIndex(mainListView.currentIndex, ListView.Center)
 					//mainListView.currentIndex = mainListView.currentIndex - 1
 				}
@@ -84,7 +81,7 @@ import "schedulerscripts.js" as Scripts
 					//step to next weekday
 					//Scripts.updateEndsWith(mainListView)
 					Scripts.incrementCurrentDay()
-					weekDayText.text = Scripts.getCurrentDay().dayName
+					weekDayText.text = Scripts.getCurrentDayName()
 					//mainListView.positionViewAtIndex(mainListView.currentIndex, ListView.Center)
 					//mainListView.currentIndex = mainListView.currentIndex + 1
 				}
@@ -141,30 +138,11 @@ import "schedulerscripts.js" as Scripts
 		
 	}
 	
-	/*
-	ListView{
-		id: mainListView
-		anchors.top: mainTop.bottom
-		anchors.topMargin: 10
-		anchors.left: parent.left
-		height: parent.height //TODO
-		width: parent.width
-		//anchors.left: dayListView.left
-		header: mainListViewHeader
-		model: 1
-		orientation: ListView.Horizontal
-		delegate: listDayRow //Text { text: "TEST - per modell" }
-		interactive: false //no scroll between days in this way
-		
-		//TODO transitions:
-	}
-	*/
-	
 	Component{
 		id: dayListViewComponent
 		ListView {
 			id: dayListView
-			property string dayName: ""
+			property date daydate
 			//anchors.top: mainListView.bottom
 			//anchors.left: parent.left
 			width: constDeviceRowWidth
@@ -194,14 +172,33 @@ import "schedulerscripts.js" as Scripts
 				},
 				State {
 					name: "visible"; //when: parent.left != null
-					AnchorChanges { target: dayListView; anchors.right: undefined; anchors.left: parent.left }
 					PropertyChanges { target: dayListView; opacity: 1 }
+					AnchorChanges { target: dayListView; anchors.right: undefined; anchors.left: parent.left }
 				}
 			]
 			
-			transitions: Transition {
-				 AnchorAnimation { easing.type: Easing.InOutQuad; duration: 1000 } //PropertyAnimation { properties: "x"; duration: 1000; easing.type: Easing.InOutQuad }
-			}
+			transitions: [
+				Transition {
+					from: "hiddenLeft"
+					to: "visible"
+					AnchorAnimation { easing.type: Easing.InOutQuad; duration: 1000 } //PropertyAnimation { properties: "x"; duration: 1000; easing.type: Easing.InOutQuad }
+				},
+				Transition {
+					from: "visible"
+					to: "hiddenRight"
+					AnchorAnimation { easing.type: Easing.InOutQuad; duration: 1000 } //PropertyAnimation { properties: "x"; duration: 1000; easing.type: Easing.InOutQuad }
+				},
+				Transition {
+					from: "visible"
+					to: "hiddenLeft"
+					AnchorAnimation { easing.type: Easing.InOutQuad; duration: 1000 } //PropertyAnimation { properties: "x"; duration: 1000; easing.type: Easing.InOutQuad }
+				},
+				Transition {
+					from: "hiddenRight"
+					to: "visible"
+					AnchorAnimation { easing.type: Easing.InOutQuad; duration: 1000 } //PropertyAnimation { properties: "x"; duration: 1000; easing.type: Easing.InOutQuad }
+				}
+			]
 			//TODO transition between state, animation
 			
 		}
@@ -254,6 +251,25 @@ import "schedulerscripts.js" as Scripts
 						dynamicPoint.addState("bell");
 						//dynamicPoint.setFirstState("dim"); //when type is a stored value
 						dynamicPoint.setFirstState();
+						
+						
+						//TEST, proof of concept for repeat-everyday-points:
+						//if deleted, must check if parent exists before deletion
+						//in that case, parent must have list of all its children and delete them too...
+						/*
+						var dynamicPoint2 = component.createObject(deviceRow.parent.parent.children[1])
+						dynamicPoint2.absoluteHour = dynamicPoint.absoluteHour
+						dynamicPoint2.absoluteMinute = 30
+						dynamicPoint2.parentPoint = dynamicPoint
+						dynamicPoint2.x = dynamicPoint2.getAbsoluteXValue();
+						dynamicPoint2.border.color = "blue"
+						dynamicPoint2.addState("on");
+						dynamicPoint2.addState("off");
+						dynamicPoint2.addState("dim");
+						dynamicPoint2.addState("bell");
+						dynamicPoint2.setFirstState();
+						*/
+						//SLUT TEST
 						
 						dialog.show(dynamicPoint) 
 					}

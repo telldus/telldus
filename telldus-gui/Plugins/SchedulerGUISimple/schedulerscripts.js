@@ -1,3 +1,6 @@
+//TODO pragma instead? Which is best in this case?
+
+var deviceIndex = [];
 var activeStates = new Array();
 
 function addState(state){
@@ -9,6 +12,7 @@ function getActiveStates(){
 }
 
 //Days:
+var weekday_name_array = new Array("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday")
 var currentDayIndex = 6; //Today...
 var days = new Array();
 
@@ -24,32 +28,39 @@ function getCurrentDay(){
 	return days[currentDayIndex];
 }
 
-/*
 function getCurrentDayName(){
-	print("Hittat rätt" + currentDayIndex);
-	var day = days[currentDayIndex];
-	if(day == null){
-		return "TOMT-omt-omt";
-	}
-	return day.dayName;
+	var day = getCurrentDay().daydate;
+	return weekday_name_array[day.getDay()] + " " + day.getDate();
 }
-*/
+
 
 function decrementCurrentDay(){
-	if(currentDayIndex == 0){ //TODO in the future, add new day instead (if 7 days)
-		return;
-	}
 	days[currentDayIndex].state = "hiddenRight";
-	currentDayIndex--;
+	var workDate = days[currentDayIndex].daydate;
+	workDate.setDate(workDate.getDate() - 7);
+	days[currentDayIndex].daydate = workDate;
+	if(currentDayIndex == 0){
+		currentDayIndex = days.length - 1;
+	}
+	else{
+		currentDayIndex--;
+	}
+	days[currentDayIndex].state = "hiddenLeft"; //place on right side of center, for correct slid
 	days[currentDayIndex].state = "visible";
 }
 
 function incrementCurrentDay(){
-	if(currentDayIndex == days.length){
-		return; //TODO add day instead
-	}
 	days[currentDayIndex].state = "hiddenLeft";
-	currentDayIndex++;
+	var workDate = days[currentDayIndex].daydate;
+	workDate.setDate(workDate.getDate() + 1);
+	if(currentDayIndex == (days.length - 1)){
+		currentDayIndex = 0;
+	}
+	else{
+		currentDayIndex++;
+	}
+	days[currentDayIndex].daydate = workDate;
+	days[currentDayIndex].state = "hiddenRight"; //place on right side of center, for correct slide
 	days[currentDayIndex].state = "visible";	
 }
 
@@ -112,4 +123,33 @@ function pad(number, length) {
 
 function getNextAndPrevBarWidth(currentBar, currentPointRect, pointList){
 	return getBarWidth(currentBar, currentPointRect, pointList);
+}
+
+function updateDeviceIndex(){
+	deviceIndex = []; //empty list
+	for(var i=0;i<deviceModel.length;i++){
+		deviceIndex[deviceModel.get(i).id] = i;
+	}
+	//for(var listproperty in deviceIndex){
+	//}
+}
+
+function initiatePointsInGUI(pointList){
+	//för varje point, addPointToGUI, men ju även lägga till schemajobb... alltså i __init__.js... men därifrån kan inte denna anropas...
+	//så det får väl bli varsin iteration då...
+	//weekPointList -> från __init__.js
+	for(var i=0;i<weekPointList.length;i++){
+		addWeekPointToGUI(mainPointList[i]);
+	}
+}
+
+function addWeekPointToGUI(point){
+	//lägg till point till GUI
+	var deviceId = point.deviceId;
+	var dayOfWeek = point.day;
+	
+	//1. hitta rätt veckodag med getDay == dayOfWeek
+	//2. i denna day, hitta rätt device... deviceIndex[deviceId] = rätt index
+	//3. i denna listviewdelegates rektangel, lägg till en ny point, som man gör när man klickar ungefär... Lägg till i flera (med "parentpoint") om varje dag-punkt...)
+	
 }
