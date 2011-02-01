@@ -247,6 +247,17 @@ function updateEndsWith(){
 
 function assignContinuingBarProperties(deviceRow, previousEndPoint, dayIndex, firstRow){
 	var barWidth = 0;
+	
+	if(previousEndPoint == undefined){ //the first has no point to bind to
+		deviceRow.continuingBar.prevDayColor = "white";
+		deviceRow.continuingBar.prevDayOpacity = 0;
+		deviceRow.continuingBar.prevDayWidth = 0;
+	}
+	else{
+		deviceRow.continuingBar.prevDayColor = previousEndPoint.actionTypeColor;
+		deviceRow.continuingBar.prevDayOpacity = previousEndPoint.actionTypeOpacity;
+	}
+
 	if(deviceRow.hasPoints()){
 		print("A Point!!");
 		//TODO barWidth here... Must depend on first point... bind... somehow...
@@ -259,19 +270,8 @@ function assignContinuingBarProperties(deviceRow, previousEndPoint, dayIndex, fi
 		deviceRow.endPoint = previousEndPoint;
 		barWidth = deviceRow.width;
 	}
-	
-	if(!firstRow){ //all but the first (have no point to bind to)
-		if(previousEndPoint == undefined){
-			deviceRow.continuingBar.prevDayColor = "white";
-			deviceRow.continuingBar.prevDayOpacity = 0;
-			deviceRow.continuingBar.prevDayWidth = 0;
-		}
-		else{
-			deviceRow.continuingBar.prevDayColor = previousEndPoint.actionTypeColor;
-			deviceRow.continuingBar.prevDayOpacity = previousEndPoint.actionTypeOpacity;
-			deviceRow.continuingBar.prevDayWidth = barWidth;
-		}
-	}
+	deviceRow.continuingBar.prevDayWidth = barWidth;
+
 	return previousEndPoint;
 }
 

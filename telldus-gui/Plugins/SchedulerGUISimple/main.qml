@@ -244,7 +244,7 @@ import "schedulerscripts.js" as Scripts
 					//onExited:  parent.border.color = borderColor
 					onClicked: {
 						print("ENDPOINT: " + deviceRow.endPoint);
-						/*
+						
 						//print("Mainrow: " + mainRow.parent.children[0].height);
 						var component = Qt.createComponent("ActionPoint.qml")
 						var dynamicPoint = component.createObject(deviceRow)
@@ -282,7 +282,7 @@ import "schedulerscripts.js" as Scripts
 						*/
 						//SLUT TEST
 						
-						//dialog.show(dynamicPoint) 
+						dialog.show(dynamicPoint) 
 					}
 				}
 				
