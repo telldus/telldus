@@ -51,6 +51,7 @@ import "schedulerscripts.js" as Scripts
 				anchors.fill: parent
 				onClicked: {
 					//step to prev weekday
+					dialog.hide()
 					Scripts.updateEndsWith()
 					Scripts.decrementCurrentDay()
 					weekDayText.text = Scripts.getCurrentDayName()
@@ -84,6 +85,7 @@ import "schedulerscripts.js" as Scripts
 				anchors.fill: parent
 				onClicked: {
 					//step to next weekday
+					dialog.hide()
 					Scripts.updateEndsWith() //mainListView)
 					Scripts.incrementCurrentDay()
 					weekDayText.text = Scripts.getCurrentDayName()

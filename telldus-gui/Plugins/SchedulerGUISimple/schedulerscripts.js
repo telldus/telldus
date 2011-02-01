@@ -246,7 +246,6 @@ function updateEndsWith(){
 }
 
 function assignContinuingBarProperties(deviceRow, previousEndPoint, dayIndex, firstRow){
-	var barWidth = 0;
 	
 	if(previousEndPoint == undefined){ //the first has no point to bind to
 		deviceRow.continuingBar.prevDayColor = "white";
@@ -263,15 +262,16 @@ function assignContinuingBarProperties(deviceRow, previousEndPoint, dayIndex, fi
 		//TODO barWidth here... Must depend on first point... bind... somehow...
 		deviceRow.endPoint = getEndsWith(deviceRow.children, days[dayIndex].daydate.getDay(), deviceRow.deviceId);
 		previousEndPoint = deviceRow.endPoint;
-		barWidth = 100;
+		deviceRow.continuingBar.prevDayWidth = 0;
+		deviceRow.continuingBar.state = "continuingWithLimitedWidth";
 	}
 	else{
 		//print("NO points");
+		deviceRow.continuingBar.state = "continuing";
 		deviceRow.endPoint = previousEndPoint;
-		barWidth = deviceRow.width;
+		deviceRow.continuingBar.prevDayWidth = deviceRow.width;
 	}
-	deviceRow.continuingBar.prevDayWidth = barWidth;
-
+	
 	return previousEndPoint;
 }
 
@@ -324,4 +324,20 @@ function addWeekPointToGUI(point){
 	dynamicPoint.addState("dim");
 	dynamicPoint.addState("bell");
 	dynamicPoint.setFirstState("dim");	
+}
+
+//TODO move, pragma safe:
+function getFirstPointWidth(deviceRow){
+	var pointList = deviceRow.children;
+	var firstX = deviceRow.width;
+	var pointWidth = 0;
+	for(var i=0;i<pointList.length;i++){
+		if (pointList[i].isPoint != undefined && pointList[i].isPoint == "true") {
+			if(pointList[i].x < firstX){
+				pointWidth = pointList[i].width; //same width for all
+				firstX = pointList[i].x;
+			}
+		}
+	}
+	return firstX + pointWidth/2;
 }
