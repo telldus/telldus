@@ -109,10 +109,8 @@ function getEndsWith(pointList, dayIndex, deviceId){ //previousDayEndsWithPoint)
 		}
 		
 		//TODO Avoid loop here!
-		var prevDayDevice = getDeviceRow(dayIndex, deviceId);
+		var prevDayDevice = getDeviceRow(dayIndex, deviceId, days, deviceIndex);
 		print("PREVDAYHERE: index: " + dayIndex + " id: " + deviceId + " Daydevice: " + prevDayDevice);
-		//print("Test1: " + prevDayDevice.children.length);
-		//print("Test2: " + prevDayDevice.children[0]);
 		if(prevDayDevice == undefined){ // || prevDayDevice.endPoint == undefined){ //TODO this is due to an error, but in the future use it to avoid loops
 			print("DayDeviceUndefined....................");
 			return null; 
@@ -145,28 +143,6 @@ function getPreviousState(currentPointRect){
 	}
 	
 	return prevPoint.state;
-}
-
-//TODO: move this to separate js library (pragma?)
-function getPreviousDayColor(currentDayIndexLocal, daysLocal){
-	var dayIndex = currentDayIndexLocal - 1;
-	if(dayIndex == -1){ //too far, begin from end again
-		dayIndex = daysLocal.length - 1;
-	}
-	/* TODO have too avoid binding loop...
-	if(days[dayIndex].daydate > days[currentDay]){
-		
-	}
-	*/
-	//print("Current day index: " + dayIndex);
-	//print("Days count: " + daysLocal.length);
-	var prevDay = daysLocal[dayIndex]; //TODO Kan ju inte vara per dag! Ska vara per device...
-	if(prevDay == undefined || prevDay.endPoint == undefined){
-		//no previous end point exists
-		return "white";
-	}
-	var prevEndPoint = prevDay.endPoint;
-	return prevEndPoint.actionTypeColor;
 }
 
 function isMidnightDark(){
@@ -224,11 +200,14 @@ function updateEndsWith(){
 		var startIndex = 0;
 		for(var dayIndex=0;dayIndex<days.length;dayIndex++){
 			var deviceRow = days[dayIndex].children[0].children[(parseInt(deviceIndex[device]))]; //+1 TODO property somehow? Or function...
+			/*
+			 * DEBUG
 			print("day: " + days[dayIndex]);
 			print("child zero: " + days[dayIndex].children[0]);
 			print("deviceRow: " + deviceRow);
 			print("index: " + (parseInt(deviceIndex[device])));
 			print("Length: " + days[dayIndex].children[0].children.length);
+			*/
 			//print("deviceRow, id: " + deviceRow.deviceId);
 			//print("deviceRow: " + deviceRow.children.length);
 			
@@ -237,8 +216,6 @@ function updateEndsWith(){
 				print(myKey + " == (" + days[dayIndex].children[0][myKey] + ")");
 			}
 			*/
-			
-			var TEST = getDeviceRow(dayIndex, device);
 			
 			if(deviceRow.hasPoints()){
 				print("HAS POINTS ..........");
@@ -255,54 +232,47 @@ function updateEndsWith(){
 			}
 			
 			var deviceRow = days[dayIndex].children[0].children[parseInt(deviceIndex[device])]; //+1 TODO property somehow?
-			if(deviceRow.hasPoints()){
-				deviceRow.endPoint = getEndsWith(deviceRow.children, days[dayIndex].daydate.getDay(), deviceRow.deviceId);
-				previousEndPoint = deviceRow.endPoint;
-			}
-			else{
-				deviceRow.endPoint = previousEndPoint;
+			//print("ID " + deviceRow.deviceId);
+			
+			previousEndPoint = assignContinuingBarProperties(deviceRow, previousEndPoint, dayIndex, i==0);
+			
+			if(i == days.length-1){
+				//last one, bind the first one too then
+				deviceRow = days[startIndex].children[0].children[parseInt(deviceIndex[device])];
+				assignContinuingBarProperties(deviceRow, previousEndPoint, dayIndex, false);
 			}
 		}
 	}
-	
-	
-	/*
-	
-	for(var i=0;i<days.length;i++){
-		var dayindex = i;
-		/*
-		print(currentDayIndex);
-		dayindex = dayindex + currentDayIndex + 1; //make sure to start on the day one week ago
-		if(dayindex > days.length-1){
-			dayindex = dayindex - days.length;
-		}
-		print("Day: " + dayindex);
-		
-		
-		var day = days[dayindex];
-		print("Day length: " + day.children[0].children.length);
-		for(var j=1;j<day.children[0].children.length-1;j++){  //TODO property?
-			var device = day.children[0].children[j]; //TODO property?
-			print("id: " + device.deviceId);
-			print("day: " + day.daydate.getDay());
-			print("children length: " + device.children.length);
-			if(device.deviceId == undefined){
-				//TODO which controls? More than these? device.endPoint = null;
-			}
-			else{
-				//TODO remove check above
-				device.endPoint = getEndsWith(device.children, day.daydate.getDay(), device.deviceId);
-			}
-			print("DeviceEndPoint: " + device.endPoint);
-		}
-		
+}
+
+function assignContinuingBarProperties(deviceRow, previousEndPoint, dayIndex, firstRow){
+	var barWidth = 0;
+	if(deviceRow.hasPoints()){
+		print("A Point!!");
+		//TODO barWidth here... Must depend on first point... bind... somehow...
+		deviceRow.endPoint = getEndsWith(deviceRow.children, days[dayIndex].daydate.getDay(), deviceRow.deviceId);
+		previousEndPoint = deviceRow.endPoint;
+		barWidth = 100;
 	}
-	*/
-	//för varje device på denna dag...
-	//kör getEndsWith och spara undan värdet..
-	//fast... hm... om man är på onsdag, sätter en on, inget annat finns under veckan, och så går du bakåt till tisdag...
-	//då måste det ha slagit igenom hela vägen...
-	//inte för varje device, spara (och nollställ här) en deviceChanged-property
+	else{
+		//print("NO points");
+		deviceRow.endPoint = previousEndPoint;
+		barWidth = deviceRow.width;
+	}
+	
+	if(!firstRow){ //all but the first (have no point to bind to)
+		if(previousEndPoint == undefined){
+			deviceRow.continuingBar.prevDayColor = "white";
+			deviceRow.continuingBar.prevDayOpacity = 0;
+			deviceRow.continuingBar.prevDayWidth = 0;
+		}
+		else{
+			deviceRow.continuingBar.prevDayColor = previousEndPoint.actionTypeColor;
+			deviceRow.continuingBar.prevDayOpacity = previousEndPoint.actionTypeOpacity;
+			deviceRow.continuingBar.prevDayWidth = barWidth;
+		}
+	}
+	return previousEndPoint;
 }
 
 //Upstart:
@@ -327,11 +297,10 @@ function getDeviceRow(dayOfWeek, deviceId){
 		print("DayListViewComp undefined");
 		return null;
 	}
-	print("Children Length: " + dayListViewComp.children[0].children.length);  //TODO export this as property instead?
-	print("Deviceid: " + deviceId);
 	var currentDeviceIndex = deviceIndex[deviceId];
-	print("CurrentDeviceIndex: " + currentDeviceIndex);
-	print("Deviceid (should be the same as before, is it always?): " + dayListViewComp.children[0].children[currentDeviceIndex].deviceId); //TEST was +1
+	if(dayListViewComp.children.length == undefined){
+		return null;
+	}
 	var pointParent = dayListViewComp.children[0].children[currentDeviceIndex]; //TEST was +1
 	print("Pointparent: " + pointParent);
 	return pointParent;
@@ -342,7 +311,7 @@ function addWeekPointToGUI(point){
 	var deviceId = point.deviceId;
 	var dayOfWeek = point.day;
 	print("Dayofweek: " + dayOfWeek);
-	var pointParent = getDeviceRow(dayOfWeek, deviceId);
+	var pointParent = getDeviceRow(dayOfWeek, deviceId, days, deviceIndex);
 	
 	var component = Qt.createComponent("ActionPoint.qml")
 	var dynamicPoint = component.createObject(pointParent)
@@ -354,11 +323,5 @@ function addWeekPointToGUI(point){
 	dynamicPoint.addState("off");
 	dynamicPoint.addState("dim");
 	dynamicPoint.addState("bell");
-	dynamicPoint.setFirstState("dim");
-	
-	
-	//1. hitta rätt veckodag med getDay == dayOfWeek
-	//2. i denna day, hitta rätt device... deviceIndex[deviceId] = rätt index
-	//3. i denna listviewdelegates rektangel, lägg till en ny point, som man gör när man klickar ungefär... Lägg till i flera (med "parentpoint") om varje dag-punkt...)
-	
+	dynamicPoint.setFirstState("dim");	
 }

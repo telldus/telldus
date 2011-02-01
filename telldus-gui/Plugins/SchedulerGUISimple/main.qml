@@ -148,11 +148,6 @@ import "schedulerscripts.js" as Scripts
 		ListView {
 			id: dayListView
 			property date daydate
-			//property alias devices2: dayListView.children
-			//property alias devices: dayListView.devices2[0]
-			//property string endsWith
-			//anchors.top: mainListView.bottom
-			//anchors.left: parent.left
 			width: constDeviceRowWidth
 			height: 700 //TODO
 			
@@ -237,6 +232,7 @@ import "schedulerscripts.js" as Scripts
 				clip: true
 				property variant endPoint: undefined //: Scripts.getEndsWith(deviceRow.children, index, modelData.id);
 				property int deviceId: modelData.id;
+				property alias continuingBar: continuingBar
 				
 				MouseArea {
 					id: deviceMouseArea
@@ -293,8 +289,6 @@ import "schedulerscripts.js" as Scripts
 				ActionBar{
 					id: "continuingBar"
 					hangOnToPoint: deviceRow
-					days: Scripts.getDays()
-					currentDay: Scripts.currentDayIndex
 						
 					state: "continuing"
 				}

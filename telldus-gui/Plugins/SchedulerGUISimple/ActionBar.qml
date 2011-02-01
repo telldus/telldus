@@ -4,8 +4,9 @@ import "schedulerscripts.js" as Scripts
 Rectangle{
 	id: barRectangle
 	property variant hangOnToPoint
-	property variant days
-	property int currentDay
+	property color prevDayColor
+	property double prevDayOpacity
+	property int prevDayWidth
 	
 	height: constBarHeight
 	z: 110
@@ -17,9 +18,10 @@ Rectangle{
 				target: barRectangle
 				anchors.verticalCenter: hangOnToPoint.verticalCenter
 				anchors.left: hangOnToPoint.left
-				color: Scripts.getPreviousDayColor(currentDay, days) //not really point, but deviceRow TODO
-				opacity: 100 //TODO
-				width: 50 //TODO Scripts.getBarWidth(barRectangle, hangOnToPoint, hangOnToPoint.parent.children); //TEST getNextAndPrevBarWidth before
+				color: barRectangle.prevDayColor
+				//getPreviousDayColor(barRectangle.currentDay, barRectangle.days, hangOnToPoint.deviceId, barRectangle.deviceIndex)
+				opacity: barRectangle.prevDayOpacity
+				width: barRectangle.prevDayWidth //TODO Scripts.getBarWidth(barRectangle, hangOnToPoint, hangOnToPoint.parent.children); //TEST getNextAndPrevBarWidth before
 			}
 		},
 		State {
