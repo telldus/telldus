@@ -284,6 +284,7 @@ import "schedulerscripts.js" as Scripts
 						*/
 						//SLUT TEST
 						
+						deviceRow.updateContinuingBars();
 						dialog.show(dynamicPoint) 
 					}
 				}
@@ -312,6 +313,10 @@ import "schedulerscripts.js" as Scripts
 				function hasPoints(){
 					return Scripts.hasPoints(deviceRow.children);
 				}
+				
+				function updateContinuingBars(){
+					Scripts.updateEndsWith();
+				}	
 			}
 		//}
 	}

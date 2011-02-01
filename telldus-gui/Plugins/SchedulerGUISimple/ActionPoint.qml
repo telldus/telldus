@@ -19,6 +19,7 @@ Rectangle{
 	property alias triggerstate: trigger.state
 	property variant parentPoint
 	property int parentPointAbsoluteHour: 0
+	property alias deviceRow: pointRect.parent
 	
 	Component.onCompleted: {
 		//TODO useless really, still gets Cannot anchor to a null item-warning...
@@ -85,7 +86,7 @@ Rectangle{
 		}
 		
 		onReleased: {
-			
+			pointRect.deviceRow.updateContinuingBars()
 			dialog.show(pointRect)  //TODO not pointRect, but parentPoint if such exists
 			//var rootCoordinates = pointRect.mapToItem(pointRect.parent, mouse.x, mouse.y);
 			//var hourMinute = getTimeFromPosition(rootCoordinates.x)
@@ -183,21 +184,25 @@ Rectangle{
 			name: "on"
 			PropertyChanges { target: pointRect; actionTypeColor: "blue"; actionTypeOpacity: 1 } 
 			PropertyChanges { target: pointRect; actionTypeImage: imageActionOn }
+			StateChangeScript{ name: "updateBars"; script: updateBars(); }
 		},
 		State{
 			name: "off"
 			PropertyChanges { target: pointRect; actionTypeColor: "gainsboro"; actionTypeOpacity: 0 }
 			PropertyChanges { target: pointRect; actionTypeImage: imageActionOff }
+			StateChangeScript{ name: "updateBars"; script: updateBars(); }
 		},
 		State{
 			name: "dim"
 			PropertyChanges { target: pointRect; actionTypeColor: "green"; actionTypeOpacity: dimvalue/100 }
 			PropertyChanges { target: pointRect; actionTypeImage: imageActionDim }
+			StateChangeScript{ name: "updateBars"; script: updateBars(); }
 		},
 		State{
 			name: "bell"
 			PropertyChanges { target: pointRect; actionTypeColor: getLastPointColor() }
 			PropertyChanges { target: pointRect; actionTypeImage: imageActionBell }
+			StateChangeScript{ name: "updateBars"; script: updateBars(); }
 		},
 		State{ //TODO test
 			name: "test"; when: pointRect.parentPoint != undefined
@@ -217,6 +222,12 @@ Rectangle{
 			anchors.fill: parent
 			fillMode: Image.Tile
 			source: "fuzzy.png"
+		}
+	}
+	
+	function updateBars(){
+		if(pointRect.deviceRow != undefined){
+			pointRect.deviceRow.updateContinuingBars();
 		}
 	}
 	
@@ -372,8 +383,10 @@ Rectangle{
 		var x = pointRect.x;
 		pointRect.isPoint = "false"
 		var pointList = pointRect.parent.children;
+		var deviceRow = pointRect.deviceRow;
 		pointRect.destroy();
 		dialog.hide();
+		deviceRow.updateContinuingBars()
 	}
 	
 	function minutesToTimelineUnits(minutes){
