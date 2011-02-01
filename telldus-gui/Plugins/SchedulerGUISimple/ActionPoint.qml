@@ -23,8 +23,10 @@ Rectangle{
 	Component.onCompleted: {
 		//TODO useless really, still gets Cannot anchor to a null item-warning...
 		isLoaded = "true"
+		var actionBar = Qt.createComponent("ActionBar.qml")
 		var dynamicBar = actionBar.createObject(pointRect)
 		dynamicBar.hangOnToPoint = pointRect
+		dynamicBar.state = "pointLoaded"
 		//pointRect.hangOnToBar = dynamicBar
 	}
 	
@@ -197,7 +199,7 @@ Rectangle{
 			PropertyChanges { target: pointRect; actionTypeColor: getLastPointColor() }
 			PropertyChanges { target: pointRect; actionTypeImage: imageActionBell }
 		},
-		State{
+		State{ //TODO test
 			name: "test"; when: pointRect.parentPoint != undefined
 			PropertyChanges{ target: pointRect; parentPointAbsoluteHour: pointRect.parentPoint.absoluteHour }
 		}
@@ -215,30 +217,6 @@ Rectangle{
 			anchors.fill: parent
 			fillMode: Image.Tile
 			source: "fuzzy.png"
-		}
-	}
-	
-	Component{
-		id: actionBar
-		Rectangle{
-			id: barRectangle
-			property variant hangOnToPoint
-			
-			height: constBarHeight
-			z: 110
-
-			states: State {
-				name: "pointLoaded"; when: pointRect.parent != null && pointRect.isLoaded != undefined && pointRect.verticalCenter != undefined  //TODO might aswell use hangOnToPoint != undefined, still get null item warning
-				PropertyChanges {
-					target: barRectangle
-					anchors.verticalCenter: pointRect.verticalCenter
-					anchors.left: pointRect.horizontalCenter
-					color: pointRect.actionTypeColor
-					opacity: pointRect.actionTypeOpacity
-					width: Scripts.getNextAndPrevBarWidth(actionBar, pointRect, pointRect.parent.children);
-				}
-			}
-
 		}
 	}
 	
@@ -377,7 +355,7 @@ Rectangle{
 			return;
 		}
 		
-		var previousState = Scripts.getPreviousState(pointRect, pointRect.parent.children);
+		var previousState = Scripts.getPreviousState(pointRect);
 		if(previousState == "" || previousState == "off"){
 			//nothing on/dimmed at the moment, use first added state
 			pointRect.state = activeStates[0];

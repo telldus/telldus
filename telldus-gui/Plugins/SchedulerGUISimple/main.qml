@@ -11,6 +11,7 @@ import "schedulerscripts.js" as Scripts
 
 	Component.onCompleted: {
 		var dynamicDay = 0;
+		var previousDayEndsWithPoint = null; //previous day, nothing to begin with
 		var startday = new Date();
 		startday.setDate(startday.getDate() - 6);
 		for(var i=0;i<7;i++){  //One week, TODO dynamic
@@ -19,12 +20,15 @@ import "schedulerscripts.js" as Scripts
 			var currentDay = new Date(startday);
 			currentDay.setDate(startday.getDate() + i);
 			dynamicDay.daydate = currentDay;
-			Scripts.addDay(dynamicDay)
+			//TODO previousDayEndsWith = 
+			Scripts.addDay(dynamicDay);
+			Scripts.updateDeviceIndex();  //TODO, don't run in every iteration
 		}
 		dynamicDay.state = "visible" //set last one as visible
 		weekDayText.text = Scripts.getCurrentDayName()
-		Scripts.updateDeviceIndex();
+		//Scripts.updateDeviceIndex();
 		Scripts.initiatePointsInGUI();
+		Scripts.updateEndsWith();
 	}
 
 	Rectangle{
@@ -47,7 +51,7 @@ import "schedulerscripts.js" as Scripts
 				anchors.fill: parent
 				onClicked: {
 					//step to prev weekday
-					//Scripts.updateEndsWith()
+					Scripts.updateEndsWith()
 					Scripts.decrementCurrentDay()
 					weekDayText.text = Scripts.getCurrentDayName()
 					//mainListView.positionViewAtIndex(mainListView.currentIndex, ListView.Center)
@@ -80,7 +84,7 @@ import "schedulerscripts.js" as Scripts
 				anchors.fill: parent
 				onClicked: {
 					//step to next weekday
-					//Scripts.updateEndsWith(mainListView)
+					Scripts.updateEndsWith() //mainListView)
 					Scripts.incrementCurrentDay()
 					weekDayText.text = Scripts.getCurrentDayName()
 					//mainListView.positionViewAtIndex(mainListView.currentIndex, ListView.Center)
@@ -144,6 +148,9 @@ import "schedulerscripts.js" as Scripts
 		ListView {
 			id: dayListView
 			property date daydate
+			//property alias devices2: dayListView.children
+			//property alias devices: dayListView.devices2[0]
+			//property string endsWith
 			//anchors.top: mainListView.bottom
 			//anchors.left: parent.left
 			width: constDeviceRowWidth
@@ -200,6 +207,7 @@ import "schedulerscripts.js" as Scripts
 					AnchorAnimation { easing.type: Easing.InOutQuad; duration: 1000 } //PropertyAnimation { properties: "x"; duration: 1000; easing.type: Easing.InOutQuad }
 				}
 			]
+			
 			//TODO transition between state, animation
 			
 		}
@@ -208,6 +216,7 @@ import "schedulerscripts.js" as Scripts
 	Component{
 		id: listRow
 		
+		/*
 		Row{
 			id: mainRow
 			
@@ -224,8 +233,11 @@ import "schedulerscripts.js" as Scripts
 				}
 			}
 			*/
-			Rectangle { id: "deviceRow"; border.color: "blue"; width: parent.width; height: parent.height;
+			Rectangle { id: "deviceRow"; border.color: "blue"; width: constDeviceRowWidth; height: constDeviceRowHeight;
 				clip: true
+				property variant endPoint: undefined //: Scripts.getEndsWith(deviceRow.children, index, modelData.id);
+				property int deviceId: modelData.id;
+				
 				MouseArea {
 					id: deviceMouseArea
 					anchors.fill: parent
@@ -235,6 +247,8 @@ import "schedulerscripts.js" as Scripts
 					//onEntered: parent.border.color = onHoverColor
 					//onExited:  parent.border.color = borderColor
 					onClicked: {
+						print("ENDPOINT: " + deviceRow.endPoint);
+						/*
 						//print("Mainrow: " + mainRow.parent.children[0].height);
 						var component = Qt.createComponent("ActionPoint.qml")
 						var dynamicPoint = component.createObject(deviceRow)
@@ -272,17 +286,38 @@ import "schedulerscripts.js" as Scripts
 						*/
 						//SLUT TEST
 						
-						dialog.show(dynamicPoint) 
+						//dialog.show(dynamicPoint) 
+					}
+				}
+				
+				ActionBar{
+					id: "continuingBar"
+					hangOnToPoint: deviceRow
+					days: Scripts.getDays()
+					currentDay: Scripts.currentDayIndex
+						
+					state: "continuing"
+				}
+				
+				Item{
+				//TODO eller ska detta VARA början-rektanglen?
+					id: previousDay
+					states: State{
+						name: "isFirst"; when: daydate > getPreviousDayDate()
+						PropertyChanges{ target: dayListView; endsWith: "NÅGOT" }
 					}
 				}
 
+				ListView.onAdd: SequentialAnimation {
+					PropertyAction { target: mainRow; property: "height"; value: 0 }
+					NumberAnimation { target: mainRow; property: "height"; to: 50; duration: 250; easing.type: Easing.InOutQuad }
+				}
+				
+				function hasPoints(){
+					return Scripts.hasPoints(deviceRow.children);
+				}
 			}
-
-			ListView.onAdd: SequentialAnimation {
-				PropertyAction { target: mainRow; property: "height"; value: 0 }
-				NumberAnimation { target: mainRow; property: "height"; to: 50; duration: 250; easing.type: Easing.InOutQuad }
-			}
-		}
+		//}
 	}
 	
 	Component{
