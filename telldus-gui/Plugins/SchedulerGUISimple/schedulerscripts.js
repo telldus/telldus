@@ -91,8 +91,8 @@ function hasBarChangingPoints(pointList){
 }
 
 function getEndsWith(pointList, dayIndex, deviceId){ //previousDayEndsWithPoint){
-	print("DAY INDEX: " + dayIndex);
-	print("DEVICEID: " + deviceId);
+	//print("DAY INDEX: " + dayIndex);
+	//print("DEVICEID: " + deviceId);
 	var prevPoint = null;
 	for(var i=0;i<pointList.length;i++){
 		if(pointList[i].isPoint != undefined && pointList[i].isPoint == "true"){
@@ -109,39 +109,58 @@ function getEndsWith(pointList, dayIndex, deviceId){ //previousDayEndsWithPoint)
 		}
 		
 		//TODO Avoid loop here!
-		var prevDayDevice = getDeviceRow(dayIndex, deviceId, days, deviceIndex);
-		print("PREVDAYHERE: index: " + dayIndex + " id: " + deviceId + " Daydevice: " + prevDayDevice);
+		var prevDayDevice = getDeviceRow(dayIndex, deviceId);
+		//print("PREVDAYHERE: index: " + dayIndex + " id: " + deviceId + " Daydevice: " + prevDayDevice);
 		if(prevDayDevice == undefined){ // || prevDayDevice.endPoint == undefined){ //TODO this is due to an error, but in the future use it to avoid loops
 			print("DayDeviceUndefined....................");
 			return null; 
 		}
-		print("RETURNING A PREV POINT");
-		print("Prev day: " + days[dayIndex].daydate.getDate());
-		print("Containing: " + prevDayDevice.endPoint);
+		//print("RETURNING A PREV POINT");
+		//print("Prev day: " + days[dayIndex].daydate.getDate());
+		//print("Containing: " + prevDayDevice.endPoint);
 		return prevDayDevice.endPoint;  // previousDayEndsWithPoint;
 	}
 	if(prevPoint.state == "off"){
 		return null;
 	}
-	print("RETURNING A POINT");
+	//print("RETURNING A POINT");
 	return prevPoint;  //.state, only on or dim
 }
 
 function getPreviousState(currentPointRect){
 	var pointList = currentPointRect.parent.children
 	var prevPoint = null;
+	var firstBarStateIndex;
 	for(var i=0;i<pointList.length;i++){
 		if(pointList[i].isPoint != undefined && pointList[i].isPoint == "true" && pointList[i] != currentPointRect){
 			if(pointList[i].x < currentPointRect.x && (prevPoint == null || pointList[i].x > prevPoint.x) && pointList[i].state != "bell"){ //TODO when more than "bell", make dynamic
 				prevPoint = pointList[i];
 			}
 		}
+		else if(pointList[i].firstBar != undefined && pointList[i].firstBar == "true"){
+			firstBarStateIndex = i;
+		}
 	}
 	
 	if(prevPoint == null){
+		//no previous point,see if state continues from previous day
+		if(firstBarStateIndex != undefined && pointList[firstBarStateIndex].firstBar != undefined){
+			//print("ENDPOINT!!");
+			
+			var dayIndex = currentDayIndex - 1;
+			if(dayIndex == -1){ //too far, begin from end again
+				dayIndex = days.length - 1;
+			}
+			//print("CORRECT DEVICE ID? : " + currentPointRect.deviceRow.deviceId);
+			var prevDayDevice = currentPointRect.parent.getDeviceRow(dayIndex, currentPointRect.deviceRow.deviceId);
+			if(prevDayDevice != undefined){ 
+				//print("Setting end point: ** " + prevDayDevice.endPoint);
+				return prevDayDevice.endPoint;
+			}
+		}
+		
 		return "";
 	}
-	
 	return prevPoint.state;
 }
 
@@ -184,17 +203,27 @@ function updateDeviceIndex(){  //TODO, better way, please...
 	for(var i=0;i<deviceModel.length;i++){
 		deviceIndex[deviceModel.get(i).id] = i + startIndex;
 	}
-	//TODO !!!!!! are devices reordered sometimes? Check that!
+	//TODO !!!!!! are devices reordered sometimes? Or even different for different days? Check that!
+}
+
+function debugPrintDeviceIndex(){ 
+	//TODO debug
+	if(days.length != undefined){
+		print("DEBUG: " + days[0].children[0].children.length);	
+	}
+	for(var key in deviceIndex){
+		print("** " + key + ": " + deviceIndex[key] + " **");
+	}
 }
 
 function updateEndsWith(){
 	updateDeviceIndex(); //TODO needed?
-	print("UPDATEENDSWITH");
+	//print("UPDATEENDSWITH");
 	for(var device in deviceIndex){
 		//for each device, order doesn't matter
 		var previousEndPoint = undefined;
-		print("DeviceIndex: " + deviceIndex[device]);
-		print("DeviceId: " + device);
+		//print("DeviceIndex: " + deviceIndex[device]);
+		//print("DeviceId: " + device);
 		
 		//loop through days, beginning with oldest, in search for the first Point
 		var startIndex = 0;
@@ -218,8 +247,8 @@ function updateEndsWith(){
 			*/
 			
 			if(deviceRow.hasPoints()){
-				print("Dayindex " + dayIndex  + " HAS POINTS ..........");
-				print("Current day index: " + currentDayIndex);
+				//print("Dayindex " + dayIndex  + " HAS POINTS ..........");
+				//print("Current day index: " + currentDayIndex);
 				startIndex = dayIndex;
 				break;
 			}
@@ -232,7 +261,7 @@ function updateEndsWith(){
 				dayIndex = dayIndex - days.length;
 			}
 			
-			var deviceRow = days[dayIndex].children[0].children[parseInt(deviceIndex[device])]; //+1 TODO property somehow?
+			var deviceRow = days[dayIndex].children[0].children[parseInt(deviceIndex[device])];
 			//print("ID " + deviceRow.deviceId);
 			
 			previousEndPoint = assignContinuingBarProperties(deviceRow, previousEndPoint, dayIndex, i==0);
@@ -240,7 +269,6 @@ function updateEndsWith(){
 			if(i == days.length-1){
 				//last one, bind the first one too then
 				deviceRow = days[startIndex].children[0].children[parseInt(deviceIndex[device])];
-				print("In last one");
 				assignContinuingBarProperties(deviceRow, previousEndPoint, dayIndex, false);
 			}
 		}
@@ -266,15 +294,12 @@ function assignContinuingBarProperties(deviceRow, previousEndPoint, dayIndex, fi
 	}
 
 	if(deviceRow.hasPoints()){
-		print("A Point!!");
-		//TODO barWidth here... Must depend on first point... bind... somehow...
 		deviceRow.endPoint = getEndsWith(deviceRow.children, days[dayIndex].daydate.getDay(), deviceRow.deviceId);
 		previousEndPoint = deviceRow.endPoint;
 		deviceRow.continuingBar.prevDayWidth = 0;
 		deviceRow.continuingBar.state = "continuingWithLimitedWidth";
 	}
 	else{
-		//print("NO points");
 		deviceRow.continuingBar.state = "continuing";
 		deviceRow.endPoint = previousEndPoint;
 		deviceRow.continuingBar.prevDayWidth = deviceRow.width;
@@ -309,8 +334,9 @@ function getDeviceRow(dayOfWeek, deviceId){
 	if(dayListViewComp.children.length == undefined){
 		return null;
 	}
-	var pointParent = dayListViewComp.children[0].children[currentDeviceIndex]; //TEST was +1
-	print("Pointparent: " + pointParent);
+	print("DeviceIndex: " + currentDeviceIndex + " och " + deviceId + ", och sedan " + days.length);
+	var pointParent = dayListViewComp.children[0].children[currentDeviceIndex];
+	print("Picked device id (must be same as above): " + dayListViewComp.children[0].children[currentDeviceIndex].deviceId);
 	return pointParent;
 }
 
@@ -319,7 +345,7 @@ function addWeekPointToGUI(point){
 	var deviceId = point.deviceId;
 	var dayOfWeek = point.day;
 	print("Dayofweek: " + dayOfWeek);
-	var pointParent = getDeviceRow(dayOfWeek, deviceId, days, deviceIndex);
+	var pointParent = getDeviceRow(dayOfWeek, deviceId);
 	
 	var component = Qt.createComponent("ActionPoint.qml")
 	var dynamicPoint = component.createObject(pointParent)

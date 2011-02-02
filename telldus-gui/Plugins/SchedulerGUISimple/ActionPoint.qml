@@ -337,11 +337,13 @@ Rectangle{
 	}
 	
 	function addState(state){
+		print("Adding state: " + state);
 		Scripts.addState(state);
 	}
 	
 	function setFirstState(firstState){
 	
+		//print("SETTING FIRST STATE");
 		var activeStates = Scripts.getActiveStates();
 		
 		if(activeStates == null || activeStates.length == 0){
@@ -366,12 +368,13 @@ Rectangle{
 		
 		if(!exists){
 			//no "off", just set state to the first added state
+			
 			pointRect.state = activeStates[0];
 			return;
 		}
 		
 		var previousState = Scripts.getPreviousState(pointRect);
-		if(previousState == "" || previousState == "off"){
+		if(previousState == undefined || previousState == "" || previousState == "off"){
 			//nothing on/dimmed at the moment, use first added state
 			pointRect.state = activeStates[0];
 			return;

@@ -182,6 +182,11 @@ import "schedulerscripts.js" as Scripts
 				}
 			]
 			
+			onChildrenChanged: {
+				//TODO REMOVE
+				print("-------------- CHILDREN CHANGED ----------------");
+			}
+			
 			transitions: [
 				Transition {
 					from: "hiddenLeft"
@@ -245,8 +250,8 @@ import "schedulerscripts.js" as Scripts
 					//onEntered: parent.border.color = onHoverColor
 					//onExited:  parent.border.color = borderColor
 					onClicked: {
-						print("ENDPOINT: " + deviceRow.endPoint);
-						
+						//Scripts.debugPrintDeviceIndex(); 
+						Scripts.updateDeviceIndex(); //TODO why is this needed here? (but it is, adding points to empty device will get wrong state otherwise)
 						//print("Mainrow: " + mainRow.parent.children[0].height);
 						var component = Qt.createComponent("ActionPoint.qml")
 						var dynamicPoint = component.createObject(deviceRow)
@@ -292,6 +297,7 @@ import "schedulerscripts.js" as Scripts
 				ActionBar{
 					id: "continuingBar"
 					hangOnToPoint: deviceRow
+					firstBar: "true"
 						
 					state: "continuing"
 				}
@@ -308,6 +314,11 @@ import "schedulerscripts.js" as Scripts
 				function updateContinuingBars(){
 					Scripts.updateEndsWith();
 				}	
+				
+				function getDeviceRow(dayIndex, deviceId){
+					print("CALLING getDeviceRow");
+					return Scripts.getDeviceRow(dayIndex, deviceId);
+				}
 			}
 		//}
 	}

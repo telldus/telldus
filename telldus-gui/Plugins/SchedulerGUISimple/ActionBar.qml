@@ -7,6 +7,7 @@ Rectangle{
 	property color prevDayColor: "white" //default
 	property double prevDayOpacity: 0 //default
 	property int prevDayWidth: 0 //default
+	property string firstBar: "false"
 	
 	height: constBarHeight
 	z: 110
@@ -26,7 +27,7 @@ Rectangle{
 				/*color: barRectangle.prevDayColor
 				//getPreviousDayColor(barRectangle.currentDay, barRectangle.days, hangOnToPoint.deviceId, barRectangle.deviceIndex)
 				opacity: barRectangle.prevDayOpacity
-				width: barRectangle.prevDayWidth //TODO Scripts.getBarWidth(barRectangle, hangOnToPoint, hangOnToPoint.parent.children); //TEST getNextAndPrevBarWidth before
+				width: barRectangle.prevDayWidth //TODO Scripts.getBarWidth(barRectangle, hangOnToPoint, hangOnToPoint.parent.children);
 				*/
 			}
 		},
@@ -47,7 +48,7 @@ Rectangle{
 				anchors.left: hangOnToPoint.horizontalCenter
 				color: hangOnToPoint.actionTypeColor
 				opacity: hangOnToPoint.actionTypeOpacity
-				width: Scripts.getBarWidth(barRectangle, hangOnToPoint, hangOnToPoint.parent.children) //TEST getNextAndPrevBarWidth before	
+				width: Scripts.getBarWidth(barRectangle, hangOnToPoint, hangOnToPoint.parent.children)	
 			}
 		}
 	]  
