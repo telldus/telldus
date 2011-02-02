@@ -302,7 +302,7 @@ import "schedulerscripts.js" as Scripts
 				}
 				
 				function hasPoints(){
-					return Scripts.hasPoints(deviceRow.children);
+					return Scripts.hasBarChangingPoints(deviceRow.children);
 				}
 				
 				function updateContinuingBars(){

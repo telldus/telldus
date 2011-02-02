@@ -80,10 +80,10 @@ function getBarWidth(currentBar, currentPointRect, pointList){
 	return (nextX - currentPointRect.x);
 }
 
-function hasPoints(pointList){
+function hasBarChangingPoints(pointList){
 	
 	for(var i=0;i<pointList.length;i++){
-		if (pointList[i].isPoint != undefined && pointList[i].isPoint == "true") {
+		if (pointList[i].isPoint != undefined && pointList[i].isPoint == "true" && pointList[i].state != "bell") {  //TODO make "bell" dynamic?
 			return true;
 		}
 	}
@@ -255,8 +255,6 @@ function assignContinuingBarProperties(deviceRow, previousEndPoint, dayIndex, fi
 		deviceRow.continuingBar.prevDayWidth = 0;
 	}
 	else{
-		print("Color: " + previousEndPoint.actionTypeColor);
-		print("Opacity: " + previousEndPoint.actionTypeOpacity);
 		deviceRow.continuingBar.prevDayColor = previousEndPoint.actionTypeColor;
 		if(previousEndPoint.state == "dim"){
 			deviceRow.continuingBar.prevDayOpacity = previousEndPoint.dimvalue/100;
