@@ -61,6 +61,10 @@ Rectangle{
 		dialog.absoluteHour = parentPointAbsoluteHour;
 	}
 	
+	onDimvalueChanged: {
+		updateBars();
+	}
+	
 	MouseArea {
 		id: pointRectMouseArea
 		acceptedButtons: Qt.LeftButton | Qt.RightButton

@@ -296,15 +296,6 @@ import "schedulerscripts.js" as Scripts
 					state: "continuing"
 				}
 				
-				Item{
-				//TODO eller ska detta VARA början-rektanglen?
-					id: previousDay
-					states: State{
-						name: "isFirst"; when: daydate > getPreviousDayDate()
-						PropertyChanges{ target: dayListView; endsWith: "NÅGOT" }
-					}
-				}
-
 				ListView.onAdd: SequentialAnimation {
 					PropertyAction { target: mainRow; property: "height"; value: 0 }
 					NumberAnimation { target: mainRow; property: "height"; to: 50; duration: 250; easing.type: Easing.InOutQuad }

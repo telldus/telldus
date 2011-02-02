@@ -218,7 +218,8 @@ function updateEndsWith(){
 			*/
 			
 			if(deviceRow.hasPoints()){
-				print("HAS POINTS ..........");
+				print("Dayindex " + dayIndex  + " HAS POINTS ..........");
+				print("Current day index: " + currentDayIndex);
 				startIndex = dayIndex;
 				break;
 			}
@@ -239,6 +240,7 @@ function updateEndsWith(){
 			if(i == days.length-1){
 				//last one, bind the first one too then
 				deviceRow = days[startIndex].children[0].children[parseInt(deviceIndex[device])];
+				print("In last one");
 				assignContinuingBarProperties(deviceRow, previousEndPoint, dayIndex, false);
 			}
 		}
@@ -253,8 +255,16 @@ function assignContinuingBarProperties(deviceRow, previousEndPoint, dayIndex, fi
 		deviceRow.continuingBar.prevDayWidth = 0;
 	}
 	else{
+		print("Color: " + previousEndPoint.actionTypeColor);
+		print("Opacity: " + previousEndPoint.actionTypeOpacity);
 		deviceRow.continuingBar.prevDayColor = previousEndPoint.actionTypeColor;
-		deviceRow.continuingBar.prevDayOpacity = previousEndPoint.actionTypeOpacity;
+		if(previousEndPoint.state == "dim"){
+			deviceRow.continuingBar.prevDayOpacity = previousEndPoint.dimvalue/100;
+		}
+		else{
+			deviceRow.continuingBar.prevDayOpacity = previousEndPoint.actionTypeOpacity;
+		}
+		
 	}
 
 	if(deviceRow.hasPoints()){
