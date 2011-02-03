@@ -122,12 +122,32 @@ import "schedulerscripts.js" as Scripts
 				
 				model: deviceModel
 				Rectangle{
+					id: deviceNameRect
+					property string isEnabled: modelData.isEnabled
 					width: parent.width
 					height: constDeviceRowHeight
 					border.color: "green"
 					Text{
+						id: "deviceNameText"
 						anchors.centerIn: parent
 						text: modelData.name
+					}
+					Rectangle{
+						width: 10
+						height: 10
+						anchors.top: deviceNameText.bottom
+						anchors.horizontalCenter: parent.horizontalCenter
+						color: deviceNameRect.isEnabled == "enabled" ? "red" : "blue"  //TODO use same as in script?
+						MouseArea{
+							anchors.fill: parent
+							onClicked: {
+								//TODO implement setProperty if this is to be stored... or do something else... modelData.setProperty(index, isEnabled, modelData.isEnabled == "enabled" ? "disabled" : "enabled");
+								//TODO also implement disabled/enabled for all (deviceEnabled=false on all) and per point (set isPoint=false and opacity=0.4)...
+								//take that value into consideration when saving and sending jobs for execution
+								deviceNameRect.isEnabled = deviceNameRect.isEnabled == "enabled" ? "disabled" : "enabled"
+								Scripts.deviceEnabled(modelData.id, deviceNameRect.isEnabled);
+							}
+						}
 					}
 				}
 			}
@@ -240,7 +260,19 @@ import "schedulerscripts.js" as Scripts
 				property variant endPoint: undefined //: Scripts.getEndsWith(deviceRow.children, index, modelData.id);
 				property int deviceId: modelData.id;
 				property alias continuingBar: continuingBar
+				state: "enabled"
 				
+				states: [
+					State{
+						name: "enabled"
+						PropertyChanges{ target: deviceRow; opacity: 1 }
+					},
+					State{
+						name: "disabled"
+						PropertyChanges{ target: deviceRow; opacity: 0.4 }
+					}
+				]
+										 
 				MouseArea {
 					id: deviceMouseArea
 					anchors.fill: parent

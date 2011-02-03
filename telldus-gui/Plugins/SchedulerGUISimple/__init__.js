@@ -19,7 +19,9 @@ com.telldus.schedulersimplegui = function() {
 		deviceList = new com.telldus.qml.array();
 		var list = com.telldus.core.deviceList.getList();
 		for(var i=0; i < list.length; ++i) {
-			deviceList.push(list[i]);
+			var item = list[i];
+			item.isEnabled = "enabled";
+			deviceList.push(item);
 		}
 		view.setProperty('deviceModel', deviceList);
 		//set images:

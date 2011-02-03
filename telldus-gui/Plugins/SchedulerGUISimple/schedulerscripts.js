@@ -204,6 +204,11 @@ function updateDeviceIndex(){  //TODO, better way, please...
 		deviceIndex[deviceModel.get(i).id] = i + startIndex;
 	}
 	//TODO !!!!!! are devices reordered sometimes? Or even different for different days? Check that!
+	//Kan det vara så här:
+	// days[0].children[0].children består av alla delegat-element, plus header och footer
+	//header, footer och delegaternas ordning kan skifta, men delegaternas interna ordning är (FÖRHOPPNINGSVIS!) alltid samma
+	//och samma som i modellen: Delegaternas börjar antingen på 0 (delegater, header, footer eller delegater, footer, header)
+	//eller 1 (header/footer, delegater, header/footer) eller 2 (header/footer, header/footer, delegater)
 }
 
 function debugPrintDeviceIndex(){ 
@@ -315,7 +320,7 @@ function initiatePointsInGUI(){ //weekPointList){
 	//weekPointList -> från __init__.js
 	var weekPointList = new Array();
 	var dummypoint = []
-	dummypoint["day"] = 5;
+	dummypoint["day"] = 0;
 	dummypoint["deviceId"] = 1;
 	weekPointList.push(dummypoint);
 	for(var i=0;i<weekPointList.length;i++){
@@ -336,7 +341,7 @@ function getDeviceRow(dayOfWeek, deviceId){
 	}
 	print("DeviceIndex: " + currentDeviceIndex + " och " + deviceId + ", och sedan " + days.length);
 	var pointParent = dayListViewComp.children[0].children[currentDeviceIndex];
-	print("Picked device id (must be same as above): " + dayListViewComp.children[0].children[currentDeviceIndex].deviceId);
+	print("Picked device id (must be same as above): " + dayListViewComp.daydate); //children[0].children[currentDeviceIndex].deviceId);
 	return pointParent;
 }
 
@@ -344,7 +349,16 @@ function addWeekPointToGUI(point){
 	//lägg till point till GUI
 	var deviceId = point.deviceId;
 	var dayOfWeek = point.day;
-	print("Dayofweek: " + dayOfWeek);
+	//set dayOfWeek to correct index in the days-table
+	var offset = days[0].daydate.getDay();
+	dayOfWeek = days.length - offset + dayOfWeek;
+	if(dayOfWeek == -1){
+		dayOfWeek = days.length - 1;
+	}
+	if(dayOfWeek > days.length-1){
+		dayOfWeek = dayOfWeek - days.length;
+	}
+	print("Inserting point at: " + weekday_name_array[days[dayOfWeek].daydate.getDay()]);
 	var pointParent = getDeviceRow(dayOfWeek, deviceId);
 	
 	var component = Qt.createComponent("ActionPoint.qml")
@@ -374,4 +388,12 @@ function getFirstPointWidth(deviceRow){
 		}
 	}
 	return firstX + pointWidth/2;
+}
+
+function deviceEnabled(deviceId, enabled){
+	updateDeviceIndex(); //TODO make this unnessessary
+	for(var i=0;i<days.length;i++){
+		var deviceRow = days[i].children[0].children[deviceIndex[deviceId]];
+		deviceRow.state = enabled; //TODO connect directly instead... if possible
+	}
 }
