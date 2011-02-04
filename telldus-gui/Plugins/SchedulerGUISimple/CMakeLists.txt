@@ -25,6 +25,7 @@ SET( Plugin_EXTRA
 	ticked.png
 	unticked.png
 	alwaysticked.png
+	qmldir
 )
 
 INCLUDE( ../TelldusCenterPlugin.cmake NO_POLICY_SCOPE )
