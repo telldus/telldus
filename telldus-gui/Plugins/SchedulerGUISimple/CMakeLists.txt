@@ -22,6 +22,9 @@ SET( Plugin_EXTRA
 	bell.png
 	info.png
 	fuzzy.png
+	ticked.png
+	unticked.png
+	alwaysticked.png
 )
 
 INCLUDE( ../TelldusCenterPlugin.cmake NO_POLICY_SCOPE )

@@ -18,7 +18,8 @@ Rectangle{
 	property int absoluteMinute: parseInt(dialog.absoluteMinute, 10)
 	property alias triggerstate: trigger.state
 	property variant parentPoint
-	property int parentPointAbsoluteHour: 0
+	property int parentPointAbsoluteHour //TEST changed from int, want "undefined"
+	property variant childPoints: []
 	property alias deviceRow: pointRect.parent
 	
 	Component.onCompleted: {
@@ -55,11 +56,27 @@ Rectangle{
      }
      */
 	
-	onParentPointAbsoluteHourChanged: {
-		print("Nja");
-		//pointRect.absoluteHour = parentPoint.absolutHour
-		dialog.absoluteHour = parentPointAbsoluteHour;
+	onAbsoluteHourChanged: {
+		print("ABSOLUTE HOUR CHANGED"); //TEST NYTT TEST
+		pointRect.x = getAbsoluteXValue();
 	}
+	
+	/*
+	onParentPointAbsoluteHourChanged: {
+		//pointRect.absoluteHour = parentPoint.absolutHour
+		print("IN ABSOLUTEHOURCHANGED...");
+		if(parentPoint == undefined){  //TODO this is not correct, must remove, but...
+			print("PP UNDEFINED!");  //Should never happen
+			dialog.absoluteHour = absoluteHour; //this is needed for update 
+			print("Absolute hour changed from " + dialog.absoluteHour + " to " + absoluteHour);
+		}
+		else if(parentPointAbsoluteHour != undefined){
+			print("PPABSOLUTE HOUR NOT UNDEFINED!");
+			dialog.absoluteHour = parentPointAbsoluteHour; //this is needed for update 
+			print("Absolute hour changed from " + dialog.absoluteHour + " to " + parentPointAbsoluteHour);
+		}
+	}
+	*/
 	
 	onDimvalueChanged: {
 		updateBars();
@@ -83,6 +100,7 @@ Rectangle{
 			//var rootCoordinates = pointRect.mapToItem(pointRect.parent, mouse.x, mouse.y);
 			var rootCoordinates = pointRect.mapToItem(pointRect.parent, mouse.x, mouse.y);
 			var hourMinute = getTimeFromPosition(rootCoordinates.x - mouse.x + pointRect.width/2)
+			print("Position changed reporting in");
 			if((hourMinute[0] >= 0) && hourMinute[0] < 24){
 				pointRect.absoluteHour = hourMinute[0]
 				pointRect.absoluteMinute = hourMinute[1]
@@ -94,12 +112,14 @@ Rectangle{
 			dialog.show(pointRect)  //TODO not pointRect, but parentPoint if such exists
 			//var rootCoordinates = pointRect.mapToItem(pointRect.parent, mouse.x, mouse.y);
 			//var hourMinute = getTimeFromPosition(rootCoordinates.x)
+			print("Released reporting in");
 			dialog.absoluteHour = Scripts.pad(pointRect.absoluteHour, 2) //Scripts.pad(hourMinute[0], 2)
 			dialog.absoluteMinute = Scripts.pad(pointRect.absoluteMinute, 2) //Scripts.pad(hourMinute[1], 2)
 			
 			print("TESTAR!!! " + parentPoint);
 			if(parentPoint != undefined){
-				parentPoint.absoluteHour = dialog.absoluteHour;
+				print("Not undefined reporting in");
+				parentPoint.absoluteHour = parseInt(dialog.absoluteHour, 10);
 			}
 		}
 		
@@ -117,6 +137,19 @@ Rectangle{
 			PropertyChanges { target: pointRect; opacity: 0.5; }
 		}
 	}
+	/*
+	ListModel{
+		id: daysOfWeek
+		ListElement{
+			name: "on"
+			imagesource: "on.png" //TODO cannot use javascript properties here... do in some other way, maybe a list with names here?
+		}
+		ListElement{
+			name: "off"
+			imagesource: "off.png"
+		}
+	}
+	*/
 	
 	Column{
 		spacing: 10
@@ -207,11 +240,14 @@ Rectangle{
 			PropertyChanges { target: pointRect; actionTypeColor: getLastPointColor() }
 			PropertyChanges { target: pointRect; actionTypeImage: imageActionBell }
 			StateChangeScript{ name: "updateBars"; script: updateBars(); }
-		},
+		}//,
+		/*
 		State{ //TODO test
-			name: "test"; when: pointRect.parentPoint != undefined
+			name: "test"; when: pointRect.parentPoint != undefined //&& pointRect.parentPoint.absoluteHour != undefined
+			StateChangeScript{ name: "updateBars"; script: print("CHANGED TO TEST, " + pointRect.parentPoint.absoluteHour); }
 			PropertyChanges{ target: pointRect; parentPointAbsoluteHour: pointRect.parentPoint.absoluteHour }
 		}
+		*/
 	]
 	
 	Rectangle{
@@ -245,6 +281,9 @@ Rectangle{
 			print("Different x");
 			point = pointRect.parentPoint;
 		}
+		//TODO point.width är (ofta/alltid?) 0 här)
+		print("ABSOLUTE X-value: " + (point.absoluteHour * hourSize + hourSize * (point.absoluteMinute/60) - point.width/2));
+		print("AbsoluteHour: " +point.absoluteHour+ " hourSize: " + hourSize + " AbsoluteMinute: " + point.absoluteMinute + " Width: " + point.width); 
 		return point.absoluteHour * hourSize + hourSize * (point.absoluteMinute/60) - point.width/2;
 	}
 	
@@ -337,7 +376,7 @@ Rectangle{
 	}
 	
 	function addState(state){
-		print("Adding state: " + state);
+		//print("Adding state: " + state);
 		Scripts.addState(state);
 	}
 	
@@ -401,5 +440,46 @@ Rectangle{
 			return 0;
 		}
 		return pointRect.parent.width/24 * (minutes/60);
+	}
+	
+	function getTickedImageSource(index){
+		//3 fall
+		//alwaysticked, unticked, ticked
+		if(pointRect.deviceRow.parent == undefined || pointRect.deviceRow.parent.parent == undefined){ //to get rid of warnings on initialization
+			return "";
+		}
+		var originalDay = pointRect.deviceRow.parent.parent.daydate.getDay();
+		if(pointRect.parentPoint != undefined){
+			originalDay = pointRect.parentPoint.deviceRow.parent.parent.daydate.getDay();
+		}
+		if(index == originalDay){ //TODO change, must be stored with the point insted, it's "original day" (if clicked on on another day for instance)
+			//current day (where the point was originally placed) should always be ticked
+			return "alwaysticked.png";
+		}
+		else if(pointRect.childPoints[index] == undefined){
+			return "unticked.png";
+		}
+		else{
+			return "ticked.png";
+		}
+	}
+	
+	function toggleTickedWeekDay(index){
+		var originalPointDay = pointRect.deviceRow.parent.parent.daydate.getDay(); //TODO change, must be stored with the point insted, it's "original day" (if clicked on on another day for instance)
+		if(pointRect.parentPoint != undefined){
+			originalPointDay = pointRect.parentPoint.deviceRow.parent.parent.daydate.getDay();
+		}
+		if(index == originalPointDay){
+			//cannot change this, do nothing
+			return;
+		}
+		if(pointRect.childPoints[index] == undefined){
+			print("CREATE NEW POINT");
+			pointRect.childPoints = deviceRow.createChildPoint(index, pointRect, deviceRow.deviceId);
+		}
+		else{
+			print("REMOVE A POINT");
+			pointRect.childPoints[index].remove();
+		}
 	}
 }

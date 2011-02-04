@@ -431,7 +431,11 @@
 						event.accepted = true;
 						inputAbsoluteMinuteText.focus = true;
 					}
-					text: "0"
+					//text: "0"
+  					//onChanged:{
+					//	print("DIALOG HOUR CHANGED");
+					//}
+
 				}
 				
 				Binding {
@@ -564,11 +568,64 @@
 		}
 	}
 	
+	Rectangle{
+		id: weekDayPanel
+		anchors.left: currentType.left
+		anchors.top: currentType.bottom
+		anchors.topMargin: 40
+		height: weekColumn.height
+		width: weekColumn.width
+		Column{
+			id: "weekColumn"
+			//anchors.verticalCenter: parent.verticalCenter	
+			//anchors.fill: parent
+			spacing: 2
+			Repeater{
+				id: weekRepeater
+				model: 7 //actionPoint.daysOfWeek
+				//delegate: weekDayDelegate
+				Rectangle{
+					width: 30
+					height: 30
+					Image{
+						id: tickBox
+						height: 14
+						width: 14
+						source: actionPoint.getTickedImageSource(index)
+						MouseArea{
+							anchors.fill: parent
+							onClicked: {
+								actionPoint.toggleTickedWeekDay(index)
+							}
+						}
+					}
+					Text{
+						//anchors.fill: parent
+						anchors.left: tickBox.right
+						anchors.leftMargin: 10
+						text: Scripts.weekday_name_array[index] //TODO start on monday
+					}
+				}
+			}
+		}
+	}
+	
+	Component{
+		id: weekDayDelegate
+		Rectangle{
+			width: 10
+			height: 20
+			color: "red"
+		}
+	}
+	
 	Button{
 		id: closeButton
 		text: "Close"
-		y: circleTrigger.y + 30
-		x: parent.x + 30
+		anchors.top: weekDayPanel.bottom
+		anchors.horizontalCenter: weekDayPanel.right //horizontalCenter
+		//y: circleTrigger.y + 30
+		//x: parent.x + 30
 		onClicked: {
 			hide();
 		}

@@ -351,6 +351,11 @@ import "schedulerscripts.js" as Scripts
 					print("CALLING getDeviceRow");
 					return Scripts.getDeviceRow(dayIndex, deviceId);
 				}
+				
+				function createChildPoint(index, pointRect, deviceId){
+					print("CREATING child point");
+					return Scripts.createChildPoint(index, pointRect, deviceId);
+				}
 			}
 		//}
 	}
@@ -406,6 +411,7 @@ import "schedulerscripts.js" as Scripts
 		}
 	 }
 
+	/* Not in use, adding all devices always instead
 	 Component{
 		id: addButtonComponent
 		Row {
@@ -439,7 +445,8 @@ import "schedulerscripts.js" as Scripts
 			}
 		}
 	 }
-
+	*/
+	
 	Dialog {
 		id: dialog
 		z: 150
@@ -509,9 +516,4 @@ import "schedulerscripts.js" as Scripts
 		var hourSize = constDeviceRowWidth/24; //(main.width - 100)/24; //TODO constant or something?
 		return hourSize * suntime[0] + hourSize * suntime[1]/60;
 	}
-	//opacity vid dimning?
-	//linjens färg etc (state) beror ju på närmaste punkt föres sort... Punkten kan finnas osynlig (tidigare dag) också...
-	//kan man liksom göra hela linjen (från en vecka tillbaka) men inte visa den? Om det är vettigt... Då hade man tom kunnat zooma en vacker dag
-	//properties, ställa in dem...
-	//fuzziness
 }

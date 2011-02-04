@@ -350,14 +350,7 @@ function addWeekPointToGUI(point){
 	var deviceId = point.deviceId;
 	var dayOfWeek = point.day;
 	//set dayOfWeek to correct index in the days-table
-	var offset = days[0].daydate.getDay();
-	dayOfWeek = days.length - offset + dayOfWeek;
-	if(dayOfWeek == -1){
-		dayOfWeek = days.length - 1;
-	}
-	if(dayOfWeek > days.length-1){
-		dayOfWeek = dayOfWeek - days.length;
-	}
+	dayOfWeek = getDayIndexForDayOfWeek(dayOfWeek);
 	print("Inserting point at: " + weekday_name_array[days[dayOfWeek].daydate.getDay()]);
 	var pointParent = getDeviceRow(dayOfWeek, deviceId);
 	
@@ -372,6 +365,19 @@ function addWeekPointToGUI(point){
 	dynamicPoint.addState("dim");
 	dynamicPoint.addState("bell");
 	dynamicPoint.setFirstState("dim");	
+}
+
+//must be run in "main"
+function getDayIndexForDayOfWeek(dayOfWeek){
+	var offset = days[0].daydate.getDay();
+	dayOfWeek = days.length - offset + dayOfWeek;
+	if(dayOfWeek == -1){
+		dayOfWeek = days.length - 1;
+	}
+	if(dayOfWeek > days.length-1){
+		dayOfWeek = dayOfWeek - days.length;
+	}
+	return dayOfWeek;
 }
 
 //TODO move, pragma safe:
@@ -396,4 +402,23 @@ function deviceEnabled(deviceId, enabled){
 		var deviceRow = days[i].children[0].children[deviceIndex[deviceId]];
 		deviceRow.state = enabled; //TODO connect directly instead... if possible
 	}
+}
+
+function createChildPoint(index, pointRect, deviceId){
+	index = getDayIndexForDayOfWeek(index);
+	var deviceRow = getDeviceRow(index, deviceId); //TODO correct index?
+	var component = Qt.createComponent("ActionPoint.qml")
+	var dynamicPoint = component.createObject(deviceRow)
+	dynamicPoint.absoluteHour = pointRect.absoluteHour
+	print("The absolute hour is: " + pointRect.absoluteHour);
+	dynamicPoint.absoluteMinute = 30  //TODO
+	dynamicPoint.parentPoint = pointRect
+	dynamicPoint.x = dynamicPoint.getAbsoluteXValue();
+	dynamicPoint.border.color = "blue"
+	dynamicPoint.addState("on"); //TODO, add same states as in pointRect
+	dynamicPoint.addState("off");
+	dynamicPoint.addState("dim");
+	dynamicPoint.addState("bell");
+	dynamicPoint.setFirstState(pointRect.state);
+	return dynamicPoint;
 }
