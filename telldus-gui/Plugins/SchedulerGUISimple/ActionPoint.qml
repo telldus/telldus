@@ -19,7 +19,6 @@ Rectangle{
 	property alias triggerstate: trigger.state
 	property variant parentPoint
 	property int parentPointAbsoluteHour //TEST changed from int, want "undefined"
-	property variant childPoints: []
 	property alias deviceRow: pointRect.parent
 	
 	Component.onCompleted: {
@@ -422,7 +421,7 @@ Rectangle{
 		pointRect.state = "off"; //previous point should be "on" or "dim"														 
 	}
 	
-	function remove(){
+	function remove(keepDialogOpen){
 		if(pointRect.hangOnToBar != null){
 			hangOnToBar.destroy();
 		}
@@ -431,7 +430,9 @@ Rectangle{
 		var pointList = pointRect.parent.children;
 		var deviceRow = pointRect.deviceRow;
 		pointRect.destroy();
-		dialog.hide();
+		if(keepDialogOpen == undefined){
+			dialog.hide();
+		}
 		deviceRow.updateContinuingBars()
 	}
 	
@@ -443,20 +444,19 @@ Rectangle{
 	}
 	
 	function getTickedImageSource(index){
-		//3 fall
-		//alwaysticked, unticked, ticked
 		if(pointRect.deviceRow.parent == undefined || pointRect.deviceRow.parent.parent == undefined){ //to get rid of warnings on initialization
-			return "";
+			print("UNDEFINED, should only be in beginning");
+			return "unticked.png";
 		}
-		var originalDay = pointRect.deviceRow.parent.parent.daydate.getDay();
+		var originalPoint = pointRect; // pointRect.deviceRow.parent.parent;
 		if(pointRect.parentPoint != undefined){
-			originalDay = pointRect.parentPoint.deviceRow.parent.parent.daydate.getDay();
+			originalPoint = pointRect.parentPoint; //.deviceRow.parent.parent;
 		}
-		if(index == originalDay){ //TODO change, must be stored with the point insted, it's "original day" (if clicked on on another day for instance)
+		if(index == originalPoint.deviceRow.parent.parent.daydate.getDay()){ //TODO property or so
 			//current day (where the point was originally placed) should always be ticked
 			return "alwaysticked.png";
 		}
-		else if(pointRect.childPoints[index] == undefined){
+		else if(originalPoint.getChildPoint(index) == undefined){
 			return "unticked.png";
 		}
 		else{
@@ -465,21 +465,32 @@ Rectangle{
 	}
 	
 	function toggleTickedWeekDay(index){
-		var originalPointDay = pointRect.deviceRow.parent.parent.daydate.getDay(); //TODO change, must be stored with the point insted, it's "original day" (if clicked on on another day for instance)
+		var originalPoint = pointRect;
 		if(pointRect.parentPoint != undefined){
-			originalPointDay = pointRect.parentPoint.deviceRow.parent.parent.daydate.getDay();
+			originalPoint = pointRect.parentPoint;
 		}
-		if(index == originalPointDay){
+		if(index == originalPoint.deviceRow.parent.parent.daydate.getDay()){
 			//cannot change this, do nothing
 			return;
 		}
-		if(pointRect.childPoints[index] == undefined){
+		if(originalPoint.getChildPoint(index) == undefined){
 			print("CREATE NEW POINT");
-			pointRect.childPoints = deviceRow.createChildPoint(index, pointRect, deviceRow.deviceId);
+			originalPoint.addChildPoint(index, deviceRow.createChildPoint(index, pointRect, deviceRow.deviceId));
 		}
 		else{
 			print("REMOVE A POINT");
-			pointRect.childPoints[index].remove();
+			originalPoint.removeChildPoint(index);
 		}
+	}
+	
+	function getChildPoint(index){
+		return Scripts.getChildPoint(index);
+	}
+	
+	function addChildPoint(index, point){
+		Scripts.addChildPoint(index, point);
+	}
+	function removeChildPoint(index){
+		Scripts.removeChildPoint(index);
 	}
 }

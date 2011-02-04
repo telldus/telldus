@@ -367,6 +367,29 @@ function addWeekPointToGUI(point){
 	dynamicPoint.setFirstState("dim");	
 }
 
+//per point
+var childPoints = [];
+
+function getChildPoint(index){
+	//print("INDEX");
+	//print(index + ": " + childPoints[index]);
+	return childPoints[index];
+}
+
+function addChildPoint(index, point){
+	childPoints[index] = point;
+}
+
+function removeChildPoint(index){
+	print("INDEX BEFORE REMOVE: " + childPoints[index]);
+	var test = childPoints[index];
+	childPoints[index] = undefined;
+	test.remove("true");
+	print("INDEX AFTER REMOVE: " + childPoints[index]);
+}
+
+//end per point
+
 //must be run in "main"
 function getDayIndexForDayOfWeek(dayOfWeek){
 	var offset = days[0].daydate.getDay();
@@ -382,7 +405,7 @@ function getDayIndexForDayOfWeek(dayOfWeek){
 
 //TODO move, pragma safe:
 function getFirstPointWidth(deviceRow){
-	var pointList = deviceRow.children;
+	var pointList = deviceRow.children;  //TODO should really try to avoid using "children"... make own list instead?
 	var firstX = deviceRow.width;
 	var pointWidth = 0;
 	for(var i=0;i<pointList.length;i++){
@@ -420,5 +443,6 @@ function createChildPoint(index, pointRect, deviceId){
 	dynamicPoint.addState("dim");
 	dynamicPoint.addState("bell");
 	dynamicPoint.setFirstState(pointRect.state);
+	print("RETURNING " + dynamicPoint);
 	return dynamicPoint;
 }

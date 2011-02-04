@@ -589,6 +589,10 @@
 					height: 30
 					Image{
 						id: tickBox
+						property int dialogOpacity: container.opacity
+						onDialogOpacityChanged: {
+							tickBox.source = actionPoint.getTickedImageSource(index)
+						}
 						height: 14
 						width: 14
 						source: actionPoint.getTickedImageSource(index)
@@ -596,6 +600,7 @@
 							anchors.fill: parent
 							onClicked: {
 								actionPoint.toggleTickedWeekDay(index)
+								tickBox.source = actionPoint.getTickedImageSource(index)
 							}
 						}
 					}
