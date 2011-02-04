@@ -376,16 +376,40 @@ function getChildPoint(index){
 	return childPoints[index];
 }
 
+function getChildPoints(){
+	return childPoints;
+}
+
 function addChildPoint(index, point){
 	childPoints[index] = point;
 }
 
 function removeChildPoint(index){
 	print("INDEX BEFORE REMOVE: " + childPoints[index]);
-	var test = childPoints[index];
+	var toBeRemoved = childPoints[index];
 	childPoints[index] = undefined;
-	test.remove("true");
+	toBeRemoved.remove("true");
 	print("INDEX AFTER REMOVE: " + childPoints[index]);
+}
+
+function removeParentPoint(newParentPoint){
+	print("Removing parent point...");
+	newParentPoint.setChildPoints(childPoints); //copy child list to current child (making it a parent)
+	newParentPoint.parentPoint = undefined;
+	childPoints[newParentPoint.deviceRow.parent.parent.daydate.getDay()] = undefined; //remove the current point from the child list
+	updateParentsInChildList(newParentPoint); //update all other child points (if any) with the current point as their parent
+	pointRect.remove("true");
+}
+
+function setChildPoints(newChildPoints){
+	childPoints = newChildPoints;
+}
+
+function updateParentsInChildList(newParentPoint){
+	var children = newParentPoint.getChildPoints()
+	for(var point in children){
+		point.pointParent = newParentPoint;
+	}
 }
 
 //end per point
@@ -433,7 +457,7 @@ function createChildPoint(index, pointRect, deviceId){
 	var component = Qt.createComponent("ActionPoint.qml")
 	var dynamicPoint = component.createObject(deviceRow)
 	dynamicPoint.absoluteHour = pointRect.absoluteHour
-	print("The absolute hour is: " + pointRect.absoluteHour);
+	//print("The absolute hour is: " + pointRect.absoluteHour);
 	dynamicPoint.absoluteMinute = 30  //TODO
 	dynamicPoint.parentPoint = pointRect
 	dynamicPoint.x = dynamicPoint.getAbsoluteXValue();
@@ -443,6 +467,6 @@ function createChildPoint(index, pointRect, deviceId){
 	dynamicPoint.addState("dim");
 	dynamicPoint.addState("bell");
 	dynamicPoint.setFirstState(pointRect.state);
-	print("RETURNING " + dynamicPoint);
+	//print("RETURNING " + dynamicPoint);
 	return dynamicPoint;
 }

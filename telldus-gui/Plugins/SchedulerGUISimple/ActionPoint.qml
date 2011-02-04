@@ -111,11 +111,10 @@ Rectangle{
 			dialog.show(pointRect)  //TODO not pointRect, but parentPoint if such exists
 			//var rootCoordinates = pointRect.mapToItem(pointRect.parent, mouse.x, mouse.y);
 			//var hourMinute = getTimeFromPosition(rootCoordinates.x)
-			print("Released reporting in");
+			//print("Released reporting in");
 			dialog.absoluteHour = Scripts.pad(pointRect.absoluteHour, 2) //Scripts.pad(hourMinute[0], 2)
 			dialog.absoluteMinute = Scripts.pad(pointRect.absoluteMinute, 2) //Scripts.pad(hourMinute[1], 2)
 			
-			print("TESTAR!!! " + parentPoint);
 			if(parentPoint != undefined){
 				print("Not undefined reporting in");
 				parentPoint.absoluteHour = parseInt(dialog.absoluteHour, 10);
@@ -277,12 +276,11 @@ Rectangle{
 		var hourSize = pointRect.parent.width / 24;
 		var point = pointRect;
 		if(pointRect.parentPoint != undefined){
-			print("Different x");
+			//print("Different x");
 			point = pointRect.parentPoint;
 		}
-		//TODO point.width är (ofta/alltid?) 0 här)
-		print("ABSOLUTE X-value: " + (point.absoluteHour * hourSize + hourSize * (point.absoluteMinute/60) - point.width/2));
-		print("AbsoluteHour: " +point.absoluteHour+ " hourSize: " + hourSize + " AbsoluteMinute: " + point.absoluteMinute + " Width: " + point.width); 
+		//print("ABSOLUTE X-value: " + (point.absoluteHour * hourSize + hourSize * (point.absoluteMinute/60) - point.width/2));
+		//print("AbsoluteHour: " +point.absoluteHour+ " hourSize: " + hourSize + " AbsoluteMinute: " + point.absoluteMinute + " Width: " + point.width); 
 		return point.absoluteHour * hourSize + hourSize * (point.absoluteMinute/60) - point.width/2;
 	}
 	
@@ -422,6 +420,7 @@ Rectangle{
 	}
 	
 	function remove(keepDialogOpen){
+		//TODO Check if point has children, remove them too in that case!
 		if(pointRect.hangOnToBar != null){
 			hangOnToBar.destroy();
 		}
@@ -444,6 +443,7 @@ Rectangle{
 	}
 	
 	function getTickedImageSource(index){
+		print("GETTING TICKED");
 		if(pointRect.deviceRow.parent == undefined || pointRect.deviceRow.parent.parent == undefined){ //to get rid of warnings on initialization
 			print("UNDEFINED, should only be in beginning");
 			return "unticked.png";
@@ -452,14 +452,15 @@ Rectangle{
 		if(pointRect.parentPoint != undefined){
 			originalPoint = pointRect.parentPoint; //.deviceRow.parent.parent;
 		}
-		if(index == originalPoint.deviceRow.parent.parent.daydate.getDay()){ //TODO property or so
-			//current day (where the point was originally placed) should always be ticked
+		if(index == pointRect.deviceRow.parent.parent.daydate.getDay()){ //TODO property or so
+			//current day should always be ticked
 			return "alwaysticked.png";
 		}
-		else if(originalPoint.getChildPoint(index) == undefined){
+		else if(originalPoint.getChildPoint(index) == undefined && index != originalPoint.deviceRow.parent.parent.daydate.getDay()){  //TODO turn this parent-parent into a property
 			return "unticked.png";
 		}
 		else{
+			print("Well, index? " + index + " or index: " + originalPoint.deviceRow.parent.parent.daydate.getDay());
 			return "ticked.png";
 		}
 	}
@@ -469,11 +470,15 @@ Rectangle{
 		if(pointRect.parentPoint != undefined){
 			originalPoint = pointRect.parentPoint;
 		}
-		if(index == originalPoint.deviceRow.parent.parent.daydate.getDay()){
+		if(index == pointRect.deviceRow.parent.parent.daydate.getDay()){
 			//cannot change this, do nothing
 			return;
 		}
-		if(originalPoint.getChildPoint(index) == undefined){
+		if(index == originalPoint.deviceRow.parent.parent.daydate.getDay()){
+			//trying to remove the parentPoint, special removal procedure needed
+			originalPoint.removeParentPoint(pointRect);
+		}
+		else if(originalPoint.getChildPoint(index) == undefined){
 			print("CREATE NEW POINT");
 			originalPoint.addChildPoint(index, deviceRow.createChildPoint(index, pointRect, deviceRow.deviceId));
 		}
@@ -486,11 +491,19 @@ Rectangle{
 	function getChildPoint(index){
 		return Scripts.getChildPoint(index);
 	}
-	
+	function getChildPoints(){
+		return Scripts.getChildPoints();
+	}
 	function addChildPoint(index, point){
 		Scripts.addChildPoint(index, point);
 	}
 	function removeChildPoint(index){
 		Scripts.removeChildPoint(index);
+	}
+	function removeParentPoint(newParentPoint){
+		Scripts.removeParentPoint(newParentPoint);
+	}
+	function setChildPoints(childPoints){
+		Scripts.setChildPoints(childPoints);
 	}
 }

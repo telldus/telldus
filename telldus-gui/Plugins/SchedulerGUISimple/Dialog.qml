@@ -600,6 +600,7 @@
 							anchors.fill: parent
 							onClicked: {
 								actionPoint.toggleTickedWeekDay(index)
+								print("Just toggled, now update image: " + actionPoint);
 								tickBox.source = actionPoint.getTickedImageSource(index)
 							}
 						}
