@@ -101,7 +101,6 @@ Rectangle{
 			//var rootCoordinates = pointRect.mapToItem(pointRect.parent, mouse.x, mouse.y);
 			var rootCoordinates = pointRect.mapToItem(pointRect.parent, mouse.x, mouse.y);
 			var hourMinute = getTimeFromPosition(rootCoordinates.x - mouse.x + pointRect.width/2)
-			print("Position changed reporting in");
 			if((hourMinute[0] >= 0) && hourMinute[0] < 24){
 				pointRect.absoluteHour = hourMinute[0]
 				pointRect.absoluteMinute = hourMinute[1]
@@ -118,7 +117,6 @@ Rectangle{
 			dialog.absoluteMinute = Scripts.pad(pointRect.absoluteMinute, 2) //Scripts.pad(hourMinute[1], 2)
 			
 			if(parentPoint != undefined){
-				print("Not undefined reporting in");
 				parentPoint.absoluteHour = parseInt(dialog.absoluteHour, 10);
 			}
 		}
@@ -421,8 +419,12 @@ Rectangle{
 		pointRect.state = "off"; //previous point should be "on" or "dim"														 
 	}
 	
-	function remove(keepDialogOpen){
-		//TODO Check if point has children, remove them too in that case!
+	function remove(keepDialogOpen, ignoreParent){
+		if(ignoreParent == undefined && pointRect.parentPoint != undefined){
+			//remove from parent instead
+			pointRect.parentPoint.remove();
+			return;
+		}
 		if(pointRect.hangOnToBar != null){
 			hangOnToBar.destroy();
 		}
@@ -430,11 +432,16 @@ Rectangle{
 		pointRect.isPoint = "false"
 		var pointList = pointRect.parent.children;
 		var deviceRow = pointRect.deviceRow;
+		var childPoints = Scripts.getChildPoints();
+		for(var child in childPoints){
+			childPoints[child].remove(keepDialogOpen, "ignoreParent");
+			delete childPoints[child];
+		}
 		pointRect.destroy();
 		if(keepDialogOpen == undefined){
 			dialog.hide();
 		}
-		deviceRow.updateContinuingBars()
+		deviceRow.updateContinuingBars();
 	}
 	
 	function minutesToTimelineUnits(minutes){
