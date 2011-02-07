@@ -56,7 +56,9 @@ Rectangle{
      */
 	
 	onAbsoluteHourChanged: {
-		print("ABSOLUTE HOUR CHANGED"); //TEST NYTT TEST
+		//print("ABSOLUTE HOUR CHANGED");
+		Scripts.updateParentAbsoluteHour();
+		Scripts.updateChildPoints();
 		pointRect.x = getAbsoluteXValue();
 	}
 	
@@ -461,7 +463,6 @@ Rectangle{
 			return "unticked.png";
 		}
 		else{
-			print("Well, index? " + index + " or index: " + originalPoint.deviceRow.parent.parent.daydate.getDay());
 			return "ticked.png";
 		}
 	}

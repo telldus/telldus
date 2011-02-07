@@ -394,9 +394,9 @@ function removeChildPoint(index){
 
 function removeParentPoint(newParentPoint){
 	print("Removing parent point...");
+	delete childPoints[newParentPoint.deviceRow.parent.parent.daydate.getDay()]; //TODO remove this: = undefined; //remove the current point from the child list
 	newParentPoint.setChildPoints(childPoints); //copy child list to current child (making it a parent)
 	newParentPoint.parentPoint = undefined;
-	childPoints[newParentPoint.deviceRow.parent.parent.daydate.getDay()] = undefined; //remove the current point from the child list
 	updateParentsInChildList(newParentPoint); //update all other child points (if any) with the current point as their parent
 	pointRect.remove("true");
 }
@@ -406,9 +406,21 @@ function setChildPoints(newChildPoints){
 }
 
 function updateParentsInChildList(newParentPoint){
-	var children = newParentPoint.getChildPoints()
+	var children = newParentPoint.getChildPoints();
 	for(var point in children){
-		point.pointParent = newParentPoint;
+		children[point].parentPoint = newParentPoint;
+	}
+}
+
+function updateChildPoints(parentPoint){
+	for(var point in childPoints){
+		childPoints[point].absoluteHour = pointRect.absoluteHour;
+	}
+}
+
+function updateParentAbsoluteHour(){
+	if(pointRect.parentPoint != undefined){
+		pointRect.parentPoint.absoluteHour = pointRect.absoluteHour; //TODO check if this can be done with binding without loops...
 	}
 }
 
@@ -433,6 +445,7 @@ function getOffsetWeekdayName(index){
 }
 
 function getOffsetWeekday(index){
+	//TODO this can be modified based on locale, not adding 1 of week should start with sunday
 	index = index + 1;
 	if(index == weekday_name_array.length){
 		index = 0;
