@@ -387,7 +387,7 @@ function addChildPoint(index, point){
 function removeChildPoint(index){
 	print("INDEX BEFORE REMOVE: " + childPoints[index]);
 	var toBeRemoved = childPoints[index];
-	childPoints[index] = undefined;
+	delete childPoints[index]; // = undefined;
 	toBeRemoved.remove("true");
 	print("INDEX AFTER REMOVE: " + childPoints[index]);
 }

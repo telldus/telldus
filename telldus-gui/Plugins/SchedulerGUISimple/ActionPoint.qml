@@ -420,7 +420,7 @@ Rectangle{
 	}
 	
 	function remove(keepDialogOpen, ignoreParent){
-		if(ignoreParent == undefined && pointRect.parentPoint != undefined){
+		if(keepDialogOpen == undefined && ignoreParent == undefined && pointRect.parentPoint != undefined){
 			//remove from parent instead
 			pointRect.parentPoint.remove();
 			return;
@@ -491,10 +491,12 @@ Rectangle{
 		else if(originalPoint.getChildPoint(index) == undefined){
 			print("CREATE NEW POINT");
 			originalPoint.addChildPoint(index, deviceRow.createChildPoint(index, pointRect, deviceRow.deviceId));
+			pointRect.deviceRow.updateContinuingBars();
 		}
 		else{
 			print("REMOVE A POINT");
 			originalPoint.removeChildPoint(index);
+			pointRect.deviceRow.updateContinuingBars();
 		}
 	}
 	
