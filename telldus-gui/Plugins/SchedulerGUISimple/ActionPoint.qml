@@ -147,9 +147,9 @@ Rectangle{
 		drag.target: pointRect
 		drag.axis: Drag.XAxis
 		drag.minimumX: -1 * pointRect.width/2
-		drag.maximumX: pointRect.parent.width - pointRect.width/2  //TODO: om pointRect.parent == null, då bara 0...
+		drag.maximumX: pointRect.parent == null ? 0 : pointRect.parent.width - pointRect.width/2
 		drag.filterChildren: true //TODO testing this
-		//TODO make it impossible to overlap (on release)
+		//TODO make it impossible to overlap (on release) (why?)
 		//TODO drag to most right - jumps back, why?
 		
 		states: State{
@@ -157,19 +157,6 @@ Rectangle{
 			PropertyChanges { target: pointRect; opacity: 0.5; }
 		}
 	}
-	/*
-	ListModel{
-		id: daysOfWeek
-		ListElement{
-			name: "on"
-			imagesource: "on.png" //TODO cannot use javascript properties here... do in some other way, maybe a list with names here?
-		}
-		ListElement{
-			name: "off"
-			imagesource: "off.png"
-		}
-	}
-	*/
 	
 	Column{
 		spacing: 10

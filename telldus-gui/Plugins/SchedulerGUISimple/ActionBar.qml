@@ -41,14 +41,14 @@ Rectangle{
 			}
 		},
 		State{
-			name: "pointLoaded" //; when: hangOnToPoint != undefined && hangOnToPoint.isLoaded != undefined && hangOnToPoint.parent != null && hangOnToPoint.parent != undefined && hangOnToPoint.verticalCenter != undefined  //TODO might aswell use hangOnToPoint != undefined, still get null item warning, used hangOnToPoint.isLoaded too before, remove this?
+			name: "pointLoaded"
 			PropertyChanges {
 				target: barRectangle
-				anchors.verticalCenter: hangOnToPoint.verticalCenter
+				anchors.verticalCenter: hangOnToPoint.verticalCenter  //TODO Warning on this and the line below... cannot fix, warning even if setting to undefined directly
 				anchors.left: hangOnToPoint.horizontalCenter
 				color: hangOnToPoint.actionTypeColor
 				opacity: hangOnToPoint.actionTypeOpacity
-				width: Scripts.getBarWidth(barRectangle, hangOnToPoint, hangOnToPoint.parent.children)	
+				width: hangOnToPoint.parent == null ? 0 : Scripts.getBarWidth(barRectangle, hangOnToPoint, hangOnToPoint.parent.children)	
 			}
 		}
 	]  
