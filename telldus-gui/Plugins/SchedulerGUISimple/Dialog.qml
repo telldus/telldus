@@ -609,7 +609,7 @@
 						//anchors.fill: parent
 						anchors.left: tickBox.right
 						anchors.leftMargin: 10
-						text: Scripts.weekday_name_array[index] //TODO start on monday
+						text: Scripts.getOffsetWeekdayName(index)
 					}
 				}
 			}

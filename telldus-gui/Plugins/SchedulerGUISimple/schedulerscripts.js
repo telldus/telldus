@@ -427,6 +427,19 @@ function getDayIndexForDayOfWeek(dayOfWeek){
 	return dayOfWeek;
 }
 
+function getOffsetWeekdayName(index){
+	index = getOffsetWeekday(index);
+	return weekday_name_array[index];
+}
+
+function getOffsetWeekday(index){
+	index = index + 1;
+	if(index == weekday_name_array.length){
+		index = 0;
+	}
+	return index;
+}
+
 //TODO move, pragma safe:
 function getFirstPointWidth(deviceRow){
 	var pointList = deviceRow.children;  //TODO should really try to avoid using "children"... make own list instead?

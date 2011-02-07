@@ -443,7 +443,8 @@ Rectangle{
 	}
 	
 	function getTickedImageSource(index){
-		print("GETTING TICKED");
+		//print("GETTING TICKED");
+		index = Scripts.getOffsetWeekday(index);
 		if(pointRect.deviceRow.parent == undefined || pointRect.deviceRow.parent.parent == undefined){ //to get rid of warnings on initialization
 			print("UNDEFINED, should only be in beginning");
 			return "unticked.png";
@@ -466,6 +467,7 @@ Rectangle{
 	}
 	
 	function toggleTickedWeekDay(index){
+		index = Scripts.getOffsetWeekday(index);
 		var originalPoint = pointRect;
 		if(pointRect.parentPoint != undefined){
 			originalPoint = pointRect.parentPoint;
