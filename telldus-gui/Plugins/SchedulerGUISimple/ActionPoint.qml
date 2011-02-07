@@ -18,7 +18,7 @@ Rectangle{
 	property int absoluteMinute: parseInt(dialog.absoluteMinute, 10)
 	property alias triggerstate: trigger.state
 	property variant parentPoint
-	property int parentPointAbsoluteHour //TEST changed from int, want "undefined"
+	//property int parentPointAbsoluteHour //TEST changed from int, want "undefined"
 	property alias deviceRow: pointRect.parent
 	
 	Component.onCompleted: {
@@ -55,11 +55,36 @@ Rectangle{
      }
      */
 	
+	
+	//reflect changes on parent/siblings:
 	onAbsoluteHourChanged: {
+		updateChanges();
 		//print("ABSOLUTE HOUR CHANGED");
-		Scripts.updateParentAbsoluteHour();
-		Scripts.updateChildPoints();
-		pointRect.x = getAbsoluteXValue();
+	}
+	
+	onAbsoluteMinuteChanged: {
+		updateChanges();
+	}
+	
+	onFuzzyBeforeChanged: {
+		updateChanges();
+	}
+	
+	onFuzzyAfterChanged: {
+		updateChanges();
+	}
+	
+	onOffsetChanged: {
+		updateChanges();
+	}
+	
+	onDimvalueChanged: {
+		updateChanges();
+		updateBars();
+	}
+	
+	onStateChanged: {
+		updateChanges();
 	}
 	
 	/*
@@ -78,10 +103,6 @@ Rectangle{
 		}
 	}
 	*/
-	
-	onDimvalueChanged: {
-		updateBars();
-	}
 	
 	MouseArea {
 		id: pointRectMouseArea
@@ -118,6 +139,7 @@ Rectangle{
 			
 			if(parentPoint != undefined){
 				parentPoint.absoluteHour = parseInt(dialog.absoluteHour, 10);
+				parentPoint.absoluteMinute = parseInt(dialog.absoluteMinute, 10);
 			}
 		}
 		
@@ -249,6 +271,7 @@ Rectangle{
 	]
 	
 	Rectangle{
+		//TODO continue fuzzy too into next/prev day
 		width: minutesToTimelineUnits(fuzzyAfter + fuzzyBefore)
 		height: constBarHeight
 		anchors.verticalCenter: parent.verticalCenter
@@ -321,6 +344,14 @@ Rectangle{
 			//pointRect.xvalue = pointRect.x;
 			trigger.state = "sunrise";
 		}
+		Scripts.updateParentWithCurrentValues();
+		Scripts.updateChildPoints();
+	}
+	
+	function updateChanges(){
+		Scripts.updateParentWithCurrentValues();
+		Scripts.updateChildPoints();
+		pointRect.x = getAbsoluteXValue();	
 	}
 	
 	function getLastPointColor(){
@@ -375,6 +406,14 @@ Rectangle{
 	function addState(state){
 		//print("Adding state: " + state);
 		Scripts.addState(state);
+	}
+	
+	function setActiveStates(activeStates){
+		Scripts.setActiveStates(activeStates);
+	}
+	
+	function getActiveStates(){
+		return Scripts.getActiveStates();
 	}
 	
 	function setFirstState(firstState){
@@ -455,12 +494,12 @@ Rectangle{
 		//print("GETTING TICKED");
 		index = Scripts.getOffsetWeekday(index);
 		if(pointRect.deviceRow.parent == undefined || pointRect.deviceRow.parent.parent == undefined){ //to get rid of warnings on initialization
-			print("UNDEFINED, should only be in beginning");
+			//undefined, should only be in the beginning
 			return "unticked.png";
 		}
-		var originalPoint = pointRect; // pointRect.deviceRow.parent.parent;
+		var originalPoint = pointRect;
 		if(pointRect.parentPoint != undefined){
-			originalPoint = pointRect.parentPoint; //.deviceRow.parent.parent;
+			originalPoint = pointRect.parentPoint;
 		}
 		if(index == pointRect.deviceRow.parent.parent.daydate.getDay()){ //TODO property or so
 			//current day should always be ticked

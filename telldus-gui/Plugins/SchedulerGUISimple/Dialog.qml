@@ -395,27 +395,14 @@
 		anchors.leftMargin: 10
 		anchors.top: fuzzyPanel.bottom
 		anchors.topMargin: 10
-		//property alias absoluteHourText: inputAbsoluteHourText.text
-		//property alias absoluteMinuteText: inputAbsoluteMinuteText.text
 		
 		Row{
 			Text{
-				/*id: textAbsolute
-				anchors.left: parent.left
-				anchors.leftMargin: 5
-				anchors.top: parent.top
-				anchors.topMargin: 5
-				*/
 				text: "Time:"
 			}
 			
 			Rectangle{
 				id: inputAbsoluteHour
-				//property alias absoluteHour: inputAbsoluteHourText.text
-				/*anchors.left: textOffset.right
-				anchors.leftMargin: 5
-				anchors.verticalCenter: textOffset.verticalCenter
-				*/
 				width: 35
 				height: inputAbsoluteHourText.height
 				border.width: 1
@@ -431,11 +418,6 @@
 						event.accepted = true;
 						inputAbsoluteMinuteText.focus = true;
 					}
-					//text: "0"
-  					//onChanged:{
-					//	print("DIALOG HOUR CHANGED");
-					//}
-
 				}
 				
 				Binding {
@@ -447,21 +429,12 @@
 			}
 			
 			Text{
-				/*id: textOffsetUnit
-				anchors.left: inputOffset.right
-				anchors.leftMargin: 5
-				anchors.verticalCenter: textOffset.verticalCenter
-				*/
 				text: ":"
 			}
 			
 			Rectangle{
 				id: inputAbsoluteMinute
 				property alias absoluteMinute: inputAbsoluteMinuteText.text
-				/*anchors.left: textOffset.right
-				anchors.leftMargin: 5
-				anchors.verticalCenter: textOffset.verticalCenter
-				*/
 				width: 35
 				height: inputAbsoluteMinuteText.height
 				border.width: 1

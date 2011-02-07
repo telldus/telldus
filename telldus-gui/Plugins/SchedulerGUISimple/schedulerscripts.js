@@ -13,6 +13,10 @@ function getActiveStates(){
 	return activeStates;
 }
 
+function setActiveStates(newActiveStates){
+	activeStates = newActiveStates;
+}
+
 //Days:
 var weekday_name_array = new Array("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday")
 var currentDayIndex = 6; //Today...
@@ -108,23 +112,16 @@ function getEndsWith(pointList, dayIndex, deviceId){ //previousDayEndsWithPoint)
 			dayIndex = days.length - 1;
 		}
 		
-		//TODO Avoid loop here!
 		var prevDayDevice = getDeviceRow(dayIndex, deviceId);
-		//print("PREVDAYHERE: index: " + dayIndex + " id: " + deviceId + " Daydevice: " + prevDayDevice);
 		if(prevDayDevice == undefined){ // || prevDayDevice.endPoint == undefined){ //TODO this is due to an error, but in the future use it to avoid loops
-			print("DayDeviceUndefined....................");
 			return null; 
 		}
-		//print("RETURNING A PREV POINT");
-		//print("Prev day: " + days[dayIndex].daydate.getDate());
-		//print("Containing: " + prevDayDevice.endPoint);
 		return prevDayDevice.endPoint;  // previousDayEndsWithPoint;
 	}
 	if(prevPoint.state == "off"){
 		return null;
 	}
-	//print("RETURNING A POINT");
-	return prevPoint;  //.state, only on or dim
+	return prevPoint;  //only on or dim
 }
 
 function getPreviousState(currentPointRect){
@@ -145,16 +142,13 @@ function getPreviousState(currentPointRect){
 	if(prevPoint == null){
 		//no previous point,see if state continues from previous day
 		if(firstBarStateIndex != undefined && pointList[firstBarStateIndex].firstBar != undefined){
-			//print("ENDPOINT!!");
 			
 			var dayIndex = currentDayIndex - 1;
 			if(dayIndex == -1){ //too far, begin from end again
 				dayIndex = days.length - 1;
 			}
-			//print("CORRECT DEVICE ID? : " + currentPointRect.deviceRow.deviceId);
 			var prevDayDevice = currentPointRect.parent.getDeviceRow(dayIndex, currentPointRect.deviceRow.deviceId);
 			if(prevDayDevice != undefined){ 
-				//print("Setting end point: ** " + prevDayDevice.endPoint);
 				return prevDayDevice.endPoint;
 			}
 		}
@@ -193,10 +187,8 @@ function updateDeviceIndex(){  //TODO, better way, please...
 	var startIndex = 0;
 	for(var i=0;i<days[0].children[0].children.length;i++){
 		var deviceListItem = days[0].children[0].children[i];
-		//print("** DEVICELISTITEM: ** " + deviceListItem);
 		if(deviceListItem.deviceId != undefined){
 			startIndex = i;
-			//print("** CORRECT DEVICELISTITEM **");
 			break;
 		}
 	}
@@ -223,37 +215,15 @@ function debugPrintDeviceIndex(){
 
 function updateEndsWith(){
 	updateDeviceIndex(); //TODO needed?
-	//print("UPDATEENDSWITH");
 	for(var device in deviceIndex){
 		//for each device, order doesn't matter
 		var previousEndPoint = undefined;
-		//print("DeviceIndex: " + deviceIndex[device]);
-		//print("DeviceId: " + device);
-		
 		//loop through days, beginning with oldest, in search for the first Point
 		var startIndex = 0;
 		for(var dayIndex=0;dayIndex<days.length;dayIndex++){
 			var deviceRow = days[dayIndex].children[0].children[(parseInt(deviceIndex[device]))]; //+1 TODO property somehow? Or function...
-			/*
-			 * DEBUG
-			print("day: " + days[dayIndex]);
-			print("child zero: " + days[dayIndex].children[0]);
-			print("deviceRow: " + deviceRow);
-			print("index: " + (parseInt(deviceIndex[device])));
-			print("Length: " + days[dayIndex].children[0].children.length);
-			*/
-			//print("deviceRow, id: " + deviceRow.deviceId);
-			//print("deviceRow: " + deviceRow.children.length);
-			
-			/*
-			for (var myKey in days[dayIndex].children[0]) {
-				print(myKey + " == (" + days[dayIndex].children[0][myKey] + ")");
-			}
-			*/
 			
 			if(deviceRow.hasPoints()){
-				//print("Dayindex " + dayIndex  + " HAS POINTS ..........");
-				//print("Current day index: " + currentDayIndex);
 				startIndex = dayIndex;
 				break;
 			}
@@ -267,7 +237,6 @@ function updateEndsWith(){
 			}
 			
 			var deviceRow = days[dayIndex].children[0].children[parseInt(deviceIndex[device])];
-			//print("ID " + deviceRow.deviceId);
 			
 			previousEndPoint = assignContinuingBarProperties(deviceRow, previousEndPoint, dayIndex, i==0);
 			
@@ -341,7 +310,6 @@ function getDeviceRow(dayOfWeek, deviceId){
 	}
 	print("DeviceIndex: " + currentDeviceIndex + " och " + deviceId + ", och sedan " + days.length);
 	var pointParent = dayListViewComp.children[0].children[currentDeviceIndex];
-	print("Picked device id (must be same as above): " + dayListViewComp.daydate); //children[0].children[currentDeviceIndex].deviceId);
 	return pointParent;
 }
 
@@ -364,7 +332,8 @@ function addWeekPointToGUI(point){
 	dynamicPoint.addState("off");
 	dynamicPoint.addState("dim");
 	dynamicPoint.addState("bell");
-	dynamicPoint.setFirstState("dim");	
+	dynamicPoint.setFirstState("dim");
+	//also: states, fuzzy * 2, trigger, offset, dimvalue
 }
 
 //per point
@@ -387,14 +356,14 @@ function addChildPoint(index, point){
 function removeChildPoint(index){
 	print("INDEX BEFORE REMOVE: " + childPoints[index]);
 	var toBeRemoved = childPoints[index];
-	delete childPoints[index]; // = undefined;
+	delete childPoints[index];
 	toBeRemoved.remove("true");
 	print("INDEX AFTER REMOVE: " + childPoints[index]);
 }
 
 function removeParentPoint(newParentPoint){
 	print("Removing parent point...");
-	delete childPoints[newParentPoint.deviceRow.parent.parent.daydate.getDay()]; //TODO remove this: = undefined; //remove the current point from the child list
+	delete childPoints[newParentPoint.deviceRow.parent.parent.daydate.getDay()]; //remove the current point from the child list
 	newParentPoint.setChildPoints(childPoints); //copy child list to current child (making it a parent)
 	newParentPoint.parentPoint = undefined;
 	updateParentsInChildList(newParentPoint); //update all other child points (if any) with the current point as their parent
@@ -415,12 +384,26 @@ function updateParentsInChildList(newParentPoint){
 function updateChildPoints(parentPoint){
 	for(var point in childPoints){
 		childPoints[point].absoluteHour = pointRect.absoluteHour;
+		childPoints[point].absoluteMinute = pointRect.absoluteMinute;
+		childPoints[point].fuzzyBefore = pointRect.fuzzyBefore;
+		childPoints[point].fuzzyAfter = pointRect.fuzzyAfter;
+		childPoints[point].offset = pointRect.offset;
+		childPoints[point].triggerstate = pointRect.triggerstate;
+		childPoints[point].dimvalue = pointRect.dimvalue;
+		childPoints[point].state = pointRect.state;
 	}
 }
 
-function updateParentAbsoluteHour(){
+function updateParentWithCurrentValues(){
 	if(pointRect.parentPoint != undefined){
 		pointRect.parentPoint.absoluteHour = pointRect.absoluteHour; //TODO check if this can be done with binding without loops...
+		pointRect.parentPoint.absoluteMinute = pointRect.absoluteMinute;
+		pointRect.parentPoint.fuzzyBefore = pointRect.fuzzyBefore;
+		pointRect.parentPoint.fuzzyAfter = pointRect.fuzzyAfter;
+		pointRect.parentPoint.offset = pointRect.offset;
+		pointRect.parentPoint.triggerstate = pointRect.triggerstate;
+		pointRect.parentPoint.dimvalue = pointRect.dimvalue;
+		pointRect.parentPoint.state = pointRect.state;
 	}
 }
 
@@ -479,19 +462,28 @@ function deviceEnabled(deviceId, enabled){
 
 function createChildPoint(index, pointRect, deviceId){
 	index = getDayIndexForDayOfWeek(index);
-	var deviceRow = getDeviceRow(index, deviceId); //TODO correct index?
-	var component = Qt.createComponent("ActionPoint.qml")
-	var dynamicPoint = component.createObject(deviceRow)
-	dynamicPoint.absoluteHour = pointRect.absoluteHour
-	//print("The absolute hour is: " + pointRect.absoluteHour);
-	dynamicPoint.absoluteMinute = 30  //TODO
+	var deviceRow = getDeviceRow(index, deviceId);
+	var component = Qt.createComponent("ActionPoint.qml");
+	var dynamicPoint = component.createObject(deviceRow);
+	dynamicPoint.absoluteHour = pointRect.absoluteHour;
+	dynamicPoint.absoluteMinute = pointRect.absoluteMinute;
+	dynamicPoint.fuzzyBefore = pointRect.fuzzyBefore;
+	dynamicPoint.fuzzyAfter = pointRect.fuzzyAfter;
+	dynamicPoint.offset = pointRect.offset;
+	dynamicPoint.triggerstate = pointRect.triggerstate;
+	dynamicPoint.dimvalue = pointRect.dimvalue;
+	
 	dynamicPoint.parentPoint = pointRect
 	dynamicPoint.x = dynamicPoint.getAbsoluteXValue();
 	dynamicPoint.border.color = "blue"
+	dynamicPoint.setActiveStates(pointRect.getActiveStates());
+	
+	/*
 	dynamicPoint.addState("on"); //TODO, add same states as in pointRect
 	dynamicPoint.addState("off");
 	dynamicPoint.addState("dim");
 	dynamicPoint.addState("bell");
+	*/
 	dynamicPoint.setFirstState(pointRect.state);
 	//print("RETURNING " + dynamicPoint);
 	return dynamicPoint;
