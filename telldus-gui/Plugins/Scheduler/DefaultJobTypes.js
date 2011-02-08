@@ -19,8 +19,11 @@ function getEventRunTime(event, date){
 			date = 0;
 		}
 		currentEventRuntimeTimestamp = (event.d.time * 1000) + date;
+		print("currentEventRuntimeTimestamp: " + new Date(currentEventRuntimeTimestamp));
 		currentEventRuntimeTimestamp += (offset * 1000); //this is really not useful for absolute values, but exists for consistency
+		print("currentEventRuntimeTimestamp1: " + new Date(currentEventRuntimeTimestamp));
 		currentEventRuntimeTimestamp = com.telldus.scheduler.fuzzify(currentEventRuntimeTimestamp, parseInt(event.d.fuzzinessBefore), parseInt(event.d.fuzzinessAfter));
+		print("currentEventRuntimeTimestamp2: " + new Date(currentEventRuntimeTimestamp));
 	}
 	else if(event.d.type == com.telldus.scheduler.EVENTTYPE_SUNRISE || event.d.type == com.telldus.scheduler.EVENTTYPE_SUNSET){
 		currentEventRuntimeTimestamp = getSunUpDownForDate(date, parseInt(event.d.type));
@@ -88,6 +91,7 @@ function getNextEventRunTime(nextRunTime, event, date, pastGracePeriod){
 	}
 	
 	var currentEventRuntimeTimestamp = getEventRunTime(event, date);
+	print("EventRunTime: " + new Date(currentEventRuntimeTimestamp));
 	if((nextRunTime === null || currentEventRuntimeTimestamp < nextRunTime) && currentEventRuntimeTimestamp > (new Date().getTime() - pastGracePeriod)){   //earlier than other events, but later than "now"
 		nextRunTime = currentEventRuntimeTimestamp;
 	}
@@ -259,6 +263,7 @@ com.telldus.scheduler.JobRecurringDay = function(jobdata){ com.telldus.scheduler
  * type is com.telldus.scheduler.JOBTYPE_RECURRING_WEEK
  * Extra/different event properties:
  * value - day of week
+ * time - seconds into the day
  */
 com.telldus.scheduler.JobRecurringWeek = function(jobdata){ com.telldus.scheduler.Job.call(this, jobdata); }
 
@@ -337,7 +342,6 @@ com.telldus.scheduler.JobRecurringWeek.prototype.getNextRunTime = function(){
 	}
 	
 	var pastGracePeriod = getGracePeriod(this.v);
-	
 	for(var key in this.v.events){
 		//get next correct day of week, may be today too
 		var weekday = parseInt(this.v.events[key].d.value);
@@ -345,6 +349,7 @@ com.telldus.scheduler.JobRecurringWeek.prototype.getNextRunTime = function(){
 			print("Incorrect weekday value");
 			continue;
 		}
+		print("Weekday... " + weekday);
 		var returnDate = new Date();
 		var minStartTime = new Date(this.v.startdate);
 		if(minStartTime > returnDate){
@@ -367,7 +372,6 @@ com.telldus.scheduler.JobRecurringWeek.prototype.getNextRunTime = function(){
 			nextRunTime = nextTempRunTime;
 		}
 	}
-	
 	return nextRunTime;
 }
 

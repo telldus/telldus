@@ -303,7 +303,7 @@ function getDeviceRow(dayOfWeek, deviceId){
 	if(dayListViewComp.children.length == undefined){
 		return null;
 	}
-	print("DeviceIndex: " + currentDeviceIndex + " och " + deviceId + ", och sedan " + days.length);
+	//print("DeviceIndex: " + currentDeviceIndex + " och " + deviceId + ", och sedan " + days.length);
 	var pointParent = dayListViewComp.children[0].children[currentDeviceIndex];
 	return pointParent;
 }

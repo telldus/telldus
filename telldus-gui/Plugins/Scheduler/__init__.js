@@ -23,7 +23,7 @@ com.telldus.scheduler = function() {
 	function init(){
 		JobDaylightSavingReload.prototype = new com.telldus.scheduler.Job();
 		setDaylightSavingJobFunctions();
-		loadJobs(); //TODO remove this after testing is done
+		//loadJobs(); //TODO remove this after testing is done
 	}
 	
 	
@@ -38,6 +38,28 @@ com.telldus.scheduler = function() {
 		print("Add job");
 		updateJobInList(key);
 		return key;
+	}
+	
+	//add several jobs at once, withou recalculating timer between each
+	function addJobs(jobs){
+		if(storedJobs.length == 0){
+			print("Adding daylight saving time");
+			var daylightSavingReloadKey = storedJobs.push(getDaylightSavingReloadJob());
+			updateJobInList(daylightSavingReloadKey, true); //waitForMore = don't sort array and recalculate timer yet
+		}
+		var returnKeys = new Array();
+		for(var i=0;i<jobs.length;i++){
+			var job = jobs[i];
+			var key = storedJobs.push(job);
+			job.key = key;
+			print("Adding job");
+			updateJobInList(key, true); //waitForMore = don't sort array and recalculate timer yet
+			returnKeys.push(key);
+		}
+		joblist.sort(compareTime);
+		runNextJob();
+		
+		return returnKeys;
 	}
 	
 	function fuzzify(currentTimestamp, fuzzinessBefore, fuzzinessAfter){
@@ -145,7 +167,7 @@ com.telldus.scheduler = function() {
 		print("Has started a job wait");
 	}
 	
-	function updateJobInList(id){
+	function updateJobInList(id, waitForMore){
 		if(!joblist){
 			joblist = new Array();
 		}
@@ -167,9 +189,10 @@ com.telldus.scheduler = function() {
 		}
 		
 		joblist.push(new RunJob(id, nextRunTime));
-		
-		joblist.sort(compareTime);
-		runNextJob();
+		if(waitForMore == undefined){		
+			joblist.sort(compareTime);
+			runNextJob();
+		}
 	}
 	
 	function updateJob(key, job){
@@ -257,6 +280,7 @@ com.telldus.scheduler = function() {
 
 	return { //Public functions
 		addJob: addJob, //job, returns: storage id
+		addJobs: addJobs, //jobs (array), returns: storage id's in array
 		fuzzify: fuzzify, //timestamp, max fuzziness before, max fuzziness after, returns: new random timestamp within min/max fuzziness-boundries
 		removeJob: removeJob, //storage id
 		updateJob: updateJob, //storage id, job

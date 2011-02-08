@@ -409,8 +409,20 @@ import "schedulerscripts.js" as Scripts
 				}
 			}
 		}
-	 }
+	}
 
+	Button{
+		id: save
+		text: "Save changes"
+		anchors.horizontalCenter: parent.horizontalCenter
+		anchors.horizontalCenterOffset: -30
+		anchors.top: mainContent.bottom
+		anchors.topMargin: 30
+		onClicked: {
+			saveAll();
+		}
+	}
+	
 	/* Not in use, adding all devices always instead
 	 Component{
 		id: addButtonComponent
@@ -516,4 +528,145 @@ import "schedulerscripts.js" as Scripts
 		var hourSize = constDeviceRowWidth/24; //(main.width - 100)/24; //TODO constant or something?
 		return hourSize * suntime[0] + hourSize * suntime[1]/60;
 	}
+	
+	function saveAll(){
+		print("Save all and reset jobs");
+		//var jobs = new Array();
+		var points = new Array();
+		var days = Scripts.getDays();
+		for(var i=0;i<deviceModel.length;i++){
+			//punkt 1 och 2 (och 3)
+			var deviceId = deviceModel.get(i).id;
+			for(var j=0;j<days.length;j++){
+				var row = Scripts.getDeviceRow(days[j].daydate.getDay(), deviceId);
+				for(var k=0;k<row.children.length;k++){
+					var point = row.children[k];
+					if(point.isPoint && point.parentPoint == undefined){ //and not disabled
+						print("and step 4");
+						points.push(pointToArray(point));
+						//jobs.push(pointToJob(point));
+					}
+				}
+			}
+		}
+		
+		print("after loops");
+		//if(jobs.length > 0){
+			//var timerkeys = addJobsToSchedule.callWith(jobs);
+		//}
+		if(points.length > 0){
+			/*
+			print("Nerifrån: " + points[0].absoluteHour);
+			var koll = {"TEST": 55};
+			print("Koll: " + koll["TEST"]);
+			var underarray = new Array();
+			underarray.push("hejsan");
+			underarray.push("hoppsan");
+			koll = new Array();
+			koll.push(underarray);
+			koll.push(8);
+			*/
+			addJobsToSchedule.callWith(points); //{"TEST": 55}); //points);
+		}
+		//1. for each device (som har hasChanged set):
+		//2. ta bort alla timers med keys till denna device
+		//3. om disabled = gör inte mer... annars:
+		//4. alla punkter på alla dagar här, gå igenom:
+		//5. om punkt, om inte har parentPoint, och inte disabled (senare):
+		//6. gör om punkt till jobb (pointToJob), lägg till array, med events för alla childPoints (och sig själv)
+		//7. skicka in denna array till schedulern (addJobs)
+		//8. få tillbaka ny array med timerkeys, spara denna på devicen
+	}
+	
+	function pointToArray(point){ //TODO another way than using arrays...
+		var deviceId = point.deviceRow.deviceId; //not really in use yet
+		var pointName = "Job_" + deviceId;
+		var lastrun = 0; //TODO
+		var startdate = new Date(); //startdate, not in use, always "now"
+		var pointDimValue = point.dimvalue;
+		var pointMethod = getMethodFromState.callWith(point.state);
+		
+		var pointTime = point.absoluteHour * 3600 + point.absoluteMinute * 60;
+		var pointType = getTypeFromTriggerstate.callWith(point.triggerstate);
+		if(point.triggerstate == "sunrise"){
+			var suntime = main.sunData[0].split(':');
+			pointTime = suntime[0] * 3600 + suntime[1] * 60;
+		}
+		else if(point.triggerstate == "sunset"){
+			var suntime = main.sunData[1].split(':');
+			pointTime = suntime[0] * 3600 + suntime[1] * 60;
+		}
+		var pointFuzzinessBefore = point.fuzzyBefore;
+		var pointFuzzinessAfter = point.fuzzyAfter;
+		var pointOffset = point.triggerstate == "absolute" ? 0 : point.offset;
+		
+		var pointDays = new Array();
+		pointDays.push(point.deviceRow.parent.parent.daydate.getDay());
+		for(var childPoint in point.childPoints){
+			pointDays.push(point.childPoints[childPoint].deviceRow.parent.parent.daydate.getDay()); //different per event
+		}
+		return new Array(deviceId, pointName, startdate, lastrun, pointMethod, pointDimValue, pointTime, pointType, pointFuzzinessBefore, pointFuzzinessAfter, pointOffset, pointDays);
+	}
+	
+	/*
+	function pointToJob(point){
+	
+		var execFunc = function(job){ print("Custom execute function running"); print("Job: " + job.v.name); return 42; }; //TODO default later
+		
+		var deviceId = point.deviceRow.deviceId; //not really in use yet
+		var pointName = "Job_" + deviceId;
+		var lastrun = 0; //TODO
+		var startdate = new Date(); //startdate, not in use, always "now"
+		var pointDimValue = point.dimvalue;
+		var pointMethod = getMethodFromState.callWith(point.state);
+		
+		var job = getJob.callWith(deviceId, execFunc, pointName, startdate, lastrun, deviceId, pointMethod, pointDimValue); //ERROR here, cannot return this
+		print("Jobtest: " + job);
+		
+		var pointTime = point.absoluteHour * 3600 + point.absoluteMinute * 60;
+		var pointType = getTypeFromTriggerstate.callWith(point.triggerstate);
+		if(point.triggerstate == "sunrise"){
+			var suntime = main.sunData[0].split(':');
+			pointTime = suntime[0] * 3600 + suntime[1] * 60;
+		}
+		else if(point.triggerstate == "sunset"){
+			var suntime = main.sunData[1].split(':');
+			pointTime = suntime[0] * 3600 + suntime[1] * 60;
+		}
+		var pointFuzzinessBefore = point.fuzzyBefore;
+		var pointFuzzinessAfter = point.fuzzyAfter;
+		var pointOffset = point.offset;
+		
+		var pointDay = point.deviceRow.parent.parent.daydate.getDay(); //different per event
+		var event = {};
+		
+		event.d = {id: deviceId, value: pointDay, fuzzinessBefore: pointFuzzinessBefore, fuzzinessAfter: pointFuzzinessAfter, type: pointType, offset: pointOffset, time: pointTime};
+		print("Job: " + job.v.name);
+		job.addEvent(event);
+		for(var childPoint in point.childPoints){
+			event = {};
+			pointDay = point.childPoints[childPoint].deviceRow.parent.parent.daydate.getDay(); //different per event
+			event.d = {id: deviceId, value: pointDay, fuzzinessBefore: pointFuzzinessBefore, fuzzinessAfter: pointFuzzinessAfter, type: pointType, offset: pointOffset, time: pointTime};
+			job.addEvent(event);
+		}
+		
+		//job.addEvent(new Event({id: 0, value: "", fuzzinessBefore: 0, fuzzinessAfter: 0, type: com.telldus.scheduler.EVENTTYPE_ABSOLUTE, offset: 10, time: (new Date().getTime())/1000 + 20}));
+		
+		return job;
+		
+		/*
+		var jobs = new Array();
+		jobs.push(job);
+		
+		//hm, timerkeys... kommer ju få tillbaka alla på en ggn, eller iaf per device... (om ett addjob/device)
+		//tänkte ändå alltid uppdatera alla (dvs ta bort/lägga till) för varje device, om den alls har ändrats...
+		//man kunde klart koppla en key till en point, men isf måste man på ngt sätt lagra när den tas bort...
+		//och jämför när man lägger till nya (iofs bara kolla om ngn key finns på pointen, annars är den ny)
+		//ett jobb/punkt (med flera events, per dag)
+		//lägga till alla jobb/device (för alla dagar) på en ggn (om device hasChanged), ta bort alla tidigare...
+		//alla timers kommer ju att ha försvunnit vid avstängning, så det behöver man inte bry sig om...
+		var timerkeys = com.telldus.scheduler.addJobs(jobs);
+		*/
+	//}
+	
 }
