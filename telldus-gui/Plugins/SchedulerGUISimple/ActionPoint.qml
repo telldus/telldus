@@ -338,7 +338,9 @@ Rectangle{
 	function updateChanges(){
 		Scripts.updateParentWithCurrentValues();
 		Scripts.updateChildPoints();
-		pointRect.x = getAbsoluteXValue();	
+		if(pointRect.triggerstate == "absolute"){
+			pointRect.x = getAbsoluteXValue();	
+		}
 	}
 	
 	function getLastPointColor(){

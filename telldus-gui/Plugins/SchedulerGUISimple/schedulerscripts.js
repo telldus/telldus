@@ -287,14 +287,9 @@ function initiatePointsInGUI(){ //weekPointList){
 	//för varje point, addPointToGUI, men ju även lägga till schemajobb... alltså i __init__.js... men därifrån kan inte denna anropas...
 	//så det får väl bli varsin iteration då...
 	//weekPointList -> från __init__.js
-	var weekPointList = new Array();
-	var dummypoint = []
-	dummypoint["day"] = 0;
-	dummypoint["deviceId"] = 1;
-	weekPointList.push(dummypoint);
+	//for(var i in weekPointList){
 	for(var i=0;i<weekPointList.length;i++){
-		print("Inne");
-		addWeekPointToGUI(weekPointList[i]);
+		addWeekPointToGUI(weekPointList.get(i));
 	}
 }
 
@@ -314,12 +309,12 @@ function getDeviceRow(dayOfWeek, deviceId){
 }
 
 function addWeekPointToGUI(point){
-	//lägg till point till GUI
 	var deviceId = point.deviceId;
 	var dayOfWeek = point.day;
 	//set dayOfWeek to correct index in the days-table
+	print("DayOfWeek again: " + dayOfWeek);
 	dayOfWeek = getDayIndexForDayOfWeek(dayOfWeek);
-	print("Inserting point at: " + weekday_name_array[days[dayOfWeek].daydate.getDay()]);
+	print("Inserting point at: " + weekday_name_array[days[dayOfWeek].daydate.getDay()] + " (" + dayOfWeek + ")" + ", id: " + deviceId);
 	var pointParent = getDeviceRow(dayOfWeek, deviceId);
 	
 	var component = Qt.createComponent("ActionPoint.qml")
