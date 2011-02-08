@@ -602,8 +602,9 @@ import "schedulerscripts.js" as Scripts
 		
 		var pointDays = new Array();
 		pointDays.push(point.deviceRow.parent.parent.daydate.getDay());
-		for(var childPoint in point.childPoints){
-			pointDays.push(point.childPoints[childPoint].deviceRow.parent.parent.daydate.getDay()); //different per event
+		var childPoints = point.getChildPoints();
+		for(var child in childPoints){
+			pointDays.push(childPoints[child].deviceRow.parent.parent.daydate.getDay()); //different per event
 		}
 		return new Array(deviceId, pointName, startdate, lastrun, pointMethod, pointDimValue, pointTime, pointType, pointFuzzinessBefore, pointFuzzinessAfter, pointOffset, pointDays);
 	}
