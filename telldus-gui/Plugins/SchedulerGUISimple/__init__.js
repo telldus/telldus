@@ -16,7 +16,7 @@ com.telldus.schedulersimplegui = function() {
 			getSunSetTime: getSunSetTime,
 			getSunData: getSunData
 		});
-		
+
 		//devices:
 		deviceList = new com.telldus.qml.array();
 		var list = com.telldus.core.deviceList.getList();
@@ -26,7 +26,9 @@ com.telldus.schedulersimplegui = function() {
 			deviceList.push(item);
 		}
 		view.setProperty('deviceModel', deviceList);
-		
+		//Listen for device-change
+		com.telldus.core.deviceChange.connect(deviceChange);
+
 		//points:
 		//from storage...
 		var weekPointList = new com.telldus.qml.array();
@@ -38,17 +40,17 @@ com.telldus.schedulersimplegui = function() {
 		dummypoint["day"] = 1;
 		dummypoint["deviceId"] = 2;
 		weekPointList.push(dummypoint);
-		
+
 		var now = new Date();
 		var time1 = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
 		print(time1); // 48880
 		time2 = time1 + 30;
 		time3 = time1 - 60;
 		time1 = time1 + 50;
-		
+
 		var startdate = now; //new Date(2011,0,5).getTime();
 		//var startdate2 = new Date(2011,0,5).getTime();
-		
+
 		//ID = ID for storage
 		//Key is position in list, returned from "addJob"
 		var execFunc = function(job){ print("Custom execute function running"); print("Job: " + job.v.name); return 42; };
@@ -67,9 +69,9 @@ com.telldus.schedulersimplegui = function() {
 		com.telldus.scheduler.addJob(newAbsoluteJob);
 		*/
 		//END FROM STORAGE
-		
+
 		view.setProperty('weekPointList', weekPointList);
-		
+
 		//set images:
 		view.setProperty("imageTriggerSunrise", "sunrise.png");
 		view.setProperty("imageTriggerSunset", "sunset.png");
@@ -79,13 +81,13 @@ com.telldus.schedulersimplegui = function() {
 		view.setProperty("imageActionDim", "dim.png");
 		view.setProperty("imageActionBell", "bell.png");
 		view.setProperty("imageInfo", "info.png");
-		
+
 		//height/width constants
 		view.setProperty("constBarHeight", 10);
 		view.setProperty("constDeviceRowHeight", 50);
 		view.setProperty("constDeviceRowWidth", 600);
 		view.setProperty("constPointWidth", 30);
-		
+
 		view.load("main.qml");
 		application.addWidget("scheduler.simple", "icon.png", view);
 
@@ -94,7 +96,15 @@ com.telldus.schedulersimplegui = function() {
 	function addDevice() {
 		deviceList.push({name:'Stallet istallet'});
 	}
-	
+
+	function deviceChange( deviceId, eventType ) {
+		if (eventType == com.telldus.core.TELLSTICK_DEVICE_ADDED) {
+			var item = com.telldus.core.deviceList.getDevice(deviceId);
+			item.isEnabled = "enabled";
+			deviceList.push(item);
+		}
+	}
+
 	function getSun(riseset, rowWidth, pointWidth){
 		var date = new Date();
 		var timevalues = com.telldus.suncalculator.riseset(date);
@@ -108,18 +118,18 @@ com.telldus.schedulersimplegui = function() {
 		var hourSize = rowWidth/24;
 		return hourSize*hourminute[0] + hourSize * (hourminute[1]/60) - pointWidth/2;
 	}
-	
+
 	//Raw sun data
 	function getSunData(){
 		var date = new Date;
 		return com.telldus.suncalculator.riseset(date);
 	}
-	
+
 	function getSunRiseTime(rowWidth, pointWidth){
-		
+
 		return getSun("rise", rowWidth, pointWidth);
 	}
-	
+
 	function getSunSetTime(rowWidth, pointWidth){
 		return getSun("set", rowWidth, pointWidth);
 	}
