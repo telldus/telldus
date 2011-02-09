@@ -58,8 +58,8 @@ com.telldus.schedulersimplegui = function() {
 
 		//ID = ID for storage
 		//Key is position in list, returned from "addJob"
-		var execFunc = function(job){ print("Custom execute function running"); print("Job: " + job.v.name); return 42; };
-		var job = new com.telldus.scheduler.JobRecurringWeek({id: 4, executeFunc: execFunc, name: "testnamn14", type: com.telldus.scheduler.JOBTYPE_RECURRING_WEEK, startdate: startdate, lastRun: 0, device: 1, method: 1, value: ""});
+		//var execFunc = function(job){ print("Custom execute function running"); print("Job: " + job.v.name); return 42; };
+		var job = new com.telldus.scheduler.JobRecurringWeek({id: 4, executeFunc: null, name: "testnamn14", type: com.telldus.scheduler.JOBTYPE_RECURRING_WEEK, startdate: startdate, lastRun: 0, device: 1, method: 1, value: ""});
 		var event = {};
 		event.d = {id: 0, value: 3, fuzzinessBefore: 0, fuzzinessAfter: 0, type: com.telldus.scheduler.EVENTTYPE_ABSOLUTE, offset: 0, time: 300};  //(new Date().getTime())/1000 + 20
 		job.addEvent(event);
@@ -68,7 +68,7 @@ com.telldus.schedulersimplegui = function() {
 		var jobs = new Array();
 		jobs.push(job);
 		
-		job = new com.telldus.scheduler.JobRecurringWeek({id: 4, executeFunc: execFunc, name: "testnamn15", type: com.telldus.scheduler.JOBTYPE_RECURRING_WEEK, startdate: startdate, lastRun: 0, device: 1, method: 1, value: ""});
+		job = new com.telldus.scheduler.JobRecurringWeek({id: 4, executeFunc: null, name: "testnamn15", type: com.telldus.scheduler.JOBTYPE_RECURRING_WEEK, startdate: startdate, lastRun: 0, device: 1, method: 1, value: ""});
 		var event = {};
 		event.d = {id: 0, value: 3, fuzzinessBefore: 0, fuzzinessAfter: 0, type: com.telldus.scheduler.EVENTTYPE_ABSOLUTE, offset: 0, time: 100};  //(new Date().getTime())/1000 + 20
 		job.addEvent(event);
@@ -133,9 +133,9 @@ com.telldus.schedulersimplegui = function() {
 	
 	
 	function getJob(pointArray){ //deviceId, pointName, startdate, lastrun, pointMethod, pointDimValue, pointTime, pointType, pointFuzzinessBefore, pointFuzzinessAfter, pointOffset, pointDays
-		var execFunc = function(job){ print("Custom execute function running"); print("Job: " + job.v.name); return 42; }; //TODO default later
+		//var execFunc = function(job){ print("Custom execute function running"); print("Job: " + job.v.name); return 42; }; //TODO default later
 		//TODO dimValue 0-100 ok? Or other number expected?
-		var job = new com.telldus.scheduler.JobRecurringWeek({id: pointArray[0], executeFunc: execFunc, name: pointArray[1], type: com.telldus.scheduler.JOBTYPE_RECURRING_WEEK, startdate: pointArray[2], lastRun: pointArray[3], device: pointArray[0], method: pointArray[4], value: pointArray[5]});
+		var job = new com.telldus.scheduler.JobRecurringWeek({id: pointArray[0], executeFunc: null, name: pointArray[1], type: com.telldus.scheduler.JOBTYPE_RECURRING_WEEK, startdate: pointArray[2], lastRun: pointArray[3], device: pointArray[0], method: pointArray[4], value: pointArray[5]});
 		var event = {};
 		var pointFuzzinessBefore = (pointArray[8]*60);
 		var pointFuzzinessAfter = (pointArray[9]*60);
