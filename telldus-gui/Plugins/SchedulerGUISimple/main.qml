@@ -539,6 +539,9 @@ import "schedulerscripts.js" as Scripts
 		//var jobs = new Array();
 		var points = new Array();
 		var days = Scripts.getDays();
+		if(dialog.dialogOpacity == 1){
+			Scripts.setChanged(dialog.actionPoint.deviceRow.deviceId, true); //set the devicerow that the currently visible dialog is connected to as dirty
+		}
 		for(var i=0;i<deviceModel.length;i++){
 			var deviceId = deviceModel.get(i).id;
 			if(!Scripts.hasChanged(deviceId)){

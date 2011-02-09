@@ -6,6 +6,7 @@
 	property ActionPoint actionPoint
 	property alias absoluteHour: inputAbsoluteHourText.text
 	property alias absoluteMinute: inputAbsoluteMinuteText.text
+	property alias dialogOpacity: container.opacity
 	
 	focus: true
 	Keys.onPressed: {
