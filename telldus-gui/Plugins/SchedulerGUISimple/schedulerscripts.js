@@ -33,9 +33,16 @@ function setDeviceTimerKeys(deviceId, deviceTimerKeys){
 }
 
 function hasChanged(deviceId){
-	var hasChanged = deviceProperties[deviceId]["hasChanged"];
-	print("Do some thingys here");
-	return hasChanged == true;
+	var device = deviceProperties[deviceId];
+	var hasChanged = device == undefined ? false : device["hasChanged"];
+	return hasChanged;
+}
+
+function setChanged(deviceId, change){
+	if(deviceProperties[deviceId] == undefined){
+		deviceProperties[deviceId] = {};
+	}
+	deviceProperties[deviceId]["hasChanged"] = change;
 }
 
 //Days:
@@ -474,6 +481,11 @@ function deviceEnabled(deviceId, enabled){
 		var deviceRow = days[i].children[0].children[deviceIndex[deviceId]];
 		deviceRow.state = enabled; //TODO connect directly instead... if possible
 	}
+	setChanged(deviceId, true);
+}
+
+function deviceIsEnabled(deviceId){
+	return days[0].children[0].children[deviceIndex[deviceId]].state == "enabled";
 }
 
 function createChildPoint(index, pointRect, deviceId){

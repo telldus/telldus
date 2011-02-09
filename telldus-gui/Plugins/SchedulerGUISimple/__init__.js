@@ -74,25 +74,6 @@ com.telldus.schedulersimplegui = function() {
 		job.addEvent(event);
 		jobs.push(job);
 		
-		//hm, timerkeys... kommer ju få tillbaka alla på en ggn, eller iaf per device... (om ett addjob/device)
-		//tänkte ändå alltid uppdatera alla (dvs ta bort/lägga till) för varje device, om den alls har ändrats...
-		//man kunde klart koppla en key till en point, men isf måste man på ngt sätt lagra när den tas bort...
-		//och jämför när man lägger till nya (iofs bara kolla om ngn key finns på pointen, annars är den ny)
-		//ett jobb/punkt (med flera events, per dag)
-		//lägga till alla jobb/device (för alla dagar) på en ggn (om device hasChanged), ta bort alla tidigare...
-		//alla timers kommer ju att ha försvunnit vid avstängning, så det behöver man inte bry sig om...
-	//	var timerkeys = com.telldus.scheduler.addJobs(jobs);
-	//	for(var i=0;i<timerkeys.length;i++){
-	//		print("ENA: " + timerkeys[i]);
-	//	}
-		//newRecurringMonthJob.save();
-		/*
-		var newAbsoluteJob = getJob({id: 5, name: "testnamn15", type: com.telldus.scheduler.JOBTYPE_RECURRING_MONTH, startdate: startdate2, lastRun: 0, device: 1, method: 1, value: "", pastGracePeriod: 90});
-		newAbsoluteJob.addEvent(new Event({id: 1, value: "00-05", fuzzinessBefore: 0, fuzzinessAfter: 0, type: com.telldus.scheduler.EVENTTYPE_ABSOLUTE, offset: 0, time: time2}));
-		newAbsoluteJob.addEvent(new Event({id: 2, value: "00-05", fuzzinessBefore: 0, fuzzinessAfter: 0, type: com.telldus.scheduler.EVENTTYPE_ABSOLUTE, offset: 0, time: time3}));
-		//newAbsoluteJob.save();
-		com.telldus.scheduler.addJob(newAbsoluteJob);
-		*/
 		//END FROM STORAGE
 
 		view.setProperty('weekPointList', weekPointList);
@@ -133,9 +114,11 @@ com.telldus.schedulersimplegui = function() {
 	
 	function addJobsToSchedule(points, deviceTimerKeys){
 		//delete all current schedules for this device:
-		for(var i=0;i<deviceTimerKeys.length;i++){
-			var waitForMore = (i == deviceTimerKeys.length-1) ? "true" : undefined;
-			com.telldus.scheduler.removeJob(deviceTimerKeys[i]);
+		if(deviceTimerKeys != undefined){
+			for(var i=0;i<deviceTimerKeys.length;i++){
+				var waitForMore = (i == deviceTimerKeys.length-1) ? "true" : undefined;
+				com.telldus.scheduler.removeJob(deviceTimerKeys[i]);
+			}
 		}
 		
 		//add new schedules:
@@ -144,13 +127,14 @@ com.telldus.schedulersimplegui = function() {
 			var jobtemp = getJob(points[i]);
 			jobs.push(jobtemp);
 		}
+		print("Adding some jobs " + jobs.length);
 		return com.telldus.scheduler.addJobs(jobs);
 	}
 	
 	
 	function getJob(pointArray){ //deviceId, pointName, startdate, lastrun, pointMethod, pointDimValue, pointTime, pointType, pointFuzzinessBefore, pointFuzzinessAfter, pointOffset, pointDays
 		var execFunc = function(job){ print("Custom execute function running"); print("Job: " + job.v.name); return 42; }; //TODO default later
-		//TODO dimValue ok? Or other number expected?
+		//TODO dimValue 0-100 ok? Or other number expected?
 		var job = new com.telldus.scheduler.JobRecurringWeek({id: pointArray[0], executeFunc: execFunc, name: pointArray[1], type: com.telldus.scheduler.JOBTYPE_RECURRING_WEEK, startdate: pointArray[2], lastRun: pointArray[3], device: pointArray[0], method: pointArray[4], value: pointArray[5]});
 		var event = {};
 		var pointFuzzinessBefore = (pointArray[8]*60);
@@ -228,56 +212,6 @@ com.telldus.schedulersimplegui = function() {
 		}
 		return type;
 	}
-	
-	/*
-	function pointToJob(point){
-		print("ngt");
-		
-		print("4: " + point.absoluteHour);
-		var execFunc = function(job){ print("Custom execute function running"); print("Job: " + job.v.name); return 42; }; //TODO default later
-		print("1");
-		print("5: " + point);
-		var deviceId = point.deviceRow.deviceId; //not really in use yet
-		print("2 " + deviceId);
-		var pointName = "Job_" + deviceId;
-		var lastrun = 0; //TODO
-		var startdate = new Date(); //startdate, not in use, always "now"
-		var pointDimValue = point.dimvalue;
-		var pointMethod = getMethodFromState.callWith(point.state);
-		
-		var job = getJob.callWith(deviceId, execFunc, pointName, startdate, lastrun, deviceId, pointMethod, pointDimValue); 
-		print("Jobtest: " + job);
-		
-		var pointTime = point.absoluteHour * 3600 + point.absoluteMinute * 60;
-		var pointType = getTypeFromTriggerstate.callWith(point.triggerstate);
-		if(point.triggerstate == "sunrise"){
-			var suntime = main.sunData[0].split(':');
-			pointTime = suntime[0] * 3600 + suntime[1] * 60;
-		}
-		else if(point.triggerstate == "sunset"){
-			var suntime = main.sunData[1].split(':');
-			pointTime = suntime[0] * 3600 + suntime[1] * 60;
-		}
-		var pointFuzzinessBefore = point.fuzzyBefore;
-		var pointFuzzinessAfter = point.fuzzyAfter;
-		var pointOffset = point.offset;
-		
-		var pointDay = point.deviceRow.parent.parent.daydate.getDay(); //different per event
-		var event = {};
-		
-		event.d = {id: deviceId, value: pointDay, fuzzinessBefore: pointFuzzinessBefore, fuzzinessAfter: pointFuzzinessAfter, type: pointType, offset: pointOffset, time: pointTime};
-		print("Job: " + job.v.name);
-		job.addEvent(event);
-		for(var childPoint in point.childPoints){
-			event = {};
-			pointDay = point.childPoints[childPoint].deviceRow.parent.parent.daydate.getDay(); //different per event
-			event.d = {id: deviceId, value: pointDay, fuzzinessBefore: pointFuzzinessBefore, fuzzinessAfter: pointFuzzinessAfter, type: pointType, offset: pointOffset, time: pointTime};
-			job.addEvent(event);
-		}
-		
-		return job;
-	}
-	*/
 
 	return { //Public functions
 		init:init

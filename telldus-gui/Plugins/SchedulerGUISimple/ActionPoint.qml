@@ -87,23 +87,6 @@ Rectangle{
 		updateChanges();
 	}
 	
-	/*
-	onParentPointAbsoluteHourChanged: {
-		//pointRect.absoluteHour = parentPoint.absolutHour
-		print("IN ABSOLUTEHOURCHANGED...");
-		if(parentPoint == undefined){  //TODO this is not correct, must remove, but...
-			print("PP UNDEFINED!");  //Should never happen
-			dialog.absoluteHour = absoluteHour; //this is needed for update 
-			print("Absolute hour changed from " + dialog.absoluteHour + " to " + absoluteHour);
-		}
-		else if(parentPointAbsoluteHour != undefined){
-			print("PPABSOLUTE HOUR NOT UNDEFINED!");
-			dialog.absoluteHour = parentPointAbsoluteHour; //this is needed for update 
-			print("Absolute hour changed from " + dialog.absoluteHour + " to " + parentPointAbsoluteHour);
-		}
-	}
-	*/
-	
 	MouseArea {
 		id: pointRectMouseArea
 		acceptedButtons: Qt.LeftButton | Qt.RightButton
@@ -129,11 +112,9 @@ Rectangle{
 		}
 		
 		onReleased: {
+			pointRect.deviceRow.setChanged();
 			pointRect.deviceRow.updateContinuingBars()
 			dialog.show(pointRect)  //TODO not pointRect, but parentPoint if such exists
-			//var rootCoordinates = pointRect.mapToItem(pointRect.parent, mouse.x, mouse.y);
-			//var hourMinute = getTimeFromPosition(rootCoordinates.x)
-			//print("Released reporting in");
 			dialog.absoluteHour = Scripts.pad(pointRect.absoluteHour, 2) //Scripts.pad(hourMinute[0], 2)
 			dialog.absoluteMinute = Scripts.pad(pointRect.absoluteMinute, 2) //Scripts.pad(hourMinute[1], 2)
 			
