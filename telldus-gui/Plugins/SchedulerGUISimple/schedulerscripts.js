@@ -17,6 +17,27 @@ function setActiveStates(newActiveStates){
 	activeStates = newActiveStates;
 }
 
+//from main:
+var deviceProperties = {};
+
+function getDeviceTimerKeys(deviceId){
+	var device = deviceProperties[deviceId];
+	return device == undefined ? {} : device["timerkeys"];
+}
+
+function setDeviceTimerKeys(deviceId, deviceTimerKeys){
+	if(deviceProperties[deviceId] == undefined){
+		deviceProperties[deviceId] = {};
+	}
+	deviceProperties[deviceId]["timerkeys"] = deviceTimerKeys;
+}
+
+function hasChanged(deviceId){
+	var hasChanged = deviceProperties[deviceId]["hasChanged"];
+	print("Do some thingys here");
+	return hasChanged == true;
+}
+
 //Days:
 var weekday_name_array = new Array("Sunday","Monday","Tuesday","Wednesday","Thursday","Friday","Saturday")
 var currentDayIndex = 6; //Today...

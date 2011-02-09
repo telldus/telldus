@@ -19,11 +19,11 @@ function getEventRunTime(event, date){
 			date = 0;
 		}
 		currentEventRuntimeTimestamp = (event.d.time * 1000) + date;
-		print("currentEventRuntimeTimestamp: " + new Date(currentEventRuntimeTimestamp));
+		//print("currentEventRuntimeTimestamp: " + new Date(currentEventRuntimeTimestamp));
 		currentEventRuntimeTimestamp += (offset * 1000); //this is really not useful for absolute values, but exists for consistency
-		print("currentEventRuntimeTimestamp1: " + new Date(currentEventRuntimeTimestamp));
+		//print("currentEventRuntimeTimestamp1: " + new Date(currentEventRuntimeTimestamp));
 		currentEventRuntimeTimestamp = com.telldus.scheduler.fuzzify(currentEventRuntimeTimestamp, parseInt(event.d.fuzzinessBefore), parseInt(event.d.fuzzinessAfter));
-		print("currentEventRuntimeTimestamp2: " + new Date(currentEventRuntimeTimestamp));
+		//print("currentEventRuntimeTimestamp2: " + new Date(currentEventRuntimeTimestamp));
 	}
 	else if(event.d.type == com.telldus.scheduler.EVENTTYPE_SUNRISE || event.d.type == com.telldus.scheduler.EVENTTYPE_SUNSET){
 		currentEventRuntimeTimestamp = getSunUpDownForDate(date, parseInt(event.d.type));
@@ -363,7 +363,7 @@ com.telldus.scheduler.JobRecurringWeek.prototype.getNextRunTime = function(){
 		
 		returnDate = zeroTime(returnDate);
 		
-		nextTempRunTime = getNextEventRunTime(null, this.v.events[key], returnDate.getTime(), pastGracePeriod);
+		nextTempRunTime = getNextEventRunTime(nextRunTime, this.v.events[key], returnDate.getTime(), pastGracePeriod);
 		if(nextTempRunTime < new Date().getTime()){ //event happened today, already passed, add to next week instead
 			returnDate.setDate(returnDate.getDate() + 7);
 			nextRunTime = getNextEventRunTime(nextRunTime, this.v.events[key], returnDate.getTime(), pastGracePeriod);	

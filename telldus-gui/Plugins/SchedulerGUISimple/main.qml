@@ -542,32 +542,17 @@ import "schedulerscripts.js" as Scripts
 				for(var k=0;k<row.children.length;k++){
 					var point = row.children[k];
 					if(point.isPoint && point.parentPoint == undefined){ //and not disabled
-						print("and step 4");
 						points.push(pointToArray(point));
-						//jobs.push(pointToJob(point));
 					}
 				}
 			}
+			if(points.length > 0){
+				var deviceTimerKeys = Scripts.getDeviceTimerKeys(deviceId);
+				deviceTimerKeys = addJobsToSchedule.callWith(points, deviceTimerKeys);  //remove all schedules for this device, and add them again
+				Scripts.setDeviceTimerKeys(deviceId, deviceTimerKeys);
+			}
 		}
 		
-		print("after loops");
-		//if(jobs.length > 0){
-			//var timerkeys = addJobsToSchedule.callWith(jobs);
-		//}
-		if(points.length > 0){
-			/*
-			print("Nerifrån: " + points[0].absoluteHour);
-			var koll = {"TEST": 55};
-			print("Koll: " + koll["TEST"]);
-			var underarray = new Array();
-			underarray.push("hejsan");
-			underarray.push("hoppsan");
-			koll = new Array();
-			koll.push(underarray);
-			koll.push(8);
-			*/
-			addJobsToSchedule.callWith(points); //{"TEST": 55}); //points);
-		}
 		//1. for each device (som har hasChanged set):
 		//2. ta bort alla timers med keys till denna device
 		//3. om disabled = gör inte mer... annars:

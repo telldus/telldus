@@ -131,12 +131,18 @@ com.telldus.schedulersimplegui = function() {
 	}
 
 	
-	function addJobsToSchedule(points){
-		//print("Uppe: " + points["TEST"]);
+	function addJobsToSchedule(points, deviceTimerKeys){
+		//delete all current schedules for this device:
+		for(var i=0;i<deviceTimerKeys.length;i++){
+			var waitForMore = (i == deviceTimerKeys.length-1) ? "true" : undefined;
+			com.telldus.scheduler.removeJob(deviceTimerKeys[i]);
+		}
+		
+		//add new schedules:
 		var jobs = new Array();
 		for(var i=0;i<points.length;i++){
-			print("EN POINT " + points[i]);
-			jobs.push(getJob(points[i]));
+			var jobtemp = getJob(points[i]);
+			jobs.push(jobtemp);
 		}
 		return com.telldus.scheduler.addJobs(jobs);
 	}
@@ -150,15 +156,16 @@ com.telldus.schedulersimplegui = function() {
 		var pointFuzzinessBefore = (pointArray[8]*60);
 		var pointFuzzinessAfter = (pointArray[9]*60);
 		var pointOffset = (pointArray[10]*60);
-		event.d = {id: pointArray[0], value: pointArray[11][0], fuzzinessBefore: pointFuzzinessBefore, fuzzinessAfter: pointFuzzinessAfter, type: pointArray[7], offset: pointOffset, time: pointArray[6]};
+		event.d = {id: (pointArray[0] + "_0"), value: pointArray[11][0], fuzzinessBefore: pointFuzzinessBefore, fuzzinessAfter: pointFuzzinessAfter, type: pointArray[7], offset: pointOffset, time: pointArray[6]};
 		job.addEvent(event);
 		
 		for(var i=1;i<pointArray[11].length;i++){
 			event = {};
 			pointDay = pointArray[11][i];
-			event.d = {id: pointArray[0], value: pointDay, fuzzinessBefore: pointFuzzinessBefore, fuzzinessAfter: pointFuzzinessAfter, type: pointArray[7], offset: pointOffset, time: pointArray[6]};
-		job.addEvent(event);
+			event.d = {id: (pointArray[0] + "_" + i), value: pointDay, fuzzinessBefore: pointFuzzinessBefore, fuzzinessAfter: pointFuzzinessAfter, type: pointArray[7], offset: pointOffset, time: pointArray[6]};
+			job.addEvent(event);
 		}
+		
 		return job;
 	}
 	

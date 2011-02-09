@@ -52,7 +52,6 @@ com.telldus.scheduler = function() {
 			var job = jobs[i];
 			var key = storedJobs.push(job);
 			job.key = key;
-			print("Adding job");
 			updateJobInList(key, true); //waitForMore = don't sort array and recalculate timer yet
 			returnKeys.push(key);
 		}
@@ -109,9 +108,13 @@ com.telldus.scheduler = function() {
 		}
 	}
 	
-	function removeJob(id){
+	function removeJob(id, waitForMore){
+		if(queuedJob.id == id){
+			queuedJob = undefined;
+		}
+		
 		storedJobs.remove(id);
-		updateJobInList(id);
+		updateJobInList(id, waitForMore); //wait for more
 		if(storedJobs.length == 1){
 			//only one job left, it's only the DaylightSaving reload job, remove that too
 			for(var key in storedJobs.container){
@@ -144,7 +147,6 @@ com.telldus.scheduler = function() {
 			joblist.push(queuedJob);
 			joblist.sort(compareTime);
 		}
-		
 		var job = joblist.shift(); //get first job in list (and remove it from the list)
 		queuedJob = job; //put it in list, to keep track of current job
 		var nextRunTime = job.nextRunTime;
@@ -155,13 +157,11 @@ com.telldus.scheduler = function() {
 			updateJobInList(job.id); //This will just recalculate the job, and probably return 0 again, but updateJobInList won't add it to the list in that case (shouldnt end up here at all now actually)
 			return;
 		}
-		
 		var runJobFunc = function(){ runJob(job.id); };
 		var now = new Date().getTime();
 		var delay = nextRunTime - now;
 		print("Will run " + storedJobs.get(job.id).v.name + " (" + job.id + ") at " + new Date(nextRunTime)); //Note not all will have a name
 		print("(Now is " + new Date() + ")");
-		print("Delay: " + delay);
 		timerid = setTimeout(runJobFunc, delay); //start the timer
 		
 		print("Has started a job wait");
@@ -171,12 +171,12 @@ com.telldus.scheduler = function() {
 		if(!joblist){
 			joblist = new Array();
 		}
-		
 		if(!storedJobs.contains(id)){
 			removeFromJobList(id);
 			runNextJob();
 			return;
 		}
+		
 		var job = storedJobs.get(id);
 		var nextRunTime = job.getNextRunTime();
 		print("Time updated to: " + new Date(nextRunTime));
