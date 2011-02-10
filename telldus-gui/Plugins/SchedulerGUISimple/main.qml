@@ -27,7 +27,9 @@ import "schedulerscripts.js" as Scripts
 		dynamicDay.state = "visible" //set last one as visible
 		weekDayText.text = Scripts.getCurrentDayName()
 		//Scripts.updateDeviceIndex();
-		Scripts.initiatePointsInGUI();
+		Scripts.setLoading();
+		Scripts.initiateStoredPointsInGUI();
+		Scripts.endLoading();
 		Scripts.updateEndsWith();
 	}
 
@@ -296,10 +298,10 @@ import "schedulerscripts.js" as Scripts
 						dynamicPoint.border.color = "blue"
 						
 						//TODO different states depending on the device							
-						dynamicPoint.addState("on");
-						dynamicPoint.addState("off");
-						dynamicPoint.addState("dim");
-						dynamicPoint.addState("bell");
+						dynamicPoint.addActiveState("on");
+						dynamicPoint.addActiveState("off");
+						dynamicPoint.addActiveState("dim");
+						dynamicPoint.addActiveState("bell");
 						//dynamicPoint.setFirstState("dim"); //when type is a stored value
 						dynamicPoint.setFirstState();
 						
@@ -314,10 +316,10 @@ import "schedulerscripts.js" as Scripts
 						dynamicPoint2.parentPoint = dynamicPoint
 						dynamicPoint2.x = dynamicPoint2.getAbsoluteXValue();
 						dynamicPoint2.border.color = "blue"
-						dynamicPoint2.addState("on");
-						dynamicPoint2.addState("off");
-						dynamicPoint2.addState("dim");
-						dynamicPoint2.addState("bell");
+						dynamicPoint2.addActiveState("on");
+						dynamicPoint2.addActiveState("off");
+						dynamicPoint2.addActiveState("dim");
+						dynamicPoint2.addActiveState("bell");
 						dynamicPoint2.setFirstState();
 						*/
 						//SLUT TEST
@@ -360,6 +362,10 @@ import "schedulerscripts.js" as Scripts
 				
 				function setChanged(){
 					Scripts.setChanged(deviceId, true);
+				}
+				
+				function isLoading(){
+					return Scripts.isLoading();
 				}
 			}
 		//}
@@ -421,8 +427,8 @@ import "schedulerscripts.js" as Scripts
 		text: "Save changes"
 		anchors.horizontalCenter: parent.horizontalCenter
 		anchors.horizontalCenterOffset: -30
-		anchors.top: mainContent.bottom
-		anchors.topMargin: 30
+		anchors.top: mainRow.bottom
+		anchors.topMargin: -100
 		onClicked: {
 			saveAll();
 		}
@@ -537,12 +543,13 @@ import "schedulerscripts.js" as Scripts
 	function saveAll(){
 		print("Save all and reset jobs");
 		//var jobs = new Array();
-		var points = new Array();
+		//var points = new Array();
 		var days = Scripts.getDays();
 		if(dialog.dialogOpacity == 1){
 			Scripts.setChanged(dialog.actionPoint.deviceRow.deviceId, true); //set the devicerow that the currently visible dialog is connected to as dirty
 		}
 		for(var i=0;i<deviceModel.length;i++){
+			var points = new Array();
 			var deviceId = deviceModel.get(i).id;
 			if(!Scripts.hasChanged(deviceId)){
 				//no point has been updated, removed or added, ignore this device
@@ -566,7 +573,7 @@ import "schedulerscripts.js" as Scripts
 			}
 			
 			var deviceTimerKeys = Scripts.getDeviceTimerKeys(deviceId); //get timer keys for this device, for removal
-			deviceTimerKeys = addJobsToSchedule.callWith(points, deviceTimerKeys);  //remove all schedules for this device, and add them again
+			deviceTimerKeys = addJobsToSchedule.callWith(deviceId, points, deviceTimerKeys);  //remove all schedules for this device, and add them again
 			Scripts.setDeviceTimerKeys(deviceId, deviceTimerKeys); //save the new timer keys
 		}	
 	}
@@ -580,6 +587,7 @@ import "schedulerscripts.js" as Scripts
 		var pointMethod = getMethodFromState.callWith(point.state);
 		
 		var pointTime = point.absoluteHour * 3600 + point.absoluteMinute * 60;
+		var absolutePointTime = pointTime;
 		var pointType = getTypeFromTriggerstate.callWith(point.triggerstate);
 		if(point.triggerstate == "sunrise"){
 			var suntime = main.sunData[0].split(':');
@@ -598,7 +606,8 @@ import "schedulerscripts.js" as Scripts
 		var childPoints = point.getChildPoints();
 		for(var child in childPoints){
 			pointDays.push(childPoints[child].deviceRow.parent.parent.daydate.getDay()); //different per event
+			print("GOT DAY " + childPoints[child].deviceRow.parent.parent.daydate.getDay());
 		}
-		return new Array(deviceId, pointName, startdate, lastrun, pointMethod, pointDimValue, pointTime, pointType, pointFuzzinessBefore, pointFuzzinessAfter, pointOffset, pointDays);
+		return new Array(deviceId, pointName, startdate, lastrun, pointMethod, pointDimValue, pointTime, pointType, pointFuzzinessBefore, pointFuzzinessAfter, pointOffset, pointDays, absolutePointTime);
 	}
 }

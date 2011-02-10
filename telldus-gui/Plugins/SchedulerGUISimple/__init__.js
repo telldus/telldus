@@ -15,10 +15,12 @@ com.telldus.schedulersimplegui = function() {
 			addJobsToSchedule: addJobsToSchedule,
 			getJob: getJob,
 			getMethodFromState: getMethodFromState,
+			getStateFromMethod: getStateFromMethod, 
 			getSunRiseTime: getSunRiseTime,
 			getSunSetTime: getSunSetTime,
 			getSunData: getSunData,
-			getTypeFromTriggerstate: getTypeFromTriggerstate
+			getTypeFromTriggerstate: getTypeFromTriggerstate,
+			getTriggerstateFromType: getTriggerstateFromType
 		});
 
 		//devices:
@@ -34,49 +36,8 @@ com.telldus.schedulersimplegui = function() {
 		//Listen for device-change
 		com.telldus.core.deviceChange.connect(deviceChange);
 
-		//points:
-		//from storage...
-		var weekPointList = new com.telldus.qml.array();
-		var dummypoint = {};
-		dummypoint["day"] = 0;
-		dummypoint["deviceId"] = 1;
-		weekPointList.push(dummypoint);
-		dummypoint = {};
-		dummypoint["day"] = 1;
-		dummypoint["deviceId"] = 2;
-		weekPointList.push(dummypoint);
-
-		var now = new Date();
-		var time1 = now.getHours() * 3600 + now.getMinutes() * 60 + now.getSeconds();
-		print(time1); // 48880
-		time2 = time1 + 30;
-		time3 = time1 - 60;
-		time1 = time1 + 50;
-
-		var startdate = now; //new Date(2011,0,5).getTime();
-		//var startdate2 = new Date(2011,0,5).getTime();
-
-		//ID = ID for storage
-		//Key is position in list, returned from "addJob"
-		//var execFunc = function(job){ print("Custom execute function running"); print("Job: " + job.v.name); return 42; };
-		var job = new com.telldus.scheduler.JobRecurringWeek({id: 4, executeFunc: null, name: "testnamn14", type: com.telldus.scheduler.JOBTYPE_RECURRING_WEEK, startdate: startdate, lastRun: 0, device: 1, method: 1, value: ""});
-		var event = {};
-		event.d = {id: 0, value: 3, fuzzinessBefore: 0, fuzzinessAfter: 0, type: com.telldus.scheduler.EVENTTYPE_ABSOLUTE, offset: 0, time: 300};  //(new Date().getTime())/1000 + 20
-		job.addEvent(event);
-		//job.addEvent(new Event({id: 0, value: "", fuzzinessBefore: 0, fuzzinessAfter: 0, type: com.telldus.scheduler.EVENTTYPE_ABSOLUTE, offset: 10, time: (new Date().getTime())/1000 + 20}));
-		
-		var jobs = new Array();
-		jobs.push(job);
-		
-		job = new com.telldus.scheduler.JobRecurringWeek({id: 4, executeFunc: null, name: "testnamn15", type: com.telldus.scheduler.JOBTYPE_RECURRING_WEEK, startdate: startdate, lastRun: 0, device: 1, method: 1, value: ""});
-		var event = {};
-		event.d = {id: 0, value: 3, fuzzinessBefore: 0, fuzzinessAfter: 0, type: com.telldus.scheduler.EVENTTYPE_ABSOLUTE, offset: 0, time: 100};  //(new Date().getTime())/1000 + 20
-		job.addEvent(event);
-		jobs.push(job);
-		
-		//END FROM STORAGE
-
-		view.setProperty('weekPointList', weekPointList);
+		var storedPoints = loadJobs();
+		view.setProperty('storedPoints', storedPoints);
 
 		//set images:
 		view.setProperty("imageTriggerSunrise", "sunrise.png");
@@ -110,9 +71,8 @@ com.telldus.schedulersimplegui = function() {
 			deviceList.push(item);
 		}
 	}
-
 	
-	function addJobsToSchedule(points, deviceTimerKeys){
+	function addJobsToSchedule(deviceId, points, deviceTimerKeys){
 		//delete all current schedules for this device:
 		if(deviceTimerKeys != undefined){
 			for(var i=0;i<deviceTimerKeys.length;i++){
@@ -128,14 +88,45 @@ com.telldus.schedulersimplegui = function() {
 			jobs.push(jobtemp);
 		}
 		print("Adding some jobs " + jobs.length);
+		saveJobs(deviceId, jobs);
+		//return [];
 		return com.telldus.scheduler.addJobs(jobs);
 	}
 	
+	function saveJobs(deviceId, devicejobs){
+		var settings = new com.telldus.settings();
+		var jobs = settings.value("jobs", "");
+			
+		if(!jobs || jobs == undefined){
+			jobs = {}; //initialize new setting
+		}
+		jobs[deviceId] = devicejobs;
+		settings.setValue("jobs", jobs);
+	}
+	
+	function loadJobs(){
+		var settings = new com.telldus.settings();
+		var temp = settings.value("jobs", "");
+		return settings.value("jobs", "");
+		
+		/*
+		//from storage...
+		var weekPointList = new com.telldus.qml.array();
+		var dummypoint = {};
+		dummypoint["day"] = 0;
+		dummypoint["deviceId"] = 1;
+		weekPointList.push(dummypoint);
+		dummypoint = {};
+		dummypoint["day"] = 1;
+		dummypoint["deviceId"] = 2;
+		weekPointList.push(dummypoint);
+		*/
+	}
 	
 	function getJob(pointArray){ //deviceId, pointName, startdate, lastrun, pointMethod, pointDimValue, pointTime, pointType, pointFuzzinessBefore, pointFuzzinessAfter, pointOffset, pointDays
 		//var execFunc = function(job){ print("Custom execute function running"); print("Job: " + job.v.name); return 42; }; //TODO default later
 		//TODO dimValue 0-100 ok? Or other number expected?
-		var job = new com.telldus.scheduler.JobRecurringWeek({id: pointArray[0], executeFunc: null, name: pointArray[1], type: com.telldus.scheduler.JOBTYPE_RECURRING_WEEK, startdate: pointArray[2], lastRun: pointArray[3], device: pointArray[0], method: pointArray[4], value: pointArray[5]});
+		var job = new com.telldus.scheduler.JobRecurringWeek({id: pointArray[0], executeFunc: null, name: pointArray[1], type: com.telldus.scheduler.JOBTYPE_RECURRING_WEEK, startdate: pointArray[2], lastRun: pointArray[3], device: pointArray[0], method: pointArray[4], value: pointArray[5], absoluteTime: pointArray[12]});
 		var event = {};
 		var pointFuzzinessBefore = (pointArray[8]*60);
 		var pointFuzzinessAfter = (pointArray[9]*60);
@@ -168,6 +159,23 @@ com.telldus.schedulersimplegui = function() {
 			pointMethod = com.telldus.core.TELLSTICK_BELL;
 		}
 		return pointMethod;
+	}
+	
+	function getStateFromMethod(pointMethod){
+		var state = "";
+		if(pointMethod == com.telldus.core.TELLSTICK_TURNON){
+			state = "on";
+		}
+		else if(pointMethod == com.telldus.core.TELLSTICK_TURNOFF){
+			state = "off";
+		}
+		else if(pointMethod == com.telldus.core.TELLSTICK_DIM){
+			state = "dim";
+		}
+		else if(pointMethod == com.telldus.core.TELLSTICK_BELL){
+			state = "bell";
+		}
+		return state;
 	}
 	
 	function getSun(riseset, rowWidth, pointWidth){
@@ -211,6 +219,20 @@ com.telldus.schedulersimplegui = function() {
 			type = com.telldus.scheduler.EVENTTYPE_ABSOLUTE;
 		}
 		return type;
+	}
+	
+	function getTriggerstateFromType(type){
+		var triggerstate = "";
+		if(type == com.telldus.scheduler.EVENTTYPE_SUNRISE){
+			triggerstate = "sunrise";
+		}
+		else if(type == com.telldus.scheduler.EVENTTYPE_SUNSET){
+			triggerstate = "sunset";
+		}
+		else{
+			triggerstate = "absolute";
+		}
+		return triggerstate;
 	}
 
 	return { //Public functions

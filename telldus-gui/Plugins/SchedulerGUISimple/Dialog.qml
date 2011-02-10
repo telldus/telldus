@@ -435,7 +435,6 @@
 			
 			Rectangle{
 				id: inputAbsoluteMinute
-				property alias absoluteMinute: inputAbsoluteMinuteText.text
 				width: 35
 				height: inputAbsoluteMinuteText.height
 				border.width: 1

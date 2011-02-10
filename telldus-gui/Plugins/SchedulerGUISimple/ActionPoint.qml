@@ -94,10 +94,10 @@ Rectangle{
 		onClicked: {
 			if (mouse.button == Qt.RightButton){
 				pointRect.toggleType()
-				dialog.show(pointRect)
+				//dialog.show(pointRect)
 			}
 			else{
-				dialog.show(pointRect)
+				//dialog.show(pointRect)
 			}
 		}
 		
@@ -288,11 +288,9 @@ Rectangle{
 				break;
 			}
 		}
-		
 		if(index == activeStates.length){
 			index = 0; //return to beginning again
 		}
-		
 		pointRect.state = activeStates[index];
 	}
 	
@@ -317,6 +315,9 @@ Rectangle{
 	}
 	
 	function updateChanges(){
+		if(pointRect.deviceRow == null || (pointRect.deviceRow.isLoading != undefined && pointRect.deviceRow.isLoading())){
+			return; //loading values from storage, wait until everything is in place
+		}
 		Scripts.updateParentWithCurrentValues();
 		Scripts.updateChildPoints();
 		if(pointRect.triggerstate == "absolute"){
@@ -373,9 +374,9 @@ Rectangle{
 		return [hours, partOfHour];
 	}
 	
-	function addState(state){
+	function addActiveState(state){
 		//print("Adding state: " + state);
-		Scripts.addState(state);
+		Scripts.addActiveState(state);
 	}
 	
 	function setActiveStates(activeStates){

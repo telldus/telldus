@@ -5,7 +5,7 @@ var deviceIndex = [];
 //TODO active states - move to actionPoint-only-js file
 var activeStates = new Array();
 
-function addState(state){
+function addActiveState(state){
 	activeStates.push(state);
 }
 
@@ -310,16 +310,81 @@ function assignContinuingBarProperties(deviceRow, previousEndPoint, dayIndex, fi
 	return previousEndPoint;
 }
 
-//Upstart:
-function initiatePointsInGUI(){ //weekPointList){
-	//för varje point, addPointToGUI, men ju även lägga till schemajobb... alltså i __init__.js... men därifrån kan inte denna anropas...
-	//så det får väl bli varsin iteration då...
-	//weekPointList -> från __init__.js
-	//for(var i in weekPointList){
-	for(var i=0;i<weekPointList.length;i++){
-		addWeekPointToGUI(weekPointList.get(i));
+//Init:
+function initiateStoredPointsInGUI(){
+	var k = 0;
+	for(var devicekey in storedPoints){
+		for(var i=0;i<storedPoints[devicekey].length;i++){
+			k++;
+			print("ADDED POINTS: " + k);
+			addPointToGUI(devicekey, storedPoints[devicekey][i]);
+		}
 	}
 }
+
+function addPointToGUI(key, job){
+	if(job == undefined){
+		return;
+	}
+	var deviceId = key;
+	var jobdata = job.v;
+	var state = getStateFromMethod.callWith(jobdata.method);
+	var activeStates = new Array("on", "off", "dim", "bell"); //TODO get dynamically, depending on device...
+	var dimvalue = jobdata.value;
+	var absoluteTime = jobdata.absoluteTime;
+	var events = jobdata.events;
+	var parentPoint;
+	
+	for(var key in events){
+		var eventdata = events[key].d;
+		var dayIndex = eventdata.value;
+		var dayOfWeek = getDayIndexForDayOfWeek(dayIndex); //set dayOfWeek to correct index in the days-table
+		
+		print("Inserting point at: " + weekday_name_array[days[dayOfWeek].daydate.getDay()] + " (" + dayOfWeek + ")" + ", id: " + deviceId);
+		
+		var pointParentDevice = getDeviceRow(dayOfWeek, deviceId);
+		
+		var component = Qt.createComponent("ActionPoint.qml");
+		var dynamicPoint = component.createObject(pointParentDevice);
+		
+		if(parentPoint == undefined){
+			//set common values
+			var time = getTimeFromSeconds(absoluteTime); //eventdata.time);
+			dynamicPoint.absoluteHour = time[0]; //same time for all
+			dynamicPoint.absoluteMinute = time[1]; //same time for all
+			dynamicPoint.triggerstate = getTriggerstateFromType.callWith(eventdata.type);
+			dynamicPoint.fuzzyBefore = eventdata.fuzzinessBefore/60;
+			dynamicPoint.fuzzyAfter = eventdata.fuzzinessAfter/60;
+			dynamicPoint.offset = eventdata.offset;
+			if(dynamicPoint.triggerstate == "absolute"){
+				dynamicPoint.x = dynamicPoint.getAbsoluteXValue();
+			}
+			dynamicPoint.setActiveStates(activeStates); //TODO: active states depending on the device (get this from __init__ etc)
+			dynamicPoint.setFirstState(state);
+			dynamicPoint.dimvalue = dimvalue;
+		
+			parentPoint = dynamicPoint;
+		}
+		else{
+			dynamicPoint.parentPoint = parentPoint;
+			dynamicPoint.setActiveStates(parentPoint.getActiveStates());
+			parentPoint.addChildPoint(dayIndex, dynamicPoint);
+		}
+		
+		dynamicPoint.border.color = "blue"; //default blue at the moment
+		
+	}
+		
+	updateChildPoints(parentPoint);  //if any child points exists, update them with parent values
+}
+
+function getTimeFromSeconds(seconds){
+	var totalMinutes = seconds/60;
+	var minutes = totalMinutes%60;
+	var hours = Math.floor(totalMinutes/60);
+	return [hours, minutes];
+}
+//End init
 
 function getDeviceRow(dayOfWeek, deviceId){
 	var dayListViewComp = days[dayOfWeek];
@@ -336,31 +401,8 @@ function getDeviceRow(dayOfWeek, deviceId){
 	return pointParent;
 }
 
-function addWeekPointToGUI(point){
-	var deviceId = point.deviceId;
-	var dayOfWeek = point.day;
-	//set dayOfWeek to correct index in the days-table
-	print("DayOfWeek again: " + dayOfWeek);
-	dayOfWeek = getDayIndexForDayOfWeek(dayOfWeek);
-	print("Inserting point at: " + weekday_name_array[days[dayOfWeek].daydate.getDay()] + " (" + dayOfWeek + ")" + ", id: " + deviceId);
-	var pointParent = getDeviceRow(dayOfWeek, deviceId);
-	
-	var component = Qt.createComponent("ActionPoint.qml")
-	var dynamicPoint = component.createObject(pointParent)
-	dynamicPoint.absoluteHour = 12
-	dynamicPoint.absoluteMinute = 30
-	dynamicPoint.x = dynamicPoint.getAbsoluteXValue();
-	dynamicPoint.border.color = "blue"
-	dynamicPoint.addState("on");
-	dynamicPoint.addState("off");
-	dynamicPoint.addState("dim");
-	dynamicPoint.addState("bell");
-	dynamicPoint.setFirstState("dim");
-	//also: states, fuzzy * 2, trigger, offset, dimvalue
-}
-
 //per point
-var childPoints = [];
+var childPoints = {};
 
 function getChildPoint(index){
 	//print("INDEX");
@@ -373,6 +415,7 @@ function getChildPoints(){
 }
 
 function addChildPoint(index, point){
+	print("Adding child point " + point + " at " + index);
 	childPoints[index] = point;
 }
 
@@ -405,15 +448,34 @@ function updateParentsInChildList(newParentPoint){
 }
 
 function updateChildPoints(parentPoint){
-	for(var point in childPoints){
-		childPoints[point].absoluteHour = pointRect.absoluteHour;
-		childPoints[point].absoluteMinute = pointRect.absoluteMinute;
-		childPoints[point].fuzzyBefore = pointRect.fuzzyBefore;
-		childPoints[point].fuzzyAfter = pointRect.fuzzyAfter;
-		childPoints[point].offset = pointRect.offset;
-		childPoints[point].triggerstate = pointRect.triggerstate;
-		childPoints[point].dimvalue = pointRect.dimvalue;
-		childPoints[point].state = pointRect.state;
+	
+	var children;
+	if(parentPoint != undefined){
+		children = parentPoint.getChildPoints();
+	}
+	else{
+		if(pointRect.parentPoint != undefined){
+			children = pointRect.parentPoint.getChildPoints();
+			parentPoint = pointRect.parentPoint;
+		}
+		else{
+			children = getChildPoints();
+			parentPoint = pointRect;
+		}
+	}
+	
+	for(var point in children){
+		children[point].absoluteHour = parentPoint.absoluteHour;
+		children[point].absoluteMinute = parentPoint.absoluteMinute;
+		children[point].fuzzyBefore = parentPoint.fuzzyBefore;
+		children[point].fuzzyAfter = parentPoint.fuzzyAfter;
+		children[point].offset = parentPoint.offset;
+		children[point].triggerstate = parentPoint.triggerstate;
+		children[point].dimvalue = parentPoint.dimvalue;
+		children[point].state = parentPoint.state;
+		if(children[point].triggerstate == "absolute"){
+			children[point].x = children[point].getAbsoluteXValue();
+		}
 	}
 }
 
@@ -433,9 +495,22 @@ function updateParentWithCurrentValues(){
 //end per point
 
 //must be run in "main"
+var loading = false;
+function setLoading(){
+	loading = true;
+}
+
+function endLoading(){
+	loading = false;
+}
+
+function isLoading(){
+	return loading;
+}
+
 function getDayIndexForDayOfWeek(dayOfWeek){
 	var offset = days[0].daydate.getDay();
-	dayOfWeek = days.length - offset + dayOfWeek;
+	dayOfWeek = days.length - offset + parseInt(dayOfWeek);
 	if(dayOfWeek == -1){
 		dayOfWeek = days.length - 1;
 	}
@@ -452,6 +527,7 @@ function getOffsetWeekdayName(index){
 
 function getOffsetWeekday(index){
 	//TODO this can be modified based on locale, not adding 1 of week should start with sunday
+	index = parseInt(index);
 	index = index + 1;
 	if(index == weekday_name_array.length){
 		index = 0;
@@ -507,10 +583,10 @@ function createChildPoint(index, pointRect, deviceId){
 	dynamicPoint.setActiveStates(pointRect.getActiveStates());
 	
 	/*
-	dynamicPoint.addState("on"); //TODO, add same states as in pointRect
-	dynamicPoint.addState("off");
-	dynamicPoint.addState("dim");
-	dynamicPoint.addState("bell");
+	dynamicPoint.addActiveState("on"); //TODO, add same states as in pointRect
+	dynamicPoint.addActiveState("off");
+	dynamicPoint.addActiveState("dim");
+	dynamicPoint.addActiveState("bell");
 	*/
 	dynamicPoint.setFirstState(pointRect.state);
 	//print("RETURNING " + dynamicPoint);
