@@ -8,7 +8,7 @@ com.telldus.scheduler.EVENTTYPE_SUNRISE = 1;
 com.telldus.scheduler.EVENTTYPE_SUNSET = 2;
 
 
-function getEventRunTime(event, date){
+function getEventRunTime(event, date, lastRun){
 	var currentEventRuntimeTimestamp = null;
 	var offset = event.d.offset;
 	if(isNaN(offset)){
@@ -22,13 +22,13 @@ function getEventRunTime(event, date){
 		//print("currentEventRuntimeTimestamp: " + new Date(currentEventRuntimeTimestamp));
 		currentEventRuntimeTimestamp += (offset * 1000); //this is really not useful for absolute values, but exists for consistency
 		//print("currentEventRuntimeTimestamp1: " + new Date(currentEventRuntimeTimestamp));
-		currentEventRuntimeTimestamp = com.telldus.scheduler.fuzzify(currentEventRuntimeTimestamp, parseInt(event.d.fuzzinessBefore), parseInt(event.d.fuzzinessAfter));
+		currentEventRuntimeTimestamp = com.telldus.scheduler.fuzzify(currentEventRuntimeTimestamp, parseInt(event.d.fuzzinessBefore), parseInt(event.d.fuzzinessAfter), lastRun);
 		//print("currentEventRuntimeTimestamp2: " + new Date(currentEventRuntimeTimestamp));
 	}
 	else if(event.d.type == com.telldus.scheduler.EVENTTYPE_SUNRISE || event.d.type == com.telldus.scheduler.EVENTTYPE_SUNSET){
 		currentEventRuntimeTimestamp = getSunUpDownForDate(date, parseInt(event.d.type));
 		currentEventRuntimeTimestamp += (offset * 1000);
-		currentEventRuntimeTimestamp = com.telldus.scheduler.fuzzify(currentEventRuntimeTimestamp, parseInt(event.d.fuzzinessBefore), parseInt(event.d.fuzzinessAfter));		
+		currentEventRuntimeTimestamp = com.telldus.scheduler.fuzzify(currentEventRuntimeTimestamp, parseInt(event.d.fuzzinessBefore), parseInt(event.d.fuzzinessAfter), lastRun);		
 	}
 	
 	return currentEventRuntimeTimestamp;
@@ -84,14 +84,15 @@ function getJob(jobdata){
 * but wasn't, because of a reboot or similar (in seconds)
 * note, must in that case have checked last run	 
 */
-function getNextEventRunTime(nextRunTime, event, date, pastGracePeriod){
+function getNextEventRunTime(nextRunTime, event, date, pastGracePeriod, lastRun){
 	
 	if(!pastGracePeriod){
 		var pastGracePeriod = 0;
 	}
 	
-	var currentEventRuntimeTimestamp = getEventRunTime(event, date);
+	var currentEventRuntimeTimestamp = getEventRunTime(event, date, lastRun);
 	print("EventRunTime: " + new Date(currentEventRuntimeTimestamp));
+			
 	if((nextRunTime === null || currentEventRuntimeTimestamp < nextRunTime) && currentEventRuntimeTimestamp > (new Date().getTime() - pastGracePeriod)){   //earlier than other events, but later than "now"
 		nextRunTime = currentEventRuntimeTimestamp;
 	}
@@ -136,6 +137,7 @@ function getSunUpDownForDate(datetimestamp, sun){
 	return date.getTime();
 }
 
+/*
 function loadJobs(){
 	print("Loading jobs");
 	//TODO detta ska inte göras från denna plugin, utan från respektive...
@@ -176,7 +178,8 @@ function loadJobs(){
 		var tempkey = com.telldus.scheduler.addJob(job); //TODO, use different function than this = only sort list afterwards (one time) and dont start timer until all initial are added
 	}
 	*/
-}
+//}
+
 
 /*
  * updateLastRun-example:
@@ -296,7 +299,7 @@ com.telldus.scheduler.JobAbsolute.prototype.getNextRunTime = function(){
 	var pastGracePeriod = getGracePeriod(this.v);
 	
 	for(var key in this.v.events){
-		nextRunTime = getNextEventRunTime(nextRunTime, this.v.events[key], 0, pastGracePeriod);
+		nextRunTime = getNextEventRunTime(nextRunTime, this.v.events[key], 0, pastGracePeriod, this.v.lastRun);
 	}
 	return nextRunTime;
 }
@@ -310,7 +313,7 @@ com.telldus.scheduler.JobRecurringDay.prototype.getNextRunTime = function(){
 	var date;
 	
 	if(this.v.lastRun > 0){
-		var lastRunDate = new Date(this.lastRun);	
+		var lastRunDate = new Date(this.v.lastRun);	//TEST changed from this.lastRun, test this!
 		date = new Date(lastRunDate.getFullYear(), lastRunDate.getMonth(), lastRunDate.getDate());
 		date = date.getTime() + this.v.events[0].d.value;   //add interval
 	}
@@ -324,11 +327,11 @@ com.telldus.scheduler.JobRecurringDay.prototype.getNextRunTime = function(){
 		}
 		date = new Date(startTime.getFullYear(), startTime.getMonth(), startTime.getDate());
 	}
-	nextRunTime = getNextEventRunTime(null, this.v.events[0], date.getTime(), pastGracePeriod);
+	nextRunTime = getNextEventRunTime(null, this.v.events[0], date.getTime(), pastGracePeriod, this.v.lastRun);
 	if(nextRunTime < new Date().getTime()){
 		var runTime = new Date(date);
 		runTime.setDate(runTime.getDate() + parseInt(this.v.events[0].d.value));
-		nextRunTime = getNextEventRunTime(null, this.v.events[0], runTime.getTime(), pastGracePeriod); //already passed this time today, try again after "interval" days 
+		nextRunTime = getNextEventRunTime(null, this.v.events[0], runTime.getTime(), pastGracePeriod, this.v.lastRun); //already passed this time today, try again after "interval" days 
 	}
 	
 	return nextRunTime;
@@ -363,10 +366,10 @@ com.telldus.scheduler.JobRecurringWeek.prototype.getNextRunTime = function(){
 		
 		returnDate = zeroTime(returnDate);
 		
-		nextTempRunTime = getNextEventRunTime(nextRunTime, this.v.events[key], returnDate.getTime(), pastGracePeriod);
+		nextTempRunTime = getNextEventRunTime(nextRunTime, this.v.events[key], returnDate.getTime(), pastGracePeriod, this.v.lastRun);
 		if(nextTempRunTime < new Date().getTime()){ //event happened today, already passed, add to next week instead
 			returnDate.setDate(returnDate.getDate() + 7);
-			nextRunTime = getNextEventRunTime(nextRunTime, this.v.events[key], returnDate.getTime(), pastGracePeriod);	
+			nextRunTime = getNextEventRunTime(nextRunTime, this.v.events[key], returnDate.getTime(), pastGracePeriod, this.v.lastRun);	
 		}
 		else{
 			nextRunTime = nextTempRunTime;

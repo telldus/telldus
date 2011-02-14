@@ -20,7 +20,8 @@ com.telldus.schedulersimplegui = function() {
 			getSunSetTime: getSunSetTime,
 			getSunData: getSunData,
 			getTypeFromTriggerstate: getTypeFromTriggerstate,
-			getTriggerstateFromType: getTriggerstateFromType
+			getTriggerstateFromType: getTriggerstateFromType,
+			restoreJobs: restoreJobs
 		});
 
 		//devices:
@@ -36,8 +37,8 @@ com.telldus.schedulersimplegui = function() {
 		//Listen for device-change
 		com.telldus.core.deviceChange.connect(deviceChange);
 
-		var storedPoints = loadJobs();
-		view.setProperty('storedPoints', storedPoints);
+		//var storedPoints = loadJobs();
+		//view.setProperty('storedPoints', storedPoints);
 
 		//set images:
 		view.setProperty("imageTriggerSunrise", "sunrise.png");
@@ -72,7 +73,7 @@ com.telldus.schedulersimplegui = function() {
 		}
 	}
 	
-	function addJobsToSchedule(deviceId, points, deviceTimerKeys){
+	function addJobsToSchedule(deviceId, points, deviceTimerKeys, callbackFunc){
 		//delete all current schedules for this device:
 		if(deviceTimerKeys != undefined){
 			for(var i=0;i<deviceTimerKeys.length;i++){
@@ -84,7 +85,7 @@ com.telldus.schedulersimplegui = function() {
 		//add new schedules:
 		var jobs = new Array();
 		for(var i=0;i<points.length;i++){
-			var jobtemp = getJob(points[i]);
+			var jobtemp = getJob(points[i], callbackFunc);
 			jobs.push(jobtemp);
 		}
 		print("Adding some jobs " + jobs.length);
@@ -104,44 +105,89 @@ com.telldus.schedulersimplegui = function() {
 		settings.setValue("jobs", jobs);
 	}
 	
-	function loadJobs(){
+	function loadJobs(updateLastRun){
 		var settings = new com.telldus.settings();
-		var temp = settings.value("jobs", "");
-		return settings.value("jobs", "");
-		
-		/*
-		//from storage...
-		var weekPointList = new com.telldus.qml.array();
-		var dummypoint = {};
-		dummypoint["day"] = 0;
-		dummypoint["deviceId"] = 1;
-		weekPointList.push(dummypoint);
-		dummypoint = {};
-		dummypoint["day"] = 1;
-		dummypoint["deviceId"] = 2;
-		weekPointList.push(dummypoint);
-		*/
+		var storedJobs = settings.value("jobs", "");
+		restoreJobsToSchedule(storedJobs, updateLastRun); //Start timers here
+		return storedJobs;
 	}
 	
-	function getJob(pointArray){ //deviceId, pointName, startdate, lastrun, pointMethod, pointDimValue, pointTime, pointType, pointFuzzinessBefore, pointFuzzinessAfter, pointOffset, pointDays
-		//var execFunc = function(job){ print("Custom execute function running"); print("Job: " + job.v.name); return 42; }; //TODO default later
-		//TODO dimValue 0-100 ok? Or other number expected?
-		var job = new com.telldus.scheduler.JobRecurringWeek({id: pointArray[0], executeFunc: null, name: pointArray[1], type: com.telldus.scheduler.JOBTYPE_RECURRING_WEEK, startdate: pointArray[2], lastRun: pointArray[3], device: pointArray[0], method: pointArray[4], value: pointArray[5], absoluteTime: pointArray[12]});
+	function restoreJobsToSchedule(storedJobs, updateLastRun){
+		var jobs = new Array();
+		for(var devicekey in storedJobs){
+			for(var i=0;i<storedJobs[devicekey].length;i++){
+				if(storedJobs[devicekey][i] == undefined){
+					continue;
+				}
+				var jobtemp = restoreJob(storedJobs[devicekey][i], updateLastRun);
+				jobs.push(jobtemp);
+			}
+		}
+		return com.telldus.scheduler.addJobs(jobs)
+	}
+	
+	function restoreJob(storedJob, updateLastRunInGUI){
+		var execFunc = function(job){ print("Custom execute function running"); print("Job: " + job.v.name); var lastRun = new Date().getTime(); updateLastRun(job, lastRun); updateLastRunInGUI(job.v.device, job.v.events[job.v.id + "_0"].d.value, job.v.id, lastRun); return job.executeDefault();};
+		var job = new com.telldus.scheduler.JobRecurringWeek(storedJob.v);
+		job.v.executeFunc = execFunc;
+		return job;
+	}
+	
+	function restoreJobs(updateLastRun){
+		var storedPoints = loadJobs(updateLastRun);
+		view.setProperty('storedPoints', storedPoints);
+	}
+	
+	function getJob(pointArray, updateLastRunInGUI){ //deviceId, pointName, startdate, lastrun, pointMethod, pointDimValue, pointTime, pointType, pointFuzzinessBefore, pointFuzzinessAfter, pointOffset, pointDays
+		//updateLastRunInGUI: deviceId, day of week, id
+		var execFunc = function(job){ print("Custom execute function running"); print("Job: " + job.v.name); var lastRun = new Date().getTime(); updateLastRun(job, lastRun); updateLastRunInGUI(job.v.device, job.v.events[job.v.id + "_0"].d.value, job.v.id, lastRun); return job.executeDefault();};
+		print("POINTARRAY3: " + pointArray[3]);
+		var job = new com.telldus.scheduler.JobRecurringWeek({id: pointArray[13], executeFunc: execFunc, name: pointArray[1], type: com.telldus.scheduler.JOBTYPE_RECURRING_WEEK, startdate: pointArray[2], lastRun: pointArray[3], device: pointArray[0], method: pointArray[4], value: pointArray[5], absoluteTime: pointArray[12]});
 		var event = {};
 		var pointFuzzinessBefore = (pointArray[8]*60);
 		var pointFuzzinessAfter = (pointArray[9]*60);
 		var pointOffset = (pointArray[10]*60);
-		event.d = {id: (pointArray[0] + "_0"), value: pointArray[11][0], fuzzinessBefore: pointFuzzinessBefore, fuzzinessAfter: pointFuzzinessAfter, type: pointArray[7], offset: pointOffset, time: pointArray[6]};
+		event.d = {id: (pointArray[13] + "_0"), value: pointArray[11][0], fuzzinessBefore: pointFuzzinessBefore, fuzzinessAfter: pointFuzzinessAfter, type: pointArray[7], offset: pointOffset, time: pointArray[6]};
 		job.addEvent(event);
 		
 		for(var i=1;i<pointArray[11].length;i++){
 			event = {};
 			pointDay = pointArray[11][i];
-			event.d = {id: (pointArray[0] + "_" + i), value: pointDay, fuzzinessBefore: pointFuzzinessBefore, fuzzinessAfter: pointFuzzinessAfter, type: pointArray[7], offset: pointOffset, time: pointArray[6]};
+			event.d = {id: (pointArray[13] + "_" + i), value: pointDay, fuzzinessBefore: pointFuzzinessBefore, fuzzinessAfter: pointFuzzinessAfter, type: pointArray[7], offset: pointOffset, time: pointArray[6]};
 			job.addEvent(event);
 		}
 		
 		return job;
+	}
+	
+	function updateLastRun(job, lastRun){
+		//TODO uppdatera både storage och värdet i pointen...
+		var settings = new com.telldus.settings();
+		var storedjobs = settings.value("jobs", "");
+		//settings.setValue("test", "TESTAR");
+		print("UPDATING LAST RUN 3 " + storedjobs);
+		for(var devicekey in storedjobs){
+			print("Key: " + devicekey);
+			if(devicekey == job.v.device){
+				print("En bra bit");
+				
+				for(var i=0;i<storedjobs[devicekey].length;i++){
+					print("GREJ 2: " + storedjobs[devicekey][i].v.id);
+					print("JMF: " + job.v.id);
+					if(storedjobs[devicekey][i].v.id == job.v.id){
+						storedjobs[devicekey][i].v.lastRun = lastRun;
+						break;
+					}
+				}
+				break;
+			}
+		}
+		
+		settings.setValue("jobs", storedjobs);
+		print("saveD");
+		
+		//för alla points denna... device och dag (parentpointens dag, dvs det som är lagrat i job)
+		//gå igenom punkterna, hitta punkt med korrekt id, uppdatera last run för den...
 	}
 	
 	function getMethodFromState(state){

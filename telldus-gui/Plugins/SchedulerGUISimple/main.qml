@@ -28,6 +28,8 @@ import "schedulerscripts.js" as Scripts
 		weekDayText.text = Scripts.getCurrentDayName()
 		//Scripts.updateDeviceIndex();
 		Scripts.setLoading();
+		var updateLastRunFunc = updateLastRun;
+		restoreJobs.callWith(updateLastRunFunc);
 		Scripts.initiateStoredPointsInGUI();
 		Scripts.endLoading();
 		Scripts.updateEndsWith();
@@ -304,6 +306,7 @@ import "schedulerscripts.js" as Scripts
 						dynamicPoint.addActiveState("bell");
 						//dynamicPoint.setFirstState("dim"); //when type is a stored value
 						dynamicPoint.setFirstState();
+						dynamicPoint.pointId = new Date().getTime(); //just needed for storage update
 						
 						
 						//TEST, proof of concept for repeat-everyday-points:
@@ -573,18 +576,28 @@ import "schedulerscripts.js" as Scripts
 			}
 			
 			var deviceTimerKeys = Scripts.getDeviceTimerKeys(deviceId); //get timer keys for this device, for removal
-			deviceTimerKeys = addJobsToSchedule.callWith(deviceId, points, deviceTimerKeys);  //remove all schedules for this device, and add them again
+			var updateLastRunFunc = updateLastRun;
+			deviceTimerKeys = addJobsToSchedule.callWith(deviceId, points, deviceTimerKeys, updateLastRunFunc);  //remove all schedules for this device, and add them again
 			Scripts.setDeviceTimerKeys(deviceId, deviceTimerKeys); //save the new timer keys
 		}	
+	}
+	
+	function updateLastRun(deviceId, day, pointId, lastRun){
+		print("deviceid: " + deviceId);
+		print("day: " + day);
+		print("pointid: " + pointId);
+		Scripts.updateLastRun(deviceId, day, pointId, lastRun);
 	}
 	
 	function pointToArray(point){ //TODO another way than using arrays...
 		var deviceId = point.deviceRow.deviceId; //not really in use yet
 		var pointName = "Job_" + deviceId;
-		var lastrun = 0; //TODO
 		var startdate = new Date(); //startdate, not in use, always "now"
-		var pointDimValue = point.dimvalue;
+		var pointDimValue = point.dimvalue * (255/100);
 		var pointMethod = getMethodFromState.callWith(point.state);
+		var pointId = point.pointId;
+		var lastRun = point.lastRun;
+		print("LASTRUN pointToArray: " + lastRun);
 		
 		var pointTime = point.absoluteHour * 3600 + point.absoluteMinute * 60;
 		var absolutePointTime = pointTime;
@@ -608,6 +621,6 @@ import "schedulerscripts.js" as Scripts
 			pointDays.push(childPoints[child].deviceRow.parent.parent.daydate.getDay()); //different per event
 			print("GOT DAY " + childPoints[child].deviceRow.parent.parent.daydate.getDay());
 		}
-		return new Array(deviceId, pointName, startdate, lastrun, pointMethod, pointDimValue, pointTime, pointType, pointFuzzinessBefore, pointFuzzinessAfter, pointOffset, pointDays, absolutePointTime);
+		return new Array(deviceId, pointName, startdate, lastRun, pointMethod, pointDimValue, pointTime, pointType, pointFuzzinessBefore, pointFuzzinessAfter, pointOffset, pointDays, absolutePointTime, pointId);
 	}
 }

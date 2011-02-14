@@ -35,7 +35,6 @@ com.telldus.scheduler = function() {
 		}
 		var key = storedJobs.push(job);
 		job.key = key;
-		print("Add job");
 		updateJobInList(key);
 		return key;
 	}
@@ -61,8 +60,19 @@ com.telldus.scheduler = function() {
 		return returnKeys;
 	}
 	
-	function fuzzify(currentTimestamp, fuzzinessBefore, fuzzinessAfter){
+	function fuzzify(currentTimestamp, fuzzinessBefore, fuzzinessAfter, lastRun){
 		if(fuzzinessAfter != 0 || fuzzinessBefore != 0){
+			var now = new Date().getTime();
+			if(currentTimestamp - (fuzzinessBefore*1000) < now){
+				fuzzinessBefore = (currentTimestamp - now)/1000; //we have already entered the fuzzy-interval, move the start point to "now"...
+			}
+			//print("LASTRUN: " + new Date(lastRun));
+			//print("COMPARE: " + new Date(currentTimestamp - (fuzzinessBefore*1000)));
+			if(lastRun != undefined && lastRun >= (currentTimestamp - (fuzzinessBefore*1000))){
+				//print("JUST RETURNING");
+				return 0; //job already run in this interval, don't run it again...
+			}
+			//print("CONTINUING HAPPILY");
 			var interval = fuzzinessAfter + fuzzinessBefore;
 			var rand =  Math.random(); //Random enough at the moment
 			var fuzziness = Math.floor((interval+1) * rand);
@@ -312,9 +322,20 @@ com.telldus.scheduler.Job.prototype.execute = function(){
 		return success;
 	}	
 	
+	success = this.executeDefault();
+	
+	//if(success){
+		//update last run even if not successful, else it may become an infinite loop (if using pastGracePeriod)
+		this.updateJobLastRun();
+	//}
+	return success;
+};
+
+com.telldus.scheduler.Job.prototype.executeDefault = function(){
+	var success = 0;
 	deviceid = this.v.device;
 	var method = parseInt(this.v.method);
-	print("Job id: " + this.v.device + " Method: " + method);
+	//print("Job id: " + this.v.device + " Method: " + method);
 	switch(method){
 		case com.telldus.core.TELLSTICK_TURNON:
 			success = com.telldus.core.turnOn(deviceid);
@@ -331,10 +352,6 @@ com.telldus.scheduler.Job.prototype.execute = function(){
 		default:
 			break;
 	}
-	//if(success){
-		//update last run even if not successful, else it may become an infinite loop (if using pastGracePeriod)
-		this.updateJobLastRun();
-	//}
 	return success;
 };
 

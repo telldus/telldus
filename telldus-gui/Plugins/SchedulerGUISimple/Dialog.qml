@@ -47,6 +47,11 @@
 			}
 			event.accepted = true;
 		}
+		else if( event.key == Qt.Key_Delete){
+			//TODO warning?
+			container.actionPoint.remove();
+			
+		}
 		else{
 			return;
 		}

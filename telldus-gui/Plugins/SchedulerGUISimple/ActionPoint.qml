@@ -18,6 +18,8 @@ Rectangle{
 	property int absoluteMinute: parseInt(dialog.absoluteMinute, 10)
 	property alias triggerstate: trigger.state
 	property variant parentPoint
+	property variant pointId
+	property variant lastRun: 0;
 	//property int parentPointAbsoluteHour //TEST changed from int, want "undefined"
 	property alias deviceRow: pointRect.parent
 	

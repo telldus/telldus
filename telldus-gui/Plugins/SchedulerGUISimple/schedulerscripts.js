@@ -312,11 +312,8 @@ function assignContinuingBarProperties(deviceRow, previousEndPoint, dayIndex, fi
 
 //Init:
 function initiateStoredPointsInGUI(){
-	var k = 0;
 	for(var devicekey in storedPoints){
 		for(var i=0;i<storedPoints[devicekey].length;i++){
-			k++;
-			print("ADDED POINTS: " + k);
 			addPointToGUI(devicekey, storedPoints[devicekey][i]);
 		}
 	}
@@ -332,6 +329,9 @@ function addPointToGUI(key, job){
 	var activeStates = new Array("on", "off", "dim", "bell"); //TODO get dynamically, depending on device...
 	var dimvalue = jobdata.value;
 	var absoluteTime = jobdata.absoluteTime;
+	var pointId = jobdata.id;
+	var lastRun = jobdata.lastRun;
+	print("Adding point to GUI with lastrun: " + lastRun);
 	var events = jobdata.events;
 	var parentPoint;
 	
@@ -355,14 +355,16 @@ function addPointToGUI(key, job){
 			dynamicPoint.triggerstate = getTriggerstateFromType.callWith(eventdata.type);
 			dynamicPoint.fuzzyBefore = eventdata.fuzzinessBefore/60;
 			dynamicPoint.fuzzyAfter = eventdata.fuzzinessAfter/60;
-			dynamicPoint.offset = eventdata.offset;
+			dynamicPoint.offset = eventdata.offset/60;
+			dynamicPoint.lastRun = lastRun;
 			if(dynamicPoint.triggerstate == "absolute"){
 				dynamicPoint.x = dynamicPoint.getAbsoluteXValue();
 			}
 			dynamicPoint.setActiveStates(activeStates); //TODO: active states depending on the device (get this from __init__ etc)
 			dynamicPoint.setFirstState(state);
-			dynamicPoint.dimvalue = dimvalue;
-		
+			dynamicPoint.dimvalue = dimvalue * (100/255);
+			dynamicPoint.pointId = pointId;
+			print("SETTING POINTID TO: " + pointId);
 			parentPoint = dynamicPoint;
 		}
 		else{
@@ -526,13 +528,31 @@ function getOffsetWeekdayName(index){
 }
 
 function getOffsetWeekday(index){
-	//TODO this can be modified based on locale, not adding 1 of week should start with sunday
+	//TODO this can be modified based on locale, not adding 1 if week should start with sunday
 	index = parseInt(index);
 	index = index + 1;
 	if(index == weekday_name_array.length){
 		index = 0;
 	}
 	return index;
+}
+
+function updateLastRun(deviceId, day, pointId, lastRun){
+	print("0");
+	day = getDayIndexForDayOfWeek(day);
+	print("1: " + day);
+	var row = getDeviceRow(day,deviceId);
+	print("2: " + row);
+	for(var k=0;k<row.children.length;k++){
+		print("3: " + row.children[k]);
+		var point = row.children[k];
+		if(point.isPoint && point.parentPoint == undefined && point.pointId == pointId){ //and not disabled
+			print("UPDATING LAST RUN, " + lastRun);
+			point.lastRun = lastRun;
+			print("IS, " + point.lastRun);
+			
+		}
+	}
 }
 
 //TODO move, pragma safe:
