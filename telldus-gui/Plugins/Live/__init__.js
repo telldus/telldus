@@ -1,22 +1,26 @@
 __setupPackage__( __extension__ );
 
 com.telldus.live = function() {
-    var socket = null;
-    var menuId = 0;
-    var separatorId = 0;
-    var isRegistered = false;
-    var supportedMethods = 0;
-	
+	var socket = null;
+	var menuId = 0;
+	var separatorId = 0;
+	var isRegistered = false;
+	var supportedMethods = 0;
+	var configUI = null;
+
 	function init() {
+		configUI = application.configuration.addPage('Telldus Live!', 'configuration.ui', 'icon.png');
 		socket = new LiveSocket();
+		socket.errorChanged.connect(errorChanged);
+		socket.statusChanged.connect(statusChanged);
 		socket.notRegistered.connect(notRegistered);
 		socket.registered.connect(registered);
 		socket.messageReceived.connect(messageReceived);
 		socket.connectToServer();
-   		com.telldus.core.deviceEvent.connect(deviceEvent);
-   		com.telldus.core.deviceChange.connect(sendDevicesReport);
+		com.telldus.core.deviceEvent.connect(deviceEvent);
+		com.telldus.core.deviceChange.connect(sendDevicesReport);
 	}
-	
+
 	function notRegistered() {
 		isRegistered = false;
 		if (com.telldus.systray && !menuId) {
@@ -25,18 +29,18 @@ com.telldus.live = function() {
 			com.telldus.systray.menuItem(menuId).triggered.connect(socket.activate);
 		}
 	}
-	
+
 	function deviceEvent(deviceId, method, data) {
-	    msg = new LiveMessage("DeviceEvent");
-	    msg.append(deviceId);
-	    msg.append(method);
-	    msg.append(data);
-	    socket.sendMessage(msg);
+		msg = new LiveMessage("DeviceEvent");
+		msg.append(deviceId);
+		msg.append(method);
+		msg.append(data);
+		socket.sendMessage(msg);
 	}
-	
+
 	function deviceChangeEvent() {
 	}
-	
+
 	function messageReceived(msg) {
 		if (msg.name() == "turnon") {
 			com.telldus.core.turnOn( msg.argument(0).intVal() );
@@ -49,39 +53,47 @@ com.telldus.live = function() {
 		}
 		print("Received: " + msg.name());
 	}
-	
+
 	function registered(msg) {
-	    if (menuId > 0) {
-	        com.telldus.systray.removeMenuItem(menuId);
-	        com.telldus.systray.removeMenuItem(separatorId);
-	        menuId = 0;
-	        separatorId = 0;
-	    }
-	    supportedMethods = msg.getInt('supportedMethods');
-	    isRegistered = true;
-        sendDevicesReport();
+		if (menuId > 0) {
+			com.telldus.systray.removeMenuItem(menuId);
+			com.telldus.systray.removeMenuItem(separatorId);
+			menuId = 0;
+			separatorId = 0;
+		}
+		supportedMethods = msg.getInt('supportedMethods');
+		isRegistered = true;
+		sendDevicesReport();
 	}
-	
+
 	function sendDevicesReport() {
-	    if (!isRegistered) {
-	        return;
-	    }
-	    msg = new LiveMessage("DevicesReport");
-	    var deviceList = com.telldus.core.deviceList.getList();
-	    list = new LiveMessageToken();
+		if (!isRegistered) {
+			return;
+		}
+		msg = new LiveMessage("DevicesReport");
+		var deviceList = com.telldus.core.deviceList.getList();
+		list = new LiveMessageToken();
 		for( i in deviceList ) {
-		    device = new LiveMessageToken();
-		    device.set('id', deviceList[i].id);
-		    device.set('name', deviceList[i].name);
-		    device.set('methods', com.telldus.core.methods(deviceList[i].id, supportedMethods) );
-		    device.set('state', com.telldus.core.lastSentCommand(deviceList[i].id, supportedMethods) );
-		    device.set('stateValue', com.telldus.core.lastSentValue(deviceList[i].id, supportedMethods) );
-		    list.add(device);
+			device = new LiveMessageToken();
+			device.set('id', deviceList[i].id);
+			device.set('name', deviceList[i].name);
+			device.set('methods', com.telldus.core.methods(deviceList[i].id, supportedMethods) );
+			device.set('state', com.telldus.core.lastSentCommand(deviceList[i].id, supportedMethods) );
+			device.set('stateValue', com.telldus.core.lastSentValue(deviceList[i].id, supportedMethods) );
+			list.add(device);
 		}
 		msg.appendToken(list);
 		socket.sendMessage(msg);
 	}
-	
+
+	function errorChanged(msg) {
+		configUI.findChild('errorLabel').text = msg;
+	}
+
+	function statusChanged(msg) {
+		configUI.findChild('statusLabel').text = msg;
+	}
+
 	return { //Public functions
 		init:init
 	}

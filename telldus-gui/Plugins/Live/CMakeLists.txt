@@ -22,6 +22,11 @@ SET( Plugin_MOC_HDRS
 	LiveObject.h
 )
 
+SET( Plugin_EXTRA
+	configuration.ui
+	icon.png
+)
+
 CONFIGURE_FILE(
 	${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
 	${CMAKE_CURRENT_BINARY_DIR}/parsed/config.h

@@ -32,6 +32,8 @@ signals:
 	void messageReceived(LiveMessage *message);
 	void notRegistered();
 	void registered(LiveMessageTokenScriptWrapper *params);
+	void errorChanged(const QString &message);
+	void statusChanged(const QString &message);
 
 private slots:
 	void p_connected();
