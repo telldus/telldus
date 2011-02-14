@@ -433,6 +433,8 @@ function removeParentPoint(newParentPoint){
 	print("Removing parent point...");
 	delete childPoints[newParentPoint.deviceRow.parent.parent.daydate.getDay()]; //remove the current point from the child list
 	newParentPoint.setChildPoints(childPoints); //copy child list to current child (making it a parent)
+	newParentPoint.lastRun = newParentPoint.parentPoint.lastRun;
+	newParentPoint.pointId = newParentPoint.parentPoint.pointId;
 	newParentPoint.parentPoint = undefined;
 	updateParentsInChildList(newParentPoint); //update all other child points (if any) with the current point as their parent
 	pointRect.remove("true");

@@ -49,6 +49,7 @@
 		}
 		else if( event.key == Qt.Key_Delete){
 			//TODO warning?
+			print("DELETING");
 			container.actionPoint.remove();
 			
 		}
@@ -94,8 +95,11 @@
 	}
 
 	function hide() {
-		 container.opacity = 0;
-		 container.border.width = 0
+		if(container.opacity == 1){
+			actionPoint.deviceRow.setChanged();
+		}
+		container.opacity = 0;
+		container.border.width = 0
 	 }
      
 	 smooth: true

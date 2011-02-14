@@ -308,25 +308,6 @@ import "schedulerscripts.js" as Scripts
 						dynamicPoint.setFirstState();
 						dynamicPoint.pointId = new Date().getTime(); //just needed for storage update
 						
-						
-						//TEST, proof of concept for repeat-everyday-points:
-						//if deleted, must check if parent exists before deletion
-						//in that case, parent must have list of all its children and delete them too...
-						/*
-						var dynamicPoint2 = component.createObject(deviceRow.parent.parent.children[1])
-						dynamicPoint2.absoluteHour = dynamicPoint.absoluteHour
-						dynamicPoint2.absoluteMinute = 30
-						dynamicPoint2.parentPoint = dynamicPoint
-						dynamicPoint2.x = dynamicPoint2.getAbsoluteXValue();
-						dynamicPoint2.border.color = "blue"
-						dynamicPoint2.addActiveState("on");
-						dynamicPoint2.addActiveState("off");
-						dynamicPoint2.addActiveState("dim");
-						dynamicPoint2.addActiveState("bell");
-						dynamicPoint2.setFirstState();
-						*/
-						//SLUT TEST
-						
 						deviceRow.updateContinuingBars();
 						dialog.show(dynamicPoint) 
 					}

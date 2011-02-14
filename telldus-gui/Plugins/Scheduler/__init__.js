@@ -41,12 +41,15 @@ com.telldus.scheduler = function() {
 	
 	//add several jobs at once, withou recalculating timer between each
 	function addJobs(jobs){
+		var returnKeys = new Array();
+		if(jobs == undefined || jobs.length == 0){
+			return returnKeys;
+		}
 		if(storedJobs.length == 0){
 			print("Adding daylight saving time");
 			var daylightSavingReloadKey = storedJobs.push(getDaylightSavingReloadJob());
 			updateJobInList(daylightSavingReloadKey, true); //waitForMore = don't sort array and recalculate timer yet
 		}
-		var returnKeys = new Array();
 		for(var i=0;i<jobs.length;i++){
 			var job = jobs[i];
 			var key = storedJobs.push(job);
