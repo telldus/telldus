@@ -19,7 +19,7 @@ signals:
 	void save();
 
 public slots:
-	QScriptValue addPage( const QString &name, const QString &file );
+	QScriptValue addPage( const QString &name, const QString &file, const QString &icon );
 	void open();
 	void valueChanged();
 

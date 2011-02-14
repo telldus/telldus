@@ -75,7 +75,7 @@ ConfigurationDialog::~ConfigurationDialog() {
 	delete d;
 }
 
-QScriptValue ConfigurationDialog::addPage( const QString &name, const QString &filename ) {
+QScriptValue ConfigurationDialog::addPage( const QString &name, const QString &filename, const QString &icon ) {
 	QDir dir = this->baseDir();
 
 	QUiLoader loader;
@@ -86,7 +86,7 @@ QScriptValue ConfigurationDialog::addPage( const QString &name, const QString &f
 
 	int index = d->stackedLayout->addWidget(widget);
 
-	QListWidgetItem *item = new QListWidgetItem(QIcon(":images/TelldusCenter_128.png"), name, d->listWidget);
+	QListWidgetItem *item = new QListWidgetItem(QIcon(dir.filePath(icon)), name, d->listWidget);
 	QString plugin = this->currentPlugin();
 	item->setData(Qt::UserRole, plugin);
 	d->listWidget->addItem(item);
