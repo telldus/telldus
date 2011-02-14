@@ -63,12 +63,15 @@ com.telldus.scheduler = function() {
 	function fuzzify(currentTimestamp, fuzzinessBefore, fuzzinessAfter, lastRun){
 		if(fuzzinessAfter != 0 || fuzzinessBefore != 0){
 			var now = new Date().getTime();
+			var fuzzinessBeforeOrig = fuzzinessBefore*1000;
 			if(currentTimestamp - (fuzzinessBefore*1000) < now){
+				//print("Already in interval");
 				fuzzinessBefore = (currentTimestamp - now)/1000; //we have already entered the fuzzy-interval, move the start point to "now"...
 			}
-			//print("LASTRUN: " + new Date(lastRun));
-			//print("COMPARE: " + new Date(currentTimestamp - (fuzzinessBefore*1000)));
-			if(lastRun != undefined && lastRun >= (currentTimestamp - (fuzzinessBefore*1000))){
+			//print("LASTRUN: " + lastRun + " - " + new Date(lastRun));
+			//print("COMPARE: " + (currentTimestamp - (fuzzinessBefore*1000)) + " - " + new Date(currentTimestamp - (fuzzinessBefore*1000)));
+			//print("COMPARE: " + (currentTimestamp - fuzzinessBeforeOrig) + " - " + new Date(currentTimestamp - fuzzinessBeforeOrig));
+			if(lastRun != undefined && lastRun >= (currentTimestamp - fuzzinessBeforeOrig)){
 				//print("JUST RETURNING");
 				return 0; //job already run in this interval, don't run it again...
 			}
