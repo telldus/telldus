@@ -8,10 +8,11 @@ __postInit__ = function() {
 com.telldus.schedulersimplegui = function() {
 	var deviceList;
 	var view;
+	var restoredJobsTimerKeys;
+	var sunData;
 
 	function init() {
 		view = new com.telldus.qml.view({
-			addDevice: addDevice,
 			addJobsToSchedule: addJobsToSchedule,
 			getJob: getJob,
 			getMethodFromState: getMethodFromState,
@@ -21,7 +22,8 @@ com.telldus.schedulersimplegui = function() {
 			getSunData: getSunData,
 			getTypeFromTriggerstate: getTypeFromTriggerstate,
 			getTriggerstateFromType: getTriggerstateFromType,
-			restoreJobs: restoreJobs
+			restoreJobs: restoreJobs,
+			updateSunData: updateSunData
 		});
 
 		//devices:
@@ -37,9 +39,8 @@ com.telldus.schedulersimplegui = function() {
 		//Listen for device-change
 		com.telldus.core.deviceChange.connect(deviceChange);
 
-		//var storedPoints = loadJobs();
-		//view.setProperty('storedPoints', storedPoints);
-
+		updateSunData(new Date()); //default
+		
 		//set images:
 		view.setProperty("imageTriggerSunrise", "sunrise.png");
 		view.setProperty("imageTriggerSunset", "sunset.png");
@@ -55,14 +56,12 @@ com.telldus.schedulersimplegui = function() {
 		view.setProperty("constDeviceRowHeight", 50);
 		view.setProperty("constDeviceRowWidth", 600);
 		view.setProperty("constPointWidth", 30);
+		view.setProperty("mainHeight", 700); //TODO get this from somewhere
+		view.setProperty("mainWidth", 800); //TODO get this from somewhere
 
 		view.load("main.qml");
 		application.addWidget("scheduler.simple", "icon.png", view);
 
-	}
-
-	function addDevice() {
-		deviceList.push({name:'Stallet istallet'});
 	}
 
 	function deviceChange( deviceId, eventType ) {
@@ -81,6 +80,13 @@ com.telldus.schedulersimplegui = function() {
 				com.telldus.scheduler.removeJob(deviceTimerKeys[i]);
 			}
 		}
+		if(restoredJobsTimerKeys != undefined && restoredJobsTimerKeys[deviceId] != undefined){
+			for(var i=0;i<restoredJobsTimerKeys[deviceId].length;i++){
+				var waitForMore = (i == restoredJobsTimerKeys[deviceId].length-1) ? "true" : undefined;
+				com.telldus.scheduler.removeJob(restoredJobsTimerKeys[deviceId][i]);
+			}
+			restoredJobsTimerKeys[deviceId] = undefined;
+		}
 		
 		//add new schedules:
 		var jobs = new Array();
@@ -88,9 +94,7 @@ com.telldus.schedulersimplegui = function() {
 			var jobtemp = getJob(points[i], callbackFunc);
 			jobs.push(jobtemp);
 		}
-		print("Adding some jobs " + jobs.length);
 		saveJobs(deviceId, jobs);
-		//return [];
 		return com.telldus.scheduler.addJobs(jobs);
 	}
 	
@@ -108,13 +112,14 @@ com.telldus.schedulersimplegui = function() {
 	function loadJobs(updateLastRun){
 		var settings = new com.telldus.settings();
 		var storedJobs = settings.value("jobs", "");
-		restoreJobsToSchedule(storedJobs, updateLastRun); //Start timers here
+		restoredJobsTimerKeys = restoreJobsToSchedule(storedJobs, updateLastRun); //Start timers here, save keys so they can be removed if jobs are updated
 		return storedJobs;
 	}
 	
 	function restoreJobsToSchedule(storedJobs, updateLastRun){
-		var jobs = new Array();
+		var deviceTimerKeys = {};
 		for(var devicekey in storedJobs){
+			var jobs = new Array();
 			for(var i=0;i<storedJobs[devicekey].length;i++){
 				if(storedJobs[devicekey][i] == undefined){
 					continue;
@@ -122,8 +127,11 @@ com.telldus.schedulersimplegui = function() {
 				var jobtemp = restoreJob(storedJobs[devicekey][i], updateLastRun);
 				jobs.push(jobtemp);
 			}
+			if(jobs.length > 0){
+				deviceTimerKeys[devicekey] = com.telldus.scheduler.addJobs(jobs); //have to do this per device, so that the timerkeys are stored for each device
+			}
 		}
-		return com.telldus.scheduler.addJobs(jobs)
+		return deviceTimerKeys;
 	}
 	
 	function restoreJob(storedJob, updateLastRunInGUI){
@@ -141,7 +149,6 @@ com.telldus.schedulersimplegui = function() {
 	function getJob(pointArray, updateLastRunInGUI){ //deviceId, pointName, startdate, lastrun, pointMethod, pointDimValue, pointTime, pointType, pointFuzzinessBefore, pointFuzzinessAfter, pointOffset, pointDays
 		//updateLastRunInGUI: deviceId, day of week, id
 		var execFunc = function(job){ print("Custom execute function running"); print("Job: " + job.v.name); var lastRun = new Date().getTime(); updateLastRun(job, lastRun); updateLastRunInGUI(job.v.device, job.v.events[job.v.id + "_0"].d.value, job.v.id, lastRun); return job.executeDefault();};
-		print("POINTARRAY3: " + pointArray[3]);
 		var job = new com.telldus.scheduler.JobRecurringWeek({id: pointArray[13], executeFunc: execFunc, name: pointArray[1], type: com.telldus.scheduler.JOBTYPE_RECURRING_WEEK, startdate: pointArray[2], lastRun: pointArray[3], device: pointArray[0], method: pointArray[4], value: pointArray[5], absoluteTime: pointArray[12]});
 		var event = {};
 		var pointFuzzinessBefore = (pointArray[8]*60);
@@ -160,20 +167,13 @@ com.telldus.schedulersimplegui = function() {
 		return job;
 	}
 	
+	//Update last run for this job from storage, then store it again
 	function updateLastRun(job, lastRun){
-		//TODO uppdatera både storage och värdet i pointen...
 		var settings = new com.telldus.settings();
 		var storedjobs = settings.value("jobs", "");
-		//settings.setValue("test", "TESTAR");
-		print("UPDATING LAST RUN 3 " + storedjobs);
 		for(var devicekey in storedjobs){
-			print("Key: " + devicekey);
 			if(devicekey == job.v.device){
-				print("En bra bit");
-				
 				for(var i=0;i<storedjobs[devicekey].length;i++){
-					print("GREJ 2: " + storedjobs[devicekey][i].v.id);
-					print("JMF: " + job.v.id);
 					if(storedjobs[devicekey][i].v.id == job.v.id){
 						storedjobs[devicekey][i].v.lastRun = lastRun;
 						break;
@@ -184,10 +184,6 @@ com.telldus.schedulersimplegui = function() {
 		}
 		
 		settings.setValue("jobs", storedjobs);
-		print("saveD");
-		
-		//för alla points denna... device och dag (parentpointens dag, dvs det som är lagrat i job)
-		//gå igenom punkterna, hitta punkt med korrekt id, uppdatera last run för den...
 	}
 	
 	function getMethodFromState(state){
@@ -224,9 +220,14 @@ com.telldus.schedulersimplegui = function() {
 		return state;
 	}
 	
+	function updateSunData(date){
+		sunData = com.telldus.suncalculator.riseset(date);
+		return sunData;
+	}
+	
 	function getSun(riseset, rowWidth, pointWidth){
-		var date = new Date();
-		var timevalues = com.telldus.suncalculator.riseset(date);
+		var timevalues = sunData;
+		
 		var hourminute;
 		if(riseset == "rise"){
 			hourminute = timevalues[0].split(':');
@@ -239,13 +240,12 @@ com.telldus.schedulersimplegui = function() {
 	}
 
 	//Raw sun data
-	function getSunData(){
-		var date = new Date;
+	function getSunData(date){
+		print("GET SUN DATA - can be made more efficient if called often...");
 		return com.telldus.suncalculator.riseset(date);
 	}
 
 	function getSunRiseTime(rowWidth, pointWidth){
-
 		return getSun("rise", rowWidth, pointWidth);
 	}
 

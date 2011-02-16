@@ -22,6 +22,7 @@ Rectangle{
 	property variant lastRun: 0;
 	//property int parentPointAbsoluteHour //TEST changed from int, want "undefined"
 	property alias deviceRow: pointRect.parent
+	property variant selectedDate: (deviceRow == null || deviceRow == undefined) ? new Date() : deviceRow.selectedDate
 	
 	Component.onCompleted: {
 		//TODO useless really, still gets Cannot anchor to a null item-warning...
@@ -41,27 +42,10 @@ Rectangle{
 	z: 100
 	state: "on"
 	focus: true
-	//actionTypeColor: getColor()
-	
-	//TODO make this work:
-	/*Keys.onLeftPressed: {
-		pointRect.x = pointRect.x - 1
-	}
-	Keys.onRightPressed: {
-		pointRect.x = pointRect.x + 1
-	}
-		   
-		    Text {
-        //focus: true
-		text: pointRect.activeFocus ? "I HAVE active focus!" : "I do NOT have active focus"
-     }
-     */
-	
 	
 	//reflect changes on parent/siblings:
 	onAbsoluteHourChanged: {
 		updateChanges();
-		//print("ABSOLUTE HOUR CHANGED");
 	}
 	
 	onAbsoluteMinuteChanged: {
@@ -167,14 +151,14 @@ Rectangle{
 					PropertyChanges { target: triggerImage; source: imageTriggerSunrise; opacity: 1 }
 					PropertyChanges { target: triggerTime; opacity: 0 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: undefined }
-					PropertyChanges { target: pointRect; x: getSunRiseTime.callWith(pointRect.parent.width, pointRect.width) + minutesToTimelineUnits(pointRect.offset) } //TODO se nedan
+					PropertyChanges { target: pointRect; x: getSunRiseTime.callWith(pointRect.parent.width, pointRect.width, pointRect.selectedDate) + minutesToTimelineUnits(pointRect.offset) } //TODO se nedan
 				},
 				State {
 					name: "sunset"
 					PropertyChanges { target: triggerImage; source: imageTriggerSunset; opacity: 1 }
 					PropertyChanges { target: triggerTime; opacity: 0 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: undefined }
-					PropertyChanges { target: pointRect; x: getSunSetTime.callWith(pointRect.parent.width, pointRect.width) + minutesToTimelineUnits(pointRect.offset) } //TODO räkna om till tidsunits
+					PropertyChanges { target: pointRect; x: getSunSetTime.callWith(pointRect.parent.width, pointRect.width, pointRect.selectedDate) + minutesToTimelineUnits(pointRect.offset) } //TODO räkna om till tidsunits
 				},
 				State {
 					name: "absolute"; when: !pointRectMouseArea.drag.active
@@ -272,8 +256,8 @@ Rectangle{
 			//print("Different x");
 			point = pointRect.parentPoint;
 		}
-		//print("ABSOLUTE X-value: " + (point.absoluteHour * hourSize + hourSize * (point.absoluteMinute/60) - point.width/2));
-		//print("AbsoluteHour: " +point.absoluteHour+ " hourSize: " + hourSize + " AbsoluteMinute: " + point.absoluteMinute + " Width: " + point.width); 
+		print("ABSOLUTE X-value: " + (point.absoluteHour * hourSize + hourSize * (point.absoluteMinute/60) - point.width/2));
+		print("AbsoluteHour: " +point.absoluteHour+ " hourSize: " + hourSize + " AbsoluteMinute: " + point.absoluteMinute + " Width: " + point.width); 
 		return point.absoluteHour * hourSize + hourSize * (point.absoluteMinute/60) - point.width/2;
 	}
 	

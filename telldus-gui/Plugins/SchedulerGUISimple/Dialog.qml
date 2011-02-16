@@ -11,12 +11,9 @@
 	focus: true
 	Keys.onPressed: {
 		
-		tryme(event, "container");
-		
 		var hours = 0;
 		var minutes = 0;
-		if (event.key == Qt.Key_Left) {
-			//actionPoint.x = actionPoint.x - 1
+		if (event.key == Qt.Key_Left && actionPoint.triggerstate == "absolute") { //step left, 1 min
 			var minutes = parseInt(inputAbsoluteMinuteText.text, 10);
 			var hours = parseInt(inputAbsoluteHourText.text, 10);
 			if(minutes == 0){
@@ -31,8 +28,7 @@
 			}
 			event.accepted = true;
 		}
-		else if (event.key == Qt.Key_Right) {
-			//actionPoint.x = actionPoint.x + 1
+		else if (event.key == Qt.Key_Right && actionPoint.triggerstate == "absolute") { //step right, 1 min
 			var minutes = parseInt(inputAbsoluteMinuteText.text, 10);
 			var hours = parseInt(inputAbsoluteHourText.text, 10);
 			if(minutes == 59){
@@ -49,9 +45,7 @@
 		}
 		else if( event.key == Qt.Key_Delete){
 			//TODO warning?
-			print("DELETING");
 			container.actionPoint.remove();
-			
 		}
 		else{
 			return;
@@ -69,7 +63,7 @@
 		//create default actionPoint, to avoid null values and binding errors
 		var component = Qt.createComponent("ActionPoint.qml")
 		var dynamicPoint = component.createObject(container)
-		dynamicPoint.opacity = 0  //TODO why not use "visible"? Test that...
+		dynamicPoint.opacity = 0
 		dynamicPoint.width = 0
 		dynamicPoint.height = 0
 		container.actionPoint = dynamicPoint
@@ -88,7 +82,7 @@
 		container.actionPoint = actionPoint
 		
 		var rootCoordinates = actionPoint.mapToItem(null, actionPoint.x, actionPoint.y);
-		container.y = rootCoordinates.y + actionPoint.height + 10;
+		container.y = rootCoordinates.y + actionPoint.height + 10; //TODO poistion in other way, too far down in some cases now
 		container.width = actionPoint.parent.width;
 		container.x = (actionPoint.parent.parent.width - container.width)/2;
 		container.opacity = 1;
@@ -104,8 +98,7 @@
      
 	 smooth: true
 	 radius: 5
-     //width: 500 //TODO
-     height: 500 // typelist.height * 2 + 50
+     height: 500
      opacity: 0
 
 	Button{
@@ -117,11 +110,6 @@
 		anchors.leftMargin: 50
 		onClicked: {
 			container.actionPoint.toggleType();
-		}
-		
-		Keys.onLeftPressed: {
-			debug("Left pressed"); //TODO make it work
-			
 		}
 	}
 	
@@ -559,13 +547,10 @@
 		width: weekColumn.width
 		Column{
 			id: "weekColumn"
-			//anchors.verticalCenter: parent.verticalCenter	
-			//anchors.fill: parent
 			spacing: 2
 			Repeater{
 				id: weekRepeater
-				model: 7 //actionPoint.daysOfWeek
-				//delegate: weekDayDelegate
+				model: 7 //7 days, one week...
 				Rectangle{
 					width: 30
 					height: 30
@@ -582,13 +567,11 @@
 							anchors.fill: parent
 							onClicked: {
 								actionPoint.toggleTickedWeekDay(index)
-								print("Just toggled, now update image: " + actionPoint);
 								tickBox.source = actionPoint.getTickedImageSource(index)
 							}
 						}
 					}
 					Text{
-						//anchors.fill: parent
 						anchors.left: tickBox.right
 						anchors.leftMargin: 10
 						text: Scripts.getOffsetWeekdayName(index)
@@ -611,9 +594,7 @@
 		id: closeButton
 		text: "Close"
 		anchors.top: weekDayPanel.bottom
-		anchors.horizontalCenter: weekDayPanel.right //horizontalCenter
-		//y: circleTrigger.y + 30
-		//x: parent.x + 30
+		anchors.horizontalCenter: weekDayPanel.right
 		onClicked: {
 			hide();
 		}
@@ -625,20 +606,19 @@
 		anchors.topMargin: 20
 		anchors.left: currentType.right
 		anchors.leftMargin: 10
-		width: 100 //TODO relative
-		height: 100 //TODO relative
+		width: 100
+		height: 100
 		model: typeSelection
 		delegate: typeSelectionRow
 		highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
 		snapMode: ListView.SnapToItem
 		interactive: false
 	
-		//TODO can these paths be turned into some kind of constants? Import from common file or something?
 		ListModel{
 			id: typeSelection
 			ListElement{
 				name: "on"
-				imagesource: "on.png" //TODO cannot use javascript properties here... do in some other way, maybe a list with names here?
+				imagesource: "on.png"
 			}
 			ListElement{
 				name: "off"
@@ -683,26 +663,17 @@
 				width: 30; height: 30
 				Image{
 					anchors.fill: parent
-					//anchors.left: typeSelectionText.right
-					//anchors.leftMargin: 10
-					//anchors.centerIn: parent
 					source: imagesource
 					
 					MouseArea{
 						anchors.fill: parent
 						onClicked: {
-							//pointRect.focus = true
 							container.actionPoint.setType(name)
-							//typeList.highlight = name
 						}
 					}
 				}
 			}
 		}
-	}
-	
-	function tryme(event, origin){
-		print("KEY: " + event.key + " Från: " + origin);
 	}
 	
 	function getMinimumOffset(state){
@@ -735,6 +706,6 @@
 			return 0 ;
 		}
 		
-		return 24 * 60 - (parseInt(time[0], 10) * 60 + parseInt(time[1], 10));
+		return 24 * 60 - (parseInt(time[0], 10) * 60 + parseInt(time[1], 10));	
 	}
  } 

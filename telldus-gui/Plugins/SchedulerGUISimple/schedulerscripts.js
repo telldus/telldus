@@ -55,6 +55,7 @@ function addDay(day){
 }
 
 function decrementCurrentDay(){
+	print("Currentdayindex: " + currentDayIndex);
 	days[currentDayIndex].state = "hiddenRight";
 	var workDate = days[currentDayIndex].daydate;
 	workDate.setDate(workDate.getDate() - 7);
@@ -71,6 +72,15 @@ function decrementCurrentDay(){
 
 function getCurrentDay(){
 	return days[currentDayIndex];
+}
+
+function getCurrentDate(){
+	if(days.length < 7){
+		//not initiated yet
+		return new Date(); //now
+	}
+	var date = new Date(days[currentDayIndex].daydate);
+	return date;
 }
 
 function getCurrentDayName(){
@@ -186,19 +196,7 @@ function getPreviousState(currentPointRect){
 	return prevPoint.state;
 }
 
-function isMidnightDark(){
-	if(main.sunData == undefined){
-		main.sunData = getSunData.call();
-	}
-	
-	var sunrise = main.sunData[0].split(':');;
-	var sunset = main.sunData[1].split(':');
-	
-	if(sunset[0] < sunrise[0] || (sunset[0] == sunrise[0] && sunset[1] < sunrise[1])){
-		return false;
-	}
-	return true;
-}
+
 
 function pad(number, length) {
    
@@ -596,11 +594,11 @@ function createChildPoint(index, pointRect, deviceId){
 	dynamicPoint.fuzzyBefore = pointRect.fuzzyBefore;
 	dynamicPoint.fuzzyAfter = pointRect.fuzzyAfter;
 	dynamicPoint.offset = pointRect.offset;
-	dynamicPoint.triggerstate = pointRect.triggerstate;
 	dynamicPoint.dimvalue = pointRect.dimvalue;
 	
 	dynamicPoint.parentPoint = pointRect
 	dynamicPoint.x = dynamicPoint.getAbsoluteXValue();
+	dynamicPoint.triggerstate = pointRect.triggerstate;
 	dynamicPoint.border.color = "blue"
 	dynamicPoint.setActiveStates(pointRect.getActiveStates());
 	
