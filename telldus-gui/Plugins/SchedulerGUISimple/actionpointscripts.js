@@ -95,24 +95,25 @@ function updateParentsInChildList(newParentPoint){
 function updateChildPoints(){
 	
 	var children;
+	var localParentPoint;
 	if(pointRect.parentPoint != undefined){
 		children = pointRect.parentPoint.getChildPoints();
-		parentPoint = pointRect.parentPoint;
+		localParentPoint = pointRect.parentPoint;
 	}
 	else{
 		children = getChildPoints();
-		parentPoint = pointRect;
+		localParentPoint = pointRect;
 	}
 	
 	for(var point in children){
-		children[point].absoluteHour = parentPoint.absoluteHour;
-		children[point].absoluteMinute = parentPoint.absoluteMinute;
-		children[point].fuzzyBefore = parentPoint.fuzzyBefore;
-		children[point].fuzzyAfter = parentPoint.fuzzyAfter;
-		children[point].offset = parentPoint.offset;
-		children[point].triggerstate = parentPoint.triggerstate;
-		children[point].dimvalue = parentPoint.dimvalue;
-		children[point].state = parentPoint.state;
+		children[point].absoluteHour = localParentPoint.absoluteHour;
+		children[point].absoluteMinute = localParentPoint.absoluteMinute;
+		children[point].fuzzyBefore = localParentPoint.fuzzyBefore;
+		children[point].fuzzyAfter = localParentPoint.fuzzyAfter;
+		children[point].offset = localParentPoint.offset;
+		children[point].triggerstate = localParentPoint.triggerstate;
+		children[point].dimvalue = localParentPoint.dimvalue;
+		children[point].state = localParentPoint.state;
 		if(children[point].triggerstate == "absolute"){
 			children[point].x = children[point].getAbsoluteXValue();
 		}

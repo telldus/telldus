@@ -18,10 +18,9 @@ Rectangle{
 	property int absoluteHour: parseInt(dialog.absoluteHour, 10)
 	property int absoluteMinute: parseInt(dialog.absoluteMinute, 10)
 	property alias triggerstate: trigger.state
-	property variant parentPoint
+	property variant parentPoint: undefined
 	property variant pointId
 	property variant lastRun: 0;
-	//property int parentPointAbsoluteHour //TEST changed from int, want "undefined"
 	property alias deviceRow: pointRect.parent
 	property variant selectedDate: (deviceRow == null || deviceRow == undefined) ? new Date() : deviceRow.selectedDate
 	
@@ -32,7 +31,6 @@ Rectangle{
 		var dynamicBar = actionBar.createObject(pointRect)
 		dynamicBar.hangOnToPoint = pointRect
 		dynamicBar.state = "pointLoaded"
-		//pointRect.hangOnToBar = dynamicBar
 	}
 	
 	//use item instead of rectangle (no border then though) to make it invisible (opacity: 0)
@@ -418,6 +416,7 @@ Rectangle{
 	function remove(keepDialogOpen, ignoreParent){
 		if(keepDialogOpen == undefined && ignoreParent == undefined && pointRect.parentPoint != undefined){
 			//remove from parent instead
+			print(pointRect.parentPoint);
 			pointRect.parentPoint.remove();
 			return;
 		}

@@ -8,7 +8,7 @@ import "mainscripts.js" as MainScripts
 	width: mainWidth
 	height: mainHeight
 	property int dayListHeaderHeight: 15
-	property variant selectedDate: Scripts.getCurrentDate();  //Maybe just today
+	property variant selectedDate: MainScripts.getCurrentDate();  //Maybe just today
 	property variant sunData: MainScripts.getSunData();
 	
 	Component.onCompleted: {
@@ -22,17 +22,17 @@ import "mainscripts.js" as MainScripts
 			var currentDay = new Date(startday);
 			currentDay.setDate(startday.getDate() + i);
 			dynamicDay.daydate = currentDay;
-			Scripts.addDay(dynamicDay);
+			MainScripts.addDay(dynamicDay);
 		}
 		dynamicDay.state = "visible" //set last day (today) as visible
-		weekDayText.text = Scripts.getCurrentDayName()
-		Scripts.updateDeviceIndex();
-		Scripts.setLoading();
+		weekDayText.text = MainScripts.getCurrentDayName()
+		MainScripts.updateDeviceIndex();
+		MainScripts.setLoading();
 		var updateLastRunFunc = updateLastRun;
 		restoreJobs.callWith(updateLastRunFunc);
-		Scripts.initiateStoredPointsInGUI();
-		Scripts.endLoading();
-		Scripts.updateEndsWith();
+		MainScripts.initiateStoredPointsInGUI();
+		MainScripts.endLoading();
+		MainScripts.updateEndsWith();
 	}
 
 	Rectangle{
@@ -47,7 +47,7 @@ import "mainscripts.js" as MainScripts
 			anchors.verticalCenter: weekDayText.verticalCenter
 			arrowText: "<-"
 			onClicked: {
-				Scripts.decrementCurrentDay();
+				MainScripts.decrementCurrentDay();
 			}
 		}
 		Text{
@@ -60,7 +60,7 @@ import "mainscripts.js" as MainScripts
 			anchors.verticalCenter: weekDayText.verticalCenter
 			arrowText: "->"
 			onClicked: {
-				Scripts.incrementCurrentDay();
+				MainScripts.incrementCurrentDay();
 			}
 		}
 	}
@@ -194,7 +194,7 @@ import "mainscripts.js" as MainScripts
 			property int deviceId: modelData.id;
 			property alias continuingBar: continuingBar
 			property variant selectedDate: main.selectedDate
-			property int currentDayIndex: Scripts.getCurrentDayIndex(main.selectedDate)
+			property int currentDayIndex: MainScripts.getCurrentDayIndex(main.selectedDate)
 			
 			state: "enabled"
 			
@@ -230,9 +230,9 @@ import "mainscripts.js" as MainScripts
 					dynamicPoint.addActiveState("bell");
 					dynamicPoint.setFirstState();
 					dynamicPoint.pointId = new Date().getTime(); //just needed for storage update
-					
 					deviceRow.updateContinuingBars();
 					dialog.show(dynamicPoint) 
+					
 				}
 			}
 			
@@ -251,11 +251,11 @@ import "mainscripts.js" as MainScripts
 			
 			//device functions:
 			function createChildPoint(index, pointRect, deviceId){
-				return Scripts.createChildPoint(index, pointRect, deviceId);
+				return MainScripts.createChildPoint(index, pointRect, deviceId);
 			}
 			
 			function getDeviceRow(dayIndex, deviceId){
-				return Scripts.getDeviceRow(dayIndex, deviceId);
+				return MainScripts.getDeviceRow(dayIndex, deviceId);
 			}
 			
 			function hasPoints(){
@@ -263,7 +263,7 @@ import "mainscripts.js" as MainScripts
 			}
 			
 			function isLoading(){
-				return Scripts.isLoading();
+				return MainScripts.isLoading();
 			}
 			
 			function setChanged(){
@@ -271,7 +271,7 @@ import "mainscripts.js" as MainScripts
 			}
 			
 			function updateContinuingBars(){
-				Scripts.updateEndsWith();
+				MainScripts.updateEndsWith();
 			}	
 		}
 	}
@@ -367,7 +367,7 @@ import "mainscripts.js" as MainScripts
 	}
 		
 	function saveAll(){
-		var days = Scripts.getDays();
+		var days = MainScripts.getDays();
 		if(dialog.dialogOpacity == 1){
 			MainScripts.setChanged(dialog.actionPoint.deviceRow.deviceId, true); //set the devicerow that the currently visible dialog is connected to as dirty
 		}
@@ -380,9 +380,9 @@ import "mainscripts.js" as MainScripts
 			}
 			MainScripts.setChanged(deviceId, false); //reset hasChanged-status
 				
-			if(Scripts.deviceIsEnabled(deviceId)){ //if device is disabled, don't add any points to schedule (but remove current)
+			if(MainScripts.deviceIsEnabled(deviceId)){ //if device is disabled, don't add any points to schedule (but remove current)
 				for(var j=0;j<days.length;j++){
-					var row = Scripts.getDeviceRow(days[j].daydate.getDay(), deviceId);
+					var row = MainScripts.getDeviceRow(days[j].daydate.getDay(), deviceId);
 					for(var k=0;k<row.children.length;k++){
 						var point = row.children[k];
 						if(point.isPoint && point.parentPoint == undefined){ //and not disabled
@@ -400,17 +400,17 @@ import "mainscripts.js" as MainScripts
 	}
 	
 	function updateCurrentDay(){
-		main.selectedDate = Scripts.getCurrentDate();
+		main.selectedDate = MainScripts.getCurrentDate();
 		main.sunData = updateSunData.callWith(main.selectedDate);
 		MainScripts.updateSunData(main.sunData);
-		weekDayText.text = Scripts.getCurrentDayName();
+		weekDayText.text = MainScripts.getCurrentDayName();
 	}
 	
 	function updateEndsWith(){
-		Scripts.updateEndsWith();
+		MainScripts.updateEndsWith();
 	}
 	
 	function updateLastRun(deviceId, day, pointId, lastRun){
-		Scripts.updateLastRun(deviceId, day, pointId, lastRun);
+		MainScripts.updateLastRun(deviceId, day, pointId, lastRun);
 	}
 }
