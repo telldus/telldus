@@ -14,10 +14,16 @@ Rectangle{
 
 	color: barRectangle.prevDayColor
 	opacity: barRectangle.prevDayOpacity
-	width: barRectangle.prevDayWidth //TODO Scripts.getBarWidth(barRectangle, hangOnToPoint, hangOnToPoint.parent.children); //TEST getNextAndPrevBarWidth before
+	width: barRectangle.prevDayWidth
 			
-	//TODO test this with binding to created functions onX
-
+	onStateChanged: {
+		//cannot bind these values as state change properties for some reason, do it here instead
+		if(state == "pointLoaded"){
+			anchors.verticalCenter = hangOnToPoint.verticalCenter;
+			anchors.left = hangOnToPoint.horizontalCenter;
+		}
+	}
+	
 	states: [
 		State{
 			name: "continuing"
@@ -25,11 +31,6 @@ Rectangle{
 				target: barRectangle
 				anchors.verticalCenter: hangOnToPoint.verticalCenter
 				anchors.left: hangOnToPoint.left
-				/*color: barRectangle.prevDayColor
-				//getPreviousDayColor(barRectangle.currentDay, barRectangle.days, hangOnToPoint.deviceId, barRectangle.deviceIndex)
-				opacity: barRectangle.prevDayOpacity
-				width: barRectangle.prevDayWidth //TODO Scripts.getBarWidth(barRectangle, hangOnToPoint, hangOnToPoint.parent.children);
-				*/
 			}
 		},
 		State{
@@ -45,8 +46,8 @@ Rectangle{
 			name: "pointLoaded"
 			PropertyChanges {
 				target: barRectangle
-				anchors.verticalCenter: hangOnToPoint.verticalCenter  //TODO Warning on this and the line below... cannot fix, warning even if setting to undefined directly
-				anchors.left: hangOnToPoint.horizontalCenter
+				//anchors.verticalCenter: hangOnToPoint.verticalCenter  //TODO Warning on this and the line below... cannot fix, warning even if setting to undefined directly
+				//anchors.left: hangOnToPoint.horizontalCenter
 				color: hangOnToPoint.actionTypeColor
 				opacity: hangOnToPoint.actionTypeOpacity
 				width: hangOnToPoint.parent == null ? 0 : Scripts.getBarWidth(barRectangle, hangOnToPoint, hangOnToPoint.parent.children)	
