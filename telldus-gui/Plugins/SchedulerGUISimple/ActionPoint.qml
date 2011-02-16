@@ -1,5 +1,6 @@
 import Qt 4.7
 import "schedulerscripts.js" as Scripts
+import "actionpointscripts.js" as ActionPointScripts
 
 Rectangle{
 	id: pointRect
@@ -256,14 +257,14 @@ Rectangle{
 			//print("Different x");
 			point = pointRect.parentPoint;
 		}
-		print("ABSOLUTE X-value: " + (point.absoluteHour * hourSize + hourSize * (point.absoluteMinute/60) - point.width/2));
-		print("AbsoluteHour: " +point.absoluteHour+ " hourSize: " + hourSize + " AbsoluteMinute: " + point.absoluteMinute + " Width: " + point.width); 
+		//print("ABSOLUTE X-value: " + (point.absoluteHour * hourSize + hourSize * (point.absoluteMinute/60) - point.width/2));
+		//print("AbsoluteHour: " +point.absoluteHour+ " hourSize: " + hourSize + " AbsoluteMinute: " + point.absoluteMinute + " Width: " + point.width); 
 		return point.absoluteHour * hourSize + hourSize * (point.absoluteMinute/60) - point.width/2;
 	}
 	
 	function toggleType(){ //TODO other kind of selection method
 		var index = 0;
-		var activeStates = Scripts.getActiveStates();
+		var activeStates = ActionPointScripts.getActiveStates();
 		if(activeStates == undefined || activeStates.length == 0){
 			return;
 		}
@@ -296,16 +297,16 @@ Rectangle{
 			//pointRect.xvalue = pointRect.x;
 			trigger.state = "sunrise";
 		}
-		Scripts.updateParentWithCurrentValues();
-		Scripts.updateChildPoints();
+		ActionPointScripts.updateParentWithCurrentValues();
+		ActionPointScripts.updateChildPoints();
 	}
 	
 	function updateChanges(){
 		if(pointRect.deviceRow == null || (pointRect.deviceRow.isLoading != undefined && pointRect.deviceRow.isLoading())){
 			return; //loading values from storage, wait until everything is in place
 		}
-		Scripts.updateParentWithCurrentValues();
-		Scripts.updateChildPoints();
+		ActionPointScripts.updateParentWithCurrentValues();
+		ActionPointScripts.updateChildPoints();
 		if(pointRect.triggerstate == "absolute"){
 			pointRect.x = getAbsoluteXValue();	
 		}
@@ -362,21 +363,20 @@ Rectangle{
 	
 	function addActiveState(state){
 		//print("Adding state: " + state);
-		Scripts.addActiveState(state);
+		ActionPointScripts.addActiveState(state);
 	}
 	
 	function setActiveStates(activeStates){
-		Scripts.setActiveStates(activeStates);
+		ActionPointScripts.setActiveStates(activeStates);
 	}
 	
 	function getActiveStates(){
-		return Scripts.getActiveStates();
+		return ActionPointScripts.getActiveStates();
 	}
 	
 	function setFirstState(firstState){
 	
-		//print("SETTING FIRST STATE");
-		var activeStates = Scripts.getActiveStates();
+		var activeStates = ActionPointScripts.getActiveStates();
 		
 		if(activeStates == null || activeStates.length == 0){
 			//nothing to do
@@ -405,7 +405,7 @@ Rectangle{
 			return;
 		}
 		
-		var previousState = Scripts.getPreviousState(pointRect);
+		var previousState = ActionPointScripts.getPreviousState(pointRect);
 		if(previousState == undefined || previousState == "" || previousState == "off"){
 			//nothing on/dimmed at the moment, use first added state
 			pointRect.state = activeStates[0];
@@ -428,7 +428,7 @@ Rectangle{
 		pointRect.isPoint = "false"
 		var pointList = pointRect.parent.children;
 		var deviceRow = pointRect.deviceRow;
-		var childPoints = Scripts.getChildPoints();
+		var childPoints = ActionPointScripts.getChildPoints();
 		for(var child in childPoints){
 			childPoints[child].remove(keepDialogOpen, "ignoreParent");
 			delete childPoints[child];
@@ -497,21 +497,24 @@ Rectangle{
 	}
 	
 	function getChildPoint(index){
-		return Scripts.getChildPoint(index);
+		return ActionPointScripts.getChildPoint(index);
 	}
 	function getChildPoints(){
-		return Scripts.getChildPoints();
+		return ActionPointScripts.getChildPoints();
 	}
 	function addChildPoint(index, point){
-		Scripts.addChildPoint(index, point);
+		ActionPointScripts.addChildPoint(index, point);
 	}
 	function removeChildPoint(index){
-		Scripts.removeChildPoint(index);
+		ActionPointScripts.removeChildPoint(index);
 	}
 	function removeParentPoint(newParentPoint){
-		Scripts.removeParentPoint(newParentPoint);
+		ActionPointScripts.removeParentPoint(newParentPoint);
 	}
 	function setChildPoints(childPoints){
-		Scripts.setChildPoints(childPoints);
+		ActionPointScripts.setChildPoints(childPoints);
+	}
+	function updateChildPoints(){
+		ActionPointScripts.updateChildPoints();
 	}
 }

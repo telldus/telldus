@@ -112,7 +112,7 @@ import "mainscripts.js" as MainScripts
 								//take that value into consideration when saving and sending jobs for execution
 								//else, remove this button
 								deviceNameRect.isEnabled = deviceNameRect.isEnabled == "enabled" ? "disabled" : "enabled"
-								Scripts.deviceEnabled(modelData.id, deviceNameRect.isEnabled);
+								MainScripts.deviceEnabled(modelData.id, deviceNameRect.isEnabled);
 							}
 						}
 					}
@@ -194,6 +194,8 @@ import "mainscripts.js" as MainScripts
 			property int deviceId: modelData.id;
 			property alias continuingBar: continuingBar
 			property variant selectedDate: main.selectedDate
+			property int currentDayIndex: Scripts.getCurrentDayIndex(main.selectedDate)
+			
 			state: "enabled"
 			
 			states: [
@@ -211,7 +213,7 @@ import "mainscripts.js" as MainScripts
 				id: deviceMouseArea
 				anchors.fill: parent
 				onClicked: {
-					Scripts.setChanged(deviceId, true);
+					MainScripts.setChanged(deviceId, true);
 					//TODO really needed? Scripts.updateDeviceIndex(); //needed here, adding points to empty device will get wrong state otherwise
 					var component = Qt.createComponent("ActionPoint.qml")
 					var dynamicPoint = component.createObject(deviceRow)
@@ -265,7 +267,7 @@ import "mainscripts.js" as MainScripts
 			}
 			
 			function setChanged(){
-				Scripts.setChanged(deviceId, true);
+				MainScripts.setChanged(deviceId, true);
 			}
 			
 			function updateContinuingBars(){
@@ -367,16 +369,16 @@ import "mainscripts.js" as MainScripts
 	function saveAll(){
 		var days = Scripts.getDays();
 		if(dialog.dialogOpacity == 1){
-			Scripts.setChanged(dialog.actionPoint.deviceRow.deviceId, true); //set the devicerow that the currently visible dialog is connected to as dirty
+			MainScripts.setChanged(dialog.actionPoint.deviceRow.deviceId, true); //set the devicerow that the currently visible dialog is connected to as dirty
 		}
 		for(var i=0;i<deviceModel.length;i++){
 			var points = new Array();
 			var deviceId = deviceModel.get(i).id;
-			if(!Scripts.hasChanged(deviceId)){
+			if(!MainScripts.hasChanged(deviceId)){
 				//no point has been updated, removed or added, ignore this device
 				continue;
 			}
-			Scripts.setChanged(deviceId, false); //reset hasChanged-status
+			MainScripts.setChanged(deviceId, false); //reset hasChanged-status
 				
 			if(Scripts.deviceIsEnabled(deviceId)){ //if device is disabled, don't add any points to schedule (but remove current)
 				for(var j=0;j<days.length;j++){
@@ -390,10 +392,10 @@ import "mainscripts.js" as MainScripts
 				}
 			}
 			
-			var deviceTimerKeys = Scripts.getDeviceTimerKeys(deviceId); //get timer keys for this device, for removal
+			var deviceTimerKeys = MainScripts.getDeviceTimerKeys(deviceId); //get timer keys for this device, for removal
 			var updateLastRunFunc = updateLastRun;
 			deviceTimerKeys = addJobsToSchedule.callWith(deviceId, points, deviceTimerKeys, updateLastRunFunc);  //remove all schedules for this device, and add them again
-			Scripts.setDeviceTimerKeys(deviceId, deviceTimerKeys); //save the new timer keys
+			MainScripts.setDeviceTimerKeys(deviceId, deviceTimerKeys); //save the new timer keys
 		}	
 	}
 	

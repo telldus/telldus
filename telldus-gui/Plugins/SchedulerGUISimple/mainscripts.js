@@ -62,7 +62,7 @@ function getSunData(){
 		main.updateCurrentDay();
 	}
 	if(calculatedSunData[0] == undefined){
-		return ["0:0","0:0","0:0"]; //TODO
+		return ["0:0","0:0",""]; //TODO
 	}
 	return calculatedSunData;
 }
@@ -126,4 +126,43 @@ function sunToTimeUnits(suntime){
 function willSunSet(){
 	var sunData = getSunData();
 	return !(sunData[2] && sunData[2] != "")
+}
+
+
+//DEVICE PROPERTIES:
+
+var deviceProperties = {};
+
+function deviceEnabled(deviceId, enabled){
+	updateDeviceIndex(); //TODO make this unnessessary
+	for(var i=0;i<days.length;i++){
+		var deviceRow = days[i].children[0].children[deviceIndex[deviceId]];
+		deviceRow.state = enabled; //TODO connect directly instead... if possible
+	}
+	setChanged(deviceId, true);
+}
+
+function getDeviceTimerKeys(deviceId){
+	var device = deviceProperties[deviceId];
+	return device == undefined ? {} : device["timerkeys"];
+}
+
+function setDeviceTimerKeys(deviceId, deviceTimerKeys){
+	if(deviceProperties[deviceId] == undefined){
+		deviceProperties[deviceId] = {};
+	}
+	deviceProperties[deviceId]["timerkeys"] = deviceTimerKeys;
+}
+
+function hasChanged(deviceId){
+	var device = deviceProperties[deviceId];
+	var hasChanged = device == undefined ? false : device["hasChanged"];
+	return hasChanged;
+}
+
+function setChanged(deviceId, change){
+	if(deviceProperties[deviceId] == undefined){
+		deviceProperties[deviceId] = {};
+	}
+	deviceProperties[deviceId]["hasChanged"] = change;
 }

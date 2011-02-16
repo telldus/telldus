@@ -16,6 +16,7 @@ Rectangle{
 	opacity: barRectangle.prevDayOpacity
 	width: barRectangle.prevDayWidth //TODO Scripts.getBarWidth(barRectangle, hangOnToPoint, hangOnToPoint.parent.children); //TEST getNextAndPrevBarWidth before
 			
+	//TODO test this with binding to created functions onX
 
 	states: [
 		State{
