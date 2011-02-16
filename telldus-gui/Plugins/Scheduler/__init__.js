@@ -23,7 +23,6 @@ com.telldus.scheduler = function() {
 	function init(){
 		JobDaylightSavingReload.prototype = new com.telldus.scheduler.Job();
 		setDaylightSavingJobFunctions();
-		//loadJobs(); //TODO remove this after testing is done
 	}
 	
 	
@@ -59,7 +58,6 @@ com.telldus.scheduler = function() {
 		}
 		joblist.sort(compareTime);
 		runNextJob();
-		
 		return returnKeys;
 	}
 	
@@ -234,7 +232,7 @@ com.telldus.scheduler = function() {
 		JobDaylightSavingReload.prototype.execute = function(){
 			//override default
 			print("Daylight savings job");
-			//TODO Make sure this job is run "last", if other jobs are set to be runt the same second
+			//TODO Make sure this job is run "last", if other jobs are set to be run at the same second
 			setTimeout(recalculateAllJobs(), 1); //sleep for one ms, to avoid strange calculations
 			//this may lead to that things that should be executed exactly at 3.00 when
 			//moving time forward one hour won't run, but that should be the only case
@@ -301,7 +299,6 @@ com.telldus.scheduler = function() {
 		removeJob: removeJob, //storage id
 		updateJob: updateJob, //storage id, job
 		updateLastRun: updateLastRun, //id, datetimestamp
-		//TODO getNextRunForJob? For all? (to see when job is due to run next)
 		init:init
 	}
 }();
