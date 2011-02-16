@@ -25,6 +25,7 @@ function getPreviousState(currentPointRect){
 	}
 	
 	if(prevPoint == null){
+		
 		//no previous point,see if state continues from previous day
 		if(firstBarStateIndex != undefined && pointList[firstBarStateIndex].firstBar != undefined){
 			
@@ -33,13 +34,14 @@ function getPreviousState(currentPointRect){
 				dayIndex = 6; //week length - 1
 			}
 			var prevDayDevice = currentPointRect.parent.getDeviceRow(dayIndex, currentPointRect.deviceRow.deviceId);
-			if(prevDayDevice != undefined){ 
-				return prevDayDevice.endPoint;
+			if(prevDayDevice != undefined && prevDayDevice.endPoint != undefined){ 
+				return prevDayDevice.endPoint.state;
 			}
 		}
 		
 		return "";
 	}
+	
 	return prevPoint.state;
 }
 

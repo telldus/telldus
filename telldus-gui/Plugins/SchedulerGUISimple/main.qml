@@ -214,7 +214,7 @@ import "mainscripts.js" as MainScripts
 				anchors.fill: parent
 				onClicked: {
 					MainScripts.setChanged(deviceId, true);
-					//TODO really needed? Scripts.updateDeviceIndex(); //needed here, adding points to empty device will get wrong state otherwise
+					MainScripts.updateDeviceIndex(); //needed here, adding points to empty device will get wrong state otherwise (test with one "on", put new device on the row below = off)
 					var component = Qt.createComponent("ActionPoint.qml")
 					var dynamicPoint = component.createObject(deviceRow)
 					var hourMinute = dynamicPoint.getTimeFromPosition(mouse.x)

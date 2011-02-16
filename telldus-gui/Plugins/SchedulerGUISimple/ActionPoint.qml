@@ -395,7 +395,6 @@ Rectangle{
 				break;
 			}
 		}
-		
 		if(!exists){
 			//no "off", just set state to the first added state
 			
