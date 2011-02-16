@@ -12,6 +12,8 @@ SET( Plugin_EXTRA
 	Dialog.qml
 	icon.png
 	main.qml
+	mainscripts.js
+	NavButton.qml
 	schedulerscripts.js
 	absolute.png
 	sunrise.png
