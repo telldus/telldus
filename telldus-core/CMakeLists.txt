@@ -4,7 +4,7 @@ CMAKE_MINIMUM_REQUIRED( VERSION 2.6.0 )
 
 CMAKE_POLICY(SET CMP0003 NEW)
 
-OPTION(FORCE_COMPILE_FROM_TRUNK FALSE "Accept compiling souce from trunk. This is unsupported and highly unrecommended")
+OPTION(FORCE_COMPILE_FROM_TRUNK FALSE "Accept compiling source from trunk. This is unsupported and highly unrecommended")
 IF(NOT FORCE_COMPILE_FROM_TRUNK)
 	MESSAGE(FATAL_ERROR "You are compiling sources from trunk. Don't do that!")
 ENDIF(NOT FORCE_COMPILE_FROM_TRUNK)
