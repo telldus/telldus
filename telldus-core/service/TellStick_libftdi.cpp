@@ -89,6 +89,10 @@ int TellStick::firmwareVersion() {
 	return 1;
 }
 
+int TellStick::pid() const {
+	return d->pid;
+}
+
 bool TellStick::isOpen() const {
 	return d->open;
 }
@@ -112,8 +116,6 @@ void TellStick::processData( const std::string &data ) {
 			continue;
 		} else if (data[i] == 10) { // \n found
 			if (d->message.substr(0,2).compare("+V") == 0) {
-				//parent->fwVersion = atoi(message.substr(2).c_str());
-				//printf("Firmware version: %s\n", message.substr(2).c_str());
 				d->fwVersion = TelldusCore::charToInteger(d->message.substr(2).c_str());
 			} else if (d->message.substr(0,2).compare("+R") == 0) {
 				this->publishData(d->message.substr(2));
