@@ -86,7 +86,7 @@ TellStick::~TellStick() {
 }
 
 int TellStick::firmwareVersion() {
-	return 1;
+	return d->fwVersion;
 }
 
 int TellStick::pid() const {
@@ -138,6 +138,10 @@ void TellStick::run() {
 		TelldusCore::MutexLocker locker(&d->mutex);
 		d->running = true;
 	}
+
+	//Send a firmware version request
+	unsigned char msg[] = "V+";
+	ftdi_write_data( &d->ftHandle, msg, 2 ) ;
 
 	while(1) { //TODO check libftdi doc how to do this best
 		usleep(1000);
