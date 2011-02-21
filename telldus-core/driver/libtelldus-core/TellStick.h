@@ -43,6 +43,8 @@ namespace TelldusCore {
 
 		static TellStick *findFirstDevice(int vid = 0, int pid = 0);
 		static TellStick *loadBy(int vid, int pid, const std::string &serial);
+
+		static std::string convertSToT( unsigned char t0, unsigned char t1, unsigned char t2, unsigned char t3, const std::string &data );
 		
 	protected:
 		TellStick(const TellStickDescriptor &d);
