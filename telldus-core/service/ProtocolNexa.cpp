@@ -1,4 +1,5 @@
 #include "ProtocolNexa.h"
+#include "TellStick.h"
 #include "Strings.h"
 
 int ProtocolNexa::methods() const {
@@ -17,7 +18,7 @@ int ProtocolNexa::methods() const {
 	return 0;
 }
 
-std::string ProtocolNexa::getStringForMethod(int method, unsigned char data, Controller *) {
+std::string ProtocolNexa::getStringForMethod(int method, unsigned char data, Controller *controller) {
 	if (TelldusCore::comparei(model(), L"codeswitch")) {
 		return getStringCodeSwitch(method);
 	} else if (TelldusCore::comparei(model(), L"bell")) {
@@ -26,6 +27,31 @@ std::string ProtocolNexa::getStringForMethod(int method, unsigned char data, Con
 	if ((method == TELLSTICK_TURNON) && TelldusCore::comparei(model(), L"selflearning-dimmer")) {
 		//Workaround for not letting a dimmer do into "dimming mode"
 		return getStringSelflearning(TELLSTICK_DIM, 255);
+	}
+	if (method == TELLSTICK_LEARN) {
+		std::string str = getStringSelflearning(TELLSTICK_TURNON, data);
+
+		//Check to see if we are an old TellStick (fw <= 2, batch <= 8)
+		TellStick *ts = reinterpret_cast<TellStick *>(controller);
+		if (!ts) {
+			return str;
+		}
+		if (ts->pid() == 0x0c30 && ts->firmwareVersion() <= 2) {
+			//Workaround for the bug in early firmwares
+			//The TellStick have a fixed pause (max) between two packets.
+			//It is only correct between the first and second packet.
+			//It seems faster to send two packes at a time and some
+			//receivers seems picky about this when learning.
+			//We also return the last packet so Device::doAction() doesn't
+			//report TELLSTICK_ERROR_METHOD_NOT_SUPPORTED
+
+			str.insert(0, 1, 2); //Repeat two times
+			str.insert(0, 1, 'R');
+			for (int i = 0; i < 5; ++i) {
+				controller->send(str);
+			}
+		}
+		return str;
 	}
 	return getStringSelflearning(method, data);
 }
