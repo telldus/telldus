@@ -1,7 +1,7 @@
 #include "ProtocolUpm.h"
 
 int ProtocolUpm::methods() const {
-	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;
+	return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN;
 }
 
 std::string ProtocolUpm::getStringForMethod(int method, unsigned char, Controller *) {
@@ -28,7 +28,7 @@ std::string ProtocolUpm::getStringForMethod(int method, unsigned char, Controlle
 	strReturn.insert(0, START); //Startcode, first
 
 	code = 0;
-	if (method == TELLSTICK_TURNON) {
+	if (method == TELLSTICK_TURNON || method == TELLSTICK_LEARN) {
 		code += 2;
 	} else if (method != TELLSTICK_TURNOFF) {
 		return "";
