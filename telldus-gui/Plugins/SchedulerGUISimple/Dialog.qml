@@ -7,6 +7,7 @@
 	property alias absoluteHour: inputAbsoluteHourText.text
 	property alias absoluteMinute: inputAbsoluteMinuteText.text
 	property alias dialogOpacity: container.opacity
+	property ListModel typeListModel: ListModel {}
 	
 	focus: true
 	Keys.onPressed: {
@@ -82,9 +83,10 @@
 		container.actionPoint = actionPoint
 		
 		var rootCoordinates = actionPoint.mapToItem(null, actionPoint.x, actionPoint.y);
-		container.y = rootCoordinates.y + actionPoint.height + 10; //TODO poistion in other way, too far down in some cases now
+		container.y = rootCoordinates.y + actionPoint.height + 10; //TODO position in other way, too far down in some cases now
 		container.width = actionPoint.parent.width;
 		container.x = (actionPoint.parent.parent.width - container.width)/2;
+		typeList.model = Scripts.setActionTypeModel(actionPoint.getActiveStates(), typeListModel);
 		container.opacity = 1;
 	}
 
@@ -528,31 +530,10 @@
 		anchors.leftMargin: 10
 		width: 100
 		height: 100
-		model: typeSelection
 		delegate: typeSelectionRow
 		highlight: Rectangle { color: "lightsteelblue"; radius: 5 }
 		snapMode: ListView.SnapToItem
 		interactive: false
-	
-		ListModel{
-			id: typeSelection
-			ListElement{
-				name: "on"
-				imagesource: "on.png"
-			}
-			ListElement{
-				name: "off"
-				imagesource: "off.png"
-			}
-			ListElement{
-				name: "dim"
-				imagesource: "dim.png"
-			}
-			ListElement{
-				name: "bell"
-				imagesource: "bell.png"
-			}
-		}
 	}
 	
 	Rectangle{

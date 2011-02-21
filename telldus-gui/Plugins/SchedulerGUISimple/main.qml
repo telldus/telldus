@@ -195,6 +195,11 @@ import "mainscripts.js" as MainScripts
 			property alias continuingBar: continuingBar
 			property variant selectedDate: main.selectedDate
 			property int currentDayIndex: MainScripts.getCurrentDayIndex(main.selectedDate)
+			property variant activeStates
+			
+			Component.onCompleted: {
+				activeStates = MainScripts.getStates(modelData.methods)
+			}
 			
 			state: "enabled"
 			
@@ -222,17 +227,11 @@ import "mainscripts.js" as MainScripts
 					dynamicPoint.absoluteMinute = hourMinute[1]
 					dynamicPoint.x = dynamicPoint.getAbsoluteXValue();
 					dynamicPoint.border.color = "blue"
-					
-					//TODO different states depending on the device							
-					dynamicPoint.addActiveState("on");
-					dynamicPoint.addActiveState("off");
-					dynamicPoint.addActiveState("dim");
-					dynamicPoint.addActiveState("bell");
+					dynamicPoint.setActiveStates(deviceRow.activeStates);
 					dynamicPoint.setFirstState();
 					dynamicPoint.pointId = new Date().getTime(); //just needed for storage update
 					deviceRow.updateContinuingBars();
 					dialog.show(dynamicPoint) 
-					
 				}
 			}
 			

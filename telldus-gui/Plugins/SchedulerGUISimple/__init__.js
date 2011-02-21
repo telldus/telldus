@@ -27,10 +27,12 @@ com.telldus.schedulersimplegui = function() {
 		});
 
 		//devices:
+		var supportedMethods = com.telldus.core.TELLSTICK_TURNON | com.telldus.core.TELLSTICK_TURNOFF | com.telldus.core.TELLSTICK_DIM | com.telldus.core.TELLSTICK_BELL
 		deviceList = new com.telldus.qml.array();
 		var list = com.telldus.core.deviceList.getList();
 		for(var i=0; i < list.length; ++i) {
 			var item = list[i];
+			item.methods = com.telldus.core.methods(item.id, supportedMethods);
 			item.isEnabled = "enabled";
 			item.hasChanged = "false";
 			deviceList.push(item);

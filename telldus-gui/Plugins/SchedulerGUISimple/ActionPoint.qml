@@ -111,7 +111,7 @@ Rectangle{
 		drag.axis: Drag.XAxis
 		drag.minimumX: -1 * pointRect.width/2
 		drag.maximumX: pointRect.parent == null ? 0 : pointRect.parent.width - pointRect.width/2
-		drag.filterChildren: true //TODO testing this
+		drag.filterChildren: true
 		//TODO make it impossible to overlap (on release) (why?)
 		//TODO drag to most right - jumps back, why?
 		
@@ -147,14 +147,14 @@ Rectangle{
 					PropertyChanges { target: triggerImage; source: imageTriggerSunrise; opacity: 1 }
 					PropertyChanges { target: triggerTime; opacity: 0 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: undefined }
-					PropertyChanges { target: pointRect; x: getSunRiseTime.callWith(pointRect.parent.width, pointRect.width, pointRect.selectedDate) + minutesToTimelineUnits(pointRect.offset) } //TODO se nedan
+					PropertyChanges { target: pointRect; x: getSunRiseTime.callWith(pointRect.parent.width, pointRect.width, pointRect.selectedDate) + minutesToTimelineUnits(pointRect.offset) }
 				},
 				State {
 					name: "sunset"
 					PropertyChanges { target: triggerImage; source: imageTriggerSunset; opacity: 1 }
 					PropertyChanges { target: triggerTime; opacity: 0 }
 					PropertyChanges { target: pointRectMouseArea; drag.target: undefined }
-					PropertyChanges { target: pointRect; x: getSunSetTime.callWith(pointRect.parent.width, pointRect.width, pointRect.selectedDate) + minutesToTimelineUnits(pointRect.offset) } //TODO räkna om till tidsunits
+					PropertyChanges { target: pointRect; x: getSunSetTime.callWith(pointRect.parent.width, pointRect.width, pointRect.selectedDate) + minutesToTimelineUnits(pointRect.offset) }
 				},
 				State {
 					name: "absolute"; when: !pointRectMouseArea.drag.active

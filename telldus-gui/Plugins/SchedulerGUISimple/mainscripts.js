@@ -57,6 +57,20 @@ function getMorningDarkWidth(){
 	}
 }
 
+function getStates(methods){
+	var activeStates = new Array();
+	
+	var i = 1;
+	while(i <= methods){
+		if(methods & i){
+			activeStates.push(getStateFromMethod.callWith(i));
+		}
+		i = i<<1;
+	}
+	
+	return activeStates;
+}
+
 function getSunData(){
 	if(calculatedSunData == undefined){
 		main.updateCurrentDay();
@@ -145,7 +159,6 @@ function addPointToGUI(key, job){
 	var deviceId = key;
 	var jobdata = job.v;
 	var state = getStateFromMethod.callWith(jobdata.method);
-	var activeStates = new Array("on", "off", "dim", "bell"); //TODO get dynamically, depending on device...
 	var dimvalue = jobdata.value;
 	var absoluteTime = jobdata.absoluteTime;
 	var pointId = jobdata.id;
@@ -180,7 +193,7 @@ function addPointToGUI(key, job){
 			if(dynamicPoint.triggerstate == "absolute"){
 				dynamicPoint.x = dynamicPoint.getAbsoluteXValue();
 			}
-			dynamicPoint.setActiveStates(activeStates); //TODO: active states depending on the device (get this from __init__ etc)
+			dynamicPoint.setActiveStates(pointParentDevice.activeStates);
 			dynamicPoint.setFirstState(state);
 			dynamicPoint.dimvalue = dimvalue * (100/255);
 			dynamicPoint.pointId = pointId;

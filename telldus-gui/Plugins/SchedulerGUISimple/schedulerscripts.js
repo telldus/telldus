@@ -65,3 +65,12 @@ function pad(number, length) {
     return str;
 }
 
+function setActionTypeModel(activeStates, typeListModel){
+	
+	typeListModel.clear();
+	for(var i=0;i<activeStates.length;i++){
+		typeListModel.append({"name": activeStates[i], "imagesource": activeStates[i] + ".png"});
+	}
+	
+	return typeListModel;
+}
