@@ -18,6 +18,7 @@ void signalHandler(int sig) {
 			syslog(LOG_WARNING, "Received SIGHUP signal.");
 			break;
 		case SIGTERM:
+		case SIGINT:
 			syslog(LOG_WARNING, "Received SIGTERM signal.");
 			syslog(LOG_WARNING, "Shutting down");
 			tm.stop();
