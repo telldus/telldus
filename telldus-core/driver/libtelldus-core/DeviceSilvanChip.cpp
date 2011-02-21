@@ -1,4 +1,5 @@
 #include "DeviceSilvanChip.h"
+#include "TellStick.h"
 #include <string>
 
 using namespace TelldusCore;
@@ -65,39 +66,41 @@ int DeviceSilvanChip::methods(){
 }
 
 std::string DeviceSilvanChip::getStringCode(Controller *controller, int method){
-	const unsigned char S = 100;
-	const unsigned char L = 255;
-	const std::string LONG = "\255\1\200";
 
-	const std::string ONE = LONG + "\100";
-	const std::string ZERO = "\100" + LONG;
-	std::string strReturn = "R\1S";
+	std::string times = "\255\1\200\100";
+	const unsigned char S = '3';
+	const unsigned char L = '0';
+	const std::string LONG = "012";
+
+	const std::string ONE = LONG + "3";
+	const std::string ZERO = "3" + LONG;
+	std::string strReturn;
 
 	strReturn.append(1, S);
 	strReturn.append(1, L);
-	strReturn.append(1, 1);
+	strReturn.append(1, '1');
 	strReturn.append(1, L);
-	strReturn.append(1, 1);
+	strReturn.append(1, '1');
 	strReturn.append(1, L);
-	strReturn.append(1, 1);
+	strReturn.append(1, '1');
 	strReturn.append(1, L);
-	strReturn.append(1, 1);
+	strReturn.append(1, '1');
 	strReturn.append(1, L);
-	strReturn.append(1, 1);
+	strReturn.append(1, '1');
 	strReturn.append(1, L);
-	strReturn.append(1, 1);
+	strReturn.append(1, '1');
 	strReturn.append(1, L);
-	strReturn.append(1, 1);
+	strReturn.append(1, '1');
 	strReturn.append(1, L);
-	strReturn.append(1, 1);
+	strReturn.append(1, '1');
 	strReturn.append(1, L);
-	strReturn.append(1, 1);
+	strReturn.append(1, '1');
 	strReturn.append(1, L);
-	strReturn.append(1, 1);
+	strReturn.append(1, '1');
 	strReturn.append(1, L);
-	strReturn.append(1, 1);
+	strReturn.append(1, '1');
 	strReturn.append(1, L);
-	strReturn.append(1, 1);
+	strReturn.append(1, '1');
 	strReturn.append(1, S);
 
 	for( int i = 19; i >= 0; --i ) {
@@ -126,8 +129,8 @@ std::string DeviceSilvanChip::getStringCode(Controller *controller, int method){
 	}
 
 	strReturn.append(ZERO);
-	strReturn.append("+");
-	return strReturn;
+
+	return TellStick::convertSToT( 255, 1, 200, 100, strReturn);
 
 }
 
