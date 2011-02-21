@@ -23,6 +23,8 @@ Rectangle{
 	property variant lastRun: 0;
 	property alias deviceRow: pointRect.parent
 	property variant selectedDate: (deviceRow == null || deviceRow == undefined) ? new Date() : deviceRow.selectedDate
+	property int daydate: (deviceRow == null || deviceRow == undefined || deviceRow.parent == undefined || deviceRow.parent.parent == undefined) ? -1 : deviceRow.parent.parent.daydate.getDay()
+	
 	
 	Component.onCompleted: {
 		//TODO useless really, still gets Cannot anchor to a null item-warning...
@@ -79,15 +81,10 @@ Rectangle{
 		onClicked: {
 			if (mouse.button == Qt.RightButton){
 				pointRect.toggleType()
-				//dialog.show(pointRect)
-			}
-			else{
-				//dialog.show(pointRect)
 			}
 		}
 		
 		onPositionChanged: {
-			//var rootCoordinates = pointRect.mapToItem(pointRect.parent, mouse.x, mouse.y);
 			var rootCoordinates = pointRect.mapToItem(pointRect.parent, mouse.x, mouse.y);
 			var hourMinute = getTimeFromPosition(rootCoordinates.x - mouse.x + pointRect.width/2)
 			if((hourMinute[0] >= 0) && hourMinute[0] < 24){
@@ -100,8 +97,8 @@ Rectangle{
 			pointRect.deviceRow.setChanged();
 			pointRect.deviceRow.updateContinuingBars()
 			dialog.show(pointRect)  //TODO not pointRect, but parentPoint if such exists
-			dialog.absoluteHour = Scripts.pad(pointRect.absoluteHour, 2) //Scripts.pad(hourMinute[0], 2)
-			dialog.absoluteMinute = Scripts.pad(pointRect.absoluteMinute, 2) //Scripts.pad(hourMinute[1], 2)
+			dialog.absoluteHour = Scripts.pad(pointRect.absoluteHour, 2)
+			dialog.absoluteMinute = Scripts.pad(pointRect.absoluteMinute, 2)
 			
 			if(parentPoint != undefined){
 				parentPoint.absoluteHour = parseInt(dialog.absoluteHour, 10);
@@ -213,14 +210,7 @@ Rectangle{
 			PropertyChanges { target: pointRect; actionTypeColor: getLastPointColor() }
 			PropertyChanges { target: pointRect; actionTypeImage: imageActionBell }
 			StateChangeScript{ name: "updateBars"; script: updateBars(); }
-		}//,
-		/*
-		State{ //TODO test
-			name: "test"; when: pointRect.parentPoint != undefined //&& pointRect.parentPoint.absoluteHour != undefined
-			StateChangeScript{ name: "updateBars"; script: print("CHANGED TO TEST, " + pointRect.parentPoint.absoluteHour); }
-			PropertyChanges{ target: pointRect; parentPointAbsoluteHour: pointRect.parentPoint.absoluteHour }
 		}
-		*/
 	]
 	
 	Rectangle{
@@ -252,7 +242,6 @@ Rectangle{
 		var hourSize = pointRect.parent.width / 24;
 		var point = pointRect;
 		if(pointRect.parentPoint != undefined){
-			//print("Different x");
 			point = pointRect.parentPoint;
 		}
 		//print("ABSOLUTE X-value: " + (point.absoluteHour * hourSize + hourSize * (point.absoluteMinute/60) - point.width/2));
@@ -322,9 +311,6 @@ Rectangle{
 			}
 		}
 		
-		//TODO Binding loop here when moving transperent point over other point
-		//...or just changing state to transparent
-		//something with point depending on point depending on point?
 		if(prevPoint == null || prevPoint.actionTypeOpacity == 0){
 			//no point before, no bar after either
 			actionTypeOpacity = 0
@@ -349,7 +335,7 @@ Rectangle{
 		if(pointRect.parent == null){
 			return [0,0];
 		}
-		var timeOfDay = mouseX; // + (pointRect.width/2);
+		var timeOfDay = mouseX;
 		var hourSize = pointRect.parent.width / 24;
 		var hours = Math.floor(timeOfDay / hourSize);
 		var partOfHour = ((timeOfDay - (hourSize * hours))/hourSize) * 60
@@ -360,7 +346,6 @@ Rectangle{
 	}
 	
 	function addActiveState(state){
-		//print("Adding state: " + state);
 		ActionPointScripts.addActiveState(state);
 	}
 	
@@ -446,7 +431,6 @@ Rectangle{
 	}
 	
 	function getTickedImageSource(index){
-		//print("GETTING TICKED");
 		index = Scripts.getOffsetWeekday(index);
 		if(pointRect.deviceRow.parent == undefined || pointRect.deviceRow.parent.parent == undefined){ //to get rid of warnings on initialization
 			//undefined, should only be in the beginning
@@ -456,11 +440,11 @@ Rectangle{
 		if(pointRect.parentPoint != undefined){
 			originalPoint = pointRect.parentPoint;
 		}
-		if(index == pointRect.deviceRow.parent.parent.daydate.getDay()){ //TODO property or so
+		if(index == pointRect.daydate){
 			//current day should always be ticked
 			return "alwaysticked.png";
 		}
-		else if(originalPoint.getChildPoint(index) == undefined && index != originalPoint.deviceRow.parent.parent.daydate.getDay()){  //TODO turn this parent-parent into a property
+		else if(originalPoint.getChildPoint(index) == undefined && index != originalPoint.daydate){
 			return "unticked.png";
 		}
 		else{
@@ -474,11 +458,11 @@ Rectangle{
 		if(pointRect.parentPoint != undefined){
 			originalPoint = pointRect.parentPoint;
 		}
-		if(index == pointRect.deviceRow.parent.parent.daydate.getDay()){
+		if(index == pointRect.daydate){
 			//cannot change this, do nothing
 			return;
 		}
-		if(index == originalPoint.deviceRow.parent.parent.daydate.getDay()){
+		if(index == originalPoint.daydate){
 			//trying to remove the parentPoint, special removal procedure needed
 			originalPoint.removeParentPoint(pointRect);
 		}

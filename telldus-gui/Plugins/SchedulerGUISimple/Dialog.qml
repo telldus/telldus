@@ -312,7 +312,7 @@
 		InfoBox{
 			anchors.left: textOffsetUnit.right
 			anchors.verticalCenter: textOffsetUnit.verticalCenter
-			z: 200  //No use, but wait until, the correct design is set, add them in correct order or something then
+			z: 200  //TODO No use, but wait until, the correct design is set, add them in correct order or something then
 			infotext: "Enter a positive or negative value for how many minutes before or after sunset/sunrise this action will be executed."
 		}
 	}
