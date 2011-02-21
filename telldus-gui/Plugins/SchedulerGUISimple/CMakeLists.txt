@@ -12,6 +12,7 @@ SET( Plugin_EXTRA
 	Button.qml
 	Dialog.qml
 	icon.png
+	InfoBox.qml
 	main.qml
 	mainscripts.js
 	NavButton.qml

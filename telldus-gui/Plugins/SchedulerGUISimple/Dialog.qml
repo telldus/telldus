@@ -238,68 +238,18 @@
 			}
 		}
 		
-		Image{
-			//TODO turn into component?
+		InfoBox{
 			anchors.left: textFuzzyBeforeUnit.right
-			anchors.leftMargin: 5
 			anchors.verticalCenter: textFuzzyBeforeUnit.verticalCenter
 			
-			source: imageInfo
-			width: 15
-			height: 15
-			
-			MouseArea{
-				anchors.fill: parent
-				hoverEnabled: true
-				onEntered: {
-					infobox.opacity = 1
-					infobox.infoboxtext = "Enter a value indicating how many minutes before the set value that the action may be executed. The action will be executed at a random time within the interval."
-				}
-				onExited: {
-					infobox.opacity = 0
-				}
-			}
+			infotext: "Enter a value indicating how many minutes before the set value that the action may be executed. The action will be executed at a random time within the interval."
 		}
 		
-		Image{
-			//TODO turn into component?
+		InfoBox{
 			anchors.left: textFuzzyAfterUnit.right
-			anchors.leftMargin: 5
 			anchors.verticalCenter: textFuzzyAfterUnit.verticalCenter
 			
-			source: imageInfo
-			width: 15
-			height: 15
-			
-			MouseArea{
-				anchors.fill: parent
-				hoverEnabled: true
-				onEntered: {
-					infobox.opacity = 1
-					infobox.infoboxtext = "Enter a value indicating how many minutes after the set value that the action may be executed. The action will be executed at a random time within the interval."
-				}
-				onExited: {
-					infobox.opacity = 0
-				}
-			}
-		}
-		
-		Rectangle{
-			id: infobox
-			property alias infoboxtext: infoboxtext.text
-			opacity: 0
-			color: "antiquewhite"
-			width: infoboxtext.width + 4
-			height: infoboxtext.height + 4
-			border.color: "black"
-			border.width: 1
-			Text{
-				id: infoboxtext
-				anchors.centerIn: parent
-				width: 200
-				wrapMode: Text.WordWrap
-				text: ""
-			}
+			infotext: "Enter a value indicating how many minutes after the set value that the action may be executed. The action will be executed at a random time within the interval."
 		}
 	}
 	
@@ -359,26 +309,11 @@
 			}
 		}
 		
-		Image{
+		InfoBox{
 			anchors.left: textOffsetUnit.right
-			anchors.leftMargin: 5
 			anchors.verticalCenter: textOffsetUnit.verticalCenter
-			
-			source: imageInfo
-			width: 15
-			height: 15
-			
-			MouseArea{
-				anchors.fill: parent
-				hoverEnabled: true
-				onEntered: {
-					infobox.opacity = 1
-					infobox.infoboxtext = "Enter a positive or negative value for how many minutes before or after sunset/sunrise this action will be executed."
-				}
-				onExited: {
-					infobox.opacity = 0
-				}
-			}
+			z: 200  //No use, but wait until, the correct design is set, add them in correct order or something then
+			infotext: "Enter a positive or negative value for how many minutes before or after sunset/sunrise this action will be executed."
 		}
 	}
 	
@@ -515,26 +450,11 @@
 			}
 		}
 		
-		Image{
+		InfoBox{
 			anchors.left: inputDim.right
-			anchors.leftMargin: 5
 			anchors.verticalCenter: inputDim.verticalCenter
 			
-			source: imageInfo
-			width: 15
-			height: 15
-			
-			MouseArea{
-				anchors.fill: parent
-				hoverEnabled: true
-				onEntered: {
-					infobox.opacity = 1
-					infobox.infoboxtext = "Enter a dim percent value between 0 (no light) and 100 (full light)"
-				}
-				onExited: {
-					infobox.opacity = 0
-				}
-			}
+			infotext: "Enter a dim percent value between 0 (no light) and 100 (full light)"
 		}
 	}
 	
