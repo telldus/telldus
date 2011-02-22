@@ -17,28 +17,26 @@ Rectangle{
 	width: barRectangle.prevDayWidth
 			
 	onStateChanged: {
-		//cannot bind these values as state change properties for some reason, do it here instead
+		//cannot bind these values as state change properties for some reason (will generate anchor-to-null-item warnings), do it here instead
 		if(state == "pointLoaded"){
 			anchors.verticalCenter = hangOnToPoint.verticalCenter;
 			anchors.left = hangOnToPoint.horizontalCenter;
+		}
+		else if(state == "continuingWithLimitedWidth"){
+			anchors.verticalCenter = hangOnToPoint.verticalCenter;
+			anchors.left = hangOnToPoint.left;
+		}
+		else if(state == "continuing"){
+			anchors.verticalCenter = hangOnToPoint.verticalCenter
+			anchors.left = hangOnToPoint.left
 		}
 	}
 	
 	states: [
 		State{
-			name: "continuing"
-			PropertyChanges {
-				target: barRectangle
-				anchors.verticalCenter: hangOnToPoint.verticalCenter
-				anchors.left: hangOnToPoint.left
-			}
-		},
-		State{
 			name: "continuingWithLimitedWidth"
 			PropertyChanges {
 				target: barRectangle
-				anchors.verticalCenter: hangOnToPoint.verticalCenter
-				anchors.left: hangOnToPoint.left
 				width: Scripts.getFirstPointWidth(hangOnToPoint)
 			}
 		},
@@ -46,8 +44,6 @@ Rectangle{
 			name: "pointLoaded"
 			PropertyChanges {
 				target: barRectangle
-				//anchors.verticalCenter: hangOnToPoint.verticalCenter  //TODO Warning on this and the line below... cannot fix, warning even if setting to undefined directly
-				//anchors.left: hangOnToPoint.horizontalCenter
 				color: hangOnToPoint.actionTypeColor
 				opacity: hangOnToPoint.actionTypeOpacity
 				width: hangOnToPoint.parent == null ? 0 : Scripts.getBarWidth(barRectangle, hangOnToPoint, hangOnToPoint.parent.children)	
