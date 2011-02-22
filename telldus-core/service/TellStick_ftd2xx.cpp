@@ -266,7 +266,6 @@ std::list<TellStickDescriptor> TellStick::findAll() {
 std::list<TellStickDescriptor> TellStick::findAllByVIDPID( int vid, int pid ) {
 	std::list<TellStickDescriptor> retval;
 
-	FT_HANDLE fthHandle = 0;
 	FT_STATUS ftStatus = FT_OK;
 	DWORD dwNumberOfDevices = 0;
 
@@ -278,34 +277,25 @@ std::list<TellStickDescriptor> TellStick::findAllByVIDPID( int vid, int pid ) {
 	if (ftStatus != FT_OK) {
 		return retval;
 	}
-	for (int i = 0; i < (int)dwNumberOfDevices; i++) {
-		FT_PROGRAM_DATA pData;
-		char ManufacturerBuf[32];
-		char ManufacturerIdBuf[16];
-		char DescriptionBuf[64];
-		char SerialNumberBuf[16];
-
-		pData.Signature1 = 0x00000000;
-		pData.Signature2 = 0xffffffff;
-		pData.Version = 0x00000002;      // EEPROM structure with FT232R extensions
-		pData.Manufacturer = ManufacturerBuf;
-		pData.ManufacturerId = ManufacturerIdBuf;
-		pData.Description = DescriptionBuf;
-		pData.SerialNumber = SerialNumberBuf;
-
-		ftStatus = FT_Open(i, &fthHandle);
-		ftStatus = FT_EE_Read(fthHandle, &pData);
-		ftStatus = FT_Close(fthHandle);
-		if (ftStatus != FT_OK) {
-			continue;
+	if (dwNumberOfDevices > 0) {
+		FT_DEVICE_LIST_INFO_NODE *devInfo;
+		// allocate storage for list based on dwNumberOfDevices
+		devInfo = (FT_DEVICE_LIST_INFO_NODE*)malloc(sizeof(FT_DEVICE_LIST_INFO_NODE)*dwNumberOfDevices); // get the device information list 
+		ftStatus = FT_GetDeviceInfoList(devInfo,&dwNumberOfDevices);
+		if (ftStatus == FT_OK) {
+			unsigned int id = (vid << 16) | pid;
+			for (unsigned int i = 0; i < dwNumberOfDevices; i++) {
+				if (devInfo[i].ID != id) {
+					continue;
+				}
+				TellStickDescriptor td;
+				td.vid = vid;
+				td.pid = pid;
+				td.serial = devInfo[i].SerialNumber;
+				retval.push_back(td);
+			}
 		}
-		if (pData.VendorId == vid && pData.ProductId == pid) {
-			TellStickDescriptor td;
-			td.vid = vid;
-			td.pid = pid;
-			td.serial = pData.SerialNumber;
-			retval.push_back(td);
-		}
+		free(devInfo);
 	}
 	return retval;
 }
