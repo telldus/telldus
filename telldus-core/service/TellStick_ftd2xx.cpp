@@ -103,6 +103,10 @@ int TellStick::firmwareVersion() {
 	return d->fwVersion;
 }
 
+int TellStick::pid() const {
+	return d->pid;
+}
+
 bool TellStick::isOpen() const {
 	return d->open;
 }
