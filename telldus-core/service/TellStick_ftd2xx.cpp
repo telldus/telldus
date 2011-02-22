@@ -148,6 +148,10 @@ void TellStick::run() {
 	DWORD dwBytesRead = 0;
 	char *buf = 0;
 
+	//Send a firmware version request
+	char msg[] = "V+";
+	FT_Write(d->ftHandle, msg, (DWORD)strlen(msg), &dwBytesRead);
+
 	while(1) {
 #ifdef _WINDOWS
 		FT_SetEventNotification(d->ftHandle, FT_EVENT_RXCHAR, d->eh);
