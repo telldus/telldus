@@ -4,34 +4,34 @@
 #define MAX_NUM_DEVICES 50
 #include <sys/time.h>
 
-typedef unsigned long 	DWORD;
-typedef unsigned long 	ULONG;
-typedef unsigned short 	USHORT;
-typedef short 			SHORT;
-typedef unsigned char	UCHAR;
-typedef unsigned short	WORD;
-typedef unsigned char	BYTE;
-typedef unsigned char	*LPBYTE;
-typedef int 		BOOL;
-typedef char 		BOOLEAN;
-typedef char 		CHAR;
-typedef int 		*LPBOOL;
-typedef unsigned char 	*PUCHAR;
-typedef const char	*LPCSTR;
-typedef char		*PCHAR;
-typedef void 		*PVOID;
-typedef void 		*HANDLE;
-typedef long 		LONG;
-typedef int 		INT;
-typedef unsigned int 	UINT;
-typedef char 		*LPSTR;
-typedef char 		*LPTSTR;
-typedef DWORD 		*LPDWORD;
-typedef WORD 		*LPWORD;
-typedef ULONG		*PULONG;
-typedef PVOID		LPVOID;
-typedef void		VOID;
-typedef unsigned long long int ULONGLONG;
+typedef unsigned int			DWORD;
+typedef unsigned int			ULONG;
+typedef unsigned short			USHORT;
+typedef unsigned short			SHORT;
+typedef unsigned char			UCHAR;
+typedef unsigned short			WORD;
+typedef unsigned char			BYTE;
+typedef BYTE					*LPBYTE;
+typedef unsigned int			BOOL;
+typedef unsigned char			BOOLEAN;
+typedef unsigned char			CHAR;
+typedef BOOL					*LPBOOL;
+typedef UCHAR					*PUCHAR;
+typedef const char				*LPCSTR;
+typedef char					*PCHAR;
+typedef void					*PVOID;
+typedef void					*HANDLE;
+typedef unsigned int			LONG;
+typedef int						INT;
+typedef unsigned int			UINT;
+typedef char					*LPSTR;
+typedef char					*LPTSTR;
+typedef DWORD					*LPDWORD;
+typedef WORD					*LPWORD;
+typedef ULONG					*PULONG;
+typedef PVOID					LPVOID;
+typedef void					VOID;
+typedef unsigned long long int	ULONGLONG;
 
 typedef struct _OVERLAPPED {
 	DWORD Internal;
