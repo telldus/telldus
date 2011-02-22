@@ -91,6 +91,7 @@ TellStick::~TellStick() {
 	}
 	this->wait();
 	if (d->open) {
+		FT_Close(d->ftHandle);
 	}
 	delete d;
 }
