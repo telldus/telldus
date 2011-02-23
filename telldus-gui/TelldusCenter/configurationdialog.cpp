@@ -51,6 +51,9 @@ ConfigurationDialog::ConfigurationDialog(QScriptEngine *engine, QWidget *parent)
 	QHBoxLayout *mainLayout = new QHBoxLayout();
 
 	d->listWidget = new CategoryListWidget(this);
+	d->listWidget->setViewMode(QListView::IconMode);
+	d->listWidget->setFlow(QListView::TopToBottom);
+	d->listWidget->setMovement(QListView::Static);
 	connect(d->listWidget, SIGNAL(currentItemChanged(QListWidgetItem*,QListWidgetItem*)), this, SLOT(currentItemChanged(QListWidgetItem*,QListWidgetItem*)));
 	mainLayout->addWidget(d->listWidget);
 
