@@ -63,7 +63,7 @@ MainWindow::MainWindow(ScriptEnvironment *env, QWidget *parent, Qt::WFlags flags
 
 	setupToolBar();
 
-	setWindowTitle( tr("Telldus Center") );
+	setWindowTitle( tr("TelldusCenter") );
 }
 
 MainWindow::~MainWindow()
@@ -95,7 +95,7 @@ void MainWindow::setupMenu() {
 	helpMenu->addSeparator();
 	QAction *aboutQt = helpMenu->addAction(tr("About &Qt"), qApp, SLOT(aboutQt()));
 	aboutQt->setMenuRole( QAction::AboutQtRole );
-	QAction *aboutTelldusCenter = helpMenu->addAction(tr("About &Telldus Center"), this, SLOT(slotAboutApplication()));
+	QAction *aboutTelldusCenter = helpMenu->addAction(tr("About &TelldusCenter"), this, SLOT(slotAboutApplication()));
 	aboutTelldusCenter->setMenuRole( QAction::AboutRole );
 }
 
@@ -131,8 +131,8 @@ void MainWindow::addWidget( const QString &page, const QIcon &icon, QWidget *wid
 }
 
 void MainWindow::slotAboutApplication() {
-	QMessageBox::about(this, tr("About Telldus Center"),
-					   tr("<center><img src=':/images/TelldusCenter_128.png' width=128 height=128 /><h2>Telldus Center %1</h2>"
+	QMessageBox::about(this, tr("About TelldusCenter"),
+					   tr("<center><img src=':/images/TelldusCenter_128.png' width=128 height=128 /><h2>TelldusCenter %1</h2>"
 						  "<p>Copyright &copy; 2010 Telldus Technologies AB<p></center>").arg(VERSION_STRING(VERSION)));
 }
 

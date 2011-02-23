@@ -16,7 +16,7 @@ int main(int argc, char *argv[])
 
 	QCoreApplication::setOrganizationName("Telldus");
 	QCoreApplication::setOrganizationDomain("www.telldus.se");
-	QCoreApplication::setApplicationName("Telldus Center");
+	QCoreApplication::setApplicationName("TelldusCenter");
 	
 	bool showMinimized = false;
 	for( int i = 1; i < argc; ++i ) {

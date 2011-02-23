@@ -15,9 +15,9 @@
 	<key>CFBundleInfoDictionaryVersion</key>
 	<string>6.0</string>
 	<key>CFBundleName</key>
-	<string>Telldus Center</string>
+	<string>TelldusCenter</string>
 	<key>CFBundleShortVersionString</key>
-	<string>Telldus Center 2.0.0</string>
+	<string>TelldusCenter 2.0.0</string>
 	<key>CFBundleVersion</key>
 	<string>2.0.0</string>
 </dict>
