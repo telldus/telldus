@@ -1,0 +1,5 @@
+<RCC>
+    <qresource prefix="/" >
+        <file>Equifax_Secure_CA.pem</file>
+    </qresource>
+</RCC>

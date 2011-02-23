@@ -22,6 +22,10 @@ SET( Plugin_MOC_HDRS
 	LiveObject.h
 )
 
+SET( Plugin_RESOURCES
+	Live.qrc
+)
+
 SET( Plugin_EXTRA
 	configuration.ui
 	icon.png

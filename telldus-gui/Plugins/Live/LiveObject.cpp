@@ -35,6 +35,8 @@ LiveObject::LiveObject( QScriptEngine *engine, QObject * parent )
 	d = new PrivateData;
 	d->hashMethod = "sha1";
 	d->registered = false;
+
+	QSslSocket::addDefaultCaCertificates(":/Equifax_Secure_CA.pem");
 	d->socket = new QSslSocket(this);
 	d->socket->setProtocol( QSsl::TlsV1 );
 	connect(d->socket, SIGNAL(encrypted()), this, SLOT(p_connected()));
@@ -213,6 +215,7 @@ void LiveObject::sslErrors( const QList<QSslError> & errors ) {
 			case QSslError::SelfSignedCertificate:
 				continue;
 			default:
+				qDebug() << "SSL" << error.errorString();
 				everythingOK = false;
 				emit statusChanged("SSL Error");
 				emit errorChanged(error.errorString());
