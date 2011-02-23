@@ -18,7 +18,7 @@ public:
 
 class ScriptEnvironment::PrivateData {
 public:
-	QScriptEngine scriptEngine;
+	QScriptEngine *scriptEngine;
 	QHash<int, QScriptValue> intervalHash;
 	QHash<int, TimerObj*> timeoutHash;
 };
@@ -27,59 +27,61 @@ ScriptEnvironment::ScriptEnvironment(QObject *parent) :
 	QObject(parent)
 {
 	d = new PrivateData;
+	d->scriptEngine = new QScriptEngine();
 
-	connect(&d->scriptEngine, SIGNAL(signalHandlerException(const QScriptValue &)), this, SLOT(scriptException(const QScriptValue&)));
-	d->scriptEngine.installTranslatorFunctions();
+	connect(d->scriptEngine, SIGNAL(signalHandlerException(const QScriptValue &)), this, SLOT(scriptException(const QScriptValue&)));
+	d->scriptEngine->installTranslatorFunctions();
 
 	//Self is our new global object
-	QScriptValue self = d->scriptEngine.newQObject(this, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
+	QScriptValue self = d->scriptEngine->newQObject(this, QScriptEngine::QtOwnership, QScriptEngine::ExcludeSuperClassContents);
 
 	{
 		//Copy everything from our old global object
-		QScriptValueIterator it(d->scriptEngine.globalObject());
+		QScriptValueIterator it(d->scriptEngine->globalObject());
 		while (it.hasNext()) {
 			it.next();
 			self.setProperty(it.scriptName(), it.value(), it.flags());
 		}
 	}
 	self.setProperty("self", self);
-	d->scriptEngine.setGlobalObject(self);
+	d->scriptEngine->setGlobalObject(self);
 
-	QScriptValue application = d->scriptEngine.newQObject(parent);
-	d->scriptEngine.globalObject().setProperty("application", application);
+	QScriptValue application = d->scriptEngine->newQObject(parent);
+	d->scriptEngine->globalObject().setProperty("application", application);
 
 	//Create configuration dialog
-	QScriptValue configurationDialogObject = d->scriptEngine.newQObject(new ConfigurationDialog(&d->scriptEngine), QScriptEngine::ScriptOwnership, QScriptEngine::ExcludeSuperClassContents);
-	d->scriptEngine.globalObject().property("application").setProperty("configuration", configurationDialogObject);
+	QScriptValue configurationDialogObject = d->scriptEngine->newQObject(new ConfigurationDialog(d->scriptEngine), QScriptEngine::ScriptOwnership, QScriptEngine::ExcludeSuperClassContents);
+	d->scriptEngine->globalObject().property("application").setProperty("configuration", configurationDialogObject);
 
 	//Collect garbage (ie our old global object)
-	d->scriptEngine.collectGarbage();
+	d->scriptEngine->collectGarbage();
 }
 
 ScriptEnvironment::~ScriptEnvironment() {
 	foreach(TimerObj *tim, d->timeoutHash){
 		delete tim;
 	}
+//	delete d->scriptEngine; //This seems to crash for some reason?
 	delete d;
 }
 
 QDir ScriptEnvironment::currentDir() const {
-	QScriptContextInfo info(d->scriptEngine.currentContext()->parentContext());
+	QScriptContextInfo info(d->scriptEngine->currentContext()->parentContext());
 	QFileInfo fileinfo(info.fileName());
 	return fileinfo.dir();
 }
 
 QScriptEngine *ScriptEnvironment::engine() const {
-	return &d->scriptEngine;
+	return d->scriptEngine;
 }
 
 void ScriptEnvironment::scriptException(const QScriptValue & exception) {
-	qDebug() << "ScriptException:" << d->scriptEngine.uncaughtExceptionLineNumber() << exception.toString();
+	qDebug() << "ScriptException:" << d->scriptEngine->uncaughtExceptionLineNumber() << exception.toString();
 	qDebug() << "Backtrace:";
-	foreach( QString row, d->scriptEngine.uncaughtExceptionBacktrace() ) {
+	foreach( QString row, d->scriptEngine->uncaughtExceptionBacktrace() ) {
 		qDebug() << row;
 	}
-	d->scriptEngine.clearExceptions();
+	d->scriptEngine->clearExceptions();
 }
 
 void ScriptEnvironment::include(const QString &filename) {
@@ -90,11 +92,11 @@ void ScriptEnvironment::include(const QString &filename) {
 	QString fileContents = file.readAll();
 	file.close();
 
-	QScriptContext *ctx = d->scriptEngine.currentContext();
+	QScriptContext *ctx = d->scriptEngine->currentContext();
 
 	ctx->setActivationObject(ctx->parentContext()->activationObject());
 
-	d->scriptEngine.evaluate(fileContents, dir.filePath(filename));
+	d->scriptEngine->evaluate(fileContents, dir.filePath(filename));
 }
 
 void ScriptEnvironment::timerEvent(QTimerEvent *event) {
@@ -125,7 +127,7 @@ void ScriptEnvironment::timerEvent(QTimerEvent *event) {
 	}
 
 	if (expression.isString()) {
-		d->scriptEngine.evaluate(expression.toString());
+		d->scriptEngine->evaluate(expression.toString());
 	} else if (expression.isFunction()) {
 		expression.call();
 	}
