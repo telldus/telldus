@@ -17,8 +17,8 @@
 	<key>CFBundleName</key>
 	<string>TelldusCenter</string>
 	<key>CFBundleShortVersionString</key>
-	<string>TelldusCenter 2.0.0</string>
+	<string>TelldusCenter ${PACKAGE_VERSION}</string>
 	<key>CFBundleVersion</key>
-	<string>2.0.0</string>
+	<string>${PACKAGE_VERSION}</string>
 </dict>
 </plist>
