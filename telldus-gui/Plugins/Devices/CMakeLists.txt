@@ -5,10 +5,10 @@ SET( Plugin_SRCS
 )
 
 SET( Plugin_HDRS
+	devicesplugin.h
 )
 
 SET( Plugin_MOC_HDRS
-	devicesplugin.h
 )
 
 SET( Plugin_PATH "com.telldus.gui" )
