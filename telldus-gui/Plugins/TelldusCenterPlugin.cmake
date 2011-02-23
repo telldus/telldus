@@ -10,6 +10,9 @@ endif(COMMAND cmake_policy)
 QT4_WRAP_CPP(  Plugin_MOC_SRCS  ${Plugin_MOC_HDRS} )
 QT4_AUTOMOC (  ${Plugin_SRCS} )
 
+IF(Plugin_RESOURCES)
+	QT4_ADD_RESOURCES(Plugin_RSRCS ${Plugin_RESOURCES})
+ENDIF(Plugin_RESOURCES)
 
 SET( Plugin_LIBRARIES
 	${Plugin_LIBRARIES}
@@ -63,6 +66,7 @@ IF(Plugin_SRCS)
 	ADD_LIBRARY(${Plugin_NAME} SHARED
 		${Plugin_SRCS}
 		${Plugin_HDRS}
+		${Plugin_RSRCS}
 		${Plugin_MOC_HDRS}
 		${Plugin_MOC_SRCS}
 		${Plugin_MOC_HDRS}
