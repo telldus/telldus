@@ -24,11 +24,12 @@ DeviceModel::DeviceModel(QObject *parent)
 	for( int i = 0; i < numberOfDevices; ++i ) {
 		int id = tdGetDeviceId(i);
 		Device *device = new Device(id, SUPPORTED_METHODS, this);
+		connect(device, SIGNAL(showMessage(QString,QString,QString)), this, SIGNAL(showMessage(QString,QString,QString)));
 		devices.append(device);
 		connect(device, SIGNAL(stateChanged(int)), this, SLOT(deviceStateChanged(int)), Qt::QueuedConnection);
 		connect(device, SIGNAL(nameChanged(int,QString)), this, SLOT(nameChanged(int,QString)), Qt::QueuedConnection);
 	}
-	
+
 	deviceChangeCallbackId = tdRegisterDeviceChangeEvent( reinterpret_cast<TDDeviceChangeEvent>(&DeviceModel::deviceChangeEvent), this);
 }
 
@@ -77,9 +78,9 @@ QVariant DeviceModel::data(const QModelIndex &index, int role) const {
 			Device *device = devices[index.row()];
 			int lastSentCommand = device->lastSentCommand();
 			return QIcon( QString(":/images/state_%1.png").arg(lastSentCommand) );
- 		} else if (role == Qt::TextAlignmentRole) {
- 			return Qt::AlignCenter;
- 		}
+		} else if (role == Qt::TextAlignmentRole) {
+			return Qt::AlignCenter;
+		}
 	} else if (index.column() == 1) {
 		if (role == Qt::DisplayRole) {
 			return devices[index.row()]->name();
@@ -143,6 +144,7 @@ void DeviceModel::deviceChanged( int deviceId, int eventType, int changeType ) {
 		//We are not running in the DeviceModel-thread here. Move the device to the correct thread
 		device->moveToThread(this->thread());
 		device->setParent(this);
+		connect(device, SIGNAL(showMessage(QString,QString,QString)), this, SIGNAL(showMessage(QString,QString,QString)));
 		devices.append(device);
 		connect(device, SIGNAL(stateChanged(int)), this, SLOT(deviceStateChanged(int)));
 		connect(device, SIGNAL(nameChanged(int,QString)), this, SLOT(nameChanged(int,QString)));
@@ -157,7 +159,7 @@ void DeviceModel::deviceChanged( int deviceId, int eventType, int changeType ) {
 			endRemoveRows();
 		}
 	}
-	
+
 }
 
 void DeviceModel::nameChanged(int deviceId, const QString &) {
