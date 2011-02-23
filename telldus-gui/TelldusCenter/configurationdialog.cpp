@@ -18,7 +18,7 @@
 class CategoryListWidget : public QListWidget {
 public:
 	CategoryListWidget(QWidget *parent = 0) : QListWidget(parent) {
-		setSizePolicy(QSizePolicy::MinimumExpanding, QSizePolicy::Expanding);
+		setSizePolicy(QSizePolicy::Minimum, QSizePolicy::Expanding);
 		setSelectionMode(QAbstractItemView::SingleSelection);
 		setVerticalScrollMode(QAbstractItemView::ScrollPerPixel);
 	}
@@ -27,7 +27,7 @@ public:
 		int width = sizeHintForColumn(0) + frameWidth() * 2 + 5;
 		if (verticalScrollBar()->isVisible())
 			width += verticalScrollBar()->width();
-		return QSize(width, 100);
+		return QSize(width, 200);
 	}
 };
 
