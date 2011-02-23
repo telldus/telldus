@@ -233,9 +233,9 @@ void Device::deviceChangedSlot(int deviceId, int eventId, int changeType) {
 
 void Device::triggerEvent( int messageId ) {
 	if (messageId != TELLSTICK_SUCCESS) {
-// 		char *message = tdGetErrorString( messageId );
-// 		emit showMessage( "", message, "" );
-// 		tdReleaseString( message );
+		char *message = tdGetErrorString( messageId );
+		emit showMessage( "", message, "" );
+		tdReleaseString( message );
 	}
 }
 
