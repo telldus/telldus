@@ -4,7 +4,6 @@
 #include <QtNetwork>
 #include <QtCore>
 #include <QDesktopServices>
-#include <QtCrypto>
 #include <QMessageBox>
 
 #include <QDebug>
@@ -18,7 +17,6 @@ public:
 	bool registered;
 	QUrl registerUrl;
 	QString uuid, hashMethod;
-	QCA::Initializer qcaInit;
 	QNetworkAccessManager *manager;
 	QList<Server> serverList;
 	QDateTime serverRefreshTime;
@@ -36,12 +34,6 @@ LiveObject::LiveObject( QScriptEngine *engine, QObject * parent )
 {
 	d = new PrivateData;
 	d->hashMethod = "sha1";
-	foreach(QString hash, QStringList() << "sha512" << "sha256") {
-		if (QCA::isSupported(hash.toUtf8())) {
-			d->hashMethod = hash;
-			break;
-		}
-	}
 	d->registered = false;
 	d->socket = new QSslSocket(this);
 	d->socket->setProtocol( QSsl::TlsV1 );
@@ -264,14 +256,6 @@ void LiveObject::serverAssignReply( QNetworkReply *r ) {
 }
 
 QByteArray LiveObject::signatureForMessage( const QByteArray &message ) {
-	if (QCA::isSupported(d->hashMethod.toUtf8())) {
-		QCA::Hash signature(d->hashMethod);
-		signature.update(message);
-		signature.update(TELLDUS_LIVE_PRIVATE_KEY);
-		return signature.final().toByteArray().toHex();
-	}
-
-	//Fallback to builtin function
 	QCryptographicHash signature( QCryptographicHash::Sha1 );
 	signature.addData(message);
 	signature.addData(TELLDUS_LIVE_PRIVATE_KEY);
