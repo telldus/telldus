@@ -171,7 +171,7 @@ void Device::down() {
 	triggerEvent( tdDown( d->id ) );
 }
 
-void Device::stops() {
+void Device::stop() {
 	triggerEvent( tdStop( d->id ) );
 }
 

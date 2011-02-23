@@ -33,7 +33,7 @@ public:
 	int lastSentCommand() const;
 	QString lastSentValue() const;
 
- 	int methods() const;
+	int methods() const;
 
 	static void remove(int deviceId);
 
@@ -47,6 +47,7 @@ public slots:
 	void execute();
 	void up();
 	void down();
+	void stop();
 	void learn();
 
 signals:
@@ -55,9 +56,9 @@ signals:
 	void nameChanged( int deviceId, const QString &newName );
 	void methodsChanged( int deviceId );
 	void stateChanged( int deviceId );
-// 	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
+	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
 // 	void eventTriggered( const QString &name, const QString &title );
-	
+
 private slots:
 	void deviceChangedSlot(int deviceId, int eventId, int changeType);
 
