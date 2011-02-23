@@ -225,7 +225,12 @@ void LiveObject::sslErrors( const QList<QSslError> & errors ) {
 }
 
 void LiveObject::serverAssignReply( QNetworkReply *r ) {
-	qDebug() << "Server assign reply";
+	r->deleteLater();
+	if (r->error() != QNetworkReply::NoError) {
+		emit errorChanged(r->errorString());
+		emit statusChanged("Error retrieving server list");
+		return;
+	}
 	QXmlStreamReader xml(r);
 	xml.readNextStartElement(); // enter <servers>
 
@@ -252,7 +257,6 @@ void LiveObject::serverAssignReply( QNetworkReply *r ) {
 		emit statusChanged("Retrying in " + QString::number(timeout) + " seconds...");
 		QTimer::singleShot(timeout * 1000, this, SLOT(connectToServer()));
 	}
-	r->deleteLater();
 }
 
 QByteArray LiveObject::signatureForMessage( const QByteArray &message ) {
