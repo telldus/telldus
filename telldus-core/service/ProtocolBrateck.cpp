@@ -29,11 +29,11 @@ std::string ProtocolBrateck::getStringForMethod(int method, unsigned char, Contr
 			strReturn.insert(0, B0);
 		}
 	}
-		
+
 	strReturn.insert(0, "S");
-	if (method == TELLSTICK_TURNON) {
+	if (method == TELLSTICK_UP) {
 		strReturn.append(BUP);
-	} else if (method == TELLSTICK_TURNOFF) {
+	} else if (method == TELLSTICK_DOWN) {
 		strReturn.append(BDOWN);
 	} else if (method == TELLSTICK_STOP) {
 		strReturn.append(BSTOP);
@@ -41,6 +41,6 @@ std::string ProtocolBrateck::getStringForMethod(int method, unsigned char, Contr
 		return "";
 	}
 	strReturn.append("+");
-		
+
 	return strReturn;
 }
