@@ -1,5 +1,6 @@
 #include "Device.h"
 #include "Settings.h"
+#include "TellStick.h"
 
 class Device::PrivateData {
 public:
@@ -140,6 +141,24 @@ int Device::doAction(int action, unsigned char data, Controller *controller) {
 		if (code == "") {
 			return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 		}
+		if (code[0] != 'S' && code[0] != 'T' && code[0] != 'P' && code[0] != 'R') {
+			//Try autodetect sendtype
+			TellStick *tellstick = reinterpret_cast<TellStick *>(controller);
+			if (!tellstick) {
+				return TELLSTICK_ERROR_UNKNOWN;
+			}
+			int maxlength = 80;
+			if (tellstick->pid() == 0x0c31) {
+				maxlength = 512;
+			}
+			if (code.length() <= maxlength) {
+				//S is enough
+				code.insert(0, 1, 'S');
+				code.append(1, '+');
+			} else {
+				code = TellStick::createTPacket(code);
+			}
+		}
 		return controller->send(code);
 	}
 	return TELLSTICK_ERROR_UNKNOWN;
@@ -175,7 +194,7 @@ int Device::maskUnsupportedMethods(int methods, int supportedMethods) {
 	if ((methods & TELLSTICK_UP) && !(supportedMethods & TELLSTICK_UP)) {
 		methods |= TELLSTICK_TURNOFF;
 	}
-	
+
 	// Down -> On
 	if ((methods & TELLSTICK_DOWN) && !(supportedMethods & TELLSTICK_DOWN)) {
 		methods |= TELLSTICK_TURNON;
