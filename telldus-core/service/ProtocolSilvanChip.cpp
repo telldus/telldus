@@ -9,76 +9,91 @@ int ProtocolSilvanChip::methods() const {
 }
 
 std::string ProtocolSilvanChip::getStringForMethod(int method, unsigned char data, Controller *controller) {
-	const unsigned char S = 100;
-	const unsigned char L = 255;
-	const std::string LONG = "\xFF\x1\x2E";
+	if (TelldusCore::comparei(model(), L"kp100")) {
+		std::string preamble;
+		preamble.append(1, 100);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 100);
 
-	const std::string ONE = LONG + "\x2E";
-	const std::string ZERO = "\x2E" + LONG;
-	std::string strReturn;
+		const std::string one = "\xFF\x1\x2E\x2E";
+		const std::string zero = "\x2E\xFF\x1\x2E";
+		int button = 0;
+		if (method == TELLSTICK_UP) {
+			button = 2;
+		} else if (method == TELLSTICK_DOWN) {
+			button = 4;
+		} else if (method == TELLSTICK_STOP) {
+			button = 3;
+		} else if (method == TELLSTICK_LEARN) {
+			button = 1;
+		} else {
+			return "";
+		}
+		return this->getString(preamble, one, zero, button);
+	}
+	return "";
+}
 
-	strReturn.append(1, S);
-	strReturn.append(1, L);
-	strReturn.append(1, 1);
-	strReturn.append(1, L);
-	strReturn.append(1, 1);
-	strReturn.append(1, L);
-	strReturn.append(1, 1);
-	strReturn.append(1, L);
-	strReturn.append(1, 1);
-	strReturn.append(1, L);
-	strReturn.append(1, 1);
-	strReturn.append(1, L);
-	strReturn.append(1, 1);
-	strReturn.append(1, L);
-	strReturn.append(1, 1);
-	strReturn.append(1, L);
-	strReturn.append(1, 1);
-	strReturn.append(1, L);
-	strReturn.append(1, 1);
-	strReturn.append(1, L);
-	strReturn.append(1, 1);
-	strReturn.append(1, L);
-	strReturn.append(1, 1);
-	strReturn.append(1, L);
-	strReturn.append(1, 1);
-	strReturn.append(1, S);
+std::string ProtocolSilvanChip::getString(const std::string &preamble, const std::string &one, const std::string &zero, int button) {
 
 	int intHouse = this->getIntParameter(L"house", 1, 1048575);
+	std::string strReturn = preamble;
 
 	for( int i = 19; i >= 0; --i ) {
 		if (intHouse & (1 << i)) {
-			strReturn.append(ONE);
+			strReturn.append(one);
 		} else {
-			strReturn.append(ZERO);
+			strReturn.append(zero);
 		}
 	}
 
-	if (method == TELLSTICK_TURNOFF || method == TELLSTICK_UP) {
-		strReturn.append(ZERO);
-		strReturn.append(ZERO);
-		strReturn.append(ONE);
-		strReturn.append(ZERO);
-	} else if (method == TELLSTICK_TURNON || method == TELLSTICK_DOWN) {
-		strReturn.append(ONE);
-		strReturn.append(ZERO);
-		strReturn.append(ZERO);
-		strReturn.append(ZERO);
-	} else if (method == TELLSTICK_STOP) {
-		strReturn.append(ZERO);
-		strReturn.append(ONE);
-		strReturn.append(ZERO);
-		strReturn.append(ZERO);
-	} else if (method == TELLSTICK_LEARN) {
-		strReturn.append(ZERO);
-		strReturn.append(ZERO);
-		strReturn.append(ZERO);
-		strReturn.append(ONE);
+	if (button == 1) {
+		strReturn.append(zero);
+		strReturn.append(zero);
+		strReturn.append(zero);
+		strReturn.append(one);
+	} else if (button == 2) {
+		strReturn.append(zero);
+		strReturn.append(zero);
+		strReturn.append(one);
+		strReturn.append(zero);
+	} else if (button == 3) {
+		strReturn.append(zero);
+		strReturn.append(one);
+		strReturn.append(zero);
+		strReturn.append(zero);
+	} else if (button == 4) {
+		strReturn.append(one);
+		strReturn.append(zero);
+		strReturn.append(zero);
+		strReturn.append(zero);
 	} else {
 		return "";
 	}
 
-	strReturn.append(ZERO);
+	strReturn.append(zero);
 	return strReturn;
-
 }
