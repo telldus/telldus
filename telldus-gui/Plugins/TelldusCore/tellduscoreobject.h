@@ -10,7 +10,7 @@ class TelldusCoreObject : public QObject
 public:
 	TelldusCoreObject( QObject * parent = 0 );
 	virtual ~TelldusCoreObject();
-	
+
 signals:
 	void deviceChange( int deviceId, int eventId );
 	void deviceEvent( int deviceId, int method, const QString &data );
@@ -25,19 +25,22 @@ public slots:
 	int lastSentCommand( int deviceId, int methodsSupported );
 	QString lastSentValue( int deviceId );
 	int methods( int deviceId, int methodsSupported );
-	
+
 	int turnOn( int deviceId );
 	int turnOff( int deviceId );
-	
+	int up( int deviceId );
+	int down( int deviceId );
+	int stop( int deviceId );
+
 private:
 	void triggerError( int, int );
-	
+
 	static void WINAPI deviceChangeEventCallback(int deviceId, int eventId, int changeType, int callbackId, void *context);
 	static void WINAPI deviceEventCallback(int deviceId, int method, const char *data, int callbackId, void *context);
-	
+
 	int deviceEventId;
 	int deviceChangeEventId;
-	
+
 };
 
 #endif // TELLDUSCOREOBJECT_H

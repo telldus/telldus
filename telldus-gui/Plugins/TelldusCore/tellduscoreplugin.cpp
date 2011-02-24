@@ -21,12 +21,15 @@ void TelldusCorePlugin::initialize ( const QString & key, QScriptEngine * engine
 		value.setProperty("TELLSTICK_BELL", TELLSTICK_BELL);
 		value.setProperty("TELLSTICK_TOGGLE", TELLSTICK_TOGGLE);
 		value.setProperty("TELLSTICK_DIM", TELLSTICK_DIM);
-		
+		value.setProperty("TELLSTICK_UP", TELLSTICK_UP);
+		value.setProperty("TELLSTICK_DOWN", TELLSTICK_DOWN);
+		value.setProperty("TELLSTICK_STOP", TELLSTICK_STOP);
+
 		value.setProperty("TELLSTICK_DEVICE_ADDED", TELLSTICK_DEVICE_ADDED);
 		value.setProperty("TELLSTICK_DEVICE_CHANGED", TELLSTICK_DEVICE_CHANGED);
 		value.setProperty("TELLSTICK_DEVICE_REMOVED", TELLSTICK_DEVICE_REMOVED);
 		value.setProperty("TELLSTICK_DEVICE_STATE_CHANGED", TELLSTICK_DEVICE_STATE_CHANGED);
-		
+
 		engine->globalObject().property("com").property("telldus").setProperty("core", value);
 	}
 }

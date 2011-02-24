@@ -77,6 +77,30 @@ int TelldusCoreObject::turnOff(int deviceId) {
 	return retval;
 }
 
+int TelldusCoreObject::up(int deviceId) {
+	int retval = tdUp( deviceId );
+	if (retval != TELLSTICK_SUCCESS) {
+		triggerError(deviceId, retval);
+	}
+	return retval;
+}
+
+int TelldusCoreObject::down(int deviceId) {
+	int retval = tdDown( deviceId );
+	if (retval != TELLSTICK_SUCCESS) {
+		triggerError(deviceId, retval);
+	}
+	return retval;
+}
+
+int TelldusCoreObject::stop(int deviceId) {
+	int retval = tdStop( deviceId );
+	if (retval != TELLSTICK_SUCCESS) {
+		triggerError(deviceId, retval);
+	}
+	return retval;
+}
+
 void TelldusCoreObject::triggerError(int deviceId, int errorId) {
 	char *errorString = tdGetErrorString( errorId );
 	QString message = QString::fromUtf8( errorString );
