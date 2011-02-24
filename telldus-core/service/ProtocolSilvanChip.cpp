@@ -4,8 +4,10 @@
 int ProtocolSilvanChip::methods() const {
 	if (TelldusCore::comparei(model(), L"kp100")) {
 		return TELLSTICK_UP | TELLSTICK_DOWN | TELLSTICK_STOP | TELLSTICK_LEARN;
+	} else if (TelldusCore::comparei(model(), L"displaymatic")) {
+		return TELLSTICK_UP | TELLSTICK_DOWN | TELLSTICK_STOP;
 	}
-	return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN;
+	return 0;
 }
 
 std::string ProtocolSilvanChip::getStringForMethod(int method, unsigned char data, Controller *controller) {
@@ -51,6 +53,29 @@ std::string ProtocolSilvanChip::getStringForMethod(int method, unsigned char dat
 			button = 1;
 		} else {
 			return "";
+		}
+		return this->getString(preamble, one, zero, button);
+	} else if (TelldusCore::comparei(model(), L"displaymatic")) {
+		std::string preamble;
+		preamble.append(1, 0x25);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 0x25);
+		const std::string one = "\x69\25";
+		const std::string zero = "\x25\x69";
+		int button = 0;
+		if (method == TELLSTICK_UP) {
+			button = 1;
+		} else if (method == TELLSTICK_DOWN) {
+			button = 3;
+		} else if (method == TELLSTICK_STOP) {
+			button = 2;
 		}
 		return this->getString(preamble, one, zero, button);
 	}
