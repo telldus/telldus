@@ -1,6 +1,10 @@
 #include "ProtocolSilvanChip.h"
+#include "Strings.h"
 
 int ProtocolSilvanChip::methods() const {
+	if (TelldusCore::comparei(model(), L"kp100")) {
+		return TELLSTICK_UP | TELLSTICK_DOWN | TELLSTICK_STOP | TELLSTICK_LEARN;
+	}
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN;
 }
 
@@ -50,21 +54,26 @@ std::string ProtocolSilvanChip::getStringForMethod(int method, unsigned char dat
 		}
 	}
 
-	if (method == TELLSTICK_TURNON) {
+	if (method == TELLSTICK_TURNOFF || method == TELLSTICK_UP) {
 		strReturn.append(ZERO);
 		strReturn.append(ZERO);
 		strReturn.append(ONE);
+		strReturn.append(ZERO);
+	} else if (method == TELLSTICK_TURNON || method == TELLSTICK_DOWN) {
+		strReturn.append(ONE);
+		strReturn.append(ZERO);
+		strReturn.append(ZERO);
+		strReturn.append(ZERO);
+	} else if (method == TELLSTICK_STOP) {
+		strReturn.append(ZERO);
+		strReturn.append(ONE);
+		strReturn.append(ZERO);
 		strReturn.append(ZERO);
 	} else if (method == TELLSTICK_LEARN) {
 		strReturn.append(ZERO);
 		strReturn.append(ZERO);
 		strReturn.append(ZERO);
 		strReturn.append(ONE);
-	} else if (method == TELLSTICK_TURNOFF) {
-		strReturn.append(ONE);
-		strReturn.append(ZERO);
-		strReturn.append(ZERO);
-		strReturn.append(ZERO);
 	} else {
 		return "";
 	}
