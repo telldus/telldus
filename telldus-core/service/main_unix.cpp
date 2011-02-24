@@ -19,7 +19,7 @@ void signalHandler(int sig) {
 			break;
 		case SIGTERM:
 		case SIGINT:
-			syslog(LOG_WARNING, "Received SIGTERM signal.");
+			syslog(LOG_WARNING, "Received SIGTERM or SIGINT signal.");
 			syslog(LOG_WARNING, "Shutting down");
 			tm.stop();
 			break;
@@ -35,24 +35,33 @@ void signalHandler(int sig) {
 int main(int argc, char **argv) {
 	pid_t pid, sid;
 	FILE *fd;
+	bool deamonize = true;
 
-	pid = fork();
-	if (pid < 0) {
-		exit(EXIT_FAILURE);
-	}
-	if (pid > 0) {
-		//We are the parent
-		//Let the parent store the clients pid,
-		//This way anyone starting the daemon can read the pidfile immediately
-
-		/* Record the pid */
-		fd = fopen(PID_FILE,"w");
-		if (!fd) {
-			syslog(LOG_ERR, "Could not write pid file");
+	for (int i = 1; i < argc; ++i) {
+		if (strcmp(argv[i], "--nodaemon") == 0) {
+			deamonize = false;
 		}
-		fprintf(fd,"%d\n",pid);
-		fclose(fd);
-		exit(EXIT_SUCCESS);
+	}
+
+	if (deamonize) {
+		pid = fork();
+		if (pid < 0) {
+			exit(EXIT_FAILURE);
+		}
+		if (pid > 0) {
+			//We are the parent
+			//Let the parent store the clients pid,
+			//This way anyone starting the daemon can read the pidfile immediately
+
+			// Record the pid
+			fd = fopen(PID_FILE,"w");
+			if (!fd) {
+				syslog(LOG_ERR, "Could not write pid file");
+			}
+			fprintf(fd,"%d\n",pid);
+			fclose(fd);
+			exit(EXIT_SUCCESS);
+		}
 	}
 
 	setlogmask(LOG_UPTO(LOG_INFO));
@@ -60,26 +69,28 @@ int main(int argc, char **argv) {
 
 	syslog(LOG_INFO, "%s daemon starting up", DAEMON_NAME);
 
-	/* Change the file mode mask */
-	umask(0);
+	if (deamonize) {
+		/* Change the file mode mask */
+		umask(0);
 
-	sid = setsid();
+		sid = setsid();
 
-	if (sid < 0) {
-		//Something went wrong
-		exit(EXIT_FAILURE);
+		if (sid < 0) {
+			//Something went wrong
+			printf("Could not set sid\n");
+			exit(EXIT_FAILURE);
+		}
+		//TODO: Reduce our permissions (change user)
+
+		close(STDIN_FILENO);
+		close(STDOUT_FILENO);
+		close(STDERR_FILENO);
 	}
 
 	/* Change the current working directory */
 	if ((chdir("/")) < 0) {
 		exit(EXIT_FAILURE);
 	}
-
-	//TODO: Reduce our permissions (change user)
-
-	close(STDIN_FILENO);
-	close(STDOUT_FILENO);
-	close(STDERR_FILENO);
 
 	/* Install signal traps for proper shutdown */
 	signal(SIGTERM, signalHandler);
