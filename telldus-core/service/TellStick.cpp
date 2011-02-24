@@ -15,7 +15,7 @@
 
 std::string TellStick::convertSToT( unsigned char t0, unsigned char t1, unsigned char t2, unsigned char t3, const std::string &data ) {
 	unsigned char dataByte = 0;
-	std::string retString = "R\1T";
+	std::string retString = "T";
 	retString.append(1, t0);
 	retString.append(1, t1);
 	retString.append(1, t2);
@@ -42,6 +42,7 @@ std::string TellStick::convertSToT( unsigned char t0, unsigned char t1, unsigned
 		}
 	}
 	if (data.length() % 4 != 0) {
+		dataByte <<= (data.length() % 4)*2;
 		retString.append(1, dataByte);
 	}
 
