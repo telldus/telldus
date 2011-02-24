@@ -12,6 +12,39 @@
 #include "TellStick.h"
 
 #include <unistd.h>
+#include <map>
+#include <stdio.h>
+
+std::string TellStick::createTPacket( const std::string &msg ) {
+	std::map<unsigned char, char> times;
+	std::string data;
+	int index = 0;
+	for(size_t i = 0; i < msg.length(); ++i) {
+		//Search to se if it already exists and get the index
+		if (times.find(msg.at(i)) == times.end()) {
+			times[msg.at(i)] = index++;
+			if (times.size() > 4) {
+				return "";
+			}
+		}
+		data.append(1, times[msg.at(i)]);
+	}
+	//Reorder the times
+	unsigned char t0 = 1, t1 = 1, t2 = 1, t3 = 1;
+	for(std::map<unsigned char, char>::const_iterator it = times.begin(); it != times.end(); ++it) {
+		if ((*it).second == 0) {
+			t0 = (*it).first;
+		} else if ((*it).second == 1) {
+			t1 = (*it).first;
+		} else if ((*it).second == 2) {
+			t2 = (*it).first;
+		} else if ((*it).second == 3) {
+			t3 = (*it).first;
+		}
+	}
+
+	return TellStick::convertSToT(t0,t1,t2,t3,data);
+}
 
 std::string TellStick::convertSToT( unsigned char t0, unsigned char t1, unsigned char t2, unsigned char t3, const std::string &data ) {
 	unsigned char dataByte = 0;
