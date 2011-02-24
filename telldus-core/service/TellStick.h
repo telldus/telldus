@@ -44,7 +44,8 @@ protected:
 
 private:
 	static std::list<TellStickDescriptor> findAllByVIDPID( int vid, int pid );
-	
+	static std::string convertSToT(  unsigned char t0, unsigned char t1, unsigned char t2, unsigned char t3, const std::string &data );
+
 	class PrivateData;
 	PrivateData *d;
 };

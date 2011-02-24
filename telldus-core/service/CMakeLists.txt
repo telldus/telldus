@@ -13,6 +13,7 @@ SET( telldus-service_SRCS
 	Event.cpp
 	Settings.cpp
 	TelldusMain.cpp
+	TellStick.cpp
 	EventUpdateManager.cpp
 )
 SET( telldus-service_protocol_SRCS
