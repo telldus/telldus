@@ -11,11 +11,11 @@ int ProtocolSilvanChip::methods() const {
 std::string ProtocolSilvanChip::getStringForMethod(int method, unsigned char data, Controller *controller) {
 	const unsigned char S = 100;
 	const unsigned char L = 255;
-	const std::string LONG = "\255\1\200";
+	const std::string LONG = "\xFF\x1\x2E";
 
-	const std::string ONE = LONG + "\100";
-	const std::string ZERO = "\100" + LONG;
-	std::string strReturn = "R\1S";
+	const std::string ONE = LONG + "\x2E";
+	const std::string ZERO = "\x2E" + LONG;
+	std::string strReturn;
 
 	strReturn.append(1, S);
 	strReturn.append(1, L);
@@ -79,7 +79,6 @@ std::string ProtocolSilvanChip::getStringForMethod(int method, unsigned char dat
 	}
 
 	strReturn.append(ZERO);
-	strReturn.append("+");
 	return strReturn;
 
 }
