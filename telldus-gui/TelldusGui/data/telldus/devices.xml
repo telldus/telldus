@@ -26,6 +26,9 @@
 		<vendor name="Conrad" image="conrad">
 			<device model="selflearning:conrad" protocol="risingsun" widget="12" image="conrad-rsl888" name="Self Learning">Self Learning</device>
 		</vendor>
+		<vendor name="Ecosavers" image="ecosavers">
+			<device model="ecosavers:ecosavers" protocol="silvanchip" widget="14" image="ecosavers" name="Self Learning">Self Learning</device>
+		</vendor>
 		<vendor name="Elro" image="elro">
 			<!--<text>http://www.elro-nl.com/elro-en-05/home.htm</text> -->
 			<device model="codeswitch:elro" protocol="sartano" widget="2" image="elro" name="Code Switch">Code Switch</device>
@@ -117,6 +120,9 @@
 	<type name="Projector screens" expanded="true">
 		<vendor name="Roxcore" image="roxcore">
 			<device model="codeswitch:roxcore" protocol="brateck" widget="6" image="projectorscreen">Projector screen</device>
+		</vendor>
+		<vendor name="KingPin" image="roxcore">
+			<device model="kp100:kingpin" protocol="silvanchip" widget="8" image="projectorscreen">Projector screen</device>
 		</vendor>
 	</type>
 </devices>
