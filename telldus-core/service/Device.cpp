@@ -137,6 +137,20 @@ int Device::getType(){
 int Device::doAction(int action, unsigned char data, Controller *controller) {
 	Protocol *p = this->retrieveProtocol();
 	if(p){
+		//Try to determine if we need to call another method due to masking
+		int methods = p->methods();
+		if ((action & methods) == 0) {
+			//Loop all methods an see if any method masks to this one
+			for(int i = 1; i <= methods; i<<=1) {
+				if ((i & methods) == 0) {
+					continue;
+				}
+				if (this->maskUnsupportedMethods(i, action)) {
+					action = i;
+					break;
+				}
+			}
+		}
 		std::string code = p->getStringForMethod(action, data, controller);
 		if (code == "") {
 			return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
