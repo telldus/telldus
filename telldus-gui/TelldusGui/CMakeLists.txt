@@ -24,6 +24,7 @@ SET( telldus-gui_SRCS
 	devicesettingnexabell.cpp
 	devicesettingrisingsun.cpp
 	devicesettingsartano.cpp
+	devicesettingselflearning.cpp
 	devicesettingunitcode.cpp
 	devicesettingupm.cpp
 	devicesetting.cpp
@@ -51,6 +52,7 @@ SET( telldus-gui_MOC_HDRS
 	devicesettingnexabell.h
 	devicesettingrisingsun.h
 	devicesettingsartano.h
+	devicesettingselflearning.h
 	devicesettingunitcode.h
 	devicesettingupm.h
 	devicesetting.h
