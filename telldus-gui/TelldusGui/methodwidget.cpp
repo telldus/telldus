@@ -12,7 +12,7 @@ class MethodWidget::PrivateData {
 public:
 	Device *device;
 	QToolButton *turnOff, *turnOn, *bell, *learn,
-	            *dim25, *dim50, *dim75,
+				*dim25, *dim50, *dim75,
 				*execute, *up, *down, *stop;
 };
 
@@ -37,7 +37,7 @@ MethodWidget::MethodWidget( Device *device, QWidget *parent )
 	QHBoxLayout *layout = new QHBoxLayout(this);
 	layout->setMargin(0);
 	layout->setSpacing(0);
-	
+
 	d->turnOff->setIcon( QIcon(":/images/state_2.png") );
 	d->turnOff->setVisible( false );
 	layout->addWidget( d->turnOff );
@@ -58,7 +58,7 @@ MethodWidget::MethodWidget( Device *device, QWidget *parent )
 	d->turnOn->setIcon( QIcon(":/images/state_1.png") );
 	d->turnOn->setVisible( false );
 	layout->addWidget( d->turnOn );
-	
+
 	d->bell->setIcon( QIcon(":/images/bell.png") );
 	d->bell->setVisible( false );
 	layout->addWidget( d->bell );
@@ -78,7 +78,7 @@ MethodWidget::MethodWidget( Device *device, QWidget *parent )
 	d->stop->setIcon( QIcon(":/images/state_2.png") );	//TODO
 	d->stop->setVisible( false );
 	layout->addWidget( d->stop );
-	
+
 	layout->addStretch();
 
 	d->learn->setText( tr("Learn") );
@@ -96,7 +96,7 @@ MethodWidget::MethodWidget( Device *device, QWidget *parent )
 	connect(d->execute, SIGNAL(clicked()), device, SLOT(execute()));
 	connect(d->up, SIGNAL(clicked()), device, SLOT(up()));
 	connect(d->down, SIGNAL(clicked()), device, SLOT(down()));
-	connect(d->stop, SIGNAL(clicked()), device, SLOT(turnOff()));
+	connect(d->stop, SIGNAL(clicked()), device, SLOT(stop()));
 
 
 	updateMethods(device->methods());
