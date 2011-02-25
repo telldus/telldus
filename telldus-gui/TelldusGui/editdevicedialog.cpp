@@ -12,6 +12,7 @@
 #include "devicesettingnexabell.h"
 #include "devicesettingrisingsun.h"
 #include "devicesettingsartano.h"
+#include "devicesettingselflearning.h"
 #include "devicesettingunitcode.h"
 #include "devicesettingupm.h"
 
@@ -163,6 +164,9 @@ EditDeviceDialog::EditDeviceDialog(Device *device, QWidget *parent, Qt::WFlags f
 	d->deviceSettings[14] = new DeviceSettingArctechSelflearning(device, this);
 	((DeviceSettingArctechSelflearning *)d->deviceSettings[14])->setRemoteMinMax(1,1048575);
 	((DeviceSettingArctechSelflearning *)d->deviceSettings[14])->setUnitMinMax(1,4);
+	//Kingpin
+	d->deviceSettings[15] = new DeviceSettingSelflearning(device, this);
+	((DeviceSettingSelflearning *)d->deviceSettings[15])->setRemoteMinMax(1,1048575);
 
 	foreach( DeviceSetting *s, d->deviceSettings ) {
 		connect(d->filteredModel, SIGNAL(setParameter(const QString&, const QString&)), s, SLOT(setValue(const QString&, const QString&)));

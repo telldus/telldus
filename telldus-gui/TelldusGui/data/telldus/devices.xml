@@ -121,8 +121,8 @@
 		<vendor name="Roxcore" image="roxcore">
 			<device model="codeswitch:roxcore" protocol="brateck" widget="6" image="projectorscreen">Projector screen</device>
 		</vendor>
-		<vendor name="KingPin" image="roxcore">
-			<device model="kp100:kingpin" protocol="silvanchip" widget="8" image="projectorscreen">Projector screen</device>
+		<vendor name="KingPin" image="kingpin">
+			<device model="kp100:kingpin" protocol="silvanchip" widget="15" image="kp100">KP100</device>
 		</vendor>
 	</type>
 </devices>
