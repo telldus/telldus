@@ -15,7 +15,7 @@ DevicesPlugin::~DevicesPlugin() {
 }
 
 void DevicesPlugin::initialize ( const QString & key, QScriptEngine * engine ) {
-	if (key == "com.telldus.gui") {		
+	if (key == "com.telldus.gui") {
 		QWidget *deviceWidget = tdDeviceWidget(0);
 		connect(deviceWidget, SIGNAL(showMessage(const QString &, const QString &, const QString &)), qApp, SIGNAL(showMessage(const QString &, const QString &, const QString &)));
 		connect(deviceWidget, SIGNAL(eventTriggered(const QString &, const QString &)), qApp, SLOT(eventTriggered(const QString &, const QString &)));

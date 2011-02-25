@@ -4,12 +4,23 @@ var devices = new Array();
 var methodsSupported = com.telldus.core.TELLSTICK_TURNON
 	| com.telldus.core.TELLSTICK_TURNOFF
 	| com.telldus.core.TELLSTICK_BELL
-	| com.telldus.core.TELLSTICK_DIM;
+	| com.telldus.core.TELLSTICK_DIM
+	| com.telldus.core.TELLSTICK_UP
+	| com.telldus.core.TELLSTICK_DOWN
+	| com.telldus.core.TELLSTICK_STOP;
 
 __postInit__ = function() {
 	com.telldus.core.deviceChange.connect(deviceChange);
 	application.allDoneLoading.connect( allDone );
 	application.addWidget("devices.default", ":/images/devices.png", com.telldus.gui);
+}
+
+function down() {
+	com.telldus.core.down( this.id );
+}
+
+function stop() {
+	com.telldus.core.stop( this.id );
 }
 
 function turnOn() {
@@ -18,6 +29,10 @@ function turnOn() {
 
 function turnOff() {
 	com.telldus.core.turnOff( this.id );
+}
+
+function up() {
+	com.telldus.core.up( this.id );
 }
 
 function dim() {
@@ -55,7 +70,7 @@ function deviceChange( deviceId, eventType ) {
 		addMethodsSubmenu(obj);
 		return;
 	}
-	
+
 	var index = -1;
 	//Find the device
 	for (var i=0; i < devices.length; ++i) {
@@ -88,6 +103,9 @@ function addMethodsSubmenu( obj ) {
 	if (methods & com.telldus.core.TELLSTICK_TURNON) {
 		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( qsTr("On"), obj.menuId )).triggered.connect( obj, turnOn );
 	}
+	if (methods & com.telldus.core.TELLSTICK_UP) {
+		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( qsTr("Up"), obj.menuId )).triggered.connect( obj, up );
+	}
 	if (methods & com.telldus.core.TELLSTICK_DIM) {
 		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( "90%", obj.menuId )).triggered.connect( {id: obj.id, value: 230}, dim );
 		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( "80%", obj.menuId )).triggered.connect( {id: obj.id, value: 204}, dim );
@@ -99,8 +117,14 @@ function addMethodsSubmenu( obj ) {
 		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( "20%", obj.menuId )).triggered.connect( {id: obj.id, value: 51}, dim );
 		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( "10%", obj.menuId )).triggered.connect( {id: obj.id, value: 25}, dim );
 	}
+	if (methods & com.telldus.core.TELLSTICK_STOP) {
+		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( qsTr("Stop"), obj.menuId )).triggered.connect( obj, stop );
+	}
 	if (methods & com.telldus.core.TELLSTICK_TURNOFF) {
 		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( qsTr("Off"), obj.menuId )).triggered.connect( obj, turnOff );
+	}
+	if (methods & com.telldus.core.TELLSTICK_DOWN) {
+		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( qsTr("Down"), obj.menuId )).triggered.connect( obj, down );
 	}
 	if (methods & com.telldus.core.TELLSTICK_BELL) {
 		com.telldus.systray.menuItem(com.telldus.systray.addMenuItem( qsTr("Bell"), obj.menuId )).triggered.connect( obj, bell );
