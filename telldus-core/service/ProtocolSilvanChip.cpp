@@ -4,6 +4,8 @@
 int ProtocolSilvanChip::methods() const {
 	if (TelldusCore::comparei(model(), L"kp100")) {
 		return TELLSTICK_UP | TELLSTICK_DOWN | TELLSTICK_STOP | TELLSTICK_LEARN;
+	} else if (TelldusCore::comparei(model(), L"ecosavers")) {
+		return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN;
 	} else if (TelldusCore::comparei(model(), L"displaymatic")) {
 		return TELLSTICK_UP | TELLSTICK_DOWN | TELLSTICK_STOP;
 	}
@@ -46,9 +48,9 @@ std::string ProtocolSilvanChip::getStringForMethod(int method, unsigned char dat
 		if (method == TELLSTICK_UP) {
 			button = 2;
 		} else if (method == TELLSTICK_DOWN) {
-			button = 4;
+			button = 8;
 		} else if (method == TELLSTICK_STOP) {
-			button = 3;
+			button = 4;
 		} else if (method == TELLSTICK_LEARN) {
 			button = 1;
 		} else {
@@ -73,9 +75,39 @@ std::string ProtocolSilvanChip::getStringForMethod(int method, unsigned char dat
 		if (method == TELLSTICK_UP) {
 			button = 1;
 		} else if (method == TELLSTICK_DOWN) {
-			button = 3;
+			button = 4;
 		} else if (method == TELLSTICK_STOP) {
 			button = 2;
+		}
+		return this->getString(preamble, one, zero, button);
+	} else if (TelldusCore::comparei(model(), L"ecosavers")) {
+		std::string preamble;
+		preamble.append(1, 0x25);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 255);
+		preamble.append(1, 1);
+		preamble.append(1, 0x25);
+		const std::string one = "\x69\25";
+		const std::string zero = "\x25\x69";
+		int intUnit = this->getIntParameter(L"unit", 1, 4);
+		int button = 0;
+		if (intUnit == 1) {
+			button = 7;
+		} else if (intUnit == 2) {
+			button = 3;
+		} else if (intUnit == 3) {
+			button = 5;
+		} else if (intUnit == 4) {
+			button = 6;
+		}
+
+		if (method == TELLSTICK_TURNON || method == TELLSTICK_LEARN) {
+			button |= 8;
 		}
 		return this->getString(preamble, one, zero, button);
 	}
@@ -95,28 +127,12 @@ std::string ProtocolSilvanChip::getString(const std::string &preamble, const std
 		}
 	}
 
-	if (button == 1) {
-		strReturn.append(zero);
-		strReturn.append(zero);
-		strReturn.append(zero);
-		strReturn.append(one);
-	} else if (button == 2) {
-		strReturn.append(zero);
-		strReturn.append(zero);
-		strReturn.append(one);
-		strReturn.append(zero);
-	} else if (button == 3) {
-		strReturn.append(zero);
-		strReturn.append(one);
-		strReturn.append(zero);
-		strReturn.append(zero);
-	} else if (button == 4) {
-		strReturn.append(one);
-		strReturn.append(zero);
-		strReturn.append(zero);
-		strReturn.append(zero);
-	} else {
-		return "";
+	for( int i = 3; i >= 0; --i) {
+		if (button & (1 << i)) {
+			strReturn.append(one);
+		} else {
+			strReturn.append(zero);
+		}
 	}
 
 	strReturn.append(zero);
