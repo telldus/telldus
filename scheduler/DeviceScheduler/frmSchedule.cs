@@ -136,7 +136,7 @@ namespace DeviceScheduler
                 cboMonthJan.Checked = (months.IndexOf("January") > -1);
                 cboMonthFeb.Checked = (months.IndexOf("February") > -1);
                 cboMonthMar.Checked = (months.IndexOf("March") > -1);
-                cboMonthApr.Checked = (months.IndexOf("Arpil") > -1);
+                cboMonthApr.Checked = (months.IndexOf("April") > -1);
                 cboMonthMay.Checked = (months.IndexOf("May") > -1);
                 cboMonthJune.Checked = (months.IndexOf("June") > -1);
                 cboMonthJuly.Checked = (months.IndexOf("July") > -1);
