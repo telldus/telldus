@@ -106,51 +106,56 @@ std::wstring DeviceManager::getDeviceStateValue(int deviceId){
 }
 
 int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
-	//devices locked
-	TelldusCore::MutexLocker deviceListLocker(&d->lock);
+	int type = 0;
+	int methods = 0;
+	std::wstring deviceIds;
+	std::wstring protocol;
+	
+	{
+		//devices locked
+		TelldusCore::MutexLocker deviceListLocker(&d->lock);
 
-	if (!d->devices.size()) {
-		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-	}
-	DeviceMap::iterator it = d->devices.find(deviceId);
-	if (it != d->devices.end()) {
-		
-		int type;
-		int methods;
-		std::wstring deviceIds;
-		std::wstring protocol;
-
-		{
-			//TODO: better way to lock (release)
-			TelldusCore::MutexLocker deviceLocker(it->second);
-			type = it->second->getType();
-			methods = it->second->getMethods();
-			deviceIds = it->second->getParameter(L"devices");
-			protocol = it->second->getProtocolName();
+		if (!d->devices.size()) {
+			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
-		if(type == TELLSTICK_TYPE_GROUP){
+		DeviceMap::iterator it = d->devices.find(deviceId);
+		if (it != d->devices.end()) {
 
-			//get all methods that some device in the groups supports
-			std::wstring deviceIdBuffer;
-			std::wstringstream devicesstream(deviceIds);
-			methods = 0;
-
-			while(std::getline(devicesstream, deviceIdBuffer, L',')){
-				int deviceIdInGroup = TelldusCore::wideToInteger(deviceIdBuffer);
-				if(deviceId == deviceIdInGroup){
-					//group exists in group, avoid infinite loop
-					continue;
-				}
-				int deviceMethods = getDeviceMethods(deviceIdInGroup, methodsSupported);
-				if(deviceMethods > 0){
-					methods |= deviceMethods;
-				}
+			{
+				TelldusCore::MutexLocker deviceLocker(it->second);
+				type = it->second->getType();
+				methods = it->second->getMethods();
+				deviceIds = it->second->getParameter(L"devices");
+				protocol = it->second->getProtocolName();
 			}
-			return methods;
 		}
-		else{
-			return Device::maskUnsupportedMethods(methods, methodsSupported);
+	}
+	if(type == 0){
+		return 0;
+	}
+	if(type == TELLSTICK_TYPE_GROUP){
+
+		//get all methods that some device in the groups supports
+		std::wstring deviceIdBuffer;
+		std::wstringstream devicesstream(deviceIds);
+		methods = 0;
+		
+		while(std::getline(devicesstream, deviceIdBuffer, L',')){
+			int deviceIdInGroup = TelldusCore::wideToInteger(deviceIdBuffer);
+			if(deviceId == deviceIdInGroup){
+				//group exists in group, avoid infinite loop
+				continue;
+			}
+			
+			int deviceMethods = getDeviceMethods(deviceIdInGroup, methodsSupported);
+			if(deviceMethods > 0){
+				methods |= deviceMethods;
+			}
 		}
+		return methods;
+	}
+	else{
+		return Device::maskUnsupportedMethods(methods, methodsSupported);
 	}
 
 	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
