@@ -164,7 +164,7 @@ int Device::doAction(int action, unsigned char data, Controller *controller) {
 			if (!tellstick) {
 				return TELLSTICK_ERROR_UNKNOWN;
 			}
-			int maxlength = 80;
+			unsigned int maxlength = 80;
 			if (tellstick->pid() == 0x0c31) {
 				maxlength = 512;
 			}
