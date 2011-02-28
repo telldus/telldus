@@ -100,7 +100,7 @@ void Client::callbackRawEvent(std::wstring command, int controllerId){
 }
 
 bool Client::getBoolFromService(const Message &msg) {
-	return getIntegerFromService(msg) == 1;
+	return getIntegerFromService(msg) == TELLSTICK_SUCCESS;
 }
 
 int Client::getIntegerFromService(const Message &msg) {
@@ -142,7 +142,7 @@ void Client::run(){
 	d->eventSocket.connect(L"TelldusEvents");
 
 	while(d->running){
-	
+
 		if(!d->eventSocket.isConnected()){
 			d->eventSocket.connect(L"TelldusEvents");	//try to reconnect to service
 			if(!d->eventSocket.isConnected()){
@@ -207,7 +207,7 @@ bool Client::unregisterCallback( int callbackId ) {
 		d->deviceEventList.erase(callback_it);
 		return true;
 	}
-	
+
 	for(DeviceChangeList::iterator callback_it = d->deviceChangeEventList.begin(); callback_it != d->deviceChangeEventList.end(); ++callback_it) {
 		if ( (*callback_it).id != callbackId ) {
 			continue;
@@ -215,7 +215,7 @@ bool Client::unregisterCallback( int callbackId ) {
 		d->deviceChangeEventList.erase(callback_it);
 		return true;
 	}
-	
+
 	for(RawDeviceEventList::iterator callback_it = d->rawDeviceEventList.begin(); callback_it != d->rawDeviceEventList.end(); ++callback_it) {
 		if ( (*callback_it).id != callbackId ) {
 			continue;
@@ -223,7 +223,7 @@ bool Client::unregisterCallback( int callbackId ) {
 		d->rawDeviceEventList.erase(callback_it);
 		return true;
 	}
-	
+
 	return false;
 }
 
