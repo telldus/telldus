@@ -55,11 +55,12 @@ int main(int argc, char **argv) {
 
 			// Record the pid
 			fd = fopen(PID_FILE,"w");
-			if (!fd) {
+			if (fd) {
+				fprintf(fd,"%d\n",pid);
+				fclose(fd);
+			} else {
 				syslog(LOG_ERR, "Could not write pid file");
 			}
-			fprintf(fd,"%d\n",pid);
-			fclose(fd);
 			exit(EXIT_SUCCESS);
 		}
 	}
@@ -80,12 +81,13 @@ int main(int argc, char **argv) {
 			printf("Could not set sid\n");
 			exit(EXIT_FAILURE);
 		}
-		//TODO: Reduce our permissions (change user)
 
 		close(STDIN_FILENO);
 		close(STDOUT_FILENO);
 		close(STDERR_FILENO);
 	}
+
+	//TODO: Reduce our permissions (change user)
 
 	/* Change the current working directory */
 	if ((chdir("/")) < 0) {
