@@ -151,6 +151,9 @@ int Device::doAction(int action, unsigned char data, Controller *controller) {
 				}
 			}
 		}
+		if ((action & methods) == 0) {
+			return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+		}
 		std::string code = p->getStringForMethod(action, data, controller);
 		if (code == "") {
 			return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
