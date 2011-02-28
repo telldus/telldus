@@ -110,7 +110,7 @@ int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported, std::set
 	int methods = 0;
 	std::wstring deviceIds;
 	std::wstring protocol;
-	
+
 	{
 		//devices locked
 		TelldusCore::MutexLocker deviceListLocker(&d->lock);
@@ -139,18 +139,18 @@ int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported, std::set
 		std::wstring deviceIdBuffer;
 		std::wstringstream devicesstream(deviceIds);
 		methods = 0;
-		
+
 		duplicateDeviceIds->insert(deviceId);
-		
+
 		while(std::getline(devicesstream, deviceIdBuffer, L',')){
 			int deviceIdInGroup = TelldusCore::wideToInteger(deviceIdBuffer);
 			if(duplicateDeviceIds->count(deviceIdInGroup) == 1){
 				//action for device already executed, or will execute, do nothing to avoid infinite loop
 				continue;
 			}
-			
+
 			duplicateDeviceIds->insert(deviceIdInGroup);
-			
+
 			int deviceMethods = getDeviceMethods(deviceIdInGroup, methodsSupported, duplicateDeviceIds);
 			if(deviceMethods > 0){
 				methods |= deviceMethods;
@@ -382,14 +382,14 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 	} //devicelist unlocked
 
 	int retval = TELLSTICK_ERROR_UNKNOWN;
-	
+
 	if(device->getType() == TELLSTICK_TYPE_GROUP || device->getType() == TELLSTICK_TYPE_SCENE){
 		std::wstring devices = device->getParameter(L"devices");
 		deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(0);
 		std::set<int> *duplicateDeviceIds = new std::set<int>;
 		retval = doGroupAction(devices, action, data, device->getType(), deviceId, duplicateDeviceIds);
 		delete duplicateDeviceIds;
-		
+
 		{
 			//reaquire device lock, make sure it still exists
 			//devicelist locked
@@ -427,25 +427,25 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 }
 
 int DeviceManager::doGroupAction(const std::wstring devices, const int action, const unsigned char data, const int type, const int groupDeviceId, std::set<int> *duplicateDeviceIds){
-	int retval = TELLSTICK_SUCCESS;	//TODO or no devices found?
+	int retval = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 	std::wstring singledevice;
 	std::wstringstream devicesstream(devices);
-	
+
 	duplicateDeviceIds->insert(groupDeviceId);
-	
+
 	while(std::getline(devicesstream, singledevice, L',')){
 
 		int deviceId = TelldusCore::wideToInteger(singledevice);
-			
+
 		if(duplicateDeviceIds->count(deviceId) == 1){
 			//action for device already executed, or will execute, do nothing to avoid infinite loop
 			continue;
 		}
-		
+
 		duplicateDeviceIds->insert(deviceId);
-		
+
 		int deviceReturnValue = TELLSTICK_SUCCESS;
-		
+
 		if(type == TELLSTICK_TYPE_SCENE && (action == TELLSTICK_TURNON || action == TELLSTICK_EXECUTE)){
 			deviceReturnValue = executeScene(singledevice, groupDeviceId);
 		}
@@ -461,7 +461,7 @@ int DeviceManager::doGroupAction(const std::wstring devices, const int action, c
 				else{
 					//group (in group)
 					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds);
-				
+
 					if(deviceReturnValue == TELLSTICK_SUCCESS) {
 						std::wstring datastring = TelldusCore::Message::charUnsignedToWstring(data);
 						if (this->triggerDeviceStateChange(deviceId, action, datastring)) {
@@ -476,20 +476,21 @@ int DeviceManager::doGroupAction(const std::wstring devices, const int action, c
 			}
 		}
 
-		if(retval == TELLSTICK_SUCCESS){
-			//if error(s), return the first error, but still try to continue the action with the other devices
-			//quite possible that some device don't support the current method
+		if(deviceReturnValue != TELLSTICK_ERROR_METHOD_NOT_SUPPORTED){
+			//if error(s), return the last error, but still try to continue the action with the other devices
+			//if the error is a method not supported we igore is since there might be others supporting it
+			//If no devices support the method the default value will be returned (method not supported)
 			retval = deviceReturnValue;
 		}
-		
+
 	}
 	return retval;
 }
 
 int DeviceManager::executeScene(std::wstring singledevice, int groupDeviceId){
-	
+
 	std::wstringstream devicestream(singledevice);
-	
+
 	const int deviceParameterLength = 3;
 	std::wstring deviceParts[deviceParameterLength] = {L"", L"", L""};
 	std::wstring devicePart = L"";
@@ -502,7 +503,7 @@ int DeviceManager::executeScene(std::wstring singledevice, int groupDeviceId){
 	if(deviceParts[0] == L"" || deviceParts[1] == L""){
 		return TELLSTICK_ERROR_UNKNOWN;	//malformed or missing parameter
 	}
-	
+
 	int deviceId = TelldusCore::wideToInteger(deviceParts[0]);
 	if(deviceId == groupDeviceId){
 		return TELLSTICK_ERROR_UNKNOWN;	//the scene itself has been added to its devices, avoid infinite loop
@@ -515,7 +516,7 @@ int DeviceManager::executeScene(std::wstring singledevice, int groupDeviceId){
 	if(deviceParts[2] != L""){
 		devicedata = TelldusCore::wideToInteger(deviceParts[2]);
 	}
-	
+
 	if(deviceId > 0 && method > 0){	//check for format error in parameter "devices"
 		return doAction(deviceId, method, devicedata);
 	}
