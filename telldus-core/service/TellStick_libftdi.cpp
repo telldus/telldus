@@ -143,7 +143,8 @@ void TellStick::run() {
 	unsigned char msg[] = "V+";
 	ftdi_write_data( &d->ftHandle, msg, 2 ) ;
 
-	while(1) { //TODO check libftdi doc how to do this best
+	while(1) {
+		//Is there any better way then sleeping between reads?
 		usleep(1000);
 		TelldusCore::MutexLocker locker(&d->mutex);
 		if (!d->running) {
