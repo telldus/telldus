@@ -105,7 +105,7 @@ std::wstring DeviceManager::getDeviceStateValue(int deviceId){
 	return L"UNKNOWN";
 }
 
-int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
+int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported, std::set<int> *duplicateDeviceIds){
 	int type = 0;
 	int methods = 0;
 	std::wstring deviceIds;
@@ -140,14 +140,18 @@ int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported){
 		std::wstringstream devicesstream(deviceIds);
 		methods = 0;
 		
+		duplicateDeviceIds->insert(deviceId);
+		
 		while(std::getline(devicesstream, deviceIdBuffer, L',')){
 			int deviceIdInGroup = TelldusCore::wideToInteger(deviceIdBuffer);
-			if(deviceId == deviceIdInGroup){
-				//group exists in group, avoid infinite loop
+			if(duplicateDeviceIds->count(deviceIdInGroup) == 1){
+				//action for device already executed, or will execute, do nothing to avoid infinite loop
 				continue;
 			}
 			
-			int deviceMethods = getDeviceMethods(deviceIdInGroup, methodsSupported);
+			duplicateDeviceIds->insert(deviceIdInGroup);
+			
+			int deviceMethods = getDeviceMethods(deviceIdInGroup, methodsSupported, duplicateDeviceIds);
 			if(deviceMethods > 0){
 				methods |= deviceMethods;
 			}
@@ -382,7 +386,9 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 	if(device->getType() == TELLSTICK_TYPE_GROUP || device->getType() == TELLSTICK_TYPE_SCENE){
 		std::wstring devices = device->getParameter(L"devices");
 		deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(0);
-		retval = doGroupAction(devices, action, data, device->getType(), deviceId);
+		std::set<int> *duplicateDeviceIds = new std::set<int>;
+		retval = doGroupAction(devices, action, data, device->getType(), deviceId, duplicateDeviceIds);
+		delete duplicateDeviceIds;
 		
 		{
 			//reaquire device lock, make sure it still exists
@@ -420,26 +426,50 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 	return retval;
 }
 
-int DeviceManager::doGroupAction(const std::wstring devices, const int action, const unsigned char data, const int type, const int groupDeviceId){
+int DeviceManager::doGroupAction(const std::wstring devices, const int action, const unsigned char data, const int type, const int groupDeviceId, std::set<int> *duplicateDeviceIds){
 	int retval = TELLSTICK_SUCCESS;	//TODO or no devices found?
-
 	std::wstring singledevice;
 	std::wstringstream devicesstream(devices);
-
+	
+	duplicateDeviceIds->insert(groupDeviceId);
+	
 	while(std::getline(devicesstream, singledevice, L',')){
 
+		int deviceId = TelldusCore::wideToInteger(singledevice);
+			
+		if(duplicateDeviceIds->count(deviceId) == 1){
+			//action for device already executed, or will execute, do nothing to avoid infinite loop
+			continue;
+		}
+		
+		duplicateDeviceIds->insert(deviceId);
+		
 		int deviceReturnValue = TELLSTICK_SUCCESS;
 		
 		if(type == TELLSTICK_TYPE_SCENE && (action == TELLSTICK_TURNON || action == TELLSTICK_EXECUTE)){
 			deviceReturnValue = executeScene(singledevice, groupDeviceId);
 		}
 		else if(type == TELLSTICK_TYPE_GROUP){
-			int deviceId = TelldusCore::wideToInteger(singledevice);
-			if(deviceId == groupDeviceId){
-				deviceReturnValue = TELLSTICK_ERROR_UNKNOWN;	//avoid infinite loops if this group itself has been added to its devices
-			}
-			else if(deviceId != 0){
-				deviceReturnValue = doAction(deviceId, action, data);
+			if(deviceId != 0){
+				int childType = DeviceManager::getDeviceType(deviceId);
+				if(childType == TELLSTICK_TYPE_DEVICE){
+					deviceReturnValue = doAction(deviceId, action, data);
+				}
+				else if(childType == TELLSTICK_TYPE_SCENE){
+					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds); //TODO make scenes (and test) infinite loops-safe
+				}
+				else{
+					//group (in group)
+					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds);
+				
+					if(deviceReturnValue == TELLSTICK_SUCCESS) {
+						std::wstring datastring = TelldusCore::Message::charUnsignedToWstring(data);
+						if (this->triggerDeviceStateChange(deviceId, action, datastring)) {
+							DeviceManager::setDeviceLastSentCommand(deviceId, action, datastring);
+							d->set.setDeviceState(deviceId, action, datastring);
+						}
+					}
+				}
 			}
 			else{
 				deviceReturnValue = TELLSTICK_ERROR_DEVICE_NOT_FOUND;	//Probably incorrectly formatted parameter
