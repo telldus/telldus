@@ -18,9 +18,9 @@ using namespace TelldusCore;
 typedef CallbackStruct<TDDeviceEvent> DeviceEvent;
 typedef CallbackStruct<TDDeviceChangeEvent> DeviceChangeEvent;
 typedef CallbackStruct<TDRawDeviceEvent> RawDeviceEvent;
-typedef std::list<DeviceEvent> DeviceEventList;
-typedef std::list<DeviceChangeEvent> DeviceChangeList;
-typedef std::list<RawDeviceEvent> RawDeviceEventList;
+typedef std::list<DeviceEvent *> DeviceEventList;
+typedef std::list<DeviceChangeEvent *> DeviceChangeList;
+typedef std::list<RawDeviceEvent *> RawDeviceEventList;
 
 class Client::PrivateData {
 public:
@@ -70,7 +70,7 @@ void Client::callbackDeviceEvent(int deviceId, int deviceState, const std::wstri
 	std::list<std::tr1::shared_ptr<TDDeviceEventDispatcher> > list;
 	{
 		TelldusCore::MutexLocker locker(&d->mutex);
-		for(DeviceEventList::const_iterator callback_it = d->deviceEventList.begin(); callback_it != d->deviceEventList.end(); ++callback_it) {
+		for(DeviceEventList::iterator callback_it = d->deviceEventList.begin(); callback_it != d->deviceEventList.end(); ++callback_it) {
 			std::tr1::shared_ptr<TDDeviceEventDispatcher> ptr(new TDDeviceEventDispatcher(*callback_it, deviceId, deviceState, TelldusCore::wideToString(deviceStateValue)));
 			list.push_back(ptr);
 		}
@@ -81,7 +81,7 @@ void Client::callbackDeviceChangeEvent(int deviceId, int eventDeviceChanges, int
 	std::list<std::tr1::shared_ptr<TDDeviceChangeEventDispatcher> > list;
 	{
 		TelldusCore::MutexLocker locker(&d->mutex);
-		for(DeviceChangeList::const_iterator callback_it = d->deviceChangeEventList.begin(); callback_it != d->deviceChangeEventList.end(); ++callback_it) {
+		for(DeviceChangeList::iterator callback_it = d->deviceChangeEventList.begin(); callback_it != d->deviceChangeEventList.end(); ++callback_it) {
 			std::tr1::shared_ptr<TDDeviceChangeEventDispatcher> ptr(new TDDeviceChangeEventDispatcher(*callback_it, deviceId, eventDeviceChanges, eventChangeType));
 			list.push_back(ptr);
 		}
@@ -92,7 +92,7 @@ void Client::callbackRawEvent(std::wstring command, int controllerId){
 	std::list<std::tr1::shared_ptr<TDRawDeviceEventDispatcher> > list;
 	{
 		TelldusCore::MutexLocker locker(&d->mutex);
-		for(RawDeviceEventList::const_iterator callback_it = d->rawDeviceEventList.begin(); callback_it != d->rawDeviceEventList.end(); ++callback_it) {
+		for(RawDeviceEventList::iterator callback_it = d->rawDeviceEventList.begin(); callback_it != d->rawDeviceEventList.end(); ++callback_it) {
 			std::tr1::shared_ptr<TDRawDeviceEventDispatcher> ptr(new TDRawDeviceEventDispatcher(*callback_it, TelldusCore::wideToString(command), controllerId));
 			list.push_back(ptr);
 		}
@@ -116,7 +116,10 @@ std::wstring Client::getWStringFromService(const Message &msg) {
 int Client::registerDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
 	TelldusCore::MutexLocker locker(&d->mutex);
 	int id = ++d->lastCallbackId;
-	DeviceEvent callback = {eventFunction, id, context};
+	DeviceEvent *callback = new DeviceEvent;
+	callback->event = eventFunction;
+	callback->id = id;
+	callback->context = context;
 	d->deviceEventList.push_back(callback);
 	return id;
 }
@@ -124,7 +127,10 @@ int Client::registerDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
 int Client::registerDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context ) {
 	TelldusCore::MutexLocker locker(&d->mutex);
 	int id = ++d->lastCallbackId;
-	DeviceChangeEvent callback = {eventFunction, id, context};
+	DeviceChangeEvent *callback = new DeviceChangeEvent;
+	callback->event = eventFunction;
+	callback->id = id;
+	callback->context = context;
 	d->deviceChangeEventList.push_back(callback);
 	return id;
 }
@@ -132,7 +138,10 @@ int Client::registerDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *
 int Client::registerRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context ) {
 	TelldusCore::MutexLocker locker(&d->mutex);
 	int id = ++d->lastCallbackId;
-	RawDeviceEvent callback = {eventFunction, id, context};
+	RawDeviceEvent *callback = new RawDeviceEvent;
+	callback->event = eventFunction;
+	callback->id = id;
+	callback->context = context;
 	d->rawDeviceEventList.push_back(callback);
 	return id;
 }
