@@ -11,7 +11,7 @@
 
 using namespace TelldusCore;
 
-TDDeviceEventDispatcher::TDDeviceEventDispatcher(const CallbackStruct<TDDeviceEvent> &data, int id, int m, const std::string &strD)
+TDDeviceEventDispatcher::TDDeviceEventDispatcher(CallbackStruct<TDDeviceEvent> *data, int id, int m, const std::string &strD)
 :Thread(), d(data), deviceId(id), method(m), strData(strD)
 {
 	this->start();
@@ -22,11 +22,11 @@ TDDeviceEventDispatcher::~TDDeviceEventDispatcher() {
 }
 
 void TDDeviceEventDispatcher::run() {
-	d.event(deviceId, method, strData.c_str(), d.id, d.context);
+	d->event(deviceId, method, strData.c_str(), d->id, d->context);
 }
 
 
-TDDeviceChangeEventDispatcher::TDDeviceChangeEventDispatcher(const CallbackStruct<TDDeviceChangeEvent> &data, int id, int event, int type)
+TDDeviceChangeEventDispatcher::TDDeviceChangeEventDispatcher(CallbackStruct<TDDeviceChangeEvent> *data, int id, int event, int type)
 :Thread(), d(data), deviceId(id), changeEvent(event), changeType(type)
 {
 	this->start();
@@ -37,10 +37,10 @@ TDDeviceChangeEventDispatcher::~TDDeviceChangeEventDispatcher() {
 }
 
 void TDDeviceChangeEventDispatcher::run() {
-	d.event(deviceId, changeEvent, changeType, d.id, d.context);
+	d->event(deviceId, changeEvent, changeType, d->id, d->context);
 }
 
-TDRawDeviceEventDispatcher::TDRawDeviceEventDispatcher(const CallbackStruct<TDRawDeviceEvent> &data, const std::string &strD, int id)
+TDRawDeviceEventDispatcher::TDRawDeviceEventDispatcher( CallbackStruct<TDRawDeviceEvent> *data, const std::string &strD, int id)
 :Thread(), d(data), controllerId(id), strData(strD)
 {
 	this->start();
@@ -51,5 +51,5 @@ TDRawDeviceEventDispatcher::~TDRawDeviceEventDispatcher() {
 }
 
 void TDRawDeviceEventDispatcher::run() {
-	d.event(strData.c_str(), controllerId, d.id, d.context);
+	d->event(strData.c_str(), controllerId, d->id, d->context);
 }
