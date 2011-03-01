@@ -1,7 +1,7 @@
 //
 // C++ Interface: Thread
 //
-// Description: 
+// Description:
 //
 //
 // Author: Micke Prag <micke.prag@telldus.se>, (C) 2010
@@ -17,11 +17,13 @@ namespace TelldusCore {
 	public:
 		Mutex();
 		virtual ~Mutex();
-			
+
 		virtual void lock();
 		virtual void unlock();
-						
+
 	private:
+		Mutex(const Mutex&); //Disable copy
+		Mutex& operator = (const Mutex&);
 		class PrivateData;
 		PrivateData *d;
 	};
@@ -30,7 +32,7 @@ namespace TelldusCore {
 		void lock();
 		void unlock();
 	};
-	
+
 	class MutexLocker {
 	public:
 		MutexLocker(Mutex *m);
