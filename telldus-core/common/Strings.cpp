@@ -10,8 +10,6 @@ std::wstring TelldusCore::charToWstring(const char *value) {
 	size_t utf8Length = strlen(value);
 	size_t outbytesLeft = utf8Length*sizeof(wchar_t);
 
-	iconv_t convDesc = iconv_open("WCHAR_T", "UTF-8");
-
 	//Copy the instring
 	char *inString = new char[strlen(value)+1];
 	strcpy(inString, value);
@@ -23,12 +21,13 @@ std::wstring TelldusCore::charToWstring(const char *value) {
 	char *inPointer = inString;
 	char *outPointer = outString;
 
+	iconv_t convDesc = iconv_open("WCHAR_T", "UTF-8");
 	iconv(convDesc, &inPointer, &utf8Length, &outPointer, &outbytesLeft);
+	iconv_close(convDesc);
 
 	std::wstring retval( (wchar_t *)outString );
 
 	//Cleanup
-	iconv_close(convDesc);
 	delete[] inString;
 	delete[] outString;
 
@@ -62,11 +61,29 @@ int TelldusCore::wideToInteger(const std::wstring &input){
 }
 
 std::string TelldusCore::wideToString(const std::wstring &input) {
-	std::string strReturn;
-	size_t len = input.length();
-	char* convPointer = new char[len + 1];
-	wcstombs(convPointer, input.c_str(), len + 1);
-	strReturn = convPointer;
-	delete [] convPointer;
-	return strReturn;
+	size_t wideSize = sizeof(wchar_t)*input.length();
+	size_t outbytesLeft = wideSize+sizeof(char); //We cannot know how many wide character there is yet
+
+	//Copy the instring
+	char *inString = (char*)new wchar_t[input.length()+1];
+	memcpy(inString, input.c_str(), wideSize+sizeof(wchar_t));
+
+	//Create buffer for output
+	char *outString = new char[outbytesLeft];
+	memset(outString, 0, sizeof(char)*(outbytesLeft));
+
+	char *inPointer = inString;
+	char *outPointer = outString;
+
+	iconv_t convDesc = iconv_open("UTF-8", "WCHAR_T");
+	size_t converted = iconv(convDesc, &inPointer, &wideSize, &outPointer, &outbytesLeft);
+	iconv_close(convDesc);
+
+	std::string retval(outString);
+
+	//Cleanup
+	delete[] inString;
+	delete[] outString;
+
+	return retval;
 }
