@@ -208,28 +208,59 @@ void Client::stopThread(){
 }
 
 bool Client::unregisterCallback( int callbackId ) {
-	TelldusCore::MutexLocker locker(&d->mutex);
-	for(DeviceEventList::iterator callback_it = d->deviceEventList.begin(); callback_it != d->deviceEventList.end(); ++callback_it) {
-		if ( (*callback_it).id != callbackId ) {
-			continue;
+	DeviceEventList newDEList;
+	{
+		TelldusCore::MutexLocker locker(&d->mutex);
+		for(DeviceEventList::iterator callback_it = d->deviceEventList.begin(); callback_it != d->deviceEventList.end(); ++callback_it) {
+			if ( (*callback_it)->id != callbackId ) {
+				continue;
+			}
+			newDEList.splice(newDEList.begin(), d->deviceEventList, callback_it);
+			break;
 		}
-		d->deviceEventList.erase(callback_it);
+	}
+	if (newDEList.size()) {
+		DeviceEventList::iterator it = newDEList.begin();
+		{ //Lock and unlock to make sure no one else uses the object
+			TelldusCore::MutexLocker locker( &(*it)->mutex );
+		}
+		newDEList.erase(it);
 		return true;
 	}
 
-	for(DeviceChangeList::iterator callback_it = d->deviceChangeEventList.begin(); callback_it != d->deviceChangeEventList.end(); ++callback_it) {
-		if ( (*callback_it).id != callbackId ) {
-			continue;
+	DeviceChangeList newDCList;
+	{
+		TelldusCore::MutexLocker locker(&d->mutex);
+		for(DeviceChangeList::iterator callback_it = d->deviceChangeEventList.begin(); callback_it != d->deviceChangeEventList.end(); ++callback_it) {
+			if ( (*callback_it)->id != callbackId ) {
+				continue;
+			}
+			newDCList.splice(newDCList.begin(), d->deviceChangeEventList, callback_it);
+			break;
 		}
-		d->deviceChangeEventList.erase(callback_it);
+	}
+	if (newDCList.size()) {
+		DeviceChangeList::iterator it = newDCList.begin();
+		{TelldusCore::MutexLocker locker( &(*it)->mutex );}
+		newDCList.erase(it);
 		return true;
 	}
 
-	for(RawDeviceEventList::iterator callback_it = d->rawDeviceEventList.begin(); callback_it != d->rawDeviceEventList.end(); ++callback_it) {
-		if ( (*callback_it).id != callbackId ) {
-			continue;
+	RawDeviceEventList newRDEList;
+	{
+		TelldusCore::MutexLocker locker(&d->mutex);
+		for(RawDeviceEventList::iterator callback_it = d->rawDeviceEventList.begin(); callback_it != d->rawDeviceEventList.end(); ++callback_it) {
+			if ( (*callback_it)->id != callbackId ) {
+				continue;
+			}
+			newRDEList.splice(newRDEList.begin(), d->rawDeviceEventList, callback_it );
+			break;
 		}
-		d->rawDeviceEventList.erase(callback_it);
+	}
+	if (newRDEList.size()) {
+		RawDeviceEventList::iterator it = newRDEList.begin();
+		{TelldusCore::MutexLocker locker( &(*it)->mutex );}
+		newRDEList.erase(it);
 		return true;
 	}
 

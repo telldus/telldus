@@ -12,6 +12,7 @@
 #define CALLBACKDISPATCHER_H
 
 #include "Thread.h"
+#include "Mutex.h"
 #include "telldus-core.h"
 
 namespace TelldusCore {
@@ -19,6 +20,7 @@ namespace TelldusCore {
 		T event;
 		int id;
 		void *context;
+		TelldusCore::Mutex mutex;
 	};
 
 	class TDDeviceEventDispatcher : public Thread {
