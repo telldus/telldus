@@ -27,9 +27,13 @@ SET( telldus-common_HDRS
 IF (APPLE)
 	#### Mac OS X ####
 	SET( telldus-common_TARGET	TelldusCommon )
+	FIND_LIBRARY(ICONV_LIBRARY iconv)
 	ADD_DEFINITIONS( -D_MACOSX )
 	LIST(APPEND  telldus-common_SRCS
 		Socket_unix.cpp
+	)
+	LIST(APPEND telldus-common_LIBRARIES
+		${ICONV_LIBRARY}
 	)
 ELSEIF (WIN32)
 	#### Windows ####
