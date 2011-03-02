@@ -1,6 +1,7 @@
 #include "Socket.h"
 
 #include "Mutex.h"
+#include "Strings.h"
 
 #include <stdio.h>
 #include <sys/socket.h>
@@ -60,7 +61,7 @@ void Socket::connect(const std::wstring &server) {
 	if (connectWrapper(d->socket, (struct sockaddr *)&remote, len) == -1) {
 		return;
 	}
-	
+
 	TelldusCore::MutexLocker locker(&d->mutex);
 	d->connected = true;
 }
@@ -101,7 +102,7 @@ std::wstring Socket::read(int timeout) {
 	}
 
 	std::string msg(inbuf);
-	return std::wstring(msg.begin(), msg.end());
+	return TelldusCore::charToWstring(msg.c_str());
 }
 
 void Socket::stopReadWait(){
@@ -110,7 +111,7 @@ void Socket::stopReadWait(){
 }
 
 void Socket::write(const std::wstring &msg) {
-	std::string newMsg(msg.begin(), msg.end());
+	std::string newMsg(TelldusCore::wideToString(msg));
 	int sent = send(d->socket, newMsg.c_str(), newMsg.length(), 0);
 	if (sent < 0) {
 		TelldusCore::MutexLocker locker(&d->mutex);
