@@ -18,7 +18,8 @@ public:
 	int getDeviceId(int deviceIndex);
 	int getDeviceLastSentCommand(int deviceId, int methodsSupported);
 	int setDeviceLastSentCommand(int deviceId, int command, const std::wstring &value);
-	int getDeviceMethods(int deviceId, int methodsSupported, std::set<int> *duplicateDeviceIds);
+	int getDeviceMethods(int deviceId);
+	int getDeviceMethods(int deviceId, int methodsSupported);
 	std::wstring getDeviceModel(int deviceId);
 	int setDeviceModel(int deviceId, const std::wstring &model);
 	std::wstring getDeviceName(int deviceId);
@@ -37,6 +38,7 @@ public:
 	void handleControllerMessage(const ControllerEventData &event);
 
 private:
+	int getDeviceMethods(int deviceId, std::set<int> &duplicateDeviceIds);
 	int doGroupAction(const std::wstring deviceIds, int action, unsigned char data, const int type, int groupDeviceId, std::set<int> *duplicateDeviceIds);
 	int executeScene(std::wstring singledevice, int groupDeviceId);
 	bool triggerDeviceStateChange(int deviceId, int intDeviceState, const std::wstring &strDeviceStateValue );

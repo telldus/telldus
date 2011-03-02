@@ -72,7 +72,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	(*wstringReturn) = L"";
 	std::wstring msg(clientMessage);	//Copy
 	std::wstring function(TelldusCore::Message::takeString(&msg));
-	
+
 	if (function == L"tdTurnOn") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_TURNON, 0);
@@ -188,9 +188,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	} else if (function == L"tdMethods") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		int intMethodsSupported = TelldusCore::Message::takeInt(&msg);
-		std::set<int> *duplicateDeviceIds = new std::set<int>;
-		(*intReturn) = d->deviceManager->getDeviceMethods(deviceId, intMethodsSupported, duplicateDeviceIds);
-		delete duplicateDeviceIds;
+		(*intReturn) = d->deviceManager->getDeviceMethods(deviceId, intMethodsSupported);
 
 	} else if (function == L"tdSendRawCommand") {
 		std::wstring command = TelldusCore::Message::takeString(&msg);
