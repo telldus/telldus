@@ -6,6 +6,12 @@
 #include <string.h>
 #include <iconv.h>
 
+#ifdef _MACOSX
+#define WCHAR_T_ENCODING "UCS-4-INTERNAL"
+#else
+#define WCHAR_T_ENCODING "WCHAR_T"
+#endif
+
 std::wstring TelldusCore::charToWstring(const char *value) {
 	size_t utf8Length = strlen(value);
 	size_t outbytesLeft = utf8Length*sizeof(wchar_t);
@@ -21,7 +27,7 @@ std::wstring TelldusCore::charToWstring(const char *value) {
 	char *inPointer = inString;
 	char *outPointer = outString;
 
-	iconv_t convDesc = iconv_open("WCHAR_T", "UTF-8");
+	iconv_t convDesc = iconv_open(WCHAR_T_ENCODING, "UTF-8");
 	iconv(convDesc, &inPointer, &utf8Length, &outPointer, &outbytesLeft);
 	iconv_close(convDesc);
 
@@ -75,7 +81,7 @@ std::string TelldusCore::wideToString(const std::wstring &input) {
 	char *inPointer = inString;
 	char *outPointer = outString;
 
-	iconv_t convDesc = iconv_open("UTF-8", "WCHAR_T");
+	iconv_t convDesc = iconv_open("UTF-8", WCHAR_T_ENCODING);
 	size_t converted = iconv(convDesc, &inPointer, &wideSize, &outPointer, &outbytesLeft);
 	iconv_close(convDesc);
 
