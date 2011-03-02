@@ -147,18 +147,26 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	} else if (function == L"tdSetProtocol") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring protocol = TelldusCore::Message::takeString(&msg);
+		int oldMethods = d->deviceManager->getDeviceMethods(deviceId);
 		(*intReturn) = d->deviceManager->setDeviceProtocol(deviceId, protocol);
 		sendDeviceSignal(deviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_PROTOCOL);
+		if(oldMethods != d->deviceManager->getDeviceMethods(deviceId)){
+			sendDeviceSignal(deviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_METHOD);
+		}
 
 	} else if (function == L"tdGetModel") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		(*wstringReturn) = d->deviceManager->getDeviceModel(deviceId);
-
+		
 	} else if (function == L"tdSetModel") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring model = TelldusCore::Message::takeString(&msg);
+		int oldMethods = d->deviceManager->getDeviceMethods(deviceId);
 		(*intReturn) = d->deviceManager->setDeviceModel(deviceId, model);
 		sendDeviceSignal(deviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_MODEL);
+		if(oldMethods != d->deviceManager->getDeviceMethods(deviceId)){
+			sendDeviceSignal(deviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_METHOD);
+		}
 
 	} else if (function == L"tdGetDeviceParameter") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
@@ -170,7 +178,11 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring name = TelldusCore::Message::takeString(&msg);
 		std::wstring value = TelldusCore::Message::takeString(&msg);
+		int oldMethods = d->deviceManager->getDeviceMethods(deviceId);
 		(*intReturn) = d->deviceManager->setDeviceParameter(deviceId, name, value);
+		if(oldMethods != d->deviceManager->getDeviceMethods(deviceId)){
+			sendDeviceSignal(deviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_METHOD);
+		}
 
 	} else if (function == L"tdAddDevice") {
 		(*intReturn) = d->deviceManager->addDevice();
