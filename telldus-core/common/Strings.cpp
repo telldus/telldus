@@ -3,11 +3,36 @@
 #include <algorithm>
 #include <sstream>
 #include <string>
+#include <string.h>
+#include <iconv.h>
 
 std::wstring TelldusCore::charToWstring(const char *value) {
-	std::wstringstream st;
-	st << value;
-	return st.str();
+	size_t utf8Length = strlen(value);
+	size_t outbytesLeft = utf8Length*sizeof(wchar_t);
+
+	iconv_t convDesc = iconv_open("WCHAR_T", "UTF-8");
+
+	//Copy the instring
+	char *inString = new char[strlen(value)+1];
+	strcpy(inString, value);
+
+	//Create buffer for output
+	char *outString = (char*)new wchar_t[utf8Length+1];
+	memset(outString, 0, sizeof(wchar_t)*(utf8Length+1));
+
+	char *inPointer = inString;
+	char *outPointer = outString;
+
+	iconv(convDesc, &inPointer, &utf8Length, &outPointer, &outbytesLeft);
+
+	std::wstring retval( (wchar_t *)outString );
+
+	//Cleanup
+	iconv_close(convDesc);
+	delete[] inString;
+	delete[] outString;
+
+	return retval;
 }
 
 int TelldusCore::charToInteger(const char *input){
@@ -37,18 +62,11 @@ int TelldusCore::wideToInteger(const std::wstring &input){
 }
 
 std::string TelldusCore::wideToString(const std::wstring &input) {
-	
 	std::string strReturn;
-	
 	size_t len = input.length();
 	char* convPointer = new char[len + 1];
-	
 	wcstombs(convPointer, input.c_str(), len + 1);
-	
 	strReturn = convPointer;
-	
 	delete [] convPointer;
-	
 	return strReturn;
-	
 }
