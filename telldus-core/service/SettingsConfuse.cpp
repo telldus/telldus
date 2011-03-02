@@ -11,6 +11,7 @@
 //
 #include "Settings.h"
 #include "../client/telldus-core.h"
+#include "Strings.h"
 #include <confuse.h>
 #include <stdlib.h>
 #include <string.h>
@@ -66,8 +67,8 @@ Settings::~Settings(void)
 std::wstring Settings::getSetting(const std::wstring &strName) const {
 	TelldusCore::MutexLocker locker(&mutex);
 	if (d->cfg > 0) {
-		std::string setting(cfg_getstr(d->cfg, std::string(strName.begin(), strName.end()).c_str()));	//TODO, safer conversion (other places in this file as well)
-		return std::wstring(setting.begin(), setting.end());
+		std::string setting(cfg_getstr(d->cfg, TelldusCore::wideToString(strName).c_str()));
+		return TelldusCore::charToWstring(setting.c_str());
 	}
 	return L"";
 }
@@ -175,7 +176,7 @@ bool Settings::setDeviceState( int intDeviceId, int intDeviceState, const std::w
 		int deviceId = atoi(cfg_title(cfg_device));
 		if (deviceId == intDeviceId)  {
 			cfg_setint(cfg_device, "state", intDeviceState);
-			cfg_setstr(cfg_device, "stateValue", std::string(strDeviceStateValue.begin(), strDeviceStateValue.end()).c_str());
+			cfg_setstr(cfg_device, "stateValue", TelldusCore::wideToString(strDeviceStateValue).c_str());
 
 			FILE *fp = fopen(VAR_CONFIG_FILE, "w");
 			if(fp == 0){
@@ -232,7 +233,7 @@ std::wstring Settings::getDeviceStateValue( int intDeviceId ) const {
 		int deviceId = atoi(cfg_title(cfg_device));
 		if (deviceId == intDeviceId)  {
 			std::string value(cfg_getstr(cfg_device, "stateValue"));
-			return std::wstring(value.begin(), value.end());
+			return TelldusCore::charToWstring(value.c_str());
 		}
 	}
 	return L"";
@@ -250,12 +251,12 @@ std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &nam
 			if (parameter) {
 				cfg_device = cfg_getsec(cfg_device, "parameters");
 			}
-			std::string setting;
-			char *cSetting = cfg_getstr(cfg_device, std::string(name.begin(), name.end()).c_str());
+			std::wstring setting;
+			char *cSetting = cfg_getstr(cfg_device, TelldusCore::wideToString(name).c_str());
 			if (cSetting) {
-				setting = cSetting;
+				setting = TelldusCore::charToWstring(cSetting);
 			}
-			return std::wstring(setting.begin(), setting.end());
+			return setting;
 		}
 	}
 	return L"";
@@ -270,11 +271,12 @@ bool Settings::setStringSetting(int intDeviceId, const std::wstring &name, const
 	for (int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
 		cfg_device = cfg_getnsec(d->cfg, "device", i);
 		if (cfg_getint(cfg_device, "id") == intDeviceId)  {
+			std::string newValue = TelldusCore::wideToString(value);
 			if (parameter) {
 				cfg_t *cfg_parameters = cfg_getsec(cfg_device, "parameters");
-				cfg_setstr(cfg_parameters, std::string(name.begin(), name.end()).c_str(), std::string(value.begin(), value.end()).c_str());
+				cfg_setstr(cfg_parameters, TelldusCore::wideToString(name).c_str(), newValue.c_str());
 			} else {
-				cfg_setstr(cfg_device, std::string(name.begin(), name.end()).c_str(), std::string(value.begin(), value.end()).c_str());
+				cfg_setstr(cfg_device, TelldusCore::wideToString(name).c_str(), newValue.c_str());
 			}
 			FILE *fp = fopen(CONFIG_FILE, "w");
 			cfg_print(d->cfg, fp);
@@ -297,7 +299,7 @@ int Settings::getIntSetting(int intDeviceId, const std::wstring &name, bool para
 			if (parameter) {
 				cfg_device = cfg_getsec(cfg_device, "parameters");
 			}
-			return cfg_getint(cfg_device, std::string(name.begin(), name.end()).c_str());
+			return cfg_getint(cfg_device, TelldusCore::wideToString(name).c_str());
 		}
 	}
 	return 0;
@@ -314,9 +316,9 @@ bool Settings::setIntSetting(int intDeviceId, const std::wstring &name, int valu
 		if (cfg_getint(cfg_device, "id") == intDeviceId)  {
 			if (parameter) {
 				cfg_t *cfg_parameters = cfg_getsec(cfg_device, "parameters");
-				cfg_setint(cfg_parameters, std::string(name.begin(), name.end()).c_str(), value);
+				cfg_setint(cfg_parameters, TelldusCore::wideToString(name).c_str(), value);
 			} else {
-				cfg_setint(cfg_device, std::string(name.begin(), name.end()).c_str(), value);
+				cfg_setint(cfg_device, TelldusCore::wideToString(name).c_str(), value);
 			}
 			FILE *fp = fopen(CONFIG_FILE, "w");
 			cfg_print(d->cfg, fp);
