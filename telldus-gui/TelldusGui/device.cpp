@@ -223,8 +223,7 @@ void Device::deviceChangedSlot(int deviceId, int eventId, int changeType) {
 			break;
 		}
 
-		case TELLSTICK_CHANGE_PROTOCOL:
-		case TELLSTICK_CHANGE_MODEL:
+		case TELLSTICK_CHANGE_METHOD:
 			int methods = tdMethods(d->id, d->supportedMethods);
 			if (methods != d->methods) {
 				d->methods = methods;
