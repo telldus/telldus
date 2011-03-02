@@ -27,7 +27,7 @@ QScriptValue ScriptFunctionWrapper::call() {
 }
 
 QScriptValue ScriptFunctionWrapper::callWith(const QScriptValue &val) {
-	qDebug() << "Call called" << d->name;
+	//qDebug() << "Call called" << d->name;
 	QScriptEngine *eng = val.engine();
 	if (!eng) {
 		qDebug() << "We cannot access the script-engine, fail!";

@@ -22,7 +22,7 @@ __postInit__ = function() {
 		}
 
 		function deviceChangeEvent( deviceId, eventType ) {
-			print("DeviceChangeEvent", deviceId, eventType);
+			//print("DeviceChangeEvent", deviceId, eventType);
 			if (eventType == com.telldus.core.TELLSTICK_DEVICE_ADDED) {
 				devices.push(new Device(com.telldus.core.getDeviceId(i)));
 				return;
