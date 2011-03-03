@@ -103,7 +103,7 @@ int Settings::addDevice(){
 
 	FILE *fp = fopen(CONFIG_FILE, "w");
 	if (!fp) {
-		return -TELLSTICK_ERROR_PERMISSION_DENIED;
+		return TELLSTICK_ERROR_PERMISSION_DENIED;
 	}
 	cfg_print(d->cfg, fp); //Print the config-file
 	fprintf(fp, "device {\n  id=%d\n}\n", intDeviceId); //Print the new device
