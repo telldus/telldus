@@ -6,6 +6,8 @@
 #include <iostream>
 #include <fstream>
 
+#include "../client/telldus-core.h"
+
 const int intMaxRegValueLength = 1000;
 
 class Settings::PrivateData {
@@ -150,7 +152,7 @@ int Settings::getNextDeviceId() const {
 /*
 * Remove a device
 */
-bool Settings::removeDevice(int intDeviceId) {
+int Settings::removeDevice(int intDeviceId) {
 	TelldusCore::MutexLocker locker(&mutex);
 	
 	std::wostringstream ssRegPath; 
@@ -161,10 +163,10 @@ bool Settings::removeDevice(int intDeviceId) {
 
 	if(lngSuccess == ERROR_SUCCESS){
 		//one of the deletions succeeded
-		return true;
+		return TELLSTICK_SUCCESS;
 	}
 
-	return false;
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &name, bool parameter) const {
@@ -196,10 +198,10 @@ std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &nam
 	return strReturn;
 }
 
-bool Settings::setStringSetting(int intDeviceId, const std::wstring &name, const std::wstring &value, bool parameter) {
+int Settings::setStringSetting(int intDeviceId, const std::wstring &name, const std::wstring &value, bool parameter) {
 
-	bool blnSuccess = false;
 	HKEY hk;
+	int ret = TELLSTICK_SUCCESS;
 		
 	std::wostringstream ssRegPath; 
 	ssRegPath << d->strRegPathDevice << intDeviceId;
@@ -209,10 +211,12 @@ bool Settings::setStringSetting(int intDeviceId, const std::wstring &name, const
 	if (lnExists == ERROR_SUCCESS){
 		int length = (int)value.length() * sizeof(wchar_t);
 		RegSetValueEx(hk, name.c_str(), 0, REG_SZ, (LPBYTE)value.c_str(), length+1);
+	} else {
+		ret = TELLSTICK_ERROR_UNKNOWN;
 	}
 	RegCloseKey(hk);
 
-	return blnSuccess;
+	return ret;
 
 }
 
@@ -227,8 +231,8 @@ int Settings::getIntSetting(int intDeviceId, const std::wstring &name, bool para
 	return intReturn;
 }
 
-bool Settings::setIntSetting(int intDeviceId, const std::wstring &name, int value, bool parameter) {
-	bool blnReturn = false;
+int Settings::setIntSetting(int intDeviceId, const std::wstring &name, int value, bool parameter) {
+	int intReturn = TELLSTICK_ERROR_UNKNOWN;
 	HKEY hk;
 
 	std::wostringstream ssRegPath; 
@@ -239,9 +243,9 @@ bool Settings::setIntSetting(int intDeviceId, const std::wstring &name, int valu
 		DWORD dwVal = value;
 		lnExists = RegSetValueEx (hk, name.c_str(), 0L, REG_DWORD, (CONST BYTE*) &dwVal, sizeof(DWORD));
 		if (lnExists == ERROR_SUCCESS) {
-			blnReturn = true;
+			intReturn = TELLSTICK_SUCCESS;
 		}
 	}
 	RegCloseKey(hk);
-	return blnReturn;
+	return intReturn;
 }
