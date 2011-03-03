@@ -98,18 +98,18 @@ int main(int argc, char **argv) {
 		std::string user = TelldusCore::wideToString(settings.getSetting(L"user"));
 		std::string group = TelldusCore::wideToString(settings.getSetting(L"group"));
 
-		struct passwd *pw = getpwnam(user.c_str());
-		if (pw) {
-			setuid( pw->pw_uid );
-		} else {
-			syslog(LOG_WARNING, "User %s could not be found", user.c_str());
-			exit(EXIT_FAILURE);
-		}
 		struct group *grp = getgrnam(group.c_str());
 		if (grp) {
 			setgid(grp->gr_gid);
 		} else {
 			syslog(LOG_WARNING, "Group %s could not be found", group.c_str());
+			exit(EXIT_FAILURE);
+		}
+		struct passwd *pw = getpwnam(user.c_str());
+		if (pw) {
+			setuid( pw->pw_uid );
+		} else {
+			syslog(LOG_WARNING, "User %s could not be found", user.c_str());
 			exit(EXIT_FAILURE);
 		}
 	}
