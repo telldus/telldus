@@ -1,2 +1,2 @@
-ID_VENDOR_ID=="1781", SUBSYSTEM=="usb"  RUN+="${CMAKE_INSTALL_PREFIX}/share/telldus-core/helpers/udev.sh"
+ID_VENDOR_ID=="1781", SUBSYSTEM=="usb", MODE="664", GROUP="plugdev" RUN+="${CMAKE_INSTALL_PREFIX}/share/telldus-core/helpers/udev.sh"
 
