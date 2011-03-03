@@ -357,12 +357,12 @@ int DeviceManager::getPreferredControllerId(int deviceId){
 	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 }
 
-void DeviceManager::connectTellStickController(int vid, int pid, const std::wstring &serial){
-	d->controllerManager->deviceInsertedOrRemoved(vid, pid, true);
+void DeviceManager::connectTellStickController(int vid, int pid, const std::string &serial){
+	d->controllerManager->deviceInsertedOrRemoved(vid, pid, serial, true);
 }
 
-void DeviceManager::disconnectTellStickController(int vid, int pid, const std::wstring &serial){
-	d->controllerManager->deviceInsertedOrRemoved(vid, pid, false);
+void DeviceManager::disconnectTellStickController(int vid, int pid, const std::string &serial){
+	d->controllerManager->deviceInsertedOrRemoved(vid, pid, serial, false);
 }
 
 int DeviceManager::doAction(int deviceId, int action, unsigned char data){

@@ -157,7 +157,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	} else if (function == L"tdGetModel") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		(*wstringReturn) = d->deviceManager->getDeviceModel(deviceId);
-		
+
 	} else if (function == L"tdSetModel") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		std::wstring model = TelldusCore::Message::takeString(&msg);
@@ -215,12 +215,12 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	} else if (function == L"tdConnectTellStickController") {
 		int vid = TelldusCore::Message::takeInt(&msg);
 		int pid = TelldusCore::Message::takeInt(&msg);
-		std::wstring serial = TelldusCore::Message::takeString(&msg);
+		std::string serial = TelldusCore::wideToString(TelldusCore::Message::takeString(&msg));
 		d->deviceManager->connectTellStickController(vid, pid, serial);
 	} else if (function == L"tdDisconnectTellStickController") {
 		int vid = TelldusCore::Message::takeInt(&msg);
 		int pid = TelldusCore::Message::takeInt(&msg);
-		std::wstring serial = TelldusCore::Message::takeString(&msg);
+		std::string serial = TelldusCore::wideToString(TelldusCore::Message::takeString(&msg));
 		d->deviceManager->disconnectTellStickController(vid, pid, serial);
 	}
 	else{

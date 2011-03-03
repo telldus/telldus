@@ -30,7 +30,7 @@ ControllerManager::~ControllerManager() {
 	delete d;
 }
 
-void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, bool inserted) {
+void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, const std::string &serial, bool inserted) {
 	if (vid != 0x1781) {
 		return;
 	}
@@ -38,8 +38,11 @@ void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, bool inserted)
 		return;
 	}
 	if (inserted) {
+		printf("Trying to insert(%i) %x, %x, %s\n", inserted, vid, pid, serial.c_str());
 		loadControllers();
 	} else {
+		//Autodetect which has been disconnected
+		printf("Trying to disconnect(%i) %x, %x, %s\n", inserted, vid, pid, serial.c_str());
 		TelldusCore::MutexLocker locker(&d->mutex);
 		bool again = true;
 		while(again) {
@@ -49,13 +52,22 @@ void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, bool inserted)
 				if (!tellstick) {
 					continue;
 				}
-				if (!tellstick->stillConnected()) {
-					printf("Controller lost\n");
-					d->controllers.erase(it);
-					delete tellstick;
-					again=true;
-					break;
+				if (serial.compare("") != 0) {
+					TellStickDescriptor tsd;
+					tsd.vid = vid;
+					tsd.pid = pid;
+					tsd.serial = serial;
+					if (!tellstick->isSameAsDescriptor(tsd)) {
+						continue;
+					}
+				} else if (tellstick->stillConnected()) {
+					continue;
 				}
+
+				d->controllers.erase(it);
+				delete tellstick;
+				again=true;
+				break;
 			}
 		}
 	}

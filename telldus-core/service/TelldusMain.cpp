@@ -51,12 +51,12 @@ void TelldusMain::start(void) {
 	std::list<ClientCommunicationHandler *> clientCommunicationHandlerList;
 
 	EventRef handlerEvent = d->eventHandler.addEvent();
-	
+
 #ifdef _MACOSX
 	//This is only needed on OS X
 	ControllerListener controllerListener(d->controllerChangeEvent);
 #endif
-	
+
 
 	while(!d->stopEvent->isSignaled()) {
 		if (!d->eventHandler.waitForAny()) {
@@ -77,7 +77,7 @@ void TelldusMain::start(void) {
 			EventDataRef eventDataRef = d->controllerChangeEvent->takeSignal();
 			ControllerChangeEventData *data = reinterpret_cast<ControllerChangeEventData*>(eventDataRef.get());
 			if (data) {
-				controllerManager.deviceInsertedOrRemoved(data->vid, data->pid, data->inserted);
+				controllerManager.deviceInsertedOrRemoved(data->vid, data->pid, "", data->inserted);
 			}
 		}
 

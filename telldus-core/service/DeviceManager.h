@@ -13,8 +13,8 @@ public:
 	~DeviceManager(void);
 	int getNumberOfDevices(void);
 	int addDevice();
-	void connectTellStickController(int vid, int pid, const std::wstring &serial);
-	void disconnectTellStickController(int vid, int pid, const std::wstring &serial);
+	void connectTellStickController(int vid, int pid, const std::string &serial);
+	void disconnectTellStickController(int vid, int pid, const std::string &serial);
 	int getDeviceId(int deviceIndex);
 	int getDeviceLastSentCommand(int deviceId, int methodsSupported);
 	int setDeviceLastSentCommand(int deviceId, int command, const std::wstring &value);
