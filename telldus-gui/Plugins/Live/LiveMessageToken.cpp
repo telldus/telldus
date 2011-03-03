@@ -57,7 +57,6 @@ LiveMessageToken LiveMessageToken::parseToken(const QByteArray &string, int* sta
 		++(*start);
 		int index = string.indexOf('s', (*start));
 		if (index < 0) {
-			qDebug() << "Error in" << string;
 			return d;
 		}
 		bool ok;
@@ -87,7 +86,6 @@ LiveMessageToken LiveMessageToken::parseToken(const QByteArray &string, int* sta
 	} else { //String
 		int index = string.indexOf(':', (*start));
 		if (index < 0) {
-			qDebug() << "Error in" << string;
 			return d;
 		}
 		bool ok;

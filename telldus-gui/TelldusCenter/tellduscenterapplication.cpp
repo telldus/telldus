@@ -132,7 +132,6 @@ void TelldusCenterApplication::loadScripts() {
 		if (extension.startsWith("...")) {
 			continue;
 		}
-// 		qDebug() << "Loading extension:" << extension;
 		foreach(QDir dir, this->libraryPaths()) {
 			dir.cd("script");
 			QString path = extension;

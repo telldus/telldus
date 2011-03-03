@@ -2,7 +2,6 @@
 #include <QVBoxLayout>
 #include <QLabel>
 #include <QTimer>
-#include <QDebug>
 
 Message::Message(QWidget *parent)
 		:QWidget(parent)
@@ -20,7 +19,6 @@ Message::Message(QWidget *parent)
 }
 
 Message::~Message() {
-	qDebug() << "Why am I dying?";
 }
 
 void Message::showMessage( const QString &title, const QString &message, const QString &detailedMessage ) {

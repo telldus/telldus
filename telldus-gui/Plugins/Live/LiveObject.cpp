@@ -93,13 +93,13 @@ void LiveObject::disconnect() {
 
 void LiveObject::readyRead() {
 	QByteArray ba = d->socket->readAll();
-	qDebug() << ba;
+	//qDebug() << ba;
 	QScopedPointer<LiveMessage> envelope(LiveMessage::fromByteArray(ba));
 	QString signature = envelope->name();
 	QScopedPointer<LiveMessage> msg(LiveMessage::fromByteArray(envelope->arg(0).stringVal.toUtf8()));
 
 	if (signatureForMessage(envelope->arg(0).stringVal.toUtf8()) != signature) {
-		qDebug() << "HASH mismatch!" << msg->name();
+		//qDebug() << "HASH mismatch!" << msg->name();
 		return;
 	}
 
@@ -203,8 +203,6 @@ void LiveObject::stateChanged( QAbstractSocket::SocketState socketState ) {
 		emit statusChanged("Reconnecting in " + QString::number(timeout) + " seconds...");
 	} else if (socketState == QAbstractSocket::ConnectingState) {
 		emit statusChanged("Connecting...");
-	} else {
-		//qDebug() << "State:" << socketState;
 	}
 }
 
@@ -215,7 +213,7 @@ void LiveObject::sslErrors( const QList<QSslError> & errors ) {
 			case QSslError::SelfSignedCertificate:
 				continue;
 			default:
-				qDebug() << "SSL" << error.errorString();
+				//qDebug() << "SSL" << error.errorString();
 				everythingOK = false;
 				emit statusChanged("SSL Error");
 				emit errorChanged(error.errorString());
@@ -251,7 +249,7 @@ void LiveObject::serverAssignReply( QNetworkReply *r ) {
 	}
 
 	if (found) {
-		qDebug() << "Servers found, retry direct...";
+		//qDebug() << "Servers found, retry direct...";
 		d->serverRefreshTime = QDateTime::currentDateTime();
 		QTimer::singleShot(0, this, SLOT(connectToServer()));
 	} else {
