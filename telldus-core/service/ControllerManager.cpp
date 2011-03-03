@@ -38,11 +38,9 @@ void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, const std::str
 		return;
 	}
 	if (inserted) {
-		printf("Trying to insert(%i) %x, %x, %s\n", inserted, vid, pid, serial.c_str());
 		loadControllers();
 	} else {
 		//Autodetect which has been disconnected
-		printf("Trying to disconnect(%i) %x, %x, %s\n", inserted, vid, pid, serial.c_str());
 		TelldusCore::MutexLocker locker(&d->mutex);
 		bool again = true;
 		while(again) {
@@ -71,8 +69,6 @@ void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, const std::str
 			}
 		}
 	}
-	printf("List contains %i controllers\n", (int)d->controllers.size());
-
 }
 
 Controller *ControllerManager::getBestControllerById(int id) {
@@ -119,7 +115,6 @@ void ControllerManager::loadControllers() {
 			delete controller;
 			continue;
 		}
-		printf("Found (%i/%i): %s\n", (*it).vid, (*it).pid, (*it).serial.c_str());
 		d->lastControllerId = controllerId;
 		d->controllers[d->lastControllerId] = controller;
 	}

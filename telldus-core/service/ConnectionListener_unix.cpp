@@ -73,19 +73,14 @@ void ConnectionListener::run(){
 			FD_SET(serverSocket, &infds);
 			continue;
 		} else if (response < 0 ) {
-			printf("Select error occured: %i\n", response);
 			continue;
 		}
 		//Make sure it is a new connection
 		if (!FD_ISSET(serverSocket, &infds)) {
-			printf("Not ours, error?\n");
 			continue;
 		}
 		SOCKET_T clientSocket = accept(serverSocket, NULL, NULL);
-		if(clientSocket == -1){
-				printf("error %i\n", errno);
-		}
-
+		
 		ConnectionListenerEventData *data = new ConnectionListenerEventData();
 		data->socket = new TelldusCore::Socket(clientSocket);
 		d->waitEvent->signal(data);
