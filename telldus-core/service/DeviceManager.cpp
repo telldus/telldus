@@ -421,7 +421,7 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 	}
 	if(retval == TELLSTICK_SUCCESS && device->getType() != TELLSTICK_TYPE_SCENE && device->getMethods() & action) {
 		//if method isn't explicitly supported by device, but used anyway as a fallback (i.e. bell), don't change state
-		std::wstring datastring = TelldusCore::Message::charUnsignedToWstring(data);
+		std::wstring datastring = TelldusCore::charUnsignedToWstring(data);
 		if (this->triggerDeviceStateChange(deviceId, action, datastring)) {
 			device->setLastSentCommand(action, datastring);
 			d->set.setDeviceState(deviceId, action, datastring);
@@ -467,7 +467,7 @@ int DeviceManager::doGroupAction(const std::wstring devices, const int action, c
 					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds);
 
 					if(deviceReturnValue == TELLSTICK_SUCCESS) {
-						std::wstring datastring = TelldusCore::Message::charUnsignedToWstring(data);
+						std::wstring datastring = TelldusCore::charUnsignedToWstring(data);
 						if (this->triggerDeviceStateChange(deviceId, action, datastring)) {
 							DeviceManager::setDeviceLastSentCommand(deviceId, action, datastring);
 							d->set.setDeviceState(deviceId, action, datastring);
@@ -577,7 +577,6 @@ void DeviceManager::handleControllerMessage(const ControllerEventData &eventData
 		std::list<std::string> parameters = it->second->getParametersForProtocol();
 		bool thisDevice = true;
 		for (std::list<std::string>::iterator paramIt = parameters.begin(); paramIt != parameters.end(); ++paramIt){
-			//TODO more efficient conversion/compare? wstring or not?
 			if(!TelldusCore::comparei(it->second->getParameter(TelldusCore::charToWstring((*paramIt).c_str())), TelldusCore::charToWstring(msg.getParameter(*paramIt).c_str()))){
 				thisDevice = false;
 				break;

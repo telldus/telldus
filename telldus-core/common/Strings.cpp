@@ -70,6 +70,12 @@ int TelldusCore::charToInteger(const char *input){
 	return retval;
 }
 
+std::wstring TelldusCore::charUnsignedToWstring(const unsigned char value) {
+	std::wstringstream st;
+	st << value;
+	return st.str();
+}
+
 /**
 * This method doesn't support all locales
 */
@@ -78,6 +84,12 @@ bool TelldusCore::comparei(std::wstring stringA, std::wstring stringB) {
 	transform(stringB.begin(), stringB.end(), stringB.begin(), toupper);
 
 	return stringA == stringB;
+}
+
+std::wstring TelldusCore::intToWstring(int value) {
+	std::wstringstream st;
+	st << value;
+	return st.str();
 }
 
 int TelldusCore::wideToInteger(const std::wstring &input){

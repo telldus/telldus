@@ -42,20 +42,6 @@ void Message::addArgument(const char *value) {
 	this->addArgument(TelldusCore::charToWstring(value));
 }
 
-std::wstring Message::charUnsignedToWstring(const unsigned char value) {
-	//todo move?
-	std::wstringstream st;
-	st << value;
-	return st.str();
-}
-
-std::wstring Message::intToWstring(int value) {
-	//todo	move?
-	std::wstringstream st;
-	st << value;
-	return st.str();
-}
-
 bool Message::nextIsInt(const std::wstring &message) {
 	if (message.length() == 0) {
 		return false;

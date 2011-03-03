@@ -203,7 +203,7 @@ int Device::maskUnsupportedMethods(int methods, int supportedMethods) {
 	}
 
 	// Execute -> On
-	if ((methods & TELLSTICK_EXECUTE) && !(supportedMethods & TELLSTICK_EXECUTE)) {	//TODO ok everywhere? (check down/up too)
+	if ((methods & TELLSTICK_EXECUTE) && !(supportedMethods & TELLSTICK_EXECUTE)) {
 		methods |= TELLSTICK_TURNON;
 	}
 

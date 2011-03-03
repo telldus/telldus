@@ -14,8 +14,6 @@ namespace TelldusCore {
 		void addArgument(int);
 		void addArgument(const char *);
 				
-		static std::wstring charUnsignedToWstring(const unsigned char value);
-		static std::wstring intToWstring(int value);
 		static bool nextIsInt(const std::wstring &);
 		static bool nextIsString(const std::wstring &);
 
