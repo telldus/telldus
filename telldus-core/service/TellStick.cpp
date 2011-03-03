@@ -11,7 +11,6 @@
 //
 #include "TellStick.h"
 
-#include <unistd.h>
 #include <map>
 #include <stdio.h>
 
