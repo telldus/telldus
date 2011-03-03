@@ -135,12 +135,11 @@ int Settings::getNextDeviceId() const {
 /*
 * Remove a device
 */
-bool Settings::removeDevice(int intDeviceId){
+int Settings::removeDevice(int intDeviceId){
 	TelldusCore::MutexLocker locker(&mutex);
-	bool blnSuccess = true;
 	FILE *fp = fopen(CONFIG_FILE, "w");
 	if (!fp) {
-		return false;
+		return TELLSTICK_ERROR_PERMISSION_DENIED;
 	}
 
 	// Print all opts
@@ -168,7 +167,7 @@ bool Settings::removeDevice(int intDeviceId){
 	cfg_free(d->cfg);
 	readConfig(&d->cfg);
 
-	return blnSuccess;
+	return TELLSTICK_SUCCESS;
 }
 
 bool Settings::setDeviceState( int intDeviceId, int intDeviceState, const std::wstring &strDeviceStateValue ) {
@@ -268,10 +267,10 @@ std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &nam
 	return L"";
 }
 
-bool Settings::setStringSetting(int intDeviceId, const std::wstring &name, const std::wstring &value, bool parameter) {
+int Settings::setStringSetting(int intDeviceId, const std::wstring &name, const std::wstring &value, bool parameter) {
 	//already locked
 	if (d->cfg == 0) {
-		return false;
+		return TELLSTICK_ERROR_PERMISSION_DENIED;
 	}
 	cfg_t *cfg_device;
 	for (int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
@@ -286,14 +285,14 @@ bool Settings::setStringSetting(int intDeviceId, const std::wstring &name, const
 			}
 			FILE *fp = fopen(CONFIG_FILE, "w");
 			if (!fp) {
-				return false;
+				return TELLSTICK_ERROR_PERMISSION_DENIED;
 			}
 			cfg_print(d->cfg, fp);
 			fclose(fp);
-			return true;
+			return TELLSTICK_SUCCESS;
 		}
 	}
-	return false;
+	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 }
 
 int Settings::getIntSetting(int intDeviceId, const std::wstring &name, bool parameter) const {
@@ -314,10 +313,10 @@ int Settings::getIntSetting(int intDeviceId, const std::wstring &name, bool para
 	return 0;
 }
 
-bool Settings::setIntSetting(int intDeviceId, const std::wstring &name, int value, bool parameter) {
+int Settings::setIntSetting(int intDeviceId, const std::wstring &name, int value, bool parameter) {
 	//already locked
 	if (d->cfg == 0) {
-		return false;
+		return TELLSTICK_ERROR_PERMISSION_DENIED;
 	}
 	cfg_t *cfg_device;
 	for (int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
@@ -331,14 +330,14 @@ bool Settings::setIntSetting(int intDeviceId, const std::wstring &name, int valu
 			}
 			FILE *fp = fopen(CONFIG_FILE, "w");
 			if (!fp) {
-				return false;
+				return TELLSTICK_ERROR_PERMISSION_DENIED;
 			}
 			cfg_print(d->cfg, fp);
 			fclose(fp);
-			return true;
+			return TELLSTICK_SUCCESS;
 		}
 	}
-	return false;
+	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 }
 
 
