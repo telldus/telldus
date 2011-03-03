@@ -21,6 +21,10 @@ DeviceModel::DeviceModel(QObject *parent)
 {
 	connect(this, SIGNAL(deviceChange(int,int,int)), this, SLOT(deviceChanged(int,int,int)), Qt::QueuedConnection);
 	int numberOfDevices = tdGetNumberOfDevices();
+	errorNo = 0;
+	if (numberOfDevices < 0) { //Error
+		errorNo = numberOfDevices;
+	}
 	for( int i = 0; i < numberOfDevices; ++i ) {
 		int id = tdGetDeviceId(i);
 		Device *device = new Device(id, SUPPORTED_METHODS, this);
@@ -116,6 +120,18 @@ QVariant DeviceModel::headerData ( int section, Qt::Orientation orientation, int
 
 	return QVariant();
 }
+
+bool DeviceModel::haveError() const {
+	return errorNo != 0;
+}
+
+QString DeviceModel::errorString() const {
+	char *error = tdGetErrorString(errorNo);
+	QString errorStr = QString::fromUtf8( error );
+	tdReleaseString(error);
+	return errorStr;
+}
+
 
 Device *DeviceModel::device( const QModelIndex &index ) {
 	if (index.row() >= devices.size()) {

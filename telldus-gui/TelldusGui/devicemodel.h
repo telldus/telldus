@@ -21,7 +21,10 @@ public:
 
 	Device *device( const QModelIndex & );
 	int deviceId( const QModelIndex & );
-	
+
+	bool haveError() const;
+	QString errorString() const;
+
 signals:
 	void deviceChange(int deviceId, int, int);
 	void showMessage( const QString &title, const QString &message, const QString &detailedMessage );
@@ -38,7 +41,7 @@ private:
 	void triggerCellUpdate(int row, int column);
 // 	static void deviceEvent(int deviceId, int method, const char *data, int callbackId, void *context);
 	static void WINAPI deviceChangeEvent(int deviceId, int, int, int, void *);
-	
+
 // 	void connectDeviceSignals( Device *device ) const;
 // 	int deviceId( const QModelIndex &index ) const;
 // 	int deviceId( int index ) const;
@@ -46,6 +49,7 @@ private:
 // 	mutable QHash<int, int> indexToId;
 	QList<Device *> devices;
 	int deviceChangeCallbackId;
+	int errorNo;
 };
 
 #endif // DEVICEMODEL_H
