@@ -4,7 +4,12 @@
 #include <sstream>
 #include <string>
 #include <string.h>
+
+#ifdef _WINDOWS
+#include <windows.h>
+#else
 #include <iconv.h>
+#endif
 
 #ifdef _MACOSX
 #define WCHAR_T_ENCODING "UCS-4-INTERNAL"
@@ -13,6 +18,22 @@
 #endif
 
 std::wstring TelldusCore::charToWstring(const char *value) {
+#ifdef _WINDOWS
+	//Determine size
+	int size = MultiByteToWideChar(CP_UTF8, 0, value, -1, NULL, 0);
+	if (size == 0) {
+		return L"";
+	}
+	wchar_t *buffer;
+	buffer = new wchar_t[size];
+	memset(buffer, 0, sizeof(wchar_t)*(size));
+
+	int bytes = MultiByteToWideChar(CP_UTF8, 0, value, -1, buffer, size);
+	std::wstring retval(buffer);
+	delete[] buffer;
+	return retval;
+
+#else
 	size_t utf8Length = strlen(value);
 	size_t outbytesLeft = utf8Length*sizeof(wchar_t);
 
@@ -38,6 +59,7 @@ std::wstring TelldusCore::charToWstring(const char *value) {
 	delete[] outString;
 
 	return retval;
+#endif
 }
 
 int TelldusCore::charToInteger(const char *input){
@@ -67,6 +89,22 @@ int TelldusCore::wideToInteger(const std::wstring &input){
 }
 
 std::string TelldusCore::wideToString(const std::wstring &input) {
+#ifdef _WINDOWS
+	//Determine size
+	int size = WideCharToMultiByte(CP_UTF8, 0, input.c_str(), -1, NULL, 0, NULL, NULL);
+	if (size == 0) {
+		return "";
+	}
+	char *buffer;
+	buffer = new char[size];
+	memset(buffer, 0, sizeof(char)*size);
+
+	int bytes = WideCharToMultiByte(CP_UTF8, 0, input.c_str(), -1, buffer, size, NULL, NULL);
+	std::string retval(buffer);
+	delete[] buffer;
+	return retval;
+
+#else
 	size_t wideSize = sizeof(wchar_t)*input.length();
 	size_t outbytesLeft = wideSize+sizeof(char); //We cannot know how many wide character there is yet
 
@@ -92,4 +130,5 @@ std::string TelldusCore::wideToString(const std::wstring &input) {
 	delete[] outString;
 
 	return retval;
+#endif
 }
