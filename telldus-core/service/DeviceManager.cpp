@@ -192,7 +192,10 @@ int DeviceManager::setDeviceModel(int deviceId, const std::wstring &model)
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
 		TelldusCore::MutexLocker deviceLocker(it->second);
-		d->set.setModel(deviceId, model);
+		int ret = d->set.setModel(deviceId, model);
+		if (ret != TELLSTICK_SUCCESS) {
+			return ret;
+		}
 		it->second->setModel(model);
 	}
 	else{
@@ -225,7 +228,10 @@ int DeviceManager::setDeviceName(int deviceId, const std::wstring &name){
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
 		TelldusCore::MutexLocker deviceLocker(it->second);
-		d->set.setName(deviceId, name);
+		int ret = d->set.setName(deviceId, name);
+		if (ret != TELLSTICK_SUCCESS) {
+			return ret;
+		}
 		it->second->setName(name);
 	}
 	else{
@@ -261,7 +267,10 @@ int DeviceManager::setDeviceParameter(int deviceId, const std::wstring &name, co
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
 		TelldusCore::MutexLocker deviceLocker(it->second);
-		d->set.setDeviceParameter(deviceId, name, value);
+		int ret = d->set.setDeviceParameter(deviceId, name, value);
+		if (ret != TELLSTICK_SUCCESS) {
+			return ret;
+		}
 		it->second->setParameter(name, value);
 	}
 	else{
@@ -294,7 +303,10 @@ int DeviceManager::setDeviceProtocol(int deviceId, const std::wstring &protocol)
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
 		TelldusCore::MutexLocker deviceLocker(it->second);
-		d->set.setProtocol(deviceId, protocol);
+		int ret = d->set.setProtocol(deviceId, protocol);
+		if (ret != TELLSTICK_SUCCESS) {
+			return ret;
+		}
 		it->second->setProtocolName(protocol);
 	}
 	else{
@@ -312,8 +324,8 @@ int DeviceManager::getNumberOfDevices(){
 int DeviceManager::addDevice(){
 
 	int id = d->set.addDevice();
-	if(id == -1){
-		return TELLSTICK_ERROR_UNKNOWN;
+	if(id < 0){
+		return id;
 	}
 
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
@@ -330,7 +342,7 @@ int DeviceManager::getDeviceId(int deviceIndex) {
 
 int DeviceManager::getDeviceType(int deviceId){
 
-TelldusCore::MutexLocker deviceListLocker(&d->lock);
+	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
@@ -532,8 +544,9 @@ int DeviceManager::removeDevice(int deviceId){
 
 	Device *device = 0;
 	{
-		if(!d->set.removeDevice(deviceId)){		//remove from register/settings
-			return TELLSTICK_ERROR_UNKNOWN;
+		int ret = d->set.removeDevice(deviceId);		//remove from register/settings
+		if (ret != TELLSTICK_SUCCESS) {
+			return ret;
 		}
 
 		TelldusCore::MutexLocker deviceListLocker(&d->lock);
@@ -552,7 +565,7 @@ int DeviceManager::removeDevice(int deviceId){
 	{TelldusCore::MutexLocker lock(device);}	//waiting for device lock, if it's aquired, just unlock again. Device is removed from list, and cannot be accessed from anywhere else
 	delete device;
 
-	return TELLSTICK_DEVICE_REMOVED;
+	return TELLSTICK_SUCCESS;
 }
 
 void DeviceManager::handleControllerMessage(const ControllerEventData &eventData) {

@@ -193,7 +193,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	} else if (function == L"tdRemoveDevice") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		(*intReturn) = d->deviceManager->removeDevice(deviceId);
-		if((*intReturn) == TELLSTICK_DEVICE_REMOVED){
+		if((*intReturn) == TELLSTICK_SUCCESS){
 			sendDeviceSignal(deviceId, TELLSTICK_DEVICE_REMOVED, 0);
 		}
 
