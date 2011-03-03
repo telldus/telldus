@@ -132,7 +132,7 @@ std::string TelldusCore::wideToString(const std::wstring &input) {
 	char *outPointer = outString;
 
 	iconv_t convDesc = iconv_open("UTF-8", WCHAR_T_ENCODING);
-	size_t converted = iconv(convDesc, &inPointer, &wideSize, &outPointer, &outbytesLeft);
+	iconv(convDesc, &inPointer, &wideSize, &outPointer, &outbytesLeft);
 	iconv_close(convDesc);
 
 	std::string retval(outString);
