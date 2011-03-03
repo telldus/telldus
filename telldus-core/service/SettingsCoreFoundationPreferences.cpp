@@ -15,6 +15,8 @@
 #include <string.h>
 #include <CoreFoundation/CoreFoundation.h>
 
+#include "../client/telldus-core.h"
+
 class privateVars {
 public:
 	CFStringRef app_ID;
@@ -143,21 +145,25 @@ int Settings::getNextDeviceId() const {
 /*
 * Remove a device
 */
-bool Settings::removeDevice(int intDeviceId){
+int Settings::removeDevice(int intDeviceId){
+	int ret = TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	CFStringRef filterKey = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d."), intDeviceId); // The key to search for
 
 	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, d->userName, d->hostName );
-	if (!cfarray) return 0;
+	if (!cfarray) {
+		return TELLSTICK_ERROR_UNKNOWN;
+	}
 	CFIndex size = CFArrayGetCount( cfarray );
 	for (CFIndex k = 0; k < size; ++k) {
 		CFStringRef key = (CFStringRef) CFArrayGetValueAtIndex(cfarray, k);
 		if (CFStringHasPrefix( key, filterKey ) ) {
 			CFPreferencesSetValue( key, NULL, d->app_ID, d->userName, d->hostName ); //Remove the key
+			ret = TELLSTICK_SUCCESS;
 		}
 	}
 	
 	CFPreferencesSynchronize( d->app_ID, d->userName, d->hostName );
-	return true;
+	return ret;
 }
 
 std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &wname, bool parameter) const {
@@ -190,7 +196,7 @@ std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &wna
 	return retval;
 }
 
-bool Settings::setStringSetting(int intDeviceId, const std::wstring &wname, const std::wstring &wvalue, bool parameter) {
+int Settings::setStringSetting(int intDeviceId, const std::wstring &wname, const std::wstring &wvalue, bool parameter) {
 	std::string name(TelldusCore::wideToString(wname));
 	std::string value(TelldusCore::wideToString(wvalue));
 	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), kCFStringEncodingUTF8 );
@@ -205,7 +211,7 @@ bool Settings::setStringSetting(int intDeviceId, const std::wstring &wname, cons
 
 	CFPreferencesSetValue( key, cfvalue, d->app_ID, d->userName, d->hostName );
 	CFPreferencesSynchronize( d->app_ID, d->userName, d->hostName );
-	return true;
+	return TELLSTICK_SUCCESS;
 }
 
 int Settings::getIntSetting(int intDeviceId, const std::wstring &wname, bool parameter) const {
@@ -239,7 +245,7 @@ int Settings::getIntSetting(int intDeviceId, const std::wstring &wname, bool par
 	return retval;
 }
 
-bool Settings::setIntSetting(int intDeviceId, const std::wstring &wname, int value, bool parameter) {
+int Settings::setIntSetting(int intDeviceId, const std::wstring &wname, int value, bool parameter) {
 	std::string name(TelldusCore::wideToString(wname));
 	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), kCFStringEncodingUTF8 );
 	CFNumberRef cfvalue = CFNumberCreate(NULL, kCFNumberIntType, &value);
@@ -253,5 +259,5 @@ bool Settings::setIntSetting(int intDeviceId, const std::wstring &wname, int val
 	
 	CFPreferencesSetValue( key, cfvalue, d->app_ID, d->userName, d->hostName );
 	CFPreferencesSynchronize( d->app_ID, d->userName, d->hostName );
-	return true;	
+	return TELLSTICK_SUCCESS;	
 }
