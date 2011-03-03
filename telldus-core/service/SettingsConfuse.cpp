@@ -102,6 +102,9 @@ int Settings::addDevice(){
 	int intDeviceId = getNextDeviceId();
 
 	FILE *fp = fopen(CONFIG_FILE, "w");
+	if (!fp) {
+		return -TELLSTICK_ERROR_PERMISSION_DENIED;
+	}
 	cfg_print(d->cfg, fp); //Print the config-file
 	fprintf(fp, "device {\n  id=%d\n}\n", intDeviceId); //Print the new device
 	fclose(fp);
@@ -136,6 +139,9 @@ bool Settings::removeDevice(int intDeviceId){
 	TelldusCore::MutexLocker locker(&mutex);
 	bool blnSuccess = true;
 	FILE *fp = fopen(CONFIG_FILE, "w");
+	if (!fp) {
+		return false;
+	}
 
 	// Print all opts
 	for(int i = 0; d->cfg->opts[i].name; i++) {
@@ -279,6 +285,9 @@ bool Settings::setStringSetting(int intDeviceId, const std::wstring &name, const
 				cfg_setstr(cfg_device, TelldusCore::wideToString(name).c_str(), newValue.c_str());
 			}
 			FILE *fp = fopen(CONFIG_FILE, "w");
+			if (!fp) {
+				return false;
+			}
 			cfg_print(d->cfg, fp);
 			fclose(fp);
 			return true;
@@ -321,6 +330,9 @@ bool Settings::setIntSetting(int intDeviceId, const std::wstring &name, int valu
 				cfg_setint(cfg_device, TelldusCore::wideToString(name).c_str(), value);
 			}
 			FILE *fp = fopen(CONFIG_FILE, "w");
+			if (!fp) {
+				return false;
+			}
 			cfg_print(d->cfg, fp);
 			fclose(fp);
 			return true;
