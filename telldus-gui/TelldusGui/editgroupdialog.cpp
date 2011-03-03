@@ -201,8 +201,8 @@ void ProxyModel::showAllRows() {
 
 QString ProxyModel::getShownIds(){
 	QStringList addedIds;
-	foreach (int index, rows){	//TODO why does this crash when debugging? Unsafe?
-		if(index >= 0){	//TODO why can this be 
+	foreach (int index, rows){
+		if(index >= 0){ 
 			DeviceModel *model = reinterpret_cast<DeviceModel *>(this->sourceModel());
 			if (model) {
 				int deviceId = model->deviceId(model->index(index, 0));

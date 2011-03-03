@@ -81,9 +81,6 @@ QString &Device::name() const {
 }
 
 void Device::setParameter( const QString &name, const QString &value ) {
-	if(name == "devices"){
-		d->protocolChanged = true;
-	}
 	d->settings[name] = value;
 }
 

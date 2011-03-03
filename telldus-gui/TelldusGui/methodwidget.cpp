@@ -96,7 +96,7 @@ MethodWidget::MethodWidget( Device *device, QWidget *parent )
 	connect(d->execute, SIGNAL(clicked()), device, SLOT(execute()));
 	connect(d->up, SIGNAL(clicked()), device, SLOT(up()));
 	connect(d->down, SIGNAL(clicked()), device, SLOT(down()));
-	//TODO connect(d->stop, SIGNAL(clicked()), device, SLOT(stop()));
+	connect(d->stop, SIGNAL(clicked()), device, SLOT(stop()));
 
 
 	updateMethods(device->methods());
