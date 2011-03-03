@@ -7,6 +7,7 @@
 #include <QMessageBox>
 #include <QHeaderView>
 #include <QMenu>
+#include <QTimer>
 
 #include <QDebug>
 
@@ -28,7 +29,7 @@ DeviceWidget::DeviceWidget(QWidget *parent) :
 	connect( &deviceView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(listActivated(const QModelIndex &)) );
 	connect(&model, SIGNAL(showMessage(const QString &, const QString &, const QString &)), this, SIGNAL(showMessage(const QString &, const QString &, const QString &)));
 	connect(&model, SIGNAL(eventTriggered(const QString &, const QString &)), this, SIGNAL(eventTriggered(const QString &, const QString &)));
-	
+
 	QVBoxLayout *layout = new QVBoxLayout(this);
 	layout->addWidget(&deviceView);
 
@@ -68,6 +69,14 @@ DeviceWidget::DeviceWidget(QWidget *parent) :
 	buttonLayout->addStretch();
 
 	layout->addLayout( buttonLayout );
+
+	if (model.haveError()) {
+		//We emit the signal in the next "event loop".
+		//This to allow the signals to be connected from our parent object
+		QTimer::singleShot(0, this, SLOT(emitError()));
+		this->setEnabled( false );
+	}
+
 }
 
 DeviceWidget::~DeviceWidget()
@@ -83,6 +92,10 @@ void DeviceWidget::changeEvent(QEvent *e)
 	default:
 		break;
 	}
+}
+
+void DeviceWidget::emitError() {
+	emit showMessage("", model.errorString(), "");
 }
 
 void DeviceWidget::addDevice() {
@@ -102,7 +115,7 @@ void DeviceWidget::addDevice() {
 void DeviceWidget::addGroup() {
 	//Device *device = model.newDevice();
 	Device device(0, 0);
-	
+
 	EditGroupDialog *dialog = new EditGroupDialog(&device, &model);
 	if (dialog->exec() == QDialog::Accepted) {
 		device.save();

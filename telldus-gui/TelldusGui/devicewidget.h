@@ -28,6 +28,7 @@ private slots:
 	void addGroup();
 	void deleteDevice();
 	void editDevice();
+	void emitError();
 
 private:
 	DeviceModel model;
