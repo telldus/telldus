@@ -193,7 +193,7 @@
     <message>
         <location filename="devicewidget.cpp" line="64"/>
         <source>Remove</source>
-        <translation>Fjärrkontrollskod</translation>
+        <translation>Ta bort</translation>
     </message>
     <message>
         <location filename="devicewidget.cpp" line="131"/>
