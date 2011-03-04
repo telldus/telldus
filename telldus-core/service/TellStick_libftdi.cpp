@@ -19,6 +19,7 @@
 #include "Thread.h"
 #include "Mutex.h"
 #include "Strings.h"
+#include "common.h"
 
 #include <unistd.h>
 
@@ -152,6 +153,11 @@ void TellStick::run() {
 		}
 		memset(buf, 0, sizeof(buf));
 		dwBytesRead = ftdi_read_data(&d->ftHandle, buf, sizeof(buf));
+		if (dwBytesRead < 0) {
+			//An error occured, avoid flooding by sleeping longer
+			//Hopefully if will start working again
+			msleep(1000); //1s
+		}
 		if (dwBytesRead < 1) {
 			continue;
 		}
