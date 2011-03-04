@@ -86,6 +86,7 @@ void MainWindow::setupMenu() {
 	// File
 	QMenu *fileMenu = menuBar()->addMenu(tr("&File"));
 	QAction *config = fileMenu->addAction(tr("&Configure"), this, SLOT(slotConfigure()));
+	config->setMenuRole(QAction::PreferencesRole);
 	fileMenu->addSeparator();
 	QAction *quit = fileMenu->addAction(tr("&Quit"), qApp, SLOT(quit()));
 	quit->setMenuRole( QAction::QuitRole );
