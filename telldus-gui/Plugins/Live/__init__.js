@@ -25,7 +25,7 @@ com.telldus.live = function() {
 		isRegistered = false;
 		if (com.telldus.systray && !menuId) {
 			separatorId = com.telldus.systray.addSeparator();
-			menuId = com.telldus.systray.addMenuItem( "Activate Telldus Live!" );
+			menuId = com.telldus.systray.addMenuItem( qsTr("Activate Telldus Live!") );
 			com.telldus.systray.menuItem(menuId).triggered.connect(socket.activate);
 		}
 	}
