@@ -94,6 +94,9 @@ std::list<std::string> Device::getParametersForProtocol() const {
 
 void Device::setParameter(const std::wstring &key, const std::wstring &value){
 	d->parameterList[key] = value;
+	if(d->protocol){
+		d->protocol->setParameters(d->parameterList);
+	}
 }
 
 int Device::getPreferredControllerId(){
