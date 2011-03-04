@@ -4,7 +4,7 @@
 <context>
     <name>__init__</name>
     <message>
-        <location filename="../../TelldusCenter/Plugins/script/com/telldus/systray/__init__.js" line="13"/>
+        <location filename="__init__.js" line="13"/>
         <source>&amp;Quit</source>
         <translation>&amp;Avsluta</translation>
     </message>
