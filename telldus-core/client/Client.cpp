@@ -199,7 +199,7 @@ std::wstring Client::sendToService(const Message &msg) {
 	}
 	s.write(msg.data());
 
-	return s.read(1000);
+	return s.read(5000);
 }
 
 void Client::stopThread(){
