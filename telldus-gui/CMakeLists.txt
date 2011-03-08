@@ -25,6 +25,9 @@ SET(CMAKE_MODULE_PATH "${CMAKE_SOURCE_DIR}/cmake")
 
 IF (WIN32)
 	SET(TELLDUSCORE_INCLUDE_DIR	""	CACHE PATH "Path to the directory which contains telldus-core.h")
+ELSEIF(UNIX)
+	SET(PLUGIN_LIB_PATH "lib" CACHE STRING "Relative path to the directory to install TelldusCenter plugin libraries into")
+	SET(PLUGIN_LIB_FULL_PATH "${PLUGIN_LIB_PATH}/telldus/tellduscenter/plugins")
 ENDIF (WIN32)
 
 if(BUILD_LIBTELLDUS-GUI)

@@ -35,14 +35,14 @@ SET(translation_sources ${Plugin_SRCS})
 
 IF(Plugin_PATH)
 	STRING(REPLACE "." "/"
-		path ${Plugin_PATH}
+		Plugin_PATH_relative ${Plugin_PATH}
 	)
 	IF (APPLE)
-		SET(Plugin_PATH "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Plugins/script/${path}")
+		SET(Plugin_PATH "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Plugins/script/${Plugin_PATH_relative}")
 	ELSEIF (WIN32)
-		SET(Plugin_PATH "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/Plugins/script/${path}")
+		SET(Plugin_PATH "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/Plugins/script/${Plugin_PATH_relative}")
 	ELSE (APPLE)
-		SET(Plugin_PATH "${CMAKE_BINARY_DIR}/TelldusCenter/Plugins/script/${path}")
+		SET(Plugin_PATH "${CMAKE_BINARY_DIR}/TelldusCenter/Plugins/script/${Plugin_PATH_relative}")
 	ENDIF (APPLE)
 
 	LIST(APPEND translation_sources
@@ -89,6 +89,9 @@ IF(Plugin_SRCS)
 		SET_TARGET_PROPERTIES(${Plugin_NAME} PROPERTIES
 			LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/TelldusCenter/Plugins/script
 		)
+		INSTALL(TARGETS ${Plugin_NAME}
+			LIBRARY DESTINATION "${PLUGIN_LIB_FULL_PATH}/script" 
+		)
 	ENDIF (APPLE)
 ELSE(Plugin_SRCS)
 	ADD_CUSTOM_TARGET(${Plugin_NAME} ALL
@@ -109,6 +112,8 @@ IF(Plugin_PATH)
 			COMMAND ${CMAKE_COMMAND} -E copy ${_FILE} ${Plugin_PATH}
 			COMMENT "Copy ${_FILENAME} for plugin ${Plugin_NAME}"
 		)
+		INSTALL(FILES ${_FILE} DESTINATION "${PLUGIN_LIB_FULL_PATH}/script/${Plugin_PATH_relative}")
 	ENDFOREACH(_FILE)
 ENDIF(Plugin_PATH)
+
 

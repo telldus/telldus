@@ -6,6 +6,7 @@ INCLUDE( ${QT_USE_FILE} )
 
 if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
+	cmake_policy(SET CMP0005 NEW)
 endif(COMMAND cmake_policy)
 
 ######## Non configurable options  ########
@@ -99,7 +100,7 @@ ELSEIF (WIN32) #### Windows ####
 		${CMAKE_CURRENT_BINARY_DIR}/TelldusCenter.rc
 	)
 ELSE (APPLE) #### Linux ####
-
+	ADD_DEFINITIONS( -DPLUGIN_LIB_PATH=${CMAKE_INSTALL_PREFIX}/${PLUGIN_LIB_FULL_PATH} )
 ENDIF (APPLE)
 
 ######## QtSingleApplication ########
@@ -157,4 +158,8 @@ IF (APPLE)
 		COMMAND mkdir -p "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Plugins/script/"
 	)
 ENDIF (APPLE)
+
+INSTALL(TARGETS ${telldus-center_TARGET}
+	RUNTIME	DESTINATION bin
+)
 

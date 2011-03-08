@@ -11,6 +11,9 @@
 #include "plugintree.h"
 #include "scriptenvironment.h"
 
+#define DEFINE_STRING_HELPER(X) #X
+#define DEFINE_STRING(X) DEFINE_STRING_HELPER(X)
+
 class TelldusCenterPlugin;
 
 typedef QList<TelldusCenterPlugin *> PluginList;
@@ -95,12 +98,17 @@ void TelldusCenterApplication::loadPlugins() {
 		pluginsDir.cdUp();
 	}
 #endif
-	if (!pluginsDir.cd("Plugins")) {
-		return;
+	
+	if (pluginsDir.cd("Plugins")) {
+		this->setLibraryPaths( QStringList(pluginsDir.absolutePath()) );
 	}
 
-	this->setLibraryPaths( QStringList(pluginsDir.absolutePath()) );
 
+#if defined(Q_OS_UNIX)
+	QStringList paths = QStringList() << DEFINE_STRING(PLUGIN_LIB_PATH);
+	this->setLibraryPaths( paths );
+#endif
+	
 	QScriptValue mainWindowObject = d->scriptEnvironment->engine()->newQObject(d->mainWindow);
 	d->scriptEnvironment->engine()->globalObject().property("application").setProperty("mainwindow", mainWindowObject);
 
