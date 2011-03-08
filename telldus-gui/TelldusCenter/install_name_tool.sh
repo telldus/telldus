@@ -42,7 +42,7 @@ if [ ! -f /Library/Frameworks/TelldusCore.framework/Versions/Current/Libraries/l
 	install_name_tool -id "/Library/Frameworks/TelldusCore.framework/Versions/${VERSION}/Libraries/libftd2xx.${FTD2XX_VERSION}.dylib" /Library/Frameworks/TelldusCore.framework/Versions/Current/Libraries/libftd2xx.${FTD2XX_VERSION}.dylib
 fi
 install_name_tool -id /Library/Frameworks/TelldusCore.framework/TelldusCore /Library/Frameworks/TelldusCore.framework/TelldusCore
-install_name_tool -change /usr/local/lib/libftd2xx.${FTD2XX_VERSION}.dylib "/Library/Frameworks/TelldusCore.framework/Versions/${VERSION}/Libraries/libftd2xx.${FTD2XX_VERSION}.dylib" /Library/Frameworks/TelldusCore.framework/TelldusCore
+install_name_tool -change /usr/local/lib/libftd2xx.${FTD2XX_VERSION}.dylib "/Library/Frameworks/TelldusCore.framework/Versions/${VERSION}/Libraries/libftd2xx.${FTD2XX_VERSION}.dylib" /Library/Telldus/TelldusService
 
 ### QtCore ###
 if [ ! -d TelldusCenter.app/Contents/Frameworks/QtCore.framework ]; then
