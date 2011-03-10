@@ -2,6 +2,11 @@ PROJECT( telldus-core )
 
 CMAKE_MINIMUM_REQUIRED( VERSION 2.6.0 )
 
+OPTION(FORCE_COMPILE_FROM_TRUNK FALSE "Accept compiling source from trunk. This is unsupported and highly unrecommended")
+IF(NOT FORCE_COMPILE_FROM_TRUNK)
+	MESSAGE(FATAL_ERROR "You are compiling sources from trunk. Don't do that!")
+ENDIF(NOT FORCE_COMPILE_FROM_TRUNK)
+
 IF (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
 	INCLUDE_DIRECTORIES(/usr/local/include)
 	LINK_DIRECTORIES(/usr/local/lib)
