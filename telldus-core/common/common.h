@@ -43,7 +43,7 @@ inline void debuglog(const int intMessage, const std::string strMessage){
 	file.flush();
 	file.close();
 
-#elif !defined(_MACOSX)
+#elif !defined(_MACOSX) && !defined(__FreeBSD__)
 	pthread_t thread = pthread_self();
 	printf("[%i] %i - %s\n", (int)thread, intMessage, strMessage.c_str());
 	fflush(stdout);

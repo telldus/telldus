@@ -1,6 +1,6 @@
 #include "../client/telldus-core.h"
 #include <stdlib.h>
-#include <error.h>
+#include <errno.h>
 #include <argp.h>
 #include <string>
 

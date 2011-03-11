@@ -6,6 +6,7 @@
 #include <unistd.h>
 #include <syslog.h>
 #include <sys/stat.h>
+#include <errno.h>
 #include <pwd.h>
 #include <grp.h>
 
@@ -64,7 +65,8 @@ int main(int argc, char **argv) {
 				fprintf(fd,"%d\n",pid);
 				fclose(fd);
 			} else {
-				syslog(LOG_ERR, "Could not write pid file");
+				syslog(LOG_ERR, "Could not open pid file %s: %s", PID_FILE, strerror(errno));
+				exit(EXIT_FAILURE);
 			}
 			exit(EXIT_SUCCESS);
 		}
@@ -73,7 +75,7 @@ int main(int argc, char **argv) {
 	setlogmask(LOG_UPTO(LOG_INFO));
 	openlog(DAEMON_NAME, LOG_CONS, LOG_USER);
 
-	syslog(LOG_INFO, "%s daemon starting up", DAEMON_NAME);
+	syslog(LOG_NOTICE, "%s daemon starting up", DAEMON_NAME);
 
 	if (deamonize) {
 		/* Change the file mode mask */
@@ -126,6 +128,6 @@ int main(int argc, char **argv) {
 
 	tm.start();
 
-	syslog(LOG_INFO, "%s daemon exited", DAEMON_NAME);
+	syslog(LOG_NOTICE, "%s daemon exited", DAEMON_NAME);
 	exit(EXIT_SUCCESS);
 }
