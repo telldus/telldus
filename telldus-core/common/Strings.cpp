@@ -45,7 +45,11 @@ std::wstring TelldusCore::charToWstring(const char *value) {
 	char *outString = (char*)new wchar_t[utf8Length+1];
 	memset(outString, 0, sizeof(wchar_t)*(utf8Length+1));
 
+#ifdef _FREEBSD
+	const char *inPointer = inString;
+#else
 	char *inPointer = inString;
+#endif
 	char *outPointer = outString;
 
 	iconv_t convDesc = iconv_open(WCHAR_T_ENCODING, "UTF-8");
@@ -128,7 +132,11 @@ std::string TelldusCore::wideToString(const std::wstring &input) {
 	char *outString = new char[outbytesLeft];
 	memset(outString, 0, sizeof(char)*(outbytesLeft));
 
+#ifdef _FREEBSD
+	const char *inPointer = inString;
+#else
 	char *inPointer = inString;
+#endif
 	char *outPointer = outString;
 
 	iconv_t convDesc = iconv_open("UTF-8", WCHAR_T_ENCODING);

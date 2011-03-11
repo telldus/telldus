@@ -44,6 +44,17 @@ ELSEIF (WIN32)
 	LIST(APPEND  telldus-common_SRCS
 		Socket_win.cpp
 	)
+ELSEIF (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+	#### FreeBSD ####
+	SET( telldus-common_TARGET      telldus-common )
+	FIND_LIBRARY(ICONV_LIBRARY iconv)
+	ADD_DEFINITIONS( -D_FREEBSD )
+	LIST(APPEND  telldus-common_SRCS
+		Socket_unix.cpp
+	)
+	LIST(APPEND telldus-common_LIBRARIES
+		${ICONV_LIBRARY}
+	)
 ELSE (APPLE)
 	#### Linux ####
 	SET( telldus-common_TARGET	telldus-common )
