@@ -32,9 +32,10 @@ ELSEIF (APPLE)
 	)
 ELSEIF (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
 	# FreeBSD does not have argp in base libc; port devel/argp-standalone is required.
+	FIND_LIBRARY(ARGP_LIBRARY argp)
 	TARGET_LINK_LIBRARIES(tdadmin
 		${CMAKE_BINARY_DIR}/client/libtelldus-core.so
-		argp
+		${ARGP_LIBRARY}
 	)
 ELSE (WIN32)
 	TARGET_LINK_LIBRARIES(tdadmin
