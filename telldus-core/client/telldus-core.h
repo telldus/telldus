@@ -22,7 +22,7 @@
 	#define WINAPI __stdcall
 #else
 	#define WINAPI
-	#define TELLSTICK_API
+	#define TELLSTICK_API __attribute__ ((visibility("default")))
 #endif
 
 typedef void (WINAPI *TDDeviceEvent)(int deviceId, int method, const char *data, int callbackId, void *context);

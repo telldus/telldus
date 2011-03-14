@@ -85,6 +85,10 @@ ADD_LIBRARY(${telldus-core_TARGET} SHARED
 	${telldus-core_PUB_HDRS}
 )
 
+IF (UNIX)
+	SET_TARGET_PROPERTIES( ${telldus-core_TARGET} PROPERTIES COMPILE_FLAGS "-fPIC -fvisibility=hidden")
+ENDIF (UNIX)
+
 TARGET_LINK_LIBRARIES( ${telldus-core_TARGET}	${telldus-core_LIBRARIES} )
 
 SET_PROPERTY(TARGET ${telldus-core_TARGET}

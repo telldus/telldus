@@ -73,6 +73,8 @@ ADD_LIBRARY(${telldus-common_TARGET} STATIC
 	${telldus-common_HDRS}
 )
 
-SET_TARGET_PROPERTIES( ${telldus-common_TARGET} PROPERTIES COMPILE_FLAGS -fPIC)
+IF (UNIX)
+	SET_TARGET_PROPERTIES( ${telldus-common_TARGET} PROPERTIES COMPILE_FLAGS "-fPIC -fvisibility=hidden")
+ENDIF (UNIX)
 
 TARGET_LINK_LIBRARIES( ${telldus-common_TARGET}	${telldus-common_LIBRARIES} )
