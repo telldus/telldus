@@ -184,7 +184,7 @@ int TellStick::send( const std::string &strMessage ) {
 	if(ret < 0) {
 		c = false;
 	} else if(ret != strMessage.length()) {
-		fprintf(stderr, "wierd send length? retval %i instead of %d\n",
+		fprintf(stderr, "weird send length? retval %i instead of %d\n",
 		ret, (int)strMessage.length());
 	}
 

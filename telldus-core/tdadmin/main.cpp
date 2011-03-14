@@ -18,7 +18,7 @@ const int SERIAL = 3;
 static struct argp_option options[] = {
 	{0,0,0,0,
 		"COMMAND: controller, ACTION: connect/disconnect\n"
-		"Tells the deamon to add or remove a TellStick (duo)"
+		"Tells the daemon to add or remove a TellStick (duo)"
 	},
 	{"vid",VID,"VID",0, "The vendor id (1781)" },
 	{"pid",PID,"PID",0,"The product id (0c30 or 0c31)" },
