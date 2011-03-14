@@ -47,6 +47,17 @@ int main(int argc, char **argv) {
 		if (strcmp(argv[i], "--nodaemon") == 0) {
 			deamonize = false;
 		}
+		if (strcmp(argv[i], "--help") == 0) {
+			printf("Telldus TellStick background service\n\nStart with --nodaemon to not run as daemon\n\n");
+			printf("Report bugs to <info.tech@telldus.com>\n");
+			exit(EXIT_SUCCESS);
+		}
+		if (strcmp(argv[i], "--version") == 0) {
+			printf("telldusd " VERSION "\n\n");
+			printf("Copyright (C) 2011 Telldus Technologies AB\n\n");
+			printf("Written by Micke Prag <micke.prag@telldus.se>\n");
+			exit(EXIT_SUCCESS);
+		}
 	}
 
 	if (deamonize) {

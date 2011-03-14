@@ -2,6 +2,12 @@ IF(COMMAND cmake_policy)
 	CMAKE_POLICY(SET CMP0003 NEW)
 ENDIF(COMMAND cmake_policy)
 
+SET (telldusd_DESCRIPTION
+	"background service for Telldus TellStick, must be running to control TellStick"
+)
+
+ADD_DEFINITIONS( -DVERSION="${DISPLAYED_VERSION}" )
+
 ######## Non configurable options  ########
 SET( telldus-service_SRCS
 	ClientCommunicationHandler.cpp
@@ -175,6 +181,19 @@ IF (APPLE)
 		RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}
 	)
 ENDIF (APPLE)
+
+IF (UNIX)
+	IF (GENERATE_MAN)
+		ADD_CUSTOM_COMMAND(
+			TARGET ${telldus-service_TARGET}
+			POST_BUILD
+			COMMAND help2man -n ${telldusd_DESCRIPTION} ./telldusd > telldusd.1
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+			COMMENT "Generating man file telldusd.1"
+		)
+		INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/telldusd.1 DESTINATION share/man/man1)
+	ENDIF (GENERATE_MAN)
+ENDIF (UNIX)
 
 IF (UNIX AND NOT APPLE)
 	INSTALL(TARGETS ${telldus-service_TARGET} RUNTIME DESTINATION sbin)
