@@ -159,6 +159,21 @@ IF (APPLE)
 	)
 ENDIF (APPLE)
 
+IF (UNIX)
+	IF (GENERATE_MAN)
+		ADD_CUSTOM_COMMAND(
+			TARGET ${telldus-center_TARGET}
+			POST_BUILD
+			
+			COMMAND xsltproc --nonet --param man.charmap.use.subset "0" /usr/share/sgml/docbook/stylesheet/xsl/docbook-xsl/manpages/docbook.xsl ${CMAKE_CURRENT_SOURCE_DIR}/tellduscenter.man.xml 
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+			COMMENT "Generating man file TelldusCenter.1"
+		)
+		INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/TelldusCenter.1 DESTINATION share/man/man1)
+	ENDIF (GENERATE_MAN)
+ENDIF (UNIX)
+
+
 INSTALL(TARGETS ${telldus-center_TARGET}
 	RUNTIME	DESTINATION bin
 )
