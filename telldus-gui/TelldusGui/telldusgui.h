@@ -18,7 +18,7 @@
 	#define WINAPI __stdcall
 #else
 	#define WINAPI
-	#define TELLDUSGUI_API
+	#define TELLDUSGUI_API __attribute__ ((visibility("default")))
 #endif
 
 class QWidget;

@@ -137,6 +137,10 @@ ADD_LIBRARY(${telldus-gui_TARGET} SHARED
 	${telldus-gui_QM}
 )
 
+IF (UNIX)
+	SET_TARGET_PROPERTIES( ${telldus-gui_TARGET} PROPERTIES COMPILE_FLAGS "-fPIC -fvisibility=hidden")
+ENDIF (UNIX)
+
 TARGET_LINK_LIBRARIES( ${telldus-gui_TARGET}	${telldus-gui_LIBRARIES} )
 
 SET_PROPERTY(TARGET ${telldus-gui_TARGET}
