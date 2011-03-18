@@ -75,7 +75,7 @@ MethodWidget::MethodWidget( Device *device, QWidget *parent )
 	d->down->setVisible( false );
 	layout->addWidget( d->down );
 
-	d->stop->setIcon( QIcon(":/images/state_2.png") );	//TODO
+	d->stop->setIcon( QIcon(":/images/stop.png") );
 	d->stop->setVisible( false );
 	layout->addWidget( d->stop );
 
