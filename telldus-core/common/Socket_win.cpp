@@ -86,6 +86,8 @@ std::wstring Socket::read(int timeout){
 	int result;
 	DWORD cbBytesRead = 0;
 	OVERLAPPED oOverlap; 
+	
+	memset(&oOverlap, 0, sizeof(OVERLAPPED));
 
 	d->readEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
 	oOverlap.hEvent = d->readEvent;
@@ -124,10 +126,12 @@ std::wstring Socket::read(int timeout){
 
 void Socket::write(const std::wstring &msg){
 	
-	OVERLAPPED oOverlap; 
+	OVERLAPPED oOverlap;
 	DWORD bytesWritten = 0;
 	int result;
 	BOOL fSuccess;
+
+	memset(&oOverlap, 0, sizeof(OVERLAPPED));
 
 	HANDLE writeEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
 	oOverlap.hEvent = writeEvent;

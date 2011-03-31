@@ -87,6 +87,8 @@ void ConnectionListener::run() {
 	OVERLAPPED oOverlap;
 	DWORD cbBytesRead;
 
+	memset(&oOverlap, 0, sizeof(OVERLAPPED));
+
 	d->hEvent = CreateEvent(NULL, true, false, NULL);
 	oOverlap.hEvent = d->hEvent;
 	
