@@ -120,6 +120,8 @@ void TellStick::processData( const std::string &data ) {
 				d->fwVersion = TelldusCore::charToInteger(d->message.substr(2).c_str());
 			} else if (d->message.substr(0,2).compare("+R") == 0) {
 				this->publishData(d->message.substr(2));
+			} else if(d->message.substr(0,2).compare("+W") == 0) {
+				this->decodePublishData(d->message.substr(2));
 			}
 			d->message.clear();
 		} else { // Append the character

@@ -191,3 +191,17 @@ std::list<std::string> Protocol::getParametersForProtocol(const std::wstring &pr
 
 	return parameters;
 }
+
+std::list<std::string> Protocol::decodeData(const std::wstring &protocolName, const std::string &data) {
+	std::list<std::string> retval;
+	std::string decoded = "";
+	
+	if( protocolName == L"everflourish" ) {
+		decoded = ProtocolEverflourish::decodeData(data);
+		if (decoded != "") {
+			retval.push_back(decoded);
+		}
+	}
+	
+	return retval;
+}

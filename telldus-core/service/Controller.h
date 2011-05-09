@@ -20,6 +20,7 @@ public:
 protected:
 	Controller(int id, Event *event);
 	void publishData(const std::string &data) const;
+	void decodePublishData(const std::string &data) const;
 
 private:
 	class PrivateData;

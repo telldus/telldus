@@ -1,4 +1,6 @@
 #include "ProtocolEverflourish.h"
+#include <stdio.h>
+#include <sstream>
 
 int ProtocolEverflourish::methods() const {
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN;
@@ -82,4 +84,40 @@ unsigned int ProtocolEverflourish::calculateChecksum(unsigned int x) {
 	}
 
 	return res; 
+}
+
+std::string ProtocolEverflourish::decodeData(const std::string& data)
+{
+	unsigned int allData;
+	unsigned int house = 0;
+	unsigned int unit = 0;
+	unsigned int method = 0;
+	
+	sscanf(data.c_str(), "%X", &allData);
+	
+	house = allData & 0xFFFC00;
+	house >>= 10;
+	
+	unit = allData & 0x300;
+	unit >>= 8;
+	
+	method = allData & 0xF;
+	
+	std::stringstream retString;
+	retString << "class:command;protocol:everflourish;model:selflearning;house:0x" << std::hex << house << std::dec << ";unit:0x" << std::hex << unit << std::dec << ";method:";
+	if(method == 0){
+		retString << "turnoff;";
+	}
+	else if(method == 15){
+		retString << "turnon;";
+	}
+	else if(method == 10){
+		retString << "learn;";
+	}
+	else {
+		//not everflourish
+		return "";
+	}
+	
+	return retString.str();
 }
