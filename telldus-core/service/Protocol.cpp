@@ -205,6 +205,11 @@ std::list<std::string> Protocol::decodeData(const std::wstring &protocolName, co
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
+	} else if( protocolName.compare(L"x10") == 0 ) {
+		decoded = ProtocolX10::decodeData(data);
+		if (decoded != "") {
+			retval.push_back(decoded);
+		}
 	}
 
 	return retval;

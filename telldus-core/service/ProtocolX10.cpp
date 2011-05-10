@@ -1,4 +1,8 @@
 #include "ProtocolX10.h"
+#include <stdio.h>
+#include <sstream>
+
+const unsigned char HOUSES[] = {6,0xE,2,0xA,1,9,5,0xD,7,0xF,3,0xB,0,8,4,0xC};
 
 int ProtocolX10::methods() const {
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;
@@ -8,7 +12,6 @@ std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Cont
 	const unsigned char S = 59, L = 169;
 	const char B0[] = {S,S,0};
 	const char B1[] = {S,L,0};
-	const int HOUSES[] = {6,0xE,2,0xA,1,9,5,0xD,7,0xF,3,0xB,0,8,4,0xC};
 	const unsigned char START_CODE[] = {'S',255,1,255,1,255,1,100,255,1,180,0};
 	const unsigned char STOP_CODE[] = {S,0};
 
@@ -102,4 +105,70 @@ std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Cont
 	strReturn.append("+");
 	return strReturn;
 
+}
+
+std::string ProtocolX10::decodeData(const std::string& data) {
+	int intData = 0, currentBit = 31;
+	bool method=0;
+	sscanf(data.c_str(), "%X", &intData);
+
+	int unit = 0;
+	int rawHouse = 0;
+	for(int i = 0; i < 4; ++i) {
+		rawHouse >>= 1;
+		if (checkBit(intData, currentBit--)) {
+			rawHouse |= 0x8;
+		}
+	}
+
+	if (checkBit(intData, currentBit--) != 0) {
+		return "";
+	}
+
+	if (checkBit(intData, currentBit--)) {
+		unit |= (1<<3);
+	}
+
+	if (checkBit(intData, currentBit--)) {
+		return "";
+	}
+	if (checkBit(intData, currentBit--)) {
+		return "";
+	}
+
+	currentBit = 14;
+
+	if (checkBit(intData, currentBit--)) {
+		unit |= (1<<2);
+	}
+	if (checkBit(intData, currentBit--)) {
+		method = 1;
+	}
+	if (checkBit(intData, currentBit--)) {
+		unit |= (1<<0);
+	}
+	if (checkBit(intData, currentBit--)) {
+		unit |= (1<<1);
+	}
+
+	int intHouse = 0;
+	for(int i = 0; i < 16; ++i) {
+		if (HOUSES[i] == rawHouse) {
+			intHouse = i;
+			break;
+		}
+	}
+
+	std::stringstream retString;
+	retString << "class:command;protocol:x10;model:codeswitch;";
+	retString << "house:" << (char)('A' + intHouse);
+	retString << ";unit:" << unit+1;
+	retString << ";method:";
+	if(method == 0){
+		retString << "turnon;";
+	} else {
+		retString << "turnoff;";
+	}
+
+	return retString.str();
 }
