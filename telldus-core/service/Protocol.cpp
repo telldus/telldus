@@ -200,7 +200,7 @@ std::list<std::string> Protocol::decodeData(const std::wstring &protocolName, co
 	std::list<std::string> retval;
 	std::string decoded = "";
 
-	if( protocolName == L"everflourish" ) {
+	if( protocolName.compare(L"everflourish") == 0 ) {
 		decoded = ProtocolEverflourish::decodeData(data);
 		if (decoded != "") {
 			retval.push_back(decoded);
