@@ -80,6 +80,10 @@ int Protocol::getIntParameter(const std::wstring &name, int min, int max) const 
 	return intValue;
 }
 
+bool Protocol::checkBit(int data, int bitno) {
+	return ((data>>bitno)&0x01);
+}
+
 Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname){
 
 	if(TelldusCore::comparei(protocolname, L"arctech")){
@@ -181,10 +185,10 @@ std::list<std::string> Protocol::getParametersForProtocol(const std::wstring &pr
 
 	} else if (TelldusCore::comparei(protocolName, L"yidong")) {
 		parameters.push_back("unit");
-	
+
 	} else if (TelldusCore::comparei(protocolName, L"group")) {
 		parameters.push_back("devices");
-	
+
 	}  else if (TelldusCore::comparei(protocolName, L"scene")) {
 		parameters.push_back("devices");
 	}
@@ -195,13 +199,13 @@ std::list<std::string> Protocol::getParametersForProtocol(const std::wstring &pr
 std::list<std::string> Protocol::decodeData(const std::wstring &protocolName, const std::string &data) {
 	std::list<std::string> retval;
 	std::string decoded = "";
-	
+
 	if( protocolName == L"everflourish" ) {
 		decoded = ProtocolEverflourish::decodeData(data);
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
 	}
-	
+
 	return retval;
 }
