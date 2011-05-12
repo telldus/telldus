@@ -85,6 +85,7 @@ bool Protocol::checkBit(int data, int bitno) {
 	return ((data>>bitno)&0x01);
 }
 
+
 Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname){
 
 	if(TelldusCore::comparei(protocolname, L"arctech")){
@@ -186,10 +187,10 @@ std::list<std::string> Protocol::getParametersForProtocol(const std::wstring &pr
 
 	} else if (TelldusCore::comparei(protocolName, L"yidong")) {
 		parameters.push_back("unit");
-
+	
 	} else if (TelldusCore::comparei(protocolName, L"group")) {
 		parameters.push_back("devices");
-
+	
 	}  else if (TelldusCore::comparei(protocolName, L"scene")) {
 		parameters.push_back("devices");
 	}
@@ -218,6 +219,12 @@ std::list<std::string> Protocol::decodeData(const std::string &fullData) {
 	}
 	else if(TelldusCore::comparei(dataMsg.protocol(), L"everflourish") ) {
 		decoded = ProtocolEverflourish::decodeData(dataMsg);
+		if (decoded != "") {
+			retval.push_back(decoded);
+		}
+	}
+	else if(TelldusCore::comparei(dataMsg.protocol(), L"x10") ) {
+		decoded = ProtocolX10::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}

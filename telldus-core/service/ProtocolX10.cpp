@@ -107,10 +107,10 @@ std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Cont
 
 }
 
-std::string ProtocolX10::decodeData(const std::string& data) {
+std::string ProtocolX10::decodeData(ControllerMessage& dataMsg) {
 	int intData = 0, currentBit = 31;
 	bool method=0;
-	sscanf(data.c_str(), "%X", &intData);
+	sscanf(dataMsg.getParameter("data").c_str(), "%X", &intData);
 
 	int unit = 0;
 	int rawHouse = 0;
