@@ -55,6 +55,21 @@ namespace TelldusCore {
 		int controllerId;
 		std::string strData;
 	};
+	class TDSensorEventDispatcher : public Thread {
+	public:
+		TDSensorEventDispatcher( CallbackStruct<TDSensorEvent> *data, const std::string &protocol, const std::string &model, int id, const std::string &dataType, const std::string &value, int timestamp);
+		virtual ~TDSensorEventDispatcher();
+	protected:
+		virtual void run();
+	private:
+		CallbackStruct<TDSensorEvent> *d;
+		std::string protocol;
+		std::string model;
+		int sensorId;
+		std::string dataType;
+		std::string value;
+		int timestamp;
+	};
 }
 
 #endif //CALLBACKDISPATCHER_H
