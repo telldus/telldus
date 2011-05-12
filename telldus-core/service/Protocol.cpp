@@ -1,6 +1,7 @@
 #include "Protocol.h"
 #include "../client/telldus-core.h"
 
+#include "ControllerMessage.h"
 #include "ProtocolBrateck.h"
 #include "ProtocolComen.h"
 #include "ProtocolEverflourish.h"
@@ -196,21 +197,31 @@ std::list<std::string> Protocol::getParametersForProtocol(const std::wstring &pr
 	return parameters;
 }
 
-std::list<std::string> Protocol::decodeData(const std::wstring &protocolName, const std::string &data) {
+std::list<std::string> Protocol::decodeData(const std::string &fullData) {
 	std::list<std::string> retval;
 	std::string decoded = "";
-
-	if( protocolName.compare(L"everflourish") == 0 ) {
-		decoded = ProtocolEverflourish::decodeData(data);
+	
+	ControllerMessage dataMsg(fullData);
+	if( TelldusCore::comparei(dataMsg.protocol(), L"arctech") ) {
+		decoded = ProtocolNexa::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
-	} else if( protocolName.compare(L"x10") == 0 ) {
-		decoded = ProtocolX10::decodeData(data);
+		decoded = ProtocolWaveman::decodeData(dataMsg);
+		if (decoded != "") {
+			retval.push_back(decoded);
+		}
+		decoded = ProtocolSartano::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
 	}
-
+	else if(TelldusCore::comparei(dataMsg.protocol(), L"everflourish") ) {
+		decoded = ProtocolEverflourish::decodeData(dataMsg);
+		if (decoded != "") {
+			retval.push_back(decoded);
+		}
+	}
+	
 	return retval;
 }

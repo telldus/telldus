@@ -18,7 +18,7 @@ public:
 
 	static Protocol *getProtocolInstance(const std::wstring &protocolname);
 	static std::list<std::string> getParametersForProtocol(const std::wstring &protocolName);
-	static std::list<std::string> decodeData(const std::wstring &protocolname, const std::string &data);
+	static std::list<std::string> decodeData(const std::string &fullData);
 
 	virtual int methods() const = 0;
 	std::wstring model() const;

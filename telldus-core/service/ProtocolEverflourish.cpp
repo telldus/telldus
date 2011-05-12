@@ -1,6 +1,7 @@
 #include "ProtocolEverflourish.h"
-#include <stdio.h>
 #include <sstream>
+#include <stdio.h>
+#include "ControllerMessage.h"
 
 int ProtocolEverflourish::methods() const {
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN;
@@ -86,8 +87,9 @@ unsigned int ProtocolEverflourish::calculateChecksum(unsigned int x) {
 	return res; 
 }
 
-std::string ProtocolEverflourish::decodeData(const std::string& data)
+std::string ProtocolEverflourish::decodeData(ControllerMessage &dataMsg)
 {
+	std::string data = dataMsg.getParameter("data");
 	unsigned int allData;
 	unsigned int house = 0;
 	unsigned int unit = 0;
@@ -100,11 +102,17 @@ std::string ProtocolEverflourish::decodeData(const std::string& data)
 	
 	unit = allData & 0x300;
 	unit >>= 8;
+	unit++; //unit from 1 to 4
 	
 	method = allData & 0xF;
 	
+	if(house < 0 || house > 16383 || unit < 1 || unit > 4){
+		//not everflourish
+		return "";
+	}
+	
 	std::stringstream retString;
-	retString << "class:command;protocol:everflourish;model:selflearning;house:0x" << std::hex << house << std::dec << ";unit:0x" << std::hex << unit << std::dec << ";method:";
+	retString << "class:command;protocol:everflourish;model:selflearning;house:" << house << ";unit:" << unit << ";method:";
 	if(method == 0){
 		retString << "turnoff;";
 	}
