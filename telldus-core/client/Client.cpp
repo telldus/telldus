@@ -18,9 +18,11 @@ using namespace TelldusCore;
 typedef CallbackStruct<TDDeviceEvent> DeviceEvent;
 typedef CallbackStruct<TDDeviceChangeEvent> DeviceChangeEvent;
 typedef CallbackStruct<TDRawDeviceEvent> RawDeviceEvent;
+typedef CallbackStruct<TDSensorEvent> SensorEvent;
 typedef std::list<DeviceEvent *> DeviceEventList;
 typedef std::list<DeviceChangeEvent *> DeviceChangeList;
 typedef std::list<RawDeviceEvent *> RawDeviceEventList;
+typedef std::list<SensorEvent *> SensorEventList;
 
 class Client::PrivateData {
 public:
@@ -29,6 +31,7 @@ public:
 	DeviceChangeList deviceChangeEventList;
 	Socket eventSocket;
 	RawDeviceEventList rawDeviceEventList;
+	SensorEventList sensorEventList;
 	bool running;
 	TelldusCore::Mutex mutex;
 };
@@ -88,12 +91,23 @@ void Client::callbackDeviceChangeEvent(int deviceId, int eventDeviceChanges, int
 	}
 }
 
-void Client::callbackRawEvent(std::wstring command, int controllerId){
+void Client::callbackRawEvent(std::wstring command, int controllerId) {
 	std::list<std::tr1::shared_ptr<TDRawDeviceEventDispatcher> > list;
 	{
 		TelldusCore::MutexLocker locker(&d->mutex);
 		for(RawDeviceEventList::iterator callback_it = d->rawDeviceEventList.begin(); callback_it != d->rawDeviceEventList.end(); ++callback_it) {
 			std::tr1::shared_ptr<TDRawDeviceEventDispatcher> ptr(new TDRawDeviceEventDispatcher(*callback_it, TelldusCore::wideToString(command), controllerId));
+			list.push_back(ptr);
+		}
+	}
+}
+
+void Client::callbackSensorEvent(const std::wstring &protocol, const std::wstring &model, int id, int dataType, const std::wstring &value, int timestamp) {
+	std::list<std::tr1::shared_ptr<TDSensorEventDispatcher> > list;
+	{
+		TelldusCore::MutexLocker locker(&d->mutex);
+		for(SensorEventList::iterator callback_it = d->sensorEventList.begin(); callback_it != d->sensorEventList.end(); ++callback_it) {
+			std::tr1::shared_ptr<TDSensorEventDispatcher> ptr(new TDSensorEventDispatcher(*callback_it, TelldusCore::wideToString(protocol), TelldusCore::wideToString(model), id, dataType, TelldusCore::wideToString(value), timestamp));
 			list.push_back(ptr);
 		}
 	}
@@ -146,6 +160,17 @@ int Client::registerRawDeviceEvent( TDRawDeviceEvent eventFunction, void *contex
 	return id;
 }
 
+int Client::registerSensorEvent( TDSensorEvent eventFunction, void *context ) {
+	TelldusCore::MutexLocker locker(&d->mutex);
+	int id = ++d->lastCallbackId;
+	SensorEvent *callback = new SensorEvent;
+	callback->event = eventFunction;
+	callback->id = id;
+	callback->context = context;
+	d->sensorEventList.push_back(callback);
+	return id;
+}
+
 void Client::run(){
 	//listen here
 	d->eventSocket.connect(L"TelldusEvents");
@@ -181,6 +206,15 @@ void Client::run(){
 				std::wstring command = Message::takeString(&clientMessage);
 				int controllerId = Message::takeInt(&clientMessage);
 				callbackRawEvent(command, controllerId);
+			}
+			else if(type == L"TDSensorEvent"){
+				std::wstring protocol = Message::takeString(&clientMessage);
+				std::wstring model = Message::takeString(&clientMessage);
+				int sensorId = Message::takeInt(&clientMessage);
+				int dataType = Message::takeInt(&clientMessage);
+				std::wstring value = Message::takeString(&clientMessage);
+				int timestamp = Message::takeInt(&clientMessage);
+				callbackSensorEvent(protocol, model, sensorId, dataType, value, timestamp);
 			}
 			else{
 				clientMessage = L"";  //cleanup, if message contained garbage/unhandled data
@@ -261,6 +295,24 @@ bool Client::unregisterCallback( int callbackId ) {
 		RawDeviceEventList::iterator it = newRDEList.begin();
 		{TelldusCore::MutexLocker locker( &(*it)->mutex );}
 		newRDEList.erase(it);
+		return true;
+	}
+
+	SensorEventList newSEList;
+	{
+		TelldusCore::MutexLocker locker(&d->mutex);
+		for(SensorEventList::iterator callback_it = d->sensorEventList.begin(); callback_it != d->sensorEventList.end(); ++callback_it) {
+			if ( (*callback_it)->id != callbackId ) {
+				continue;
+			}
+			newSEList.splice(newSEList.begin(), d->sensorEventList, callback_it );
+			break;
+		}
+	}
+	if (newSEList.size()) {
+		SensorEventList::iterator it = newSEList.begin();
+		{TelldusCore::MutexLocker locker( &(*it)->mutex );}
+		newSEList.erase(it);
 		return true;
 	}
 

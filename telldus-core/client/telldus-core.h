@@ -26,11 +26,12 @@
 #endif
 
 typedef void (WINAPI *TDDeviceEvent)(int deviceId, int method, const char *data, int callbackId, void *context);
-typedef void (WINAPI *TDDeviceChangeEvent)(int deviceId, int changeEvent, int changeType, int callbackId, void *context); 
+typedef void (WINAPI *TDDeviceChangeEvent)(int deviceId, int changeEvent, int changeType, int callbackId, void *context);
 typedef void (WINAPI *TDRawDeviceEvent)(const char *data, int controllerId, int callbackId, void *context);
+typedef void (WINAPI *TDSensorEvent)(const char *protocol, const char *model, int id, int dataType, const char *value, int timestamp, int callbackId, void *context);
 
-#ifndef __cplusplus 
-	#define bool char 
+#ifndef __cplusplus
+	#define bool char
 #endif
 
 #ifdef __cplusplus
@@ -40,10 +41,11 @@ extern "C" {
 	TELLSTICK_API int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context );
 	TELLSTICK_API int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context);
 	TELLSTICK_API int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context );
+	TELLSTICK_API int WINAPI tdRegisterSensorEvent( TDSensorEvent eventFunction, void *context );
 	TELLSTICK_API int WINAPI tdUnregisterCallback( int callbackId );
 	TELLSTICK_API void WINAPI tdClose(void);
 	TELLSTICK_API void WINAPI tdReleaseString(char *string);
-	
+
 	TELLSTICK_API int WINAPI tdTurnOn(int intDeviceId);
 	TELLSTICK_API int WINAPI tdTurnOff(int intDeviceId);
 	TELLSTICK_API int WINAPI tdBell(int intDeviceId);
@@ -56,26 +58,26 @@ extern "C" {
 	TELLSTICK_API int WINAPI tdMethods(int id, int methodsSupported);
 	TELLSTICK_API int WINAPI tdLastSentCommand( int intDeviceId, int methodsSupported );
 	TELLSTICK_API char *WINAPI tdLastSentValue( int intDeviceId );
-	
+
 	TELLSTICK_API int WINAPI tdGetNumberOfDevices();
 	TELLSTICK_API int WINAPI tdGetDeviceId(int intDeviceIndex);
 	TELLSTICK_API int WINAPI tdGetDeviceType(int intDeviceId);
-	
+
 	TELLSTICK_API char * WINAPI tdGetErrorString(int intErrorNo);
-	
+
 	TELLSTICK_API char * WINAPI tdGetName(int intDeviceId);
 	TELLSTICK_API bool WINAPI tdSetName(int intDeviceId, const char* chNewName);
 	TELLSTICK_API char * WINAPI tdGetProtocol(int intDeviceId);
 	TELLSTICK_API bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol);
 	TELLSTICK_API char * WINAPI tdGetModel(int intDeviceId);
 	TELLSTICK_API bool WINAPI tdSetModel(int intDeviceId, const char *intModel);
-	
+
 	TELLSTICK_API char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const char *defaultValue);
 	TELLSTICK_API bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const char* strValue);
-	
+
 	TELLSTICK_API int WINAPI tdAddDevice();
 	TELLSTICK_API bool WINAPI tdRemoveDevice(int intDeviceId);
-	
+
 	TELLSTICK_API int WINAPI tdSendRawCommand(const char *command, int reserved);
 
 	TELLSTICK_API void WINAPI tdConnectTellStickController(int vid, int pid, const char *serial);
@@ -96,6 +98,10 @@ extern "C" {
 #define TELLSTICK_UP		128
 #define TELLSTICK_DOWN		256
 #define TELLSTICK_STOP		512
+
+//Sensor value types
+#define TELLSTICK_TEMPERATURE	1
+#define TELLSTICK_HUMIDITY		2
 
 //Error codes
 #define TELLSTICK_SUCCESS 0
