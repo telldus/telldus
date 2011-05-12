@@ -18,7 +18,7 @@ public:
 	std::wstring protocol;
 	std::wstring model;
 	int sensorId;
-	std::wstring dataType;
+	int dataType;
 	std::wstring value;
 	int timestamp;
 };

@@ -645,11 +645,11 @@ void DeviceManager::handleSensorMessage(const ControllerMessage &msg) {
 
 	time_t t = time(NULL);
 
-	setSensorValueAndSignal("temp", sensor, msg, t);
-	setSensorValueAndSignal("humidity", sensor, msg, t);
+	setSensorValueAndSignal("temp", TELLSTICK_TEMPERATURE, sensor, msg, t);
+	setSensorValueAndSignal("humidity", TELLSTICK_HUMIDITY, sensor, msg, t);
 }
 
-void DeviceManager::setSensorValueAndSignal( const std::string &dataType, Sensor *sensor, const ControllerMessage &msg, time_t timestamp) const {
+void DeviceManager::setSensorValueAndSignal( const std::string &dataType, int dataTypeId, Sensor *sensor, const ControllerMessage &msg, time_t timestamp) const {
 	if (!msg.hasParameter(dataType)) {
 		return;
 	}
@@ -660,7 +660,7 @@ void DeviceManager::setSensorValueAndSignal( const std::string &dataType, Sensor
 	eventData->protocol = sensor->protocol();
 	eventData->model = sensor->model();
 	eventData->sensorId = sensor->id();
-	eventData->dataType = TelldusCore::charToWstring(dataType.c_str());
+	eventData->dataType = dataTypeId;
 	eventData->value = TelldusCore::charToWstring(msg.getParameter(dataType).c_str());
 	eventData->timestamp = timestamp;
 	d->deviceUpdateEvent->signal(eventData);
