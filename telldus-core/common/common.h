@@ -18,6 +18,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <string>
+#include <stdarg.h>
 
 inline void msleep( const int msec) {
 #ifdef _WINDOWS
@@ -25,6 +26,15 @@ inline void msleep( const int msec) {
 #else
 	usleep(msec*1000);
 #endif
+}
+
+inline void dlog(const char *fmt, ...) {
+	va_list ap;
+	va_start(ap, fmt);
+	vprintf(fmt, ap);
+	va_end(ap);
+	printf("\n");
+	fflush(stdout);
 }
 
 inline void debuglog(const int intMessage, const std::string strMessage){
