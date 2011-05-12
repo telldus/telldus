@@ -1,6 +1,5 @@
 #include "Controller.h"
 #include "Protocol.h"
-#include "ControllerMessage.h"
 #include <stdio.h> //TODO DEBUG
 
 class Controller::PrivateData {
@@ -28,11 +27,8 @@ void Controller::publishData(const std::string &msg) const {
 
 void Controller::decodePublishData(const std::string &data) const {
 
-	ControllerMessage dataMsg(data);
-	std::wstring protocolName = dataMsg.protocol();
-	std::string dataParam = dataMsg.getParameter("data");
-	std::list<std::string> msgList = Protocol::decodeData(protocolName, dataParam);
-	
+	std::list<std::string> msgList = Protocol::decodeData(data);
+		
 	for (std::list<std::string>::iterator msgIt = msgList.begin(); msgIt != msgList.end(); ++msgIt){
 		this->publishData(*msgIt);
 	}
