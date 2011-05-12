@@ -1,6 +1,7 @@
 #include "DeviceManager.h"
 #include "ControllerMessage.h"
 #include "Mutex.h"
+#include "Sensor.h"
 #include "Settings.h"
 #include "Strings.h"
 #include "Message.h"
@@ -15,6 +16,7 @@ typedef std::map<int, Device *> DeviceMap;
 class DeviceManager::PrivateData {
 public:
 	 DeviceMap devices;
+	 std::list<Sensor *> sensorList;
 	 Settings set;
 	 TelldusCore::Mutex lock;
 	 ControllerManager *controllerManager;
@@ -34,6 +36,10 @@ DeviceManager::~DeviceManager(void) {
 		for (DeviceMap::iterator it = d->devices.begin(); it != d->devices.end(); ++it) {
 			{TelldusCore::MutexLocker deviceLocker(it->second);}	//aquire lock, and release it, just to see that the device it's not in use anywhere
 			delete(it->second);
+		}
+		for (std::list<Sensor *>::iterator it = d->sensorList.begin(); it != d->sensorList.end(); ++it) {
+			{TelldusCore::MutexLocker sensorLocker(*it);}	//aquire lock, and release it, just to see that the device it's not in use anywhere
+			delete(*it);
 		}
 	}
 	delete d;
@@ -577,6 +583,11 @@ void DeviceManager::handleControllerMessage(const ControllerEventData &eventData
 	d->deviceUpdateEvent->signal(eventUpdateData);
 
 	ControllerMessage msg(eventData.msg);
+	if (msg.msgClass().compare("sensor") == 0) {
+		handleSensorMessage(msg);
+		return;
+	}
+
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	for (DeviceMap::iterator it = d->devices.begin(); it != d->devices.end(); ++it) {
 		TelldusCore::MutexLocker deviceLocker(it->second);
@@ -606,6 +617,53 @@ void DeviceManager::handleControllerMessage(const ControllerEventData &eventData
 		}
 		break;
 	}
+}
+
+void DeviceManager::handleSensorMessage(const ControllerMessage &msg) {
+	TelldusCore::MutexLocker sensorListLocker(&d->lock);
+	Sensor *sensor = 0;
+	for (std::list<Sensor *>::iterator it = d->sensorList.begin(); it != d->sensorList.end(); ++it) {
+		TelldusCore::MutexLocker sensorLocker(*it);
+		if (!TelldusCore::comparei((*it)->protocol(), msg.protocol())) {
+			continue;
+		}
+		if (!TelldusCore::comparei((*it)->model(), msg.model())) {
+			continue;
+		}
+		if ((*it)->id() != msg.getIntParameter("id")) {
+			continue;
+		}
+		sensor = *it;
+		break;
+	}
+
+	if (!sensor) {
+		sensor = new Sensor(msg.protocol(), msg.model(), msg.getIntParameter("id"));
+		d->sensorList.push_back(sensor);
+	}
+	TelldusCore::MutexLocker sensorLocker(sensor);
+
+	time_t t = time(NULL);
+
+	setSensorValueAndSignal("temp", sensor, msg, t);
+	setSensorValueAndSignal("humidity", sensor, msg, t);
+}
+
+void DeviceManager::setSensorValueAndSignal( const std::string &dataType, Sensor *sensor, const ControllerMessage &msg, time_t timestamp) const {
+	if (!msg.hasParameter(dataType)) {
+		return;
+	}
+	sensor->setValue(dataType, msg.getParameter(dataType), timestamp);
+
+	EventUpdateData *eventData = new EventUpdateData();
+	eventData->messageType = L"TDSensorEvent";
+	eventData->protocol = sensor->protocol();
+	eventData->model = sensor->model();
+	eventData->sensorId = sensor->id();
+	eventData->dataType = TelldusCore::charToWstring(dataType.c_str());
+	eventData->value = TelldusCore::charToWstring(msg.getParameter(dataType).c_str());
+	eventData->timestamp = timestamp;
+	d->deviceUpdateEvent->signal(eventData);
 }
 
 int DeviceManager::sendRawCommand(const std::wstring &command, int reserved){
