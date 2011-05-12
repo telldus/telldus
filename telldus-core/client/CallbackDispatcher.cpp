@@ -60,7 +60,7 @@ void TDRawDeviceEventDispatcher::run() {
 	d->event(strData.c_str(), controllerId, d->id, d->context);
 }
 
-TDSensorEventDispatcher::TDSensorEventDispatcher( CallbackStruct<TDSensorEvent> *data, const std::string &p, const std::string &m, int id, const std::string &type, const std::string &v, int t)
+TDSensorEventDispatcher::TDSensorEventDispatcher( CallbackStruct<TDSensorEvent> *data, const std::string &p, const std::string &m, int id, int type, const std::string &v, int t)
 	:Thread(), d(data), protocol(p), model(m), sensorId(id), dataType(type), value(v), timestamp(t)
 {
 	d->mutex.lock();
@@ -73,5 +73,5 @@ TDSensorEventDispatcher::~TDSensorEventDispatcher() {
 }
 
 void TDSensorEventDispatcher::run() {
-	d->event(protocol.c_str(), model.c_str(), sensorId, dataType.c_str(), value.c_str(), timestamp, d->id, d->context);
+	d->event(protocol.c_str(), model.c_str(), sensorId, dataType, value.c_str(), timestamp, d->id, d->context);
 }
