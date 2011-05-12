@@ -17,6 +17,7 @@ SET( telldus-service_SRCS
 	Device.cpp
 	DeviceManager.cpp
 	Event.cpp
+	Sensor.cpp
 	Settings.cpp
 	TelldusMain.cpp
 	TellStick.cpp
@@ -67,6 +68,7 @@ SET( telldus-service_HDRS
 	DeviceManager.h
 	Event.h
 	EventHandler.h
+	Sensor.h
 	Settings.h
 	TelldusMain.h
 	TellStick.h
