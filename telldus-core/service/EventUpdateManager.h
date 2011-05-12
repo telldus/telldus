@@ -13,6 +13,14 @@ public:
 	int eventDeviceChanges;
 	int eventState;
 	std::wstring eventValue;
+
+	//Sensor event
+	std::wstring protocol;
+	std::wstring model;
+	int sensorId;
+	std::wstring dataType;
+	std::wstring value;
+	int timestamp;
 };
 
 class EventUpdateManager  : public TelldusCore::Thread

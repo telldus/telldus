@@ -96,6 +96,15 @@ void EventUpdateManager::sendMessageToClients(EventUpdateData *data){
 				msg.addArgument(data->eventValue);	//string
 				msg.addArgument(data->controllerId);
 			}
+			else if(data->messageType == L"TDSensorEvent"){
+				msg.addArgument("TDSensorEvent");
+				msg.addArgument(data->protocol);
+				msg.addArgument(data->model);
+				msg.addArgument(data->sensorId);
+				msg.addArgument(data->dataType);
+				msg.addArgument(data->value);
+				msg.addArgument(data->timestamp);
+			}
 
 			(*it)->write(msg);
 
