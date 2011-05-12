@@ -14,6 +14,7 @@ public:
 signals:
 	void deviceChange( int deviceId, int eventId );
 	void deviceEvent( int deviceId, int method, const QString &data );
+	void sensorEvent( const QString &protocol, const QString &model, int id, int dataType, const QString &value, int timestamp);
 	void errorOccurred( int deviceId, int errorId, const QString &errorString );
 
 public slots:
@@ -37,9 +38,11 @@ private:
 
 	static void WINAPI deviceChangeEventCallback(int deviceId, int eventId, int changeType, int callbackId, void *context);
 	static void WINAPI deviceEventCallback(int deviceId, int method, const char *data, int callbackId, void *context);
+	static void WINAPI sensorEventCallback(const char *protocol, const char *model, int id, int dataType, const char *value, int timestamp, int callbackId, void *context);
 
 	int deviceEventId;
 	int deviceChangeEventId;
+	int sensorEventId;
 
 };
 

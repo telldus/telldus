@@ -7,11 +7,13 @@ TelldusCoreObject::TelldusCoreObject( QObject * parent )
 	tdInit();
 	deviceEventId = tdRegisterDeviceEvent(reinterpret_cast<TDDeviceEvent>(&TelldusCoreObject::deviceEventCallback), this);
 	deviceChangeEventId = tdRegisterDeviceChangeEvent(reinterpret_cast<TDDeviceChangeEvent>(&TelldusCoreObject::deviceChangeEventCallback), this);
+	sensorEventId = tdRegisterSensorEvent(reinterpret_cast<TDSensorEvent>(&TelldusCoreObject::sensorEventCallback), this);
 }
 
 TelldusCoreObject::~TelldusCoreObject() {
 	tdUnregisterCallback(deviceEventId);
 	tdUnregisterCallback(deviceChangeEventId);
+	tdUnregisterCallback(sensorEventId);
 	tdClose();
 }
 
@@ -108,7 +110,6 @@ void TelldusCoreObject::triggerError(int deviceId, int errorId) {
 	emit errorOccurred(deviceId, errorId, message);
 }
 
-
 void WINAPI TelldusCoreObject::deviceChangeEventCallback(int deviceId, int eventId, int changeType, int callbackId, void *context) {
 	TelldusCoreObject *parent = static_cast<TelldusCoreObject *>(context);
 	if (parent) {
@@ -123,3 +124,9 @@ void WINAPI TelldusCoreObject::deviceEventCallback(int deviceId, int method, con
 	}
 }
 
+void WINAPI TelldusCoreObject::sensorEventCallback(const char *protocol, const char *model, int id, int dataType, const char *value, int timestamp, int callbackId, void *context) {
+	TelldusCoreObject *parent = static_cast<TelldusCoreObject *>(context);
+	if (parent) {
+		emit parent->sensorEvent(QString::fromUtf8(protocol), QString::fromUtf8(model), id, dataType, QString::fromUtf8(value), timestamp);
+	}
+}
