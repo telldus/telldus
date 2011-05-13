@@ -15,11 +15,11 @@ public:
 class FilteredDeviceProxyModel::PrivateData::Filter {
 public:
 	Filter(QString p, QString t);
-	QString protocol, type;
+	QString protocol, model;
 };
 
 FilteredDeviceProxyModel::PrivateData::Filter::Filter(QString p, QString t)
-	:protocol(p), type(t)
+	:protocol(p), model(t)
 {}
 
 FilteredDeviceProxyModel::FilteredDeviceProxyModel( QObject * parent )
@@ -41,14 +41,14 @@ void FilteredDeviceProxyModel::setSourceModel( VendorDeviceModel * sourceModel )
 void FilteredDeviceProxyModel::addFilter( const QString &filter ) {
 	d->filtered = true;
 
-	QString protocol, type;
+	QString protocol, model;
 	foreach(QString parameter, filter.split(';', QString::SkipEmptyParts)) {
 		QString name = parameter.section(':', 0, 0);
 		QString value = parameter.section(':', -1);
 		if (name == "protocol") {
 			protocol = value;
 		} else if (name == "model") {
-			type = value;
+			model = value;
 		} else if (name == "method") {
 		} else {
 			emit setParameter(name, value);
@@ -59,12 +59,12 @@ void FilteredDeviceProxyModel::addFilter( const QString &filter ) {
 		if (d->filters.at(i).protocol != protocol) {
 			continue;
 		}
-		if (d->filters.at(i).type != type) {
+		if (d->filters.at(i).model != model) {
 			continue;
 		}
 		return;
 	}
-	d->filters << PrivateData::Filter(protocol, type);
+	d->filters << PrivateData::Filter(protocol, model);
 
 	invalidateFilter();
 }
@@ -104,7 +104,7 @@ bool FilteredDeviceProxyModel::filterAcceptsRow ( int sourceRow, const QModelInd
 			if (strModel.startsWith("selflearning-")) {
 				strModel = "selflearning";
 			}
-			if (strModel == d->filters.at(i).type) {
+			if (strModel == d->filters.at(i).model) {
 				return true;
 			}
 		}
