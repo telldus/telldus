@@ -163,7 +163,7 @@ std::string ProtocolNexa::decodeData(ControllerMessage& dataMsg)
 	
 	sscanf(dataMsg.getParameter("data").c_str(), "%lx", &allData);
 	
-	if(dataMsg.getParameter("model") == "selflearning"){
+	if(dataMsg.getParameter("model").compare("selflearning")){
 		//selflearning
 		return decodeDataSelfLearning(allData);	
 	}
