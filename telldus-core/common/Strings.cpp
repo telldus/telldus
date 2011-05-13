@@ -96,6 +96,12 @@ std::wstring TelldusCore::intToWstring(int value) {
 	return st.str();
 }
 
+std::string TelldusCore::intToString(int value) {
+	std::stringstream st;
+	st << value;
+	return st.str();
+}
+
 int TelldusCore::wideToInteger(const std::wstring &input){
 	std::wstringstream inputstream;
 	inputstream << input;
