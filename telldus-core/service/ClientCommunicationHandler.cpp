@@ -217,11 +217,23 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int pid = TelldusCore::Message::takeInt(&msg);
 		std::string serial = TelldusCore::wideToString(TelldusCore::Message::takeString(&msg));
 		d->deviceManager->connectTellStickController(vid, pid, serial);
+
 	} else if (function == L"tdDisconnectTellStickController") {
 		int vid = TelldusCore::Message::takeInt(&msg);
 		int pid = TelldusCore::Message::takeInt(&msg);
 		std::string serial = TelldusCore::wideToString(TelldusCore::Message::takeString(&msg));
 		d->deviceManager->disconnectTellStickController(vid, pid, serial);
+
+	} else if (function == L"tdSensor") {
+		(*wstringReturn) = d->deviceManager->getSensors();
+
+	} else if (function == L"tdSensorValue") {
+		std::wstring protocol = TelldusCore::Message::takeString(&msg);
+		std::wstring model = TelldusCore::Message::takeString(&msg);
+		int id = TelldusCore::Message::takeInt(&msg);
+		int dataType = TelldusCore::Message::takeInt(&msg);
+		(*wstringReturn) = d->deviceManager->getSensorValue(protocol, model, id, dataType);
+
 	}
 	else{
 		(*intReturn) = TELLSTICK_ERROR_UNKNOWN;
