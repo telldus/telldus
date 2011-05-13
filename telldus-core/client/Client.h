@@ -25,6 +25,8 @@ namespace TelldusCore {
 		void stopThread(void);
 		bool unregisterCallback( int callbackId );
 
+		int getSensor(char *protocol, int protocolLen, char *model, int modelLen, int *id, int *dataTypes);
+
 		static bool getBoolFromService(const Message &msg);
 		static int getIntegerFromService(const Message &msg);
 		static std::wstring getWStringFromService(const Message &msg);

@@ -534,5 +534,32 @@ void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial
 	Client::getWStringFromService(msg);
 }
 
+int WINAPI tdSensor(char *protocol, int protocolLen, char *model, int modelLen, int *id, int *dataTypes) {
+	Client *client = Client::getInstance();
+	return client->getSensor(protocol, protocolLen, model, modelLen, id, dataTypes);
+}
+
+int WINAPI tdSensorValue(const char *protocol, const char *model, int id, int dataType, char *value, int len, int *timestamp) {
+	Message msg(L"tdSensorValue");
+	msg.addArgument(protocol);
+	msg.addArgument(model);
+	msg.addArgument(id);
+	msg.addArgument(dataType);
+	std::wstring retval = Client::getWStringFromService(msg);
+	if (retval.length() == 0) {
+		return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+	}
+
+	std::wstring v = Message::takeString(&retval);
+	int t = Message::takeInt(&retval);
+	if (value && len) {
+		strncpy(value, TelldusCore::wideToString(v).c_str(), len);
+	}
+	if (timestamp) {
+		(*timestamp) = t;
+	}
+	return TELLSTICK_SUCCESS;
+}
+
 
 /*\@}*/

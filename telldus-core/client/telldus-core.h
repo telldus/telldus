@@ -83,6 +83,9 @@ extern "C" {
 	TELLSTICK_API void WINAPI tdConnectTellStickController(int vid, int pid, const char *serial);
 	TELLSTICK_API void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial);
 
+	TELLSTICK_API int WINAPI tdSensor(char *protocol, int protocolLen, char *model, int modelLen, int *id, int *dataTypes);
+	TELLSTICK_API int WINAPI tdSensorValue(const char *protocol, const char *model, int id, int dataType, char *value, int len, int *timestamp);
+
 #ifdef __cplusplus
 }
 #endif

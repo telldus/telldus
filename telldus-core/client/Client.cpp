@@ -32,7 +32,8 @@ public:
 	Socket eventSocket;
 	RawDeviceEventList rawDeviceEventList;
 	SensorEventList sensorEventList;
-	bool running;
+	bool running, sensorCached;
+	std::wstring sensorCache;
 	TelldusCore::Mutex mutex;
 };
 
@@ -44,6 +45,7 @@ Client::Client()
 	d = new PrivateData;
 	d->lastCallbackId = 0;
 	d->running = true;
+	d->sensorCached = false;
 	start();
 }
 
@@ -319,3 +321,40 @@ bool Client::unregisterCallback( int callbackId ) {
 	return false;
 }
 
+int Client::getSensor(char *protocol, int protocolLen, char *model, int modelLen, int *sensorId, int *dataTypes) {
+	if (!d->sensorCached) {
+		Message msg(L"tdSensor");
+		std::wstring response = Client::getWStringFromService(msg);
+		int count = Message::takeInt(&response);
+		d->sensorCached = true;
+		d->sensorCache = L"";
+		if (count > 0) {
+			d->sensorCache = response;
+		}
+	}
+
+	if (d->sensorCache == L"") {
+		d->sensorCached = false;
+		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+	}
+
+	std::wstring p = Message::takeString(&d->sensorCache);
+	std::wstring m = Message::takeString(&d->sensorCache);
+	int id = Message::takeInt(&d->sensorCache);
+	int dt = Message::takeInt(&d->sensorCache);
+
+	if (protocol && protocolLen) {
+		strncpy(protocol, TelldusCore::wideToString(p).c_str(), protocolLen);
+	}
+	if (model && modelLen) {
+		strncpy(model, TelldusCore::wideToString(m).c_str(), modelLen);
+	}
+	if (sensorId) {
+		(*sensorId) = id;
+	}
+	if (dataTypes) {
+		(*dataTypes) = dt;
+	}
+
+	return TELLSTICK_SUCCESS;
+}
