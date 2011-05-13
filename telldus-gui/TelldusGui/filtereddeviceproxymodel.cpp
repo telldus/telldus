@@ -50,7 +50,10 @@ void FilteredDeviceProxyModel::addFilter( const QString &filter ) {
 		} else if (name == "model") {
 			model = value;
 		} else if (name == "method") {
-		} else {
+		} else if (name == "class" && value!= "command"){
+			return; //don't scan sensors here 
+		}
+		else {
 			emit setParameter(name, value);
 		}
 	}
