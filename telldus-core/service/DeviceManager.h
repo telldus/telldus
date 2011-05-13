@@ -38,6 +38,9 @@ public:
 	int removeDevice(int deviceId);
 	int sendRawCommand(const std::wstring &command, int reserved);
 
+	std::wstring getSensors() const;
+	std::wstring getSensorValue(const std::wstring &protocol, const std::wstring &model, int id, int dataType) const;
+
 	void handleControllerMessage(const ControllerEventData &event);
 
 private:

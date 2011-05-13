@@ -574,6 +574,56 @@ int DeviceManager::removeDevice(int deviceId){
 	return TELLSTICK_SUCCESS;
 }
 
+std::wstring DeviceManager::getSensors() const {
+	TelldusCore::MutexLocker sensorListLocker(&d->lock);
+
+	TelldusCore::Message msg;
+
+	msg.addArgument(d->sensorList.size());
+
+	for (std::list<Sensor *>::iterator it = d->sensorList.begin(); it != d->sensorList.end(); ++it) {
+		TelldusCore::MutexLocker sensorLocker(*it);
+		msg.addArgument((*it)->protocol());
+		msg.addArgument((*it)->model());
+		msg.addArgument((*it)->id());
+		msg.addArgument((*it)->dataTypes());
+	}
+
+	return msg;
+}
+
+std::wstring DeviceManager::getSensorValue(const std::wstring &protocol, const std::wstring &model, int id, int dataType) const {
+	TelldusCore::MutexLocker sensorListLocker(&d->lock);
+	Sensor *sensor = 0;
+	for (std::list<Sensor *>::iterator it = d->sensorList.begin(); it != d->sensorList.end(); ++it) {
+		TelldusCore::MutexLocker sensorLocker(*it);
+		if (!TelldusCore::comparei((*it)->protocol(), protocol)) {
+			continue;
+		}
+		if (!TelldusCore::comparei((*it)->model(), model)) {
+			continue;
+		}
+		if ((*it)->id() != id) {
+			continue;
+		}
+		sensor = *it;
+		break;
+	}
+
+	if (!sensor) {
+		return L"";
+	}
+	TelldusCore::MutexLocker sensorLocker(sensor);
+	TelldusCore::Message msg;
+	std::string value = sensor->value(dataType);
+	if (value.length() > 0) {
+		msg.addArgument(TelldusCore::charToWstring(value.c_str()));
+		msg.addArgument(sensor->timestamp());
+	}
+	return msg;
+}
+
+
 void DeviceManager::handleControllerMessage(const ControllerEventData &eventData) {
 	//Trigger raw-event
 	EventUpdateData *eventUpdateData = new EventUpdateData();
@@ -653,7 +703,7 @@ void DeviceManager::setSensorValueAndSignal( const std::string &dataType, int da
 	if (!msg.hasParameter(dataType)) {
 		return;
 	}
-	sensor->setValue(dataType, msg.getParameter(dataType), timestamp);
+	sensor->setValue(dataTypeId, msg.getParameter(dataType), timestamp);
 
 	EventUpdateData *eventData = new EventUpdateData();
 	eventData->messageType = L"TDSensorEvent";
