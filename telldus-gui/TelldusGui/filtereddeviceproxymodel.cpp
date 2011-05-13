@@ -47,7 +47,7 @@ void FilteredDeviceProxyModel::addFilter( const QString &filter ) {
 		QString value = parameter.section(':', -1);
 		if (name == "protocol") {
 			protocol = value;
-		} else if (name == "type") {
+		} else if (name == "model") {
 			type = value;
 		} else if (name == "method") {
 		} else {
