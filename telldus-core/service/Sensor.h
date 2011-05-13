@@ -13,8 +13,12 @@ public:
 	std::wstring protocol() const;
 	std::wstring model() const;
 	int id() const;
+	time_t timestamp() const;
 
-	void setValue(const std::string &name, const std::string &value, time_t timestamp);
+	int dataTypes() const;
+
+	void setValue(int type, const std::string &value, time_t timestamp);
+	std::string value(int type) const;
 
 private:
 	class PrivateData;
