@@ -712,7 +712,7 @@ void DeviceManager::setSensorValueAndSignal( const std::string &dataType, int da
 	eventData->model = sensor->model();
 	eventData->sensorId = sensor->id();
 	eventData->dataType = dataTypeId;
-	eventData->value = TelldusCore::charToWstring(msg.getParameter(dataType).c_str());
+	eventData->value = TelldusCore::charToWstring(sensor->value(dataTypeId).c_str());
 	eventData->timestamp = (int)timestamp;
 	d->deviceUpdateEvent->signal(eventData);
 }
