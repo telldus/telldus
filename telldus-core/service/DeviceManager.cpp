@@ -10,6 +10,7 @@
 #include <map>
 #include <memory>
 #include <sstream>
+#include <time.h>
 
 typedef std::map<int, Device *> DeviceMap;
 
@@ -579,7 +580,7 @@ std::wstring DeviceManager::getSensors() const {
 
 	TelldusCore::Message msg;
 
-	msg.addArgument(d->sensorList.size());
+	msg.addArgument((int)d->sensorList.size());
 
 	for (std::list<Sensor *>::iterator it = d->sensorList.begin(); it != d->sensorList.end(); ++it) {
 		TelldusCore::MutexLocker sensorLocker(*it);
@@ -618,7 +619,7 @@ std::wstring DeviceManager::getSensorValue(const std::wstring &protocol, const s
 	std::string value = sensor->value(dataType);
 	if (value.length() > 0) {
 		msg.addArgument(TelldusCore::charToWstring(value.c_str()));
-		msg.addArgument(sensor->timestamp());
+		msg.addArgument((int)sensor->timestamp());
 	}
 	return msg;
 }
@@ -712,7 +713,7 @@ void DeviceManager::setSensorValueAndSignal( const std::string &dataType, int da
 	eventData->sensorId = sensor->id();
 	eventData->dataType = dataTypeId;
 	eventData->value = TelldusCore::charToWstring(msg.getParameter(dataType).c_str());
-	eventData->timestamp = timestamp;
+	eventData->timestamp = (int)timestamp;
 	d->deviceUpdateEvent->signal(eventData);
 }
 
