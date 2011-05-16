@@ -49,3 +49,7 @@ EXPORTS
 	tdDown @35
 	tdStop @36
 	
+	tdRegisterSensorEvent @37
+	tdSensor @38
+	tdSensorValue @39
+	
