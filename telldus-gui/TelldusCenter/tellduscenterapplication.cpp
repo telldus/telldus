@@ -92,23 +92,25 @@ void TelldusCenterApplication::eventTriggered( const QString &name, const QStrin
 
 void TelldusCenterApplication::loadPlugins() {
 	QDir pluginsDir = QDir(qApp->applicationDirPath());
+	QStringList paths;
 
 #if defined(Q_OS_MAC)
 	if (pluginsDir.dirName() == "MacOS") {
 		pluginsDir.cdUp();
 	}
 #endif
-	
+
 	if (pluginsDir.cd("Plugins")) {
-		this->setLibraryPaths( QStringList(pluginsDir.absolutePath()) );
+		paths << pluginsDir.absolutePath();
 	}
 
 
 #if defined(Q_OS_UNIX)
-	QStringList paths = QStringList() << DEFINE_STRING(PLUGIN_LIB_PATH);
-	this->setLibraryPaths( paths );
+	paths << DEFINE_STRING(PLUGIN_LIB_PATH);
 #endif
-	
+
+	this->setLibraryPaths( paths );
+
 	QScriptValue mainWindowObject = d->scriptEnvironment->engine()->newQObject(d->mainWindow);
 	d->scriptEnvironment->engine()->globalObject().property("application").setProperty("mainwindow", mainWindowObject);
 
