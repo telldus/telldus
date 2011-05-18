@@ -1,2 +1,0 @@
-KERNEL=="ttyUSB*", BUS=="usb", SYSFS{idVendor}=="1781", SYSFS{idProduct}=="0c30", NAME="tellstick", GROUP="plugdev"
-
