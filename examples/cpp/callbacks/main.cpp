@@ -23,7 +23,13 @@ Events::~Events() {
 }
 
 void Events::deviceEvent(int deviceId, int method, const char *data) {
-	printf("Event from device %i\n", deviceId);
+	if (method == TELLSTICK_TURNON) {
+		printf("ON event from device %i\n", deviceId);
+	} else if (method == TELLSTICK_TURNOFF) {
+		printf("OFF event from device %i\n", deviceId);
+	} else {
+		printf("Unknown event from device %i\n", deviceId);
+	}
 }
 
 void Events::deviceEventCallback(int deviceId, int method, const char *data, int callbackId, void *context) {
