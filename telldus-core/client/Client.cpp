@@ -260,6 +260,7 @@ bool Client::unregisterCallback( int callbackId ) {
 		{ //Lock and unlock to make sure no one else uses the object
 			TelldusCore::MutexLocker locker( &(*it)->mutex );
 		}
+		delete (*it);
 		newDEList.erase(it);
 		return true;
 	}
@@ -278,6 +279,7 @@ bool Client::unregisterCallback( int callbackId ) {
 	if (newDCList.size()) {
 		DeviceChangeList::iterator it = newDCList.begin();
 		{TelldusCore::MutexLocker locker( &(*it)->mutex );}
+		delete (*it);
 		newDCList.erase(it);
 		return true;
 	}
@@ -296,6 +298,7 @@ bool Client::unregisterCallback( int callbackId ) {
 	if (newRDEList.size()) {
 		RawDeviceEventList::iterator it = newRDEList.begin();
 		{TelldusCore::MutexLocker locker( &(*it)->mutex );}
+		delete (*it);
 		newRDEList.erase(it);
 		return true;
 	}
@@ -314,6 +317,7 @@ bool Client::unregisterCallback( int callbackId ) {
 	if (newSEList.size()) {
 		SensorEventList::iterator it = newSEList.begin();
 		{TelldusCore::MutexLocker locker( &(*it)->mutex );}
+		delete (*it);
 		newSEList.erase(it);
 		return true;
 	}
