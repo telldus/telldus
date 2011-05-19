@@ -148,7 +148,7 @@ void TellStick::run() {
 
 	while(1) {
 		//Is there any better way then sleeping between reads?
-		usleep(1000);
+		msleep(100);
 		TelldusCore::MutexLocker locker(&d->mutex);
 		if (!d->running) {
 			break;
