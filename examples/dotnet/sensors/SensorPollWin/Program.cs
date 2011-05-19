@@ -9,14 +9,17 @@ namespace SensorPollWin
 	unsafe class Program
 	{
 		[DllImport("TelldusCore.dll")]
-		public static extern int tdTurnOn(int deviceId);
+		public static extern void tdInit();
+
+		[DllImport("TelldusCore.dll")]
+		public static extern void tdClose();
 		
 		[DllImport("TelldusCore.dll")]
 		public static extern int tdSensor(char* protocol, int protocolLength, char* model, int modelLength, int* id, int* dataTypes);
 		
 		[DllImport("TelldusCore.dll")]
 		public static extern int tdSensorValue(char* protocol, char* model, int id, int dataType, char* value, int valueLength, int* timestamp);
-
+		
 		static unsafe void Main(string[] args)
 		{
 			int protocolstringsize = 20;
@@ -27,7 +30,8 @@ namespace SensorPollWin
 			IntPtr id = Marshal.AllocHGlobal(sizeof(int));
 			IntPtr dataType = Marshal.AllocHGlobal(sizeof(int));
 			Console.WriteLine("getting sensors");
-
+			
+			tdInit();
 			while (tdSensor(protocol, protocolstringsize, model, modelstringsize, (int*)id, (int*)dataType) == 0)
 			{
 				Console.WriteLine("Sensor: " + System.Text.Encoding.UTF8.GetString(System.Text.Encoding.Unicode.GetBytes(new string(protocol))) + " " + System.Text.Encoding.UTF8.GetString(System.Text.Encoding.Unicode.GetBytes(new string(model))));
@@ -52,6 +56,7 @@ namespace SensorPollWin
 			Marshal.FreeHGlobal((IntPtr)model);
 			Marshal.FreeHGlobal(id);
 			Marshal.FreeHGlobal(dataType);
+			tdClose();
 		}
 
 		private static string datify(int timestamp){
