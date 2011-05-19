@@ -23,7 +23,7 @@ namespace SensorPollWin
 		static unsafe void Main(string[] args)
 		{
 			int protocolstringsize = 20;
-			int modelstringsize = 20;
+			int modelstringsize = 30;
 			int valuestringsize = 20;
 			char* protocol = (char*)Marshal.AllocHGlobal(Marshal.SystemDefaultCharSize * protocolstringsize);
 			char* model = (char*)Marshal.AllocHGlobal(Marshal.SystemDefaultCharSize * modelstringsize);
