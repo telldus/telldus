@@ -167,6 +167,10 @@ EditDeviceDialog::EditDeviceDialog(Device *device, QWidget *parent, Qt::WFlags f
 	//Kingpin
 	d->deviceSettings[15] = new DeviceSettingSelflearning(device, this);
 	((DeviceSettingSelflearning *)d->deviceSettings[15])->setRemoteMinMax(1,1048575);
+	//Hasta
+	d->deviceSettings[16] = new DeviceSettingArctechSelflearning(device, this);
+	((DeviceSettingArctechSelflearning *)d->deviceSettings[9])->setRemoteMinMax(1,65536);
+	((DeviceSettingArctechSelflearning *)d->deviceSettings[9])->setUnitMinMax(1,15);
 
 	foreach( DeviceSetting *s, d->deviceSettings ) {
 		connect(d->filteredModel, SIGNAL(setParameter(const QString&, const QString&)), s, SLOT(setValue(const QString&, const QString&)));

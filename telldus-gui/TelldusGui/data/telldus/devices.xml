@@ -117,11 +117,14 @@
 			<device model="codeswitch:x10" protocol="x10" widget="1" image="x10" name="Code Switch">Code Switch</device>
 		</vendor>
 	</type>
-	<type name="Projector screens" expanded="true">
-		<vendor name="Roxcore" image="roxcore">
-			<device model="codeswitch:roxcore" protocol="brateck" widget="6" image="projectorscreen">Projector screen</device>
-		</vendor>
-		<vendor name="KingPin" image="kingpin">
+	<type name="Projector screens and blinds" expanded="true">
+	<vendor name="Hasta" image="hasta">
+		<device model="selflearning:hasta" protocol="hasta" widget="16" image="hasta">Blinds</device>
+	</vendor>
+	<vendor name="Roxcore" image="roxcore">
+		<device model="codeswitch:roxcore" protocol="brateck" widget="6" image="projectorscreen">Projector screen</device>
+	</vendor>
+	<vendor name="KingPin" image="kingpin">
 			<device model="kp100:kingpin" protocol="silvanchip" widget="15" image="kp100">KP100</device>
 		</vendor>
 	</type>
