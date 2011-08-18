@@ -36,6 +36,8 @@ SET( telldus-service_protocol_SRCS
 	ProtocolFuhaote.cpp
 	ProtocolGroup.h
 	ProtocolGroup.cpp
+	ProtocolHasta.h
+	ProtocolHasta.cpp
 	ProtocolIkea.h
 	ProtocolIkea.cpp
 	ProtocolNexa.h

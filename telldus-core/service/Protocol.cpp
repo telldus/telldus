@@ -7,6 +7,7 @@
 #include "ProtocolEverflourish.h"
 #include "ProtocolFuhaote.h"
 #include "ProtocolGroup.h"
+#include "ProtocolHasta.h"
 #include "ProtocolIkea.h"
 #include "ProtocolNexa.h"
 #include "ProtocolRisingSun.h"
@@ -103,6 +104,9 @@ Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname){
 	} else if (TelldusCore::comparei(protocolname, L"fuhaote")) {
 		return new ProtocolFuhaote();
 
+	} else if (TelldusCore::comparei(protocolname, L"hasta")) {
+		return new ProtocolHasta();
+
 	} else if (TelldusCore::comparei(protocolname, L"ikea")) {
 		return new ProtocolIkea();
 
@@ -157,6 +161,10 @@ std::list<std::string> Protocol::getParametersForProtocol(const std::wstring &pr
 
 	} else if (TelldusCore::comparei(protocolName, L"fuhaote")) {
 		parameters.push_back("code");
+
+	} else if (TelldusCore::comparei(protocolName, L"hasta")) {
+		parameters.push_back("house");
+		parameters.push_back("unit");
 
 	} else if (TelldusCore::comparei(protocolName, L"ikea")) {
 		parameters.push_back("system");
