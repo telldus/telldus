@@ -9,6 +9,8 @@ namespace TelldusWrapper
 		int lastEventID = 0;
 		Dictionary<int, Object> callbackFunctionReferenceList = new Dictionary<int, Object>();	//this prevents errors in "unknown module" due to callback functions being garbage collected since there are no reference to them
 
+		//TODO
+		List<Object> lista = new List<object>();
 
 		//Device methods
 		public const int TELLSTICK_TURNON = 1;
@@ -17,6 +19,10 @@ namespace TelldusWrapper
 		public const int TELLSTICK_TOGGLE = 8;
 		public const int TELLSTICK_DIM = 16;
 		public const int TELLSTICK_LEARN = 32;
+		public const int TELLSTICK_EXECUTE = 64;
+		public const int TELLSTICK_UP = 128;
+		public const int TELLSTICK_DOWN	= 256;
+		public const int TELLSTICK_STOP	= 512;
 
 		//Error codes
 		public const int TELLSTICK_SUCCESS = 0;
@@ -32,6 +38,7 @@ namespace TelldusWrapper
 		//Device typedef
 		public const int TELLSTICK_TYPE_DEVICE = 1;
 		public const int TELLSTICK_TYPE_GROUP = 2;
+		public const int TELLSTICK_TYPE_SCENE = 3;
 
 		//Device changes
 		public const int TELLSTICK_DEVICE_ADDED = 1;
@@ -62,7 +69,6 @@ namespace TelldusWrapper
 		Dictionary<int, RawListeningCallbackFunction> rawListenerList = new Dictionary<int, RawListeningCallbackFunction>();
 		GCHandle rawListenerContextHandle;
 		int registeredRawListenerFunctionId = -1;
-
 
 		public TelldusNETWrapper()
 		{
@@ -158,6 +164,18 @@ namespace TelldusWrapper
 			public static extern int tdDim(int deviceId, char level);
 
 			[DllImport("TelldusCore.dll")]
+			public static extern int tdExecute(int deviceId);
+
+			[DllImport("TelldusCore.dll")]
+			public static extern int tdUp(int deviceId);
+
+			[DllImport("TelldusCore.dll")]
+			public static extern int tdDown(int deviceId);
+
+			[DllImport("TelldusCore.dll")]
+			public static extern int tdStop(int deviceId);
+
+			[DllImport("TelldusCore.dll")]
 			public static unsafe extern char* tdGetErrorString(int errorNo);
 
 			[DllImport("TelldusCore.dll")]
@@ -197,13 +215,13 @@ namespace TelldusWrapper
 			public static unsafe extern int tdRegisterDeviceChangeEvent(Delegate deviceEventFunction, void* context);
 
 			[UnmanagedFunctionPointer(CallingConvention.StdCall)]
-			public unsafe delegate int EventFunctionDelegate(int deviceId, int method, char* data, int callbackId, void* context);
+			public unsafe delegate void EventFunctionDelegate();		//int deviceId, int method, int callbackId, void* context [MarshalAs(UnmanagedType.LPStr)]string data,
 
 			[UnmanagedFunctionPointer(CallingConvention.StdCall)]
-			public unsafe delegate int DeviceChangeEventFunctionDelegate(int deviceId, int changeEvent, int changeType, int callbackId, void* context);
+			public unsafe delegate void DeviceChangeEventFunctionDelegate(int deviceId, int changeEvent, int changeType, int callbackId, void* context);
 
 			[UnmanagedFunctionPointer(CallingConvention.StdCall)]
-			public unsafe delegate int RawListeningDelegate(char* data, int controllerId, int callbackId, void* context);
+			public unsafe delegate void RawListeningDelegate(char* data, int controllerId, int callbackId, void* context);
 
 			#endregion
 		}
@@ -252,6 +270,28 @@ namespace TelldusWrapper
 		public static int tdDim(int deviceId, char level)
 		{
 			return UnmanagedImport.tdDim(deviceId, level);
+		}
+
+		/// <summary>
+		/// Send "down" command to device.
+		/// Make sure the device supports this by calling tdMethods() before any calls to this function.
+		/// </summary>
+		/// <param name="deviceId">The device id to send the command to</param>
+		/// <returns>Success or error code</returns>
+		public static int tdDown(int deviceId)
+		{
+			return UnmanagedImport.tdDown(deviceId);
+		}
+
+		/// <summary>
+		/// Execute a scene action.
+		/// Make sure the device supports this by calling tdMethods() before any calls to this function.
+		/// </summary>
+		/// <param name="deviceId">Id of device to perform the execute action on</param>
+		/// <returns>Success or error code</returns>
+		public static int tdExecute(int deviceId)
+		{
+			return UnmanagedImport.tdExecute(deviceId);
 		}
 
 		/// <summary>
@@ -329,6 +369,10 @@ namespace TelldusWrapper
 		/// TELLSTICK_BELL
 		/// TELLSTICK_TOGGLE
 		/// TELLSTICK_DIM
+		/// TELLSTICK_EXECUTE
+		/// TELLSTICK_UP
+		/// TELLSTICK_DOWN
+		/// TELLSTICK_EXECUTE
 		/// TELLSTICK_LEARN
 		/// </returns>
 		public static int tdMethods(int deviceId, int methodsSupported)
@@ -421,6 +465,7 @@ namespace TelldusWrapper
 				{
 					registeredEventFunctionId = UnmanagedImport.tdRegisterDeviceEvent(eventFunctionDelegate, (void*)null);	//context here or above?
 				}
+				GC.Collect();
 				callbackFunctionReferenceList.Add(registeredEventFunctionId, eventFunctionDelegate);
 			}
 
@@ -434,7 +479,7 @@ namespace TelldusWrapper
 		/// <summary>
 		/// Register a callback device change event function to be called when a device change event (e.g. change of name, device added) occurs
 		/// </summary>
-		/// <param name="eventFunc">Callback function to be called</param>
+		/// <param name="deviceEventFunc">Callback function to be called</param>
 		/// <param name="obj">Context object that will be echoed back when function is called. Only the object when the first function is registered will be used. Set to null if not used.</param>
 		/// <returns>Callback event id</returns>
 		public unsafe int tdRegisterDeviceChangeEvent(DeviceChangeEventCallbackFunction deviceEventFunc, Object obj)
@@ -455,6 +500,7 @@ namespace TelldusWrapper
 				{
 					registeredDeviceChangeEventFunctionId = UnmanagedImport.tdRegisterDeviceChangeEvent(deviceChangeEventFunctionDelegate, (void*)null);
 				}
+				GC.Collect();
 				callbackFunctionReferenceList.Add(registeredDeviceChangeEventFunctionId, deviceChangeEventFunctionDelegate);
 
 			}
@@ -468,7 +514,7 @@ namespace TelldusWrapper
 		/// <summary>
 		/// Register a callback listening function to be called when a listening event (e.g. data is received with Tellstick Duo) occurs
 		/// </summary>
-		/// <param name="eventFunc">Callback function to be called</param>
+		/// <param name="listeningFunc">Callback function to be called</param>
 		/// <param name="obj">Context object that will be echoed back when function is called. Only the object when the first function is registered will be used. Set to null if not used.</param>
 		/// <returns>Callback event id</returns>
 		public unsafe int tdRegisterRawDeviceEvent(RawListeningCallbackFunction listeningFunc, Object obj)
@@ -490,6 +536,7 @@ namespace TelldusWrapper
 				{
 					registeredRawListenerFunctionId = UnmanagedImport.tdRegisterRawDeviceEvent(listeningFunctionDelegate, (void*)null);
 				}
+				GC.Collect();
 				callbackFunctionReferenceList.Add(registeredRawListenerFunctionId, listeningFunctionDelegate);
 			}
 			++lastEventID;
@@ -582,12 +629,23 @@ namespace TelldusWrapper
 		}
 
 		/// <summary>
+		/// Send "stop" command to device.
+		/// Make sure the device supports this by calling tdMethods() before any calls to this function.
+		/// </summary>
+		/// <param name="deviceId">The device id to stop</param>
+		/// <returns>Success or error code</returns>
+		public static int tdStop(int deviceId)
+		{
+			return UnmanagedImport.tdStop(deviceId);
+		}
+
+		/// <summary>
 		/// Turns a device on.
 		/// Make sure the device supports this by calling tdMethods() before any calls to this function.
 		/// </summary>
 		/// <param name="deviceId">Id of device to turn on</param>
 		/// <returns>Success or error code</returns>
-		public static unsafe int tdTurnOn(int deviceId)
+		public static int tdTurnOn(int deviceId)
 		{
 			return UnmanagedImport.tdTurnOn(deviceId);
 		}
@@ -598,7 +656,7 @@ namespace TelldusWrapper
 		/// </summary>
 		/// <param name="deviceId">Id of device to turn off</param>
 		/// <returns>Success or error code</returns>
-		public static unsafe int tdTurnOff(int deviceId)
+		public static int tdTurnOff(int deviceId)
 		{
 			return UnmanagedImport.tdTurnOff(deviceId);
 		}
@@ -646,6 +704,17 @@ namespace TelldusWrapper
 			}
 		}
 
+		/// <summary>
+		/// Send "up" command to device.
+		/// Make sure the device supports this by calling tdMethods() before any calls to this function.
+		/// </summary>
+		/// <param name="deviceId">The device id to send the command to</param>
+		/// <returns>Success or error code</returns>
+		public static int tdUp(int deviceId)
+		{
+			return UnmanagedImport.tdUp(deviceId);
+		}
+
 		#endregion
 
 
@@ -670,10 +739,17 @@ namespace TelldusWrapper
 		private static unsafe string getString(char* input, bool release)
 		{
 			string returnString = System.Text.Encoding.UTF8.GetString(System.Text.Encoding.Unicode.GetBytes(new string(input)));
+
+			if (returnString.Contains("\0"))
+			{
+				returnString = returnString.Substring(0, returnString.IndexOf('\0'));
+			}
+			
 			if (release)
 			{
 				UnmanagedImport.tdReleaseString(input);
 			}
+			GC.Collect();
 			return returnString;
 		}
 
@@ -704,22 +780,24 @@ namespace TelldusWrapper
 		/// <param name="callbackId">Callback event id</param>
 		/// <param name="context">Context (optional)</param>
 		/// <returns>0</returns>
-		private unsafe int eventFunction(int deviceId, int method, char* data, int callbackId, void* context)
+		private unsafe void eventFunction()	//int deviceId, int method, int callbackId, void* context[MarshalAs(UnmanagedType.LPStr)]string data
 		{
 			foreach (EventCallbackFunction eventFunc in eventList.Values)
 			{
+				/*
 				if (context != null)
 				{
 					GCHandle eventContextHandle = GCHandle.FromIntPtr((IntPtr)context);
-					eventFunc(deviceId, method, getString(data, false), callbackId, (Object)eventContextHandle.Target);
+					eventFunc(deviceId, method, "", callbackId, (Object)eventContextHandle.Target);		//data
 				}
 				else
 				{
-					eventFunc(deviceId, method, getString(data, false), callbackId, null);
+					eventFunc(deviceId, method, "", callbackId, null);
 				}
+				*/
+				eventFunc(1, 1, "", 1, null);
+				GC.Collect();
 			}
-
-			return 0;
 		}
 
 		/// <summary>
@@ -733,7 +811,7 @@ namespace TelldusWrapper
 		/// <param name="callbackId">Callback event id</param>
 		/// <param name="context">Context (optional)</param>
 		/// <returns>0</returns>
-		private unsafe int deviceEventFunction(int deviceId, int changeEvent, int changeType, int callbackId, void* context)
+		private unsafe void deviceEventFunction(int deviceId, int changeEvent, int changeType, int callbackId, void* context)
 		{
 			foreach (DeviceChangeEventCallbackFunction deviceEventFunc in deviceChangeEventList.Values)
 			{
@@ -746,9 +824,8 @@ namespace TelldusWrapper
 				{
 					deviceEventFunc(deviceId, changeEvent, changeType, callbackId, null);
 				}
+				GC.Collect();
 			}
-
-			return 0;
 		}
 
 		/// <summary>
@@ -761,7 +838,7 @@ namespace TelldusWrapper
 		/// <param name="callbackId">Callback event id</param>
 		/// <param name="context">Context (optional)</param>
 		/// <returns>0</returns>
-		private unsafe int rawListeningFunction(char* data, int controllerId, int callbackId, void* context)
+		private unsafe void rawListeningFunction(char* data, int controllerId, int callbackId, void* context)
 		{
 			foreach (RawListeningCallbackFunction rawListeningFunc in rawListenerList.Values)
 			{
@@ -774,9 +851,8 @@ namespace TelldusWrapper
 				{
 					rawListeningFunc(getString(data, false), controllerId, callbackId, null);
 				}
+				GC.Collect();
 			}
-
-			return 0;
 		}
 
 		#endregion
