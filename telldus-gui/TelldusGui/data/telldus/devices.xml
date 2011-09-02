@@ -42,7 +42,7 @@
 		<vendor name="Goobay (experimental)" image="goobay">
 			<device model="goobay:goobay" protocol="yidong" widget="13" image="goobay" name="Code Switch">Code Switch</device>
 		</vendor>
-		<vendor name="HomeEasy" image="homeeasy">
+		<vendor name="HomeEasy (UK only)" image="homeeasy">
 			<!--<text>http://www.homeeasy.eu/home.php</text>-->
 			<device model="codeswitch:homeeasy" protocol="arctech" widget="1" image="arctech_cs" name="Code Switch">Code Switch</device>
 			<device model="selflearning-switch:homeeasy" protocol="arctech" widget="8" image="arctech_sl" name="Self Learning on/off">Self Learning on/off</device>
