@@ -10,7 +10,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("Telldus Technologies AB")]
 [assembly: AssemblyProduct("")]
-[assembly: AssemblyCopyright("Copyright © Telldus Technologies AB 2010")]
+[assembly: AssemblyCopyright("Copyright © Telldus Technologies AB 2011")]
 [assembly: AssemblyTrademark("")]
 [assembly: AssemblyCulture("")]
 
