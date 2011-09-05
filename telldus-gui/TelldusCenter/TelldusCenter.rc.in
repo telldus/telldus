@@ -11,7 +11,7 @@ BEGIN
       VALUE "CompanyName", "Telldus Technologies AB"
       VALUE "FileDescription", "The home automation control center"
       VALUE "FileVersion", "${PACKAGE_VERSION}"
-      VALUE "LegalCopyright", "Copyright (C) 2010 Telldus Technologies AB"
+      VALUE "LegalCopyright", "Copyright (C) 2011 Telldus Technologies AB"
       VALUE "OriginalFilename", "TelldusCenter.exe"
       VALUE "ProductName", "TelldusCenter"
       VALUE "ProductVersion", "${PACKAGE_MAJOR_VERSION}.${PACKAGE_MINOR_VERSION}"
