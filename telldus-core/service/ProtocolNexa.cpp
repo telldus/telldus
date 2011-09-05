@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include "TellStick.h"
 #include "Strings.h"
+#include "common.h"
 
 int ProtocolNexa::lastArctecCodeSwitchWasTurnOff=0;  //TODO, always removing first turnon now, make more flexible (waveman too)
 
@@ -163,7 +164,7 @@ std::string ProtocolNexa::decodeData(ControllerMessage& dataMsg)
 	
 	sscanf(dataMsg.getParameter("data").c_str(), "%lx", &allData);
 	
-	if(dataMsg.getParameter("model").compare("selflearning")){
+	if(TelldusCore::comparei(dataMsg.model(), L"selflearning")){
 		//selflearning
 		return decodeDataSelfLearning(allData);	
 	}
