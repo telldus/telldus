@@ -147,7 +147,7 @@ ELSE (APPLE) #### Linux ####
 	)
 	LIST(APPEND telldus-service_LIBRARIES
 		${CONFUSE_LIBRARY}
-		telldus-common
+		TelldusCommon
 	)
 ENDIF (APPLE)
 

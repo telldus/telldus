@@ -67,7 +67,7 @@ ELSE (APPLE)
 	#### Linux ####
 	SET( telldus-core_TARGET	telldus-core )
 	LIST(APPEND telldus-core_LIBRARIES
-		telldus-common
+		TelldusCommon
 	)
 
 	ADD_DEFINITIONS(
