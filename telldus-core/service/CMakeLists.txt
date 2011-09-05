@@ -173,6 +173,7 @@ ADD_EXECUTABLE(${telldus-service_TARGET}
 	${telldus-service_protocol_SRCS}
 	${telldus-service_HDRS}
 )
+ADD_DEPENDENCIES(${telldus-service_TARGET} TelldusCommon)
 SET_SOURCE_FILES_PROPERTIES(${telldus-service_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
 TARGET_LINK_LIBRARIES( ${telldus-service_TARGET}	${telldus-service_LIBRARIES} )

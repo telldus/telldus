@@ -26,7 +26,6 @@ SET( telldus-common_HDRS
 
 IF (APPLE)
 	#### Mac OS X ####
-	SET( telldus-common_TARGET	TelldusCommon )
 	FIND_LIBRARY(ICONV_LIBRARY iconv)
 	ADD_DEFINITIONS( -D_MACOSX )
 	LIST(APPEND  telldus-common_SRCS
@@ -39,14 +38,12 @@ ELSEIF (WIN32)
 	#### Windows ####
 	ADD_DEFINITIONS( -DUNICODE )
 	ADD_DEFINITIONS( /Zc:wchar_t- ) # Treat wchar_t as Built-in Type' = No
-	SET( telldus-common_TARGET	TelldusCommon )
 	ADD_DEFINITIONS( -D_WINDOWS )
 	LIST(APPEND  telldus-common_SRCS
 		Socket_win.cpp
 	)
 ELSEIF (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
 	#### FreeBSD ####
-	SET( telldus-common_TARGET      telldus-common )
 	FIND_LIBRARY(ICONV_LIBRARY iconv)
 	ADD_DEFINITIONS( -D_FREEBSD )
 	LIST(APPEND  telldus-common_SRCS
@@ -57,7 +54,6 @@ ELSEIF (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
 	)
 ELSE (APPLE)
 	#### Linux ####
-	SET( telldus-common_TARGET	telldus-common )
 	ADD_DEFINITIONS( -D_LINUX )
 	LIST(APPEND  telldus-common_SRCS
 		Socket_unix.cpp
@@ -67,14 +63,13 @@ ENDIF (APPLE)
 
 ######## Configuring  ########
 
-
-ADD_LIBRARY(${telldus-common_TARGET} STATIC
+ADD_LIBRARY(TelldusCommon STATIC
 	${telldus-common_SRCS}
 	${telldus-common_HDRS}
 )
 
 IF (UNIX)
-	SET_TARGET_PROPERTIES( ${telldus-common_TARGET} PROPERTIES COMPILE_FLAGS "-fPIC -fvisibility=hidden")
+	SET_TARGET_PROPERTIES( TelldusCommon PROPERTIES COMPILE_FLAGS "-fPIC -fvisibility=hidden")
 ENDIF (UNIX)
 
-TARGET_LINK_LIBRARIES( ${telldus-common_TARGET}	${telldus-common_LIBRARIES} )
+TARGET_LINK_LIBRARIES( TelldusCommon	${telldus-common_LIBRARIES} )
