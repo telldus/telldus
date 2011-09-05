@@ -45,7 +45,7 @@ ELSEIF (WIN32)
 	ADD_DEFINITIONS( /Zc:wchar_t- ) # Treat wchar_t as Built-in Type' = No
 	SET( telldus-core_TARGET	TelldusCore )
 	LIST(APPEND telldus-core_LIBRARIES
-		${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/TelldusCommon.lib
+		TelldusCommon
 	)
 	CONFIGURE_FILE(
 		${CMAKE_CURRENT_SOURCE_DIR}/telldus-core.rc.in

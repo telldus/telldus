@@ -118,7 +118,7 @@ ELSEIF (WIN32) #### Windows ####
 		"${CMAKE_EXE_LINKER_FLAGS} /SUBSYSTEM:CONSOLE"
 	)
 	LIST(APPEND telldus-service_LIBRARIES
-		${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/TelldusCommon.lib
+		TelldusCommon
 	)
 	LIST(APPEND telldus-service_SRCS
 		ConnectionListener_win.cpp
