@@ -666,7 +666,6 @@ void DeviceManager::handleControllerMessage(const ControllerEventData &eventData
 			d->set.setDeviceState(it->first, msg.method(), L"");
 			it->second->setLastSentCommand(msg.method(), L"");
 		}
-		break;
 	}
 }
 
