@@ -112,7 +112,9 @@ IF(Plugin_PATH)
 			COMMAND ${CMAKE_COMMAND} -E copy ${_FILE} ${Plugin_PATH}
 			COMMENT "Copy ${_FILENAME} for plugin ${Plugin_NAME}"
 		)
-		INSTALL(FILES ${_FILE} DESTINATION "${PLUGIN_LIB_FULL_PATH}/script/${Plugin_PATH_relative}")
+		IF (NOT APPLE)
+			INSTALL(FILES ${_FILE} DESTINATION "${PLUGIN_LIB_FULL_PATH}/script/${Plugin_PATH_relative}")
+		ENDIF ()
 	ENDFOREACH(_FILE)
 ENDIF(Plugin_PATH)
 

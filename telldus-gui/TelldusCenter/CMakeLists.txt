@@ -171,8 +171,10 @@ IF (UNIX)
 		)
 		INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/TelldusCenter.1 DESTINATION share/man/man1)
 	ENDIF (GENERATE_MAN)
-	INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/tellduscenter.xpm DESTINATION share/pixmaps)
-	INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tellduscenter.desktop DESTINATION share/applications)
+	IF (NOT APPLE)
+		INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/images/tellduscenter.xpm DESTINATION share/pixmaps)
+		INSTALL(FILES ${CMAKE_CURRENT_SOURCE_DIR}/tellduscenter.desktop DESTINATION share/applications)
+	ENDIF ()
 ENDIF (UNIX)
 
 
