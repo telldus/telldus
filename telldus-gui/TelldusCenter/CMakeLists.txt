@@ -120,16 +120,15 @@ ENDFOREACH(lang)
 IF (UPDATE_TRANSLATIONS)
 	QT4_CREATE_TRANSLATION( QM_FILES ${telldus-center_SRCS} ${telldus-center_TS} )
 ELSE (UPDATE_TRANSLATIONS)
-	IF (APPLE)
-		SET_SOURCE_FILES_PROPERTIES(${telldus-center_TS} PROPERTIES
-			OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Resources
-		)
-	ELSEIF (UNIX)
+	IF (UNIX)
 		SET_SOURCE_FILES_PROPERTIES(${telldus-center_TS} PROPERTIES
 			OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/TelldusCenter
 		)
 	ENDIF (APPLE)
 	QT4_ADD_TRANSLATION(telldus-center_QM ${telldus-center_TS})
+	IF (APPLE)
+		INSTALL(FILES ${telldus-center_QM} DESTINATION /Applications/TelldusCenter.app/Contents/Resources)
+	ENDIF ()
 ENDIF (UPDATE_TRANSLATIONS)
 
 
