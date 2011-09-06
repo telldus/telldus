@@ -71,7 +71,7 @@ SET( telldus-gui_LIBRARIES
 )
 
 FIND_PACKAGE(TelldusCore REQUIRED)
-list(APPEND telldus-gui_LIBRARIES ${TELLDUSCORE_LIBRARY} )
+LIST(APPEND telldus-gui_LIBRARIES ${TELLDUSCORE_LIBRARY} )
 
 ######## Configurable options for the platform  ########
 
@@ -95,9 +95,6 @@ ELSEIF (WIN32)
 	ADD_DEFINITIONS(
 		-D_WINDOWS
 		-DTELLDUSGUI_EXPORTS
-	)
-	INCLUDE_DIRECTORIES(
-		${TELLDUSCORE_INCLUDE_DIR}
 	)
 ELSE (APPLE)
 	#### Linux ####
