@@ -133,6 +133,7 @@ ADD_LIBRARY(${telldus-gui_TARGET} SHARED
 	${telldus-gui_TS}
 	${telldus-gui_QM}
 )
+ADD_DEPENDENCIES(${telldus-gui_TARGET} TelldusCenter)
 
 IF (UNIX)
 	SET_TARGET_PROPERTIES( ${telldus-gui_TARGET} PROPERTIES COMPILE_FLAGS "-fPIC -fvisibility=hidden")
