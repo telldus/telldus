@@ -85,6 +85,17 @@ ADD_LIBRARY(${telldus-core_TARGET} SHARED
 	${telldus-core_PUB_HDRS}
 )
 
+#Copy public headers files on windows
+IF (WIN32)
+	FOREACH(_FILE ${telldus-core_PUB_HDRS})
+		ADD_CUSTOM_COMMAND( TARGET ${telldus-core_TARGET}
+			POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy "${CMAKE_CURRENT_SOURCE_DIR}/${_FILE}" "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}"
+			COMMENT "Copy ${_FILE}"
+		)
+	ENDFOREACH(_FILE)
+ENDIF ()
+
 ADD_DEPENDENCIES(${telldus-core_TARGET} TelldusCommon)
 
 IF (UNIX)
