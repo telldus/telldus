@@ -182,10 +182,12 @@ INSTALL(TARGETS ${telldus-center_TARGET}
 )
 
 IF (APPLE)
-	SET(bundle "/Users/micke/Documents/dev/telldus-pub/telldus-gui/build/distr/Applications/TelldusCenter.app") #TODO
 	INSTALL(CODE "
 		INCLUDE(BundleUtilities)
-		FIXUP_BUNDLE(\"${bundle}\" \"\" \"\")
+		GET_FILENAME_COMPONENT(DESTDIR \$ENV{DESTDIR} ABSOLUTE)
+		SET(app \"\${DESTDIR}/Applications/TelldusCenter.app\")
+		GET_BUNDLE_AND_EXECUTABLE(\"\${app}\" bundle exe valid)
+		FIXUP_BUNDLE(\"\${bundle}\" \"\" \"\")
 	")
 ENDIF ()
 
