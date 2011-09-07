@@ -176,9 +176,16 @@ IF (UNIX)
 	ENDIF ()
 ENDIF (UNIX)
 
-
 INSTALL(TARGETS ${telldus-center_TARGET}
 	RUNTIME	DESTINATION bin
 	BUNDLE DESTINATION "/Applications"
 )
+
+IF (APPLE)
+	SET(bundle "/Users/micke/Documents/dev/telldus-pub/telldus-gui/build/distr/Applications/TelldusCenter.app") #TODO
+	INSTALL(CODE "
+		INCLUDE(BundleUtilities)
+		FIXUP_BUNDLE(\"${bundle}\" \"\" \"\")
+	")
+ENDIF ()
 
