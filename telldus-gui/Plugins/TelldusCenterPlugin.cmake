@@ -81,6 +81,32 @@ IF(Plugin_SRCS)
 			LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Plugins/script
 			PREFIX "../"
 		)
+		INSTALL(CODE "
+			GET_FILENAME_COMPONENT(DESTDIR \$ENV{DESTDIR} ABSOLUTE)
+			SET(app \"\${DESTDIR}/Applications/TelldusCenter.app\")
+			GET_BUNDLE_AND_EXECUTABLE(\"\${app}\" bundle exe valid)
+			SET(plugin \"\${bundle}/Contents/Plugins/script/${Plugin_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}\")
+			
+			GET_ITEM_KEY(\"\${plugin}\" pkey)
+			SET(prereqs \"\")
+			GET_PREREQUISITES(\${plugin} prereqs 1 0 \"\${exe}\" \"\${bundle}/Contents/Frameworks/\")
+			FOREACH(pr \${prereqs})
+				GET_ITEM_KEY(\"\${pr}\" rkey)
+				
+				#Don't change the path to our own libraries
+				IF (NOT \"\${rkey}\" MATCHES \"^Telldus\")
+					#Check to see if this is ourself
+					IF (NOT \${pkey} STREQUAL \${rkey})
+						SET(kv \"\")
+						SET_BUNDLE_KEY_VALUES(kv \"\${pr}\" \"\${pr}\" \"\${exe}\" \"\${bundle}/Contents/Frameworks/\" 0)
+						EXECUTE_PROCESS(COMMAND install_name_tool
+							-change \"\${pr}\" \"\${\${rkey}_EMBEDDED_ITEM}\" \"\${plugin}\"
+						)
+					ENDIF ()
+				ENDIF ()
+
+			ENDFOREACH()
+		")
 	ELSEIF (WIN32)
 		SET_TARGET_PROPERTIES(${Plugin_NAME} PROPERTIES
 			PREFIX "Plugins/script/"
