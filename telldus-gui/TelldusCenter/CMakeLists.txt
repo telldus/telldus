@@ -124,7 +124,7 @@ ELSE (UPDATE_TRANSLATIONS)
 		SET_SOURCE_FILES_PROPERTIES(${telldus-center_TS} PROPERTIES
 			OUTPUT_LOCATION ${CMAKE_BINARY_DIR}/TelldusCenter
 		)
-	ENDIF (APPLE)
+	ENDIF ()
 	QT4_ADD_TRANSLATION(telldus-center_QM ${telldus-center_TS})
 	IF (APPLE)
 		INSTALL(FILES ${telldus-center_QM} DESTINATION /Applications/TelldusCenter.app/Contents/Resources)
