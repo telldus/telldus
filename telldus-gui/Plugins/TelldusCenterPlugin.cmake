@@ -93,8 +93,8 @@ IF(Plugin_SRCS)
 			FOREACH(pr \${prereqs})
 				GET_ITEM_KEY(\"\${pr}\" rkey)
 				
-				#Don't change the path to our own libraries
-				IF (NOT \"\${rkey}\" MATCHES \"^Telldus\")
+				#Don't change the path to TelldusCore
+				IF (NOT \"\${rkey}\" STREQUAL \"TelldusCore\")
 					#Check to see if this is ourself
 					IF (NOT \${pkey} STREQUAL \${rkey})
 						SET(kv \"\")
