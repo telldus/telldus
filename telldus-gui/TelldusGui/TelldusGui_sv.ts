@@ -240,32 +240,32 @@
         <translation>Adresskod</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="212"/>
+        <location filename="editdevicedialog.cpp" line="216"/>
         <source>Please press a button on your remote</source>
         <translation>Tryck en knapp på din fjärrkontroll</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="219"/>
+        <location filename="editdevicedialog.cpp" line="223"/>
         <source>If you have a TellStick Duo connected,&lt;br&gt;you can use it to scan the code of the remote control</source>
         <translation>Om du har en TellStick Duo ansluten,&lt;br&gt;kan du använda den för att hitta rätt enhet och inställningar</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="231"/>
+        <location filename="editdevicedialog.cpp" line="235"/>
         <source>You must choose a device</source>
         <translation>Du måste välja en enhet</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="232"/>
+        <location filename="editdevicedialog.cpp" line="236"/>
         <source>Please select the device you have.</source>
         <translation>Välj den enhet du har.</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="248"/>
+        <location filename="editdevicedialog.cpp" line="252"/>
         <source>The device must have a name.</source>
         <translation>Enheten måste ha ett namn.</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="249"/>
+        <location filename="editdevicedialog.cpp" line="253"/>
         <source>Please fill in a name in the field under &apos;Name&apos;</source>
         <translation>Skriv in ett namn i fältet &apos;Namn&apos;</translation>
     </message>
