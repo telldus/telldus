@@ -186,7 +186,10 @@ IF (APPLE)
 		DIRECTORY ${QT_QTGUI_LIBRARY}/Resources/qt_menu.nib
 		DESTINATION /Applications/TelldusCenter.app/Contents/Resources
 	)
-	
+	INSTALL(
+		FILES qt.conf
+		DESTINATION /Applications/TelldusCenter.app/Contents/Resources
+	)
 	INSTALL(CODE "
 		INCLUDE(BundleUtilities)
 		GET_FILENAME_COMPONENT(DESTDIR \$ENV{DESTDIR} ABSOLUTE)
