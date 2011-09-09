@@ -71,7 +71,7 @@ void print_usage( char *name ) {
 void print_version() {
 	printf("tdtool " VERSION "\n");
 	printf("\n");
-	printf("Copyright (C) 2009 Telldus Technologies AB\n");
+	printf("Copyright (C) 2011 Telldus Technologies AB\n");
 	printf("\n");
 	printf("Written by Micke Prag <micke.prag@telldus.se>\n");
 }
