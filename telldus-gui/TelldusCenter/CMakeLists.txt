@@ -176,6 +176,14 @@ IF (UNIX)
 	ENDIF ()
 ENDIF (UNIX)
 
+IF (WIN32)
+	ADD_CUSTOM_COMMAND( TARGET ${telldus-center_TARGET}
+		POST_BUILD
+		COMMAND ${CMAKE_COMMAND} -E copy ${telldus-center_QM} ${EXECUTABLE_OUTPUT_PATH}/${CMAKE_CFG_INTDIR} VERBATIM
+		COMMENT "Copying translation for TelldusCenter"
+	)
+ENDIF()
+
 INSTALL(TARGETS ${telldus-center_TARGET}
 	RUNTIME	DESTINATION bin
 	BUNDLE DESTINATION "/Applications"
