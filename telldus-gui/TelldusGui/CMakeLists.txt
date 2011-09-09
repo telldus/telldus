@@ -155,4 +155,31 @@ IF (UNIX)
 		FRAMEWORK DESTINATION /Applications/TelldusCenter.app/Contents/Frameworks
 		#	PUBLIC_HEADER       DESTINATION         ${HEADER_DIR}
 	)
-ENDIF (UNIX)
+	IF (APPLE)
+		INSTALL(CODE "
+			INCLUDE(BundleUtilities)
+			GET_FILENAME_COMPONENT(DESTDIR \$ENV{DESTDIR} ABSOLUTE)
+			SET(lib \"\${DESTDIR}/Applications/TelldusCenter.app/Contents/Frameworks/${telldus-gui_TARGET}.framework/${telldus-gui_TARGET}\")
+
+			GET_ITEM_KEY(\"\${lib}\" pkey)
+			SET(prereqs \"\")
+			GET_PREREQUISITES(\${lib} prereqs 1 0 \"\${exe}\" \"\${bundle}/Contents/Frameworks/\")
+			FOREACH(pr \${prereqs})
+				GET_ITEM_KEY(\"\${pr}\" rkey)
+
+				#Don't change the path to TelldusCore
+				IF (NOT \"\${rkey}\" STREQUAL \"TelldusCore\")
+					#Check to see if this is ourself
+					IF (NOT \${pkey} STREQUAL \${rkey})
+						SET(kv \"\")
+						SET_BUNDLE_KEY_VALUES(kv \"\${pr}\" \"\${pr}\" \"\${exe}\" \"\${bundle}/Contents/Frameworks/\" 0)
+						EXECUTE_PROCESS(COMMAND install_name_tool
+							-change \"\${pr}\" \"\${\${rkey}_EMBEDDED_ITEM}\" \"\${lib}\"
+						)
+					ENDIF ()
+				ENDIF ()
+
+			ENDFOREACH()
+		")
+	ENDIF ()
+ENDIF ()
