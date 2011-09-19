@@ -1,6 +1,8 @@
 FIND_PACKAGE( Qt4 REQUIRED )
 INCLUDE( ${QT_USE_FILE} )
 
+FIND_PACKAGE( SignTool REQUIRED )
+
 if(COMMAND cmake_policy)
 	cmake_policy(SET CMP0003 NEW)
 endif(COMMAND cmake_policy)
@@ -140,6 +142,8 @@ IF (UNIX)
 ENDIF (UNIX)
 
 TARGET_LINK_LIBRARIES( ${telldus-gui_TARGET}	${telldus-gui_LIBRARIES} )
+
+SIGN(${telldus-gui_TARGET})
 
 SET_TARGET_PROPERTIES(${telldus-gui_TARGET} PROPERTIES
 	FRAMEWORK TRUE
