@@ -2,6 +2,8 @@ IF(COMMAND cmake_policy)
 	CMAKE_POLICY(SET CMP0003 NEW)
 ENDIF(COMMAND cmake_policy)
 
+FIND_PACKAGE( SignTool REQUIRED )
+
 SET (telldusd_DESCRIPTION
 	"background service for Telldus TellStick, must be running to control TellStick"
 )
@@ -177,6 +179,8 @@ ADD_DEPENDENCIES(${telldus-service_TARGET} TelldusCommon)
 SET_SOURCE_FILES_PROPERTIES(${telldus-service_RESOURCES} PROPERTIES MACOSX_PACKAGE_LOCATION Resources)
 
 TARGET_LINK_LIBRARIES( ${telldus-service_TARGET}	${telldus-service_LIBRARIES} )
+
+SIGN(${telldus-service_TARGET})
 
 SET_TARGET_PROPERTIES(${telldus-service_TARGET} PROPERTIES
 	MACOSX_BUNDLE_INFO_PLIST ${CMAKE_CURRENT_SOURCE_DIR}/Info.plist
