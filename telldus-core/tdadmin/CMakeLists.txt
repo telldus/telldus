@@ -60,7 +60,6 @@ INSTALL(TARGETS tdadmin RUNTIME DESTINATION sbin)
 
 IF (UNIX AND NOT APPLE)
 	SET(UDEV_RULES_DIR	"/etc/udev/rules.d" CACHE PATH "The directory where udev store its rules" )
-	SET(TDADMIN_PATH "" CACHE STRING "The directory where tdadmin is stored" )
 	CONFIGURE_FILE(
 		${CMAKE_CURRENT_SOURCE_DIR}/05-tellstick.rules
 		${CMAKE_BINARY_DIR}/parsed/05-tellstick.rules
