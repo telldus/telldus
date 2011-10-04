@@ -120,28 +120,16 @@ int Settings::getNextDeviceId() const {
 	if(lnExists == ERROR_SUCCESS){
 			
 		DWORD dwLength;
-		char *Buff = new char[intMaxRegValueLength];
+		DWORD nResult(0);
 
-		long lngStatus = RegQueryValueEx(hk, L"LastUsedId", NULL, NULL, (LPBYTE)Buff, &dwLength);
-
-		if(lngStatus == ERROR_MORE_DATA){
-			//The buffer is to small, recreate it
-			delete Buff;
-			Buff = new char[dwLength];
-			lngStatus = RegQueryValueEx(hk, L"LastUsedId", NULL, NULL, (LPBYTE)Buff, &dwLength);
-		}
+		long lngStatus = RegQueryValueEx(hk, L"LastUsedId", NULL, NULL, reinterpret_cast<LPBYTE>(&nResult), &dwLength); //(LPBYTE)Buff, &dwLength);
 
 		if(lngStatus == ERROR_SUCCESS){
-
-			int intLast = (int)Buff[0];
-			intReturn = intLast + 1;
+			intReturn = nResult + 1;
 		} else {
 			intReturn = 1;
 		}
-		delete Buff;
-
 		DWORD dwVal = intReturn;
-			
 		RegSetValueEx (hk, L"LastUsedId", 0L, REG_DWORD, (CONST BYTE*) &dwVal, sizeof(DWORD));
 			
 	}
