@@ -35,6 +35,11 @@ public:
 	bool running, sensorCached;
 	std::wstring sensorCache;
 	TelldusCore::Mutex mutex;
+
+	std::list<std::tr1::shared_ptr<TDDeviceEventDispatcher> > deviceEventThreadList;
+	std::list<std::tr1::shared_ptr<TDDeviceChangeEventDispatcher> > deviceChangeEventThreadList;
+	std::list<std::tr1::shared_ptr<TDRawDeviceEventDispatcher> > rawDeviceEventThreadList;
+	std::list<std::tr1::shared_ptr<TDSensorEventDispatcher> > sensorEventThreadList;
 };
 
 Client *Client::instance = 0;
@@ -72,46 +77,34 @@ Client *Client::getInstance() {
 }
 
 void Client::callbackDeviceEvent(int deviceId, int deviceState, const std::wstring &deviceStateValue){
-	std::list<std::tr1::shared_ptr<TDDeviceEventDispatcher> > list;
-	{
-		TelldusCore::MutexLocker locker(&d->mutex);
-		for(DeviceEventList::iterator callback_it = d->deviceEventList.begin(); callback_it != d->deviceEventList.end(); ++callback_it) {
-			std::tr1::shared_ptr<TDDeviceEventDispatcher> ptr(new TDDeviceEventDispatcher(*callback_it, deviceId, deviceState, TelldusCore::wideToString(deviceStateValue)));
-			list.push_back(ptr);
-		}
+	TelldusCore::MutexLocker locker(&d->mutex);
+	for(DeviceEventList::iterator callback_it = d->deviceEventList.begin(); callback_it != d->deviceEventList.end(); ++callback_it) {
+		std::tr1::shared_ptr<TDDeviceEventDispatcher> ptr(new TDDeviceEventDispatcher(*callback_it, deviceId, deviceState, TelldusCore::wideToString(deviceStateValue)));
+		d->deviceEventThreadList.push_back(ptr);
 	}
 }
 
 void Client::callbackDeviceChangeEvent(int deviceId, int eventDeviceChanges, int eventChangeType){
-	std::list<std::tr1::shared_ptr<TDDeviceChangeEventDispatcher> > list;
-	{
-		TelldusCore::MutexLocker locker(&d->mutex);
-		for(DeviceChangeList::iterator callback_it = d->deviceChangeEventList.begin(); callback_it != d->deviceChangeEventList.end(); ++callback_it) {
-			std::tr1::shared_ptr<TDDeviceChangeEventDispatcher> ptr(new TDDeviceChangeEventDispatcher(*callback_it, deviceId, eventDeviceChanges, eventChangeType));
-			list.push_back(ptr);
-		}
+	TelldusCore::MutexLocker locker(&d->mutex);
+	for(DeviceChangeList::iterator callback_it = d->deviceChangeEventList.begin(); callback_it != d->deviceChangeEventList.end(); ++callback_it) {
+		std::tr1::shared_ptr<TDDeviceChangeEventDispatcher> ptr(new TDDeviceChangeEventDispatcher(*callback_it, deviceId, eventDeviceChanges, eventChangeType));
+		d->deviceChangeEventThreadList.push_back(ptr);
 	}
 }
 
 void Client::callbackRawEvent(std::wstring command, int controllerId) {
-	std::list<std::tr1::shared_ptr<TDRawDeviceEventDispatcher> > list;
-	{
-		TelldusCore::MutexLocker locker(&d->mutex);
-		for(RawDeviceEventList::iterator callback_it = d->rawDeviceEventList.begin(); callback_it != d->rawDeviceEventList.end(); ++callback_it) {
-			std::tr1::shared_ptr<TDRawDeviceEventDispatcher> ptr(new TDRawDeviceEventDispatcher(*callback_it, TelldusCore::wideToString(command), controllerId));
-			list.push_back(ptr);
-		}
+	TelldusCore::MutexLocker locker(&d->mutex);
+	for(RawDeviceEventList::iterator callback_it = d->rawDeviceEventList.begin(); callback_it != d->rawDeviceEventList.end(); ++callback_it) {
+		std::tr1::shared_ptr<TDRawDeviceEventDispatcher> ptr(new TDRawDeviceEventDispatcher(*callback_it, TelldusCore::wideToString(command), controllerId));
+		d->rawDeviceEventThreadList.push_back(ptr);
 	}
 }
 
 void Client::callbackSensorEvent(const std::wstring &protocol, const std::wstring &model, int id, int dataType, const std::wstring &value, int timestamp) {
-	std::list<std::tr1::shared_ptr<TDSensorEventDispatcher> > list;
-	{
-		TelldusCore::MutexLocker locker(&d->mutex);
-		for(SensorEventList::iterator callback_it = d->sensorEventList.begin(); callback_it != d->sensorEventList.end(); ++callback_it) {
-			std::tr1::shared_ptr<TDSensorEventDispatcher> ptr(new TDSensorEventDispatcher(*callback_it, TelldusCore::wideToString(protocol), TelldusCore::wideToString(model), id, dataType, TelldusCore::wideToString(value), timestamp));
-			list.push_back(ptr);
-		}
+	TelldusCore::MutexLocker locker(&d->mutex);
+	for(SensorEventList::iterator callback_it = d->sensorEventList.begin(); callback_it != d->sensorEventList.end(); ++callback_it) {
+		std::tr1::shared_ptr<TDSensorEventDispatcher> ptr(new TDSensorEventDispatcher(*callback_it, TelldusCore::wideToString(protocol), TelldusCore::wideToString(model), id, dataType, TelldusCore::wideToString(value), timestamp));
+		d->sensorEventThreadList.push_back(ptr);
 	}
 }
 
@@ -222,7 +215,70 @@ void Client::run(){
 				clientMessage = L"";  //cleanup, if message contained garbage/unhandled data
 			}
 		}
+
+		//Clean up finished callbacks
+		this->cleanupCallbacks();
 	}
+}
+
+void Client::cleanupCallbacks() {
+	bool again = false;
+
+	//Device Event
+	do {
+		again = false;
+		TelldusCore::MutexLocker locker(&d->mutex);
+		std::list<std::tr1::shared_ptr<TDDeviceEventDispatcher> >::iterator it = d->deviceEventThreadList.begin();
+		for (;it != d->deviceEventThreadList.end(); ++it) {
+			if ((*it)->done()) {
+				d->deviceEventThreadList.erase(it);
+				again = true;
+				break;
+			}
+		}
+	} while (again);
+
+	//Device Change Event
+	do {
+		again = false;
+		TelldusCore::MutexLocker locker(&d->mutex);
+		std::list<std::tr1::shared_ptr<TDDeviceChangeEventDispatcher> >::iterator it = d->deviceChangeEventThreadList.begin();
+		for (;it != d->deviceChangeEventThreadList.end(); ++it) {
+			if ((*it)->done()) {
+				d->deviceChangeEventThreadList.erase(it);
+				again = true;
+				break;
+			}
+		}
+	} while (again);
+
+	//Raw Device Event
+	do {
+		again = false;
+		TelldusCore::MutexLocker locker(&d->mutex);
+		std::list<std::tr1::shared_ptr<TDRawDeviceEventDispatcher> >::iterator it = d->rawDeviceEventThreadList.begin();
+		for (;it != d->rawDeviceEventThreadList.end(); ++it) {
+			if ((*it)->done()) {
+				d->rawDeviceEventThreadList.erase(it);
+				again = true;
+				break;
+			}
+		}
+	} while (again);
+
+	//Sensor Event
+	do {
+		again = false;
+		TelldusCore::MutexLocker locker(&d->mutex);
+		std::list<std::tr1::shared_ptr<TDSensorEventDispatcher> >::iterator it = d->sensorEventThreadList.begin();
+		for (;it != d->sensorEventThreadList.end(); ++it) {
+			if ((*it)->done()) {
+				d->sensorEventThreadList.erase(it);
+				again = true;
+				break;
+			}
+		}
+	} while (again);
 }
 
 std::wstring Client::sendToService(const Message &msg) {

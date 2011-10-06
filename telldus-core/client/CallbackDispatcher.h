@@ -27,8 +27,10 @@ namespace TelldusCore {
 	public:
 		TDDeviceEventDispatcher(CallbackStruct<TDDeviceEvent> *data, int deviceId, int method, const std::string &strData);
 		virtual ~TDDeviceEventDispatcher();
+		bool done() const;
 	protected:
 		virtual void run();
+		bool doneRunning;
 	private:
 		CallbackStruct<TDDeviceEvent> *d;
 		int deviceId, method;
@@ -38,8 +40,10 @@ namespace TelldusCore {
 	public:
 		TDDeviceChangeEventDispatcher(CallbackStruct<TDDeviceChangeEvent> *data, int deviceId, int changeEvent, int changeType);
 		virtual ~TDDeviceChangeEventDispatcher();
+		bool done() const;
 	protected:
 		virtual void run();
+		bool doneRunning;
 	public:
 		CallbackStruct<TDDeviceChangeEvent> *d;
 		int deviceId, changeEvent, changeType;
@@ -48,8 +52,10 @@ namespace TelldusCore {
 	public:
 		TDRawDeviceEventDispatcher( CallbackStruct<TDRawDeviceEvent> *data, const std::string &strData, int controllerId);
 		virtual ~TDRawDeviceEventDispatcher();
+		bool done() const;
 	protected:
 		virtual void run();
+		bool doneRunning;
 	private:
 		CallbackStruct<TDRawDeviceEvent> *d;
 		int controllerId;
@@ -59,8 +65,10 @@ namespace TelldusCore {
 	public:
 		TDSensorEventDispatcher( CallbackStruct<TDSensorEvent> *data, const std::string &protocol, const std::string &model, int id, int dataType, const std::string &value, int timestamp);
 		virtual ~TDSensorEventDispatcher();
+		bool done() const;
 	protected:
 		virtual void run();
+		bool doneRunning;
 	private:
 		CallbackStruct<TDSensorEvent> *d;
 		std::string protocol;
