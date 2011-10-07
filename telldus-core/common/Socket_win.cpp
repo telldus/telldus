@@ -145,7 +145,7 @@ void Socket::write(const std::wstring &msg){
 		d->connected = false;
 		return;
 	}
-	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &bytesWritten, false);
+	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &bytesWritten, TRUE);
 	CloseHandle(writeEvent);
 	if (!fSuccess) {
 		CancelIo(d->hPipe);
