@@ -51,23 +51,37 @@ namespace TelldusWrapper
 		public const int TELLSTICK_CHANGE_PROTOCOL = 2;
 		public const int TELLSTICK_CHANGE_MODEL = 3;
 
-
 		//variables for event callback (e.g. turnon, turnoff)
 		public delegate int EventCallbackFunction(int deviceId, int method, string data, int callbackId, Object obj);
-		Dictionary<int, EventCallbackFunction> eventList = new Dictionary<int, EventCallbackFunction>();
-		GCHandle eventContextHandle;
+		private struct DeviceEventFunctionContext
+		{
+			public EventCallbackFunction eventCallbackFunc;
+			public Object context;
+			public int callbackId;
+		}
+		Dictionary<int, DeviceEventFunctionContext> deviceEventList = new Dictionary<int, DeviceEventFunctionContext>();
 		int registeredEventFunctionId = -1;
 
 		//variables for device event callback (e.g. change of name/protocol)
 		public delegate int DeviceChangeEventCallbackFunction(int deviceId, int changeEvent, int changeType, int callbackId, Object obj);
-		Dictionary<int, DeviceChangeEventCallbackFunction> deviceChangeEventList = new Dictionary<int, DeviceChangeEventCallbackFunction>();
-		GCHandle deviceChangeEventContextHandle;
+		private struct DeviceChangeEventFunctionContext
+		{
+			public DeviceChangeEventCallbackFunction changeEventCallbackFunc;
+			public Object context;
+			public int callbackId;
+		}
+		Dictionary<int, DeviceChangeEventFunctionContext> deviceChangeEventList = new Dictionary<int, DeviceChangeEventFunctionContext>();
 		int registeredDeviceChangeEventFunctionId = -1;
 
 		//variables for raw controller listening callback (e.g. Tellstick Duo receives data)
 		public delegate int RawListeningCallbackFunction(string data, int controllerId, int callbackId, Object obj);
-		Dictionary<int, RawListeningCallbackFunction> rawListenerList = new Dictionary<int, RawListeningCallbackFunction>();
-		GCHandle rawListenerContextHandle;
+		private struct RawEventFunctionContext
+		{
+			public RawListeningCallbackFunction rawCallbackFunc;
+			public Object context;
+			public int callbackId;
+		}
+		Dictionary<int, RawEventFunctionContext> rawListenerList = new Dictionary<int, RawEventFunctionContext>();
 		int registeredRawListenerFunctionId = -1;
 
 		public TelldusNETWrapper()
@@ -90,18 +104,6 @@ namespace TelldusWrapper
 				UnmanagedImport.tdUnregisterCallback(registeredRawListenerFunctionId);
 			}
 			UnmanagedImport.tdClose();	//Close the library and clean up the cache it uses.
-			if (eventContextHandle.IsAllocated)
-			{
-				eventContextHandle.Free();
-			}
-			if (deviceChangeEventContextHandle.IsAllocated)
-			{
-				deviceChangeEventContextHandle.Free();
-			}
-			if (rawListenerContextHandle.IsAllocated)
-			{
-				rawListenerContextHandle.Free();
-			}
 		}
 
 		/// <summary>
@@ -185,7 +187,7 @@ namespace TelldusWrapper
 			public static extern void tdInit();
 
 			[DllImport("TelldusCore.dll")]
-			public static unsafe extern int tdRegisterDeviceEvent(Delegate eventFunction, void* context);
+			public static unsafe extern int tdRegisterDeviceEvent(Delegate deviceEventFunction, void* context);
 
 			[DllImport("TelldusCore.dll")]
 			public static extern int tdLastSentCommand(int deviceId, int methods);
@@ -212,10 +214,10 @@ namespace TelldusWrapper
 			public static unsafe extern int tdUnregisterCallback(int eventId);
 
 			[DllImport("TelldusCore.dll")]
-			public static unsafe extern int tdRegisterDeviceChangeEvent(Delegate deviceEventFunction, void* context);
+			public static unsafe extern int tdRegisterDeviceChangeEvent(Delegate deviceChangeEventFunction, void* context);
 
 			[UnmanagedFunctionPointer(CallingConvention.StdCall)]
-			public unsafe delegate void EventFunctionDelegate();		//int deviceId, int method, int callbackId, void* context [MarshalAs(UnmanagedType.LPStr)]string data,
+			public unsafe delegate void EventFunctionDelegate(int deviceId, int method, char* data, int callbackId, void* context);
 
 			[UnmanagedFunctionPointer(CallingConvention.StdCall)]
 			public unsafe delegate void DeviceChangeEventFunctionDelegate(int deviceId, int changeEvent, int changeType, int callbackId, void* context);
@@ -447,31 +449,27 @@ namespace TelldusWrapper
 		/// <param name="eventFunc">Callback function to be called</param>
 		/// <param name="obj">Context object that will be echoed back when function is called. Only the object when the first function is registered will be used. Set to null if not used.</param>
 		/// <returns>Callback event id</returns>
-		public unsafe int tdRegisterDeviceEvent(EventCallbackFunction eventFunc, Object obj)
+		public unsafe int tdRegisterDeviceEvent(EventCallbackFunction deviceEventFunc, Object obj)
 		{
 			int returnValue = 0;
-			
-			if (eventList.Count == 0)
+				
+			if (deviceEventList.Count == 0)
 			{
 				//first added, register with dll too
-				//only the context object of the first event will be registered
-				UnmanagedImport.EventFunctionDelegate eventFunctionDelegate = new UnmanagedImport.EventFunctionDelegate(eventFunction);
-				if (obj != null)
-				{
-					eventContextHandle = GCHandle.Alloc(obj);
-					registeredEventFunctionId = UnmanagedImport.tdRegisterDeviceEvent(eventFunctionDelegate, (void*)GCHandle.ToIntPtr(eventContextHandle));	//context here or above?
-				}
-				else
-				{
-					registeredEventFunctionId = UnmanagedImport.tdRegisterDeviceEvent(eventFunctionDelegate, (void*)null);	//context here or above?
-				}
+				UnmanagedImport.EventFunctionDelegate deviceEventFunctionDelegate = new UnmanagedImport.EventFunctionDelegate(deviceEventFunction);
+				
+				registeredEventFunctionId = UnmanagedImport.tdRegisterDeviceEvent(deviceEventFunctionDelegate, (void*)null);	//context here or above?
 				GC.Collect();
-				callbackFunctionReferenceList.Add(registeredEventFunctionId, eventFunctionDelegate);
+				callbackFunctionReferenceList.Add(registeredEventFunctionId, deviceEventFunctionDelegate);
 			}
 
 			++lastEventID;
 			returnValue = lastEventID;
-			eventList.Add(returnValue, eventFunc);
+			DeviceEventFunctionContext deviceEventFuncContext = new DeviceEventFunctionContext();
+			deviceEventFuncContext.eventCallbackFunc = deviceEventFunc;
+			deviceEventFuncContext.context = obj;
+			deviceEventFuncContext.callbackId = returnValue;
+			deviceEventList.Add(returnValue, deviceEventFuncContext);
 			
 			return returnValue;
 		}
@@ -482,31 +480,26 @@ namespace TelldusWrapper
 		/// <param name="deviceEventFunc">Callback function to be called</param>
 		/// <param name="obj">Context object that will be echoed back when function is called. Only the object when the first function is registered will be used. Set to null if not used.</param>
 		/// <returns>Callback event id</returns>
-		public unsafe int tdRegisterDeviceChangeEvent(DeviceChangeEventCallbackFunction deviceEventFunc, Object obj)
+		public unsafe int tdRegisterDeviceChangeEvent(DeviceChangeEventCallbackFunction deviceChangeEventFunc, Object obj)
 		{
 			int returnValue = 0;
 			if (deviceChangeEventList.Count == 0)
 			{
 				//first added, register with dll too
 				//only the context object of the first event will be registered
-				UnmanagedImport.DeviceChangeEventFunctionDelegate deviceChangeEventFunctionDelegate = new UnmanagedImport.DeviceChangeEventFunctionDelegate(deviceEventFunction);
+				UnmanagedImport.DeviceChangeEventFunctionDelegate deviceChangeEventFunctionDelegate = new UnmanagedImport.DeviceChangeEventFunctionDelegate(deviceChangeEventFunction);
 
-				if (obj != null)
-				{
-					deviceChangeEventContextHandle = GCHandle.Alloc(obj);
-					registeredDeviceChangeEventFunctionId = UnmanagedImport.tdRegisterDeviceChangeEvent(deviceChangeEventFunctionDelegate, (void*)GCHandle.ToIntPtr(deviceChangeEventContextHandle));
-				}
-				else
-				{
-					registeredDeviceChangeEventFunctionId = UnmanagedImport.tdRegisterDeviceChangeEvent(deviceChangeEventFunctionDelegate, (void*)null);
-				}
+				registeredDeviceChangeEventFunctionId = UnmanagedImport.tdRegisterDeviceChangeEvent(deviceChangeEventFunctionDelegate, (void*)null);
 				GC.Collect();
 				callbackFunctionReferenceList.Add(registeredDeviceChangeEventFunctionId, deviceChangeEventFunctionDelegate);
-
 			}
 			++lastEventID;
 			returnValue = lastEventID;
-			deviceChangeEventList.Add(returnValue, deviceEventFunc);
+			DeviceChangeEventFunctionContext deviceChangeEventFuncContext = new DeviceChangeEventFunctionContext();
+			deviceChangeEventFuncContext.changeEventCallbackFunc = deviceChangeEventFunc;
+			deviceChangeEventFuncContext.context = obj;
+			deviceChangeEventFuncContext.callbackId = returnValue;
+			deviceChangeEventList.Add(returnValue, deviceChangeEventFuncContext);
 
 			return returnValue;
 		}
@@ -526,22 +519,17 @@ namespace TelldusWrapper
 				//only the context object of the first event will be registered
 				UnmanagedImport.RawListeningDelegate listeningFunctionDelegate = new UnmanagedImport.RawListeningDelegate(rawListeningFunction);
 
-				if (obj != null)
-				{
-					rawListenerContextHandle = GCHandle.Alloc(obj);
-
-					registeredRawListenerFunctionId = UnmanagedImport.tdRegisterRawDeviceEvent(listeningFunctionDelegate, (void*)GCHandle.ToIntPtr(rawListenerContextHandle));
-				}
-				else
-				{
-					registeredRawListenerFunctionId = UnmanagedImport.tdRegisterRawDeviceEvent(listeningFunctionDelegate, (void*)null);
-				}
+				registeredRawListenerFunctionId = UnmanagedImport.tdRegisterRawDeviceEvent(listeningFunctionDelegate, (void*)null);
 				GC.Collect();
 				callbackFunctionReferenceList.Add(registeredRawListenerFunctionId, listeningFunctionDelegate);
 			}
 			++lastEventID;
 			returnValue = lastEventID;
-			rawListenerList.Add(returnValue, listeningFunc);
+			RawEventFunctionContext rawEventFuncContext = new RawEventFunctionContext();
+			rawEventFuncContext.rawCallbackFunc = listeningFunc;
+			rawEventFuncContext.context = obj;
+			rawEventFuncContext.callbackId = returnValue;
+			rawListenerList.Add(returnValue, rawEventFuncContext);
 			return returnValue;
 		}
 
@@ -667,16 +655,18 @@ namespace TelldusWrapper
 		/// <param name="eventId">Id of callback even to unregister</param>
 		public void unregisterCallback(int eventId)
 		{
-			eventList.Remove(eventId);
-			if (eventList.Count == 0)
+			deviceEventList.Remove(eventId);
+			if (deviceEventList.Count == 0)
 			{
 				//no more events in list
 				UnmanagedImport.tdUnregisterCallback(registeredEventFunctionId);
 				callbackFunctionReferenceList.Remove(registeredEventFunctionId);
+				/*
 				if (eventContextHandle.IsAllocated)
 				{
 					eventContextHandle.Free();
 				}
+				*/
 			}
 
 			deviceChangeEventList.Remove(eventId);
@@ -685,10 +675,6 @@ namespace TelldusWrapper
 				//no more events in list
 				UnmanagedImport.tdUnregisterCallback(registeredDeviceChangeEventFunctionId);
 				callbackFunctionReferenceList.Remove(registeredDeviceChangeEventFunctionId);
-				if (deviceChangeEventContextHandle.IsAllocated)
-				{
-					deviceChangeEventContextHandle.Free();
-				}
 			}
 
 			rawListenerList.Remove(eventId);
@@ -697,10 +683,6 @@ namespace TelldusWrapper
 				//no more events in list
 				UnmanagedImport.tdUnregisterCallback(registeredRawListenerFunctionId);
 				callbackFunctionReferenceList.Remove(registeredRawListenerFunctionId);
-				if (rawListenerContextHandle.IsAllocated)
-				{
-					rawListenerContextHandle.Free();
-				}
 			}
 		}
 
@@ -780,25 +762,15 @@ namespace TelldusWrapper
 		/// <param name="callbackId">Callback event id</param>
 		/// <param name="context">Context (optional)</param>
 		/// <returns>0</returns>
-		private unsafe void eventFunction()	//int deviceId, int method, int callbackId, void* context[MarshalAs(UnmanagedType.LPStr)]string data
+		private unsafe void deviceEventFunction(int deviceId, int method, char* data, int callbackId, void* context)
 		{
-			foreach (EventCallbackFunction eventFunc in eventList.Values)
+			foreach (DeviceEventFunctionContext deviceEventFuncContext in deviceEventList.Values)
 			{
-				/*
-				if (context != null)
-				{
-					GCHandle eventContextHandle = GCHandle.FromIntPtr((IntPtr)context);
-					eventFunc(deviceId, method, "", callbackId, (Object)eventContextHandle.Target);		//data
-				}
-				else
-				{
-					eventFunc(deviceId, method, "", callbackId, null);
-				}
-				*/
-				eventFunc(1, 1, "", 1, null);
+				deviceEventFuncContext.eventCallbackFunc(deviceId, method, getString(data, false), deviceEventFuncContext.callbackId, deviceEventFuncContext.context);
 				GC.Collect();
 			}
 		}
+
 
 		/// <summary>
 		/// Event function wrapper that will call all registered device change event functions with C#-arguments when
@@ -811,19 +783,11 @@ namespace TelldusWrapper
 		/// <param name="callbackId">Callback event id</param>
 		/// <param name="context">Context (optional)</param>
 		/// <returns>0</returns>
-		private unsafe void deviceEventFunction(int deviceId, int changeEvent, int changeType, int callbackId, void* context)
+		private unsafe void deviceChangeEventFunction(int deviceId, int changeEvent, int changeType, int callbackId, void* context)
 		{
-			foreach (DeviceChangeEventCallbackFunction deviceEventFunc in deviceChangeEventList.Values)
+			foreach (DeviceChangeEventFunctionContext deviceChangeEventFuncContext in deviceChangeEventList.Values)
 			{
-				if (context != null)
-				{
-					GCHandle deviceChangeEventContextHandle = GCHandle.FromIntPtr((IntPtr)context);
-					deviceEventFunc(deviceId, changeEvent, changeType, callbackId, (Object)deviceChangeEventContextHandle.Target);
-				}
-				else
-				{
-					deviceEventFunc(deviceId, changeEvent, changeType, callbackId, null);
-				}
+				deviceChangeEventFuncContext.changeEventCallbackFunc(deviceId, changeEvent, changeType, deviceChangeEventFuncContext.callbackId, deviceChangeEventFuncContext.context);
 				GC.Collect();
 			}
 		}
@@ -840,17 +804,9 @@ namespace TelldusWrapper
 		/// <returns>0</returns>
 		private unsafe void rawListeningFunction(char* data, int controllerId, int callbackId, void* context)
 		{
-			foreach (RawListeningCallbackFunction rawListeningFunc in rawListenerList.Values)
+			foreach (RawEventFunctionContext rawListeningFuncContext in rawListenerList.Values)
 			{
-				if (context != null)
-				{
-					GCHandle rawListenerContextHandle = GCHandle.FromIntPtr((IntPtr)context);
-					rawListeningFunc(getString(data, false), controllerId, callbackId, (Object)rawListenerContextHandle.Target);	//strings cannot be released here, since they are still in use by calling core (sent to other clients aswell), let the core take care of it with shared pointer
-				}
-				else
-				{
-					rawListeningFunc(getString(data, false), controllerId, callbackId, null);
-				}
+				rawListeningFuncContext.rawCallbackFunc(getString(data, false), controllerId, rawListeningFuncContext.callbackId, rawListeningFuncContext.context);
 				GC.Collect();
 			}
 		}
