@@ -47,6 +47,7 @@ namespace TelldusCore {
 	public:
 		CallbackStruct<TDDeviceChangeEvent> *d;
 		int deviceId, changeEvent, changeType;
+		bool doneRunning;
 	};
 	class TDRawDeviceEventDispatcher : public Thread {
 	public:
