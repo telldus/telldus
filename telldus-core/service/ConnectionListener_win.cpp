@@ -113,13 +113,17 @@ void ConnectionListener::run() {
 
 		ConnectNamedPipe(hPipe, &oOverlap);
 
-		WaitForSingleObject(oOverlap.hEvent, INFINITE);
+		DWORD result = WaitForSingleObject(oOverlap.hEvent, 1000);
 
 		if (!d->running) {
 			break;
 		}
-
+		if(result == WAIT_TIMEOUT){
+			CloseHandle(hPipe);
+			continue;
+		}
 		BOOL connected = GetOverlappedResult(hPipe, &oOverlap, &cbBytesRead, false);
+
 		if (!connected) {
 			CloseHandle(hPipe);
 			return;
