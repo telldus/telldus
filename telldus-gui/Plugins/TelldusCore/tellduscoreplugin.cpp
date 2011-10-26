@@ -30,6 +30,9 @@ void TelldusCorePlugin::initialize ( const QString & key, QScriptEngine * engine
 		value.setProperty("TELLSTICK_DEVICE_REMOVED", TELLSTICK_DEVICE_REMOVED);
 		value.setProperty("TELLSTICK_DEVICE_STATE_CHANGED", TELLSTICK_DEVICE_STATE_CHANGED);
 
+		value.setProperty("TELLSTICK_TEMPERATURE", TELLSTICK_TEMPERATURE);
+		value.setProperty("TELLSTICK_HUMIDITY", TELLSTICK_HUMIDITY);
+
 		engine->globalObject().property("com").property("telldus").setProperty("core", value);
 	}
 }
