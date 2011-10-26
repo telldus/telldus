@@ -103,6 +103,26 @@ int TelldusCoreObject::stop(int deviceId) {
 	return retval;
 }
 
+QVariant TelldusCoreObject::sensor() const {
+	const int DATA_LENGTH = 20;
+	char protocol[DATA_LENGTH], model[DATA_LENGTH];
+	int sensorId = 0, dataTypes = 0;
+
+
+	if (tdSensor(protocol, DATA_LENGTH, model, DATA_LENGTH, &sensorId, &dataTypes) != TELLSTICK_SUCCESS) {
+		return 0;
+	}
+
+	QVariantMap retval;
+
+	retval["protocol"] = protocol;
+	retval["model"] = model;
+	retval["sensorId"] = sensorId;
+	retval["dataTypes"] = dataTypes;
+
+	return retval;
+}
+
 void TelldusCoreObject::triggerError(int deviceId, int errorId) {
 	char *errorString = tdGetErrorString( errorId );
 	QString message = QString::fromUtf8( errorString );

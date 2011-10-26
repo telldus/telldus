@@ -2,6 +2,7 @@
 #define TELLDUSCOREOBJECT_H
 
 #include <QObject>
+#include <QVariantMap>
 #include <telldus-core.h>
 
 class TelldusCoreObject : public QObject
@@ -26,6 +27,8 @@ public slots:
 	int lastSentCommand( int deviceId, int methodsSupported );
 	QString lastSentValue( int deviceId );
 	int methods( int deviceId, int methodsSupported );
+
+	QVariant sensor() const;
 
 	int turnOn( int deviceId );
 	int turnOff( int deviceId );
