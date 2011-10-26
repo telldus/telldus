@@ -1,4 +1,5 @@
 #include "tellduscoreobject.h"
+#include <QDateTime>
 #include <QDebug>
 
 TelldusCoreObject::TelldusCoreObject( QObject * parent )
@@ -120,6 +121,18 @@ QVariant TelldusCoreObject::sensor() const {
 	retval["sensorId"] = sensorId;
 	retval["dataTypes"] = dataTypes;
 
+	return retval;
+}
+
+QVariant TelldusCoreObject::sensorValue(const QString &protocol, const QString &model, int id, int dataType) const {
+	const int DATA_LENGTH = 20;
+	char value[DATA_LENGTH];
+	time_t timestamp = 0;
+
+	tdSensorValue(protocol.toUtf8(), model.toUtf8(), id, dataType, value, DATA_LENGTH, (int *)&timestamp);
+	QVariantMap retval;
+	retval["value"] = value;
+	retval["timestamp"] = QDateTime::fromTime_t(timestamp);
 	return retval;
 }
 

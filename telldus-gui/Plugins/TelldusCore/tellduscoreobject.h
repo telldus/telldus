@@ -29,6 +29,7 @@ public slots:
 	int methods( int deviceId, int methodsSupported );
 
 	QVariant sensor() const;
+	QVariant sensorValue(const QString &protocol, const QString &model, int id, int dataType) const;
 
 	int turnOn( int deviceId );
 	int turnOff( int deviceId );
