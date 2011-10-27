@@ -27,9 +27,8 @@ com.telldus.sensors = function() {
 
 		}
 
-		//com.telldus.core.sensorEvent.connect(sensorEvent);
-		view = new com.telldus.qml.view({
-		});
+		com.telldus.core.sensorEvent.connect(sensorEvent);
+		view = new com.telldus.qml.view({});
 
 		view.setProperty('sensorModel', sensorList);
 		view.load("main.qml");
@@ -63,13 +62,8 @@ com.telldus.sensors = function() {
 			print("Update");
 		}
 
-		if (dataType == com.telldus.core.TELLSTICK_TEMPERATURE) {
-			sensor.temperature = value;
-		} else if (dataType == com.telldus.core.TELLSTICK_HUMIDITY) {
-			sensor.humidity = value;
-		}
-
 		print("Sensor event", protocol, model, id, dataType, value, timestamp);
+		sensor.setValue(dataType, value, timestamp);
 	}
 
 	return { //Public functions

@@ -1,6 +1,8 @@
 #include "sensorsplugin.h"
 #include "sensor.h"
+#include "sensorvalue.h"
 #include <QScriptEngine>
+#include <QtDeclarative>
 
 QScriptValue SensorCTor(QScriptContext *context, QScriptEngine *engine) {
 	if (!context->isCalledAsConstructor()) {
@@ -12,6 +14,7 @@ QScriptValue SensorCTor(QScriptContext *context, QScriptEngine *engine) {
 SensorsPlugin::SensorsPlugin ( QObject * parent )
 		:QScriptExtensionPlugin( parent )
 {
+	qmlRegisterType<SensorValue>("Telldus", 1, 0, "SensorValue");
 }
 
 SensorsPlugin::~SensorsPlugin() {

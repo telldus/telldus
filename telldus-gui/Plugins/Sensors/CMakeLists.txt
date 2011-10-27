@@ -24,9 +24,15 @@ SET( Plugin_MOC_HDRS
 SET( Plugin_PATH "com.telldus.sensors" )
 
 SET( Plugin_EXTRA
+	header_bg.png
 	icon.png
+	icon_humidity.png
+	icon_temp.png
 	main.qml
+	HeaderTitle.qml
+	row_bg.png
 	qmldir
+	SensorValue.qml
 )
 
 INCLUDE( ../TelldusCenterPlugin.cmake NO_POLICY_SCOPE )
