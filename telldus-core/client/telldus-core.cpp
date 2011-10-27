@@ -562,4 +562,4 @@ int WINAPI tdSensorValue(const char *protocol, const char *model, int id, int da
 }
 
 
-/*\@}*/
+/* @} */
