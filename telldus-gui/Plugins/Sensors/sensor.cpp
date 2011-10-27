@@ -1,19 +1,20 @@
 #include "sensor.h"
+#include "sensorvalue.h"
+#include <telldus-core.h>
 
 class Sensor::PrivateData {
 public:
 	bool hasTemperature, hasHumidity;
 	int id;
-	QString model, name, protocol, temperature, humidity;
+	QString model, name, protocol;
 	QDateTime lastUpdated;
+	QMap<int, SensorValue *> values;
 };
 
 Sensor::Sensor(QObject *parent) :
 	QObject(parent)
 {
 	d = new PrivateData;
-	d->hasTemperature = false;
-	d->hasHumidity = false;
 	d->id = 0;
 }
 
@@ -21,19 +22,8 @@ Sensor::~Sensor() {
 	delete d;
 }
 
-QString Sensor::humidity() const {
-	return d->humidity;
-}
-
-void Sensor::setHumidity(const QString &humidity) {
-	d->humidity = humidity;
-	d->hasHumidity = true;
-	emit humidityChanged();
-	emit hasHumidityChanged();
-}
-
 bool Sensor::hasHumidity() const {
-	return d->hasHumidity;
+	return d->values.contains(TELLSTICK_HUMIDITY);
 }
 
 int Sensor::id() const {
@@ -43,15 +33,6 @@ int Sensor::id() const {
 void Sensor::setId(int id) {
 	d->id = id;
 	emit idChanged();
-}
-
-QDateTime Sensor::lastUpdated() const {
-	return d->lastUpdated;
-}
-
-void Sensor::setLastUpdated(const QDateTime &lastUpdated) {
-	d->lastUpdated = lastUpdated;
-	emit lastUpdatedChanged();
 }
 
 QString Sensor::model() const {
@@ -81,17 +62,28 @@ void Sensor::setProtocol(const QString &protocol) {
 	emit protocolChanged();
 }
 
-QString Sensor::temperature() const {
-	return d->temperature;
-}
-
-void Sensor::setTemperature(const QString &temperature) {
-	d->temperature = temperature;
-	d->hasTemperature = true;
-	emit temperatureChanged();
-	emit hasTemperatureChanged();
-}
-
 bool Sensor::hasTemperature() const {
-	return d->hasTemperature;
+	return d->values.contains(TELLSTICK_TEMPERATURE);
+}
+
+SensorValue * Sensor::sensorValue(int type) {
+	return (d->values.contains(type) ? d->values[type] : 0);
+}
+
+void Sensor::setValue(int type, const QString &value, const QDateTime &timestamp) {
+	SensorValue *sensorValue;
+	if (d->values.contains(type)) {
+		sensorValue = d->values[type];
+	} else {
+		sensorValue = new SensorValue(this);
+		d->values[type] = sensorValue;
+	}
+	sensorValue->setValue(value);
+	sensorValue->setLastUpdated(timestamp);
+
+	if (type == TELLSTICK_TEMPERATURE) {
+		emit hasTemperatureChanged();
+	} else if (type == TELLSTICK_HUMIDITY) {
+		emit hasHumidityChanged();
+	}
 }
