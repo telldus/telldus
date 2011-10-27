@@ -187,10 +187,54 @@
  * tdReleaseString(name);
  * \endcode
  *
+ * \subsection sec_bu_sensors Sensors
+ *
+ * Retrieving sensor values can be done in two ways. Either by a polling
+ * interface or by callbacks. The client application can implement one or both
+ * of these interfaces. For callbacks, read more under \ref sec_events.
+ *
+ * Each of the sensors can have one or several value types. Currently only
+ * temperature and humidity are implemented.
+ *
+ * There is no API to add, remove or edit sensors. Each sensor that
+ * TellStick Duo has got any data from is added to an internal list. It is up to
+ * the client application to filter and only show the sensors your are
+ * interested in.
+ *
+ * To iterate over the list of sensors, call tdSensor() repeatedly as long as it
+ * returns \c TELLSTICK_SUCCESS. The parameters \c protocol, \c model,
+ * \c sensorId, and \c dataTypes are sent by reference and will be filled with
+ * the values.
+ *
+ * Example:
+ * \code
+ * char protocol[DATA_LENGTH], model[DATA_LENGTH];
+ * int sensorId = 0, dataTypes = 0;
+ * while(tdSensor(protocol, DATA_LENGTH, model, DATA_LENGTH, &sensorId, &dataTypes) == TELLSTICK_SUCCESS) {
+ *   //Print the sensor
+ *   printf("%s,\t%s,\t%i\n", protocol, model, sensorId);
+ * }
+ * \endcode
+ *
+ * The type of sensor values the sensor supports are stored as flags in the
+ * parameter \c sensorId. Call tdSensorValue() for each type.
+ *
+ * Example:
+ * \code
+ * char value[DATA_LENGTH];
+ * char timeBuf[80];
+ * time_t timestamp = 0;
+ * if (dataTypes & TELLSTICK_TEMPERATURE) {
+ *   tdSensorValue(protocol, model, sensorId, TELLSTICK_TEMPERATURE, value, DATA_LENGTH, (int *)&timestamp);
+ *   strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
+ *   printf("Temperature:\t%sº\t(%s)\n", value, timeBuf);
+ * }
+ * \endcode
+ *
  * \section sec_events Events
  *
- * To get events from either a TellStick Duo or if another software changes the
- * status of a device you have to register for a callback.
+ * To get events from either a TellStick Duo, another software changes the
+ * status of a device, or new sensors values you have to register for a callback.
  *
  * \subsection sec_events_registering Registering for callbacks
  *
@@ -198,6 +242,7 @@
  * \li tdRegisterDeviceEvent()
  * \li tdRegisterDeviceChangeEvent()
  * \li tdRegisterRawDeviceEvent()
+ * \li tdRegisterSensorEvent()
  *
  * These all work in the same way. The first parameter is a function-pointer to
  * the callback function. The second parameter is an optional void pointer. This
@@ -219,7 +264,7 @@
  *
  * \subsection sec_events_callbacks Callbacks
  *
- * telldus-core currently implements three different callback function for
+ * telldus-core currently implements four different callback function for
  * different purposes.
  *
  * \subsubsection sec_events_callbacks_deviceevent DeviceEvent
@@ -271,6 +316,20 @@
  * - int controllerId - id of receiving controller, can identify the TellStick if several exists in the system
  * - int callbackId - id of callback
  * - void *context - see \ref sec_events_registering for description
+ *
+ * \subsubsection sec_events_callbacks_sensorevent SensorEvent
+ *
+ * This event is fired when a new sensor value is retrieved.
+ *
+ * Parameters:
+ * - const char *protocol - The sensors protocol
+ * - const char *model - The model of the sensor
+ * - int id - The unique id for the sensor.
+ * - int dataType - Flags for which types of data the sensor supports
+ * - const char *value - A human readable string of the data
+ * - int timestamp - The timestamp when the latest value was received
+ * - int callbackId - id of callback
+ * - void *context - See \ref sec_events_registering for description
  *
  * \subsection sec_events_example Example
  *
