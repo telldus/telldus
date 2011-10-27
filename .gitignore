@@ -1,1 +1,4 @@
 build/
+Doxyfile
+html/
+latex/
