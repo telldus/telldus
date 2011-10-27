@@ -160,6 +160,6 @@ void WINAPI TelldusCoreObject::deviceEventCallback(int deviceId, int method, con
 void WINAPI TelldusCoreObject::sensorEventCallback(const char *protocol, const char *model, int id, int dataType, const char *value, int timestamp, int callbackId, void *context) {
 	TelldusCoreObject *parent = static_cast<TelldusCoreObject *>(context);
 	if (parent) {
-		emit parent->sensorEvent(QString::fromUtf8(protocol), QString::fromUtf8(model), id, dataType, QString::fromUtf8(value), timestamp);
+		emit parent->sensorEvent(QString::fromUtf8(protocol), QString::fromUtf8(model), id, dataType, QString::fromUtf8(value), QDateTime::fromTime_t(timestamp));
 	}
 }

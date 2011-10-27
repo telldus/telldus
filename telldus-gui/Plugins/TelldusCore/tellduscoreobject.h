@@ -3,6 +3,7 @@
 
 #include <QObject>
 #include <QVariantMap>
+#include <QDateTime>
 #include <telldus-core.h>
 
 class TelldusCoreObject : public QObject
@@ -15,7 +16,7 @@ public:
 signals:
 	void deviceChange( int deviceId, int eventId );
 	void deviceEvent( int deviceId, int method, const QString &data );
-	void sensorEvent( const QString &protocol, const QString &model, int id, int dataType, const QString &value, int timestamp);
+	void sensorEvent( const QString &protocol, const QString &model, int id, int dataType, const QString &value, const QDateTime timestamp);
 	void errorOccurred( int deviceId, int errorId, const QString &errorString );
 
 public slots:
