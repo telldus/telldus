@@ -13,6 +13,9 @@ public:
 QMLView::QMLView(const QDir &dir, const QScriptValue &object) :
 	QDeclarativeView()
 {
+	setAttribute(Qt::WA_TranslucentBackground);
+	setStyleSheet("background:transparent;");
+
 	d = new PrivateData;
 	d->baseDir = dir;
 	d->object = object;
