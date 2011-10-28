@@ -262,9 +262,9 @@
  *
  * \subsubsection sec_events_callbacks_rawdeviceevent RawDeviceEvent
  *
- * Use this callback with caution. It outputs everything from the Duo without
- * any preprocessing. This can be used to get events from devices not already
- * configured.
+ * Use this callback with caution. It outputs everything from a TellStick Duo
+ * without any preprocessing. This can be used to get events from devices not
+ * already configured.
  *
  * Parameters:
  * - const char *data - raw device data
