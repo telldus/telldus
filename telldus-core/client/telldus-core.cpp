@@ -534,6 +534,17 @@ void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial
 	Client::getWStringFromService(msg);
 }
 
+/**
+ * Use this function to iterate over all sensors. Iterate until
+ * TELLSTICK_SUCCESS is not returned
+ * @param protocol A byref string where the protocol of the sensor will be placed
+ * @param protocolLen The length of the \c protocol parameter
+ * @param model A byref string where the model of the sensor will be placed
+ * @param modelLen The length of the \c model parameter
+ * @param id A byref int where the id of the sensor will be placed
+ * @param dataTypes A byref int with flags for the supported sensor values
+ * @returns TELLSTICK_SUCCESS if there is more sensors to be fetched
+ */
 int WINAPI tdSensor(char *protocol, int protocolLen, char *model, int modelLen, int *id, int *dataTypes) {
 	Client *client = Client::getInstance();
 	return client->getSensor(protocol, protocolLen, model, modelLen, id, dataTypes);
