@@ -35,4 +35,7 @@ SET( Plugin_EXTRA
 	SensorValue.qml
 )
 
+FIND_PACKAGE(TelldusCore REQUIRED)
+SET( Plugin_LIBRARIES ${TELLDUSCORE_LIBRARY} )
+
 INCLUDE( ../TelldusCenterPlugin.cmake NO_POLICY_SCOPE )
