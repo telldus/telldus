@@ -212,9 +212,10 @@
  *
  * Many devices (for example motion detectors) resends their messages many times
  * to ensure that they are received correctly. If a deviceeventcallback or
- * rawdeviceeventcallback in turn is calling a controlling function, for example tdTurnOn,
- * it may be neccessary to implement some solution to wait for the device to finish its
- * resending, before executing the controlling function. See how this can be done in the python example.
+ * rawdeviceeventcallback in turn is calling a controlling function, for example
+ * tdTurnOn, it may be neccessary to implement some solution to wait for the
+ * device to finish its resending, before executing the controlling function.
+ * See how this can be done in the python example.
  *
  * \subsection sec_events_callbacks Callbacks
  *
