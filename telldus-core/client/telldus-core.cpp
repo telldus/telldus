@@ -550,6 +550,20 @@ int WINAPI tdSensor(char *protocol, int protocolLen, char *model, int modelLen, 
 	return client->getSensor(protocol, protocolLen, model, modelLen, id, dataTypes);
 }
 
+/**
+ * Get one of the supported sensor values from a sensor. Make sure it support
+ * the value type first by calling tdSensor(). The triplet \c protocol,
+ * \c model, and \c id together identifies a sensor.
+ * @param protocol The protocol for the sensor
+ * @param model The model for the sensor
+ * @param id The id of the sensor
+ * @param dataType One of the datatype to retrieve
+ * @param value A byref string where the value will be places
+ * @param len The length of the \c value parameter
+ * @param timestamp A byref int where the timestamp of the value will be placed
+ * @returns TELLSTICK_SUCCESS if the value could be fetched or one of the
+ * errorcodes on failure
+ */
 int WINAPI tdSensorValue(const char *protocol, const char *model, int id, int dataType, char *value, int len, int *timestamp) {
 	Message msg(L"tdSensorValue");
 	msg.addArgument(protocol);
