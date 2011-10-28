@@ -235,9 +235,10 @@
  * - const char *data - For some methods this contains data. For TELLSTICK_DIM
  * this hold the current value.
  * - int callbackId - id of callback
- * - void *context - see "Registering for callbacks" for description
+ * - void *context - see \ref sec_events_registering for description
  *
  * \subsubsection sec_events_callbacks_devicechangeevent DeviceChangeEvent
+ *
  * This event is fired when the data around a device is changed. It can only be
  * triggered by another software. Use this callback to keep your list of devices
  * in sync.
@@ -257,7 +258,7 @@
  *   - TELLSTICK_CHANGE_PROTOCOL - Use tdGetProtocol() to read the new value.
  *   - TELLSTICK_CHANGE_MODEL - Use tdGetModel() to read the new value.
  * - int callbackId - id of callback
- * - void *context - see "Registering for callbacks" for description
+ * - void *context - see \ref sec_events_registering for description
  *
  * \subsubsection sec_events_callbacks_rawdeviceevent RawDeviceEvent
  *
@@ -269,7 +270,7 @@
  * - const char *data - raw device data
  * - int controllerId - id of receiving controller, can identify the TellStick if several exists in the system
  * - int callbackId - id of callback
- * - void *context - see "Registering for callbacks" for description
+ * - void *context - see \ref sec_events_registering for description
  *
  * \subsection sec_events_example Example
  *
