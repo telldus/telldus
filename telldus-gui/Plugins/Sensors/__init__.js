@@ -56,6 +56,7 @@ com.telldus.sensors = function() {
 			sensor.protocol = protocol;
 			sensor.model = model;
 			sensor.id = id;
+			sensor.showInList = false;
 			sensorList.push(sensor);
 			print("Create new");
 		} else {
