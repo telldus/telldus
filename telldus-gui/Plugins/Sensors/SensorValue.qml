@@ -14,6 +14,7 @@ Item {
 	}
 	Text {
 		id: text
+		font.weight: Font.Bold
 		anchors.left: icon.right
 		anchors.leftMargin: 10
 		anchors.verticalCenter: parent.verticalCenter

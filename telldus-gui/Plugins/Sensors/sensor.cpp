@@ -1,10 +1,11 @@
 #include "sensor.h"
 #include "sensorvalue.h"
 #include <telldus-core.h>
+#include <QDebug>
 
 class Sensor::PrivateData {
 public:
-	bool hasTemperature, hasHumidity;
+	bool hasTemperature, hasHumidity, showInList;
 	int id;
 	QString model, name, protocol;
 	QDateTime lastUpdated;
@@ -45,7 +46,10 @@ void Sensor::setModel(const QString &model) {
 }
 
 QString Sensor::name() const {
-	return QString("%1 %2").arg(this->protocol()).arg(this->id()); //TODO: Remove when name is fully implemented
+	//return QString("%1 %2").arg(this->protocol()).arg(this->id()); //TODO: Remove when name is fully implemented
+	if(d->name == ""){
+		return "<unnamed>";
+	}
 	return d->name;
 }
 
@@ -87,4 +91,14 @@ void Sensor::setValue(int type, const QString &value, const QDateTime &timestamp
 	} else if (type == TELLSTICK_HUMIDITY) {
 		emit hasHumidityChanged();
 	}
+}
+
+bool Sensor::showInList() const{
+	//TODO showInList and name must be persistent...
+	return d->showInList;
+}
+
+void Sensor::setShowInList(bool show){
+	d->showInList = show;
+	emit showInListChanged();
 }
