@@ -81,6 +81,10 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_TURNOFF, 0);
 
 	} else if (function == L"tdBell") {
+		//TelldusCore::Message msg2;
+		//msg2.addSpecialArgument(18);
+		//msg2.addSpecialArgument("testgrej");
+
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_BELL, 0);
 

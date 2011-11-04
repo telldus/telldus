@@ -8,6 +8,7 @@
  */
 
 #include "CallbackDispatcher.h"
+#include "common.h"
 
 using namespace TelldusCore;
 
@@ -28,7 +29,9 @@ bool TDDeviceEventDispatcher::done() const {
 }
 
 void TDDeviceEventDispatcher::run() {
+	char *str = wrapStdString(strData);
 	d->event(deviceId, method, strData.c_str(), d->id, d->context);
+
 	doneRunning = true;
 }
 

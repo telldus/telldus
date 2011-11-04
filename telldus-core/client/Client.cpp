@@ -130,6 +130,7 @@ int Client::registerDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
 	callback->id = id;
 	callback->context = context;
 	d->deviceEventList.push_back(callback);
+	//debuglog(id, "deviceeventadded");
 	return id;
 }
 
@@ -141,6 +142,7 @@ int Client::registerDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *
 	callback->id = id;
 	callback->context = context;
 	d->deviceChangeEventList.push_back(callback);
+	//debuglog(id, "devicechangeeventadded");
 	return id;
 }
 
@@ -176,13 +178,24 @@ void Client::run(){
 			d->eventSocket.connect(L"TelldusEvents");	//try to reconnect to service
 			if(!d->eventSocket.isConnected()){
 				//reconnect didn't succeed, wait a while and try again
+				//debuglog(0, "Reconnecting");
 				msleep(2000);
 				continue;
 			}
 		}
 
 		std::wstring clientMessage = d->eventSocket.read(5000);	//testing 5 second timeout
+
+		//int test = 0;
+		/*if(clientMessage != L""){
+			debuglog(88, "Clientmessage nothing after read");
+		}*/
 		while(clientMessage != L""){
+			//debuglog(99, TelldusCore::wideToString(clientMessage));
+			//test++;
+			/*if(test > 5){
+				debuglog(test, "Test is getting big");
+			}*/
 			//a message arrived
 			std::wstring type = Message::takeString(&clientMessage);
 			if(type == L"TDDeviceChangeEvent"){
@@ -282,16 +295,53 @@ void Client::cleanupCallbacks() {
 }
 
 std::wstring Client::sendToService(const Message &msg) {
-	Socket s;
-	s.connect(L"TelldusClient");
-	if (!s.isConnected()) { //Connection failed
-		TelldusCore::Message msg;
-		msg.addArgument(TELLSTICK_ERROR_CONNECTING_SERVICE);
-		return msg;
+	
+	int tries = 0;
+	std::wstring readData;
+	//debuglog(3, "PRETEST");
+	while(tries < 20){
+		//debuglog(3, "PRETESTINNE");
+		tries++;
+		if(tries == 20){
+			TelldusCore::Message msg;
+			msg.addArgument(TELLSTICK_ERROR_CONNECTING_SERVICE);
+			return msg;
+		}
+		Socket s;
+		s.connect(L"TelldusClient");
+		if (!s.isConnected()) { //Connection failed
+			//debuglog(3, "Ett)");  //deviceeventscallbacks verkar sluta fungera vid/med ett sådant här!? njä, bara ngn ggn...
+			msleep(500);
+			continue; //retry
+		}
+		s.write(msg.data());
+		if (!s.isConnected()) { //Connection failed sometime during operation... (better check here, instead of 5 seconds timeout later)
+			//debuglog(3, "Två");
+			msleep(500);
+			continue; //retry
+		}
+		readData = s.read(5000); //500
+		if(readData == L""){
+			//debuglog(3, "Empty result (may be ok?)");
+			/*
+			if this is  enabled, all "send"  will run 20 times... - NO! That was due to too short timeout in s.read, turnOn didn't  havee titme otecxeu
+			if it's  NOT enabled, tdGetName  will often return empty...
+			*/
+			msleep(500);
+			continue; //TODO cannot be sure it SHOULD be anything... right?
+			
+		}
+		
+		if (!s.isConnected()) { //Connection failed sometime during operation...
+			//debuglog(3, "Not connected");
+			msleep(500);
+			continue; //retry
+		}
+		break;
 	}
-	s.write(msg.data());
 
-	return s.read(5000);
+	//debuglog(3, "POSTTEST");
+	return readData;
 }
 
 void Client::stopThread(){
@@ -300,6 +350,7 @@ void Client::stopThread(){
 }
 
 bool Client::unregisterCallback( int callbackId ) {
+	//debuglog(callbackId, "unregistering");
 	DeviceEventList newDEList;
 	{
 		TelldusCore::MutexLocker locker(&d->mutex);
