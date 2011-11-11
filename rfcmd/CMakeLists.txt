@@ -1,0 +1,88 @@
+cmake_minimum_required(VERSION 2.4)
+
+INCLUDE_DIRECTORIES(
+  /usr/src/linux/include
+)
+
+#### Project: rfcmd ####
+
+PROJECT(rfcmd)
+
+SET(rfcmd_DESCRIPTION
+	"Sends RF remote commands through a Telldus TellStick"
+)
+
+SET(rfcmd_SRCS
+  rfcmd.c
+)
+
+IF(${RFCMD_DEBUG})
+	ADD_DEFINITIONS( -DRFCMD_DEBUG )
+ENDIF(${RFCMD_DEBUG})
+
+IF (BUILD_RFCMD_WITH_LIBFTDI)
+	ADD_DEFINITIONS( -DLIBFTDI )
+
+	SET(rfcmd_SRCS
+		${rfcmd_SRCS}
+		ftdi.c
+	)
+ENDIF (BUILD_RFCMD_WITH_LIBFTDI)
+ADD_EXECUTABLE(rfcmd
+  ${rfcmd_SRCS}
+)
+
+IF (BUILD_RFCMD_WITH_SEMAPHORES)
+	FIND_LIBRARY(SEM_LIBRARY rt)
+	TARGET_LINK_LIBRARIES(rfcmd
+		${SEM_LIBRARY}
+	)
+ELSE (BUILD_RFCMD_WITH_SEMAPHORES)
+	ADD_DEFINITIONS( -DNO_SEMAPHORES )
+ENDIF (BUILD_RFCMD_WITH_SEMAPHORES)
+
+
+
+IF (BUILD_RFCMD_WITH_LIBFTDI)
+	FIND_LIBRARY(FTDI_LIBRARY ftdi)
+
+	TARGET_LINK_LIBRARIES(rfcmd
+	${FTDI_LIBRARY}
+	)
+ENDIF (BUILD_RFCMD_WITH_LIBFTDI)
+
+INSTALL(TARGETS rfcmd RUNTIME DESTINATION bin)
+
+IF (UNIX)
+	IF (GENERATE_MAN)
+		ADD_CUSTOM_COMMAND(
+			TARGET rfcmd
+			POST_BUILD
+			COMMAND help2man -n ${rfcmd_DESCRIPTION} ./rfcmd > rfcmd.1
+			WORKING_DIRECTORY ${CMAKE_CURRENT_BINARY_DIR}
+			COMMENT "Generating man file rfcmd.1"
+		)
+		INSTALL(FILES ${CMAKE_CURRENT_BINARY_DIR}/rfcmd.1 DESTINATION share/man/man1)
+	ENDIF (GENERATE_MAN)
+ENDIF (UNIX)
+
+#### Project: find_telldus ####
+
+IF (BUILD_RFCMD_WITH_LIBFTDI)
+	PROJECT(find_telldus)
+
+	SET(find_telldus_SRCS
+		find_telldus.c
+	)
+
+	ADD_EXECUTABLE(find_telldus
+		${find_telldus_SRCS}
+	)
+
+	TARGET_LINK_LIBRARIES(find_telldus
+	${FTDI_LIBRARY}
+	)
+
+	INSTALL(TARGETS find_telldus RUNTIME DESTINATION bin)
+
+ENDIF (BUILD_RFCMD_WITH_LIBFTDI)
