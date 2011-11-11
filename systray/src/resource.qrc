@@ -1,9 +1,0 @@
-<RCC>
-	<qresource prefix="/" >
-		<file>images/bell.png</file>
-		<file>images/lamp-on.png</file>
-		<file>images/lamp-off.png</file>
-		<file>images/preferences-system.png</file>
-		<file>images/system-log-out.png</file>
-	</qresource>
-</RCC>
