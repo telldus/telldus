@@ -228,8 +228,10 @@ void LiveObject::sslErrors( const QList<QSslError> & errors ) {
 void LiveObject::serverAssignReply( QNetworkReply *r ) {
 	r->deleteLater();
 	if (r->error() != QNetworkReply::NoError) {
+		int timeout = rand() % 300 + 60; //Random timeout from 60s-6min to avoid flooding the servers
 		emit errorChanged(r->errorString());
-		emit statusChanged("Error retrieving server list");
+		emit statusChanged("Retrying in " + QString::number(timeout) + " seconds...");
+		QTimer::singleShot(timeout * 1000, this, SLOT(connectToServer()));
 		return;
 	}
 	QXmlStreamReader xml(r);
