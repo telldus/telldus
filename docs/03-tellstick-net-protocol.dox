@@ -1,0 +1,35 @@
+/**
+ * @page TellStickNet TellStick Net protocol
+ *
+ * \section Introduction
+ *
+ * TellStick Net will eventually support local access through the LAN. This is
+ * unsupported by Telldus Technologies but can be useful in some cases. For
+ * instance in mobile devices or when the internet is not available. Using
+ * TellStick Net through Telldus Live! is still the prefered and supported
+ * method.
+ *
+ * This interface is still under development and is not ready for production.
+ *
+ * \section autodiscovery Auto discovery
+ *
+ * The TellStick Net can be auto discovered on the LAN using UDP broadcast.
+ * Sending a package to the broadcast address 255.255.255.255 port 30303 will
+ * be responded by any TellStick Net on the network. The packet should only
+ * contain the single character 'D' (ascii number 68).
+ *
+ * The response from the device will be sent back to the same host and port as
+ * the originated packet. So any dynamically port can be assigned by the host
+ * implementing the auto discovery.
+ * The returning packet is cunstructed in the following way:
+ * <tt>product:mac address:activation code:firmware</tt>
+ *
+ * Example:<br>
+ * <tt>TellStickNet:ABCDEFGHIJKL:ABDCEFGHIJ:2</tt><br>
+ * Product: <tt>TellStick Net (TSNET)</tt><br>
+ * Mac address: <tt>AB:CD:EF:GH:IJ:KL</tt><br>
+ * Code for activation: <tt>ABCDEFGHIJ</tt><br>
+ * Firmware version: <tt>2</tt>
+ *
+ * Use the source ip-address to determine the address to the device.
+ */
