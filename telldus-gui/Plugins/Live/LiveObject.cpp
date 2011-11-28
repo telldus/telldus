@@ -13,7 +13,7 @@ public:
 	class Server;
 
 	QSslSocket *socket;
-	QTimer timer;
+	QTimer pingTimer, pongTimer;
 	bool registered;
 	QUrl registerUrl;
 	QString uuid, hashMethod;
@@ -46,8 +46,11 @@ LiveObject::LiveObject( QScriptEngine *engine, QObject * parent )
 	connect(d->socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(stateChanged(QAbstractSocket::SocketState)));
 	connect(d->socket, SIGNAL(sslErrors(const QList<QSslError> &)), this, SLOT(sslErrors(const QList<QSslError> &)));
 
-	d->timer.setInterval(120000); //Two minutes
-	connect(&d->timer, SIGNAL(timeout()), this, SLOT(pingServer()));
+	d->pingTimer.setInterval(120000); //Two minutes
+	d->pongTimer.setInterval(360000); //Six minutes
+	d->pongTimer.setSingleShot(true);
+	connect(&d->pingTimer, SIGNAL(timeout()), this, SLOT(pingServer()));
+	connect(&d->pongTimer, SIGNAL(timeout()), this, SLOT(pongTimeout()));
 
 	d->manager = new QNetworkAccessManager(this);
 	connect(d->manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(serverAssignReply(QNetworkReply*)));
@@ -107,6 +110,9 @@ void LiveObject::readyRead() {
 		return;
 	} else if (msg->name() == "disconnect") {
 		this->disconnect();
+	} else if (msg->name() == "pong") {
+		d->pongTimer.stop();
+		d->pongTimer.start();
 	} else if (msg->name() == "registered") {
 		d->registered = true;
 		emit registered(msg->argument(0));
@@ -170,7 +176,8 @@ void LiveObject::p_connected() {
 	QSettings settings;
 	d->uuid = settings.value("Live/UUID", "").toString();
 
-	d->timer.start(); //For pings
+	d->pingTimer.start(); //For pings
+	d->pongTimer.start(); //For pongs
 	LiveMessage msg("Register");
 
 	LiveMessageToken token;
@@ -188,7 +195,8 @@ void LiveObject::p_connected() {
 }
 
 void LiveObject::p_disconnected() {
-	d->timer.stop();
+	d->pingTimer.stop();
+	d->pongTimer.stop();
 	d->registered = false;
 }
 
@@ -315,4 +323,8 @@ LiveMessageToken LiveObject::generateVersionToken() {
 	token.dictVal["os-version"] = LiveMessageToken("");
 #endif
 	return token;
+}
+
+void LiveObject::pongTimeout() {
+	this->disconnect();
 }
