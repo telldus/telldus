@@ -46,7 +46,7 @@ LiveObject::LiveObject( QScriptEngine *engine, QObject * parent )
 	connect(d->socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(stateChanged(QAbstractSocket::SocketState)));
 	connect(d->socket, SIGNAL(sslErrors(const QList<QSslError> &)), this, SLOT(sslErrors(const QList<QSslError> &)));
 
-	d->timer.setInterval(60000); //Once a minute
+	d->timer.setInterval(120000); //Two minutes
 	connect(&d->timer, SIGNAL(timeout()), this, SLOT(pingServer()));
 
 	d->manager = new QNetworkAccessManager(this);
@@ -198,7 +198,7 @@ void LiveObject::error( QAbstractSocket::SocketError socketError ) {
 
 void LiveObject::stateChanged( QAbstractSocket::SocketState socketState ) {
 	if (socketState == QAbstractSocket::UnconnectedState) {
-		int timeout = rand() % 20 + 10; //Random timeout from 10-30s to avoid flooding the servers
+		int timeout = rand() % 40 + 10; //Random timeout from 10-50s to avoid flooding the servers
 		QTimer::singleShot(timeout*1000, this, SLOT(connectToServer()));
 		emit statusChanged("Reconnecting in " + QString::number(timeout) + " seconds...");
 	} else if (socketState == QAbstractSocket::ConnectingState) {
@@ -255,7 +255,7 @@ void LiveObject::serverAssignReply( QNetworkReply *r ) {
 		d->serverRefreshTime = QDateTime::currentDateTime();
 		QTimer::singleShot(0, this, SLOT(connectToServer()));
 	} else {
-		int timeout = rand() % 20 + 10; //Random timeout from 10-30s to avoid flooding the servers
+		int timeout = rand() % 40 + 10; //Random timeout from 10-50s to avoid flooding the servers
 		emit errorChanged("No servers found");
 		emit statusChanged("Retrying in " + QString::number(timeout) + " seconds...");
 		QTimer::singleShot(timeout * 1000, this, SLOT(connectToServer()));
