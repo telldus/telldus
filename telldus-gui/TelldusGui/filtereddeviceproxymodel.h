@@ -17,7 +17,7 @@ public:
 	void addFilter( const QString & );
 
 signals:
-	void setParameter(const QString &name, const QString &value);
+	void setParameter(const QString &name, const QString &value, const QString &protocol,  const QString &model);
 
 protected:
 	virtual bool filterAcceptsRow ( int source_row, const QModelIndex & source_parent ) const;

@@ -54,7 +54,7 @@ void FilteredDeviceProxyModel::addFilter( const QString &filter ) {
 			return; //don't scan sensors here 
 		}
 		else {
-			emit setParameter(name, value);
+			emit setParameter(name, value, protocol, model);
 		}
 	}
 	//Make sure we don't add a duplicate
