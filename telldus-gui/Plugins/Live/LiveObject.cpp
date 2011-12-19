@@ -263,7 +263,7 @@ void LiveObject::serverAssignReply( QNetworkReply *r ) {
 		d->serverRefreshTime = QDateTime::currentDateTime();
 		QTimer::singleShot(0, this, SLOT(connectToServer()));
 	} else {
-		int timeout = rand() % 40 + 10; //Random timeout from 10-50s to avoid flooding the servers
+		int timeout = rand() % 300 + 60; //Random timeout from 60-6min to avoid flooding the servers
 		emit errorChanged("No servers found");
 		emit statusChanged("Retrying in " + QString::number(timeout) + " seconds...");
 		QTimer::singleShot(timeout * 1000, this, SLOT(connectToServer()));
