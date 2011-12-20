@@ -1,8 +1,13 @@
 #include "ProtocolFineoffset.h"
 #include <stdlib.h>
-#include <stdint.h>
 #include <sstream>
 #include <iomanip>
+#ifdef _MSC_VER
+typedef unsigned __int8 uint8_t;
+typedef unsigned __int16 uint16_t;
+#else
+#include <stdint.h>
+#endif
 
 std::string ProtocolFineoffset::decodeData(ControllerMessage &dataMsg)
 {
