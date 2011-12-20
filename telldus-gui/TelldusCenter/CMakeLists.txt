@@ -65,10 +65,6 @@ ADD_DEFINITIONS( -DVERSION=${DISPLAYED_VERSION} )
 SET( telldus-center_TARGET	TelldusCenter )
 
 IF (APPLE) #### Mac OS X ####
-	FIND_PACKAGE(Qt4 COMPONENTS QtUiTools REQUIRED)
-	LIST(APPEND telldus-center_LIBRARIES
-		${QT_QTUITOOLS_LIBRARY}
-	)
 	INCLUDE_DIRECTORIES(
 		/usr/include/QtUiTools
 	)
