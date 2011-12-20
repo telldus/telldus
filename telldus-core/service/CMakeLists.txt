@@ -34,6 +34,8 @@ SET( telldus-service_protocol_SRCS
 	ProtocolComen.cpp
 	ProtocolEverflourish.h
 	ProtocolEverflourish.cpp
+	ProtocolFineoffset.h
+	ProtocolFineoffset.cpp
 	ProtocolFuhaote.h
 	ProtocolFuhaote.cpp
 	ProtocolGroup.h
