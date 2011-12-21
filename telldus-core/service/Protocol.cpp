@@ -11,6 +11,7 @@
 #include "ProtocolHasta.h"
 #include "ProtocolIkea.h"
 #include "ProtocolNexa.h"
+#include "ProtocolOregon.h"
 #include "ProtocolRisingSun.h"
 #include "ProtocolSartano.h"
 #include "ProtocolScene.h"
@@ -234,6 +235,12 @@ std::list<std::string> Protocol::decodeData(const std::string &fullData) {
 	}
 	else if(TelldusCore::comparei(dataMsg.protocol(), L"fineoffset") ) {
 		decoded = ProtocolFineoffset::decodeData(dataMsg);
+		if (decoded != "") {
+			retval.push_back(decoded);
+		}
+	}
+	else if(TelldusCore::comparei(dataMsg.protocol(), L"oregon") ) {
+		decoded = ProtocolOregon::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
