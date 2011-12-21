@@ -44,6 +44,8 @@ SET( telldus-service_protocol_SRCS
 	ProtocolHasta.cpp
 	ProtocolIkea.h
 	ProtocolIkea.cpp
+	ProtocolMandolyn.h
+	ProtocolMandolyn.cpp
 	ProtocolNexa.h
 	ProtocolNexa.cpp
 	ProtocolOregon.h

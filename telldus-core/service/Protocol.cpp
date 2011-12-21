@@ -10,6 +10,7 @@
 #include "ProtocolGroup.h"
 #include "ProtocolHasta.h"
 #include "ProtocolIkea.h"
+#include "ProtocolMandolyn.h"
 #include "ProtocolNexa.h"
 #include "ProtocolOregon.h"
 #include "ProtocolRisingSun.h"
@@ -235,6 +236,12 @@ std::list<std::string> Protocol::decodeData(const std::string &fullData) {
 	}
 	else if(TelldusCore::comparei(dataMsg.protocol(), L"fineoffset") ) {
 		decoded = ProtocolFineoffset::decodeData(dataMsg);
+		if (decoded != "") {
+			retval.push_back(decoded);
+		}
+	}
+	else if(TelldusCore::comparei(dataMsg.protocol(), L"mandolyn") ) {
+		decoded = ProtocolMandolyn::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
