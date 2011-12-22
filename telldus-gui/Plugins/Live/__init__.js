@@ -19,6 +19,7 @@ com.telldus.live = function() {
 		socket.connectToServer();
 		com.telldus.core.deviceEvent.connect(deviceEvent);
 		com.telldus.core.deviceChange.connect(sendDevicesReport);
+		configUI.findChild('registrationLink').visible = false;
 	}
 
 	function notRegistered() {
@@ -28,6 +29,7 @@ com.telldus.live = function() {
 			menuId = com.telldus.systray.addMenuItem( qsTr("Activate Telldus Live!") );
 			com.telldus.systray.menuItem(menuId).triggered.connect(socket.activate);
 		}
+		registrationLinkVisible(true);
 	}
 
 	function deviceEvent(deviceId, method, data) {
@@ -63,7 +65,15 @@ com.telldus.live = function() {
 		}
 		supportedMethods = msg.getInt('supportedMethods');
 		isRegistered = true;
+		registrationLinkVisible(false);
 		sendDevicesReport();
+	}
+
+	function registrationLinkVisible(visibleParam){
+		configUI.findChild('registrationLink').visible = visibleParam;
+		if(visibleParam){
+			configUI.findChild('registrationLink').clicked.connect(socket.activate);
+		}
 	}
 
 	function sendDevicesReport() {
