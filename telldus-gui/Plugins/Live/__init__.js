@@ -19,6 +19,7 @@ com.telldus.live = function() {
 		socket.connectToServer();
 		com.telldus.core.deviceEvent.connect(deviceEvent);
 		com.telldus.core.deviceChange.connect(sendDevicesReport);
+		configUI.findChild('registrationLink').clicked.connect(socket.activate);
 		configUI.findChild('registrationLink').visible = false;
 	}
 
@@ -71,9 +72,6 @@ com.telldus.live = function() {
 
 	function registrationLinkVisible(visibleParam){
 		configUI.findChild('registrationLink').visible = visibleParam;
-		if(visibleParam){
-			configUI.findChild('registrationLink').clicked.connect(socket.activate);
-		}
 	}
 
 	function sendDevicesReport() {
