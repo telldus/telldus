@@ -19,6 +19,7 @@ SET( telldus-service_SRCS
 	Device.cpp
 	DeviceManager.cpp
 	Event.cpp
+	Log.cpp
 	Sensor.cpp
 	Settings.cpp
 	TelldusMain.cpp
@@ -78,6 +79,7 @@ SET( telldus-service_HDRS
 	DeviceManager.h
 	Event.h
 	EventHandler.h
+	Log.h
 	Sensor.h
 	Settings.h
 	TelldusMain.h
@@ -144,6 +146,7 @@ ELSE (APPLE) #### Linux ####
 	SET(DEFAULT_FTDI_ENGINE "libftdi")
 	FIND_LIBRARY(CONFUSE_LIBRARY confuse)
 	ADD_DEFINITIONS( -D_CONFUSE )
+	ADD_DEFINITIONS( -D_LINUX )
 
 	SET( telldus-service_TARGET	telldusd )
 	LIST(APPEND telldus-service_SRCS
