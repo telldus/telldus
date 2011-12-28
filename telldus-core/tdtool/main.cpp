@@ -2,6 +2,7 @@
 #include <getopt.h>
 #include <stdlib.h>
 #include <string.h>
+#include <ctime>
 #include "../client/telldus-core.h"
 
 const int SUPPORTED_METHODS =
@@ -21,7 +22,7 @@ void print_usage( char *name ) {
 	printf("                      [ --raw input ]\n");
 	printf("\n");
 	printf("       --list (-l short option)\n");
-	printf("             List currently configured devices.\n");
+	printf("             List currently configured devices and all discovered sensors.\n");
 	printf("\n");
 	printf("       --help (-h short option)\n");
 	printf("             Shows this screen.\n");
@@ -114,6 +115,46 @@ void list_devices() {
 	while (i < intNum) {
 		print_device( i );
 		i++;
+	}
+
+	int DATA_LENGTH = 20;
+	char protocol[DATA_LENGTH], model[DATA_LENGTH];
+	int sensorId = 0, dataTypes = 0;
+
+	int sensorStatus = tdSensor(protocol, DATA_LENGTH, model, DATA_LENGTH, &sensorId, &dataTypes);
+	if(sensorStatus == 0){
+		printf("\nSENSORS:\n%-20s\t%-20s\t%-5s\t%-5s\t%-8s\t%-20s\n", "PROTOCOL", "MODEL", "ID", "TEMP", "HUMIDITY", "LAST UPDATED");
+	}
+	while(sensorStatus == 0){
+		sensorStatus = tdSensor(protocol, DATA_LENGTH, model, DATA_LENGTH, &sensorId, &dataTypes);
+
+		char tempvalue[DATA_LENGTH];
+		tempvalue[0] = 0;
+		char humidityvalue[DATA_LENGTH];
+		humidityvalue[0] = 0;
+		char timeBuf[80];
+		time_t timestamp = 0;
+
+		if (dataTypes & TELLSTICK_TEMPERATURE) {
+		  tdSensorValue(protocol, model, sensorId, TELLSTICK_TEMPERATURE, tempvalue, DATA_LENGTH, (int *)&timestamp);
+		  strcat(tempvalue, "°");
+		  strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
+		}
+
+		if (dataTypes & TELLSTICK_HUMIDITY) {
+		  tdSensorValue(protocol, model, sensorId, TELLSTICK_HUMIDITY, humidityvalue, DATA_LENGTH, (int *)&timestamp);
+		  strcat(humidityvalue, "%");
+		  strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
+		}
+		printf("%-20s\t%-20s\t%-5i\t%-5s\t%-8s\t%-20s\n", protocol, model, sensorId, tempvalue, humidityvalue, timeBuf);
+
+		printf("\n");
+	}
+	if(sensorStatus != TELLSTICK_ERROR_DEVICE_NOT_FOUND){
+		char *errorString = tdGetErrorString(sensorStatus);
+		fprintf(stderr, "Error fetching sensors: %s\n", errorString);
+		tdReleaseString(errorString);
+		return;
 	}
 }
 
