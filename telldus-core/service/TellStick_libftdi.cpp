@@ -18,6 +18,7 @@
 #include <ftdi.h>
 #include "Thread.h"
 #include "Mutex.h"
+#include "Log.h"
 #include "Strings.h"
 #include "common.h"
 

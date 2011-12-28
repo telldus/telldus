@@ -2,6 +2,7 @@
 #define STRING_H
 
 #include <string>
+#include <stdarg.h>
 
 namespace TelldusCore {
 	std::wstring charToWstring(const char *value);

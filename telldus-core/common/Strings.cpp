@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <string.h>
+#include <stdio.h>
 
 #ifdef _WINDOWS
 #include <windows.h>
