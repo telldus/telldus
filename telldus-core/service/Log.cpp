@@ -145,7 +145,7 @@ void Log::message(Log::LogLevel logLevel, const char *format, va_list ap) const 
 		}
 #elif defined(_WINDOWS)
 		LPWSTR pInsertStrings[2] = {NULL, NULL};
-		std::wstring str = TelldusCore::charToWstring(format);
+		std::wstring str = TelldusCore::charToWstring(TelldusCore::sformatf(format, ap).c_str());
 		pInsertStrings[0] = (LPWSTR)str.c_str();
 
 		switch (logLevel) {
