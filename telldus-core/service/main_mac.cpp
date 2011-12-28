@@ -1,16 +1,16 @@
 #include "TelldusMain.h"
+#include "Log.h"
 #include <signal.h>
-#include <stdio.h>
 
 TelldusMain tm;
 
 void shutdownHandler(int onSignal) {
-	printf("Shutting down\n");
+	Log::notice("Shutting down");
 	tm.stop();
 }
 
 void sigpipeHandler(int onSignal) {
-	printf("SIGPIPE received\n");
+	Log::notice("SIGPIPE received");
 }
 
 int main(int argc, char **argv) {
@@ -19,7 +19,10 @@ int main(int argc, char **argv) {
 	signal(SIGINT, shutdownHandler);
 	signal(SIGPIPE, sigpipeHandler);
 
+	Log::notice("telldusd started");
 	tm.start();
-	printf("telldusd stopped gracefully\n");
+	Log::notice("telldusd stopped gracefully");
+
+	Log::destroy();
 	return 0;
 }

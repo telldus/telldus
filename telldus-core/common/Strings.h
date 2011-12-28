@@ -14,6 +14,9 @@ namespace TelldusCore {
 	std::string wideToString(const std::wstring &input);
 
 	int wideToInteger(const std::wstring &input);
+
+	std::string formatf(const char *format, ...);
+	std::string sformatf(const char *format, va_list ap);
 }
 
 #endif //STRING_H
