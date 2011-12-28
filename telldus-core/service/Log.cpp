@@ -30,6 +30,8 @@ Log::Log()
 #if defined(_LINUX)
 	setlogmask(LOG_UPTO(LOG_INFO));
 	openlog("telldusd", LOG_CONS, LOG_USER);
+#elif defined(_MACOSX)
+	d->logOutput = Log::StdOut;
 #elif defined(_WINDOWS)
 	//Add ourselves to the registy
 	HKEY hRegKey = NULL;
@@ -111,6 +113,10 @@ void Log::setDebug() {
 }
 
 void Log::setLogOutput(LogOutput logOutput) {
+#ifdef _MACOSX
+	//Always stdout
+	return;
+#endif
 	Log *log = Log::instance();
 	log->d->logOutput = logOutput;
 }
