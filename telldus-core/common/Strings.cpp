@@ -158,3 +158,48 @@ std::string TelldusCore::wideToString(const std::wstring &input) {
 	return retval;
 #endif
 }
+
+std::string TelldusCore::formatf(const char *format, ...) {
+	va_list ap;
+	va_start(ap, format);
+	std::string retval = sformatf(format, ap);
+	va_end(ap);
+	return retval;
+}
+
+std::string TelldusCore::sformatf(const char *format, va_list ap) {
+	//This code is based on code from the Linux man-pages project (man vsprintf)
+	int n;
+	int size = 100;     /* Guess we need no more than 100 bytes. */
+	char *p, *np;
+
+	if ((p = (char*)malloc(size)) == NULL) {
+		return "";
+	}
+
+	while (1) {
+		/* Try to print in the allocated space. */
+		n = vsnprintf(p, size, format, ap);
+
+		/* If that worked, return the string. */
+		if (n > -1 && n < size) {
+			std::string retval(p);
+			free(p);
+			return retval;
+		}
+
+		/* Else try again with more space. */
+
+		if (n > -1) {   /* glibc 2.1 */
+			size = n+1; /* precisely what is needed */
+		} else {        /* glibc 2.0 */
+			size *= 2;  /* twice the old size */
+		}
+		if ((np = (char *)realloc (p, size)) == NULL) {
+			free(p);
+            return "";
+		} else {
+			p = np;
+		}
+	}
+}
