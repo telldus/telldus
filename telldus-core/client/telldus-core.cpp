@@ -82,6 +82,10 @@ using namespace TelldusCore;
  * Error code. The client library received a response from the service
  * it did not understand.
  *
+ * @def TELLSTICK_ERROR_SYNTAX
+ * Error code. Input/command could not be parsed or didn't follow
+ * input rules.
+ *
  * @def TELLSTICK_ERROR_UNKNOWN
  * Error code. An unkown error has occurred.
  */
@@ -479,10 +483,14 @@ int WINAPI tdMethods(int id, int methodsSupported){
  * @sa TELLSTICK_ERROR_PERMISSION_DENIED
  * @sa TELLSTICK_ERROR_DEVICE_NOT_FOUND
  * @sa TELLSTICK_ERROR_METHOD_NOT_SUPPORTED
+ * @sa TELLSTICK_ERROR_COMMUNICATION
+ * @sa TELLSTICK_ERROR_CONNECTING_SERVICE
+ * @sa TELLSTICK_ERROR_UNKNOWN_RESPONSE
+ * @sa TELLSTICK_ERROR_SYNTAX
  * @sa TELLSTICK_ERROR_UNKNOWN
  */
 char * WINAPI tdGetErrorString(int intErrorNo) {
-	const int numResponses = 8;
+	const int numResponses = 9;
 	const char *responses[numResponses] = {
 		"Success",
 		"TellStick not found",
@@ -491,7 +499,8 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
 		"The method you tried to use is not supported by the device",
 		"An error occurred while communicating with TellStick",
 		"Could not connect to the Telldus Service",
-		"Received an unknown response"
+		"Received an unknown response",
+		"Syntax error"
 	};
 	std::string strReturn;
 	intErrorNo = abs(intErrorNo); //We don't use negative values here.
