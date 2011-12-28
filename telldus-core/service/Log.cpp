@@ -11,9 +11,10 @@
 
 class Log::PrivateData {
 public:
-	PrivateData() : logOutput(Log::System) {}
+	PrivateData() : logOutput(Log::System), debug(false) {}
 
 	Log::LogOutput logOutput;
+	bool debug;
 
 	static Log *instance;
 #ifdef _WINDOWS
@@ -104,12 +105,20 @@ void Log::error(const char *fmt, ...) {
 	va_end(ap);
 }
 
+void Log::setDebug() {
+	Log *log = Log::instance();
+	log->d->debug = true;
+}
+
 void Log::setLogOutput(LogOutput logOutput) {
 	Log *log = Log::instance();
 	log->d->logOutput = logOutput;
 }
 
 void Log::message(Log::LogLevel logLevel, const char *format, va_list ap) const {
+	if (logLevel == Debug && d->debug == false) {
+		return;
+	}
 	if (d->logOutput == StdOut) {
 		FILE *stream = stdout;
 		if (logLevel == Warning || logLevel == Error) {

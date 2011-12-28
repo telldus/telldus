@@ -112,6 +112,13 @@ DWORD WINAPI TelldusWinService::serviceControlHandler( DWORD controlCode, DWORD 
 void WINAPI TelldusWinService::serviceMain( DWORD argc, TCHAR* argv[] ) {
 	TelldusWinService instance;
 
+	//Enable debug if we hade this supplied
+	for(unsigned int i = 1; i < argc; ++i) {
+		if (wcscmp(argv[i], L"--debug") == 0) {
+			Log::setDebug();
+		}
+	}
+
 	// initialise service status
 	instance.serviceStatus.dwServiceType = SERVICE_WIN32;
 	instance.serviceStatus.dwCurrentState = SERVICE_STOPPED;

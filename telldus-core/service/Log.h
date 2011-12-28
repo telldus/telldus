@@ -16,6 +16,7 @@ public:
 	static void warning(const char *fmt, ...);
 	static void error(const char *fmt, ...);
 
+	static void setDebug();
 	static void setLogOutput(LogOutput logOutput);
 
 protected:
