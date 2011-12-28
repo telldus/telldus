@@ -137,10 +137,21 @@ ELSEIF (WIN32) #### Windows ####
 		main_win.cpp
 		SettingsWinRegistry.cpp
 		TelldusWinService_win.cpp
+		Messages.mc
+		${CMAKE_CURRENT_BINARY_DIR}/Messages.rc
+		${CMAKE_CURRENT_BINARY_DIR}/Messages.h
 	)
 	LIST(APPEND telldus-service_HDRS
 		TelldusWinService_win.h
 	)
+	ADD_CUSTOM_COMMAND(
+		OUTPUT Messages.rc Messages.h
+		COMMAND mc.exe -u -r ${CMAKE_CURRENT_BINARY_DIR} -h ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/Messages.mc
+		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Messages.mc
+		DEPENDS Messages.rc
+		COMMENT "Compiling Messages Resource"
+	)
+	INCLUDE_DIRECTORIES( ${CMAKE_CURRENT_BINARY_DIR} )
 
 ELSE (APPLE) #### Linux ####
 	SET(DEFAULT_FTDI_ENGINE "libftdi")

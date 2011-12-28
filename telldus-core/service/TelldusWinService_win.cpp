@@ -1,5 +1,6 @@
 #include "TelldusWinService_win.h"
 #include "TelldusMain.h"
+#include "Log.h"
 
 #include <Dbt.h>
 #include <string>
@@ -140,8 +141,13 @@ void WINAPI TelldusWinService::serviceMain( DWORD argc, TCHAR* argv[] ) {
 		devInterface.dbcc_classguid = GUID_DEVINTERFACE_USBRAW;
 		HDEVNOTIFY deviceNotificationHandle = RegisterDeviceNotificationW(instance.serviceStatusHandle, &devInterface, DEVICE_NOTIFY_SERVICE_HANDLE);
 
+		Log::notice("TelldusService started");
+
 		//Start our main-loop
 		instance.tm->start();
+
+		Log::notice("TelldusService stopping");
+		Log::destroy();
 		
 		// service was stopped
 		instance.serviceStatus.dwCurrentState = SERVICE_STOP_PENDING;
