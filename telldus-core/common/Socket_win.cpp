@@ -93,42 +93,53 @@ std::wstring Socket::read(int timeout){
 	d->readEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
 	oOverlap.hEvent = d->readEvent;
 	BOOL fSuccess = false;
+	std::wstring returnString;
+	bool moreData = true;
 
-	memset(&buf, 0, BUFSIZE);
+	while(moreData){
+		moreData = false;
+		memset(&buf, 0, sizeof(buf));
 
-	ReadFile( d->hPipe, &buf, sizeof(wchar_t)*BUFSIZE, &cbBytesRead, &oOverlap);
-
-	result = WaitForSingleObject(oOverlap.hEvent, timeout);
-	
-	if(!d->running){
-		CancelIo(d->hPipe);
-		CloseHandle(d->readEvent);
-		//debuglog(1, "Not running");
-		return L"";
-	}
-
-	if (result == WAIT_TIMEOUT) {
-		CancelIo(d->hPipe);
-		CloseHandle(d->readEvent);
-		//debuglog(1, "Wait timeout");
-		return L"";
-	}
-	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &cbBytesRead, false);
-	if (!fSuccess) {
-		DWORD err = GetLastError();
-		//debuglog(result, "This then?");
-		//debuglog(1, "Unsuccessful");
+		ReadFile( d->hPipe, &buf, sizeof(buf)-sizeof(wchar_t), &cbBytesRead, &oOverlap);
 		
-		if (err == ERROR_BROKEN_PIPE) {
-			//debuglog(1, "Broken pipe");
-			d->connected = false;
+		result = WaitForSingleObject(oOverlap.hEvent, timeout);
+		
+		if(!d->running){
+			CancelIo(d->hPipe);
+			CloseHandle(d->readEvent);
+			//debuglog(1, "Not running");
+			return L"";
 		}
-		buf[0] = 0;
-	}
 
+		if (result == WAIT_TIMEOUT) {
+			CancelIo(d->hPipe);
+			CloseHandle(d->readEvent);
+			//debuglog(1, "Wait timeout");
+			return L"";
+		}
+		fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &cbBytesRead, false);
+	
+		if (!fSuccess) {
+			DWORD err = GetLastError();
+
+			//debuglog(result, "This then?");
+			//debuglog(1, "Unsuccessful");
+			if(err == ERROR_MORE_DATA){
+				moreData = true;
+			}
+			else{
+				buf[0] = 0;
+			}
+			if (err == ERROR_BROKEN_PIPE) {
+				//debuglog(1, "Broken pipe");
+				d->connected = false;
+			}
+		}
+		returnString.append(buf);
+	}
 	CancelIo(d->hPipe);
 	CloseHandle(d->readEvent);
-	return buf;
+	return returnString;
 }
 
 void Socket::write(const std::wstring &msg){
