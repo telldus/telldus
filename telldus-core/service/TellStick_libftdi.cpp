@@ -54,6 +54,7 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 	ftdi_init(&d->ftHandle);
 	ftdi_set_interface(&d->ftHandle, INTERFACE_ANY);
 
+	Log::notice("Connecting to TellStick (%X/%X) with serial %s", d->vid, d->pid, d->serial.c_str());
 	int ret = ftdi_usb_open_desc(&d->ftHandle, td.vid, td.pid, NULL, td.serial.c_str());
 	if (ret < 0) {
 		ftdi_deinit(&d->ftHandle);
@@ -71,10 +72,13 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 			this->setBaud(4800);
 		}
 		this->start();
+	} else {
+		Log::warning("Failed to open TellStick");
 	}
 }
 
 TellStick::~TellStick() {
+	Log::warning("Disconnected TellStick (%X/%X) with serial %s", d->vid, d->pid, d->serial.c_str());
 	if (d->running) {
 		stop();
 	}

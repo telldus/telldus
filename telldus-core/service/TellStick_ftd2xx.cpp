@@ -12,6 +12,7 @@
 #include "TellStick.h"
 #include "Mutex.h"
 #include "Strings.h"
+#include "Log.h"
 #include "../client/telldus-core.h"
 #include <string.h>
 #include <stdlib.h>
@@ -61,6 +62,7 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 	strcpy(tempSerial, td.serial.c_str());
 	FT_SetVIDPID(td.vid, td.pid);
 #endif
+	Log::notice("Connecting to TellStick (%X/%X) with serial %s", d->vid, d->pid, d->serial.c_str());
 	FT_STATUS ftStatus = FT_OpenEx(tempSerial, FT_OPEN_BY_SERIAL_NUMBER, &d->ftHandle);
 	delete tempSerial;
 	if (ftStatus == FT_OK) {
@@ -76,10 +78,13 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 			setBaud(4800);
 		}
 		this->start();
+	} else {
+		Log::warning("Failed to open TellStick");
 	}
 }
 
 TellStick::~TellStick() {
+	Log::warning("Disconnected TellStick (%X/%X) with serial %s", d->vid, d->pid, d->serial.c_str());
 	if (d->running) {
 		TelldusCore::MutexLocker locker(&d->mutex);
 		d->running = false;
