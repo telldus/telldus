@@ -1,5 +1,4 @@
 #include "Socket.h"
-#include "common.h"
 
 #include <windows.h>
 #include <AccCtrl.h>
@@ -107,14 +106,12 @@ std::wstring Socket::read(int timeout){
 		if(!d->running){
 			CancelIo(d->hPipe);
 			CloseHandle(d->readEvent);
-			//debuglog(1, "Not running");
 			return L"";
 		}
 
 		if (result == WAIT_TIMEOUT) {
 			CancelIo(d->hPipe);
 			CloseHandle(d->readEvent);
-			//debuglog(1, "Wait timeout");
 			return L"";
 		}
 		fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &cbBytesRead, false);
@@ -122,8 +119,6 @@ std::wstring Socket::read(int timeout){
 		if (!fSuccess) {
 			DWORD err = GetLastError();
 
-			//debuglog(result, "This then?");
-			//debuglog(1, "Unsuccessful");
 			if(err == ERROR_MORE_DATA){
 				moreData = true;
 			}
@@ -131,7 +126,6 @@ std::wstring Socket::read(int timeout){
 				buf[0] = 0;
 			}
 			if (err == ERROR_BROKEN_PIPE) {
-				//debuglog(1, "Broken pipe");
 				d->connected = false;
 			}
 		}
@@ -161,7 +155,6 @@ void Socket::write(const std::wstring &msg){
 		CancelIo(d->hPipe);
 		CloseHandle(writeEvent);
 		d->connected = false;
-		//debuglog(2, "Wait timeout");
 		return;
 	}
 	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &bytesWritten, TRUE);
@@ -169,7 +162,6 @@ void Socket::write(const std::wstring &msg){
 	if (!fSuccess) {
 		CancelIo(d->hPipe);
 		d->connected = false;
-		//debuglog(2, "Unsuccessful");
 		return;	
 	}
 }

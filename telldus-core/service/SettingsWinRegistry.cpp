@@ -95,9 +95,6 @@ int Settings::addDevice() {
 	DWORD dwDisp;
 	intDeviceId = getNextDeviceId();
 
-	//std::wostringstream ssRegPath; 
-	//ssRegPath << d->strRegPathDevice << intDeviceId;
-	//std::wstring strCompleteRegPath = ssRegPath.str();
 	std::wstring strCompleteRegPath = d->strRegPathDevice;
 	strCompleteRegPath.append(TelldusCore::intToWstring(intDeviceId));
 		
@@ -126,7 +123,7 @@ int Settings::getNextDeviceId() const {
 		DWORD dwLength;
 		DWORD nResult(0);
 
-		long lngStatus = RegQueryValueEx(hk, L"LastUsedId", NULL, NULL, reinterpret_cast<LPBYTE>(&nResult), &dwLength); //(LPBYTE)Buff, &dwLength);
+		long lngStatus = RegQueryValueEx(hk, L"LastUsedId", NULL, NULL, reinterpret_cast<LPBYTE>(&nResult), &dwLength);
 
 		if(lngStatus == ERROR_SUCCESS){
 			intReturn = nResult + 1;
@@ -147,9 +144,6 @@ int Settings::getNextDeviceId() const {
 int Settings::removeDevice(int intDeviceId) {
 	TelldusCore::MutexLocker locker(&mutex);
 	
-	//std::wostringstream ssRegPath; 
-	//ssRegPath << d->strRegPathDevice << intDeviceId;
-	//std::wstring strCompleteRegPath = ssRegPath.str();
 	std::wstring strCompleteRegPath = d->strRegPathDevice;
 	strCompleteRegPath.append(TelldusCore::intToWstring(intDeviceId));
 
@@ -167,9 +161,6 @@ std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &nam
 	std::wstring strReturn;
 	HKEY hk;
 
-	//std::wostringstream ssRegPath; 
-	//ssRegPath << d->strRegPathDevice << intDeviceId;
-	//std::wstring strCompleteRegPath = ssRegPath.str();
 	std::wstring strCompleteRegPath = d->strRegPathDevice;
 	strCompleteRegPath.append(TelldusCore::intToWstring(intDeviceId));
 	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &hk);
@@ -199,16 +190,9 @@ int Settings::setStringSetting(int intDeviceId, const std::wstring &name, const 
 	HKEY hk;
 	int ret = TELLSTICK_SUCCESS;
 		
-	//std::wostringstream ssRegPath; 
-	//ssRegPath << d->strRegPathDevice << intDeviceId;
-	//std::wstring strCompleteRegPath = ssRegPath.str();
-	//debuglog(intDeviceId, "Device id");
 	std::wstring bla = TelldusCore::intToWstring(intDeviceId);
-	//debuglog(888, TelldusCore::wideToString(bla));
-	//debuglog(555, TelldusCore::wideToString(d->strRegPathDevice));
 	std::wstring strCompleteRegPath = d->strRegPathDevice;
 	strCompleteRegPath.append(bla);
-	//debuglog(999, TelldusCore::wideToString(strCompleteRegPath));
 	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_WRITE, &hk);
 				
 	if (lnExists == ERROR_SUCCESS){
@@ -238,9 +222,6 @@ int Settings::setIntSetting(int intDeviceId, const std::wstring &name, int value
 	int intReturn = TELLSTICK_ERROR_UNKNOWN;
 	HKEY hk;
 
-	//std::wostringstream ssRegPath; 
-	//ssRegPath << d->strRegPathDevice << intDeviceId;
-	//std::wstring strCompleteRegPath = ssRegPath.str();
 	std::wstring strCompleteRegPath =  d->strRegPathDevice;
 	strCompleteRegPath.append(TelldusCore::intToWstring(intDeviceId));
 	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_WRITE, &hk);

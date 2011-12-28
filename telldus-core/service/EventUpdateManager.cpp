@@ -4,7 +4,6 @@
 #include "EventHandler.h"
 #include "Message.h"
 #include "Socket.h"
-//#include "common.h" //debug
 
 #include <list>
 #include <memory>
@@ -117,6 +116,4 @@ void EventUpdateManager::sendMessageToClients(EventUpdateData *data){
 			it = d->clients.erase(it);
 		}
 	}
-	//debuglog(connected, " - number of clients");
-	//debuglog(temp2, " - number of clients total");
 }
