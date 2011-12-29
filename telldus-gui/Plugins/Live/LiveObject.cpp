@@ -105,14 +105,13 @@ void LiveObject::readyRead() {
 		//qDebug() << "HASH mismatch!" << msg->name();
 		return;
 	}
+	d->pongTimer.stop();
+	d->pongTimer.start();
 
 	if (msg->name() == "") {
 		return;
 	} else if (msg->name() == "disconnect") {
 		this->disconnect();
-	} else if (msg->name() == "pong") {
-		d->pongTimer.stop();
-		d->pongTimer.start();
 	} else if (msg->name() == "registered") {
 		d->registered = true;
 		emit registered(msg->argument(0));
