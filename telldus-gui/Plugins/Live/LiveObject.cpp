@@ -127,6 +127,14 @@ void LiveObject::readyRead() {
 		s.setValue("Live/UUID", d->uuid);
 		emit notRegistered();
 		emit errorChanged("Not registered");
+	} else if (msg->name() == "command") {
+		if (msg->arg(0).valueType == LiveMessageToken::Dictionary && msg->arg(0).dictVal.contains("ACK")) {
+			int ack = msg->arg(0).dictVal["ACK"].intVal;
+			LiveMessage msg("ACK");
+			msg.append(ack);
+			this->sendMessage(msg);
+		}
+		emit messageReceived(msg.data());
 	} else {
 		emit messageReceived(msg.data());
 	}
@@ -137,7 +145,7 @@ void LiveObject::refreshServerList() {
 	emit statusChanged("Discover servers");
 	d->serverList.clear();
 	QUrl url(TELLDUS_LIVE_URI);
-	QPair<QString, QString> version("protocolVersion", "1");
+	QPair<QString, QString> version("protocolVersion", "2");
 	QList<QPair<QString, QString> > query;
 	query.append(version);
 	url.setQueryItems(query);
@@ -286,7 +294,7 @@ QByteArray LiveObject::signatureForMessage( const QByteArray &message ) {
 LiveMessageToken LiveObject::generateVersionToken() {
 	LiveMessageToken token;
 	token.valueType = LiveMessageToken::Dictionary;
-	token.dictVal["protocol"] = LiveMessageToken("1");
+	token.dictVal["protocol"] = LiveMessageToken(2);
 	token.dictVal["version"] = LiveMessageToken(TELLDUS_CENTER_VERSION);
 #if defined(Q_WS_WIN)
 	token.dictVal["os"] = LiveMessageToken("windows");

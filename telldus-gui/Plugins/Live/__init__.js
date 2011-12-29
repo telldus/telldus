@@ -45,16 +45,22 @@ com.telldus.live = function() {
 	}
 
 	function messageReceived(msg) {
-		if (msg.name() == "turnon") {
-			com.telldus.core.turnOn( msg.argument(0).intVal() );
-		} else if (msg.name() == "turnoff") {
-			com.telldus.core.turnOff( msg.argument(0).intVal() );
-		} else if (msg.name() == "dim") {
-			com.telldus.core.dim( msg.argument(0).intVal(), msg.argument(1).intVal() );
-		} else if (msg.name() == "bell") {
-			com.telldus.core.bell( msg.argument(0).intVal() );
+		if (msg.name() == "command") {
+			handleCommand(msg.argument(0));
 		}
-		print("Received: " + msg.name());
+	}
+
+	function handleCommand(msg) {
+		var action = msg.getString('action');
+		if (action == "turnon") {
+			com.telldus.core.turnOn( msg.getInt('id') );
+		} else if (action == "turnoff") {
+			com.telldus.core.turnOff( msg.getInt('id') );
+		} else if (action == "dim") {
+			com.telldus.core.dim( msg.getInt('id'), msg.getInt('value') );
+		} else if (action == "bell") {
+			com.telldus.core.bell( msg.getInt('id') );
+		}
 	}
 
 	function registered(msg) {
