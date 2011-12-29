@@ -12,6 +12,7 @@ public:
 
 	LiveMessageToken();
 	LiveMessageToken(const QString &value);
+	LiveMessageToken(int value);
 	QByteArray toByteArray() const;
 	static LiveMessageToken parseToken(const QByteArray &string, int* start);
 

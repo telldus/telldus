@@ -11,6 +11,11 @@ LiveMessageToken::LiveMessageToken(const QString &value) {
 	stringVal = value;
 }
 
+LiveMessageToken::LiveMessageToken(int value) {
+	valueType = Int;
+	intVal = value;
+}
+
 QByteArray LiveMessageToken::toByteArray() const {
 	if (valueType == Int) {
 		return QString("i%1s").arg(intVal, 0, 16).toUtf8();
