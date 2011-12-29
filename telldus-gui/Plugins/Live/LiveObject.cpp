@@ -161,6 +161,8 @@ void LiveObject::sendMessage(const LiveMessage &message) {
 
 	d->socket->write(msg.toByteArray());
 	d->socket->flush();
+	d->pingTimer.stop();
+	d->pingTimer.start();
 }
 
 void LiveObject::sendMessage(LiveMessage *message) {
