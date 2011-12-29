@@ -198,6 +198,10 @@ void LiveObject::p_connected() {
 void LiveObject::p_disconnected() {
 	d->pingTimer.stop();
 	d->pongTimer.stop();
+	if (d->registered) {
+		//Clear the registered status
+		emit errorChanged("Disconnected from server");
+	}
 	d->registered = false;
 }
 
@@ -212,6 +216,7 @@ void LiveObject::stateChanged( QAbstractSocket::SocketState socketState ) {
 		emit statusChanged("Reconnecting in " + QString::number(timeout) + " seconds...");
 	} else if (socketState == QAbstractSocket::ConnectingState) {
 		emit statusChanged("Connecting...");
+		emit errorChanged("");
 	}
 }
 
