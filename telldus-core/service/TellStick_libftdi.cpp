@@ -197,7 +197,7 @@ int TellStick::send( const std::string &strMessage ) {
 
 	delete[] tempMessage;
 
-	int retrycnt = 200;
+	int retrycnt = 500;
 	unsigned char in;
 	while(c && --retrycnt) {
 		ret = ftdi_read_data( &d->ftHandle, &in, 1);
