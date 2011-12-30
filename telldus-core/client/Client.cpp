@@ -182,6 +182,7 @@ void Client::run(){
 		}
 
 		std::wstring clientMessage = d->eventSocket.read(5000);	//testing 5 second timeout
+
 		while(clientMessage != L""){
 			//a message arrived
 			std::wstring type = Message::takeString(&clientMessage);
@@ -282,16 +283,41 @@ void Client::cleanupCallbacks() {
 }
 
 std::wstring Client::sendToService(const Message &msg) {
-	Socket s;
-	s.connect(L"TelldusClient");
-	if (!s.isConnected()) { //Connection failed
-		TelldusCore::Message msg;
-		msg.addArgument(TELLSTICK_ERROR_CONNECTING_SERVICE);
-		return msg;
+	
+	int tries = 0;
+	std::wstring readData;
+	while(tries < 20){
+		tries++;
+		if(tries == 20){
+			TelldusCore::Message msg;
+			msg.addArgument(TELLSTICK_ERROR_CONNECTING_SERVICE);
+			return msg;
+		}
+		Socket s;
+		s.connect(L"TelldusClient");
+		if (!s.isConnected()) { //Connection failed
+			msleep(500);
+			continue; //retry
+		}
+		s.write(msg.data());
+		if (!s.isConnected()) { //Connection failed sometime during operation... (better check here, instead of 5 seconds timeout later)
+			msleep(500);
+			continue; //retry
+		}
+		readData = s.read(5000);
+		if(readData == L""){
+			msleep(500);
+			continue; //TODO can we be really sure it SHOULD be anything?
+		}
+		
+		if (!s.isConnected()) { //Connection failed sometime during operation...
+			msleep(500);
+			continue; //retry
+		}
+		break;
 	}
-	s.write(msg.data());
 
-	return s.read(5000);
+	return readData;
 }
 
 void Client::stopThread(){

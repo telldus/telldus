@@ -91,35 +91,39 @@ void ConnectionListener::run() {
 
 	d->hEvent = CreateEvent(NULL, true, false, NULL);
 	oOverlap.hEvent = d->hEvent;
+	bool recreate = true;
 	
 	while (1) {
-		hPipe = CreateNamedPipe( 
-			(const wchar_t *)d->pipename.c_str(),             // pipe name 
-			PIPE_ACCESS_DUPLEX |      // read/write access 
-			FILE_FLAG_OVERLAPPED,	  //Overlapped mode
-			PIPE_TYPE_MESSAGE |       // message type pipe 
-			PIPE_READMODE_MESSAGE |   // message-read mode 
-			PIPE_WAIT,                // blocking mode 
-			PIPE_UNLIMITED_INSTANCES, // max. instances  
-			BUFSIZE,                  // output buffer size 
-			BUFSIZE,                  // input buffer size 
-			0,                        // client time-out 
-			&d->sa);                    // default security attribute 
+		if (recreate) {
+			hPipe = CreateNamedPipe(
+				(const wchar_t *)d->pipename.c_str(),             // pipe name
+				PIPE_ACCESS_DUPLEX |      // read/write access
+				FILE_FLAG_OVERLAPPED,	  //Overlapped mode
+				PIPE_TYPE_MESSAGE |       // message type pipe
+				PIPE_READMODE_MESSAGE |   // message-read mode
+				PIPE_WAIT,                // blocking mode
+				PIPE_UNLIMITED_INSTANCES, // max. instances
+				BUFSIZE,                  // output buffer size
+				BUFSIZE,                  // input buffer size
+				0,                        // client time-out
+				&d->sa);                    // default security attribute
 
-		if (hPipe == INVALID_HANDLE_VALUE) {
-			//TelldusCore::logMessage("Could not create named pipe"); 
-			return;
+			if (hPipe == INVALID_HANDLE_VALUE) {
+				return;
+			}
+
+			ConnectNamedPipe(hPipe, &oOverlap);
+			recreate = false;
 		}
-
-		ConnectNamedPipe(hPipe, &oOverlap);
-
 		DWORD result = WaitForSingleObject(oOverlap.hEvent, 1000);
 
 		if (!d->running) {
+			CancelIo(hPipe);
+			WaitForSingleObject(oOverlap.hEvent, INFINITE);
 			break;
 		}
 		if(result == WAIT_TIMEOUT){
-			CloseHandle(hPipe);
+			//CloseHandle(hPipe);
 			continue;
 		}
 		BOOL connected = GetOverlappedResult(hPipe, &oOverlap, &cbBytesRead, false);
@@ -129,8 +133,11 @@ void ConnectionListener::run() {
 			return;
 		}
 		ConnectionListenerEventData *data = new ConnectionListenerEventData();
+		ResetEvent(oOverlap.hEvent);
 		data->socket = new TelldusCore::Socket(hPipe);
 		d->waitEvent->signal(data);
+
+		recreate = true;
 	}
 
 	CloseHandle(d->hEvent);

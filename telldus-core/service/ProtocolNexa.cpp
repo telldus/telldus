@@ -3,7 +3,6 @@
 #include <stdio.h>
 #include "TellStick.h"
 #include "Strings.h"
-#include "common.h"
 
 int ProtocolNexa::lastArctecCodeSwitchWasTurnOff=0;  //TODO, always removing first turnon now, make more flexible (waveman too)
 
