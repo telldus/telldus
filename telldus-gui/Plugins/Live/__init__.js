@@ -60,6 +60,12 @@ com.telldus.live = function() {
 			com.telldus.core.dim( msg.getInt('id'), msg.getInt('value') );
 		} else if (action == "bell") {
 			com.telldus.core.bell( msg.getInt('id') );
+		} else if (action == "up") {
+			com.telldus.core.up( msg.getInt('id') );
+		} else if (action == "down") {
+			com.telldus.core.down( msg.getInt('id') );
+		} else if (action == "stop") {
+			com.telldus.core.stop( msg.getInt('id') );
 		}
 	}
 
@@ -75,7 +81,10 @@ com.telldus.live = function() {
 			com.telldus.core.TELLSTICK_TURNON |
 			com.telldus.core.TELLSTICK_TURNOFF |
 			com.telldus.core.TELLSTICK_DIM |
-			com.telldus.core.TELLSTICK_BELL;
+			com.telldus.core.TELLSTICK_BELL |
+			com.telldus.core.TELLSTICK_UP |
+			com.telldus.core.TELLSTICK_DOWN |
+			com.telldus.core.TELLSTICK_STOP;
 		supportedMethods = supportedMethods & msg.getInt('supportedMethods');
 		isRegistered = true;
 		registrationLinkVisible(false);
