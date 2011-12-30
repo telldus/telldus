@@ -70,7 +70,13 @@ com.telldus.live = function() {
 			menuId = 0;
 			separatorId = 0;
 		}
-		supportedMethods = msg.getInt('supportedMethods');
+		//Mask to lowest common denominator
+		supportedMethods =
+			com.telldus.core.TELLSTICK_TURNON |
+			com.telldus.core.TELLSTICK_TURNOFF |
+			com.telldus.core.TELLSTICK_DIM |
+			com.telldus.core.TELLSTICK_BELL;
+		supportedMethods = supportedMethods & msg.getInt('supportedMethods');
 		isRegistered = true;
 		registrationLinkVisible(false);
 		sendDevicesReport();
