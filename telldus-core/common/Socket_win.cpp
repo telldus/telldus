@@ -37,6 +37,7 @@ Socket::~Socket(void){
 	SetEvent(d->readEvent);	//signal for break
 	if (d->hPipe != INVALID_HANDLE_VALUE) {
 		CloseHandle(d->hPipe);
+		d->hPipe = 0;
 	}
 	delete d;
 }
@@ -89,7 +90,7 @@ std::wstring Socket::read(int timeout){
 	
 	memset(&oOverlap, 0, sizeof(OVERLAPPED));
 
-	d->readEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
+	d->readEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 	oOverlap.hEvent = d->readEvent;
 	BOOL fSuccess = false;
 	std::wstring returnString;
@@ -105,16 +106,17 @@ std::wstring Socket::read(int timeout){
 		
 		if(!d->running){
 			CancelIo(d->hPipe);
-			CloseHandle(d->readEvent);
+			WaitForSingleObject(oOverlap.hEvent, INFINITE);
+			d->readEvent = 0;
+			CloseHandle(oOverlap.hEvent);
 			return L"";
 		}
 
 		if (result == WAIT_TIMEOUT) {
 			CancelIo(d->hPipe);
-			CloseHandle(d->readEvent);
-			return L"";
+			// Cancel, we still need to cleanup
 		}
-		fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &cbBytesRead, false);
+		fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &cbBytesRead, true);
 	
 		if (!fSuccess) {
 			DWORD err = GetLastError();
@@ -131,8 +133,8 @@ std::wstring Socket::read(int timeout){
 		}
 		returnString.append(buf);
 	}
-	CancelIo(d->hPipe);
-	CloseHandle(d->readEvent);
+	d->readEvent = 0;
+	CloseHandle(oOverlap.hEvent);
 	return returnString;
 }
 
@@ -141,26 +143,33 @@ void Socket::write(const std::wstring &msg){
 	OVERLAPPED oOverlap;
 	DWORD bytesWritten = 0;
 	int result;
-	BOOL fSuccess;
+	BOOL fSuccess = false;
 
 	memset(&oOverlap, 0, sizeof(OVERLAPPED));
 
-	HANDLE writeEvent = CreateEvent(NULL, TRUE, TRUE, NULL);
+	HANDLE writeEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 	oOverlap.hEvent = writeEvent;
 	
-	WriteFile(d->hPipe, msg.data(), (DWORD)msg.length()*sizeof(wchar_t), &bytesWritten, &oOverlap);
-
-	result = WaitForSingleObject(writeEvent, 500);
-	if (result == WAIT_TIMEOUT) {
-		CancelIo(d->hPipe);
-		CloseHandle(writeEvent);
-		d->connected = false;
-		return;
+	BOOL writeSuccess = WriteFile(d->hPipe, msg.data(), (DWORD)msg.length()*sizeof(wchar_t), &bytesWritten, &oOverlap);
+	result = GetLastError();
+	if (writeSuccess || result == ERROR_IO_PENDING) {
+		result = WaitForSingleObject(writeEvent, 500);
+		if (result == WAIT_TIMEOUT) {
+			CancelIo(d->hPipe);
+			WaitForSingleObject(oOverlap.hEvent, INFINITE);
+			CloseHandle(writeEvent);
+			CloseHandle(d->hPipe);
+			d->hPipe = 0;
+			d->connected = false;
+			return;
+		}
+		fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &bytesWritten, TRUE);
 	}
-	fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &bytesWritten, TRUE);
+
 	CloseHandle(writeEvent);
 	if (!fSuccess) {
-		CancelIo(d->hPipe);
+		CloseHandle(d->hPipe);
+		d->hPipe = 0;
 		d->connected = false;
 		return;	
 	}
