@@ -53,10 +53,8 @@ void EventHandler::signal(Event *) {
 bool EventHandler::waitForAny() {
 	
 	while(1){
-		int result = WaitForMultipleObjects(d->eventCount, d->eventArray, FALSE, 1000); //FALSE, INFINITE);
-	//TODO KANSE ÄNDRA HÄR... Svårt att se effekten säkert, men lite nytta verkade det göra...
+		int result = WaitForMultipleObjects(d->eventCount, d->eventArray, FALSE, 1000);
 		if (result == WAIT_TIMEOUT) {
-			//return false;
 			continue;
 		}
 		TelldusCore::MutexLocker locker(&d->mutex);

@@ -94,6 +94,7 @@ void ConnectionListener::run() {
 	bool recreate = true;
 	
 	while (1) {
+		BOOL alreadyConnected = false;
 		if (recreate) {
 			hPipe = CreateNamedPipe(
 				(const wchar_t *)d->pipename.c_str(),             // pipe name
@@ -113,24 +114,27 @@ void ConnectionListener::run() {
 			}
 
 			ConnectNamedPipe(hPipe, &oOverlap);
+			alreadyConnected = GetLastError() == ERROR_PIPE_CONNECTED;
 			recreate = false;
 		}
-		DWORD result = WaitForSingleObject(oOverlap.hEvent, 1000);
+		if(!alreadyConnected){
+			DWORD result = WaitForSingleObject(oOverlap.hEvent, 1000);
+			if (!d->running) {
+				CancelIo(hPipe);
+				WaitForSingleObject(oOverlap.hEvent, INFINITE);
+				break;
+			}
+			
+			if(result == WAIT_TIMEOUT){
+				//CloseHandle(hPipe);
+				continue;
+			}
+			BOOL connected = GetOverlappedResult(hPipe, &oOverlap, &cbBytesRead, false);
 
-		if (!d->running) {
-			CancelIo(hPipe);
-			WaitForSingleObject(oOverlap.hEvent, INFINITE);
-			break;
-		}
-		if(result == WAIT_TIMEOUT){
-			//CloseHandle(hPipe);
-			continue;
-		}
-		BOOL connected = GetOverlappedResult(hPipe, &oOverlap, &cbBytesRead, false);
-
-		if (!connected) {
-			CloseHandle(hPipe);
-			return;
+			if (!connected) {
+				CloseHandle(hPipe);
+				return;
+			}
 		}
 		ConnectionListenerEventData *data = new ConnectionListenerEventData();
 		ResetEvent(oOverlap.hEvent);
