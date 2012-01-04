@@ -207,11 +207,6 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		std::wstring command = TelldusCore::Message::takeString(&msg);
 		int reserved = TelldusCore::Message::takeInt(&msg);
 		(*intReturn) = d->deviceManager->sendRawCommand(command, reserved);
-		EventUpdateData *eventData = new EventUpdateData();
-		eventData->messageType = L"TDRawDeviceEvent";
-		eventData->controllerId = -1;
-		eventData->eventValue = command;
-		d->deviceUpdateEvent->signal(eventData);
 
 	} else if (function == L"tdConnectTellStickController") {
 		int vid = TelldusCore::Message::takeInt(&msg);
