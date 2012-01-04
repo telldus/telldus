@@ -239,7 +239,7 @@ std::string TelldusCore::sformatf(const char *format, va_list ap) {
 		}
 		if ((np = (char *)realloc (p, size)) == NULL) {
 			free(p);
-            return "";
+			return "";
 		} else {
 			p = np;
 		}
