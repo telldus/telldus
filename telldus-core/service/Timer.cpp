@@ -1,6 +1,5 @@
 #include "Timer.h"
 #include "Mutex.h"
-#include "Log.h"
 #ifdef _WINDOWS
 #else
 #include <sys/time.h>
@@ -14,6 +13,8 @@ public:
 	int interval;
 	bool running;
 #ifdef _WINDOWS
+	HANDLE cond;
+	TelldusCore::Mutex mutex;
 #else
 	pthread_mutex_t waitMutex;
 	pthread_cond_t cond;
@@ -25,6 +26,7 @@ Timer::Timer(EventRef event)
 {
 	d->event = event;
 #ifdef _WINDOWS
+	d->cond = CreateEventW(NULL, false, false, NULL);
 #else
 	pthread_cond_init(&d->cond, NULL);
 	pthread_mutex_init(&d->waitMutex, NULL);
@@ -49,6 +51,9 @@ void Timer::setInterval(int sec) {
 
 void Timer::stop() {
 #ifdef _WINDOWS
+	TelldusCore::MutexLocker(&d->mutex);
+	d->running = false;
+	SetEvent(d->cond);
 #else
 	//Signal event
 	pthread_mutex_lock(&d->waitMutex);
@@ -62,7 +67,22 @@ void Timer::stop() {
 
 void Timer::run() {
 #ifdef _WINDOWS
-		sleep(2); //TODO: Implement me
+	int interval = 0;
+	{
+		TelldusCore::MutexLocker(&d->mutex);
+		d->running = true;
+		interval = d->interval*1000;
+	}
+	while(1) {
+		DWORD retval = WaitForSingleObject(d->cond, interval);
+		if (retval == WAIT_TIMEOUT) {
+			d->event->signal();
+		}
+		TelldusCore::MutexLocker(&d->mutex);
+		if (!d->running) {
+			break;
+		}
+	}
 #else
 	struct timespec ts;
 	struct timeval tp;
