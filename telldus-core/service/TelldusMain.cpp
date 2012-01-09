@@ -6,6 +6,8 @@
 #include "ControllerManager.h"
 #include "ControllerListener.h"
 #include "EventUpdateManager.h"
+#include "Timer.h"
+#include "Log.h"
 
 #include <stdio.h>
 #include <list>
@@ -39,6 +41,10 @@ void TelldusMain::deviceInsertedOrRemoved(int vid, int pid, bool inserted) {
 void TelldusMain::start(void) {
 	EventRef clientEvent = d->eventHandler.addEvent();
 	EventRef dataEvent = d->eventHandler.addEvent();
+	EventRef janitor = d->eventHandler.addEvent(); //Used for regular cleanups
+	Timer supervisor(janitor); //Tells the janitor to go back to work
+	supervisor.setInterval(60*5); //Every 5 minutes
+	supervisor.start();
 
 	ControllerManager controllerManager(dataEvent.get());
 	EventUpdateManager eventUpdateManager;
@@ -101,7 +107,16 @@ void TelldusMain::start(void) {
 				}
 			}
 		}
+		if (janitor->isSignaled()) {
+			//Clear all of them if there is more than one
+			while(janitor->isSignaled()) {
+				janitor->popSignal();
+			}
+			Log::debug("Do Janitor cleanup");
+		}
 	}
+
+	supervisor.stop();
 }
 
 void TelldusMain::stop(void){
