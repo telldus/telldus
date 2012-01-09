@@ -1,4 +1,6 @@
 build/
+qtcreator-build/
 Doxyfile
 html/
 latex/
+CMakeLists.txt.user
