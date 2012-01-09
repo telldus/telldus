@@ -24,6 +24,7 @@ SET( telldus-service_SRCS
 	Settings.cpp
 	TelldusMain.cpp
 	TellStick.cpp
+	Timer.cpp
 	EventUpdateManager.cpp
 )
 SET( telldus-service_protocol_SRCS
@@ -79,12 +80,13 @@ SET( telldus-service_HDRS
 	DeviceManager.h
 	Event.h
 	EventHandler.h
+	EventUpdateManager.h
 	Log.h
 	Sensor.h
 	Settings.h
 	TelldusMain.h
 	TellStick.h
-	EventUpdateManager.h
+	Timer.h
 )
 FIND_PACKAGE(Threads REQUIRED)
 LIST(APPEND telldus-service_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
