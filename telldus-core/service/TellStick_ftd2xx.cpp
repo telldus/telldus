@@ -113,6 +113,14 @@ int TellStick::pid() const {
 	return d->pid;
 }
 
+int TellStick::vid() const {
+	return d->vid;
+}
+
+std::string TellStick::serial() const {
+	return d->serial;
+}
+
 bool TellStick::isOpen() const {
 	return d->open;
 }
@@ -147,6 +155,14 @@ void TellStick::processData( const std::string &data ) {
 			d->message.append( 1, data[i] );
 		}
 	}
+}
+
+int TellStick::reset(){
+	int success = FT_CyclePort( d->ftHandle );
+	if(success == FT_OK){
+		return success;
+	}
+	return TELLSTICK_ERROR_UNKNOWN;
 }
 
 void TellStick::run() {
@@ -210,6 +226,14 @@ int TellStick::send( const std::string &strMessage ) {
 	FT_STATUS ftStatus;
 	ftStatus = FT_Write(d->ftHandle, tempMessage, (DWORD)strMessage.length(), &bytesWritten);
 	free(tempMessage);
+	if(strMessage == "noop"){
+		if(c){
+			return TELLSTICK_SUCCESS;
+		}
+		else{
+			return TELLSTICK_ERROR_COMMUNICATION;
+		}
+	}
 
 	while(c) {
 		ftStatus = FT_Read(d->ftHandle,&in,1,&bytesRead);
