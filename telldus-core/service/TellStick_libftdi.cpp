@@ -215,6 +215,14 @@ int TellStick::send( const std::string &strMessage ) {
 	}
 
 	delete[] tempMessage;
+	if(strMessage == "noop"){
+		if(c){
+			return TELLSTICK_SUCCESS;
+		}
+		else{
+			return TELLSTICK_ERROR_COMMUNICATION;
+		}
+	}
 
 	int retrycnt = 500;
 	unsigned char in;

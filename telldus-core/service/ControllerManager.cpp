@@ -3,6 +3,7 @@
 #include "Mutex.h"
 #include "TellStick.h"
 #include "Log.h"
+#include "../client/telldus-core.h"
 
 #include <map>
 #include <stdio.h>
@@ -99,7 +100,7 @@ void ControllerManager::loadControllers() {
 		bool found = false;
 		ControllerMap::const_iterator cit = d->controllers.begin();
 		for(; cit != d->controllers.end(); ++cit) {
-			Log::notice("Something in second the loop");
+			Log::notice("Something in the second loop");
 			TellStick *tellstick = reinterpret_cast<TellStick*>(cit->second);
 			if (!tellstick) {
 				Log::notice("No tellstick");
@@ -128,13 +129,51 @@ void ControllerManager::loadControllers() {
 	}
 }
 
+void ControllerManager::queryControllerStatus(){
+
+	std::list<TellStick *> tellStickControllers;
+
+	{
+		TelldusCore::MutexLocker locker(&d->mutex);
+		for(ControllerMap::iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
+			Log::notice("found a controller");
+			TellStick *tellstick = reinterpret_cast<TellStick*>(it->second);
+			if (tellstick) {
+				Log::notice("found a tellstick");
+				tellStickControllers.push_back(tellstick);
+			}
+		}
+	}
+
+	bool reloadControllers = false;
+	std::string noop = "noop";
+	for(std::list<TellStick *>::iterator it = tellStickControllers.begin(); it != tellStickControllers.end(); ++it) {
+		int success = (*it)->send(noop);
+		if(success == TELLSTICK_ERROR_COMMUNICATION){
+			Log::warning("TellStick query: Error in communication with TellStick, resetting USB");
+			resetController(*it);
+			Log::notice("has reset");
+		}
+		if(success == TELLSTICK_ERROR_COMMUNICATION || success == TELLSTICK_ERROR_NOT_FOUND){
+			reloadControllers = true;
+			Log::notice("Set reload");
+		}
+	}
+
+	if(!tellStickControllers.size() || reloadControllers){
+		//no tellstick at all found, or controller was reset
+		Log::warning("TellStick query: Rescanning USB ports");
+		loadControllers();
+	}
+}
+
 int ControllerManager::resetController(Controller *controller) {
 	TellStick *tellstick = reinterpret_cast<TellStick*>(controller);
 	if (!tellstick) {
 		return true; //not tellstick, nothing to reset at the moment, just return true
 	}
 	Log::notice("resettingController");
-	int success = controller->reset(); //ehh, här är väl controllern borttagen förresten?
+	int success = controller->reset();
 	Log::notice("Remove device");
 	deviceInsertedOrRemoved(tellstick->vid(), tellstick->pid(), tellstick->serial(), false); //remove from list and delete
 	Log::notice("Device removed");

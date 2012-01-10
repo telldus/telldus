@@ -43,7 +43,7 @@ void TelldusMain::start(void) {
 	EventRef dataEvent = d->eventHandler.addEvent();
 	EventRef janitor = d->eventHandler.addEvent(); //Used for regular cleanups
 	Timer supervisor(janitor); //Tells the janitor to go back to work
-	supervisor.setInterval(60*5); //Every 5 minutes
+	supervisor.setInterval(10); //Every 5 minutes TODO how often? 60*5
 	supervisor.start();
 
 	ControllerManager controllerManager(dataEvent.get());
@@ -113,6 +113,7 @@ void TelldusMain::start(void) {
 				janitor->popSignal();
 			}
 			Log::debug("Do Janitor cleanup");
+			controllerManager.queryControllerStatus();
 		}
 	}
 
