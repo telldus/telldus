@@ -92,16 +92,57 @@ bool TelldusCore::comparei(std::wstring stringA, std::wstring stringB) {
 }
 
 std::wstring TelldusCore::intToWstring(int value) {
+#ifdef _WINDOWS
+	//no stream used
+//TODO! Make effective and safe...
+	wchar_t numstr[21]; // enough to hold all numbers up to 64-bits
+	_itow_s(value, numstr, sizeof(numstr), 10);
+	std::wstring newstring(numstr);
+	return newstring;
+	//return TelldusCore::charToWstring(stdstring.c_str());
+	//std::wstring temp = TelldusCore::charToWstring(stdstring.c_str());
+	//std::wstring temp(stdstring.length(), L' ');
+	//std::copy(stdstring.begin(), stdstring.end(), temp.begin());
+	//return temp;
+#else
 	std::wstringstream st;
 	st << value;
 	return st.str();
+#endif
 }
 
 std::string TelldusCore::intToString(int value) {
+//Not sure if this is neecssary (for ordinary stringstream that is)
+#ifdef _WINDOWS
+	char numstr[21]; // enough to hold all numbers up to 64-bits
+	_itoa_s(value, numstr, sizeof(numstr), 10);
+	std::string stdstring(numstr);
+	return stdstring;
+#else
 	std::stringstream st;
 	st << value;
 	return st.str();
+#endif
 }
+
+/*
+std::wstring TelldusCore::intToWStringSafe(int value){
+	#ifdef _WINDOWS
+		//no stream used
+	//TODO! Make effective and safe...
+		char numstr[21]; // enough to hold all numbers up to 64-bits
+		itoa(value, numstr, 10);
+		std::string stdstring(numstr);
+		return TelldusCore::charToWstring(stdstring.c_str());
+		//std::wstring temp = TelldusCore::charToWstring(stdstring.c_str());
+		//std::wstring temp(stdstring.length(), L' ');
+		//std::copy(stdstring.begin(), stdstring.end(), temp.begin());
+		//return temp;
+	#else
+		return TelldusCore::intToWString(value);
+	#endif
+}
+*/
 
 int TelldusCore::wideToInteger(const std::wstring &input){
 	std::wstringstream inputstream;
@@ -198,7 +239,7 @@ std::string TelldusCore::sformatf(const char *format, va_list ap) {
 		}
 		if ((np = (char *)realloc (p, size)) == NULL) {
 			free(p);
-            return "";
+			return "";
 		} else {
 			p = np;
 		}

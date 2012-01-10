@@ -520,8 +520,12 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
  * @returns TELLSTICK_SUCCESS on success or one of the errorcodes on failure
  */
 int WINAPI tdSendRawCommand(const char *command, int reserved) {
+	std::wstring wcommand;
+	for(int i = 0; i < strlen(command);++i) {
+		wcommand.append(1, (unsigned char)command[i]);
+	}
 	Message msg(L"tdSendRawCommand");
-	msg.addArgument(command);
+	msg.addArgument(wcommand);
 	msg.addArgument(reserved);
 	return Client::getIntegerFromService(msg);
 }

@@ -23,20 +23,69 @@ Message::~Message(void) {
 }
 
 void Message::addArgument(const std::wstring &value) {
-	std::wstringstream st;
-	st << (int)value.size();
-	this->append(st.str());
+	//std::wstringstream st;
+	//st << (int)value.size();
+	this->append(TelldusCore::intToWstring(value.size())); //st.str());
 	this->append(L":");
 	this->append(value);
 }
 
 void Message::addArgument(int value) {
-	std::wstringstream st;
-	st << (int)value;
+	//std::wstringstream st;
+	//st << (int)value;
 	this->append(L"i");
-	this->append(st.str());
+	this->append(TelldusCore::intToWstring(value)); // st.str());
 	this->append(L"s");
 }
+
+/*
+void Message::addSpecialArgument(const std::wstring &value){
+	int i = 0;
+	while(i<1000000){
+		i++;
+
+		char numstr[21]; // enough to hold all numbers up to 64-bits
+		//sprintf(numstr, "%d", value.size());
+		//this->append(TelldusCore::charToWstring(numstr)); //.str());
+
+		itoa(value.size(), numstr, 10);
+		std::string test(numstr);
+		std::wstring temp(test.length(), L' ');
+		std::copy(test.begin(), test.end(), temp.begin());
+
+		this->append(temp);
+		this->append(L":");
+		this->append(value);
+
+		/*
+		std::wstringstream st;
+		st << (int)value.size();
+		this->append(st.str());
+		this->append(L":");
+		this->append(value);
+		
+	}
+}
+
+void Message::addSpecialArgument(int value){
+	int i = 0;
+	while(i<1000000){
+		i++;
+		/*
+		//std::wstringstream st;
+		//st << (int)value;
+		this->append(L"i");
+		//this->append(st.str());
+		this->append(L"s");
+		
+	}
+}
+*/
+/*
+void Message::addSpecialArgument(const char *value){
+	this->addSpecialArgument(TelldusCore::charToWstring(value));
+}
+*/
 
 void Message::addArgument(const char *value) {
 	this->addArgument(TelldusCore::charToWstring(value));

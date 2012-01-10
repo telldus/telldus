@@ -5,8 +5,9 @@
 #include "Settings.h"
 #include "Strings.h"
 #include "Message.h"
-#include "common.h"
-#include "Log.h"
+
+#include "common.h" //TODO remove?
+#include "Log.h" //TODO remove?
 
 #include <map>
 #include <memory>
@@ -510,7 +511,7 @@ int DeviceManager::doGroupAction(const std::wstring devices, const int action, c
 					deviceReturnValue = doAction(deviceId, action, data);
 				}
 				else if(childType == TELLSTICK_TYPE_SCENE){
-					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds); //TODO make scenes (and test) infinite loops-safe
+					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds); //TODO make scenes infinite loops-safe
 				}
 				else{
 					//group (in group)

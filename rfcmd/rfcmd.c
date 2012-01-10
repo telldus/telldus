@@ -57,6 +57,19 @@
  ******************************************************************************/
 
 /*******************************************************************************
+ * Modifications from rfcmd.c ver 2.1.0 based on marvelous work by Snakehand
+ * See http://www.telldus.com/forum/viewtopic.php?t=97&start=63
+ *  Added support for EVERFLOURISH
+ * Note:
+ * 1. Command line syntax:
+ *    /usr/local/bin/rfcmd  /dev/ttyUSB0  EVERFLOURISH 1 15
+ *    Arg 1: device
+ *    Arg 2: protocol
+ *    Arg 3: device number (0..65535)
+ *    Arg 4: Level (0=off, 15=on, 10=learn)
+ ******************************************************************************/
+
+/*******************************************************************************
  * Modifications from rfcmd ver 2.1.1 done by Johan Ström
  *  Default disabled semaphores for FreeBSD.
  *  Added status readback in ftdi.c, instead of wasting time in sleep.
@@ -98,7 +111,8 @@ int createIkeaString(const char * pSystemStr, const char * pChannelStr,
                      char * pStrReturn);
 int createRisingSunString(const char * pCodeStr, const char* pUnitStr, const char * pOn_offStr,
                         char * pTxStr);
-
+int createEverFlourishString(const char* pUnitStr, const char * pLevelStr,
+                        char * pTxStr);
 void printUsage(void);
 void printVersion(void);
 
@@ -148,7 +162,14 @@ int main( int argc, char **argv )
 			printUsage();
 			exit(1);
 			}
-			/* else - a send cmd string was created */
+		/* else - a send cmd string was created */
+	} else if ( (argc == 5) && (strcmp(*(argv+2),"EVERFLOURISH")==0) ) {
+	//                      Unit,          Level
+		if ( createEverFlourishString(*(argv+3), *(argv+4), txStr) == 0 ) {
+			printUsage();
+			exit(1);
+		}
+		/* else - a send cmd string was created */
 	} else if ( (argc >= 2) && (strcmp(*(argv+1),"--version")==0) ) {
 		printVersion();
 		exit(1);
@@ -525,6 +546,78 @@ int createRisingSunString(const char * pCodeStr, const char * pUnitStr, const ch
 	return strlen(pTxStr);
 }
 
+unsigned int everflourish_find_code(unsigned int x) {
+	unsigned int bits[16] = { 0xf ,0xa ,0x7 ,0xe,
+	                          0xf ,0xd ,0x9 ,0x1,
+	                          0x1 ,0x2 ,0x4 ,0x8,
+	                          0x3 ,0x6 ,0xc ,0xb };
+	unsigned int bit = 1;
+	unsigned int res = 0x5;
+	int i;
+	unsigned int lo,hi;
+
+	if ((x&0x3)==3) {
+		lo = x & 0x00ff;
+		hi = x & 0xff00;
+		lo += 4;
+		if (lo>0x100) lo = 0x12;
+		x = lo | hi;
+	}
+
+	for(i=0;i<16;i++) {
+		if (x&bit) {
+			res = res ^ bits[i];
+		}
+		bit = bit << 1;
+	}
+
+	return res;
+}
+
+
+int createEverFlourishString(const char * pUnitStr, const char * pLevelStr,
+                        char * pTxStr)
+{
+	int len = 0;
+	int level;
+	int unit;
+	unsigned int check;
+	int i;
+
+	unit = atoi(pUnitStr);
+	level = atoi(pLevelStr);                /* ON=15, OFF=0, LEARN=10 */
+	check = everflourish_find_code(unit);
+
+#ifdef RFCMD_DEBUG
+   printf("unit: %d, level: %d\n", unit, level);
+#endif
+
+	/* check converted parameters for validity */
+	if((unit < 0) || (unit > 0xffff) ||
+	  (level < 0) || (level > 15)) {
+	} else {
+		const char ssss = 85;
+		const char sssl = 84; // 0
+		const char slss = 69; // 1
+
+		const char bits[2] = {sssl,slss};
+		int i;
+
+		char preamble[] = {'R', 5, 'T', 114,60,1,1,105,ssss,ssss};
+		memcpy(pTxStr, preamble, sizeof(preamble));
+		len += sizeof(preamble);
+
+		for(i=15;i>=0;i--) pTxStr[len++]=bits[(unit>>i)&0x01];
+		for(i=3;i>=0;i--) pTxStr[len++]=bits[(check>>i)&0x01];
+		for(i=3;i>=0;i--) pTxStr[len++]=bits[(level>>i)&0x01];
+
+		pTxStr[len++] = ssss;
+		pTxStr[len++] = '+';
+	}
+
+	pTxStr[len] = '\0';
+	return strlen(pTxStr);
+}
 
 void printUsage(void)
 {
@@ -535,7 +628,7 @@ void printUsage(void)
 #else
 	printf("\t DEVICE: /dev/ttyUSB[0..n]\n" );
 #endif
-	printf("\t PROTOCOLS: NEXA, SARTANO, WAVEMAN, IKEA, RISINGSUN\n" );
+	printf("\t PROTOCOLS: NEXA, SARTANO, WAVEMAN, IKEA, RISINGSUN, EVERFLOURISH\n" );
 	printf("\n");
 	printf("\t PROTOCOL ARGUMENTS - NEXA, WAVEMAN:\n");
 	printf("\t\tHOUSE_CODE: A..P\n\t\tCHANNEL: 1..16\n\t\tOFF_ON: 0..1\n" );
@@ -550,6 +643,10 @@ void printUsage(void)
 	printf("\t PROTOCOL ARGUMENTS - RISINGSUN:\n");
 	printf("\t\tCODE: 1..4\n\t\tDEVICE: 1..4\n");
 	printf("\t\tOFF_ON: 0..1\n" );
+	printf("\n");
+	printf("\t PROTOCOL ARGUMENTS - EVERFLOURISH:\n");
+	printf("\t\tDEVICE: 0..65535\n");
+	printf("\t\tLEVEL: 0=off, 10=learn, 15=on\n" );
 	printf("\n");
 	printf("Report bugs to <info.tech@telldus.se>\n");
 }
