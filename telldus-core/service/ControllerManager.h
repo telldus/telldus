@@ -14,9 +14,8 @@ public:
 	void deviceInsertedOrRemoved(int vid, int pid, const std::string &serial, bool inserted);
 
 	Controller *getBestControllerById(int id);
-
-protected:
 	void loadControllers();
+	int resetController(Controller *controller);
 
 private:
 	class PrivateData;

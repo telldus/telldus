@@ -16,6 +16,7 @@ public:
 
 	virtual int firmwareVersion() = 0;
 	virtual int send( const std::string &message ) = 0;
+	virtual int reset() = 0;
 
 protected:
 	Controller(int id, Event *event);

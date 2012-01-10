@@ -21,6 +21,7 @@
 #include "Log.h"
 #include "Strings.h"
 #include "common.h"
+#include "Log.h"
 
 #include <unistd.h>
 
@@ -99,6 +100,14 @@ int TellStick::pid() const {
 	return d->pid;
 }
 
+int TellStick::vid() const {
+	return d->vid;
+}
+
+std::string TellStick::serial() const {
+	return d->serial;
+}
+
 bool TellStick::isOpen() const {
 	return d->open;
 }
@@ -133,6 +142,16 @@ void TellStick::processData( const std::string &data ) {
 			d->message.append( 1, data[i] );
 		}
 	}
+}
+
+int TellStick::reset(){
+	Log::notice("Resetting one");
+	int success = ftdi_usb_reset( &d->ftHandle );
+	Log::notice("Has reset one");
+	if(success < 0){
+		return TELLSTICK_ERROR_UNKNOWN; //-1 = FTDI reset failed, -2 = USB device unavailable
+	}
+	return success;
 }
 
 void TellStick::run() {
@@ -273,10 +292,15 @@ std::list<TellStickDescriptor> TellStick::findAllByVIDPID( int vid, int pid ) {
 	char serialBuffer[10];
 	ftdi_init(&ftdic);
 
+	Log::notice("Trying to find Duo");
 	int ret = ftdi_usb_find_all(&ftdic, &devlist, vid, pid);
 	if (ret > 0) {
+		Log::notice("Curdev > 0");
 		for (curdev = devlist; curdev != NULL; curdev = curdev->next) {
+			Log::notice("Something in the loop");
 			ret = ftdi_usb_get_strings(&ftdic, curdev->dev, NULL, 0, NULL, 0, serialBuffer, 10);
+			Log::notice("Ret: %d",ret);
+			//blir -9 efter felen, "get serial number failed", även lsusb -v ger annat svar än innan...?
 			if (ret != 0) {
 				continue;
 			}

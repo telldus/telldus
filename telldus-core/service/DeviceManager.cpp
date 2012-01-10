@@ -6,6 +6,7 @@
 #include "Strings.h"
 #include "Message.h"
 #include "common.h"
+#include "Log.h"
 
 #include <map>
 #include <memory>
@@ -431,10 +432,40 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 		} //devicelist unlocked
 	}
 	else{
+		Log::notice("Getting a controller...");
 		Controller *controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
+		Log::notice("Doing action...");
+		if(!controller){
+			Log::warning("No controller found, rescanning USB ports");
+			//no controller found, scan for one, and retry once
+			d->controllerManager->loadControllers();
+			controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
+		}
+
 		if(controller){
+			Log::notice("But now, a controller!");
 			retval = device->doAction(action, data, controller);
+			Log::notice("Retval received, %d.", retval);
+			if(retval == TELLSTICK_ERROR_COMMUNICATION){
+				Log::warning("Error in communication with TellStick, resetting USB");
+				d->controllerManager->resetController(controller);
+				Log::notice("Controller reset");
+			}
+			if(retval == TELLSTICK_ERROR_COMMUNICATION || retval == TELLSTICK_ERROR_NOT_FOUND){
+				Log::warning("Rescanning USB ports");
+				d->controllerManager->loadControllers();
+				Log::notice("Loaded, get one");
+				controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
+				if(!controller){
+					Log::error("No contoller (TellStick) found, even after reset. Giving up.");
+					return TELLSTICK_ERROR_NOT_FOUND;
+				}
+				Log::notice("Got a new, do action");
+				retval = device->doAction(action, data, controller); //retry one more time
+				Log::notice("Did action");
+			}
 		} else {
+			Log::error("No contoller (TellStick) found after one retry. Giving up.");
 			return TELLSTICK_ERROR_NOT_FOUND;
 		}
 	}
@@ -719,10 +750,29 @@ void DeviceManager::setSensorValueAndSignal( const std::string &dataType, int da
 int DeviceManager::sendRawCommand(const std::wstring &command, int reserved){
 
 	Controller *controller = d->controllerManager->getBestControllerById(-1);
-	if(controller){
-		return controller->send(TelldusCore::wideToString(command));
+
+	if(!controller){
+		//no controller found, scan for one, and retry once
+		d->controllerManager->loadControllers();
+		controller = d->controllerManager->getBestControllerById(-1);
 	}
-	else{
+
+	int retval = TELLSTICK_ERROR_UNKNOWN;
+	if(controller){
+		retval = controller->send(TelldusCore::wideToString(command));
+		if(retval == TELLSTICK_ERROR_COMMUNICATION){
+			d->controllerManager->resetController(controller);
+		}
+		if(retval == TELLSTICK_ERROR_COMMUNICATION || retval == TELLSTICK_ERROR_NOT_FOUND){
+			d->controllerManager->loadControllers();
+			controller = d->controllerManager->getBestControllerById(-1);
+			if(!controller){
+				return TELLSTICK_ERROR_NOT_FOUND;
+			}
+			retval = controller->send(TelldusCore::wideToString(command));  //retry one more time
+		}
+		return retval;
+	} else {
 		return TELLSTICK_ERROR_NOT_FOUND;
 	}
 }

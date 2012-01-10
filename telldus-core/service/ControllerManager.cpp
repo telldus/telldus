@@ -2,6 +2,7 @@
 #include "Controller.h"
 #include "Mutex.h"
 #include "TellStick.h"
+#include "Log.h"
 
 #include <map>
 #include <stdio.h>
@@ -90,18 +91,23 @@ void ControllerManager::loadControllers() {
 	std::list<TellStickDescriptor> list = TellStick::findAll();
 
 	std::list<TellStickDescriptor>::iterator it = list.begin();
+	Log::notice("Before for-loop");
 	for(; it != list.end(); ++it) {
+		Log::notice("Something in the loop");
 		//Most backend only report non-opened devices.
 		//If they don't make sure we don't open them twice
 		bool found = false;
 		ControllerMap::const_iterator cit = d->controllers.begin();
 		for(; cit != d->controllers.end(); ++cit) {
+			Log::notice("Something in second the loop");
 			TellStick *tellstick = reinterpret_cast<TellStick*>(cit->second);
 			if (!tellstick) {
+				Log::notice("No tellstick");
 				continue;
 			}
 			if (tellstick->isSameAsDescriptor(*it)) {
 				found = true;
+				Log::notice("FOUND");
 				break;
 			}
 		}
@@ -111,11 +117,26 @@ void ControllerManager::loadControllers() {
 
 		int controllerId = d->lastControllerId-1;
 		TellStick *controller = new TellStick(controllerId, d->event, *it);
+		Log::notice("Is it open?");
 		if (!controller->isOpen()) {
+			Log::notice("Yes it was");
 			delete controller;
 			continue;
 		}
 		d->lastControllerId = controllerId;
 		d->controllers[d->lastControllerId] = controller;
 	}
+}
+
+int ControllerManager::resetController(Controller *controller) {
+	TellStick *tellstick = reinterpret_cast<TellStick*>(controller);
+	if (!tellstick) {
+		return true; //not tellstick, nothing to reset at the moment, just return true
+	}
+	Log::notice("resettingController");
+	int success = controller->reset(); //ehh, här är väl controllern borttagen förresten?
+	Log::notice("Remove device");
+	deviceInsertedOrRemoved(tellstick->vid(), tellstick->pid(), tellstick->serial(), false); //remove from list and delete
+	Log::notice("Device removed");
+	return success;
 }
