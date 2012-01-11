@@ -19,9 +19,9 @@
 #include "Thread.h"
 #include "Mutex.h"
 #include "Log.h"
+#include "Settings.h"
 #include "Strings.h"
 #include "common.h"
-#include "Log.h"
 
 #include <unistd.h>
 
@@ -33,7 +33,7 @@ typedef int DWORD;
 
 class TellStick::PrivateData {
 public:
-	bool open;
+	bool open, ignoreControllerConfirmation;
 	int vid, pid, fwVersion;
 	std::string serial, message;
 	ftdi_context ftHandle;
@@ -52,6 +52,9 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 	d->fwVersion = 0;
 	d->serial = td.serial;
 	d->running = false;
+
+	Settings set;
+	d->ignoreControllerConfirmation = set.getSetting(L"ignoreControllerConfirmation")==L"true";
 
 	ftdi_init(&d->ftHandle);
 	ftdi_set_interface(&d->ftHandle, INTERFACE_ANY);
@@ -213,13 +216,15 @@ int TellStick::send( const std::string &strMessage ) {
 
 	delete[] tempMessage;
 	Log::notice("Message: %s", strMessage.c_str());
-	if(strMessage == "N+" && ((pid() == 0x0C31 && firmwareVersion() < 5) || (pid() == 0x0C30 && firmwareVersion() < 6))){
+	if(d->ignoreControllerConfirmation || (strMessage == "N+" && ((pid() == 0x0C31 && firmwareVersion() < 5) || (pid() == 0x0C30 && firmwareVersion() < 6)))){
 		//these firmware versions doesn't implement ack to noop, just check that the noop can be sent correctly
 		Log::notice("Too old firmware, accepting this");
 		if(c){
+			Log::notice("Success");
 			return TELLSTICK_SUCCESS;
 		}
 		else{
+			Log::notice("Fail");
 			return TELLSTICK_ERROR_COMMUNICATION;
 		}
 	}
@@ -230,7 +235,9 @@ int TellStick::send( const std::string &strMessage ) {
 	while(c && --retrycnt) {
 		ret = ftdi_read_data( &d->ftHandle, &in, 1);
 		if (ret > 0) {
+			Log::notice("Returned %c", in);
 			if (in == '\n') {
+				Log::notice("BREAK");
 				break;
 			}
 		} else if(ret == 0) { // No data available
