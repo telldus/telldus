@@ -157,6 +157,33 @@ int Settings::removeDevice(int intDeviceId) {
 	return TELLSTICK_ERROR_UNKNOWN;
 }
 
+std::wstring Settings::getSetting(const std::wstring &strName) const{
+	std::wstring strReturn;
+	HKEY hk;
+
+	std::wstring strCompleteRegPath = d->strRegPath;
+	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &hk);
+			
+	if(lnExists == ERROR_SUCCESS){
+		wchar_t* Buff = new wchar_t[intMaxRegValueLength];
+		DWORD dwLength = sizeof(wchar_t)*intMaxRegValueLength;
+		long lngStatus = RegQueryValueEx(hk, strName.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
+
+		if(lngStatus == ERROR_MORE_DATA){
+			//The buffer is to small, recreate it
+			delete Buff;
+			Buff = new wchar_t[dwLength];
+			lngStatus = RegQueryValueEx(hk, strName.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
+		}
+		if (lngStatus == ERROR_SUCCESS) {
+			strReturn = Buff;
+		}
+		delete Buff;
+	}
+	RegCloseKey(hk);
+	return strReturn;
+}
+
 std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &name, bool parameter) const {
 	std::wstring strReturn;
 	HKEY hk;

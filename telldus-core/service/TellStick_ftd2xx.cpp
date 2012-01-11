@@ -11,6 +11,7 @@
 //
 #include "TellStick.h"
 #include "Mutex.h"
+#include "Settings.h"
 #include "Strings.h"
 #include "Log.h"
 #include "../client/telldus-core.h"
@@ -21,7 +22,7 @@
 
 class TellStick::PrivateData {
 public:
-	bool open, running;
+	bool open, running, ignoreControllerConfirmation;
 	int vid, pid, fwVersion;
 	std::string serial, message;
 	FT_HANDLE ftHandle;
@@ -54,6 +55,8 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 	d->pid = td.pid;
 	d->fwVersion = 0;
 	d->serial = td.serial;
+	Settings set;
+	d->ignoreControllerConfirmation = set.getSetting(L"ignoreControllerConfirmation")==L"true";
 
 	char *tempSerial = new char[td.serial.size()+1];
 #ifdef _WINDOWS
@@ -226,7 +229,9 @@ int TellStick::send( const std::string &strMessage ) {
 	FT_STATUS ftStatus;
 	ftStatus = FT_Write(d->ftHandle, tempMessage, (DWORD)strMessage.length(), &bytesWritten);
 	free(tempMessage);
-	if(strMessage == "noop"){
+	
+	if(d->ignoreControllerConfirmation || (strMessage == "N+" && ((pid() == 0x0C31 && firmwareVersion() < 5) || (pid() == 0x0C30 && firmwareVersion() < 6)))){
+		//these firmware versions doesn't implement ack to noop, just check that the noop can be sent correctly
 		if(c){
 			return TELLSTICK_SUCCESS;
 		}
