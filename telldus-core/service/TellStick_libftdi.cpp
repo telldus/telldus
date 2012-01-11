@@ -145,9 +145,7 @@ void TellStick::processData( const std::string &data ) {
 }
 
 int TellStick::reset(){
-	Log::notice("Resetting one");
 	int success = ftdi_usb_reset( &d->ftHandle );
-	Log::notice("Has reset one");
 	if(success < 0){
 		return TELLSTICK_ERROR_UNKNOWN; //-1 = FTDI reset failed, -2 = USB device unavailable
 	}
@@ -210,12 +208,14 @@ int TellStick::send( const std::string &strMessage ) {
 	if(ret < 0) {
 		c = false;
 	} else if(ret != strMessage.length()) {
-		fprintf(stderr, "weird send length? retval %i instead of %d\n",
-		ret, (int)strMessage.length());
+		Log::debug("Weird send length? retval %i instead of %d\n", ret, (int)strMessage.length());
 	}
 
 	delete[] tempMessage;
-	if(strMessage == "noop"){
+	Log::notice("Message: %s", strMessage.c_str());
+	if(strMessage == "N+" && ((pid() == 0x0C31 && firmwareVersion() < 5) || (pid() == 0x0C30 && firmwareVersion() < 6))){
+		//these firmware versions doesn't implement ack to noop, just check that the noop can be sent correctly
+		Log::notice("Too old firmware, accepting this");
 		if(c){
 			return TELLSTICK_SUCCESS;
 		}
@@ -223,6 +223,7 @@ int TellStick::send( const std::string &strMessage ) {
 			return TELLSTICK_ERROR_COMMUNICATION;
 		}
 	}
+	Log::warning("Continuing");
 
 	int retrycnt = 500;
 	unsigned char in;
@@ -300,15 +301,10 @@ std::list<TellStickDescriptor> TellStick::findAllByVIDPID( int vid, int pid ) {
 	char serialBuffer[10];
 	ftdi_init(&ftdic);
 
-	Log::notice("Trying to find Duo");
 	int ret = ftdi_usb_find_all(&ftdic, &devlist, vid, pid);
 	if (ret > 0) {
-		Log::notice("Curdev > 0");
 		for (curdev = devlist; curdev != NULL; curdev = curdev->next) {
-			Log::notice("Something in the loop");
 			ret = ftdi_usb_get_strings(&ftdic, curdev->dev, NULL, 0, NULL, 0, serialBuffer, 10);
-			Log::notice("Ret: %d",ret);
-			//blir -9 efter felen, "get serial number failed", även lsusb -v ger annat svar än innan...?
 			if (ret != 0) {
 				continue;
 			}

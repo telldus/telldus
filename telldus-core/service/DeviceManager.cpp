@@ -5,9 +5,7 @@
 #include "Settings.h"
 #include "Strings.h"
 #include "Message.h"
-
-#include "common.h" //TODO remove?
-#include "Log.h" //TODO remove?
+#include "Log.h"
 
 #include <map>
 #include <memory>
@@ -433,37 +431,29 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 		} //devicelist unlocked
 	}
 	else{
-		Log::notice("Getting a controller...");
 		Controller *controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
-		Log::notice("Doing action...");
 		if(!controller){
-			Log::warning("No controller found, rescanning USB ports");
+			Log::warning("Trying to execute action, but no controller found. Rescanning USB ports");
 			//no controller found, scan for one, and retry once
 			d->controllerManager->loadControllers();
 			controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
 		}
 
 		if(controller){
-			Log::notice("But now, a controller!");
 			retval = device->doAction(action, data, controller);
-			Log::notice("Retval received, %d.", retval);
 			if(retval == TELLSTICK_ERROR_COMMUNICATION){
-				Log::warning("Error in communication with TellStick, resetting USB");
+				Log::warning("Error in communication with TellStick when executing action. Resetting USB");
 				d->controllerManager->resetController(controller);
-				Log::notice("Controller reset");
 			}
 			if(retval == TELLSTICK_ERROR_COMMUNICATION || retval == TELLSTICK_ERROR_NOT_FOUND){
 				Log::warning("Rescanning USB ports");
 				d->controllerManager->loadControllers();
-				Log::notice("Loaded, get one");
 				controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
 				if(!controller){
 					Log::error("No contoller (TellStick) found, even after reset. Giving up.");
 					return TELLSTICK_ERROR_NOT_FOUND;
 				}
-				Log::notice("Got a new, do action");
 				retval = device->doAction(action, data, controller); //retry one more time
-				Log::notice("Did action");
 			}
 		} else {
 			Log::error("No contoller (TellStick) found after one retry. Giving up.");

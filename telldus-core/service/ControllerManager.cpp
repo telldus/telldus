@@ -92,23 +92,18 @@ void ControllerManager::loadControllers() {
 	std::list<TellStickDescriptor> list = TellStick::findAll();
 
 	std::list<TellStickDescriptor>::iterator it = list.begin();
-	Log::notice("Before for-loop");
 	for(; it != list.end(); ++it) {
-		Log::notice("Something in the loop");
 		//Most backend only report non-opened devices.
 		//If they don't make sure we don't open them twice
 		bool found = false;
 		ControllerMap::const_iterator cit = d->controllers.begin();
 		for(; cit != d->controllers.end(); ++cit) {
-			Log::notice("Something in the second loop");
 			TellStick *tellstick = reinterpret_cast<TellStick*>(cit->second);
 			if (!tellstick) {
-				Log::notice("No tellstick");
 				continue;
 			}
 			if (tellstick->isSameAsDescriptor(*it)) {
 				found = true;
-				Log::notice("FOUND");
 				break;
 			}
 		}
@@ -118,9 +113,7 @@ void ControllerManager::loadControllers() {
 
 		int controllerId = d->lastControllerId-1;
 		TellStick *controller = new TellStick(controllerId, d->event, *it);
-		Log::notice("Is it open?");
 		if (!controller->isOpen()) {
-			Log::notice("Yes it was");
 			delete controller;
 			continue;
 		}
@@ -136,33 +129,29 @@ void ControllerManager::queryControllerStatus(){
 	{
 		TelldusCore::MutexLocker locker(&d->mutex);
 		for(ControllerMap::iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
-			Log::notice("found a controller");
 			TellStick *tellstick = reinterpret_cast<TellStick*>(it->second);
 			if (tellstick) {
-				Log::notice("found a tellstick");
 				tellStickControllers.push_back(tellstick);
 			}
 		}
 	}
 
 	bool reloadControllers = false;
-	std::string noop = "noop";
+	std::string noop = "N+";
 	for(std::list<TellStick *>::iterator it = tellStickControllers.begin(); it != tellStickControllers.end(); ++it) {
 		int success = (*it)->send(noop);
 		if(success == TELLSTICK_ERROR_COMMUNICATION){
 			Log::warning("TellStick query: Error in communication with TellStick, resetting USB");
 			resetController(*it);
-			Log::notice("has reset");
 		}
 		if(success == TELLSTICK_ERROR_COMMUNICATION || success == TELLSTICK_ERROR_NOT_FOUND){
 			reloadControllers = true;
-			Log::notice("Set reload");
 		}
 	}
 
 	if(!tellStickControllers.size() || reloadControllers){
 		//no tellstick at all found, or controller was reset
-		Log::warning("TellStick query: Rescanning USB ports");
+		Log::debug("TellStick query: Rescanning USB ports");  //only log as debug, since this will happen all the time if no TellStick is connected
 		loadControllers();
 	}
 }
@@ -172,10 +161,7 @@ int ControllerManager::resetController(Controller *controller) {
 	if (!tellstick) {
 		return true; //not tellstick, nothing to reset at the moment, just return true
 	}
-	Log::notice("resettingController");
-	int success = controller->reset();
-	Log::notice("Remove device");
+	int success = tellstick->reset();
 	deviceInsertedOrRemoved(tellstick->vid(), tellstick->pid(), tellstick->serial(), false); //remove from list and delete
-	Log::notice("Device removed");
 	return success;
 }
