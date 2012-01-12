@@ -216,9 +216,6 @@ int TellStick::send( const std::string &strMessage ) {
 	}
 
 	delete[] tempMessage;
-	Log::notice("Message: %s", strMessage.c_str());
-	Log::notice("FWVersion: %d", firmwareVersion());
-	Log::notice("Pid: %X", pid());
 
 	if(!c){
 		Log::debug("Broken pipe on send");
@@ -227,27 +224,21 @@ int TellStick::send( const std::string &strMessage ) {
 
 	if(strMessage.compare("N+") == 0 && ((pid() == 0x0C31 && firmwareVersion() < 5) || (pid() == 0x0C30 && firmwareVersion() < 6))){
 		//these firmware versions doesn't implement ack to noop, just check that the noop can be sent correctly
-		Log::warning("Too old firmware, accepting this, just return success");
 		return TELLSTICK_SUCCESS;
 	}
 
 	if(d->ignoreControllerConfirmation){
 		//allow TellStick to finish its air-sending
-		Log::warning("Sleeping");
 		msleep(1000);
 		return TELLSTICK_SUCCESS;
 	}
-
-	Log::warning("Continuing");
 
 	int retrycnt = 250;
 	unsigned char in;
 	while(--retrycnt) {
 		ret = ftdi_read_data( &d->ftHandle, &in, 1);
 		if (ret > 0) {
-			Log::warning("%c", in);
 			if (in == '\n') {
-				Log::warning("Received an end");
 				return TELLSTICK_SUCCESS;
 			}
 		} else if(ret == 0) { // No data available
@@ -258,7 +249,6 @@ int TellStick::send( const std::string &strMessage ) {
 		}
 	}
 
-	Log::warning("Error in communication, retrycount ended");
 	return TELLSTICK_ERROR_COMMUNICATION;
 }
 

@@ -112,7 +112,6 @@ void TelldusMain::start(void) {
 			while(janitor->isSignaled()) {
 				janitor->popSignal();
 			}
-			Log::debug("Do Janitor cleanup");
 			controllerManager.queryControllerStatus();
 		}
 	}
