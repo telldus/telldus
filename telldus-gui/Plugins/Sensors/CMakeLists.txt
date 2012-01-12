@@ -34,6 +34,7 @@ SET( Plugin_EXTRA
 	qmldir
 	SensorValue.qml
 	SensorView.qml
+	SensorList.qml
 )
 
 FIND_PACKAGE(TelldusCore REQUIRED)
