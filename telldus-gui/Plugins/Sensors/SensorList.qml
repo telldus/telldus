@@ -98,5 +98,4 @@ Column {
 			}
 			*/
 	}
-	anchors.fill: parent
 }

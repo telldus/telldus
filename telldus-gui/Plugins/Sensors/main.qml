@@ -4,7 +4,14 @@ Item {
 	id: main
 	state: "VIEW"
 
-	SensorList {
-		id: sensorList
+	Flickable {
+		anchors.fill: parent
+
+		contentHeight: sensorList.height
+
+		SensorList {
+			width: parent.width
+			id: sensorList
+		}
 	}
 }
