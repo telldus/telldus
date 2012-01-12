@@ -153,7 +153,7 @@ int TellStick::reset(){
 	if(success < 0){
 		return TELLSTICK_ERROR_UNKNOWN; //-1 = FTDI reset failed, -2 = USB device unavailable
 	}
-	return success;
+	return TELLSTICK_SUCCESS;
 }
 
 void TellStick::run() {
