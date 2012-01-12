@@ -68,6 +68,7 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 	d->open = true;
 	ftdi_usb_reset( &d->ftHandle );
 	ftdi_disable_bitbang( &d->ftHandle );
+	ftdi_set_latency_timer(&d->ftHandle, 16);
 
 	if (d->open) {
 
@@ -230,7 +231,7 @@ int TellStick::send( const std::string &strMessage ) {
 	}
 	Log::warning("Continuing");
 
-	int retrycnt = 500;
+	int retrycnt = 250;
 	unsigned char in;
 	while(c && --retrycnt) {
 		ret = ftdi_read_data( &d->ftHandle, &in, 1);
