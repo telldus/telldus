@@ -162,11 +162,15 @@ void TellStick::processData( const std::string &data ) {
 }
 
 int TellStick::reset(){
+#ifndef _WINDOWS
+	return TELLSTICK_SUCCESS; //nothing to be done on other platforms
+#else
 	int success = FT_CyclePort( d->ftHandle );
 	if(success == FT_OK){
-		return success;
+		return TELLSTICK_SUCCESS;
 	}
 	return TELLSTICK_ERROR_UNKNOWN;
+#endif
 }
 
 void TellStick::run() {
