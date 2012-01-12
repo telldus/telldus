@@ -10,6 +10,7 @@
 //
 //
 #include "TellStick.h"
+#include "common.h"
 #include "Mutex.h"
 #include "Settings.h"
 #include "Strings.h"
@@ -210,8 +211,7 @@ int TellStick::send( const std::string &strMessage ) {
 	if (!d->open) {
 		return TELLSTICK_ERROR_NOT_FOUND;
 	}
-	bool c = true;
-
+	
 	//This lock does two things
 	// 1 Prevents two calls from different threads to this function
 	// 2 Prevents our running thread from receiving the data we are interested in here
@@ -230,35 +230,38 @@ int TellStick::send( const std::string &strMessage ) {
 	ftStatus = FT_Write(d->ftHandle, tempMessage, (DWORD)strMessage.length(), &bytesWritten);
 	free(tempMessage);
 	
-	if(d->ignoreControllerConfirmation || (strMessage == "N+" && ((pid() == 0x0C31 && firmwareVersion() < 5) || (pid() == 0x0C30 && firmwareVersion() < 6)))){
-		//these firmware versions doesn't implement ack to noop, just check that the noop can be sent correctly
-		if(c){
-			return TELLSTICK_SUCCESS;
-		}
-		else{
-			return TELLSTICK_ERROR_COMMUNICATION;
-		}
+	if(ftStatus != FT_OK){
+		Log::debug("Broken pipe on send");
+		return TELLSTICK_ERROR_BROKEN_PIPE;
 	}
 
-	while(c) {
+	if(strMessage.compare("N+") == 0 && ((pid() == 0x0C31 && firmwareVersion() < 5) || (pid() == 0x0C30 && firmwareVersion() < 6))){
+		//these firmware versions doesn't implement ack to noop, just check that the noop can be sent correctly
+		return TELLSTICK_SUCCESS;
+	}
+	if(d->ignoreControllerConfirmation){
+		//wait for TellStick to finish its air-sending
+		msleep(1000);
+		return TELLSTICK_SUCCESS;
+	}
+
+	while(1) {
 		ftStatus = FT_Read(d->ftHandle,&in,1,&bytesRead);
 		if (ftStatus == FT_OK) {
 			if (bytesRead == 1) {
 				if (in == '\n') {
-					break;
+					return TELLSTICK_SUCCESS;
+				} else {
+					continue;
 				}
 			} else { //Timeout
-				c = false;
+				return TELLSTICK_ERROR_COMMUNICATION;
 			}
 		} else { //Error
-			c = false;
+			Log::debug("Broken pipe on read");
+			return TELLSTICK_ERROR_BROKEN_PIPE;
 		}
 	}
-
-	if (!c) {
-		return TELLSTICK_ERROR_COMMUNICATION;
-	}
-	return TELLSTICK_SUCCESS;
 }
 
 bool TellStick::stillConnected() const {
