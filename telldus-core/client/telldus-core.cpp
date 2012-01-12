@@ -89,6 +89,9 @@ using namespace TelldusCore;
  * Error code. Input/command could not be parsed or didn't follow
  * input rules.
  *
+ * @def TELLSTICK_ERROR_COMMUNICATING_SERVICE
+ * Error code. Timeout waiting for response from the Telldus Service.
+ *
  * @def TELLSTICK_ERROR_UNKNOWN
  * Error code. An unkown error has occurred.
  */
@@ -491,6 +494,7 @@ int WINAPI tdMethods(int id, int methodsSupported){
  * @sa TELLSTICK_ERROR_UNKNOWN_RESPONSE
  * @sa TELLSTICK_ERROR_SYNTAX
  * @sa TELLSTICK_ERROR_BROKEN_PIPE
+ * @sa TELLSTICK_ERROR_COMMUNICATING_SERVICE
  * @sa TELLSTICK_ERROR_UNKNOWN
  */
 char * WINAPI tdGetErrorString(int intErrorNo) {
@@ -506,6 +510,7 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
 		"Received an unknown response",
 		"Syntax error",
 		"Broken pipe"
+		"An error occured while communicating with the Telldus Service"
 	};
 	std::string strReturn;
 	intErrorNo = abs(intErrorNo); //We don't use negative values here.

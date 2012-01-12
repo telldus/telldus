@@ -114,6 +114,9 @@ bool Client::getBoolFromService(const Message &msg) {
 
 int Client::getIntegerFromService(const Message &msg) {
 	std::wstring response = sendToService(msg);
+	if (response.compare(L"") == 0) {
+		return TELLSTICK_ERROR_COMMUNICATING_SERVICE;
+	}
 	return Message::takeInt(&response);
 }
 
