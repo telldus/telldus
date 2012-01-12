@@ -306,7 +306,7 @@ std::wstring Client::sendToService(const Message &msg) {
 			msleep(500);
 			continue; //retry
 		}
-		readData = s.read(10000);  //TODO changed to 10000 from 5000, how much does this do...?
+		readData = s.read(8000);  //TODO changed to 10000 from 5000, how much does this do...?
 		if(readData == L""){
 			printf("Readdata nothing\n\r");
 			msleep(500);

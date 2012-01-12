@@ -1,7 +1,6 @@
 #include "ClientCommunicationHandler.h"
 #include "Message.h"
 #include "Strings.h"
-#include "Log.h" //Debug
 
 #include <stdlib.h>
 

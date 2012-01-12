@@ -441,11 +441,11 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 
 		if(controller){
 			retval = device->doAction(action, data, controller);
-			if(retval == TELLSTICK_ERROR_COMMUNICATION){
+			if(retval == TELLSTICK_ERROR_BROKEN_PIPE){
 				Log::warning("Error in communication with TellStick when executing action. Resetting USB");
 				d->controllerManager->resetController(controller);
 			}
-			if(retval == TELLSTICK_ERROR_COMMUNICATION || retval == TELLSTICK_ERROR_NOT_FOUND){
+			if(retval == TELLSTICK_ERROR_BROKEN_PIPE || retval == TELLSTICK_ERROR_NOT_FOUND){
 				Log::warning("Rescanning USB ports");
 				d->controllerManager->loadControllers();
 				controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
@@ -751,10 +751,10 @@ int DeviceManager::sendRawCommand(const std::wstring &command, int reserved){
 	int retval = TELLSTICK_ERROR_UNKNOWN;
 	if(controller){
 		retval = controller->send(TelldusCore::wideToString(command));
-		if(retval == TELLSTICK_ERROR_COMMUNICATION){
+		if(retval == TELLSTICK_ERROR_BROKEN_PIPE){
 			d->controllerManager->resetController(controller);
 		}
-		if(retval == TELLSTICK_ERROR_COMMUNICATION || retval == TELLSTICK_ERROR_NOT_FOUND){
+		if(retval == TELLSTICK_ERROR_BROKEN_PIPE || retval == TELLSTICK_ERROR_NOT_FOUND){
 			d->controllerManager->loadControllers();
 			controller = d->controllerManager->getBestControllerById(-1);
 			if(!controller){

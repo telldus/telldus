@@ -217,42 +217,44 @@ int TellStick::send( const std::string &strMessage ) {
 
 	delete[] tempMessage;
 	Log::notice("Message: %s", strMessage.c_str());
+	Log::notice("FWVersion: %d", firmwareVersion());
+	Log::notice("Pid: %X", pid());
+
+	if(!c){
+		Log::debug("Broken pipe on send");
+		return TELLSTICK_ERROR_BROKEN_PIPE;
+	}
+
 	if(d->ignoreControllerConfirmation || (strMessage == "N+" && ((pid() == 0x0C31 && firmwareVersion() < 5) || (pid() == 0x0C30 && firmwareVersion() < 6)))){
 		//these firmware versions doesn't implement ack to noop, just check that the noop can be sent correctly
-		Log::notice("Too old firmware, accepting this");
-		if(c){
-			Log::notice("Success");
-			return TELLSTICK_SUCCESS;
-		}
-		else{
-			Log::notice("Fail");
-			return TELLSTICK_ERROR_COMMUNICATION;
-		}
+		Log::notice("Too old firmware, accepting this, just return success");
+		return TELLSTICK_SUCCESS;
 	}
 	Log::warning("Continuing");
 
 	int retrycnt = 250;
 	unsigned char in;
-	while(c && --retrycnt) {
+	while(--retrycnt) {
 		ret = ftdi_read_data( &d->ftHandle, &in, 1);
 		if (ret > 0) {
-			Log::notice("Returned %c", in);
+			Log::warning("%c", in);
 			if (in == '\n') {
-				Log::notice("BREAK");
+				Log::warning("Received an end");
 				break;
 			}
 		} else if(ret == 0) { // No data available
 			usleep(100);
 		} else { //Error
-			c = false;
+			Log::debug("Broken pipe on read");
+			return TELLSTICK_ERROR_BROKEN_PIPE;
 		}
 	}
+	Log::warning("Retry ready");
 	if (!retrycnt) {
-		c = false;
-	}
-	if (!c) {
+		Log::warning("Error in communication, retrycount ended");
 		return TELLSTICK_ERROR_COMMUNICATION;
 	}
+	Log::warning("Success");
 	return TELLSTICK_SUCCESS;
 }
 

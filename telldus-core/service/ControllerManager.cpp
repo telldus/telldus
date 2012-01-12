@@ -140,11 +140,11 @@ void ControllerManager::queryControllerStatus(){
 	std::string noop = "N+";
 	for(std::list<TellStick *>::iterator it = tellStickControllers.begin(); it != tellStickControllers.end(); ++it) {
 		int success = (*it)->send(noop);
-		if(success == TELLSTICK_ERROR_COMMUNICATION){
+		if(success == TELLSTICK_ERROR_BROKEN_PIPE){
 			Log::warning("TellStick query: Error in communication with TellStick, resetting USB");
 			resetController(*it);
 		}
-		if(success == TELLSTICK_ERROR_COMMUNICATION || success == TELLSTICK_ERROR_NOT_FOUND){
+		if(success == TELLSTICK_ERROR_BROKEN_PIPE || success == TELLSTICK_ERROR_NOT_FOUND){
 			reloadControllers = true;
 		}
 	}

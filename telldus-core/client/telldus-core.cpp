@@ -57,6 +57,9 @@ using namespace TelldusCore;
  * @def TELLSTICK_SUCCESS
  * Error code. Returned when the command succeeded.
  *
+ * @def TELLSTICK_ERROR_BROKEN_PIPE
+ * Error code. Pipe broken during communication.
+ *
  * @def TELLSTICK_ERROR_NOT_FOUND
  * Error code. Returned if a TellStick was not found on the system.
  *
@@ -487,10 +490,11 @@ int WINAPI tdMethods(int id, int methodsSupported){
  * @sa TELLSTICK_ERROR_CONNECTING_SERVICE
  * @sa TELLSTICK_ERROR_UNKNOWN_RESPONSE
  * @sa TELLSTICK_ERROR_SYNTAX
+ * @sa TELLSTICK_ERROR_BROKEN_PIPE
  * @sa TELLSTICK_ERROR_UNKNOWN
  */
 char * WINAPI tdGetErrorString(int intErrorNo) {
-	const int numResponses = 9;
+	const int numResponses = 10;
 	const char *responses[numResponses] = {
 		"Success",
 		"TellStick not found",
@@ -500,7 +504,8 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
 		"An error occurred while communicating with TellStick",
 		"Could not connect to the Telldus Service",
 		"Received an unknown response",
-		"Syntax error"
+		"Syntax error",
+		"Broken pipe"
 	};
 	std::string strReturn;
 	intErrorNo = abs(intErrorNo); //We don't use negative values here.
