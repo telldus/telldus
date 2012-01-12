@@ -138,15 +138,15 @@ int list_devices() {
 		time_t timestamp = 0;
 
 		if (dataTypes & TELLSTICK_TEMPERATURE) {
-		  tdSensorValue(protocol, model, sensorId, TELLSTICK_TEMPERATURE, tempvalue, DATA_LENGTH, (int *)&timestamp);
-		  strcat(tempvalue, "°");
-		  strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
+			tdSensorValue(protocol, model, sensorId, TELLSTICK_TEMPERATURE, tempvalue, DATA_LENGTH, (int *)&timestamp);
+			strcat(tempvalue, "°");
+			strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
 		}
 
 		if (dataTypes & TELLSTICK_HUMIDITY) {
-		  tdSensorValue(protocol, model, sensorId, TELLSTICK_HUMIDITY, humidityvalue, DATA_LENGTH, (int *)&timestamp);
-		  strcat(humidityvalue, "%");
-		  strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
+			tdSensorValue(protocol, model, sensorId, TELLSTICK_HUMIDITY, humidityvalue, DATA_LENGTH, (int *)&timestamp);
+			strcat(humidityvalue, "%");
+			strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
 		}
 		printf("%-20s\t%-20s\t%-5i\t%-5s\t%-8s\t%-20s\n", protocol, model, sensorId, tempvalue, humidityvalue, timeBuf);
 
