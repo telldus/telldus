@@ -33,6 +33,7 @@ SET( Plugin_EXTRA
 	row_bg.png
 	qmldir
 	SensorValue.qml
+	SensorView.qml
 )
 
 FIND_PACKAGE(TelldusCore REQUIRED)
