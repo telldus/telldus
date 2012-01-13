@@ -1,0 +1,3 @@
+[submodule "telldus-gui/3rdparty/qt-components-desktop"]
+	path = telldus-gui/3rdparty/qt-components-desktop
+	url = git://gitorious.org/qt-components/desktop.git
