@@ -38,6 +38,7 @@ Column {
 			id: visibleinlistTitle
 			text: "Visible in list"
 			anchors.right: sensorinformationTitle.left
+			horizontalAlignment: Text.AlignHCenter
 			visible: main.state == "EDIT"
 			width: 100
 		}

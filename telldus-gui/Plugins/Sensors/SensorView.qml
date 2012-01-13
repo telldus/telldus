@@ -1,4 +1,5 @@
 import Qt 4.7
+import QtDesktop 0.1
 
 Component {
 	id: sensorView
@@ -67,29 +68,19 @@ Component {
 				color: "#004275"
 				width: 100
 			}
-			Item{
+			Item  {
 				id: visibleinlistcheckbox
-				anchors.right: sensorInfo.left
-				visible: main.state == "EDIT"
 				height: 40
-				Rectangle{
-					anchors.centerIn: parent
-					height: 10
-					width: 10
-					color: "white"
-					Text{
-						anchors.centerIn: parent
-						color: "#004275"
-						text: modelData.showInList ? "X" : ""
-					}
-					MouseArea{
-						anchors.fill: parent
-						onClicked: {
-							modelData.setShowInList(!modelData.showInList);
-						}
-					}
-				}
 				width: 100
+				anchors.right: sensorInfo.left
+				CheckBox {
+					id: checkBox
+					anchors.centerIn: parent
+					width: checkBox.height
+					visible: main.state == "EDIT"
+					checked: modelData.showInList
+					onClicked: modelData.setShowInList(!modelData.showInList)
+				}
 			}
 
 			Column {
