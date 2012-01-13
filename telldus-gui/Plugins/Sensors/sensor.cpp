@@ -46,10 +46,6 @@ void Sensor::setModel(const QString &model) {
 }
 
 QString Sensor::name() const {
-	//return QString("%1 %2").arg(this->protocol()).arg(this->id()); //TODO: Remove when name is fully implemented
-	if(d->name == ""){
-		return "<unnamed>";
-	}
 	return d->name;
 }
 

@@ -9,6 +9,13 @@ Component {
 		height: childrenRect.height
 		width: parent.width
 
+		property string state: main.state
+		onStateChanged: {
+			if (state != "EDIT") {
+				modelData.setName(nameEdit.text)
+			}
+		}
+
 		BorderImage {
 			source: "row_bg.png"
 			border.left: 5; border.top: 5
@@ -22,32 +29,18 @@ Component {
 				anchors.leftMargin: 15
 				height: 40
 				verticalAlignment: Text.AlignVCenter
-				text: modelData.name;
+				text: modelData.name == '' ? '<unnamed>' : modelData.name;
 				color: "#004275"
 			}
-			Rectangle{
-				color: "white"
+			TextField {
+				id: nameEdit
 				visible: main.state == "EDIT"
 				anchors.left: parent.left
 				anchors.leftMargin: 15
-				width: nameEdit.width + 4
-				height: 22
-				TextInput{
-					id: nameEdit
-					anchors.centerIn: parent
-					text: modelData.name;
-					color: "#004275"
-
-					onActiveFocusChanged: {
-						if(!activeFocus){
-							//todo other way?
-							modelData.setName(nameEdit.text);
-						}
-					}
-					onAccepted: {
-						modelData.setName(nameEdit.text);
-					}
-				}
+				anchors.top: parent.top
+				anchors.topMargin: (40-nameEdit.height)/2
+				text: modelData.name;
+				placeholderText: 'Enter a name'
 			}
 			Text{
 				anchors.right: model.left
