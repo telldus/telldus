@@ -24,5 +24,9 @@ SET( Plugin_PATH "com.telldus.qml" )
 
 INCLUDE( ../TelldusCenterPlugin.cmake NO_POLICY_SCOPE )
 
-SET(QT_COMPONENTS_OUTPUT_DIR "${CMAKE_BINARY_DIR}/TelldusCenter/Plugins/declarative")
+IF (WIN32)
+	SET(QT_COMPONENTS_OUTPUT_DIR "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/Plugins/declarative")
+ELSE()
+	SET(QT_COMPONENTS_OUTPUT_DIR "${CMAKE_BINARY_DIR}/TelldusCenter/Plugins/declarative")
+ENDIF()
 INCLUDE( ${CMAKE_SOURCE_DIR}/3rdparty/qt-components-desktop.cmake NO_POLICY_SCOPE )
