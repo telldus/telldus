@@ -1,4 +1,5 @@
 import Qt 4.7
+import QtDesktop 0.1
 
 Column {
 	id: sensorList
@@ -60,22 +61,16 @@ Column {
 	}
 	Row{
 		spacing: 20
-		Rectangle {
+		Button {
 			width: 50
 			height: 20
-			Text{
-				anchors.centerIn: parent
-				text: main.state == "VIEW" ? "Edit" : "View"
-			}
-			MouseArea{
-				anchors.fill: parent
-				onClicked: {
-					if(main.state == "VIEW"){
-						main.state = "EDIT"
-					}
-					else{
-						main.state  ="VIEW"
-					}
+			text: main.state == "VIEW" ? "Edit" : "View"
+			onClicked: {
+				if(main.state == "VIEW"){
+					main.state = "EDIT"
+				}
+				else{
+					main.state  ="VIEW"
 				}
 			}
 		}
