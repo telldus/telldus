@@ -65,9 +65,6 @@ ADD_DEFINITIONS( -DVERSION=${DISPLAYED_VERSION} )
 SET( telldus-center_TARGET	TelldusCenter )
 
 IF (APPLE) #### Mac OS X ####
-	LIST(APPEND telldus-center_LIBRARIES
-		/usr/lib/libQtUiTools.a
-	)
 	INCLUDE_DIRECTORIES(
 		/usr/include/QtUiTools
 	)

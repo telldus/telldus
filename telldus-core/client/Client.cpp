@@ -114,6 +114,9 @@ bool Client::getBoolFromService(const Message &msg) {
 
 int Client::getIntegerFromService(const Message &msg) {
 	std::wstring response = sendToService(msg);
+	if (response.compare(L"") == 0) {
+		return TELLSTICK_ERROR_COMMUNICATING_SERVICE;
+	}
 	return Message::takeInt(&response);
 }
 
@@ -181,7 +184,8 @@ void Client::run(){
 			}
 		}
 
-		std::wstring clientMessage = d->eventSocket.read(5000);	//testing 5 second timeout
+		std::wstring clientMessage = d->eventSocket.read(1000);	//testing 5 second timeout
+
 		while(clientMessage != L""){
 			//a message arrived
 			std::wstring type = Message::takeString(&clientMessage);
@@ -282,16 +286,46 @@ void Client::cleanupCallbacks() {
 }
 
 std::wstring Client::sendToService(const Message &msg) {
-	Socket s;
-	s.connect(L"TelldusClient");
-	if (!s.isConnected()) { //Connection failed
-		TelldusCore::Message msg;
-		msg.addArgument(TELLSTICK_ERROR_CONNECTING_SERVICE);
-		return msg;
+	
+	int tries = 0;
+	std::wstring readData;
+	while(tries < 20){
+		tries++;
+		if(tries == 20){
+			TelldusCore::Message msg;
+			msg.addArgument(TELLSTICK_ERROR_CONNECTING_SERVICE);
+			return msg;
+		}
+		Socket s;
+		s.connect(L"TelldusClient");
+		if (!s.isConnected()) { //Connection failed
+			printf("Connection failed\n\r");
+			msleep(500);
+			continue; //retry
+		}
+		s.write(msg.data());
+		if (!s.isConnected()) { //Connection failed sometime during operation... (better check here, instead of 5 seconds timeout later)
+			printf("Connection failed after write\n\r");
+			msleep(500);
+			continue; //retry
+		}
+		readData = s.read(8000);  //TODO changed to 10000 from 5000, how much does this do...?
+		if(readData == L""){
+			printf("Readdata nothing\n\r");
+			msleep(500);
+			continue; //TODO can we be really sure it SHOULD be anything?
+			//TODO perhaps break here instead?
+		}
+		
+		if (!s.isConnected()) { //Connection failed sometime during operation...
+			printf("Connection failed in the end\n\r");
+			msleep(500);
+			continue; //retry
+		}
+		break;
 	}
-	s.write(msg.data());
 
-	return s.read(5000);
+	return readData;
 }
 
 void Client::stopThread(){

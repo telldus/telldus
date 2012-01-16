@@ -18,6 +18,8 @@
 #include <ftdi.h>
 #include "Thread.h"
 #include "Mutex.h"
+#include "Log.h"
+#include "Settings.h"
 #include "Strings.h"
 #include "common.h"
 
@@ -31,7 +33,7 @@ typedef int DWORD;
 
 class TellStick::PrivateData {
 public:
-	bool open;
+	bool open, ignoreControllerConfirmation;
 	int vid, pid, fwVersion;
 	std::string serial, message;
 	ftdi_context ftHandle;
@@ -51,9 +53,13 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 	d->serial = td.serial;
 	d->running = false;
 
+	Settings set;
+	d->ignoreControllerConfirmation = set.getSetting(L"ignoreControllerConfirmation")==L"true";
+
 	ftdi_init(&d->ftHandle);
 	ftdi_set_interface(&d->ftHandle, INTERFACE_ANY);
 
+	Log::notice("Connecting to TellStick (%X/%X) with serial %s", d->vid, d->pid, d->serial.c_str());
 	int ret = ftdi_usb_open_desc(&d->ftHandle, td.vid, td.pid, NULL, td.serial.c_str());
 	if (ret < 0) {
 		ftdi_deinit(&d->ftHandle);
@@ -62,6 +68,7 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 	d->open = true;
 	ftdi_usb_reset( &d->ftHandle );
 	ftdi_disable_bitbang( &d->ftHandle );
+	ftdi_set_latency_timer(&d->ftHandle, 16);
 
 	if (d->open) {
 
@@ -71,10 +78,13 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 			this->setBaud(4800);
 		}
 		this->start();
+	} else {
+		Log::warning("Failed to open TellStick");
 	}
 }
 
 TellStick::~TellStick() {
+	Log::warning("Disconnected TellStick (%X/%X) with serial %s", d->vid, d->pid, d->serial.c_str());
 	if (d->running) {
 		stop();
 	}
@@ -92,6 +102,14 @@ int TellStick::firmwareVersion() {
 
 int TellStick::pid() const {
 	return d->pid;
+}
+
+int TellStick::vid() const {
+	return d->vid;
+}
+
+std::string TellStick::serial() const {
+	return d->serial;
 }
 
 bool TellStick::isOpen() const {
@@ -128,6 +146,14 @@ void TellStick::processData( const std::string &data ) {
 			d->message.append( 1, data[i] );
 		}
 	}
+}
+
+int TellStick::reset(){
+	int success = ftdi_usb_reset( &d->ftHandle );
+	if(success < 0){
+		return TELLSTICK_ERROR_UNKNOWN; //-1 = FTDI reset failed, -2 = USB device unavailable
+	}
+	return TELLSTICK_SUCCESS;
 }
 
 void TellStick::run() {
@@ -186,33 +212,44 @@ int TellStick::send( const std::string &strMessage ) {
 	if(ret < 0) {
 		c = false;
 	} else if(ret != strMessage.length()) {
-		fprintf(stderr, "weird send length? retval %i instead of %d\n",
-		ret, (int)strMessage.length());
+		Log::debug("Weird send length? retval %i instead of %d\n", ret, (int)strMessage.length());
 	}
 
 	delete[] tempMessage;
 
-	int retrycnt = 200;
+	if(!c){
+		Log::debug("Broken pipe on send");
+		return TELLSTICK_ERROR_BROKEN_PIPE;
+	}
+
+	if(strMessage.compare("N+") == 0 && ((pid() == 0x0C31 && firmwareVersion() < 5) || (pid() == 0x0C30 && firmwareVersion() < 6))){
+		//these firmware versions doesn't implement ack to noop, just check that the noop can be sent correctly
+		return TELLSTICK_SUCCESS;
+	}
+
+	if(d->ignoreControllerConfirmation){
+		//allow TellStick to finish its air-sending
+		msleep(1000);
+		return TELLSTICK_SUCCESS;
+	}
+
+	int retrycnt = 250;
 	unsigned char in;
-	while(c && --retrycnt) {
+	while(--retrycnt) {
 		ret = ftdi_read_data( &d->ftHandle, &in, 1);
 		if (ret > 0) {
 			if (in == '\n') {
-				break;
+				return TELLSTICK_SUCCESS;
 			}
 		} else if(ret == 0) { // No data available
 			usleep(100);
 		} else { //Error
-			c = false;
+			Log::debug("Broken pipe on read");
+			return TELLSTICK_ERROR_BROKEN_PIPE;
 		}
 	}
-	if (!retrycnt) {
-		c = false;
-	}
-	if (!c) {
-		return TELLSTICK_ERROR_COMMUNICATION;
-	}
-	return TELLSTICK_SUCCESS;
+
+	return TELLSTICK_ERROR_COMMUNICATION;
 }
 
 void TellStick::setBaud(int baud) {

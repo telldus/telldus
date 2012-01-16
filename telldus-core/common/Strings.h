@@ -2,6 +2,7 @@
 #define STRING_H
 
 #include <string>
+#include <stdarg.h>
 
 namespace TelldusCore {
 	std::wstring charToWstring(const char *value);
@@ -10,10 +11,14 @@ namespace TelldusCore {
 
 	bool comparei(std::wstring stringA, std::wstring stringB);
 	std::wstring intToWstring(int value);
+	//std::wstring intToWStringSafe(int value);
 	std::string intToString(int value);
 	std::string wideToString(const std::wstring &input);
 
 	int wideToInteger(const std::wstring &input);
+
+	std::string formatf(const char *format, ...);
+	std::string sformatf(const char *format, va_list ap);
 }
 
 #endif //STRING_H

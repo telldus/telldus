@@ -4,6 +4,7 @@
 #include <sstream>
 #include <string>
 #include <string.h>
+#include <stdio.h>
 
 #ifdef _WINDOWS
 #include <windows.h>
@@ -91,16 +92,57 @@ bool TelldusCore::comparei(std::wstring stringA, std::wstring stringB) {
 }
 
 std::wstring TelldusCore::intToWstring(int value) {
+#ifdef _WINDOWS
+	//no stream used
+//TODO! Make effective and safe...
+	wchar_t numstr[21]; // enough to hold all numbers up to 64-bits
+	_itow_s(value, numstr, sizeof(numstr), 10);
+	std::wstring newstring(numstr);
+	return newstring;
+	//return TelldusCore::charToWstring(stdstring.c_str());
+	//std::wstring temp = TelldusCore::charToWstring(stdstring.c_str());
+	//std::wstring temp(stdstring.length(), L' ');
+	//std::copy(stdstring.begin(), stdstring.end(), temp.begin());
+	//return temp;
+#else
 	std::wstringstream st;
 	st << value;
 	return st.str();
+#endif
 }
 
 std::string TelldusCore::intToString(int value) {
+//Not sure if this is neecssary (for ordinary stringstream that is)
+#ifdef _WINDOWS
+	char numstr[21]; // enough to hold all numbers up to 64-bits
+	_itoa_s(value, numstr, sizeof(numstr), 10);
+	std::string stdstring(numstr);
+	return stdstring;
+#else
 	std::stringstream st;
 	st << value;
 	return st.str();
+#endif
 }
+
+/*
+std::wstring TelldusCore::intToWStringSafe(int value){
+	#ifdef _WINDOWS
+		//no stream used
+	//TODO! Make effective and safe...
+		char numstr[21]; // enough to hold all numbers up to 64-bits
+		itoa(value, numstr, 10);
+		std::string stdstring(numstr);
+		return TelldusCore::charToWstring(stdstring.c_str());
+		//std::wstring temp = TelldusCore::charToWstring(stdstring.c_str());
+		//std::wstring temp(stdstring.length(), L' ');
+		//std::copy(stdstring.begin(), stdstring.end(), temp.begin());
+		//return temp;
+	#else
+		return TelldusCore::intToWString(value);
+	#endif
+}
+*/
 
 int TelldusCore::wideToInteger(const std::wstring &input){
 	std::wstringstream inputstream;
@@ -157,4 +199,49 @@ std::string TelldusCore::wideToString(const std::wstring &input) {
 
 	return retval;
 #endif
+}
+
+std::string TelldusCore::formatf(const char *format, ...) {
+	va_list ap;
+	va_start(ap, format);
+	std::string retval = sformatf(format, ap);
+	va_end(ap);
+	return retval;
+}
+
+std::string TelldusCore::sformatf(const char *format, va_list ap) {
+	//This code is based on code from the Linux man-pages project (man vsprintf)
+	int n;
+	int size = 100;     /* Guess we need no more than 100 bytes. */
+	char *p, *np;
+
+	if ((p = (char*)malloc(size)) == NULL) {
+		return "";
+	}
+
+	while (1) {
+		/* Try to print in the allocated space. */
+		n = vsnprintf(p, size, format, ap);
+
+		/* If that worked, return the string. */
+		if (n > -1 && n < size) {
+			std::string retval(p);
+			free(p);
+			return retval;
+		}
+
+		/* Else try again with more space. */
+
+		if (n > -1) {   /* glibc 2.1 */
+			size = n+1; /* precisely what is needed */
+		} else {        /* glibc 2.0 */
+			size *= 2;  /* twice the old size */
+		}
+		if ((np = (char *)realloc (p, size)) == NULL) {
+			free(p);
+			return "";
+		} else {
+			p = np;
+		}
+	}
 }

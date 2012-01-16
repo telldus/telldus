@@ -29,10 +29,18 @@ public:
 
 public slots:
 	virtual void saveParameters() = 0;
+	void addProtocolMatch( const QString &protocol, const QString &model );
+
+private slots:
+	void setProtocolValue( const QString &name, const QString &value, const QString &protocol, const QString &model );
 	virtual void setValue( const QString &name, const QString &value ) = 0;
 
 protected:
 	Device *p_device;
+
+private:
+	QList<QString> acceptedProtocolModel;
+
 };
 
 #endif

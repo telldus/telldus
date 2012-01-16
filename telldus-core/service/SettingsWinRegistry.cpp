@@ -1,10 +1,12 @@
 #include "Settings.h"
+#include "Strings.h"
 #include <Windows.h>
 #include <sstream> 
 #include <string>
 #include <vector>
 #include <iostream>
 #include <fstream>
+#include "common.h"
 
 #include "../client/telldus-core.h"
 
@@ -93,9 +95,8 @@ int Settings::addDevice() {
 	DWORD dwDisp;
 	intDeviceId = getNextDeviceId();
 
-	std::wostringstream ssRegPath; 
-	ssRegPath << d->strRegPathDevice << intDeviceId;
-	std::wstring strCompleteRegPath = ssRegPath.str();
+	std::wstring strCompleteRegPath = d->strRegPathDevice;
+	strCompleteRegPath.append(TelldusCore::intToWstring(intDeviceId));
 		
 	if (RegCreateKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hk, &dwDisp)) {
 		//fail
@@ -122,7 +123,7 @@ int Settings::getNextDeviceId() const {
 		DWORD dwLength;
 		DWORD nResult(0);
 
-		long lngStatus = RegQueryValueEx(hk, L"LastUsedId", NULL, NULL, reinterpret_cast<LPBYTE>(&nResult), &dwLength); //(LPBYTE)Buff, &dwLength);
+		long lngStatus = RegQueryValueEx(hk, L"LastUsedId", NULL, NULL, reinterpret_cast<LPBYTE>(&nResult), &dwLength);
 
 		if(lngStatus == ERROR_SUCCESS){
 			intReturn = nResult + 1;
@@ -143,9 +144,8 @@ int Settings::getNextDeviceId() const {
 int Settings::removeDevice(int intDeviceId) {
 	TelldusCore::MutexLocker locker(&mutex);
 	
-	std::wostringstream ssRegPath; 
-	ssRegPath << d->strRegPathDevice << intDeviceId;
-	std::wstring strCompleteRegPath = ssRegPath.str();
+	std::wstring strCompleteRegPath = d->strRegPathDevice;
+	strCompleteRegPath.append(TelldusCore::intToWstring(intDeviceId));
 
 	long lngSuccess = RegDeleteKey(d->rootKey, strCompleteRegPath.c_str());
 
@@ -157,13 +157,39 @@ int Settings::removeDevice(int intDeviceId) {
 	return TELLSTICK_ERROR_UNKNOWN;
 }
 
+std::wstring Settings::getSetting(const std::wstring &strName) const{
+	std::wstring strReturn;
+	HKEY hk;
+
+	std::wstring strCompleteRegPath = d->strRegPath;
+	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &hk);
+			
+	if(lnExists == ERROR_SUCCESS){
+		wchar_t* Buff = new wchar_t[intMaxRegValueLength];
+		DWORD dwLength = sizeof(wchar_t)*intMaxRegValueLength;
+		long lngStatus = RegQueryValueEx(hk, strName.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
+
+		if(lngStatus == ERROR_MORE_DATA){
+			//The buffer is to small, recreate it
+			delete Buff;
+			Buff = new wchar_t[dwLength];
+			lngStatus = RegQueryValueEx(hk, strName.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
+		}
+		if (lngStatus == ERROR_SUCCESS) {
+			strReturn = Buff;
+		}
+		delete Buff;
+	}
+	RegCloseKey(hk);
+	return strReturn;
+}
+
 std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &name, bool parameter) const {
 	std::wstring strReturn;
 	HKEY hk;
 
-	std::wostringstream ssRegPath; 
-	ssRegPath << d->strRegPathDevice << intDeviceId;
-	std::wstring strCompleteRegPath = ssRegPath.str();
+	std::wstring strCompleteRegPath = d->strRegPathDevice;
+	strCompleteRegPath.append(TelldusCore::intToWstring(intDeviceId));
 	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &hk);
 			
 	if(lnExists == ERROR_SUCCESS){
@@ -191,9 +217,9 @@ int Settings::setStringSetting(int intDeviceId, const std::wstring &name, const 
 	HKEY hk;
 	int ret = TELLSTICK_SUCCESS;
 		
-	std::wostringstream ssRegPath; 
-	ssRegPath << d->strRegPathDevice << intDeviceId;
-	std::wstring strCompleteRegPath = ssRegPath.str();
+	std::wstring bla = TelldusCore::intToWstring(intDeviceId);
+	std::wstring strCompleteRegPath = d->strRegPathDevice;
+	strCompleteRegPath.append(bla);
 	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_WRITE, &hk);
 				
 	if (lnExists == ERROR_SUCCESS){
@@ -223,9 +249,8 @@ int Settings::setIntSetting(int intDeviceId, const std::wstring &name, int value
 	int intReturn = TELLSTICK_ERROR_UNKNOWN;
 	HKEY hk;
 
-	std::wostringstream ssRegPath; 
-	ssRegPath << d->strRegPathDevice << intDeviceId;
-	std::wstring strCompleteRegPath = ssRegPath.str();
+	std::wstring strCompleteRegPath =  d->strRegPathDevice;
+	strCompleteRegPath.append(TelldusCore::intToWstring(intDeviceId));
 	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_WRITE, &hk);
 	if (lnExists == ERROR_SUCCESS) {
 		DWORD dwVal = value;

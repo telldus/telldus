@@ -11,6 +11,11 @@ LiveMessageToken::LiveMessageToken(const QString &value) {
 	stringVal = value;
 }
 
+LiveMessageToken::LiveMessageToken(int value) {
+	valueType = Int;
+	intVal = value;
+}
+
 QByteArray LiveMessageToken::toByteArray() const {
 	if (valueType == Int) {
 		return QString("i%1s").arg(intVal, 0, 16).toUtf8();
@@ -122,7 +127,7 @@ void LiveMessageTokenScriptWrapper::add(LiveMessageTokenScriptWrapper *t) {
 	p_token.listVal << t->p_token;
 }
 
-int LiveMessageTokenScriptWrapper::getInt(const QString &key, int defaultValue) {
+int LiveMessageTokenScriptWrapper::getInt(const QString &key, int defaultValue) const {
 	if (p_token.valueType != LiveMessageToken::Dictionary) {
 		return defaultValue;
 	}
@@ -130,6 +135,16 @@ int LiveMessageTokenScriptWrapper::getInt(const QString &key, int defaultValue) 
 		return defaultValue;
 	}
 	return p_token.dictVal[key].intVal;
+}
+
+QString LiveMessageTokenScriptWrapper::getString(const QString &key, const QString &defaultValue) const {
+	if (p_token.valueType != LiveMessageToken::Dictionary) {
+		return defaultValue;
+	}
+	if (!p_token.dictVal.contains(key)) {
+		return defaultValue;
+	}
+	return p_token.dictVal[key].stringVal;
 }
 
 int LiveMessageTokenScriptWrapper::intVal() const {

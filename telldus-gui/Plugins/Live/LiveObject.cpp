@@ -13,7 +13,7 @@ public:
 	class Server;
 
 	QSslSocket *socket;
-	QTimer timer;
+	QTimer pingTimer, pongTimer;
 	bool registered;
 	QUrl registerUrl;
 	QString uuid, hashMethod;
@@ -46,8 +46,11 @@ LiveObject::LiveObject( QScriptEngine *engine, QObject * parent )
 	connect(d->socket, SIGNAL(stateChanged(QAbstractSocket::SocketState)), this, SLOT(stateChanged(QAbstractSocket::SocketState)));
 	connect(d->socket, SIGNAL(sslErrors(const QList<QSslError> &)), this, SLOT(sslErrors(const QList<QSslError> &)));
 
-	d->timer.setInterval(60000); //Once a minute
-	connect(&d->timer, SIGNAL(timeout()), this, SLOT(pingServer()));
+	d->pingTimer.setInterval(120000); //Two minutes
+	d->pongTimer.setInterval(360000); //Six minutes
+	d->pongTimer.setSingleShot(true);
+	connect(&d->pingTimer, SIGNAL(timeout()), this, SLOT(pingServer()));
+	connect(&d->pongTimer, SIGNAL(timeout()), this, SLOT(pongTimeout()));
 
 	d->manager = new QNetworkAccessManager(this);
 	connect(d->manager, SIGNAL(finished(QNetworkReply*)), this, SLOT(serverAssignReply(QNetworkReply*)));
@@ -102,6 +105,8 @@ void LiveObject::readyRead() {
 		//qDebug() << "HASH mismatch!" << msg->name();
 		return;
 	}
+	d->pongTimer.stop();
+	d->pongTimer.start();
 
 	if (msg->name() == "") {
 		return;
@@ -122,6 +127,14 @@ void LiveObject::readyRead() {
 		s.setValue("Live/UUID", d->uuid);
 		emit notRegistered();
 		emit errorChanged("Not registered");
+	} else if (msg->name() == "command") {
+		if (msg->arg(0).valueType == LiveMessageToken::Dictionary && msg->arg(0).dictVal.contains("ACK")) {
+			int ack = msg->arg(0).dictVal["ACK"].intVal;
+			LiveMessage msg("ACK");
+			msg.append(ack);
+			this->sendMessage(msg);
+		}
+		emit messageReceived(msg.data());
 	} else {
 		emit messageReceived(msg.data());
 	}
@@ -132,7 +145,7 @@ void LiveObject::refreshServerList() {
 	emit statusChanged("Discover servers");
 	d->serverList.clear();
 	QUrl url(TELLDUS_LIVE_URI);
-	QPair<QString, QString> version("protocolVersion", "1");
+	QPair<QString, QString> version("protocolVersion", "2");
 	QList<QPair<QString, QString> > query;
 	query.append(version);
 	url.setQueryItems(query);
@@ -156,6 +169,8 @@ void LiveObject::sendMessage(const LiveMessage &message) {
 
 	d->socket->write(msg.toByteArray());
 	d->socket->flush();
+	d->pingTimer.stop();
+	d->pingTimer.start();
 }
 
 void LiveObject::sendMessage(LiveMessage *message) {
@@ -170,7 +185,8 @@ void LiveObject::p_connected() {
 	QSettings settings;
 	d->uuid = settings.value("Live/UUID", "").toString();
 
-	d->timer.start(); //For pings
+	d->pingTimer.start(); //For pings
+	d->pongTimer.start(); //For pongs
 	LiveMessage msg("Register");
 
 	LiveMessageToken token;
@@ -188,7 +204,12 @@ void LiveObject::p_connected() {
 }
 
 void LiveObject::p_disconnected() {
-	d->timer.stop();
+	d->pingTimer.stop();
+	d->pongTimer.stop();
+	if (d->registered) {
+		//Clear the registered status
+		emit errorChanged("Disconnected from server");
+	}
 	d->registered = false;
 }
 
@@ -198,11 +219,12 @@ void LiveObject::error( QAbstractSocket::SocketError socketError ) {
 
 void LiveObject::stateChanged( QAbstractSocket::SocketState socketState ) {
 	if (socketState == QAbstractSocket::UnconnectedState) {
-		int timeout = rand() % 20 + 10; //Random timeout from 10-30s to avoid flooding the servers
+		int timeout = rand() % 40 + 10; //Random timeout from 10-50s to avoid flooding the servers
 		QTimer::singleShot(timeout*1000, this, SLOT(connectToServer()));
 		emit statusChanged("Reconnecting in " + QString::number(timeout) + " seconds...");
 	} else if (socketState == QAbstractSocket::ConnectingState) {
 		emit statusChanged("Connecting...");
+		emit errorChanged("");
 	}
 }
 
@@ -228,8 +250,10 @@ void LiveObject::sslErrors( const QList<QSslError> & errors ) {
 void LiveObject::serverAssignReply( QNetworkReply *r ) {
 	r->deleteLater();
 	if (r->error() != QNetworkReply::NoError) {
+		int timeout = rand() % 300 + 60; //Random timeout from 60s-6min to avoid flooding the servers
 		emit errorChanged(r->errorString());
-		emit statusChanged("Error retrieving server list");
+		emit statusChanged("Retrying in " + QString::number(timeout) + " seconds...");
+		QTimer::singleShot(timeout * 1000, this, SLOT(connectToServer()));
 		return;
 	}
 	QXmlStreamReader xml(r);
@@ -253,7 +277,7 @@ void LiveObject::serverAssignReply( QNetworkReply *r ) {
 		d->serverRefreshTime = QDateTime::currentDateTime();
 		QTimer::singleShot(0, this, SLOT(connectToServer()));
 	} else {
-		int timeout = rand() % 20 + 10; //Random timeout from 10-30s to avoid flooding the servers
+		int timeout = rand() % 300 + 60; //Random timeout from 60-6min to avoid flooding the servers
 		emit errorChanged("No servers found");
 		emit statusChanged("Retrying in " + QString::number(timeout) + " seconds...");
 		QTimer::singleShot(timeout * 1000, this, SLOT(connectToServer()));
@@ -270,7 +294,7 @@ QByteArray LiveObject::signatureForMessage( const QByteArray &message ) {
 LiveMessageToken LiveObject::generateVersionToken() {
 	LiveMessageToken token;
 	token.valueType = LiveMessageToken::Dictionary;
-	token.dictVal["protocol"] = LiveMessageToken("1");
+	token.dictVal["protocol"] = LiveMessageToken(2);
 	token.dictVal["version"] = LiveMessageToken(TELLDUS_CENTER_VERSION);
 #if defined(Q_WS_WIN)
 	token.dictVal["os"] = LiveMessageToken("windows");
@@ -313,4 +337,8 @@ LiveMessageToken LiveObject::generateVersionToken() {
 	token.dictVal["os-version"] = LiveMessageToken("");
 #endif
 	return token;
+}
+
+void LiveObject::pongTimeout() {
+	this->disconnect();
 }

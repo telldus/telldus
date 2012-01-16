@@ -29,8 +29,12 @@ public:
 
 	virtual int firmwareVersion();
 	virtual int pid() const;
+	virtual int vid() const;
+	virtual std::string serial() const;
+
 	bool isOpen() const;
 	bool isSameAsDescriptor(const TellStickDescriptor &d) const;
+	virtual int reset();
 	virtual int send( const std::string &message );
 	bool stillConnected() const;
 

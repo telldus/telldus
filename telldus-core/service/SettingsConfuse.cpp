@@ -375,6 +375,7 @@ bool readConfig(cfg_t **cfg) {
 		CFG_STR(const_cast<char *>("user"), const_cast<char *>("nobody"), CFGF_NONE),
 		CFG_STR(const_cast<char *>("group"), const_cast<char *>("plugdev"), CFGF_NONE),
 		CFG_STR(const_cast<char *>("deviceNode"), const_cast<char *>("/dev/tellstick"), CFGF_NONE),
+		CFG_STR(const_cast<char *>("ignoreControllerConfirmation"), const_cast<char *>("false"), CFGF_NONE),
 		CFG_SEC(const_cast<char *>("device"), device_opts, CFGF_MULTI),
 		CFG_END()
 	};

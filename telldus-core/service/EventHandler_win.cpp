@@ -51,15 +51,17 @@ void EventHandler::signal(Event *) {
 }
 
 bool EventHandler::waitForAny() {
-	int result = WaitForMultipleObjects(d->eventCount, d->eventArray, FALSE, INFINITE);
-
-	TelldusCore::MutexLocker locker(&d->mutex);
-	if (result == WAIT_TIMEOUT) {
-		return false;
+	
+	while(1){
+		int result = WaitForMultipleObjects(d->eventCount, d->eventArray, FALSE, 1000);
+		if (result == WAIT_TIMEOUT) {
+			continue;
+		}
+		TelldusCore::MutexLocker locker(&d->mutex);
+		int eventIndex = result - WAIT_OBJECT_0;
+		if (eventIndex >= d->eventCount) {
+			return false;
+		}
+		return true;
 	}
-	int eventIndex = result - WAIT_OBJECT_0;
-	if (eventIndex >= d->eventCount) {
-		return false;
-	}
-	return true;
 }

@@ -12,6 +12,7 @@ public:
 
 	LiveMessageToken();
 	LiveMessageToken(const QString &value);
+	LiveMessageToken(int value);
 	QByteArray toByteArray() const;
 	static LiveMessageToken parseToken(const QByteArray &string, int* start);
 
@@ -34,13 +35,14 @@ public:
 public slots:
 	void add(LiveMessageTokenScriptWrapper *token);
 
-	int getInt(const QString &key, int defaultValue = 0);
+	int getInt(const QString &key, int defaultValue = 0) const;
+	QString getString(const QString &key, const QString &defaultValue = "") const;
 
 	int intVal() const;
 
 	void set(const QString &key, int value);
 	void set(const QString &key, const QString &value);
-	
+
 private:
 	LiveMessageToken p_token;
 };

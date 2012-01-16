@@ -73,10 +73,10 @@ void EventUpdateManager::run(){
 
 void EventUpdateManager::sendMessageToClients(EventUpdateData *data){
 
+	int connected = 0;
 	for(SocketList::iterator it = d->clients.begin(); it != d->clients.end();){
-
 		if((*it)->isConnected()){
-
+			connected++;
 			TelldusCore::Message msg;
 
 			if(data->messageType == L"TDDeviceEvent"){

@@ -39,6 +39,7 @@ private slots:
 	void p_connected();
 	void p_disconnected();
 	void readyRead();
+	void pongTimeout();
 	void error( QAbstractSocket::SocketError socketError );
 	void stateChanged( QAbstractSocket::SocketState socketState );
 	void sslErrors( const QList<QSslError> & errors );

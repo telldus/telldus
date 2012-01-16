@@ -173,8 +173,28 @@ EditDeviceDialog::EditDeviceDialog(Device *device, QWidget *parent, Qt::WFlags f
 	((DeviceSettingArctechSelflearning *)d->deviceSettings[9])->setUnitMinMax(1,15);
 
 	foreach( DeviceSetting *s, d->deviceSettings ) {
-		connect(d->filteredModel, SIGNAL(setParameter(const QString&, const QString&)), s, SLOT(setValue(const QString&, const QString&)));
+		connect(d->filteredModel, SIGNAL(setParameter(const QString&, const QString&, const QString&, const QString&)), s, SLOT(setProtocolValue(const QString&, const QString&, const QString&, const QString&)));
 		d->settingsLayout->addWidget( s );
+	}
+
+	for (int i=0; i<d->model->rowCount(QModelIndex()); ++i){
+		QModelIndex index = d->model->index(i, 0, QModelIndex());
+		VendorDeviceTreeItem *typeitem = d->model->item(index);
+
+		for(int j=0; j<typeitem->childCount(); ++j){
+			VendorDeviceTreeItem *branditem = typeitem->child(j); //d->model->item(index);
+
+			for(int k=0; k<branditem->childCount(); ++k){
+				VendorDeviceTreeItem *deviceitem = branditem->child(k); //d->model->item(index);
+
+				int widget = deviceitem->widget();
+				QString strModel = deviceitem->deviceModel().section(':', 0, 0);
+				if (strModel.startsWith("selflearning-")) {
+					strModel = "selflearning";
+				}
+				d->deviceSettings[widget]->addProtocolMatch(deviceitem->deviceProtocol(), strModel);
+			}
+		}
 	}
 
 	expandNodes(deviceView);

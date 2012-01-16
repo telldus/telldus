@@ -10,8 +10,11 @@
 //
 //
 #include "TellStick.h"
+#include "common.h"
 #include "Mutex.h"
+#include "Settings.h"
 #include "Strings.h"
+#include "Log.h"
 #include "../client/telldus-core.h"
 #include <string.h>
 #include <stdlib.h>
@@ -20,7 +23,7 @@
 
 class TellStick::PrivateData {
 public:
-	bool open, running;
+	bool open, running, ignoreControllerConfirmation;
 	int vid, pid, fwVersion;
 	std::string serial, message;
 	FT_HANDLE ftHandle;
@@ -53,6 +56,8 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 	d->pid = td.pid;
 	d->fwVersion = 0;
 	d->serial = td.serial;
+	Settings set;
+	d->ignoreControllerConfirmation = set.getSetting(L"ignoreControllerConfirmation")==L"true";
 
 	char *tempSerial = new char[td.serial.size()+1];
 #ifdef _WINDOWS
@@ -61,6 +66,7 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 	strcpy(tempSerial, td.serial.c_str());
 	FT_SetVIDPID(td.vid, td.pid);
 #endif
+	Log::notice("Connecting to TellStick (%X/%X) with serial %s", d->vid, d->pid, d->serial.c_str());
 	FT_STATUS ftStatus = FT_OpenEx(tempSerial, FT_OPEN_BY_SERIAL_NUMBER, &d->ftHandle);
 	delete tempSerial;
 	if (ftStatus == FT_OK) {
@@ -76,10 +82,13 @@ TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &
 			setBaud(4800);
 		}
 		this->start();
+	} else {
+		Log::warning("Failed to open TellStick");
 	}
 }
 
 TellStick::~TellStick() {
+	Log::warning("Disconnected TellStick (%X/%X) with serial %s", d->vid, d->pid, d->serial.c_str());
 	if (d->running) {
 		TelldusCore::MutexLocker locker(&d->mutex);
 		d->running = false;
@@ -106,6 +115,14 @@ int TellStick::firmwareVersion() {
 
 int TellStick::pid() const {
 	return d->pid;
+}
+
+int TellStick::vid() const {
+	return d->vid;
+}
+
+std::string TellStick::serial() const {
+	return d->serial;
 }
 
 bool TellStick::isOpen() const {
@@ -142,6 +159,18 @@ void TellStick::processData( const std::string &data ) {
 			d->message.append( 1, data[i] );
 		}
 	}
+}
+
+int TellStick::reset(){
+#ifndef _WINDOWS
+	return TELLSTICK_SUCCESS; //nothing to be done on other platforms
+#else
+	int success = FT_CyclePort( d->ftHandle );
+	if(success == FT_OK){
+		return TELLSTICK_SUCCESS;
+	}
+	return TELLSTICK_ERROR_UNKNOWN;
+#endif
 }
 
 void TellStick::run() {
@@ -186,8 +215,7 @@ int TellStick::send( const std::string &strMessage ) {
 	if (!d->open) {
 		return TELLSTICK_ERROR_NOT_FOUND;
 	}
-	bool c = true;
-
+	
 	//This lock does two things
 	// 1 Prevents two calls from different threads to this function
 	// 2 Prevents our running thread from receiving the data we are interested in here
@@ -205,26 +233,39 @@ int TellStick::send( const std::string &strMessage ) {
 	FT_STATUS ftStatus;
 	ftStatus = FT_Write(d->ftHandle, tempMessage, (DWORD)strMessage.length(), &bytesWritten);
 	free(tempMessage);
+	
+	if(ftStatus != FT_OK){
+		Log::debug("Broken pipe on send");
+		return TELLSTICK_ERROR_BROKEN_PIPE;
+	}
 
-	while(c) {
+	if(strMessage.compare("N+") == 0 && ((pid() == 0x0C31 && firmwareVersion() < 5) || (pid() == 0x0C30 && firmwareVersion() < 6))){
+		//these firmware versions doesn't implement ack to noop, just check that the noop can be sent correctly
+		return TELLSTICK_SUCCESS;
+	}
+	if(d->ignoreControllerConfirmation){
+		//wait for TellStick to finish its air-sending
+		msleep(1000);
+		return TELLSTICK_SUCCESS;
+	}
+
+	while(1) {
 		ftStatus = FT_Read(d->ftHandle,&in,1,&bytesRead);
 		if (ftStatus == FT_OK) {
 			if (bytesRead == 1) {
 				if (in == '\n') {
-					break;
+					return TELLSTICK_SUCCESS;
+				} else {
+					continue;
 				}
 			} else { //Timeout
-				c = false;
+				return TELLSTICK_ERROR_COMMUNICATION;
 			}
 		} else { //Error
-			c = false;
+			Log::debug("Broken pipe on read");
+			return TELLSTICK_ERROR_BROKEN_PIPE;
 		}
 	}
-
-	if (!c) {
-		return TELLSTICK_ERROR_COMMUNICATION;
-	}
-	return TELLSTICK_SUCCESS;
 }
 
 bool TellStick::stillConnected() const {

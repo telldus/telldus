@@ -5,7 +5,7 @@
 #include "Settings.h"
 #include "Strings.h"
 #include "Message.h"
-#include "common.h"
+#include "Log.h"
 
 #include <map>
 #include <memory>
@@ -432,9 +432,31 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 	}
 	else{
 		Controller *controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
+		if(!controller){
+			Log::warning("Trying to execute action, but no controller found. Rescanning USB ports");
+			//no controller found, scan for one, and retry once
+			d->controllerManager->loadControllers();
+			controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
+		}
+
 		if(controller){
 			retval = device->doAction(action, data, controller);
+			if(retval == TELLSTICK_ERROR_BROKEN_PIPE){
+				Log::warning("Error in communication with TellStick when executing action. Resetting USB");
+				d->controllerManager->resetController(controller);
+			}
+			if(retval == TELLSTICK_ERROR_BROKEN_PIPE || retval == TELLSTICK_ERROR_NOT_FOUND){
+				Log::warning("Rescanning USB ports");
+				d->controllerManager->loadControllers();
+				controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
+				if(!controller){
+					Log::error("No contoller (TellStick) found, even after reset. Giving up.");
+					return TELLSTICK_ERROR_NOT_FOUND;
+				}
+				retval = device->doAction(action, data, controller); //retry one more time
+			}
 		} else {
+			Log::error("No contoller (TellStick) found after one retry. Giving up.");
 			return TELLSTICK_ERROR_NOT_FOUND;
 		}
 	}
@@ -479,7 +501,7 @@ int DeviceManager::doGroupAction(const std::wstring devices, const int action, c
 					deviceReturnValue = doAction(deviceId, action, data);
 				}
 				else if(childType == TELLSTICK_TYPE_SCENE){
-					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds); //TODO make scenes (and test) infinite loops-safe
+					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds); //TODO make scenes infinite loops-safe
 				}
 				else{
 					//group (in group)
@@ -719,10 +741,29 @@ void DeviceManager::setSensorValueAndSignal( const std::string &dataType, int da
 int DeviceManager::sendRawCommand(const std::wstring &command, int reserved){
 
 	Controller *controller = d->controllerManager->getBestControllerById(-1);
-	if(controller){
-		return controller->send(TelldusCore::wideToString(command));
+
+	if(!controller){
+		//no controller found, scan for one, and retry once
+		d->controllerManager->loadControllers();
+		controller = d->controllerManager->getBestControllerById(-1);
 	}
-	else{
+
+	int retval = TELLSTICK_ERROR_UNKNOWN;
+	if(controller){
+		retval = controller->send(TelldusCore::wideToString(command));
+		if(retval == TELLSTICK_ERROR_BROKEN_PIPE){
+			d->controllerManager->resetController(controller);
+		}
+		if(retval == TELLSTICK_ERROR_BROKEN_PIPE || retval == TELLSTICK_ERROR_NOT_FOUND){
+			d->controllerManager->loadControllers();
+			controller = d->controllerManager->getBestControllerById(-1);
+			if(!controller){
+				return TELLSTICK_ERROR_NOT_FOUND;
+			}
+			retval = controller->send(TelldusCore::wideToString(command));  //retry one more time
+		}
+		return retval;
+	} else {
 		return TELLSTICK_ERROR_NOT_FOUND;
 	}
 }

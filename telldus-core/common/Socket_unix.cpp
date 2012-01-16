@@ -78,9 +78,9 @@ std::wstring Socket::read() {
 std::wstring Socket::read(int timeout) {
 	struct timeval tv;
 	char inbuf[BUFSIZE];
-	memset(inbuf, '\0', sizeof(inbuf));
 
 	FD_SET(d->socket, &d->infds);
+	std::string msg;
 	while(isConnected()) {
 		tv.tv_sec = floor(timeout / 1000.0);
 		tv.tv_usec = timeout % 1000;
@@ -93,21 +93,28 @@ std::wstring Socket::read(int timeout) {
 			continue;
 		}
 
-		int received = recv(d->socket, inbuf, BUFSIZE - 1, 0);
-		if (received <= 0) {
+		int received = BUFSIZE;
+		while(received >= (BUFSIZE - 1)){
+			memset(inbuf, '\0', sizeof(inbuf));
+			received = recv(d->socket, inbuf, BUFSIZE - 1, 0);
+			if(received > 0){
+				msg.append(std::string(inbuf));
+			}
+		}
+		if (received < 0) {
 			TelldusCore::MutexLocker locker(&d->mutex);
 			d->connected = false;
 		}
 		break;
 	}
 
-	std::string msg(inbuf);
 	return TelldusCore::charToWstring(msg.c_str());
 }
 
 void Socket::stopReadWait(){
 	TelldusCore::MutexLocker locker(&d->mutex);
 	d->connected = false;
+	//TODO somehow signal the socket here?
 }
 
 void Socket::write(const std::wstring &msg) {

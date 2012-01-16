@@ -19,6 +19,8 @@ com.telldus.live = function() {
 		socket.connectToServer();
 		com.telldus.core.deviceEvent.connect(deviceEvent);
 		com.telldus.core.deviceChange.connect(sendDevicesReport);
+		configUI.findChild('registrationLink').clicked.connect(socket.activate);
+		configUI.findChild('registrationLink').visible = false;
 	}
 
 	function notRegistered() {
@@ -28,6 +30,7 @@ com.telldus.live = function() {
 			menuId = com.telldus.systray.addMenuItem( qsTr("Activate Telldus Live!") );
 			com.telldus.systray.menuItem(menuId).triggered.connect(socket.activate);
 		}
+		registrationLinkVisible(true);
 	}
 
 	function deviceEvent(deviceId, method, data) {
@@ -42,16 +45,28 @@ com.telldus.live = function() {
 	}
 
 	function messageReceived(msg) {
-		if (msg.name() == "turnon") {
-			com.telldus.core.turnOn( msg.argument(0).intVal() );
-		} else if (msg.name() == "turnoff") {
-			com.telldus.core.turnOff( msg.argument(0).intVal() );
-		} else if (msg.name() == "dim") {
-			com.telldus.core.dim( msg.argument(0).intVal(), msg.argument(1).intVal() );
-		} else if (msg.name() == "bell") {
-			com.telldus.core.bell( msg.argument(0).intVal() );
+		if (msg.name() == "command") {
+			handleCommand(msg.argument(0));
 		}
-		print("Received: " + msg.name());
+	}
+
+	function handleCommand(msg) {
+		var action = msg.getString('action');
+		if (action == "turnon") {
+			com.telldus.core.turnOn( msg.getInt('id') );
+		} else if (action == "turnoff") {
+			com.telldus.core.turnOff( msg.getInt('id') );
+		} else if (action == "dim") {
+			com.telldus.core.dim( msg.getInt('id'), msg.getInt('value') );
+		} else if (action == "bell") {
+			com.telldus.core.bell( msg.getInt('id') );
+		} else if (action == "up") {
+			com.telldus.core.up( msg.getInt('id') );
+		} else if (action == "down") {
+			com.telldus.core.down( msg.getInt('id') );
+		} else if (action == "stop") {
+			com.telldus.core.stop( msg.getInt('id') );
+		}
 	}
 
 	function registered(msg) {
@@ -61,9 +76,23 @@ com.telldus.live = function() {
 			menuId = 0;
 			separatorId = 0;
 		}
-		supportedMethods = msg.getInt('supportedMethods');
+		//Mask to lowest common denominator
+		supportedMethods =
+			com.telldus.core.TELLSTICK_TURNON |
+			com.telldus.core.TELLSTICK_TURNOFF |
+			com.telldus.core.TELLSTICK_DIM |
+			com.telldus.core.TELLSTICK_BELL |
+			com.telldus.core.TELLSTICK_UP |
+			com.telldus.core.TELLSTICK_DOWN |
+			com.telldus.core.TELLSTICK_STOP;
+		supportedMethods = supportedMethods & msg.getInt('supportedMethods');
 		isRegistered = true;
+		registrationLinkVisible(false);
 		sendDevicesReport();
+	}
+
+	function registrationLinkVisible(visibleParam){
+		configUI.findChild('registrationLink').visible = visibleParam;
 	}
 
 	function sendDevicesReport() {

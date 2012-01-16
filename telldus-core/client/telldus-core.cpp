@@ -57,6 +57,9 @@ using namespace TelldusCore;
  * @def TELLSTICK_SUCCESS
  * Error code. Returned when the command succeeded.
  *
+ * @def TELLSTICK_ERROR_BROKEN_PIPE
+ * Error code. Pipe broken during communication.
+ *
  * @def TELLSTICK_ERROR_NOT_FOUND
  * Error code. Returned if a TellStick was not found on the system.
  *
@@ -81,6 +84,13 @@ using namespace TelldusCore;
  * @def TELLSTICK_ERROR_UNKNOWN_RESPONSE
  * Error code. The client library received a response from the service
  * it did not understand.
+ *
+ * @def TELLSTICK_ERROR_SYNTAX
+ * Error code. Input/command could not be parsed or didn't follow
+ * input rules.
+ *
+ * @def TELLSTICK_ERROR_COMMUNICATING_SERVICE
+ * Error code. Timeout waiting for response from the Telldus Service.
  *
  * @def TELLSTICK_ERROR_UNKNOWN
  * Error code. An unkown error has occurred.
@@ -479,10 +489,16 @@ int WINAPI tdMethods(int id, int methodsSupported){
  * @sa TELLSTICK_ERROR_PERMISSION_DENIED
  * @sa TELLSTICK_ERROR_DEVICE_NOT_FOUND
  * @sa TELLSTICK_ERROR_METHOD_NOT_SUPPORTED
+ * @sa TELLSTICK_ERROR_COMMUNICATION
+ * @sa TELLSTICK_ERROR_CONNECTING_SERVICE
+ * @sa TELLSTICK_ERROR_UNKNOWN_RESPONSE
+ * @sa TELLSTICK_ERROR_SYNTAX
+ * @sa TELLSTICK_ERROR_BROKEN_PIPE
+ * @sa TELLSTICK_ERROR_COMMUNICATING_SERVICE
  * @sa TELLSTICK_ERROR_UNKNOWN
  */
 char * WINAPI tdGetErrorString(int intErrorNo) {
-	const int numResponses = 8;
+	const int numResponses = 10;
 	const char *responses[numResponses] = {
 		"Success",
 		"TellStick not found",
@@ -491,7 +507,10 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
 		"The method you tried to use is not supported by the device",
 		"An error occurred while communicating with TellStick",
 		"Could not connect to the Telldus Service",
-		"Received an unknown response"
+		"Received an unknown response",
+		"Syntax error",
+		"Broken pipe"
+		"An error occured while communicating with the Telldus Service"
 	};
 	std::string strReturn;
 	intErrorNo = abs(intErrorNo); //We don't use negative values here.
@@ -511,8 +530,12 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
  * @returns TELLSTICK_SUCCESS on success or one of the errorcodes on failure
  */
 int WINAPI tdSendRawCommand(const char *command, int reserved) {
+	std::wstring wcommand;
+	for(int i = 0; i < strlen(command);++i) {
+		wcommand.append(1, (unsigned char)command[i]);
+	}
 	Message msg(L"tdSendRawCommand");
-	msg.addArgument(command);
+	msg.addArgument(wcommand);
 	msg.addArgument(reserved);
 	return Client::getIntegerFromService(msg);
 }
@@ -534,11 +557,36 @@ void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial
 	Client::getWStringFromService(msg);
 }
 
+/**
+ * Use this function to iterate over all sensors. Iterate until
+ * TELLSTICK_SUCCESS is not returned
+ * @param protocol A byref string where the protocol of the sensor will be placed
+ * @param protocolLen The length of the \c protocol parameter
+ * @param model A byref string where the model of the sensor will be placed
+ * @param modelLen The length of the \c model parameter
+ * @param id A byref int where the id of the sensor will be placed
+ * @param dataTypes A byref int with flags for the supported sensor values
+ * @returns TELLSTICK_SUCCESS if there is more sensors to be fetched
+ */
 int WINAPI tdSensor(char *protocol, int protocolLen, char *model, int modelLen, int *id, int *dataTypes) {
 	Client *client = Client::getInstance();
 	return client->getSensor(protocol, protocolLen, model, modelLen, id, dataTypes);
 }
 
+/**
+ * Get one of the supported sensor values from a sensor. Make sure it support
+ * the value type first by calling tdSensor(). The triplet \c protocol,
+ * \c model, and \c id together identifies a sensor.
+ * @param protocol The protocol for the sensor
+ * @param model The model for the sensor
+ * @param id The id of the sensor
+ * @param dataType One of the datatype to retrieve
+ * @param value A byref string where the value will be places
+ * @param len The length of the \c value parameter
+ * @param timestamp A byref int where the timestamp of the value will be placed
+ * @returns TELLSTICK_SUCCESS if the value could be fetched or one of the
+ * errorcodes on failure
+ */
 int WINAPI tdSensorValue(const char *protocol, const char *model, int id, int dataType, char *value, int len, int *timestamp) {
 	Message msg(L"tdSensorValue");
 	msg.addArgument(protocol);
@@ -562,4 +610,4 @@ int WINAPI tdSensorValue(const char *protocol, const char *model, int id, int da
 }
 
 
-/*\@}*/
+/* @} */
