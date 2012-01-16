@@ -26,6 +26,8 @@ INCLUDE( ../TelldusCenterPlugin.cmake NO_POLICY_SCOPE )
 
 IF (WIN32)
 	SET(QT_COMPONENTS_OUTPUT_DIR "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/Plugins/declarative")
+ELSEIF (APPLE)
+	SET(QT_COMPONENTS_OUTPUT_DIR "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Plugins/declarative")
 ELSE()
 	SET(QT_COMPONENTS_OUTPUT_DIR "${CMAKE_BINARY_DIR}/TelldusCenter/Plugins/declarative")
 ENDIF()
