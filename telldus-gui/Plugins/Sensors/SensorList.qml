@@ -5,10 +5,6 @@ Column {
 	id: sensorList
 	spacing: 1
 
-	SensorView {
-		id: sensorView
-	}
-
 	BorderImage {
 		id: header
 		source: "header_bg.png"
@@ -22,6 +18,13 @@ Column {
 			anchors.leftMargin: 15
 		}
 		HeaderTitle {
+			text: ""
+			anchors.right: sensorid.left
+			visible: main.state == "EDIT"
+			width: 50
+		}
+		HeaderTitle {
+			id: sensorid
 			text: "ID"
 			anchors.right: modelTitle.left
 			visible: main.state == "EDIT"
@@ -58,7 +61,7 @@ Column {
 	}
 	Repeater {
 		model: sensorModel
-		delegate: sensorView
+		delegate: SensorView{ state: main.state == "EDIT" ? 'EDIT' : ''}
 	}
 	Row{
 		spacing: 20
@@ -71,27 +74,9 @@ Column {
 					main.state = "EDIT"
 				}
 				else{
-					main.state  ="VIEW"
+					main.state = "VIEW"
 				}
 			}
 		}
-		/*
-			Rectangle {
-				//TODO should this button exist at all, or always save?
-				width: 50
-				height: 20
-				visible: main.state == "EDIT"
-				Text{
-					anchors.centerIn: parent
-					text: "Cancel"
-				}
-				MouseArea{
-					anchors.fill: parent
-					onClicked: {
-						main.state  ="VIEW"
-					}
-				}
-			}
-			*/
 	}
 }
