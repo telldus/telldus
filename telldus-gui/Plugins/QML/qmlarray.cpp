@@ -1,7 +1,5 @@
 #include "qmlarray.h"
 
-#include <QDebug>
-
 class QMLArray::PrivateData {
 public:
 	QList<QScriptValue> list;
@@ -36,11 +34,9 @@ void QMLArray::push(const QScriptValue &v) {
 }
 
 void QMLArray::remove(int index) {
-	qDebug() << "Count first: " << d->list.count();
 	beginRemoveRows( QModelIndex(), index, index );
 	d->list.takeAt(index);
 	endRemoveRows();
-	qDebug() << "Count after: " << d->list.size();
 }
 
 int QMLArray::rowCount(const QModelIndex &parent) const {
