@@ -1,4 +1,5 @@
 #include "qmlarray.h"
+#include <QMetaMethod>
 
 class QMLArray::PrivateData {
 public:
@@ -37,6 +38,12 @@ void QMLArray::remove(int index) {
 	beginRemoveRows( QModelIndex(), index, index );
 	d->list.takeAt(index);
 	endRemoveRows();
+}
+
+void QMLArray::removeLater(int index) {
+	int methodIndex = this->metaObject()->indexOfMethod(QMetaObject::normalizedSignature("remove(int)"));
+	QMetaMethod method = this->metaObject()->method(methodIndex);
+	method.invoke(this, Qt::QueuedConnection, Q_ARG(int, index));
 }
 
 int QMLArray::rowCount(const QModelIndex &parent) const {

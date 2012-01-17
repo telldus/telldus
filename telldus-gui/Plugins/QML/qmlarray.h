@@ -20,6 +20,7 @@ signals:
 public slots:
 	void push(const QScriptValue &v);
 	void remove(int index);
+	void removeLater(int index);
 	QVariant get(int index) const;
 
 
