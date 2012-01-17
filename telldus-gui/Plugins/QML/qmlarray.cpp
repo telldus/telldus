@@ -35,6 +35,14 @@ void QMLArray::push(const QScriptValue &v) {
 	endInsertRows();
 }
 
+void QMLArray::remove(int index) {
+	qDebug() << "Count first: " << d->list.count();
+	beginRemoveRows( QModelIndex(), index, index );
+	d->list.takeAt(index);
+	endRemoveRows();
+	qDebug() << "Count after: " << d->list.size();
+}
+
 int QMLArray::rowCount(const QModelIndex &parent) const {
 	return d->list.size();
 }
