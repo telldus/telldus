@@ -23,3 +23,12 @@ SET( Plugin_MOC_HDRS
 SET( Plugin_PATH "com.telldus.qml" )
 
 INCLUDE( ../TelldusCenterPlugin.cmake NO_POLICY_SCOPE )
+
+IF (WIN32)
+	SET(QT_COMPONENTS_OUTPUT_DIR "${LIBRARY_OUTPUT_PATH}/${CMAKE_CFG_INTDIR}/Plugins/declarative")
+ELSEIF (APPLE)
+	SET(QT_COMPONENTS_OUTPUT_DIR "${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Plugins/declarative")
+ELSE()
+	SET(QT_COMPONENTS_OUTPUT_DIR "${CMAKE_BINARY_DIR}/TelldusCenter/Plugins/declarative")
+ENDIF()
+INCLUDE( ${CMAKE_SOURCE_DIR}/3rdparty/qt-components-desktop.cmake NO_POLICY_SCOPE )

@@ -2,7 +2,9 @@
 #include "scriptfunctionwrapper.h"
 #include <QDeclarativeContext>
 #include <QScriptValueIterator>
+#include <QDeclarativeEngine>
 #include <QVariant>
+#include <QApplication>
 
 class QMLView::PrivateData {
 public:
@@ -15,6 +17,22 @@ QMLView::QMLView(const QDir &dir, const QScriptValue &object) :
 {
 	setAttribute(Qt::WA_TranslucentBackground);
 	setStyleSheet("background:transparent;");
+
+	QDeclarativeEngine *eng = this->engine();
+	QStringList paths(eng->importPathList());
+	QDir pluginsDir = QDir(qApp->applicationDirPath());
+
+#if defined(Q_OS_MAC)
+	if (pluginsDir.dirName() == "MacOS") {
+		pluginsDir.cdUp();
+	}
+#endif
+
+	if (pluginsDir.cd("Plugins/declarative")) {
+		paths << pluginsDir.absolutePath();
+	}
+
+	eng->setImportPathList(paths);
 
 	d = new PrivateData;
 	d->baseDir = dir;

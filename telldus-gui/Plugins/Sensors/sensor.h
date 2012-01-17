@@ -17,7 +17,7 @@ class Sensor : public QObject
 	Q_PROPERTY(QString model READ model WRITE setModel NOTIFY modelChanged)
 	Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 	Q_PROPERTY(QString protocol READ protocol WRITE setProtocol NOTIFY protocolChanged)
-	Q_PROPERTY(bool showInList READ showInList NOTIFY showInListChanged)
+	Q_PROPERTY(bool showInList READ showInList WRITE setShowInList NOTIFY showInListChanged)
 
 public:
 	explicit Sensor(QObject *parent = 0);
@@ -32,7 +32,6 @@ public:
 	void setModel(const QString &model);
 
 	QString name() const;
-	//void setName(const QString &name);
 
 	QString protocol() const;
 	void setProtocol(const QString &protocol);
@@ -40,7 +39,7 @@ public:
 	bool hasTemperature() const;
 	bool showInList() const;
 
-	Q_INVOKABLE SensorValue *sensorValue(int type);
+	Q_INVOKABLE QObject *sensorValue(int type);
 	Q_INVOKABLE void setValue(int type, const QString &value, const QDateTime &timestamp);
 	Q_INVOKABLE void setName(const QString &name);
 	Q_INVOKABLE void setShowInList(bool show);

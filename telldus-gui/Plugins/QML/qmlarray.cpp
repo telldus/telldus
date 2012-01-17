@@ -1,6 +1,5 @@
 #include "qmlarray.h"
-
-#include <QDebug>
+#include <QMetaMethod>
 
 class QMLArray::PrivateData {
 public:
@@ -33,6 +32,18 @@ void QMLArray::push(const QScriptValue &v) {
 	beginInsertRows( QModelIndex(), d->list.size(), d->list.size() );
 	d->list << v;
 	endInsertRows();
+}
+
+void QMLArray::remove(int index) {
+	beginRemoveRows( QModelIndex(), index, index );
+	d->list.takeAt(index);
+	endRemoveRows();
+}
+
+void QMLArray::removeLater(int index) {
+	int methodIndex = this->metaObject()->indexOfMethod(QMetaObject::normalizedSignature("remove(int)"));
+	QMetaMethod method = this->metaObject()->method(methodIndex);
+	method.invoke(this, Qt::QueuedConnection, Q_ARG(int, index));
 }
 
 int QMLArray::rowCount(const QModelIndex &parent) const {

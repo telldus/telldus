@@ -3,7 +3,7 @@ SET(REQUIRE_PLUGIN_SETTINGS TRUE PARENT_SCOPE)
 
 SET(QT_USE_QTDECLARATIVE TRUE)
 
-SET( Plugin_NAME "sensors" )
+SET( Plugin_NAME "Sensors" )
 
 
 SET( Plugin_SRCS
@@ -33,6 +33,8 @@ SET( Plugin_EXTRA
 	row_bg.png
 	qmldir
 	SensorValue.qml
+	SensorView.qml
+	SensorList.qml
 )
 
 FIND_PACKAGE(TelldusCore REQUIRED)

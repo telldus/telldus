@@ -1,2 +1,4 @@
 HeaderTitle 1.0 HeaderTitle.qml
 SensorValue 1.0 SensorValue.qml
+SensorView 1.0 SensorView.qml
+SensorList 1.0 SensorList.qml

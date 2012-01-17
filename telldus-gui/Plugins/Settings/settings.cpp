@@ -26,10 +26,12 @@ void Settings::setValue( const QString & key, const QVariant & value ) {
 		d->s.beginGroup(key);
 		d->s.setValue("size", list.size());
 		d->s.setValue("type", "array");
+		//d->s.beginWriteArray("list"); //TODO write or read? What prefix?
 		for (int i = 0; i < list.size(); ++i) {
-			d->s.setArrayIndex(i);
+			//d->s.setArrayIndex(i);
 			this->setValue(QString::number(i), list.at(i));
 		}
+		//d->s.endArray();
 		d->s.endGroup();
 
 	} else if (value.type() == QVariant::Map) {

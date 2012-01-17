@@ -17,6 +17,7 @@ Sensor::Sensor(QObject *parent) :
 {
 	d = new PrivateData;
 	d->id = 0;
+	d->showInList = false;
 }
 
 Sensor::~Sensor() {
@@ -46,14 +47,13 @@ void Sensor::setModel(const QString &model) {
 }
 
 QString Sensor::name() const {
-	//return QString("%1 %2").arg(this->protocol()).arg(this->id()); //TODO: Remove when name is fully implemented
-	if(d->name == ""){
-		return "<unnamed>";
-	}
 	return d->name;
 }
 
 void Sensor::setName(const QString &name) {
+	if (name == d->name) {
+		return;
+	}
 	d->name = name;
 	emit nameChanged();
 }
@@ -71,7 +71,7 @@ bool Sensor::hasTemperature() const {
 	return d->values.contains(TELLSTICK_TEMPERATURE);
 }
 
-SensorValue * Sensor::sensorValue(int type) {
+QObject * Sensor::sensorValue(int type) {
 	return (d->values.contains(type) ? d->values[type] : 0);
 }
 
@@ -94,7 +94,6 @@ void Sensor::setValue(int type, const QString &value, const QDateTime &timestamp
 }
 
 bool Sensor::showInList() const{
-	//TODO showInList and name must be persistent...
 	return d->showInList;
 }
 

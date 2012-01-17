@@ -63,6 +63,21 @@ ELSE (UPDATE_TRANSLATIONS)
 	LIST(APPEND Plugin_FILES ${Plugin_QM})
 ENDIF (UPDATE_TRANSLATIONS)
 
+IF(Plugin_PATH)
+	FOREACH(_FILE ${Plugin_FILES})
+		GET_FILENAME_COMPONENT(_FILENAME ${_FILE} NAME)
+		ADD_CUSTOM_COMMAND( OUTPUT ${Plugin_PATH}/${_FILENAME}
+			COMMAND ${CMAKE_COMMAND} -E copy ${_FILE} ${Plugin_PATH}/${_FILENAME}
+			DEPENDS ${_FILE}
+			COMMENT "Copy ${_FILENAME} for plugin ${Plugin_NAME}"
+		)
+		LIST(APPEND Plugin_TARGET_FILES "${Plugin_PATH}/${_FILENAME}")
+		IF (NOT APPLE)
+			INSTALL(FILES ${_FILE} DESTINATION "${PLUGIN_LIB_FULL_PATH}/script/${Plugin_PATH_relative}")
+		ENDIF ()
+	ENDFOREACH(_FILE)
+ENDIF(Plugin_PATH)
+
 IF(Plugin_SRCS)
 	ADD_LIBRARY(${Plugin_NAME} SHARED
 		${Plugin_SRCS}
@@ -74,6 +89,7 @@ IF(Plugin_SRCS)
 		${Plugin_FILES}
 		${Plugin_TS}
 		${Plugin_QM}
+		${Plugin_TARGET_FILES}
 	)
 	TARGET_LINK_LIBRARIES( ${Plugin_NAME}	${Plugin_LIBRARIES} )
 
@@ -87,13 +103,13 @@ IF(Plugin_SRCS)
 			SET(app \"\${DESTDIR}/Applications/TelldusCenter.app\")
 			GET_BUNDLE_AND_EXECUTABLE(\"\${app}\" bundle exe valid)
 			SET(plugin \"\${bundle}/Contents/Plugins/script/${Plugin_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}\")
-			
+
 			GET_ITEM_KEY(\"\${plugin}\" pkey)
 			SET(prereqs \"\")
 			GET_PREREQUISITES(\${plugin} prereqs 1 0 \"\${exe}\" \"\${bundle}/Contents/Frameworks/\")
 			FOREACH(pr \${prereqs})
 				GET_ITEM_KEY(\"\${pr}\" rkey)
-				
+
 				#Don't change the path to TelldusCore
 				IF (NOT \"\${rkey}\" STREQUAL \"TelldusCore\")
 					#Check to see if this is ourself
@@ -117,33 +133,12 @@ IF(Plugin_SRCS)
 			LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/TelldusCenter/Plugins/script
 		)
 		INSTALL(TARGETS ${Plugin_NAME}
-			LIBRARY DESTINATION "${PLUGIN_LIB_FULL_PATH}/script" 
+			LIBRARY DESTINATION "${PLUGIN_LIB_FULL_PATH}/script"
 		)
 	ENDIF (APPLE)
 	SIGN(${Plugin_NAME})
 ELSE(Plugin_SRCS)
 	ADD_CUSTOM_TARGET(${Plugin_NAME} ALL
-		SOURCES ${Plugin_FILES}
+		SOURCES ${Plugin_FILES} ${Plugin_TARGET_FILES}
 	)
 ENDIF(Plugin_SRCS)
-
-IF(Plugin_PATH)
-	ADD_CUSTOM_COMMAND( TARGET ${Plugin_NAME}
-		POST_BUILD
-		COMMAND ${CMAKE_COMMAND} -E make_directory ${Plugin_PATH}
-		COMMENT "Creating plugin directory ${Plugin_NAME}"
-	)
-	FOREACH(_FILE ${Plugin_FILES})
-		GET_FILENAME_COMPONENT(_FILENAME ${_FILE} NAME)
-		ADD_CUSTOM_COMMAND( TARGET ${Plugin_NAME}
-			POST_BUILD
-			COMMAND ${CMAKE_COMMAND} -E copy ${_FILE} ${Plugin_PATH}
-			COMMENT "Copy ${_FILENAME} for plugin ${Plugin_NAME}"
-		)
-		IF (NOT APPLE)
-			INSTALL(FILES ${_FILE} DESTINATION "${PLUGIN_LIB_FULL_PATH}/script/${Plugin_PATH_relative}")
-		ENDIF ()
-	ENDFOREACH(_FILE)
-ENDIF(Plugin_PATH)
-
-
