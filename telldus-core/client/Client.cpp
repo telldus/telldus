@@ -299,26 +299,22 @@ std::wstring Client::sendToService(const Message &msg) {
 		Socket s;
 		s.connect(L"TelldusClient");
 		if (!s.isConnected()) { //Connection failed
-			printf("Connection failed\n\r");
 			msleep(500);
 			continue; //retry
 		}
 		s.write(msg.data());
 		if (!s.isConnected()) { //Connection failed sometime during operation... (better check here, instead of 5 seconds timeout later)
-			printf("Connection failed after write\n\r");
 			msleep(500);
 			continue; //retry
 		}
 		readData = s.read(8000);  //TODO changed to 10000 from 5000, how much does this do...?
 		if(readData == L""){
-			printf("Readdata nothing\n\r");
 			msleep(500);
 			continue; //TODO can we be really sure it SHOULD be anything?
 			//TODO perhaps break here instead?
 		}
 		
 		if (!s.isConnected()) { //Connection failed sometime during operation...
-			printf("Connection failed in the end\n\r");
 			msleep(500);
 			continue; //retry
 		}
