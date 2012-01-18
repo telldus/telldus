@@ -66,22 +66,22 @@
 #endif
 
 __BEGIN_DECLS
-__dead void	 _exit(int);
-int	 access(const char *, int);
+//__dead void	 _exit(int);
+//int	 access(const char *, int);
 unsigned int alarm(unsigned int);
-int	 chdir(const char *);
-int	 chown(const char *, uid_t, gid_t);
+//int	 chdir(const char *);
+//int	 chown(const char *, uid_t, gid_t);
 int	 close(int);
 int	 dup(int);
 int	 dup2(int, int);
-int	 execl(const char *, const char *, ...) 
-	    __attribute__((sentinel));
-int	 execle(const char *, const char *, ...);
-int	 execlp(const char *, const char *, ...) 
-	    __attribute__((sentinel));
-int	 execv(const char *, char * const *);
-int	 execve(const char *, char * const *, char * const *);
-int	 execvp(const char *, char * const *);
+//int	 execl(const char *, const char *, ...)
+//	    __attribute__((sentinel));
+//int	 execle(const char *, const char *, ...);
+//int	 execlp(const char *, const char *, ...)
+//	    __attribute__((sentinel));
+//int	 execv(const char *, char * const *);
+//int	 execve(const char *, char * const *, char * const *);
+//int	 execvp(const char *, char * const *);
 pid_t	 fork(void);
 long	 fpathconf(int, int);
 char	*getcwd(char *, size_t)
@@ -96,14 +96,14 @@ pid_t	 getpid(void);
 pid_t	 getppid(void);
 uid_t	 getuid(void);
 int	 isatty(int);
-int	 link(const char *, const char *);
-off_t	 lseek(int, off_t, int);
-long	 pathconf(const char *, int);
+//int	 link(const char *, const char *);
+//off_t	 lseek(int, off_t, int);
+//long	 pathconf(const char *, int);
 int	 pause(void);
 int	 pipe(int *);
-ssize_t	 read(int, void *, size_t)
-		__attribute__((__bounded__(__buffer__,2,3)));
-int	 rmdir(const char *);
+//ssize_t	 read(int, void *, size_t)
+//		__attribute__((__bounded__(__buffer__,2,3)));
+//int	 rmdir(const char *);
 int	 setgid(gid_t);
 int	 setuid(uid_t);
 unsigned int sleep(unsigned int);
@@ -111,9 +111,9 @@ long	 sysconf(int);
 pid_t	 tcgetpgrp(int);
 int	 tcsetpgrp(int, pid_t);
 char	*ttyname(int);
-int	 unlink(const char *);
-ssize_t	 write(int, const void *, size_t)
-		__attribute__((__bounded__(__buffer__,2,3)));
+//int	 unlink(const char *);
+//ssize_t	 write(int, const void *, size_t)
+//		__attribute__((__bounded__(__buffer__,2,3)));
 
 #if __POSIX_VISIBLE || __XPG_VISIBLE >= 300
 pid_t	 setsid(void);
@@ -182,10 +182,10 @@ int	 ttyname_r(int, char *, size_t)
 #if __BSD_VISIBLE ||  __XPG_VISIBLE <= 500
 /* Interfaces withdrawn by X/Open Issue 5 Version 0 */
 int	 brk(void *);
-int	 chroot(const char *);
+//int	 chroot(const char *);
 int	 getdtablesize(void);
 int	 getpagesize(void);
-char	*getpass(const char *);
+//char	*getpass(const char *);
 void	*sbrk(int);
 #endif
 
