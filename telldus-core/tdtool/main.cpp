@@ -335,9 +335,11 @@ int main(int argc, char **argv)
 			case 'h' :
 				print_usage( argv[0] );
 				success = TELLSTICK_SUCCESS;
+				break;
 			case 'i' :
 				print_version( );
 				success = TELLSTICK_SUCCESS;
+				break;
 			case 'l' :
 				success = list_devices();
 				break;
