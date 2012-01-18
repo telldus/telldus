@@ -154,8 +154,6 @@ int list_devices() {
 			strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
 		}
 		printf("%-20s\t%-20s\t%-5i\t%-5s\t%-8s\t%-20s\n", protocol, model, sensorId, tempvalue, humidityvalue, timeBuf);
-
-		printf("\n");
 	}
 	if(sensorStatus != TELLSTICK_ERROR_DEVICE_NOT_FOUND){
 		char *errorString = tdGetErrorString(sensorStatus);
