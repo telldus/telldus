@@ -15,6 +15,8 @@ const int SUPPORTED_METHODS =
 	TELLSTICK_BELL |
 	TELLSTICK_DIM;
 
+const int DATA_LENGTH = 20;
+
 void print_usage( char *name ) {
 	printf("Usage: %s [ options ]\n", name);
 	printf("\n");
@@ -123,7 +125,6 @@ int list_devices() {
 		i++;
 	}
 
-	int DATA_LENGTH = 20;
 	char protocol[DATA_LENGTH], model[DATA_LENGTH];
 	int sensorId = 0, dataTypes = 0;
 
