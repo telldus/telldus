@@ -5,6 +5,10 @@
 #include <ctime>
 #include "../client/telldus-core.h"
 
+#ifdef _WINDOWS
+#define strcasecmp _stricmp
+#endif
+
 const int SUPPORTED_METHODS =
 	TELLSTICK_TURNON |
 	TELLSTICK_TURNOFF |
