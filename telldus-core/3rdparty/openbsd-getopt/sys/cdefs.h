@@ -86,7 +86,9 @@
 #define	__CONCAT(x,y)	x/**/y
 #define	__STRING(x)	"x"
 
-#if !defined(__GNUC__) && !defined(lint)
+#if defined(_MSC_VER)
+#include <windows.h>
+#elif !defined(__GNUC__) && !defined(lint)
 #define	__const				/* delete pseudo-ANSI C keywords */
 #define	__inline
 #define	__signed
