@@ -21,7 +21,7 @@
  * The response from the device will be sent back to the same host and port as
  * the originated packet. So any dynamically port can be assigned by the host
  * implementing the auto discovery.
- * The returning packet is cunstructed in the following way:
+ * The returning packet is constructed in the following way:
  * <tt>product:mac address:activation code:firmware</tt>
  *
  * Example:<br>
