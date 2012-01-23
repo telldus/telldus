@@ -94,8 +94,12 @@
  * }
  * \endcode
  *
- * By supplying the methods the application supports, the library can be backwards
- * compatible. Let's say that the client application only supports turning on and
+ * By supplying the methods your application supports, the library can return
+ * customized methods for your application, even if your application doesn't
+ * support the same methods as the device accepts. One example is if your
+ * application only supports ON and OFF, you can control a device that needs UP
+ * and DOWN anyway by using just ON and OFF.
+ * Let's say that the client application only supports turning on and
  * off. The call to query a device for it's methods should be:
  * \code
  * int methods = tdMethods( id, TELLSTICK_TURNON | TELLSTICK_TURNOFF );
