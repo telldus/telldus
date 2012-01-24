@@ -130,11 +130,9 @@ int list_devices() {
 
 	int sensorStatus = tdSensor(protocol, DATA_LENGTH, model, DATA_LENGTH, &sensorId, &dataTypes);
 	if(sensorStatus == 0){
-		printf("\nSENSORS:\n%-20s\t%-20s\t%-5s\t%-5s\t%-8s\t%-20s\n", "PROTOCOL", "MODEL", "ID", "TEMP", "HUMIDITY", "LAST UPDATED");
+		printf("\n\nSENSORS:\n\n%-20s\t%-20s\t%-5s\t%-5s\t%-8s\t%-20s\n", "PROTOCOL", "MODEL", "ID", "TEMP", "HUMIDITY", "LAST UPDATED");
 	}
 	while(sensorStatus == 0){
-		sensorStatus = tdSensor(protocol, DATA_LENGTH, model, DATA_LENGTH, &sensorId, &dataTypes);
-
 		char tempvalue[DATA_LENGTH];
 		tempvalue[0] = 0;
 		char humidityvalue[DATA_LENGTH];
@@ -154,7 +152,10 @@ int list_devices() {
 			strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
 		}
 		printf("%-20s\t%-20s\t%-5i\t%-5s\t%-8s\t%-20s\n", protocol, model, sensorId, tempvalue, humidityvalue, timeBuf);
+
+		sensorStatus = tdSensor(protocol, DATA_LENGTH, model, DATA_LENGTH, &sensorId, &dataTypes);
 	}
+	printf("\n");
 	if(sensorStatus != TELLSTICK_ERROR_DEVICE_NOT_FOUND){
 		char *errorString = tdGetErrorString(sensorStatus);
 		fprintf(stderr, "Error fetching sensors: %s\n", errorString);
