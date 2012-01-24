@@ -30,6 +30,7 @@ IF (APPLE)
 	ADD_DEFINITIONS( -D_MACOSX )
 	LIST(APPEND  telldus-common_SRCS
 		Socket_unix.cpp
+		stdlibc_workaround.cpp #Remove this when we drop support for 10.5
 	)
 	LIST(APPEND telldus-common_LIBRARIES
 		${ICONV_LIBRARY}
