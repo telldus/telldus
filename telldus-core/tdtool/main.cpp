@@ -7,6 +7,9 @@
 
 #ifdef _WINDOWS
 #define strcasecmp _stricmp
+#define DEGREE " "
+#else
+#define DEGREE "°"
 #endif
 
 const int SUPPORTED_METHODS =
@@ -142,7 +145,7 @@ int list_devices() {
 
 		if (dataTypes & TELLSTICK_TEMPERATURE) {
 			tdSensorValue(protocol, model, sensorId, TELLSTICK_TEMPERATURE, tempvalue, DATA_LENGTH, (int *)&timestamp);
-			strcat(tempvalue, "°");
+			strcat(tempvalue, DEGREE);
 			strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
 		}
 
