@@ -36,6 +36,14 @@ com.telldus.sensors = function() {
 		});
 
 		view.setProperty('sensorModel', sensorList);
+		var initialViewMode = 'EDIT';
+		for (var i=0; i < sensorList.length; ++i) {
+			if (sensorList.get(i).showInList || sensorList.get(i).name !== "") {
+				initialViewMode = 'VIEW';
+				break;
+			}
+		}
+		view.setProperty('initialViewMode', initialViewMode);
 		saveSensorModel();
 		view.load("main.qml");
 		application.addWidget("sensors.gui", "icon.png", view);

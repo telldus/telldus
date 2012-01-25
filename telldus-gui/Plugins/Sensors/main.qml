@@ -3,7 +3,7 @@ import QtDesktop 0.1
 
 Item {
 	id: main
-	state: "VIEW"
+	state: initialViewMode
 
 	ScrollArea {
 		id: scrollArea
