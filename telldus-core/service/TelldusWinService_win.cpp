@@ -123,6 +123,7 @@ void WINAPI TelldusWinService::serviceMain( DWORD argc, TCHAR* argv[] ) {
 	for(unsigned int i = 1; i < argc; ++i) {
 		if (wcscmp(argv[i], L"--debug") == 0) {
 			Log::setDebug();
+			Log::debug("Debug message output enabled");
 		}
 	}
 
