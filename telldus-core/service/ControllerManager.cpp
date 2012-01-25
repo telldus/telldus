@@ -33,6 +33,20 @@ ControllerManager::~ControllerManager() {
 }
 
 void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, const std::string &serial, bool inserted) {
+	if (vid == 0x0 && pid == 0x0) { //All
+		if (inserted) {
+			loadControllers();
+		} else {
+			//Disconnect all
+			TelldusCore::MutexLocker locker(&d->mutex);
+			while(d->controllers.size()) {
+				ControllerMap::iterator it = d->controllers.begin();
+				delete it->second;
+				d->controllers.erase(it);
+			}
+		}
+		return;
+	}
 	if (vid != 0x1781) {
 		return;
 	}
