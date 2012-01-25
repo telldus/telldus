@@ -38,6 +38,24 @@ void TelldusMain::deviceInsertedOrRemoved(int vid, int pid, bool inserted) {
 	d->controllerChangeEvent->signal(data);
 }
 
+void TelldusMain::resume() {
+	Log::notice("Came back from suspend");
+	ControllerChangeEventData *data = new ControllerChangeEventData;
+	data->vid = 0x0;
+	data->pid = 0x0;
+	data->inserted = true;
+	d->controllerChangeEvent->signal(data);
+}
+
+void TelldusMain::suspend() {
+	Log::notice("Preparing for suspend");
+	ControllerChangeEventData *data = new ControllerChangeEventData;
+	data->vid = 0x0;
+	data->pid = 0x0;
+	data->inserted = false;
+	d->controllerChangeEvent->signal(data);
+}
+
 void TelldusMain::start(void) {
 	EventRef clientEvent = d->eventHandler.addEvent();
 	EventRef dataEvent = d->eventHandler.addEvent();

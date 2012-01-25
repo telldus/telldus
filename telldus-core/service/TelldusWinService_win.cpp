@@ -41,6 +41,13 @@ DWORD WINAPI TelldusWinService::serviceControlHandler( DWORD controlCode, DWORD 
 			SetServiceStatus( serviceStatusHandle, &serviceStatus );
 
 			return NO_ERROR;
+		case SERVICE_CONTROL_POWEREVENT:
+			if (dwEventType == PBT_APMSUSPEND) {
+				tm->suspend();
+			} else if (dwEventType == PBT_APMRESUMEAUTOMATIC) {
+				tm->resume();
+			}
+			return NO_ERROR;
 	}
 	return ERROR_CALL_NOT_IMPLEMENTED;
 }
@@ -137,6 +144,8 @@ void WINAPI TelldusWinService::serviceMain( DWORD argc, TCHAR* argv[] ) {
 
 		// running
 		instance.serviceStatus.dwControlsAccepted |= (SERVICE_ACCEPT_STOP | SERVICE_ACCEPT_SHUTDOWN);
+		// Register for power management notification
+		instance.serviceStatus.dwControlsAccepted |= SERVICE_ACCEPT_POWEREVENT;
 		instance.serviceStatus.dwCurrentState = SERVICE_RUNNING;
 		SetServiceStatus( instance.serviceStatusHandle, &instance.serviceStatus );
 

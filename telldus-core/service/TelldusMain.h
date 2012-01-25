@@ -12,6 +12,8 @@ public:
 
 	//Thread safe!
 	void deviceInsertedOrRemoved(int vid, int pid, bool inserted);
+	void resume();
+	void suspend();
 
 private:
 	class PrivateData;
