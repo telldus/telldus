@@ -1,13 +1,8 @@
 #include "ProtocolFineoffset.h"
+#include "Strings.h"
 #include <stdlib.h>
 #include <sstream>
 #include <iomanip>
-#ifdef _MSC_VER
-typedef unsigned __int8 uint8_t;
-typedef unsigned __int16 uint16_t;
-#else
-#include <stdint.h>
-#endif
 
 std::string ProtocolFineoffset::decodeData(ControllerMessage &dataMsg)
 {
@@ -16,13 +11,13 @@ std::string ProtocolFineoffset::decodeData(ControllerMessage &dataMsg)
 		return "";
 	}
 
-	uint8_t checksum = strtol(data.substr(data.length()-2).c_str(), NULL, 16);
+	uint8_t checksum = (uint8_t)TelldusCore::hexTo64l(data.substr(data.length()-2));
 	data = data.substr(0, data.length()-2);
 
-	uint8_t humidity = strtol(data.substr(data.length()-2).c_str(), NULL, 16);
+	uint8_t humidity = (uint8_t)TelldusCore::hexTo64l(data.substr(data.length()-2));
 	data = data.substr(0, data.length()-2);
 
-	uint16_t value = strtol(data.substr(data.length()-3).c_str(), NULL, 16);
+	uint16_t value = (uint16_t)TelldusCore::hexTo64l(data.substr(data.length()-3));
 	double temperature = (value & 0x7FF)/10.0;
 
 	value >>= 11;
@@ -31,7 +26,7 @@ std::string ProtocolFineoffset::decodeData(ControllerMessage &dataMsg)
 	}
 	data = data.substr(0, data.length()-3);
 
-	uint16_t id = strtol(data.c_str(), NULL, 16) & 0xFF;
+	uint16_t id = (uint16_t)TelldusCore::hexTo64l(data) & 0xFF;
 
 	std::stringstream retString;
 	retString << "class:sensor;protocol:fineoffset;id:" << id << ";model:";

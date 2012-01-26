@@ -144,6 +144,14 @@ std::wstring TelldusCore::intToWStringSafe(int value){
 }
 */
 
+uint64_t TelldusCore::hexTo64l(const std::string data){
+#ifdef _WINDOWS
+	return _strtoui64(data.c_str(), NULL, 16);
+#else
+	return strtol(data.c_str(), NULL, 16);
+#endif
+}
+
 int TelldusCore::wideToInteger(const std::wstring &input){
 	std::wstringstream inputstream;
 	inputstream << input;

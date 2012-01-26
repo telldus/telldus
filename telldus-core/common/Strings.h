@@ -3,6 +3,14 @@
 
 #include <string>
 #include <stdarg.h>
+#ifdef _MSC_VER
+typedef unsigned __int8 uint8_t;
+typedef unsigned __int16 uint16_t;
+typedef unsigned __int32 uint32_t;
+typedef unsigned __int64 uint64_t;
+#else
+#include <stdint.h>
+#endif
 
 namespace TelldusCore {
 	std::wstring charToWstring(const char *value);
@@ -13,6 +21,7 @@ namespace TelldusCore {
 	std::wstring intToWstring(int value);
 	//std::wstring intToWStringSafe(int value);
 	std::string intToString(int value);
+	uint64_t hexTo64l(const std::string data);
 	std::string wideToString(const std::wstring &input);
 
 	int wideToInteger(const std::wstring &input);

@@ -1,19 +1,13 @@
 #include "ProtocolMandolyn.h"
+#include "Strings.h"
 #include <stdlib.h>
 #include <sstream>
 #include <iomanip>
 
-#ifdef _MSC_VER
-typedef unsigned __int8 uint8_t;
-typedef unsigned __int32 uint32_t;
-#else
-#include <stdint.h>
-#endif
-
 std::string ProtocolMandolyn::decodeData(ControllerMessage &dataMsg)
 {
 	std::string data = dataMsg.getParameter("data");
-	uint32_t value = strtol(data.c_str(), NULL, 16);
+	uint32_t value = (uint32_t)TelldusCore::hexTo64l(data);
 
 	bool parity = value & 0x1;
 	value >>= 1;

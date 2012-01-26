@@ -1,13 +1,8 @@
 #include "ProtocolOregon.h"
+#include "Strings.h"
 #include <stdlib.h>
 #include <sstream>
 #include <iomanip>
-#ifdef _MSC_VER
-typedef unsigned __int8 uint8_t;
-typedef unsigned __int64 uint64_t;
-#else
-#include <stdint.h>
-#endif
 
 std::string ProtocolOregon::decodeData(ControllerMessage &dataMsg)
 {
@@ -24,8 +19,8 @@ std::string ProtocolOregon::decodeData(ControllerMessage &dataMsg)
 }
 
 std::string ProtocolOregon::decodeEA4C(const std::string &data) {
-	uint64_t value = strtol(data.c_str(), NULL, 16);
-
+	uint64_t value = TelldusCore::hexTo64l(data);
+	
 	uint8_t checksum = 0xE + 0xA + 0x4 + 0xC;
 	checksum -= (value & 0xF) * 0x10;
 	checksum -= 0xA;
@@ -69,7 +64,7 @@ std::string ProtocolOregon::decodeEA4C(const std::string &data) {
 }
 
 std::string ProtocolOregon::decode1A2D(const std::string &data) {
-	uint64_t value = strtol(data.c_str(), NULL, 16);
+	uint64_t value = TelldusCore::hexTo64l(data);
 	uint8_t checksum2 = value & 0xFF;
 	value >>= 8;
 	uint8_t checksum1 = value & 0xFF;
