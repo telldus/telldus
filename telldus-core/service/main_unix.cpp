@@ -47,6 +47,8 @@ int main(int argc, char **argv) {
 		if (strcmp(argv[i], "--nodaemon") == 0) {
 			deamonize = false;
 			Log::setLogOutput(Log::StdOut);
+		} else if (strcmp(argv[i], "--debug") == 0) {
+			Log::setDebug();
 		} else if (strcmp(argv[i], "--help") == 0) {
 			printf("Telldus TellStick background service\n\nStart with --nodaemon to not run as daemon\n\n");
 			printf("Report bugs to <info.tech@telldus.com>\n");
