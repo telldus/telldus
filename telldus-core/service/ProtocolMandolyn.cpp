@@ -12,7 +12,7 @@ std::string ProtocolMandolyn::decodeData(ControllerMessage &dataMsg)
 	bool parity = value & 0x1;
 	value >>= 1;
 
-	double temp = (value & 0x7FFF) - 6400;
+	double temp = (double)(value & 0x7FFF) - (double)6400;
 	temp = temp/128.0;
 	value >>= 15;
 
