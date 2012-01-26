@@ -110,6 +110,7 @@ void Log::error(const char *fmt, ...) {
 void Log::setDebug() {
 	Log *log = Log::instance();
 	log->d->debug = true;
+	Log::debug("Debug message output enabled");
 }
 
 void Log::setLogOutput(LogOutput logOutput) {
