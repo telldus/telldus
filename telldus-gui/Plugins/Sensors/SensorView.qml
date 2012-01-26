@@ -53,6 +53,7 @@ Item{
 			MouseArea{
 				anchors.fill: parent
 				onClicked: {
+					main.focus = true
 					confirmDeletion.visible = true;
 				}
 			}
