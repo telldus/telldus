@@ -63,6 +63,7 @@ IF (UNIX AND NOT APPLE)
 	CONFIGURE_FILE(
 		${CMAKE_CURRENT_SOURCE_DIR}/05-tellstick.rules
 		${CMAKE_BINARY_DIR}/parsed/05-tellstick.rules
+		@ONLY
 	)
 	CONFIGURE_FILE(
 		${CMAKE_CURRENT_SOURCE_DIR}/udev.sh
