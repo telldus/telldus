@@ -102,6 +102,7 @@ IF(Plugin_SRCS)
 			GET_FILENAME_COMPONENT(DESTDIR \$ENV{DESTDIR} ABSOLUTE)
 			SET(app \"\${DESTDIR}/Applications/TelldusCenter.app\")
 			GET_BUNDLE_AND_EXECUTABLE(\"\${app}\" bundle exe valid)
+			GET_FILENAME_COMPONENT(exedir \"\${exe}\" PATH)
 			SET(plugin \"\${bundle}/Contents/Plugins/script/${Plugin_NAME}${CMAKE_SHARED_LIBRARY_SUFFIX}\")
 
 			GET_ITEM_KEY(\"\${plugin}\" pkey)
@@ -115,7 +116,10 @@ IF(Plugin_SRCS)
 					#Check to see if this is ourself
 					IF (NOT \${pkey} STREQUAL \${rkey})
 						SET(kv \"\")
-						SET_BUNDLE_KEY_VALUES(kv \"\${pr}\" \"\${pr}\" \"\${exe}\" \"\${bundle}/Contents/Frameworks/\" 0)
+						SET_BUNDLE_KEY_VALUES(kv \"\${pr}\" \"\${pr}\" \"\${exedir}\" \"\${bundle}/Contents/Frameworks/\" 1)
+						IF (NOT EXISTS \"\${\${kv}_RESOLVED_EMBEDDED_ITEM}\")
+							COPY_RESOLVED_FRAMEWORK_INTO_BUNDLE(\"\${\${kv}_RESOLVED_ITEM}\" \"\${\${kv}_RESOLVED_EMBEDDED_ITEM}\")
+						ENDIF ()
 						EXECUTE_PROCESS(COMMAND install_name_tool
 							-change \"\${pr}\" \"\${\${rkey}_EMBEDDED_ITEM}\" \"\${plugin}\"
 						)
