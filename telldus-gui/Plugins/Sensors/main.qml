@@ -15,7 +15,8 @@ Item {
 
 		SensorList {
 			id: sensorList
-			width: main.width-scrollArea.verticalScrollBar.width
+			property int calculatedWidth: main.width-scrollArea.verticalScrollBar.width
+			width: (calculatedWidth < minimumWidth ? minimumWidth : calculatedWidth)
 		}
 	}
 }

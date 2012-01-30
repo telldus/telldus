@@ -3,6 +3,7 @@ import QtDesktop 0.1
 
 Column {
 	id: sensorList
+	property int minimumWidth: main.state == "EDIT" ? 770 : 475
 	spacing: 1
 
 	BorderImage {
