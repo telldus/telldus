@@ -40,21 +40,22 @@ Item{
 			placeholderText: 'Enter a name'
 			onTextChanged: modelData.name = text
 		}
-
-		Text{
-			anchors.right: sensorid.left
-			visible: sensorViewItem.state == "EDIT"
+		Item {
 			height: 40
-			verticalAlignment: Text.AlignVCenter
-			text: "Delete"
-			font.underline: true
-			color: "#004275"
-			width: 50
-			MouseArea{
-				anchors.fill: parent
-				onClicked: {
-					main.focus = true
-					confirmDeletion.visible = true;
+			width: deleteImg.width
+			anchors.right: sensorid.left
+			anchors.rightMargin: 15
+			visible: sensorViewItem.state == "EDIT"
+			Image {
+				id: deleteImg
+				anchors.centerIn: parent
+				source: "btn_action_remove.png"
+				MouseArea{
+					anchors.fill: parent
+					onClicked: {
+						main.focus = true
+						confirmDeletion.visible = true;
+					}
 				}
 			}
 		}

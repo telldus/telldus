@@ -24,6 +24,7 @@ SET( Plugin_MOC_HDRS
 SET( Plugin_PATH "com.telldus.sensors" )
 
 SET( Plugin_EXTRA
+	btn_action_remove.png
 	header_bg.png
 	icon.png
 	icon_humidity.png
