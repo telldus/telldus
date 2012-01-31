@@ -102,8 +102,8 @@ int Settings::getDeviceId(int intDeviceIndex) const {
 				CFStringGetCString( cfid, cp, size, kCFStringEncodingUTF8 );
 				cp = (char *)realloc( cp, strlen(cp) + 1);
 				id = atoi(cp);
-				
-			 
+				free(cp);
+
 				CFRelease(key);
 				CFRelease(split);
 				CFRelease(cfid);	
