@@ -68,7 +68,7 @@ TellStick::TellStick(int controllerId, TelldusCore::Event *event, const TellStic
 #endif
 	Log::notice("Connecting to TellStick (%X/%X) with serial %s", d->vid, d->pid, d->serial.c_str());
 	FT_STATUS ftStatus = FT_OpenEx(tempSerial, FT_OPEN_BY_SERIAL_NUMBER, &d->ftHandle);
-	delete tempSerial;
+	delete[] tempSerial;
 	if (ftStatus == FT_OK) {
 		d->open = true;
 		FT_SetFlowControl(d->ftHandle, FT_FLOW_NONE, 0, 0);

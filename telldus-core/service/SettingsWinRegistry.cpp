@@ -76,8 +76,8 @@ int Settings::getDeviceId(int intDeviceIndex) const {
 		if (RegEnumKeyEx(hk, intDeviceIndex, (LPWSTR)Buff, &size, NULL, NULL, NULL, NULL) == ERROR_SUCCESS) {
 			intReturn = _wtoi(Buff);
 		}
-		
-		delete Buff;
+
+		delete[] Buff;
 		RegCloseKey(hk);
 	}
 	return intReturn;
@@ -171,14 +171,14 @@ std::wstring Settings::getSetting(const std::wstring &strName) const{
 
 		if(lngStatus == ERROR_MORE_DATA){
 			//The buffer is to small, recreate it
-			delete Buff;
+			delete[] Buff;
 			Buff = new wchar_t[dwLength];
 			lngStatus = RegQueryValueEx(hk, strName.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
 		}
 		if (lngStatus == ERROR_SUCCESS) {
 			strReturn = Buff;
 		}
-		delete Buff;
+		delete[] Buff;
 	}
 	RegCloseKey(hk);
 	return strReturn;
@@ -199,14 +199,14 @@ std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &nam
 
 		if(lngStatus == ERROR_MORE_DATA){
 			//The buffer is to small, recreate it
-			delete Buff;
+			delete[] Buff;
 			Buff = new wchar_t[dwLength];
 			lngStatus = RegQueryValueEx(hk, name.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
 		}
 		if (lngStatus == ERROR_SUCCESS) {
 			strReturn = Buff;
 		}
-		delete Buff;
+		delete[] Buff;
 	}
 	RegCloseKey(hk);
 	return strReturn;

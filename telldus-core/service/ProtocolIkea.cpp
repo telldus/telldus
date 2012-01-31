@@ -45,7 +45,7 @@ std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Co
 		intUnits = intUnits | ( 1<<(9-intUnit) );
 	} while ( (strToken = strtok(NULL, ",")) != NULL );
 
-	free(tempUnits);
+	delete[] tempUnits;
 
 	std::string strReturn = "STTTTTTª"; //Startcode, always like this;
 
