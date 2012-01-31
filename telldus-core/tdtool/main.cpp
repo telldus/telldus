@@ -285,6 +285,7 @@ int send_raw_command( char *command ) {
 			return TELLSTICK_ERROR_UNKNOWN;
 		}
 		fgets(msg, MAX_LENGTH, fd);
+		fclose(fd);
 	}
 	
 	int retval = tdSendRawCommand( msg, 0 );	
