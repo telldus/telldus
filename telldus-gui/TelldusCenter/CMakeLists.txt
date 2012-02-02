@@ -2,6 +2,10 @@ FIND_PACKAGE( Qt4 REQUIRED )
 SET(QT_USE_QTSCRIPT TRUE)
 SET(QT_USE_QTNETWORK TRUE)
 SET(QT_USE_QTUITOOLS TRUE)
+IF (APPLE)
+	#This is a workaround for plugins that depends on libraries and will not copy these correctly
+	SET(QT_USE_QTDECLARATIVE TRUE)
+ENDIF()
 INCLUDE( ${QT_USE_FILE} )
 
 FIND_PACKAGE( SignTool REQUIRED )
