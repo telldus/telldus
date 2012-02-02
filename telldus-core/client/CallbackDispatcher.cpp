@@ -21,7 +21,6 @@ TDDeviceEventDispatcher::TDDeviceEventDispatcher(CallbackStruct<TDDeviceEvent> *
 
 TDDeviceEventDispatcher::~TDDeviceEventDispatcher() {
 	this->wait();
-	d->mutex.unlock();
 }
 
 bool TDDeviceEventDispatcher::done() const {
@@ -33,6 +32,7 @@ void TDDeviceEventDispatcher::run() {
 	d->event(deviceId, method, strData.c_str(), d->id, d->context);
 
 	doneRunning = true;
+	d->mutex.unlock();
 }
 
 
@@ -45,7 +45,6 @@ TDDeviceChangeEventDispatcher::TDDeviceChangeEventDispatcher(CallbackStruct<TDDe
 
 TDDeviceChangeEventDispatcher::~TDDeviceChangeEventDispatcher() {
 	this->wait();
-	d->mutex.unlock();
 }
 
 bool TDDeviceChangeEventDispatcher::done() const {
@@ -55,6 +54,7 @@ bool TDDeviceChangeEventDispatcher::done() const {
 void TDDeviceChangeEventDispatcher::run() {
 	d->event(deviceId, changeEvent, changeType, d->id, d->context);
 	doneRunning = true;
+	d->mutex.unlock();
 }
 
 TDRawDeviceEventDispatcher::TDRawDeviceEventDispatcher( CallbackStruct<TDRawDeviceEvent> *data, const std::string &strD, int id)
@@ -66,7 +66,6 @@ TDRawDeviceEventDispatcher::TDRawDeviceEventDispatcher( CallbackStruct<TDRawDevi
 
 TDRawDeviceEventDispatcher::~TDRawDeviceEventDispatcher() {
 	this->wait();
-	d->mutex.unlock();
 }
 
 bool TDRawDeviceEventDispatcher::done() const {
@@ -76,6 +75,7 @@ bool TDRawDeviceEventDispatcher::done() const {
 void TDRawDeviceEventDispatcher::run() {
 	d->event(strData.c_str(), controllerId, d->id, d->context);
 	doneRunning = true;
+	d->mutex.unlock();
 }
 
 TDSensorEventDispatcher::TDSensorEventDispatcher( CallbackStruct<TDSensorEvent> *data, const std::string &p, const std::string &m, int id, int type, const std::string &v, int t)
@@ -87,7 +87,6 @@ TDSensorEventDispatcher::TDSensorEventDispatcher( CallbackStruct<TDSensorEvent> 
 
 TDSensorEventDispatcher::~TDSensorEventDispatcher() {
 	this->wait();
-	d->mutex.unlock();
 }
 
 bool TDSensorEventDispatcher::done() const {
@@ -97,4 +96,5 @@ bool TDSensorEventDispatcher::done() const {
 void TDSensorEventDispatcher::run() {
 	d->event(protocol.c_str(), model.c_str(), sensorId, dataType, value.c_str(), timestamp, d->id, d->context);
 	doneRunning = true;
+	d->mutex.unlock();
 }
