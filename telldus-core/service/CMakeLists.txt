@@ -148,7 +148,7 @@ ELSEIF (WIN32) #### Windows ####
 	)
 	ADD_CUSTOM_COMMAND(
 		OUTPUT Messages.rc Messages.h
-		COMMAND mc.exe -u -r ${CMAKE_CURRENT_BINARY_DIR} -h ${CMAKE_CURRENT_BINARY_DIR} ${CMAKE_CURRENT_SOURCE_DIR}/Messages.mc
+		COMMAND mc.exe -u -r \"${CMAKE_CURRENT_BINARY_DIR}\" -h \"${CMAKE_CURRENT_BINARY_DIR}\" \"${CMAKE_CURRENT_SOURCE_DIR}/Messages.mc\"
 		DEPENDS ${CMAKE_CURRENT_SOURCE_DIR}/Messages.mc
 		DEPENDS Messages.rc
 		COMMENT "Compiling Messages Resource"
