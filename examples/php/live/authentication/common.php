@@ -7,7 +7,7 @@ require_once 'HTTP/OAuth/Consumer.php';
 define('PUBLIC_KEY', '');
 define('PRIVATE_KEY', '');
 
-define('URL', 'http://api.telldus.net');
+define('URL', 'http://api.telldus.com'); //https should be used in production!
 define('REQUEST_TOKEN', constant('URL').'/oauth/requestToken');
 define('AUTHORIZE_TOKEN', constant('URL').'/oauth/authorize');
 define('ACCESS_TOKEN', constant('URL').'/oauth/accessToken');
