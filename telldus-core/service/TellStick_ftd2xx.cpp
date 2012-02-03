@@ -40,7 +40,7 @@ public:
 #endif
 };
 
-TellStick::TellStick(int controllerId, Event *event, const TellStickDescriptor &td )
+TellStick::TellStick(int controllerId, TelldusCore::Event *event, const TellStickDescriptor &td )
 	:Controller(controllerId, event)
 {
 	d = new PrivateData;

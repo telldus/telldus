@@ -14,10 +14,10 @@ public:
 	SECURITY_ATTRIBUTES sa;
 	HANDLE hEvent;
 	bool running;
-	EventRef waitEvent;
+	TelldusCore::EventRef waitEvent;
 };
 
-ConnectionListener::ConnectionListener(const std::wstring &name, EventRef waitEvent)
+ConnectionListener::ConnectionListener(const std::wstring &name, TelldusCore::EventRef waitEvent)
 {
 	d = new PrivateData;
 	d->hEvent = 0;

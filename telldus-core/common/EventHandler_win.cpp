@@ -5,6 +5,8 @@
 #include <windows.h>
 #include <list>
 
+using namespace TelldusCore;
+
 class EventHandler::PrivateData {
 public:
 	HANDLE *eventArray;
