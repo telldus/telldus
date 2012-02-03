@@ -15,8 +15,8 @@
 
 class TelldusMain::PrivateData {
 public:
-	EventHandler eventHandler;
-	EventRef stopEvent, controllerChangeEvent;
+	TelldusCore::EventHandler eventHandler;
+	TelldusCore::EventRef stopEvent, controllerChangeEvent;
 };
 
 TelldusMain::TelldusMain(void)
@@ -57,16 +57,16 @@ void TelldusMain::suspend() {
 }
 
 void TelldusMain::start(void) {
-	EventRef clientEvent = d->eventHandler.addEvent();
-	EventRef dataEvent = d->eventHandler.addEvent();
-	EventRef janitor = d->eventHandler.addEvent(); //Used for regular cleanups
+	TelldusCore::EventRef clientEvent = d->eventHandler.addEvent();
+	TelldusCore::EventRef dataEvent = d->eventHandler.addEvent();
+	TelldusCore::EventRef janitor = d->eventHandler.addEvent(); //Used for regular cleanups
 	Timer supervisor(janitor); //Tells the janitor to go back to work
 	supervisor.setInterval(60); //Once every minute
 	supervisor.start();
 
 	ControllerManager controllerManager(dataEvent.get());
 	EventUpdateManager eventUpdateManager;
-	EventRef deviceUpdateEvent = eventUpdateManager.retrieveUpdateEvent();
+	TelldusCore::EventRef deviceUpdateEvent = eventUpdateManager.retrieveUpdateEvent();
 	eventUpdateManager.start();
 	DeviceManager deviceManager(&controllerManager, deviceUpdateEvent);
 
@@ -74,7 +74,7 @@ void TelldusMain::start(void) {
 
 	std::list<ClientCommunicationHandler *> clientCommunicationHandlerList;
 
-	EventRef handlerEvent = d->eventHandler.addEvent();
+	TelldusCore::EventRef handlerEvent = d->eventHandler.addEvent();
 
 #ifdef _MACOSX
 	//This is only needed on OS X
@@ -88,7 +88,7 @@ void TelldusMain::start(void) {
 		}
 		if (clientEvent->isSignaled()) {
 			//New client connection
-			EventDataRef eventDataRef = clientEvent->takeSignal();
+			TelldusCore::EventDataRef eventDataRef = clientEvent->takeSignal();
 			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventDataRef.get());
 			if (data) {
 				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(data->socket, handlerEvent, &deviceManager, deviceUpdateEvent);
@@ -98,7 +98,7 @@ void TelldusMain::start(void) {
 		}
 
 		if (d->controllerChangeEvent->isSignaled()) {
-			EventDataRef eventDataRef = d->controllerChangeEvent->takeSignal();
+			TelldusCore::EventDataRef eventDataRef = d->controllerChangeEvent->takeSignal();
 			ControllerChangeEventData *data = reinterpret_cast<ControllerChangeEventData*>(eventDataRef.get());
 			if (data) {
 				controllerManager.deviceInsertedOrRemoved(data->vid, data->pid, "", data->inserted);
@@ -106,7 +106,7 @@ void TelldusMain::start(void) {
 		}
 
 		if (dataEvent->isSignaled()) {
-			EventDataRef eventData = dataEvent->takeSignal();
+			TelldusCore::EventDataRef eventData = dataEvent->takeSignal();
 			ControllerEventData *data = reinterpret_cast<ControllerEventData*>(eventData.get());
 			if (data) {
 				deviceManager.handleControllerMessage(*data);

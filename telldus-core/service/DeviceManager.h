@@ -12,7 +12,7 @@ class Sensor;
 class DeviceManager
 {
 public:
-	DeviceManager(ControllerManager *controllerManager, EventRef deviceUpdateEvent);
+	DeviceManager(ControllerManager *controllerManager, TelldusCore::EventRef deviceUpdateEvent);
 	~DeviceManager(void);
 	int getNumberOfDevices(void);
 	int addDevice();

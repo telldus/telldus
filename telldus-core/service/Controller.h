@@ -4,14 +4,14 @@
 #include "Event.h"
 #include <string>
 
-class ControllerEventData : public EventDataBase {
+class ControllerEventData : public TelldusCore::EventDataBase {
 public:
 	std::string msg;
 	int controllerId;
 };
 
 class Controller {
-public: 
+public:
 	virtual ~Controller();
 
 	virtual int firmwareVersion() = 0;
@@ -19,7 +19,7 @@ public:
 	virtual int reset() = 0;
 
 protected:
-	Controller(int id, Event *event);
+	Controller(int id, TelldusCore::Event *event);
 	void publishData(const std::string &data) const;
 	void decodePublishData(const std::string &data) const;
 

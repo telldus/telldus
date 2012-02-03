@@ -9,7 +9,7 @@
 class Timer::PrivateData {
 public:
 	PrivateData() : interval(0), running(false) {}
-	EventRef event;
+	TelldusCore::EventRef event;
 	int interval;
 	bool running;
 #ifdef _WINDOWS
@@ -21,7 +21,7 @@ public:
 #endif
 };
 
-Timer::Timer(EventRef event)
+Timer::Timer(TelldusCore::EventRef event)
 	:TelldusCore::Thread(), d(new PrivateData)
 {
 	d->event = event;

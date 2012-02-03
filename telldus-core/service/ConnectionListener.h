@@ -10,14 +10,14 @@ namespace TelldusCore {
 	class Socket;
 };
 
-class ConnectionListenerEventData : public EventDataBase {
+class ConnectionListenerEventData : public TelldusCore::EventDataBase {
 public:
 	TelldusCore::Socket *socket;
 };
 
 class ConnectionListener : public TelldusCore::Thread {
 public:
-	ConnectionListener(const std::wstring &name, EventRef waitEvent);
+	ConnectionListener(const std::wstring &name, TelldusCore::EventRef waitEvent);
 	virtual ~ConnectionListener(void);
 
 protected:

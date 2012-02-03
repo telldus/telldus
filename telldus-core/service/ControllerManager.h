@@ -2,13 +2,15 @@
 #define CONTROLLERMANAGER_H
 
 class Controller;
-class Event;
+namespace TelldusCore {
+	class Event;
+}
 
 #include <string>
 
 class ControllerManager {
 public:
-	ControllerManager(Event *event);
+	ControllerManager(TelldusCore::Event *event);
 	~ControllerManager(void);
 
 	void deviceInsertedOrRemoved(int vid, int pid, const std::string &serial, bool inserted);

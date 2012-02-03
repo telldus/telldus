@@ -14,11 +14,11 @@ class ControllerManager::PrivateData {
 public:
 	int lastControllerId;
 	ControllerMap controllers;
-	Event *event;
+	TelldusCore::Event *event;
 	TelldusCore::Mutex mutex;
 };
 
-ControllerManager::ControllerManager(Event *event){
+ControllerManager::ControllerManager(TelldusCore::Event *event){
 	d = new PrivateData;
 	d->lastControllerId = 0;
 	d->event = event;

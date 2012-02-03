@@ -4,11 +4,11 @@
 
 class Controller::PrivateData {
 public:
-	Event *event;
+	TelldusCore::Event *event;
 	int id;
 };
 
-Controller::Controller(int id, Event *event){
+Controller::Controller(int id, TelldusCore::Event *event){
 	d = new PrivateData;
 	d->event = event;
 	d->id = id;
@@ -28,7 +28,7 @@ void Controller::publishData(const std::string &msg) const {
 void Controller::decodePublishData(const std::string &data) const {
 
 	std::list<std::string> msgList = Protocol::decodeData(data);
-		
+
 	for (std::list<std::string>::iterator msgIt = msgList.begin(); msgIt != msgList.end(); ++msgIt){
 		this->publishData(*msgIt);
 	}

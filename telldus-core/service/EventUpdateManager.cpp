@@ -12,8 +12,8 @@ typedef std::list<TelldusCore::Socket *> SocketList;
 
 class EventUpdateManager::PrivateData {
 public:
-	EventHandler eventHandler;
-	EventRef stopEvent, updateEvent, clientConnectEvent;
+	TelldusCore::EventHandler eventHandler;
+	TelldusCore::EventRef stopEvent, updateEvent, clientConnectEvent;
 	SocketList clients;
 	ConnectionListener *eventUpdateClientListener;
 };
@@ -40,7 +40,7 @@ EventUpdateManager::~EventUpdateManager(void) {
 	delete d;
 }
 
-EventRef EventUpdateManager::retrieveUpdateEvent(){
+TelldusCore::EventRef EventUpdateManager::retrieveUpdateEvent(){
 
 	return d->updateEvent;
 }
@@ -54,7 +54,7 @@ void EventUpdateManager::run(){
 
 		if(d->clientConnectEvent->isSignaled()){
 			//new client added
-			EventDataRef eventData = d->clientConnectEvent->takeSignal();
+			TelldusCore::EventDataRef eventData = d->clientConnectEvent->takeSignal();
 			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventData.get());
 			if(data){
 				d->clients.push_back(data->socket);
@@ -62,7 +62,7 @@ void EventUpdateManager::run(){
 		}
 		else if(d->updateEvent->isSignaled()){
 			//device event, signal all clients
-			EventDataRef eventData = d->updateEvent->takeSignal();
+			TelldusCore::EventDataRef eventData = d->updateEvent->takeSignal();
 			EventUpdateData *data = reinterpret_cast<EventUpdateData*>(eventData.get());
 			if(data){
 				sendMessageToClients(data);

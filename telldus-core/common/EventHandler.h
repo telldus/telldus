@@ -3,24 +3,27 @@
 
 #include "Event.h"
 
-class EventHandler {
-public:
-	EventHandler();
-	virtual ~EventHandler(void);
+namespace TelldusCore {
 
-	EventRef addEvent();
+	class EventHandler {
+	public:
+		EventHandler();
+		virtual ~EventHandler(void);
 
-	bool waitForAny();
+		EventRef addEvent();
 
-protected:
-	void signal(Event *event);
+		bool waitForAny();
 
-private:
-	class PrivateData;
-	PrivateData *d;
-	bool listIsSignalled();
+	protected:
+		void signal(Event *event);
 
-	friend class Event;
-};
+	private:
+		class PrivateData;
+		PrivateData *d;
+		bool listIsSignalled();
+
+		friend class Event;
+	};
+}
 
 #endif //EVENTHANDLER_H

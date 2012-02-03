@@ -2,6 +2,8 @@
 #include "EventHandler.h"
 #include "Thread.h"
 
+using namespace TelldusCore;
+
 class Event::PrivateData {
 public:
 };

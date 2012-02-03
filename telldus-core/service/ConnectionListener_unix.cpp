@@ -14,12 +14,12 @@
 
 class ConnectionListener::PrivateData {
 public:
-	EventRef waitEvent;
+	TelldusCore::EventRef waitEvent;
 	std::string name;
 	bool running;
 };
 
-ConnectionListener::ConnectionListener(const std::wstring &name, EventRef waitEvent)
+ConnectionListener::ConnectionListener(const std::wstring &name, TelldusCore::EventRef waitEvent)
 {
 	d = new PrivateData;
 	d->waitEvent = waitEvent;
@@ -56,7 +56,7 @@ void ConnectionListener::run(){
 	int size = SUN_LEN(&name);
 	bind(serverSocket, (struct sockaddr *)&name, size);
 	listen(serverSocket, 5);
-	
+
 	//Change permissions to allow everyone
 	chmod(d->name.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
 	len = sizeof(struct sockaddr_un);
@@ -80,7 +80,7 @@ void ConnectionListener::run(){
 			continue;
 		}
 		SOCKET_T clientSocket = accept(serverSocket, NULL, NULL);
-		
+
 		ConnectionListenerEventData *data = new ConnectionListenerEventData();
 		data->socket = new TelldusCore::Socket(clientSocket);
 		d->waitEvent->signal(data);

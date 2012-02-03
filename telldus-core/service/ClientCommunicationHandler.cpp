@@ -7,7 +7,7 @@
 class ClientCommunicationHandler::PrivateData {
 public:
 	TelldusCore::Socket *clientSocket;
-	EventRef event, deviceUpdateEvent;
+	TelldusCore::EventRef event, deviceUpdateEvent;
 	bool done;
 	DeviceManager *deviceManager;
 };
@@ -16,7 +16,7 @@ ClientCommunicationHandler::ClientCommunicationHandler(){
 
 }
 
-ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clientSocket, EventRef event, DeviceManager *deviceManager, EventRef deviceUpdateEvent)
+ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clientSocket, TelldusCore::EventRef event, DeviceManager *deviceManager, TelldusCore::EventRef deviceUpdateEvent)
 	:Thread()
 {
 	d = new PrivateData;

@@ -4,7 +4,7 @@
 #include "Thread.h"
 #include "Event.h"
 
-class EventUpdateData : public EventDataBase {
+class EventUpdateData : public TelldusCore::EventDataBase {
 public:
 	std::wstring messageType;
 	int controllerId;
@@ -29,8 +29,8 @@ public:
 	EventUpdateManager(void);
 	~EventUpdateManager(void);
 
-	EventRef retrieveUpdateEvent();
-	EventRef retrieveClientConnectEvent();
+	TelldusCore::EventRef retrieveUpdateEvent();
+	TelldusCore::EventRef retrieveClientConnectEvent();
 
 protected:
 	void run();

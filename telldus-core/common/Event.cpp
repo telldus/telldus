@@ -4,6 +4,8 @@
 
 #include <list>
 
+using namespace TelldusCore;
+
 EventData::~EventData() {
 }
 
@@ -22,7 +24,7 @@ public:
 	std::list<EventDataRef> eventDataList;
 };
 
-EventBase::EventBase(EventHandler *handler) {
+EventBase::EventBase(TelldusCore::EventHandler *handler) {
 	d = new PrivateData;
 	d->handler = handler;
 }

@@ -21,10 +21,10 @@ public:
 	 Settings set;
 	 TelldusCore::Mutex lock;
 	 ControllerManager *controllerManager;
-	 EventRef deviceUpdateEvent;
+	 TelldusCore::EventRef deviceUpdateEvent;
 };
 
-DeviceManager::DeviceManager(ControllerManager *controllerManager, EventRef deviceUpdateEvent){
+DeviceManager::DeviceManager(ControllerManager *controllerManager, TelldusCore::EventRef deviceUpdateEvent){
 	d = new PrivateData;
 	d->controllerManager = controllerManager;
 	d->deviceUpdateEvent = deviceUpdateEvent;

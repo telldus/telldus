@@ -6,6 +6,8 @@
 #include <pthread.h>
 #include <stdio.h>
 
+using namespace TelldusCore;
+
 class EventHandler::PrivateData {
 public:
 	pthread_cond_t event;

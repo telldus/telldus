@@ -4,7 +4,7 @@
 #include "Thread.h"
 #include "Event.h"
 
-class ControllerChangeEventData : public EventDataBase {
+class ControllerChangeEventData : public TelldusCore::EventDataBase {
 public:
 	int vid, pid;
 	bool inserted;
@@ -12,13 +12,13 @@ public:
 
 class ControllerListener : public TelldusCore::Thread {
 public:
-	ControllerListener(EventRef event);
+	ControllerListener(TelldusCore::EventRef event);
 	virtual ~ControllerListener();
 
 protected:
 	void run();
-	
-private:	
+
+private:
 	class PrivateData;
 	PrivateData *d;
 };
