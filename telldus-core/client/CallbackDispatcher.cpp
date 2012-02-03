@@ -15,8 +15,7 @@ using namespace TelldusCore;
 TDDeviceEventDispatcher::TDDeviceEventDispatcher(CallbackStruct<TDDeviceEvent> *data, int id, int m, const std::string &strD)
 :Thread(), d(data), deviceId(id), method(m), strData(strD), doneRunning(false)
 {
-	d->mutex.lock();
-	this->start();
+	this->startAndLock(&d->mutex);
 }
 
 TDDeviceEventDispatcher::~TDDeviceEventDispatcher() {
@@ -32,15 +31,13 @@ void TDDeviceEventDispatcher::run() {
 	d->event(deviceId, method, strData.c_str(), d->id, d->context);
 
 	doneRunning = true;
-	d->mutex.unlock();
 }
 
 
 TDDeviceChangeEventDispatcher::TDDeviceChangeEventDispatcher(CallbackStruct<TDDeviceChangeEvent> *data, int id, int event, int type)
 :Thread(), d(data), deviceId(id), changeEvent(event), changeType(type), doneRunning(false)
 {
-	d->mutex.lock();
-	this->start();
+	this->startAndLock(&d->mutex);
 }
 
 TDDeviceChangeEventDispatcher::~TDDeviceChangeEventDispatcher() {
@@ -54,14 +51,12 @@ bool TDDeviceChangeEventDispatcher::done() const {
 void TDDeviceChangeEventDispatcher::run() {
 	d->event(deviceId, changeEvent, changeType, d->id, d->context);
 	doneRunning = true;
-	d->mutex.unlock();
 }
 
 TDRawDeviceEventDispatcher::TDRawDeviceEventDispatcher( CallbackStruct<TDRawDeviceEvent> *data, const std::string &strD, int id)
 :Thread(), d(data), controllerId(id), strData(strD), doneRunning(false)
 {
-	d->mutex.lock();
-	this->start();
+	this->startAndLock(&d->mutex);
 }
 
 TDRawDeviceEventDispatcher::~TDRawDeviceEventDispatcher() {
@@ -75,14 +70,12 @@ bool TDRawDeviceEventDispatcher::done() const {
 void TDRawDeviceEventDispatcher::run() {
 	d->event(strData.c_str(), controllerId, d->id, d->context);
 	doneRunning = true;
-	d->mutex.unlock();
 }
 
 TDSensorEventDispatcher::TDSensorEventDispatcher( CallbackStruct<TDSensorEvent> *data, const std::string &p, const std::string &m, int id, int type, const std::string &v, int t)
 	:Thread(), d(data), protocol(p), model(m), sensorId(id), dataType(type), value(v), timestamp(t), doneRunning(false)
 {
-	d->mutex.lock();
-	this->start();
+	this->startAndLock(&d->mutex);
 }
 
 TDSensorEventDispatcher::~TDSensorEventDispatcher() {
@@ -96,5 +89,4 @@ bool TDSensorEventDispatcher::done() const {
 void TDSensorEventDispatcher::run() {
 	d->event(protocol.c_str(), model.c_str(), sensorId, dataType, value.c_str(), timestamp, d->id, d->context);
 	doneRunning = true;
-	d->mutex.unlock();
 }
