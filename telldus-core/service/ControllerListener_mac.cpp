@@ -12,7 +12,7 @@ public:
 	CFStringRef             serialNumber;
 	UInt32					vid;
 	UInt32					pid;
-	EventRef				event;
+	TelldusCore::EventRef				event;
 };
 
 class ControllerListener::PrivateData {
@@ -20,14 +20,14 @@ public:
 	IONotificationPortRef	gNotifyPort;
 	CFRunLoopRef			gRunLoop;
 	io_iterator_t			gAddedIter;
-	EventRef				event;
+	TelldusCore::EventRef				event;
 	
 	void addUsbFilter(int vid, int pid);
 	static void DeviceAdded(void *refCon, io_iterator_t iterator);
 	static void DeviceNotification(void *refCon, io_service_t service, natural_t messageType, void *messageArgument);
 };
 
-ControllerListener::ControllerListener(EventRef event)
+ControllerListener::ControllerListener(TelldusCore::EventRef event)
 :Thread()
 {
 	d = new PrivateData;
