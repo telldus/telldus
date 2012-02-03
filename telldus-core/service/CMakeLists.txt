@@ -18,7 +18,6 @@ SET( telldus-service_SRCS
 	ControllerMessage.cpp
 	Device.cpp
 	DeviceManager.cpp
-	Event.cpp
 	Log.cpp
 	Sensor.cpp
 	Settings.cpp
@@ -78,8 +77,6 @@ SET( telldus-service_HDRS
 	ControllerMessage.h
 	Device.h
 	DeviceManager.h
-	Event.h
-	EventHandler.h
 	EventUpdateManager.h
 	Log.h
 	Sensor.h
@@ -116,8 +113,6 @@ IF (APPLE) #### Mac OS X ####
 		main_mac.cpp
 		ConnectionListener_unix.cpp
 		ControllerListener_mac.cpp
-		Event_unix.cpp
-		EventHandler_unix.cpp
 		SettingsCoreFoundationPreferences.cpp
 	)
 
@@ -134,8 +129,6 @@ ELSEIF (WIN32) #### Windows ####
 	)
 	LIST(APPEND telldus-service_SRCS
 		ConnectionListener_win.cpp
-		Event_win.cpp
-		EventHandler_win.cpp
 		main_win.cpp
 		SettingsWinRegistry.cpp
 		TelldusWinService_win.cpp
@@ -164,8 +157,6 @@ ELSE (APPLE) #### Linux ####
 	SET( telldus-service_TARGET	telldusd )
 	LIST(APPEND telldus-service_SRCS
 		ConnectionListener_unix.cpp
-		Event_unix.cpp
-		EventHandler_unix.cpp
 		main_unix.cpp
 		SettingsConfuse.cpp
 	)

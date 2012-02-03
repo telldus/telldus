@@ -4,6 +4,7 @@ ENDIF(COMMAND cmake_policy)
 
 ######## Non configurable options  ########
 SET( telldus-common_SRCS
+	Event.cpp
 	Message.cpp
 	Mutex.cpp
 	Strings.cpp
@@ -12,6 +13,8 @@ SET( telldus-common_SRCS
 
 SET( telldus-common_HDRS
 	common.h
+	Event.h
+	EventHandler.h
 	Message.h
 	Mutex.h
 	Socket.h
@@ -29,6 +32,8 @@ IF (APPLE)
 	FIND_LIBRARY(ICONV_LIBRARY iconv)
 	ADD_DEFINITIONS( -D_MACOSX )
 	LIST(APPEND  telldus-common_SRCS
+		Event_unix.cpp
+		EventHandler_unix.cpp
 		Socket_unix.cpp
 		stdlibc_workaround.cpp #Remove this when we drop support for 10.5
 	)
@@ -41,6 +46,8 @@ ELSEIF (WIN32)
 	ADD_DEFINITIONS( /Zc:wchar_t- ) # Treat wchar_t as Built-in Type' = No
 	ADD_DEFINITIONS( -D_WINDOWS )
 	LIST(APPEND  telldus-common_SRCS
+		Event_win.cpp
+		EventHandler_win.cpp
 		Socket_win.cpp
 	)
 ELSEIF (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
@@ -48,6 +55,8 @@ ELSEIF (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
 	FIND_LIBRARY(ICONV_LIBRARY iconv)
 	ADD_DEFINITIONS( -D_FREEBSD )
 	LIST(APPEND  telldus-common_SRCS
+		Event_unix.cpp
+		EventHandler_unix.cpp
 		Socket_unix.cpp
 	)
 	LIST(APPEND telldus-common_LIBRARIES
