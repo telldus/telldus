@@ -150,7 +150,7 @@ uint64_t TelldusCore::hexTo64l(const std::string data){
 #elif defined(_MACOSX)
 	return strtoq(data.c_str(), NULL, 16);
 #else
-	return strtol(data.c_str(), NULL, 16);
+	return strtoul(data.c_str(), NULL, 16);
 #endif
 }
 
