@@ -66,6 +66,8 @@ ELSE (APPLE)
 	#### Linux ####
 	ADD_DEFINITIONS( -D_LINUX )
 	LIST(APPEND  telldus-common_SRCS
+		Event_unix.cpp
+		EventHandler_unix.cpp
 		Socket_unix.cpp
 	)
 ENDIF (APPLE)
