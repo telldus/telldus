@@ -14,12 +14,15 @@
 #ifdef _WINDOWS
 #include <windows.h>
 #endif
+#include "EventHandler.h"
 
 using namespace TelldusCore;
 
 class TelldusCore::ThreadPrivate {
 public:
 	bool running;
+	EventRef threadStarted;
+	Mutex *mutex;
 #ifdef _WINDOWS
 	HANDLE thread;
 	DWORD threadId;
@@ -31,6 +34,7 @@ public:
 Thread::Thread() {
 	d = new ThreadPrivate;
 	d->thread = 0;
+	d->mutex = 0;
 }
 
 Thread::~Thread() {
@@ -44,6 +48,15 @@ void Thread::start() {
 #else
 	pthread_create(&d->thread, NULL, &Thread::exec, this );
 #endif
+}
+
+void Thread::startAndLock(Mutex *lock) {
+	EventHandler handler;
+	d->threadStarted = handler.addEvent();
+	d->mutex = lock;
+	this->start();
+	handler.waitForAny();
+	d->threadStarted.reset();
 }
 
 bool Thread::wait() {
@@ -64,7 +77,14 @@ bool Thread::wait() {
 void *Thread::exec( void *ptr ) {
 	Thread *t = reinterpret_cast<Thread *>(ptr);
 	if (t) {
+		if (t->d->threadStarted) {
+			t->d->mutex->lock();
+			t->d->threadStarted->signal();
+		}
 		t->run();
+		if (t->d->mutex) {
+			t->d->mutex->unlock();
+		}
 		t->d->running = false;
 	}
 #ifdef _WINDOWS

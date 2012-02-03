@@ -13,6 +13,7 @@
 #define THREAD_H
 
 #include <string>
+#include "Mutex.h"
 
 namespace TelldusCore {
 	class ThreadPrivate;
@@ -21,6 +22,7 @@ namespace TelldusCore {
 			Thread();
 			virtual ~Thread();
 			void start();
+			void startAndLock(Mutex *);
 			bool wait();
 						
 		protected:
