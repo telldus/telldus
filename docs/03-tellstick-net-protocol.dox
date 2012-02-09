@@ -32,4 +32,30 @@
  * Firmware version: <tt>2</tt>
  *
  * Use the source ip-address to determine the address to the device.
+ *
+ * \section messageformat Message format
+ *
+ * The message format used to communicate with TellStick Net is designed to be
+ * easily parsed but still be flexible. It can be converted to and from json
+ * without losing information.
+ *
+ * There exists four datatypes; string, integer, list and dictionary:
+ *
+ * - Strings are length-prefixed base sixteen followed by a colon and the
+ *   string. For example 6:FooBar corresponds to 'FooBar'.
+ *
+ * - Integers are represented by an 'i' followed by the number in base 16
+ *   followed by an 's'. For example i3s corresponds to 3 and i-3s corresponds
+ *   to -3. Integers have no size limitation. i-0s is invalid. All encodings
+ *   with a leading zero, such as i03s, are invalid, other than i0s, which of
+ *   course corresponds to 0.
+ *
+ * - Lists are encoded as an 'l' followed by their elements (also encoded)
+ *   followed by an 's'. For example l3:foo3:bars corresponds to ['foo', 'bar'].
+ *
+ * - Dictionaries are encoded as a 'h' followed by a list of alternating keys and
+ *   their corresponding values followed by an 's'. For example,
+ *   h3:foo3:bar5:hello5:worlds corresponds to {'foo': 'bar', 'hello': 'world'}
+ *   and h3:fool3:bar3:bazss corresponds to {'foo': ['bar', 'baz']}. Keys must
+ *   be strings.
  */
