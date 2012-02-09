@@ -9,7 +9,8 @@
  * TellStick Net through Telldus Live! is still the prefered and supported
  * method.
  *
- * This interface is still under development and is not ready for production.
+ * <em>This interface is still under development and is not ready for
+ * production.</em>
  *
  * \section autodiscovery Auto discovery
  *
