@@ -59,4 +59,36 @@
  *   h3:foo3:bar5:hello5:worlds corresponds to {'foo': 'bar', 'hello': 'world'}
  *   and h3:fool3:bar3:bazss corresponds to {'foo': ['bar', 'baz']}. Keys must
  *   be strings.
+ *
+ * Communication with TellStick Net is done over UDP on port 42314.
+ * The first string sent contains the command to execute. The following python
+ * example sends a disconnection command to a TellStick Net. This will reboot
+ * the device.
+ * \code
+ * from socket import *
+ * UDPSock = socket(AF_INET,SOCK_DGRAM)
+ * UDPSock.sendto("A:disconnect", ("192.168.0.155",42314))
+ * \endcode
+ * \section tellstick_net_command_send Send command
+ *
+ * For readability the examples will be displayed in json format in this
+ * documentation. They must be encoded using the TellStick Net message format
+ * before sending to an actual TellStick Net.
+ *
+ * Sending RF-data uses the same encoding as TellStick \ref sec_send with the
+ * difference that prefixes should be sent as a parameter and not in the
+ * RF-data.
+ *
+ * The parameters are sent encoded in a dictionary, with the RF-data in the key
+ * 'S'. Example sending Arctech Code switch A1 ON:<br>
+ * <tt>{'S': '$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$kk$$kk$$kk$$k'}</tt>
+ * The string sent will be encoded like this:<br>
+ * <tt>4:sendh1:S32:$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$kk$$kk$$k$k$ks</tt>
+ *
+ * The same example as above but with a 20 ms pause between the 15 packages:<br>
+ * <tt>{'S': '$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$k$kk$$kk$$kk$$k',
+ * 'P': 20, 'R': 15}</tt>
+ *
+ * The command \ref sec_send_extended "\"Send extended\" (T)" is not implemented
+ * since a TellStick Net can handle packages over 255 pulses.
  */
