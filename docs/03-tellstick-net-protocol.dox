@@ -42,8 +42,8 @@
  *
  * There exists four datatypes; string, integer, list and dictionary:
  *
- * - Strings are length-prefixed base sixteen followed by a colon and the
- *   string. For example 6:FooBar corresponds to 'FooBar'.
+ * - Strings are length-prefixed base sixteen (upper case) followed by a colon
+ *   and the string. For example 6:FooBar corresponds to 'FooBar'.
  *
  * - Integers are represented by an 'i' followed by the number in base 16
  *   followed by an 's'. For example i3s corresponds to 3 and i-3s corresponds
