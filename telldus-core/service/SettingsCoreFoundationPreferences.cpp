@@ -100,8 +100,14 @@ int Settings::getDeviceId(int intDeviceIndex) const {
 				CFIndex size = CFStringGetMaximumSizeForEncoding( CFStringGetLength( cfid ), kCFStringEncodingUTF8) + 1;
 				cp = (char *)malloc(size);
 				CFStringGetCString( cfid, cp, size, kCFStringEncodingUTF8 );
-				cp = (char *)realloc( cp, strlen(cp) + 1);
-				id = atoi(cp);
+				char *newcp = (char *)realloc( cp, strlen(cp) + 1);
+				if (newcp != NULL) {
+					cp = newcp;
+					id = atoi(cp);
+				} else {
+					//Should not happen
+					id = 0;
+				}
 				free(cp);
 
 				CFRelease(key);
@@ -184,15 +190,22 @@ std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &wna
 		return L"";
 	}
 	
+	std::wstring retval;
 	char *cp = NULL;
 	CFIndex size = CFStringGetMaximumSizeForEncoding( CFStringGetLength( value ), kCFStringEncodingUTF8) + 1;
 	cp = (char *)malloc(size);
 	CFStringGetCString( value, cp, size, kCFStringEncodingUTF8 );
-	cp = (char *)realloc( cp, strlen(cp) + 1);
+	char *newcp = (char *)realloc( cp, strlen(cp) + 1);
+	if (newcp != NULL) {
+		cp = newcp;
+		retval = TelldusCore::charToWstring(cp);
+	} else {
+		//Should not happen
+		retval = L"";
+	}
+	free(cp);
 	
 	CFRelease(value);
-	std::wstring retval = TelldusCore::charToWstring(cp);
-	free(cp);
 	return retval;
 }
 
