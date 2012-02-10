@@ -1,11 +1,15 @@
-ADD_SUBDIRECTORY(common)
+SET(ENABLE_TESTING	FALSE	CACHE BOOL "Enable unit tests")
 
-ADD_EXECUTABLE(TestRunner cppunit.cpp)
-TARGET_LINK_LIBRARIES(TestRunner cppunit TelldusCommonTests)
-ADD_DEPENDENCIES(TestRunner TelldusCommonTests)
+IF(ENABLE_TESTING)
+	ADD_SUBDIRECTORY(common)
 
-ADD_TEST(cppunit ${CMAKE_CURRENT_BINARY_DIR}/TestRunner)
-IF (UNIX AND NOT APPLE)
-	ADD_TEST(cppcheck cppcheck --quiet --error-exitcode=2 ${CMAKE_SOURCE_DIR} -i ${CMAKE_BINARY_DIR})
+	ADD_EXECUTABLE(TestRunner cppunit.cpp)
+	TARGET_LINK_LIBRARIES(TestRunner cppunit TelldusCommonTests)
+	ADD_DEPENDENCIES(TestRunner TelldusCommonTests)
+
+	ADD_TEST(cppunit ${CMAKE_CURRENT_BINARY_DIR}/TestRunner)
+	IF (UNIX AND NOT APPLE)
+		ADD_TEST(cppcheck cppcheck --quiet --error-exitcode=2 ${CMAKE_SOURCE_DIR} -i ${CMAKE_BINARY_DIR})
+	ENDIF()
 ENDIF()
 
