@@ -9,7 +9,7 @@ IF(ENABLE_TESTING)
 
 	ADD_TEST(cppunit ${CMAKE_CURRENT_BINARY_DIR}/TestRunner)
 	IF (UNIX AND NOT APPLE)
-		ADD_TEST(cppcheck cppcheck --quiet --error-exitcode=2 ${CMAKE_SOURCE_DIR} -i ${CMAKE_BINARY_DIR})
+		ADD_TEST(cppcheck cppcheck --quiet --error-exitcode=2 ${CMAKE_SOURCE_DIR})
 	ENDIF()
 ENDIF()
 
