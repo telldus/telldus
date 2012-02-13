@@ -8,7 +8,14 @@
 #include <map>
 #include <stdio.h>
 
-typedef std::map<int, Controller *> ControllerMap;
+class ControllerDescriptor {
+public:
+	std::string name;
+	int type;
+	Controller *controller;
+};
+
+typedef std::map<int, ControllerDescriptor> ControllerMap;
 
 class ControllerManager::PrivateData {
 public:
@@ -27,7 +34,9 @@ ControllerManager::ControllerManager(TelldusCore::Event *event){
 
 ControllerManager::~ControllerManager() {
 	for (ControllerMap::iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
-		delete( it->second );
+		if (it->second.controller) {
+			delete( it->second.controller );
+		}
 	}
 	delete d;
 }
@@ -41,7 +50,7 @@ void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, const std::str
 			TelldusCore::MutexLocker locker(&d->mutex);
 			while(d->controllers.size()) {
 				ControllerMap::iterator it = d->controllers.begin();
-				delete it->second;
+				delete it->second.controller;
 				d->controllers.erase(it);
 			}
 		}
@@ -62,7 +71,10 @@ void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, const std::str
 		while(again) {
 			again = false;
 			for(ControllerMap::iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
-				TellStick *tellstick = reinterpret_cast<TellStick*>(it->second);
+				if (!it->second.controller) {
+					continue;
+				}
+				TellStick *tellstick = reinterpret_cast<TellStick*>(it->second.controller);
 				if (!tellstick) {
 					continue;
 				}
@@ -94,9 +106,9 @@ Controller *ControllerManager::getBestControllerById(int id) {
 	}
 	ControllerMap::const_iterator it = d->controllers.find(id);
 	if (it != d->controllers.end()) {
-		return it->second;
+		return it->second.controller;
 	}
-	return d->controllers.begin()->second;
+	return d->controllers.begin()->second.controller;
 
 }
 
@@ -112,7 +124,10 @@ void ControllerManager::loadControllers() {
 		bool found = false;
 		ControllerMap::const_iterator cit = d->controllers.begin();
 		for(; cit != d->controllers.end(); ++cit) {
-			TellStick *tellstick = reinterpret_cast<TellStick*>(cit->second);
+			if (!cit->second.controller) {
+				continue;
+			}
+			TellStick *tellstick = reinterpret_cast<TellStick*>(cit->second.controller);
 			if (!tellstick) {
 				continue;
 			}
@@ -125,14 +140,19 @@ void ControllerManager::loadControllers() {
 			continue;
 		}
 
-		int controllerId = d->lastControllerId-1;
+		int controllerId = d->lastControllerId+1;
 		TellStick *controller = new TellStick(controllerId, d->event, *it);
 		if (!controller->isOpen()) {
 			delete controller;
 			continue;
 		}
 		d->lastControllerId = controllerId;
-		d->controllers[d->lastControllerId] = controller;
+		d->controllers[d->lastControllerId].controller = controller;
+		if (controller->pid() == 0x0c30) {
+			d->controllers[d->lastControllerId].type = TELLSTICK_CONTROLLER_TELLSTICK;
+		} else {
+			d->controllers[d->lastControllerId].type = TELLSTICK_CONTROLLER_TELLSTICK_DUO;
+		}
 	}
 }
 
@@ -143,7 +163,10 @@ void ControllerManager::queryControllerStatus(){
 	{
 		TelldusCore::MutexLocker locker(&d->mutex);
 		for(ControllerMap::iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
-			TellStick *tellstick = reinterpret_cast<TellStick*>(it->second);
+			if (!it->second.controller) {
+				continue;
+			}
+			TellStick *tellstick = reinterpret_cast<TellStick*>(it->second.controller);
 			if (tellstick) {
 				tellStickControllers.push_back(tellstick);
 			}
