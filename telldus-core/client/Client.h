@@ -26,6 +26,7 @@ namespace TelldusCore {
 		bool unregisterCallback( int callbackId );
 
 		int getSensor(char *protocol, int protocolLen, char *model, int modelLen, int *id, int *dataTypes);
+		int getController(int *controllerId, int *controllerType, char *name, int nameLen, int *available);
 
 		static bool getBoolFromService(const Message &msg);
 		static int getIntegerFromService(const Message &msg);

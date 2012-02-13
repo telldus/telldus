@@ -697,5 +697,24 @@ int WINAPI tdSensorValue(const char *protocol, const char *model, int id, int da
 	return TELLSTICK_SUCCESS;
 }
 
+/**
+ * Use this function to iterate over all controllers. Iterate until
+ * TELLSTICK_SUCCESS is not returned
+ *
+ * Added in version 2.1.2.
+ * @param controllerId A byref int where the id of the controller will be placed
+ * @param controllerType A byref int where the type of the controller will be placed
+ * @param name A byref string where the name of the controller will be placed
+ * @param nameLen The length of the \c name parameter
+ * @param available A byref int if the controller is currently available or maybe disconnected
+ * @returns TELLSTICK_SUCCESS if there is more sensors to be fetched
+ * @sa TELLSTICK_CONTROLLER_TELLSTICK
+ * @sa TELLSTICK_CONTROLLER_TELLSTICK_DUO
+ * @sa TELLSTICK_CONTROLLER_TELLSTICK_NET
+ **/
+int WINAPI tdController(int *controllerId, int *controllerType, char *name, int nameLen, int *available) {
+	Client *client = Client::getInstance();
+	return client->getController(controllerId, controllerType, name, nameLen, available);
+}
 
 /* @} */

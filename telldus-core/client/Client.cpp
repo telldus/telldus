@@ -32,8 +32,8 @@ public:
 	Socket eventSocket;
 	RawDeviceEventList rawDeviceEventList;
 	SensorEventList sensorEventList;
-	bool running, sensorCached;
-	std::wstring sensorCache;
+	bool running, sensorCached, controllerCached;
+	std::wstring sensorCache, controllerCache;
 	TelldusCore::Mutex mutex;
 
 	std::list<std::tr1::shared_ptr<TDDeviceEventDispatcher> > deviceEventThreadList;
@@ -287,7 +287,7 @@ void Client::cleanupCallbacks() {
 }
 
 std::wstring Client::sendToService(const Message &msg) {
-	
+
 	int tries = 0;
 	std::wstring readData;
 	while(tries < 20){
@@ -314,7 +314,7 @@ std::wstring Client::sendToService(const Message &msg) {
 			continue; //TODO can we be really sure it SHOULD be anything?
 			//TODO perhaps break here instead?
 		}
-		
+
 		if (!s.isConnected()) { //Connection failed sometime during operation...
 			msleep(500);
 			continue; //retry
@@ -445,6 +445,44 @@ int Client::getSensor(char *protocol, int protocolLen, char *model, int modelLen
 	}
 	if (dataTypes) {
 		(*dataTypes) = dt;
+	}
+
+	return TELLSTICK_SUCCESS;
+}
+
+int Client::getController(int *controllerId, int *controllerType, char *name, int nameLen, int *available) {
+	if (!d->controllerCached) {
+		Message msg(L"tdController");
+		std::wstring response = Client::getWStringFromService(msg);
+		int count = Message::takeInt(&response);
+		d->controllerCached = true;
+		d->controllerCache = L"";
+		if (count > 0) {
+			d->controllerCache = response;
+		}
+	}
+
+	if (d->controllerCache == L"") {
+		d->controllerCached = false;
+		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+	}
+
+	int id = Message::takeInt(&d->controllerCache);
+	int type = Message::takeInt(&d->controllerCache);
+	std::wstring n = Message::takeString(&d->controllerCache);
+	int a = Message::takeInt(&d->controllerCache);
+
+	if (controllerId) {
+		(*controllerId) = id;
+	}
+	if (controllerType) {
+		(*controllerType) = type;
+	}
+	if (name && nameLen) {
+		strncpy(name, TelldusCore::wideToString(n).c_str(), nameLen);
+	}
+	if (available) {
+		(*available) = a;
 	}
 
 	return TELLSTICK_SUCCESS;
