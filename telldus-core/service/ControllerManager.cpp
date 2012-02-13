@@ -3,6 +3,7 @@
 #include "Mutex.h"
 #include "TellStick.h"
 #include "Log.h"
+#include "Message.h"
 #include "../client/telldus-core.h"
 
 #include <map>
@@ -201,4 +202,20 @@ int ControllerManager::resetController(Controller *controller) {
 	int success = tellstick->reset();
 	deviceInsertedOrRemoved(tellstick->vid(), tellstick->pid(), tellstick->serial(), false); //remove from list and delete
 	return success;
+}
+
+std::wstring ControllerManager::getControllers() const {
+	TelldusCore::MutexLocker locker(&d->mutex);
+
+	TelldusCore::Message msg;
+
+	msg.addArgument((int)d->controllers.size());
+
+	for(ControllerMap::iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
+		msg.addArgument(it->first);
+		msg.addArgument(it->second.type);
+		msg.addArgument(it->second.name.c_str());
+		msg.addArgument(it->second.controller ? 1 : 0);
+	}
+	return msg;
 }

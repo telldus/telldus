@@ -20,6 +20,8 @@ public:
 	void queryControllerStatus();
 	int resetController(Controller *controller);
 
+	std::wstring getControllers() const;
+
 private:
 	class PrivateData;
 	PrivateData *d;

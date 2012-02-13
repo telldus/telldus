@@ -10,13 +10,14 @@ public:
 	TelldusCore::EventRef event, deviceUpdateEvent;
 	bool done;
 	DeviceManager *deviceManager;
+	ControllerManager *controllerManager;
 };
 
 ClientCommunicationHandler::ClientCommunicationHandler(){
 
 }
 
-ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clientSocket, TelldusCore::EventRef event, DeviceManager *deviceManager, TelldusCore::EventRef deviceUpdateEvent)
+ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clientSocket, TelldusCore::EventRef event, DeviceManager *deviceManager, TelldusCore::EventRef deviceUpdateEvent, ControllerManager *controllerManager)
 	:Thread()
 {
 	d = new PrivateData;
@@ -25,7 +26,7 @@ ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clie
 	d->done = false;
 	d->deviceManager = deviceManager;
 	d->deviceUpdateEvent = deviceUpdateEvent;
-
+	d->controllerManager = controllerManager;
 }
 
 ClientCommunicationHandler::~ClientCommunicationHandler(void)
@@ -230,8 +231,10 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int dataType = TelldusCore::Message::takeInt(&msg);
 		(*wstringReturn) = d->deviceManager->getSensorValue(protocol, model, id, dataType);
 
-	}
-	else{
+	} else if (function == L"tdController") {
+		(*wstringReturn) = d->controllerManager->getControllers();
+
+	} else{
 		(*intReturn) = TELLSTICK_ERROR_UNKNOWN;
 	}
 }

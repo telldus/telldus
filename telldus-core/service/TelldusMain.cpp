@@ -91,7 +91,7 @@ void TelldusMain::start(void) {
 			TelldusCore::EventDataRef eventDataRef = clientEvent->takeSignal();
 			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventDataRef.get());
 			if (data) {
-				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(data->socket, handlerEvent, &deviceManager, deviceUpdateEvent);
+				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(data->socket, handlerEvent, &deviceManager, deviceUpdateEvent, &controllerManager);
 				clientCommunication->start();
 				clientCommunicationHandlerList.push_back(clientCommunication);
 			}
