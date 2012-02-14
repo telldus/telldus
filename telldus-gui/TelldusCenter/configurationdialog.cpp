@@ -87,6 +87,12 @@ QScriptValue ConfigurationDialog::addPage( const QString &name, const QString &f
 	QWidget *widget = loader.load(&file, this);
 	file.close();
 
+	return this->addPage(name, widget, icon);
+}
+
+QScriptValue ConfigurationDialog::addPage(const QString &name, QWidget *widget, const QString &icon) {
+	QDir dir = this->baseDir();
+
 	int index = d->stackedLayout->addWidget(widget);
 
 	QListWidgetItem *item = new QListWidgetItem(QIcon(dir.filePath(icon)), name, d->listWidget);
