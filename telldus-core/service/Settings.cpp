@@ -1,5 +1,7 @@
 #include "Settings.h"
 
+TelldusCore::Mutex Settings::mutex;
+
 /*
 * Get the name of the device
 */

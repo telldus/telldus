@@ -40,7 +40,7 @@ private:
 
 	class PrivateData;
 	PrivateData *d;
-	mutable TelldusCore::Mutex mutex;
+	static TelldusCore::Mutex mutex;
 };
 
 #endif
