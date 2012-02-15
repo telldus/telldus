@@ -4,6 +4,7 @@
 #include "TellStick.h"
 #include "Log.h"
 #include "Message.h"
+#include "Strings.h"
 #include "../client/telldus-core.h"
 
 #include <map>
@@ -218,4 +219,19 @@ std::wstring ControllerManager::getControllers() const {
 		msg.addArgument(it->second.controller ? 1 : 0);
 	}
 	return msg;
+}
+
+int ControllerManager::setControllerValue(int id, const std::wstring &name, const std::wstring &value) {
+	TelldusCore::MutexLocker locker(&d->mutex);
+
+	ControllerMap::iterator it = d->controllers.find(id);
+	if (it == d->controllers.end()) {
+		return TELLSTICK_ERROR_NOT_FOUND;
+	}
+	if (name == L"name") {
+		it->second.name = TelldusCore::wideToString(value);
+	} else {
+		return TELLSTICK_ERROR_SYNTAX; //TODO: Is this the best error?
+	}
+	return TELLSTICK_SUCCESS;
 }

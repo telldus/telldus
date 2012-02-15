@@ -21,6 +21,7 @@ public:
 	int resetController(Controller *controller);
 
 	std::wstring getControllers() const;
+	int setControllerValue(int id, const std::wstring &name, const std::wstring &value);
 
 private:
 	class PrivateData;

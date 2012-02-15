@@ -234,6 +234,12 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	} else if (function == L"tdController") {
 		(*wstringReturn) = d->controllerManager->getControllers();
 
+	} else if (function == L"tdSetControllerValue") {
+		int id = TelldusCore::Message::takeInt(&msg);
+		std::wstring name = TelldusCore::Message::takeString(&msg);
+		std::wstring value = TelldusCore::Message::takeString(&msg);
+		(*intReturn) = d->controllerManager->setControllerValue(id, name, value);
+
 	} else{
 		(*intReturn) = TELLSTICK_ERROR_UNKNOWN;
 	}
