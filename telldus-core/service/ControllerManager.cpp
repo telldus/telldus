@@ -5,6 +5,7 @@
 #include "Log.h"
 #include "Message.h"
 #include "Strings.h"
+#include "Settings.h"
 #include "../client/telldus-core.h"
 
 #include <map>
@@ -22,6 +23,7 @@ typedef std::map<int, ControllerDescriptor> ControllerMap;
 class ControllerManager::PrivateData {
 public:
 	int lastControllerId;
+	Settings settings;
 	ControllerMap controllers;
 	TelldusCore::Event *event;
 	TelldusCore::Mutex mutex;
@@ -31,6 +33,7 @@ ControllerManager::ControllerManager(TelldusCore::Event *event){
 	d = new PrivateData;
 	d->lastControllerId = 0;
 	d->event = event;
+	this->loadStoredControllers();
 	this->loadControllers();
 }
 
@@ -155,6 +158,18 @@ void ControllerManager::loadControllers() {
 		} else {
 			d->controllers[d->lastControllerId].type = TELLSTICK_CONTROLLER_TELLSTICK_DUO;
 		}
+	}
+}
+
+void ControllerManager::loadStoredControllers() {
+	int numberOfControllers = d->settings.getNumberOfNodes(Settings::Controller);
+	TelldusCore::MutexLocker locker(&d->mutex);
+
+	for (int i = 0; i < numberOfControllers; ++i) {
+		int id = d->settings.getNodeId(Settings::Controller, i);
+		d->controllers[id].controller = NULL;
+		d->controllers[id].type = TELLSTICK_CONTROLLER_TELLSTICK;
+		d->controllers[id].name = d->settings.getName(Settings::Controller, id);
 	}
 }
 

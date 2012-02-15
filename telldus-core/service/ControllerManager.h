@@ -17,6 +17,7 @@ public:
 
 	Controller *getBestControllerById(int id);
 	void loadControllers();
+	void loadStoredControllers();
 	void queryControllerStatus();
 	int resetController(Controller *controller);
 
