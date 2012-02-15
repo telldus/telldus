@@ -12,7 +12,7 @@
 
 class ControllerDescriptor {
 public:
-	std::string name;
+	std::wstring name;
 	int type;
 	Controller *controller;
 };
@@ -229,7 +229,7 @@ int ControllerManager::setControllerValue(int id, const std::wstring &name, cons
 		return TELLSTICK_ERROR_NOT_FOUND;
 	}
 	if (name == L"name") {
-		it->second.name = TelldusCore::wideToString(value);
+		it->second.name = value;
 	} else {
 		return TELLSTICK_ERROR_SYNTAX; //TODO: Is this the best error?
 	}
