@@ -717,4 +717,21 @@ int WINAPI tdController(int *controllerId, int *controllerType, char *name, int 
 	return client->getController(controllerId, controllerType, name, nameLen, available);
 }
 
+/**
+ * This function sets a parameter on a controller.
+ * Valid parameters are: \c name
+ *
+ * Added in version 2.1.2.
+ * @param controllerId The controller to change
+ * @param name The parameter to change.
+ * @param value The new value for the parameter.
+ **/
+int WINAPI tdSetControllerValue(int controllerId, const char *name, const char *value) {
+	Message msg(L"tdSetControllerValue");
+	msg.addArgument(controllerId);
+	msg.addArgument(name);
+	msg.addArgument(value);
+	return Client::getIntegerFromService(msg);
+}
+
 /* @} */
