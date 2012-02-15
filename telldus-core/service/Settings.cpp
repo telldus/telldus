@@ -5,17 +5,17 @@ TelldusCore::Mutex Settings::mutex;
 /*
 * Get the name of the device
 */
-std::wstring Settings::getName(int intDeviceId) const {
+std::wstring Settings::getName(Node type, int intNodeId) const {
 	TelldusCore::MutexLocker locker(&mutex);
-	return getStringSetting(intDeviceId, L"name", false);
+	return getStringSetting(type, intNodeId, L"name", false);
 }
 
 /*
 * Set the name of the device
 */
-int Settings::setName(int intDeviceId, const std::wstring &strNewName){
+int Settings::setName(Node type, int intDeviceId, const std::wstring &strNewName){
 	TelldusCore::MutexLocker locker(&mutex);
-	return setStringSetting(intDeviceId, L"name", strNewName, false);
+	return setStringSetting(type, intDeviceId, L"name", strNewName, false);
 }
 
 /*
@@ -23,7 +23,7 @@ int Settings::setName(int intDeviceId, const std::wstring &strNewName){
 */
 std::wstring Settings::getProtocol(int intDeviceId) const {
 	TelldusCore::MutexLocker locker(&mutex);
-	return getStringSetting(intDeviceId, L"protocol", false);
+	return getStringSetting(Device, intDeviceId, L"protocol", false);
 }
 
 /*
@@ -31,7 +31,7 @@ std::wstring Settings::getProtocol(int intDeviceId) const {
 */
 int Settings::setProtocol(int intDeviceId, const std::wstring &strVendor){
 	TelldusCore::MutexLocker locker(&mutex);
-	return setStringSetting(intDeviceId, L"protocol", strVendor, false);
+	return setStringSetting(Device, intDeviceId, L"protocol", strVendor, false);
 }
 
 /*
@@ -39,7 +39,7 @@ int Settings::setProtocol(int intDeviceId, const std::wstring &strVendor){
 */
 std::wstring Settings::getModel(int intDeviceId) const {
 	TelldusCore::MutexLocker locker(&mutex);
-	return getStringSetting(intDeviceId, L"model", false);
+	return getStringSetting(Device, intDeviceId, L"model", false);
 }
 
 /*
@@ -47,7 +47,7 @@ std::wstring Settings::getModel(int intDeviceId) const {
 */
 int Settings::setModel(int intDeviceId, const std::wstring &strModel){
 	TelldusCore::MutexLocker locker(&mutex);
-	return setStringSetting(intDeviceId, L"model", strModel, false);
+	return setStringSetting(Device, intDeviceId, L"model", strModel, false);
 }
 
 /*
@@ -55,7 +55,7 @@ int Settings::setModel(int intDeviceId, const std::wstring &strModel){
 */
 int Settings::setDeviceParameter(int intDeviceId, const std::wstring &strName, const std::wstring &strValue){
 	TelldusCore::MutexLocker locker(&mutex);
-	return setStringSetting(intDeviceId, strName, strValue, true);
+	return setStringSetting(Device, intDeviceId, strName, strValue, true);
 }
 
 /*
@@ -63,7 +63,7 @@ int Settings::setDeviceParameter(int intDeviceId, const std::wstring &strName, c
 */
 std::wstring Settings::getDeviceParameter(int intDeviceId, const std::wstring &strName) const {
 	TelldusCore::MutexLocker locker(&mutex);
-	return getStringSetting(intDeviceId, strName, true);
+	return getStringSetting(Device, intDeviceId, strName, true);
 }
 
 /*
@@ -71,7 +71,7 @@ std::wstring Settings::getDeviceParameter(int intDeviceId, const std::wstring &s
 */
 int Settings::setPreferredControllerId(int intDeviceId, int value){
 	TelldusCore::MutexLocker locker(&mutex);
-	return setIntSetting(intDeviceId,  L"controller", value, false);
+	return setIntSetting(Device, intDeviceId,  L"controller", value, false);
 }
 
 /*
@@ -79,7 +79,16 @@ int Settings::setPreferredControllerId(int intDeviceId, int value){
 */
 int Settings::getPreferredControllerId(int intDeviceId) {
 	TelldusCore::MutexLocker locker(&mutex);
-	return getIntSetting(intDeviceId, L"controller", false);
+	return getIntSetting(Device, intDeviceId, L"controller", false);
+}
+
+
+std::string Settings::getNodeString(Settings::Node type) const {
+	if (type == Device) {
+		return "device";
+	} else if (type == Controller) {
+		return "controller";
+	}
 }
 
 #ifndef _CONFUSE
