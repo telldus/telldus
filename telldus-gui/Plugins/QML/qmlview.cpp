@@ -69,3 +69,11 @@ void QMLView::setProperty( const QString & name, const QScriptValue &value ) {
 		context->setContextProperty(name, value.toVariant());
 	}
 }
+
+void QMLView::sizeRootObjectToView(bool enable) {
+	if (enable) {
+		this->setResizeMode(QDeclarativeView::SizeRootObjectToView);
+	} else {
+		this->setResizeMode(QDeclarativeView::SizeViewToRootObject);
+	}
+}
