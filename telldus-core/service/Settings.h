@@ -25,6 +25,8 @@ public:
 	int getPreferredControllerId(int intDeviceId);
 	int setPreferredControllerId(int intDeviceId, int value);
 
+	int getNumberOfControllers(void) const;
+
 	int addDevice();
 	int getDeviceId(int intDeviceIndex) const;
 	int removeDevice(int intDeviceId);

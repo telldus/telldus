@@ -84,6 +84,14 @@ int Settings::getNumberOfDevices(void) const {
 	return 0;
 }
 
+int Settings::getNumberOfControllers() const {
+	TelldusCore::MutexLocker locker(&mutex);
+	if (d->cfg > 0) {
+		return cfg_size(d->cfg, "controller");
+	}
+	return 0;
+}
+
 int Settings::getDeviceId(int intDeviceIndex) const {
 	if (intDeviceIndex >= getNumberOfDevices()) { //Out of bounds
 		return -1;
