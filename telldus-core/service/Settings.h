@@ -31,6 +31,11 @@ public:
 	int getNodeId(Node type, int intDeviceIndex) const;
 	int removeNode(Node type, int intNodeId);
 
+	std::wstring getControllerSerial(int intControllerId) const;
+	int setControllerSerial(int intControllerId, const std::wstring &serial);
+	int getControllerType(int intControllerId) const;
+	int setControllerType(int intControllerId, int type);
+
 protected:
 	std::wstring getStringSetting(Node type, int intNodeId, const std::wstring &name, bool parameter) const;
 	int setStringSetting(Node type, int intDeviceId, const std::wstring &name, const std::wstring &value, bool parameter);

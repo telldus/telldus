@@ -82,6 +82,25 @@ int Settings::getPreferredControllerId(int intDeviceId) {
 	return getIntSetting(Device, intDeviceId, L"controller", false);
 }
 
+std::wstring Settings::getControllerSerial(int intControllerId) const {
+	TelldusCore::MutexLocker locker(&mutex);
+	return getStringSetting(Controller, intControllerId, L"serial", false);
+}
+
+int Settings::setControllerSerial(int intControllerId, const std::wstring &serial) {
+	TelldusCore::MutexLocker locker(&mutex);
+	return setStringSetting(Controller, intControllerId,  L"serial", serial, false);
+}
+
+int Settings::getControllerType(int intControllerId) const {
+	TelldusCore::MutexLocker locker(&mutex);
+	return getIntSetting(Controller, intControllerId, L"type", false);
+}
+
+int Settings::setControllerType(int intControllerId, int type) {
+	TelldusCore::MutexLocker locker(&mutex);
+	return setIntSetting(Controller, intControllerId,  L"type", type, false);
+}
 
 std::string Settings::getNodeString(Settings::Node type) const {
 	if (type == Device) {
