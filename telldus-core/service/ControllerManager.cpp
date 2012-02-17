@@ -267,6 +267,7 @@ int ControllerManager::setControllerValue(int id, const std::wstring &name, cons
 	}
 	if (name == L"name") {
 		it->second.name = value;
+		d->settings.setName(Settings::Controller, id, value);
 	} else {
 		return TELLSTICK_ERROR_SYNTAX; //TODO: Is this the best error?
 	}
