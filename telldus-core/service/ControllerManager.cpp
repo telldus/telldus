@@ -13,7 +13,7 @@
 
 class ControllerDescriptor {
 public:
-	std::wstring name;
+	std::wstring name, serial;
 	int type;
 	Controller *controller;
 };
@@ -147,19 +147,38 @@ void ControllerManager::loadControllers() {
 			continue;
 		}
 
-		int controllerId = d->lastControllerId+1;
+		int type = TELLSTICK_CONTROLLER_TELLSTICK;
+		if ((*it).pid == 0x0c31) {
+			type = TELLSTICK_CONTROLLER_TELLSTICK_DUO;
+		}
+		int controllerId = 0;
+		//See if the controller matches one of the loaded, non available controllers
+		std::wstring serial = TelldusCore::charToWstring((*it).serial.c_str());
+		for(cit = d->controllers.begin(); cit != d->controllers.end(); ++cit) {
+			if (cit->second.type == type && cit->second.serial.compare(serial) == 0) {
+				controllerId = cit->first;
+				break;
+			}
+		}
+		if (!controllerId) {
+			controllerId = d->settings.addNode(Settings::Controller);
+			if(controllerId < 0){
+				//TODO: How to handle this?
+				continue;
+			}
+			d->controllers[controllerId].type = type;
+			d->settings.setControllerType(controllerId, type);
+			d->controllers[controllerId].serial = TelldusCore::charToWstring((*it).serial.c_str());
+			d->settings.setControllerSerial(controllerId, d->controllers[controllerId].serial);
+		}
+
+		//int controllerId = d->lastControllerId+1;
 		TellStick *controller = new TellStick(controllerId, d->event, *it);
 		if (!controller->isOpen()) {
 			delete controller;
 			continue;
 		}
-		d->lastControllerId = controllerId;
-		d->controllers[d->lastControllerId].controller = controller;
-		if (controller->pid() == 0x0c30) {
-			d->controllers[d->lastControllerId].type = TELLSTICK_CONTROLLER_TELLSTICK;
-		} else {
-			d->controllers[d->lastControllerId].type = TELLSTICK_CONTROLLER_TELLSTICK_DUO;
-		}
+		d->controllers[controllerId].controller = controller;
 	}
 }
 
@@ -170,8 +189,9 @@ void ControllerManager::loadStoredControllers() {
 	for (int i = 0; i < numberOfControllers; ++i) {
 		int id = d->settings.getNodeId(Settings::Controller, i);
 		d->controllers[id].controller = NULL;
-		d->controllers[id].type = TELLSTICK_CONTROLLER_TELLSTICK;
 		d->controllers[id].name = d->settings.getName(Settings::Controller, id);
+		d->controllers[id].type = d->settings.getControllerType(id);
+		d->controllers[id].serial = d->settings.getControllerSerial(id);
 	}
 }
 
