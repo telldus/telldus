@@ -106,10 +106,16 @@ Controller *ControllerManager::getBestControllerById(int id) {
 		return 0;
 	}
 	ControllerMap::const_iterator it = d->controllers.find(id);
-	if (it != d->controllers.end()) {
+	if (it != d->controllers.end() && it->second.controller) {
 		return it->second.controller;
 	}
-	return d->controllers.begin()->second.controller;
+	//Find first available controller
+	for(it = d->controllers.begin(); it != d->controllers.end(); ++it) {
+		if (it->second.controller) {
+			return it->second.controller;
+		}
+	}
+	return 0;
 
 }
 
