@@ -66,6 +66,7 @@ Client::~Client(void) {
 void Client::close() {
 	if (Client::instance != 0) {
 		delete Client::instance;
+		Client::instance = 0;
 	}
 }
 
