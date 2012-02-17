@@ -258,6 +258,24 @@ std::wstring ControllerManager::getControllers() const {
 	return msg;
 }
 
+std::wstring ControllerManager::getControllerValue(int id, const std::wstring &name) {
+	TelldusCore::MutexLocker locker(&d->mutex);
+
+	ControllerMap::iterator it = d->controllers.find(id);
+	if (it == d->controllers.end()) {
+		return L"";
+	}
+	if (name == L"serial") {
+		return it->second.serial;
+	} else if (name == L"firmware") {
+		if (!it->second.controller) {
+			return L"-1";
+		}
+		return TelldusCore::intToWstring(it->second.controller->firmwareVersion());
+	}
+	return L"";
+}
+
 int ControllerManager::setControllerValue(int id, const std::wstring &name, const std::wstring &value) {
 	TelldusCore::MutexLocker locker(&d->mutex);
 

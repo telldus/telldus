@@ -718,6 +718,30 @@ int WINAPI tdController(int *controllerId, int *controllerType, char *name, int 
 }
 
 /**
+ * This function gets a parameter on a controller.
+ * Valid parameters are: \c serial \c and firmware
+ *
+ * Added in version 2.1.2.
+ * @param controllerId The controller to change
+ * @param name The parameter to get.
+ * @param value A byref string where the value of the parameter will be placed
+ **/
+int WINAPI tdControllerValue(int controllerId, const char *name, char *value, int valueLen) {
+	Message msg(L"tdControllerValue");
+	msg.addArgument(controllerId);
+	msg.addArgument(name);
+	std::wstring retval = Client::getWStringFromService(msg);
+	if (retval.length() == 0) {
+		return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+	}
+
+	if (value && valueLen) {
+		strncpy(value, TelldusCore::wideToString(retval).c_str(), valueLen);
+	}
+	return TELLSTICK_SUCCESS;
+}
+
+/**
  * This function sets a parameter on a controller.
  * Valid parameters are: \c name
  *

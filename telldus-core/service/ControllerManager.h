@@ -22,6 +22,7 @@ public:
 	int resetController(Controller *controller);
 
 	std::wstring getControllers() const;
+	std::wstring getControllerValue(int id, const std::wstring &name);
 	int setControllerValue(int id, const std::wstring &name, const std::wstring &value);
 
 private:
