@@ -56,7 +56,8 @@ void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, const std::str
 			while(d->controllers.size()) {
 				ControllerMap::iterator it = d->controllers.begin();
 				delete it->second.controller;
-				d->controllers.erase(it);
+				it->second.controller = 0;
+				//TODO: signal controller lost
 			}
 		}
 		return;
@@ -72,34 +73,29 @@ void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, const std::str
 	} else {
 		//Autodetect which has been disconnected
 		TelldusCore::MutexLocker locker(&d->mutex);
-		bool again = true;
-		while(again) {
-			again = false;
-			for(ControllerMap::iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
-				if (!it->second.controller) {
-					continue;
-				}
-				TellStick *tellstick = reinterpret_cast<TellStick*>(it->second.controller);
-				if (!tellstick) {
-					continue;
-				}
-				if (serial.compare("") != 0) {
-					TellStickDescriptor tsd;
-					tsd.vid = vid;
-					tsd.pid = pid;
-					tsd.serial = serial;
-					if (!tellstick->isSameAsDescriptor(tsd)) {
-						continue;
-					}
-				} else if (tellstick->stillConnected()) {
-					continue;
-				}
-
-				d->controllers.erase(it);
-				delete tellstick;
-				again=true;
-				break;
+		for(ControllerMap::iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
+			if (!it->second.controller) {
+				continue;
 			}
+			TellStick *tellstick = reinterpret_cast<TellStick*>(it->second.controller);
+			if (!tellstick) {
+				continue;
+			}
+			if (serial.compare("") != 0) {
+				TellStickDescriptor tsd;
+				tsd.vid = vid;
+				tsd.pid = pid;
+				tsd.serial = serial;
+				if (!tellstick->isSameAsDescriptor(tsd)) {
+					continue;
+				}
+			} else if (tellstick->stillConnected()) {
+				continue;
+			}
+
+			it->second.controller = 0;
+			delete tellstick;
+			//TODO: signal controller lost
 		}
 	}
 }
