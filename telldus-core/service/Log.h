@@ -2,6 +2,7 @@
 #define LOG_H
 
 #include <stdio.h>
+#include <stdarg.h>
 
 class Log {
 public:
