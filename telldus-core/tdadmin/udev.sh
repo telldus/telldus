@@ -1,4 +1,4 @@
-#!/bin/bash
+#!/bin/sh
 
 if [ "${ID_VENDOR_ID}" == "1781" ]; then
 	if [ "${ACTION}" == "add" ]; then
