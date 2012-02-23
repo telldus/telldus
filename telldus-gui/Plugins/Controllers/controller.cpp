@@ -1,5 +1,6 @@
 #include "controller.h"
 #include <telldus-core.h>
+#include <QMessageBox>
 #include <QDebug>
 
 class Controller::PrivateData {
@@ -76,6 +77,18 @@ void Controller::save() {
 
 QString Controller::serial() const {
 	return d->serial;
+}
+
+void Controller::tryRemove() {
+	QMessageBox msgBox;
+	msgBox.setText( tr("Are you sure you want to remove the selected controller?") );
+	msgBox.setInformativeText( tr("If you connect it again at a later point it will be readded automatically.") );
+	msgBox.setIcon( QMessageBox::Warning );
+	msgBox.setStandardButtons( QMessageBox::Yes | QMessageBox::No );
+	msgBox.setDefaultButton( QMessageBox::No );
+	if ( msgBox.exec() ==  QMessageBox::Yes) {
+		tdRemoveController(d->id);
+	}
 }
 
 int Controller::type() const {

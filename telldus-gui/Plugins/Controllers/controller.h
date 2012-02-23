@@ -32,6 +32,8 @@ public:
 
 	QString serial() const;
 
+	Q_INVOKABLE void tryRemove();
+
 	int type() const;
 
 signals:

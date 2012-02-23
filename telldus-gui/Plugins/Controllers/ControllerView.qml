@@ -45,6 +45,10 @@ BorderImage {
 			Image {
 				source: "btn_action_remove.png"
 				visible: !controller.available
+				MouseArea {
+					anchors.fill: parent
+					onClicked: controller.tryRemove();
+				}
 			}
 		}
 	}
