@@ -120,7 +120,7 @@ int Settings::getNextDeviceId() const {
 				
 	if(lnExists == ERROR_SUCCESS){
 			
-		DWORD dwLength;
+		DWORD dwLength = sizeof(DWORD);
 		DWORD nResult(0);
 
 		long lngStatus = RegQueryValueEx(hk, L"LastUsedId", NULL, NULL, reinterpret_cast<LPBYTE>(&nResult), &dwLength);
