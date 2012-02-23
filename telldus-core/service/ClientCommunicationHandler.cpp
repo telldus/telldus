@@ -245,6 +245,10 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		std::wstring value = TelldusCore::Message::takeString(&msg);
 		(*intReturn) = d->controllerManager->setControllerValue(id, name, value);
 
+	} else if (function == L"tdRemoveController") {
+		int controllerId = TelldusCore::Message::takeInt(&msg);
+		(*intReturn) = d->controllerManager->removeController(controllerId);
+
 	} else{
 		(*intReturn) = TELLSTICK_ERROR_UNKNOWN;
 	}

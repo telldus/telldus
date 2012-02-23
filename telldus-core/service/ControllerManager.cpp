@@ -276,6 +276,29 @@ std::wstring ControllerManager::getControllerValue(int id, const std::wstring &n
 	return L"";
 }
 
+int ControllerManager::removeController(int id) {
+	TelldusCore::MutexLocker locker(&d->mutex);
+
+	ControllerMap::iterator it = d->controllers.find(id);
+	if (it == d->controllers.end()) {
+		return TELLSTICK_ERROR_NOT_FOUND;
+	}
+	if (it->second.controller) {
+		//Still connected
+		return TELLSTICK_ERROR_PERMISSION_DENIED;
+	}
+
+	int ret = d->settings.removeNode(Settings::Controller, id);
+	if (ret != TELLSTICK_SUCCESS) {
+		return ret;
+	}
+
+	d->controllers.erase(it);
+
+	//TODO: signal
+	return TELLSTICK_SUCCESS;
+}
+
 int ControllerManager::setControllerValue(int id, const std::wstring &name, const std::wstring &value) {
 	TelldusCore::MutexLocker locker(&d->mutex);
 

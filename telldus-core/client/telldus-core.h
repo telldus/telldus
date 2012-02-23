@@ -89,6 +89,7 @@ extern "C" {
 	TELLSTICK_API int WINAPI tdController(int *controllerId, int *controllerType, char *name, int nameLen, int *available);
 	TELLSTICK_API int WINAPI tdControllerValue(int controllerId, const char *name, char *value, int valueLen);
 	TELLSTICK_API int WINAPI tdSetControllerValue(int controllerId, const char *name, const char *value);
+	TELLSTICK_API int WINAPI tdRemoveController(int controllerId);
 
 #ifdef __cplusplus
 }

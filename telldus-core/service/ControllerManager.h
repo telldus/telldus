@@ -23,6 +23,7 @@ public:
 
 	std::wstring getControllers() const;
 	std::wstring getControllerValue(int id, const std::wstring &name);
+	int removeController(int id);
 	int setControllerValue(int id, const std::wstring &name, const std::wstring &value);
 
 private:

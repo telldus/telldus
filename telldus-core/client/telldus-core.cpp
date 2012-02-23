@@ -758,4 +758,22 @@ int WINAPI tdSetControllerValue(int controllerId, const char *name, const char *
 	return Client::getIntegerFromService(msg);
 }
 
+/**
+ * This function removes a controller from the list
+ * of controllers. The controller must not be
+ * available (disconnected) for this to work.
+ *
+ * Added in version 2.1.2.
+ * @param controllerId The controller to remove
+ * @returns TELLSTICK_SUCCESS if the controller was
+ * removed, TELLSTICK_ERROR_NOT_FOUND if the controller was
+ * not found, and TELLSTICK_ERROR_PERMISSION_DENIED if the
+ * controller is still connected.
+ **/
+int WINAPI tdRemoveController(int controllerId) {
+	Message msg(L"tdRemoveController");
+	msg.addArgument(controllerId);
+	return Client::getIntegerFromService(msg);
+}
+
 /* @} */
