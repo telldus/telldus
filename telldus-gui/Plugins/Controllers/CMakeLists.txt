@@ -30,6 +30,7 @@ SET( Plugin_EXTRA
 	HeaderTitle.qml
 	icon.png
 	main.qml
+	qmldir
 	row_bg.png
 	tellstick.png
 	tellstick_duo.png
