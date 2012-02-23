@@ -465,7 +465,7 @@ int Client::getController(int *controllerId, int *controllerType, char *name, in
 
 	if (d->controllerCache == L"") {
 		d->controllerCached = false;
-		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+		return TELLSTICK_ERROR_NOT_FOUND;
 	}
 
 	int id = Message::takeInt(&d->controllerCache);
