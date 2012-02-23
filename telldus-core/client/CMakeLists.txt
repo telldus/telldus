@@ -7,12 +7,14 @@ FIND_PACKAGE( SignTool REQUIRED )
 ######## Non configurable options  ########
 SET( telldus-core_SRCS
 	CallbackDispatcher.cpp
+	CallbackMainDispatcher.cpp
 	Client.cpp
 	telldus-core.cpp
 )
 
 SET( telldus-core_HDRS
 	CallbackDispatcher.h
+	CallbackMainDispatcher.cpp
 	Client.h
 )
 SET( telldus-core_PUB_HDRS
