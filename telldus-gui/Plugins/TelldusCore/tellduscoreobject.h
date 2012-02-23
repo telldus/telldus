@@ -32,6 +32,8 @@ public slots:
 	QVariant sensor() const;
 	QVariant sensorValue(const QString &protocol, const QString &model, int id, int dataType) const;
 
+	QVariant controller() const;
+
 	int turnOn( int deviceId );
 	int turnOff( int deviceId );
 	int up( int deviceId );

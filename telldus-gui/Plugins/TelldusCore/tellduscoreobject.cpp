@@ -136,6 +136,26 @@ QVariant TelldusCoreObject::sensorValue(const QString &protocol, const QString &
 	return retval;
 }
 
+QVariant TelldusCoreObject::controller() const {
+	const int DATA_LENGTH = 255;
+	char name[DATA_LENGTH];
+	int controllerId = 0, available = 0, controllerType = 0;
+
+	if (tdController(&controllerId, &controllerType, name, DATA_LENGTH, &available) != TELLSTICK_SUCCESS) {
+		qDebug() << "Return null";
+		return 0;
+	}
+
+	QVariantMap retval;
+
+	retval["id"] = controllerId;
+	retval["type"] = controllerType;
+	retval["name"] = name;
+	retval["available"] = available;
+
+	return retval;
+}
+
 void TelldusCoreObject::triggerError(int deviceId, int errorId) {
 	char *errorString = tdGetErrorString( errorId );
 	QString message = QString::fromUtf8( errorString );
