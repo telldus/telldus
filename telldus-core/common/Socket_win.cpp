@@ -95,7 +95,7 @@ std::wstring Socket::read(int timeout){
 	BOOL fSuccess = false;
 	std::wstring returnString;
 	bool moreData = true;
-
+	
 	while(moreData){
 		moreData = false;
 		memset(&buf, 0, sizeof(buf));
@@ -117,7 +117,7 @@ std::wstring Socket::read(int timeout){
 			// Cancel, we still need to cleanup
 		}
 		fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &cbBytesRead, true);
-	
+			
 		if (!fSuccess) {
 			DWORD err = GetLastError();
 

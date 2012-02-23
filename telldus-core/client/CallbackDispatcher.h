@@ -7,10 +7,11 @@
  *
  */
 
-
 #ifndef CALLBACKDISPATCHER_H
 #define CALLBACKDISPATCHER_H
 
+#include "common.h"
+#include "Event.h"
 #include "Thread.h"
 #include "Mutex.h"
 #include "telldus-core.h"
@@ -25,7 +26,7 @@ namespace TelldusCore {
 
 	class TDDeviceEventDispatcher : public Thread {
 	public:
-		TDDeviceEventDispatcher(CallbackStruct<TDDeviceEvent> *data, int deviceId, int method, const std::string &strData);
+		TDDeviceEventDispatcher(CallbackStruct<TDDeviceEvent> *data, int deviceId, int method, const std::string &strData, TelldusCore::EventRef cbDone);
 		virtual ~TDDeviceEventDispatcher();
 		bool done() const;
 	protected:
@@ -35,22 +36,24 @@ namespace TelldusCore {
 		CallbackStruct<TDDeviceEvent> *d;
 		int deviceId, method;
 		std::string strData;
+		TelldusCore::EventRef callbackExecuted;
 	};
 	class TDDeviceChangeEventDispatcher : public Thread {
 	public:
-		TDDeviceChangeEventDispatcher(CallbackStruct<TDDeviceChangeEvent> *data, int deviceId, int changeEvent, int changeType);
+		TDDeviceChangeEventDispatcher(CallbackStruct<TDDeviceChangeEvent> *data, int deviceId, int changeEvent, int changeType, TelldusCore::EventRef cbDone);
 		virtual ~TDDeviceChangeEventDispatcher();
 		bool done() const;
 	protected:
 		virtual void run();
 		bool doneRunning;
-	public:
+	private:
 		CallbackStruct<TDDeviceChangeEvent> *d;
 		int deviceId, changeEvent, changeType;
+		TelldusCore::EventRef callbackExecuted;
 	};
 	class TDRawDeviceEventDispatcher : public Thread {
 	public:
-		TDRawDeviceEventDispatcher( CallbackStruct<TDRawDeviceEvent> *data, const std::string &strData, int controllerId);
+		TDRawDeviceEventDispatcher( CallbackStruct<TDRawDeviceEvent> *data, const std::string &strData, int controllerId, TelldusCore::EventRef cbDone);
 		virtual ~TDRawDeviceEventDispatcher();
 		bool done() const;
 	protected:
@@ -60,10 +63,11 @@ namespace TelldusCore {
 		CallbackStruct<TDRawDeviceEvent> *d;
 		int controllerId;
 		std::string strData;
+		TelldusCore::EventRef callbackExecuted;
 	};
 	class TDSensorEventDispatcher : public Thread {
 	public:
-		TDSensorEventDispatcher( CallbackStruct<TDSensorEvent> *data, const std::string &protocol, const std::string &model, int id, int dataType, const std::string &value, int timestamp);
+		TDSensorEventDispatcher( CallbackStruct<TDSensorEvent> *data, const std::string &protocol, const std::string &model, int id, int dataType, const std::string &value, int timestamp, TelldusCore::EventRef cbDone);
 		virtual ~TDSensorEventDispatcher();
 		bool done() const;
 	protected:
@@ -77,6 +81,7 @@ namespace TelldusCore {
 		int dataType;
 		std::string value;
 		int timestamp;
+		TelldusCore::EventRef callbackExecuted;
 	};
 }
 
