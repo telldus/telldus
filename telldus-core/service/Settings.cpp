@@ -114,19 +114,19 @@ std::string Settings::getNodeString(Settings::Node type) const {
 
 bool Settings::setDeviceState( int intDeviceId, int intDeviceState, const std::wstring &strDeviceStateValue ) {
 	TelldusCore::MutexLocker locker(&mutex);
-	bool retval = setIntSetting( intDeviceId, L"state", intDeviceState, true );
-	setStringSetting( intDeviceId, L"stateValue", strDeviceStateValue, true );
+	bool retval = setIntSetting( Settings::Device, intDeviceId, L"state", intDeviceState, true );
+	setStringSetting( Settings::Device, intDeviceId, L"stateValue", strDeviceStateValue, true );
 	return retval;
 }
 
 int Settings::getDeviceState( int intDeviceId ) const {
 	TelldusCore::MutexLocker locker(&mutex);
-	return getIntSetting( intDeviceId, L"state", true );
+	return getIntSetting( Settings::Device, intDeviceId, L"state", true );
 }
 
 std::wstring Settings::getDeviceStateValue( int intDeviceId ) const {
 	TelldusCore::MutexLocker locker(&mutex);
-	return getStringSetting( intDeviceId, L"stateValue", true );
+	return getStringSetting( Settings::Device, intDeviceId, L"stateValue", true );
 }
 
 #endif
