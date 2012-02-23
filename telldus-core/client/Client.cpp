@@ -51,6 +51,7 @@ Client::Client()
 	d->lastCallbackId = 0;
 	d->running = true;
 	d->sensorCached = false;
+	d->controllerCached = false;
 	start();
 }
 
