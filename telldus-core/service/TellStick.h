@@ -24,7 +24,7 @@ public:
 
 class TellStick : public Controller, public TelldusCore::Thread {
 public:
-	TellStick(int controllerId, TelldusCore::Event *event, const TellStickDescriptor &d);
+	TellStick(int controllerId, TelldusCore::EventRef event, const TellStickDescriptor &d);
 	virtual ~TellStick();
 
 	virtual int firmwareVersion();

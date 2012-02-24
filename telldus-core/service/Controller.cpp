@@ -4,11 +4,11 @@
 
 class Controller::PrivateData {
 public:
-	TelldusCore::Event *event;
+	TelldusCore::EventRef event;
 	int id;
 };
 
-Controller::Controller(int id, TelldusCore::Event *event){
+Controller::Controller(int id, TelldusCore::EventRef event){
 	d = new PrivateData;
 	d->event = event;
 	d->id = id;

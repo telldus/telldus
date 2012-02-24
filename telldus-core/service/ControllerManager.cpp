@@ -25,11 +25,11 @@ public:
 	int lastControllerId;
 	Settings settings;
 	ControllerMap controllers;
-	TelldusCore::Event *event;
+	TelldusCore::EventRef event;
 	TelldusCore::Mutex mutex;
 };
 
-ControllerManager::ControllerManager(TelldusCore::Event *event){
+ControllerManager::ControllerManager(TelldusCore::EventRef event){
 	d = new PrivateData;
 	d->lastControllerId = 0;
 	d->event = event;

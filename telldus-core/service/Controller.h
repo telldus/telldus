@@ -19,7 +19,7 @@ public:
 	virtual int reset() = 0;
 
 protected:
-	Controller(int id, TelldusCore::Event *event);
+	Controller(int id, TelldusCore::EventRef event);
 	void publishData(const std::string &data) const;
 	void decodePublishData(const std::string &data) const;
 
