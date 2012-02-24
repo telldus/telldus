@@ -4,6 +4,7 @@
 #include "Message.h"
 #include "telldus-core.h"
 #include "Thread.h"
+#include "CallbackDispatcher.h"
 
 namespace TelldusCore {
 	class Client : public Thread
@@ -14,14 +15,7 @@ namespace TelldusCore {
 		static Client *getInstance();
 		static void close();
 
-		void callbackDeviceEvent(int deviceId, int deviceState, const std::wstring &deviceStateValue);
-		void callbackDeviceChangeEvent(int deviceId, int eventDeviceChanges, int eventChangeType);
-		void callbackRawEvent(std::wstring command, int controllerId);
-		void callbackSensorEvent(const std::wstring &protocol, const std::wstring &model, int id, int dataType, const std::wstring &value, int timestamp);
-		int registerDeviceEvent( TDDeviceEvent eventFunction, void *context );
-		int registerDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context );
-		int registerRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context );
-		int registerSensorEvent( TDSensorEvent eventFunction, void *context );
+		int registerEvent(CallbackStruct::CallbackType type, void *eventFunction, void *context );
 		void stopThread(void);
 		bool unregisterCallback( int callbackId );
 
@@ -38,7 +32,7 @@ namespace TelldusCore {
 	private:
 		Client();
 		static std::wstring sendToService(const Message &msg);
-		
+
 		class PrivateData;
 		PrivateData *d;
 		static Client *instance;

@@ -110,8 +110,8 @@ void WINAPI tdInit(void) {
  * Added in version 2.0.0.
  **/
 int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
-	Client *client = Client::getInstance();
-	return client->registerDeviceEvent( eventFunction, context );
+	eventFunction;	Client *client = Client::getInstance();
+	return client->registerEvent( CallbackStruct::DeviceEvent, (void *)eventFunction, context );
 }
 
 /**
@@ -119,7 +119,7 @@ int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
  **/
 int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context ) {
 	Client *client = Client::getInstance();
-	return client->registerRawDeviceEvent( eventFunction, context );
+	return client->registerEvent( CallbackStruct::RawDeviceEvent, (void *)eventFunction, context );
 }
 
 /**
@@ -127,7 +127,7 @@ int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *conte
  **/
 int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context) {
 	Client *client = Client::getInstance();
-	return client->registerDeviceChangeEvent( eventFunction, context );
+	return client->registerEvent( CallbackStruct::DeviceChangeEvent, (void *)eventFunction, context );
 }
 
 /**
@@ -135,7 +135,7 @@ int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void 
  **/
 int WINAPI tdRegisterSensorEvent( TDSensorEvent eventFunction, void *context) {
 	Client *client = Client::getInstance();
-	return client->registerSensorEvent( eventFunction, context );
+	return client->registerEvent( CallbackStruct::SensorEvent, (void *)eventFunction, context );
 }
 
 /**

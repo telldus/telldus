@@ -13,17 +13,19 @@
 
 using namespace TelldusCore;
 
+typedef std::list<CallbackStruct *> CallbackList;
+
 class CallbackMainDispatcher::PrivateData {
 public:
 	EventHandler eventHandler;
 	EventRef stopEvent, generalCallbackEvent, janitor;
 
-	std::list<std::tr1::shared_ptr<TDDeviceEventDispatcher> > deviceEventThreadList;
-	std::list<std::tr1::shared_ptr<TDDeviceChangeEventDispatcher> > deviceChangeEventThreadList;
-	std::list<std::tr1::shared_ptr<TDRawDeviceEventDispatcher> > rawDeviceEventThreadList;
-	std::list<std::tr1::shared_ptr<TDSensorEventDispatcher> > sensorEventThreadList;
-
 	Mutex mutex;
+	std::list<std::tr1::shared_ptr<TelldusCore::TDEventDispatcher> > eventThreadList;
+
+	CallbackList callbackList;
+
+	int lastCallbackId;
 };
 
 CallbackMainDispatcher::CallbackMainDispatcher()
@@ -33,6 +35,8 @@ CallbackMainDispatcher::CallbackMainDispatcher()
 	d->stopEvent = d->eventHandler.addEvent();
 	d->generalCallbackEvent = d->eventHandler.addEvent();
 	d->janitor = d->eventHandler.addEvent(); //Used for cleanups
+
+	d->lastCallbackId = 0;
 }
 
 CallbackMainDispatcher::~CallbackMainDispatcher(void){
@@ -48,6 +52,42 @@ EventRef CallbackMainDispatcher::retrieveCallbackEvent(){
 	return d->generalCallbackEvent;
 }
 
+int CallbackMainDispatcher::registerCallback(CallbackStruct::CallbackType type, void *eventFunction, void *context) {
+	TelldusCore::MutexLocker locker(&d->mutex);
+	int id = ++d->lastCallbackId;
+	CallbackStruct *callback = new CallbackStruct;
+	callback->type = type;
+	callback->event = eventFunction;
+	callback->id = id;
+	callback->context = context;
+	d->callbackList.push_back(callback);
+	return id;
+}
+
+bool CallbackMainDispatcher::unregisterCallback(int callbackId) {
+	CallbackList newEventList;
+	{
+		TelldusCore::MutexLocker locker(&d->mutex);
+		for(CallbackList::iterator callback_it = d->callbackList.begin(); callback_it != d->callbackList.end(); ++callback_it) {
+			if ( (*callback_it)->id != callbackId ) {
+				continue;
+			}
+			newEventList.splice(newEventList.begin(), d->callbackList, callback_it);
+			break;
+		}
+	}
+	if (newEventList.size()) {
+		CallbackList::iterator it = newEventList.begin();
+		{ //Lock and unlock to make sure no one else uses the object
+			TelldusCore::MutexLocker locker( &(*it)->mutex );
+		}
+		delete (*it);
+		newEventList.erase(it);
+		return true;
+	}
+	return false;
+}
+
 void CallbackMainDispatcher::run(){
 
 	while(!d->stopEvent->isSignaled()){
@@ -57,37 +97,17 @@ void CallbackMainDispatcher::run(){
 
 		if(d->generalCallbackEvent->isSignaled()){
 			EventDataRef eventData = d->generalCallbackEvent->takeSignal();
-			
-			DeviceEventCallbackData *decd = dynamic_cast<DeviceEventCallbackData*>(eventData.get());
-			if(decd){
-				std::tr1::shared_ptr<TDDeviceEventDispatcher> ptr(new TDDeviceEventDispatcher(decd->data, decd->deviceId, decd->deviceState, decd->deviceStateValue, d->janitor));
-				MutexLocker locker(&d->mutex);
-				d->deviceEventThreadList.push_back(ptr);
-				continue;
-			}
 
-			DeviceChangeEventCallbackData *dcecd = dynamic_cast<DeviceChangeEventCallbackData*>(eventData.get());
-			if(dcecd){
-				std::tr1::shared_ptr<TDDeviceChangeEventDispatcher> ptr(new TDDeviceChangeEventDispatcher(dcecd->data, dcecd->deviceId, dcecd->eventDeviceChanges, dcecd->eventChangeType, d->janitor));
-				MutexLocker locker(&d->mutex);
-				d->deviceChangeEventThreadList.push_back(ptr);
+			CallbackData *cbd = dynamic_cast<CallbackData *>(eventData.get());
+			if (!cbd) {
 				continue;
 			}
-			
-			RawDeviceEventCallbackData *rdecd = dynamic_cast<RawDeviceEventCallbackData*>(eventData.get());
-			if(rdecd){
-				std::tr1::shared_ptr<TDRawDeviceEventDispatcher> ptr(new TDRawDeviceEventDispatcher(rdecd->data, rdecd->command, rdecd->controllerId, d->janitor));
-				MutexLocker locker(&d->mutex);
-				d->rawDeviceEventThreadList.push_back(ptr);
-				continue;
-			}
-			
-			SensorEventCallbackData *secd = dynamic_cast<SensorEventCallbackData*>(eventData.get());
-			if(secd){
-				std::tr1::shared_ptr<TDSensorEventDispatcher> ptr(new TDSensorEventDispatcher(secd->data, secd->protocol, secd->model, secd->id, secd->dataType, secd->value, secd->timestamp, d->janitor));
-				MutexLocker locker(&d->mutex);
-				d->sensorEventThreadList.push_back(ptr);
-				continue;
+			TelldusCore::MutexLocker locker(&d->mutex);
+			for(CallbackList::iterator callback_it = d->callbackList.begin(); callback_it != d->callbackList.end(); ++callback_it) {
+				if ( (*callback_it)->type == cbd->type ) {
+					std::tr1::shared_ptr<TelldusCore::TDEventDispatcher> ptr(new TelldusCore::TDEventDispatcher(eventData, *callback_it, d->janitor));
+					d->eventThreadList.push_back(ptr);
+				}
 			}
 		}
 		if (d->janitor->isSignaled()) {
@@ -107,52 +127,10 @@ void CallbackMainDispatcher::cleanupCallbacks() {
 	do {
 		again = false;
 		MutexLocker locker(&d->mutex);
-		std::list<std::tr1::shared_ptr<TDDeviceEventDispatcher> >::iterator it = d->deviceEventThreadList.begin();
-		for (;it != d->deviceEventThreadList.end(); ++it) {
+		std::list<std::tr1::shared_ptr<TDEventDispatcher> >::iterator it = d->eventThreadList.begin();
+		for (;it != d->eventThreadList.end(); ++it) {
 			if ((*it)->done()) {
-				d->deviceEventThreadList.erase(it);
-				again = true;
-				break;
-			}
-		}
-	} while (again);
-
-	//Device Change Event
-	do {
-		again = false;
-		MutexLocker locker(&d->mutex);
-		std::list<std::tr1::shared_ptr<TDDeviceChangeEventDispatcher> >::iterator it = d->deviceChangeEventThreadList.begin();
-		for (;it != d->deviceChangeEventThreadList.end(); ++it) {
-			if ((*it)->done()) {
-				d->deviceChangeEventThreadList.erase(it);
-				again = true;
-				break;
-			}
-		}
-	} while (again);
-
-	//Raw Device Event
-	do {
-		again = false;
-		MutexLocker locker(&d->mutex);
-		std::list<std::tr1::shared_ptr<TDRawDeviceEventDispatcher> >::iterator it = d->rawDeviceEventThreadList.begin();
-		for (;it != d->rawDeviceEventThreadList.end(); ++it) {
-			if ((*it)->done()) {
-				d->rawDeviceEventThreadList.erase(it);
-				again = true;
-				break;
-			}
-		}
-	} while (again);
-
-	//Sensor Event
-	do {
-		again = false;
-		MutexLocker locker(&d->mutex);
-		std::list<std::tr1::shared_ptr<TDSensorEventDispatcher> >::iterator it = d->sensorEventThreadList.begin();
-		for (;it != d->sensorEventThreadList.end(); ++it) {
-			if ((*it)->done()) {
-				d->sensorEventThreadList.erase(it);
+				d->eventThreadList.erase(it);
 				again = true;
 				break;
 			}
