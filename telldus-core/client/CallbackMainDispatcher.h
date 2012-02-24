@@ -15,55 +15,57 @@
 #include "Event.h"
 #include "EventHandler.h"
 
-class DeviceChangeEventCallbackData : public TelldusCore::EventDataBase {
-public:
-	TelldusCore::CallbackStruct<TDDeviceChangeEvent> *data;
-	int deviceId;
-	int eventDeviceChanges;
-	int eventChangeType;
-};
+namespace TelldusCore {
+	class DeviceChangeEventCallbackData : public EventDataBase {
+	public:
+		CallbackStruct<TDDeviceChangeEvent> *data;
+		int deviceId;
+		int eventDeviceChanges;
+		int eventChangeType;
+	};
 
-class DeviceEventCallbackData : public TelldusCore::EventDataBase {
-public:
-	TelldusCore::CallbackStruct<TDDeviceEvent> *data;
-	int deviceId;
-	int deviceState;
-	std::string deviceStateValue;
-};
+	class DeviceEventCallbackData : public EventDataBase {
+	public:
+		CallbackStruct<TDDeviceEvent> *data;
+		int deviceId;
+		int deviceState;
+		std::string deviceStateValue;
+	};
 
-class RawDeviceEventCallbackData : public TelldusCore::EventDataBase {
-public:
-	TelldusCore::CallbackStruct<TDRawDeviceEvent> *data;
-	int controllerId;
-	std::string command;
-};
+	class RawDeviceEventCallbackData : public EventDataBase {
+	public:
+		CallbackStruct<TDRawDeviceEvent> *data;
+		int controllerId;
+		std::string command;
+	};
 
-class SensorEventCallbackData : public TelldusCore::EventDataBase {
-public:
-	TelldusCore::CallbackStruct<TDSensorEvent> *data;
-	std::string protocol;
-	std::string model;
-	int id;
-	int dataType;
-	std::string value;
-	int timestamp;
-};
+	class SensorEventCallbackData : public EventDataBase {
+	public:
+		CallbackStruct<TDSensorEvent> *data;
+		std::string protocol;
+		std::string model;
+		int id;
+		int dataType;
+		std::string value;
+		int timestamp;
+	};
 
-class CallbackMainDispatcher  : public TelldusCore::Thread
-{
-public:
-	CallbackMainDispatcher(void);
-	~CallbackMainDispatcher(void);
+	class CallbackMainDispatcher  : public Thread
+	{
+	public:
+		CallbackMainDispatcher(void);
+		~CallbackMainDispatcher(void);
 
-	TelldusCore::EventRef retrieveCallbackEvent();
-	
-protected:
-	void run();
+		EventRef retrieveCallbackEvent();
+		
+	protected:
+		void run();
 
-private:
-	class PrivateData;
-	PrivateData *d;
-	void cleanupCallbacks(void);
-};
+	private:
+		class PrivateData;
+		PrivateData *d;
+		void cleanupCallbacks(void);
+	};
+}
 
 #endif //CALLBACKMAINDISPATCHER_H
