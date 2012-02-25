@@ -141,6 +141,7 @@ int list_devices() {
 		char humidityvalue[DATA_LENGTH];
 		humidityvalue[0] = 0;
 		char timeBuf[80];
+		timeBuf[0] = 0;
 		time_t timestamp = 0;
 
 		if (dataTypes & TELLSTICK_TEMPERATURE) {
