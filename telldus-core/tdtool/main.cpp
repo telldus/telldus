@@ -25,6 +25,7 @@ void print_usage( char *name ) {
 	printf("\n");
 	printf("Options:\n");
 	printf("         -[bdefhlnrv] [ --list ] [ --help ]\n");
+	printf("                      [ --list-sensors ] [ --list-devices ]\n");
 	printf("                      [ --on device ] [ --off device ] [ --bell device ]\n");
 	printf("                      [ --learn device ]\n");
 	printf("                      [ --dimlevel level --dim device ]\n");
@@ -32,6 +33,12 @@ void print_usage( char *name ) {
 	printf("\n");
 	printf("       --list (-l short option)\n");
 	printf("             List currently configured devices and all discovered sensors.\n");
+	printf("\n");
+	printf("       --list-sensors\n");
+	printf("       --list-devices\n");
+	printf("             Alternative devices/sensors listing:\n");
+	printf("             Shows devices and/or sensors using key=value format (with tabs as\n");
+	printf("             separators, one device/sensor per line, no header lines.)\n");
 	printf("\n");
 	printf("       --help (-h short option)\n");
 	printf("             Shows this screen.\n");
@@ -169,6 +176,100 @@ int list_devices() {
 	return TELLSTICK_SUCCESS;
 }
 
+/* list sensors using key=value format, one sensor/line, no header lines
+ * and no degree or percent signs attached to the numbers - just
+ * plain values. */
+int list_kv_sensors() {
+	char protocol[DATA_LENGTH], model[DATA_LENGTH];
+
+	tdInit();
+	int sensorId = 0, dataTypes = 0;
+	time_t now = 0;
+	int sensorStatus;
+
+	time(&now);
+	while(1) {
+		sensorStatus = tdSensor(protocol, DATA_LENGTH, model, DATA_LENGTH, &sensorId, &dataTypes);
+		if (sensorStatus != 0) break;
+
+		printf("type=sensor\tprotocol=%s\tmodel=%s\tid=%d",
+			protocol, model, sensorId);
+
+		time_t timestamp = 0;
+
+		if (dataTypes & TELLSTICK_TEMPERATURE) {
+			char tempvalue[DATA_LENGTH];
+			tdSensorValue(protocol, model, sensorId, TELLSTICK_TEMPERATURE, tempvalue, DATA_LENGTH, (int *)&timestamp);
+			printf("\ttemperature=%s", tempvalue);
+		}
+
+		if (dataTypes & TELLSTICK_HUMIDITY) {
+			char humidityvalue[DATA_LENGTH];
+			tdSensorValue(protocol, model, sensorId, TELLSTICK_HUMIDITY, humidityvalue, DATA_LENGTH, (int *)&timestamp);
+			printf("\thumidity=%s", humidityvalue);
+		}
+
+		if (dataTypes & (TELLSTICK_TEMPERATURE | TELLSTICK_HUMIDITY)) {
+			/* timestamp has been set, print time & age */
+			/* (age is more useful on e.g. embedded systems
+			 * which may not have real-time clock chips =>
+			 * time is useful only as a relative value) */
+			char timeBuf[80];
+			strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
+			printf("\ttime=%s\tage=%d", timeBuf, (int)(now - timestamp));
+		}
+		printf("\n");
+
+	}
+	if(sensorStatus != TELLSTICK_ERROR_DEVICE_NOT_FOUND){
+		char *errorString = tdGetErrorString(sensorStatus);
+		fprintf(stderr, "Error fetching sensors: %s\n", errorString);
+		tdReleaseString(errorString);
+		return sensorStatus;
+	}
+	return TELLSTICK_SUCCESS;
+}
+
+/* list devices using key=value format, one device/line, no header lines */
+int list_kv_devices() {
+	tdInit();
+	int intNum = tdGetNumberOfDevices();
+	if (intNum < 0) {
+		char *errorString = tdGetErrorString(intNum);
+		fprintf(stderr, "Error fetching devices: %s\n", errorString);
+		tdReleaseString(errorString);
+		return intNum;
+	}
+	int index = 0;
+	while (index < intNum) {
+		tdInit();
+		int intId = tdGetDeviceId(index);
+		char *name = tdGetName(intId);
+		printf("type=device\tid=%i\tname=%s", intId, name);
+		tdReleaseString(name);
+
+		int lastSentCommand = tdLastSentCommand(intId, SUPPORTED_METHODS);
+		char *level = 0;
+		switch(lastSentCommand) {
+			case TELLSTICK_TURNON:
+				printf("\tlastsentcommand=ON");
+				break;
+			case TELLSTICK_TURNOFF:
+				printf("\tlastsentcommand=OFF");
+				break;
+			case TELLSTICK_DIM:
+				level = tdLastSentValue(intId);
+				printf("\tlastsentcommand=DIMMED\tdimlevel=%s", level);
+				tdReleaseString(level);
+				break;
+			/* default: state is unknown, print nothing. */
+		}
+		printf("\n");
+		index++;
+	}
+}
+
+
 int find_device( char *device ) {
 	tdInit();
 	int deviceId = atoi(device);
@@ -296,12 +397,17 @@ int send_raw_command( char *command ) {
 	return retval;
 }
 
+#define LIST_KV_SENSORS 1
+#define LIST_KV_DEVICES 2
+
 int main(int argc, char **argv)
 {
 	int optch, longindex;
 	static char optstring[] = "ln:f:d:b:v:e:r:hi";
 	static struct option long_opts[] = {
 		{ "list", 0, 0, 'l' },
+		{ "list-sensors", 0, 0, LIST_KV_SENSORS },
+		{ "list-devices", 0, 0, LIST_KV_DEVICES },
 		{ "on", 1, 0, 'n' },
 		{ "off", 1, 0, 'f' },
 		{ "dim", 1, 0, 'd' },
@@ -348,6 +454,12 @@ int main(int argc, char **argv)
 				break;
 			case 'l' :
 				success = list_devices();
+				break;
+			case LIST_KV_SENSORS:
+				success = list_kv_sensors();
+				break;
+			case LIST_KV_DEVICES:
+				success = list_kv_devices();
 				break;
 			case 'n' :
 				success = switch_device(true, &optarg[0]);
