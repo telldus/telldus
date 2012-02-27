@@ -51,6 +51,11 @@ QString Controller::firmware() const {
 	return d->firmware;
 }
 
+void Controller::setFirmware(const QString &version) {
+	d->firmware = version;
+	emit firmwareChanged();
+}
+
 int Controller::id() const {
 	return d->id;
 }

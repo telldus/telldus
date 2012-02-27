@@ -22,6 +22,7 @@ public:
 	void setAvailable(bool available);
 
 	QString firmware() const;
+	void setFirmware(const QString &version);
 
 	int id() const;
 
