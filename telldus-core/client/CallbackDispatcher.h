@@ -25,7 +25,7 @@ namespace TelldusCore {
 		TelldusCore::Mutex mutex;
 	};*/
 	struct CallbackStruct {
-		enum CallbackType { DeviceEvent, DeviceChangeEvent, RawDeviceEvent, SensorEvent };
+		enum CallbackType { DeviceEvent, DeviceChangeEvent, RawDeviceEvent, SensorEvent, ControllerEvent };
 		CallbackType type;
 		void *event;
 		int id;
@@ -73,6 +73,14 @@ namespace TelldusCore {
 		int dataType;
 		std::string value;
 		int timestamp;
+	};
+	class ControllerEventCallbackData : public CallbackData {
+	public:
+		ControllerEventCallbackData() : CallbackData(CallbackStruct::ControllerEvent) {}
+		int controllerId;
+		int changeEvent;
+		int changeType;
+		std::string newValue;
 	};
 
 	class TDEventDispatcher : public Thread {

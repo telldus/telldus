@@ -126,6 +126,14 @@ void Client::run(){
 				data->timestamp = Message::takeInt(&clientMessage);
 				d->callbackMainDispatcher.retrieveCallbackEvent()->signal(data);
 
+			} else if(type == L"TDControllerEvent") {
+				ControllerEventCallbackData *data = new ControllerEventCallbackData();
+				data->controllerId = Message::takeInt(&clientMessage);
+				data->changeEvent = Message::takeInt(&clientMessage);
+				data->changeType = Message::takeInt(&clientMessage);
+				data->newValue = TelldusCore::wideToString(Message::takeString(&clientMessage));
+				d->callbackMainDispatcher.retrieveCallbackEvent()->signal(data);
+
 			} else {
 				clientMessage = L"";  //cleanup, if message contained garbage/unhandled data
 			}

@@ -139,6 +139,14 @@ int WINAPI tdRegisterSensorEvent( TDSensorEvent eventFunction, void *context) {
 }
 
 /**
+ * Added in version 2.1.2.
+ **/
+int WINAPI tdRegisterControllerEvent( TDControllerEvent eventFunction, void *context) {
+	Client *client = Client::getInstance();
+	return client->registerEvent( CallbackStruct::ControllerEvent, (void *)eventFunction, context );
+}
+
+/**
  * Added in version 2.1.0.
  **/
 int WINAPI tdUnregisterCallback( int callbackId ) {

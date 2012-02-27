@@ -60,5 +60,12 @@ void TDEventDispatcher::fireEvent() {
 		}
 		((TDSensorEvent)callback->event)(data->protocol.c_str(), data->model.c_str(), data->id, data->dataType, data->value.c_str(), data->timestamp, callback->id, callback->context);
 
+	} else if (callback->type == CallbackStruct::ControllerEvent) {
+		ControllerEventCallbackData *data = dynamic_cast<ControllerEventCallbackData *>(callbackData.get());
+		if (!data) {
+			return;
+		}
+		((TDControllerEvent)callback->event)(data->controllerId, data->changeEvent, data->changeType, data->newValue.c_str(), callback->id, callback->context);
+
 	}
 }

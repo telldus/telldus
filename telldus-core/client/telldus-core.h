@@ -29,6 +29,7 @@ typedef void (WINAPI *TDDeviceEvent)(int deviceId, int method, const char *data,
 typedef void (WINAPI *TDDeviceChangeEvent)(int deviceId, int changeEvent, int changeType, int callbackId, void *context);
 typedef void (WINAPI *TDRawDeviceEvent)(const char *data, int controllerId, int callbackId, void *context);
 typedef void (WINAPI *TDSensorEvent)(const char *protocol, const char *model, int id, int dataType, const char *value, int timestamp, int callbackId, void *context);
+typedef void (WINAPI *TDControllerEvent)(int controllerId, int changeEvent, int changeType, const char *newValue, int callbackId, void *context);
 
 #ifndef __cplusplus
 	#define bool char
@@ -42,6 +43,7 @@ extern "C" {
 	TELLSTICK_API int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context);
 	TELLSTICK_API int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context );
 	TELLSTICK_API int WINAPI tdRegisterSensorEvent( TDSensorEvent eventFunction, void *context );
+	TELLSTICK_API int WINAPI tdRegisterControllerEvent( TDControllerEvent eventFunction, void *context);
 	TELLSTICK_API int WINAPI tdUnregisterCallback( int callbackId );
 	TELLSTICK_API void WINAPI tdClose(void);
 	TELLSTICK_API void WINAPI tdReleaseString(char *string);
