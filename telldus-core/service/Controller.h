@@ -14,14 +14,15 @@ class Controller {
 public:
 	virtual ~Controller();
 
-	virtual int firmwareVersion() = 0;
+	virtual int firmwareVersion() const;
 	virtual int send( const std::string &message ) = 0;
 	virtual int reset() = 0;
 
 protected:
-	Controller(int id, TelldusCore::EventRef event);
+	Controller(int id, TelldusCore::EventRef event, TelldusCore::EventRef updateEvent);
 	void publishData(const std::string &data) const;
 	void decodePublishData(const std::string &data) const;
+	void setFirmwareVersion(int version);
 
 private:
 	class PrivateData;

@@ -177,7 +177,7 @@ void ControllerManager::loadControllers() {
 		}
 
 		//int controllerId = d->lastControllerId+1;
-		TellStick *controller = new TellStick(controllerId, d->event, *it);
+		TellStick *controller = new TellStick(controllerId, d->event, d->updateEvent, *it);
 		if (!controller->isOpen()) {
 			delete controller;
 			continue;
