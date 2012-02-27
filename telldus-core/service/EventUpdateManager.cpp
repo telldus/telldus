@@ -105,6 +105,13 @@ void EventUpdateManager::sendMessageToClients(EventUpdateData *data){
 				msg.addArgument(data->value);
 				msg.addArgument(data->timestamp);
 			}
+			else if(data->messageType == L"TDControllerEvent") {
+				msg.addArgument("TDControllerEvent");
+				msg.addArgument(data->controllerId);
+				msg.addArgument(data->eventState);
+				msg.addArgument(data->eventChangeType);
+				msg.addArgument(data->eventValue);
+			}
 
 			(*it)->write(msg);
 

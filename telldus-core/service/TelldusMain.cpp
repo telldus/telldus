@@ -64,10 +64,10 @@ void TelldusMain::start(void) {
 	supervisor.setInterval(60); //Once every minute
 	supervisor.start();
 
-	ControllerManager controllerManager(dataEvent);
 	EventUpdateManager eventUpdateManager;
 	TelldusCore::EventRef deviceUpdateEvent = eventUpdateManager.retrieveUpdateEvent();
 	eventUpdateManager.start();
+	ControllerManager controllerManager(dataEvent, deviceUpdateEvent);
 	DeviceManager deviceManager(&controllerManager, deviceUpdateEvent);
 
 	ConnectionListener clientListener(L"TelldusClient", clientEvent);

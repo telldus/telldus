@@ -6,6 +6,7 @@
 #include "Message.h"
 #include "Strings.h"
 #include "Settings.h"
+#include "EventUpdateManager.h"
 #include "../client/telldus-core.h"
 
 #include <map>
@@ -25,14 +26,15 @@ public:
 	int lastControllerId;
 	Settings settings;
 	ControllerMap controllers;
-	TelldusCore::EventRef event;
+	TelldusCore::EventRef event, updateEvent;
 	TelldusCore::Mutex mutex;
 };
 
-ControllerManager::ControllerManager(TelldusCore::EventRef event){
+ControllerManager::ControllerManager(TelldusCore::EventRef event, TelldusCore::EventRef updateEvent){
 	d = new PrivateData;
 	d->lastControllerId = 0;
 	d->event = event;
+	d->updateEvent = updateEvent;
 	this->loadStoredControllers();
 	this->loadControllers();
 }
@@ -57,7 +59,7 @@ void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, const std::str
 				ControllerMap::iterator it = d->controllers.begin();
 				delete it->second.controller;
 				it->second.controller = 0;
-				//TODO: signal controller lost
+				signalControllerEvent(it->first, TELLSTICK_DEVICE_STATE_CHANGED, TELLSTICK_CHANGE_AVAILABLE, L"0");
 			}
 		}
 		return;
@@ -95,7 +97,7 @@ void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, const std::str
 
 			it->second.controller = 0;
 			delete tellstick;
-			//TODO: signal controller lost
+			signalControllerEvent(it->first, TELLSTICK_DEVICE_STATE_CHANGED, TELLSTICK_CHANGE_AVAILABLE, L"0");
 		}
 	}
 }
@@ -160,12 +162,14 @@ void ControllerManager::loadControllers() {
 				break;
 			}
 		}
+		bool isNew = false;
 		if (!controllerId) {
 			controllerId = d->settings.addNode(Settings::Controller);
 			if(controllerId < 0){
 				//TODO: How to handle this?
 				continue;
 			}
+			isNew = true;
 			d->controllers[controllerId].type = type;
 			d->settings.setControllerType(controllerId, type);
 			d->controllers[controllerId].serial = TelldusCore::charToWstring((*it).serial.c_str());
@@ -179,6 +183,11 @@ void ControllerManager::loadControllers() {
 			continue;
 		}
 		d->controllers[controllerId].controller = controller;
+		if (isNew) {
+			signalControllerEvent(controllerId, TELLSTICK_DEVICE_ADDED, type, L"");
+		} else {
+			signalControllerEvent(controllerId, TELLSTICK_DEVICE_STATE_CHANGED, TELLSTICK_CHANGE_AVAILABLE, L"1");
+		}
 	}
 }
 
@@ -192,6 +201,7 @@ void ControllerManager::loadStoredControllers() {
 		d->controllers[id].name = d->settings.getName(Settings::Controller, id);
 		d->controllers[id].type = d->settings.getControllerType(id);
 		d->controllers[id].serial = d->settings.getControllerSerial(id);
+		signalControllerEvent(id, TELLSTICK_DEVICE_ADDED, 0, L"");
 	}
 }
 
@@ -295,7 +305,7 @@ int ControllerManager::removeController(int id) {
 
 	d->controllers.erase(it);
 
-	//TODO: signal
+	signalControllerEvent(id, TELLSTICK_DEVICE_REMOVED, 0, L"");
 	return TELLSTICK_SUCCESS;
 }
 
@@ -309,8 +319,19 @@ int ControllerManager::setControllerValue(int id, const std::wstring &name, cons
 	if (name == L"name") {
 		it->second.name = value;
 		d->settings.setName(Settings::Controller, id, value);
+		signalControllerEvent(id, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_NAME, value);
 	} else {
 		return TELLSTICK_ERROR_SYNTAX; //TODO: Is this the best error?
 	}
 	return TELLSTICK_SUCCESS;
+}
+
+void ControllerManager::signalControllerEvent(int controllerId, int changeEvent, int changeType, const std::wstring &newValue) {
+	EventUpdateData *eventData = new EventUpdateData();
+	eventData->messageType = L"TDControllerEvent";
+	eventData->controllerId = controllerId;
+	eventData->eventState = changeEvent;
+	eventData->eventChangeType = changeType;
+	eventData->eventValue = newValue;
+	d->updateEvent->signal(eventData);
 }

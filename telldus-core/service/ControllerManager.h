@@ -8,7 +8,7 @@ class Controller;
 
 class ControllerManager {
 public:
-	ControllerManager(TelldusCore::EventRef event);
+	ControllerManager(TelldusCore::EventRef event, TelldusCore::EventRef updateEvent);
 	~ControllerManager(void);
 
 	void deviceInsertedOrRemoved(int vid, int pid, const std::string &serial, bool inserted);
@@ -25,6 +25,7 @@ public:
 	int setControllerValue(int id, const std::wstring &name, const std::wstring &value);
 
 private:
+	void signalControllerEvent(int controllerId, int changeEvent, int changeType, const std::wstring &newValue);
 	class PrivateData;
 	PrivateData *d;
 };
