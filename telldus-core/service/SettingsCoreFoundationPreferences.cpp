@@ -1,7 +1,7 @@
 //
 // C++ Implementation: telldussettingsconfuse
 //
-// Description: 
+// Description:
 //
 //
 // Author: Micke Prag <micke.prag@telldus.se>, (C) 2008
@@ -30,7 +30,7 @@ public:
 	CFStringRef userName;
 	CFStringRef hostName;
 };
-	
+
 /*
 * Constructor
 */
@@ -60,22 +60,26 @@ std::wstring Settings::getSetting(const std::wstring &strName) const {
 /*
 * Return the number of stored devices
 */
-int Settings::getNumberOfDevices(void) const {
+int Settings::getNumberOfNodes(Node type) const {
 	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, d->userName, d->hostName );
 	if (!cfarray) return 0;
 	CFIndex size = CFArrayGetCount( cfarray );
-	int devices = 0;
+	int nodes = 0;
 	for (CFIndex k = 0; k < size; ++k) {
 		CFStringRef key = (CFStringRef) CFArrayGetValueAtIndex(cfarray, k);
-		if (CFStringHasPrefix( key, CFSTR("devices.") ) &&
-			CFStringHasSuffix( key, CFSTR(".name") ) ) {
-			devices++;
+		if (!CFStringHasSuffix( key, CFSTR(".name") )) {
+			continue;
 		}
-	}	
-	return devices;
+		if (type == Device && CFStringHasPrefix( key, CFSTR("devices.") )) {
+			++nodes;
+		} else if (type == Controller && CFStringHasPrefix( key, CFSTR("controllers.") )) {
+			++nodes;
+		}
+	}
+	return nodes;
 }
 
-int Settings::getDeviceId(int intDeviceIndex) const {
+int Settings::getNodeId(Node type, int intNodeIndex) const {
 	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, d->userName, d->hostName );
 	if (!cfarray) return 0;
 	CFIndex size = CFArrayGetCount( cfarray );
@@ -83,63 +87,73 @@ int Settings::getDeviceId(int intDeviceIndex) const {
 	int id = 0;
 	for (CFIndex k = 0; k < size; ++k) {
 		CFStringRef key = (CFStringRef) CFArrayGetValueAtIndex(cfarray, k);
-		if (CFStringHasPrefix( key, CFSTR("devices.") ) &&
-			CFStringHasSuffix( key, CFSTR(".name") ) ) {
-			
-			if (index == intDeviceIndex) {			 
-				CFArrayRef split = CFStringCreateArrayBySeparatingStrings( 0, key, CFSTR(".") );
-				if ( !split || CFArrayGetCount( split ) != 3 ) continue;
-
-				// This code crashes!
-				//CFNumberRef cfid = (CFNumberRef) CFArrayGetValueAtIndex( split, 1 );
-				//if (cfid)
-				//	CFNumberGetValue( cfid, kCFNumberIntType, &id);
-
-				CFStringRef cfid = (CFStringRef) CFArrayGetValueAtIndex( split, 1 );				
-				char *cp = NULL;
-				CFIndex size = CFStringGetMaximumSizeForEncoding( CFStringGetLength( cfid ), kCFStringEncodingUTF8) + 1;
-				cp = (char *)malloc(size);
-				CFStringGetCString( cfid, cp, size, kCFStringEncodingUTF8 );
-				char *newcp = (char *)realloc( cp, strlen(cp) + 1);
-				if (newcp != NULL) {
-					cp = newcp;
-					id = atoi(cp);
-				} else {
-					//Should not happen
-					id = 0;
-				}
-				free(cp);
-
-				CFRelease(key);
-				CFRelease(split);
-				CFRelease(cfid);	
-				break;
-			}
-			index++;
+		if (!CFStringHasSuffix( key, CFSTR(".name") )) {
+			CFRelease( key );
+			continue;
 		}
-		CFRelease( key );
+		if ( type == Device && !CFStringHasPrefix(key, CFSTR("devices.")) ) {
+			CFRelease( key );
+			continue;
+		}
+		if ( type == Controller && !CFStringHasPrefix(key, CFSTR("controllers.")) ) {
+			CFRelease( key );
+			continue;
+		}
+		if (index == intNodeIndex) {
+			CFArrayRef split = CFStringCreateArrayBySeparatingStrings( 0, key, CFSTR(".") );
+			if ( !split || CFArrayGetCount( split ) != 3 ) continue;
+
+			// This code crashes!
+			//CFNumberRef cfid = (CFNumberRef) CFArrayGetValueAtIndex( split, 1 );
+			//if (cfid)
+			//	CFNumberGetValue( cfid, kCFNumberIntType, &id);
+
+			CFStringRef cfid = (CFStringRef) CFArrayGetValueAtIndex( split, 1 );
+			char *cp = NULL;
+			CFIndex size = CFStringGetMaximumSizeForEncoding( CFStringGetLength( cfid ), kCFStringEncodingUTF8) + 1;
+			cp = (char *)malloc(size);
+			CFStringGetCString( cfid, cp, size, kCFStringEncodingUTF8 );
+			char *newcp = (char *)realloc( cp, strlen(cp) + 1);
+			if (newcp != NULL) {
+				cp = newcp;
+				id = atoi(cp);
+			} else {
+				//Should not happen
+				id = 0;
+			}
+			free(cp);
+
+			CFRelease(key);
+			CFRelease(split);
+			CFRelease(cfid);
+			break;
+		}
+		index++;
 	}
 	return id;
 }
 
 /*
-* Add a new device
+* Add a new node
 */
-int Settings::addDevice() {
-	int id = getNextDeviceId();
-	setStringSetting( id, L"name", L"", false ); //Create a empty name so the device has an entry
-	setStringSetting( id, L"model", L"", false );
+int Settings::addNode(Node type) {
+	int id = getNextNodeId(type);
+	setStringSetting( type, id, L"name", L"", false ); //Create a empty name so the node has an entry
+	if (type == Device) {
+		//Is there a reason we do this?
+		setStringSetting( type, id, L"model", L"", false );
+	}
 	return id;
 }
 
 /*
-* Get next available device id
+* Get next available node id
 */
-int Settings::getNextDeviceId() const {
+int Settings::getNextNodeId(Node type) const {
 	int id = 0, max = 0;
-	int numberOfDevices = getNumberOfDevices();
-	for( int i = 0; i < numberOfDevices; i++) {
-		id = getDeviceId( i );
+	int numberOfNodes = getNumberOfNodes(type);
+	for( int i = 0; i < numberOfNodes; i++) {
+		id = getNodeId( type, i );
 		if (id > max) {
 			max = id;
 		}
@@ -151,9 +165,9 @@ int Settings::getNextDeviceId() const {
 /*
 * Remove a device
 */
-int Settings::removeDevice(int intDeviceId){
+int Settings::removeNode(Node type, int intNodeId){
 	int ret = TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-	CFStringRef filterKey = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d."), intDeviceId); // The key to search for
+	CFStringRef filterKey = CFStringCreateWithFormat(0, NULL, CFSTR("%ss.%d."), getNodeString(type).c_str(), intNodeId); // The key to search for
 
 	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, d->userName, d->hostName );
 	if (!cfarray) {
@@ -167,29 +181,29 @@ int Settings::removeDevice(int intDeviceId){
 			ret = TELLSTICK_SUCCESS;
 		}
 	}
-	
+
 	CFPreferencesSynchronize( d->app_ID, d->userName, d->hostName );
 	return ret;
 }
 
-std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &wname, bool parameter) const {
+std::wstring Settings::getStringSetting(Node type, int intNodeId, const std::wstring &wname, bool parameter) const {
 	std::string name(TelldusCore::wideToString(wname));
 	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), kCFStringEncodingUTF8 );
-	
+
 	CFStringRef key;
 	if (parameter) {
-		key = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d.parameters.%@"), intDeviceId, cfname);
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("%ss.%d.parameters.%@"), getNodeString(type).c_str(), intNodeId, cfname);
 	} else {
-		key = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d.%@"), intDeviceId, cfname);		
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("%ss.%d.%@"), getNodeString(type).c_str(), intNodeId, cfname);
 	}
-	
+
 	CFStringRef value;
-	
+
 	value = (CFStringRef)CFPreferencesCopyValue(key, d->app_ID, d->userName, d->hostName);
 	if (!value) {
 		return L"";
 	}
-	
+
 	std::wstring retval;
 	char *cp = NULL;
 	CFIndex size = CFStringGetMaximumSizeForEncoding( CFStringGetLength( value ), kCFStringEncodingUTF8) + 1;
@@ -204,22 +218,22 @@ std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &wna
 		retval = L"";
 	}
 	free(cp);
-	
+
 	CFRelease(value);
 	return retval;
 }
 
-int Settings::setStringSetting(int intDeviceId, const std::wstring &wname, const std::wstring &wvalue, bool parameter) {
+int Settings::setStringSetting(Node type, int intNodeId, const std::wstring &wname, const std::wstring &wvalue, bool parameter) {
 	std::string name(TelldusCore::wideToString(wname));
 	std::string value(TelldusCore::wideToString(wvalue));
 	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), kCFStringEncodingUTF8 );
 	CFStringRef cfvalue = CFStringCreateWithCString( 0, value.c_str(), kCFStringEncodingUTF8 );
-	
+
 	CFStringRef key;
 	if (parameter) {
-		key = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d.parameters.%@"), intDeviceId, cfname);
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("%ss.%d.parameters.%@"), getNodeString(type).c_str(), intNodeId, cfname);
 	} else {
-		key = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d.%@"), intDeviceId, cfname);		
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("%ss.%d.%@"), getNodeString(type).c_str(), intNodeId, cfname);
 	}
 
 	CFPreferencesSetValue( key, cfvalue, d->app_ID, d->userName, d->hostName );
@@ -227,19 +241,19 @@ int Settings::setStringSetting(int intDeviceId, const std::wstring &wname, const
 	return TELLSTICK_SUCCESS;
 }
 
-int Settings::getIntSetting(int intDeviceId, const std::wstring &wname, bool parameter) const {
+int Settings::getIntSetting(Node type, int intNodeId, const std::wstring &wname, bool parameter) const {
 	int retval = 0;
 	std::string name(TelldusCore::wideToString(wname));
 	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), kCFStringEncodingUTF8 );
 	CFNumberRef cfvalue;
-	
+
 	CFStringRef key;
 	if (parameter) {
-		key = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d.parameters.%@"), intDeviceId, cfname);
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("%ss.%d.parameters.%@"), getNodeString(type).c_str(), intNodeId, cfname);
 	} else {
-		key = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d.%@"), intDeviceId, cfname);		
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("%ss.%d.%@"), getNodeString(type).c_str(), intNodeId, cfname);
 	}
-	
+
 	cfvalue = (CFNumberRef)CFPreferencesCopyValue(key, d->app_ID, d->userName, d->hostName);
 
 	// If the preference exists, use it.
@@ -254,23 +268,23 @@ int Settings::getIntSetting(int intDeviceId, const std::wstring &wname, bool par
 			retval = 0;
 		}
 	}
-	
+
 	return retval;
 }
 
-int Settings::setIntSetting(int intDeviceId, const std::wstring &wname, int value, bool parameter) {
+int Settings::setIntSetting(Node type, int intNodeId, const std::wstring &wname, int value, bool parameter) {
 	std::string name(TelldusCore::wideToString(wname));
 	CFStringRef cfname = CFStringCreateWithCString( 0, name.c_str(), kCFStringEncodingUTF8 );
 	CFNumberRef cfvalue = CFNumberCreate(NULL, kCFNumberIntType, &value);
-	
+
 	CFStringRef key;
 	if (parameter) {
-		key = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d.parameters.%@"), intDeviceId, cfname);
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("%ss.%d.parameters.%@"), getNodeString(type).c_str(), intNodeId, cfname);
 	} else {
-		key = CFStringCreateWithFormat(0, NULL, CFSTR("devices.%d.%@"), intDeviceId, cfname);		
+		key = CFStringCreateWithFormat(0, NULL, CFSTR("%ss.%d.%@"), getNodeString(type).c_str(), intNodeId, cfname);
 	}
-	
+
 	CFPreferencesSetValue( key, cfvalue, d->app_ID, d->userName, d->hostName );
 	CFPreferencesSynchronize( d->app_ID, d->userName, d->hostName );
-	return TELLSTICK_SUCCESS;	
+	return TELLSTICK_SUCCESS;
 }
