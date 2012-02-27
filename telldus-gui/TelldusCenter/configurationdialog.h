@@ -20,6 +20,7 @@ signals:
 
 public slots:
 	QScriptValue addPage( const QString &name, const QString &file, const QString &icon );
+	QScriptValue addPage( const QString &name, QWidget *widget, const QString &icon);
 	void open();
 	void valueChanged();
 

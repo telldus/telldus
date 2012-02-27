@@ -76,86 +76,107 @@ std::wstring Settings::getSetting(const std::wstring &strName) const {
 /*
 * Return the number of stored devices
 */
-int Settings::getNumberOfDevices(void) const {
+int Settings::getNumberOfNodes(Node node) const {
 	TelldusCore::MutexLocker locker(&mutex);
 	if (d->cfg > 0) {
-		return cfg_size(d->cfg, "device");
+		if (node == Device) {
+			return cfg_size(d->cfg, "device");
+		} else if (node == Controller) {
+			return cfg_size(d->cfg, "controller");
+		}
 	}
 	return 0;
 }
 
-int Settings::getDeviceId(int intDeviceIndex) const {
-	if (intDeviceIndex >= getNumberOfDevices()) { //Out of bounds
+int Settings::getNodeId(Node type, int intDeviceIndex) const {
+	if (intDeviceIndex >= getNumberOfNodes(type)) { //Out of bounds
 		return -1;
 	}
 	TelldusCore::MutexLocker locker(&mutex);
-	cfg_t *cfg_device = cfg_getnsec(d->cfg, "device", intDeviceIndex);
-	int id = cfg_getint(cfg_device, "id");
+	cfg_t *cfg_node;
+	if (type == Device) {
+		cfg_node = cfg_getnsec(d->cfg, "device", intDeviceIndex);
+	} else if (type == Controller) {
+		cfg_node = cfg_getnsec(d->cfg, "controller", intDeviceIndex);
+	}
+	int id = cfg_getint(cfg_node, "id");
 	return id;
 }
 
 /*
-* Add a new device
+* Add a new node
 */
-int Settings::addDevice(){
+int Settings::addNode(Node type){
 	TelldusCore::MutexLocker locker(&mutex);
-	int intDeviceId = getNextDeviceId();
+	int intNodeId = getNextNodeId(type);
 
 	FILE *fp = fopen(CONFIG_FILE, "w");
 	if (!fp) {
 		return TELLSTICK_ERROR_PERMISSION_DENIED;
 	}
 	cfg_print(d->cfg, fp); //Print the config-file
-	fprintf(fp, "device {\n  id=%d\n}\n", intDeviceId); //Print the new device
+	if (type == Device) {
+		fprintf(fp, "device {\n  id=%d\n}\n", intNodeId); //Print the new device
+	} else if (type == Controller) {
+		fprintf(fp, "controller {\n  id=%d\n}\n", intNodeId); //Print the new controller
+	}
 	fclose(fp);
 
 	//Re-read config-file
 	cfg_free(d->cfg);
 	readConfig(&d->cfg);
-	return intDeviceId;
+	return intNodeId;
 }
 
 /*
-* Get next available device id
+* Get next available node id
 */
-int Settings::getNextDeviceId() const {
+int Settings::getNextNodeId(Node type) const {
 	//Private, no locks needed
-	int intDeviceId = 0;
-	cfg_t *cfg_device;
-	for (int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
-		cfg_device = cfg_getnsec(d->cfg, "device", i);
-		if (cfg_getint(cfg_device, "id") >= intDeviceId)  {
-			intDeviceId = cfg_getint(cfg_device, "id");
+	int intNodeId = 0;
+	cfg_t *cfg_node;
+	std::string strType;
+	if (type == Device) {
+		strType = "device";
+	} else if (type == Controller) {
+		strType = "controller";
+	}
+	for (int i = 0; i < cfg_size(d->cfg, strType.c_str()); ++i) {
+		cfg_node = cfg_getnsec(d->cfg, strType.c_str(), i);
+		if (cfg_getint(cfg_node, "id") >= intNodeId)  {
+			intNodeId = cfg_getint(cfg_node, "id");
 		}
 	}
-	intDeviceId++;
-	return intDeviceId;
+	intNodeId++;
+	return intNodeId;
 }
 
 /*
 * Remove a device
 */
-int Settings::removeDevice(int intDeviceId){
+int Settings::removeNode(Node type, int intNodeId){
 	TelldusCore::MutexLocker locker(&mutex);
 	FILE *fp = fopen(CONFIG_FILE, "w");
 	if (!fp) {
 		return TELLSTICK_ERROR_PERMISSION_DENIED;
 	}
 
+	std::string strType = getNodeString(type);
+
 	// Print all opts
 	for(int i = 0; d->cfg->opts[i].name; i++) {
 
 		// Check if it isn't a device section
-		if (strcmp(d->cfg->opts[i].name, "device") != 0) {
+		if (strcmp(d->cfg->opts[i].name, strType.c_str()) != 0) {
 			cfg_opt_print(&d->cfg->opts[i], fp);
 		} else {
 			// Print all sections except the one to remove
-			cfg_t *cfg_device;
-			for (int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
-				cfg_device = cfg_getnsec(d->cfg, "device", i);
-				if (cfg_getint(cfg_device, "id") != intDeviceId) { //This isn't the one to skip
-					fprintf(fp, "device {\n");
-					cfg_print_indent(cfg_device, fp, 1);
+			cfg_t *cfg_node;
+			for (int i = 0; i < cfg_size(d->cfg, strType.c_str()); ++i) {
+				cfg_node = cfg_getnsec(d->cfg, strType.c_str(), i);
+				if (cfg_getint(cfg_node, "id") != intNodeId) { //This isn't the one to skip
+					fprintf(fp, "%s {\n", strType.c_str());
+					cfg_print_indent(cfg_node, fp, 1);
 					fprintf(fp, "}\n");
 				}
 			}
@@ -244,15 +265,17 @@ std::wstring Settings::getDeviceStateValue( int intDeviceId ) const {
 	return L"";
 }
 
-std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &name, bool parameter) const {
+std::wstring Settings::getStringSetting(Node type, int intNodeId, const std::wstring &name, bool parameter) const {
 	//already locked
 	if (d->cfg == 0) {
 		return L"";
 	}
+	std::string strType = getNodeString(type);
+
 	cfg_t *cfg_device;
-	for (int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
-		cfg_device = cfg_getnsec(d->cfg, "device", i);
-		if (cfg_getint(cfg_device, "id") == intDeviceId)  {
+	for (int i = 0; i < cfg_size(d->cfg, strType.c_str()); ++i) {
+		cfg_device = cfg_getnsec(d->cfg, strType.c_str(), i);
+		if (cfg_getint(cfg_device, "id") == intNodeId)  {
 			if (parameter) {
 				cfg_device = cfg_getsec(cfg_device, "parameters");
 			}
@@ -267,14 +290,15 @@ std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &nam
 	return L"";
 }
 
-int Settings::setStringSetting(int intDeviceId, const std::wstring &name, const std::wstring &value, bool parameter) {
+int Settings::setStringSetting(Node type, int intDeviceId, const std::wstring &name, const std::wstring &value, bool parameter) {
 	//already locked
 	if (d->cfg == 0) {
 		return TELLSTICK_ERROR_PERMISSION_DENIED;
 	}
+	std::string strType = getNodeString(type);
 	cfg_t *cfg_device;
-	for (int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
-		cfg_device = cfg_getnsec(d->cfg, "device", i);
+	for (int i = 0; i < cfg_size(d->cfg, strType.c_str()); ++i) {
+		cfg_device = cfg_getnsec(d->cfg, strType.c_str(), i);
 		if (cfg_getint(cfg_device, "id") == intDeviceId)  {
 			std::string newValue = TelldusCore::wideToString(value);
 			if (parameter) {
@@ -295,32 +319,34 @@ int Settings::setStringSetting(int intDeviceId, const std::wstring &name, const 
 	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 }
 
-int Settings::getIntSetting(int intDeviceId, const std::wstring &name, bool parameter) const {
+int Settings::getIntSetting(Node type, int intDeviceId, const std::wstring &name, bool parameter) const {
 	//already locked
 	if (d->cfg == 0) {
 		return 0;
 	}
-	cfg_t *cfg_device;
-	for(int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
-		cfg_device = cfg_getnsec(d->cfg, "device", i);
-		if (cfg_getint(cfg_device, "id") == intDeviceId) {
+	std::string strType = getNodeString(type);
+	cfg_t *cfg_node;
+	for(int i = 0; i < cfg_size(d->cfg, strType.c_str()); ++i) {
+		cfg_node = cfg_getnsec(d->cfg, strType.c_str(), i);
+		if (cfg_getint(cfg_node, "id") == intDeviceId) {
 			if (parameter) {
-				cfg_device = cfg_getsec(cfg_device, "parameters");
+				cfg_node = cfg_getsec(cfg_node, "parameters");
 			}
-			return cfg_getint(cfg_device, TelldusCore::wideToString(name).c_str());
+			return cfg_getint(cfg_node, TelldusCore::wideToString(name).c_str());
 		}
 	}
 	return 0;
 }
 
-int Settings::setIntSetting(int intDeviceId, const std::wstring &name, int value, bool parameter) {
+int Settings::setIntSetting(Node type, int intDeviceId, const std::wstring &name, int value, bool parameter) {
 	//already locked
 	if (d->cfg == 0) {
 		return TELLSTICK_ERROR_PERMISSION_DENIED;
 	}
+	std::string strType = getNodeString(type);
 	cfg_t *cfg_device;
-	for (int i = 0; i < cfg_size(d->cfg, "device"); ++i) {
-		cfg_device = cfg_getnsec(d->cfg, "device", i);
+	for (int i = 0; i < cfg_size(d->cfg, strType.c_str()); ++i) {
+		cfg_device = cfg_getnsec(d->cfg, strType.c_str(), i);
 		if (cfg_getint(cfg_device, "id") == intDeviceId)  {
 			if (parameter) {
 				cfg_t *cfg_parameters = cfg_getsec(cfg_device, "parameters");
@@ -345,6 +371,11 @@ bool readConfig(cfg_t **cfg) {
 	//All the const_cast keywords is to remove the compiler warnings generated by the C++-compiler.
 	cfg_opt_t controller_opts[] = {
 		CFG_INT(const_cast<char *>("id"), -1, CFGF_NONE),
+		CFG_STR(const_cast<char *>("name"), const_cast<char *>(""), CFGF_NONE),
+		CFG_INT(const_cast<char *>("type"), 0, CFGF_NONE),
+		CFG_STR(const_cast<char *>("serial"), const_cast<char *>(""), CFGF_NONE),
+
+		CFG_END()
 	};
 
 	cfg_opt_t device_parameter_opts[] = {
@@ -377,6 +408,7 @@ bool readConfig(cfg_t **cfg) {
 		CFG_STR(const_cast<char *>("deviceNode"), const_cast<char *>("/dev/tellstick"), CFGF_NONE),
 		CFG_STR(const_cast<char *>("ignoreControllerConfirmation"), const_cast<char *>("false"), CFGF_NONE),
 		CFG_SEC(const_cast<char *>("device"), device_opts, CFGF_MULTI),
+		CFG_SEC(const_cast<char *>("controller"), controller_opts, CFGF_MULTI),
 		CFG_END()
 	};
 

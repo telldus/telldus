@@ -53,3 +53,8 @@ EXPORTS
 	tdSensor @38
 	tdSensorValue @39
 	
+	tdController @40
+	tdControllerValue @41
+	tdSetControllerValue @42
+	tdRemoveController @43
+	tdRegisterControllerEvent @44

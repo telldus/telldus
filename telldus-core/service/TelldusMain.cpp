@@ -64,10 +64,10 @@ void TelldusMain::start(void) {
 	supervisor.setInterval(60); //Once every minute
 	supervisor.start();
 
-	ControllerManager controllerManager(dataEvent.get());
 	EventUpdateManager eventUpdateManager;
 	TelldusCore::EventRef deviceUpdateEvent = eventUpdateManager.retrieveUpdateEvent();
 	eventUpdateManager.start();
+	ControllerManager controllerManager(dataEvent, deviceUpdateEvent);
 	DeviceManager deviceManager(&controllerManager, deviceUpdateEvent);
 
 	ConnectionListener clientListener(L"TelldusClient", clientEvent);
@@ -91,7 +91,7 @@ void TelldusMain::start(void) {
 			TelldusCore::EventDataRef eventDataRef = clientEvent->takeSignal();
 			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventDataRef.get());
 			if (data) {
-				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(data->socket, handlerEvent, &deviceManager, deviceUpdateEvent);
+				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(data->socket, handlerEvent, &deviceManager, deviceUpdateEvent, &controllerManager);
 				clientCommunication->start();
 				clientCommunicationHandlerList.push_back(clientCommunication);
 			}

@@ -6,13 +6,15 @@
 
 class Settings {
 public:
+	enum Node { Device, Controller };
+
 	Settings(void);
 	virtual ~Settings(void);
 
 	std::wstring getSetting(const std::wstring &strName) const;
-	int getNumberOfDevices(void) const;
-	std::wstring getName(int intDeviceId) const;
-	int setName(int intDeviceId, const std::wstring &strNewName);
+	int getNumberOfNodes(Node type) const;
+	std::wstring getName(Node type, int intNodeId) const;
+	int setName(Node type, int intDeviceId, const std::wstring &strNewName);
 	std::wstring getProtocol(int intDeviceId) const;
 	int setProtocol(int intDeviceId, const std::wstring &strVendor);
 	std::wstring getModel(int intDeviceId) const;
@@ -25,22 +27,28 @@ public:
 	int getPreferredControllerId(int intDeviceId);
 	int setPreferredControllerId(int intDeviceId, int value);
 
-	int addDevice();
-	int getDeviceId(int intDeviceIndex) const;
-	int removeDevice(int intDeviceId);
+	int addNode(Node type);
+	int getNodeId(Node type, int intDeviceIndex) const;
+	int removeNode(Node type, int intNodeId);
+
+	std::wstring getControllerSerial(int intControllerId) const;
+	int setControllerSerial(int intControllerId, const std::wstring &serial);
+	int getControllerType(int intControllerId) const;
+	int setControllerType(int intControllerId, int type);
 
 protected:
-	std::wstring getStringSetting(int intDeviceId, const std::wstring &name, bool parameter) const;
-	int setStringSetting(int intDeviceId, const std::wstring &name, const std::wstring &value, bool parameter);
-	int getIntSetting(int intDeviceId, const std::wstring &name, bool parameter) const;
-	int setIntSetting(int intDeviceId, const std::wstring &name, int value, bool parameter);
+	std::wstring getStringSetting(Node type, int intNodeId, const std::wstring &name, bool parameter) const;
+	int setStringSetting(Node type, int intDeviceId, const std::wstring &name, const std::wstring &value, bool parameter);
+	int getIntSetting(Node type, int intDeviceId, const std::wstring &name, bool parameter) const;
+	int setIntSetting(Node type, int intDeviceId, const std::wstring &name, int value, bool parameter);
 
 private:
-	int getNextDeviceId() const;
+	int getNextNodeId(Node type) const;
+	std::string getNodeString(Node type) const;
 
 	class PrivateData;
 	PrivateData *d;
-	mutable TelldusCore::Mutex mutex;
+	static TelldusCore::Mutex mutex;
 };
 
 #endif

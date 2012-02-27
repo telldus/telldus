@@ -34,7 +34,7 @@ typedef int DWORD;
 class TellStick::PrivateData {
 public:
 	bool open, ignoreControllerConfirmation;
-	int vid, pid, fwVersion;
+	int vid, pid;
 	std::string serial, message;
 	ftdi_context ftHandle;
 	EVENT_HANDLE eh;
@@ -42,14 +42,13 @@ public:
 	TelldusCore::Mutex mutex;
 };
 
-TellStick::TellStick(int controllerId, TelldusCore::Event *event, const TellStickDescriptor &td )
-	:Controller(controllerId, event)
+TellStick::TellStick(int controllerId, TelldusCore::EventRef event, TelldusCore::EventRef updateEvent, const TellStickDescriptor &td )
+	:Controller(controllerId, event, updateEvent)
 {
 	d = new PrivateData;
 	d->open = false;
 	d->vid = td.vid;
 	d->pid = td.pid;
-	d->fwVersion = 0;
 	d->serial = td.serial;
 	d->running = false;
 
@@ -96,10 +95,6 @@ TellStick::~TellStick() {
 	delete d;
 }
 
-int TellStick::firmwareVersion() {
-	return d->fwVersion;
-}
-
 int TellStick::pid() const {
 	return d->pid;
 }
@@ -135,7 +130,7 @@ void TellStick::processData( const std::string &data ) {
 			continue;
 		} else if (data[i] == 10) { // \n found
 			if (d->message.substr(0,2).compare("+V") == 0) {
-				d->fwVersion = TelldusCore::charToInteger(d->message.substr(2).c_str());
+				setFirmwareVersion(TelldusCore::charToInteger(d->message.substr(2).c_str()));
 			} else if (d->message.substr(0,2).compare("+R") == 0) {
 				this->publishData(d->message.substr(2));
 			} else if(d->message.substr(0,2).compare("+W") == 0) {

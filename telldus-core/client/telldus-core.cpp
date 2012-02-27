@@ -110,8 +110,8 @@ void WINAPI tdInit(void) {
  * Added in version 2.0.0.
  **/
 int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
-	Client *client = Client::getInstance();
-	return client->registerDeviceEvent( eventFunction, context );
+	eventFunction;	Client *client = Client::getInstance();
+	return client->registerEvent( CallbackStruct::DeviceEvent, (void *)eventFunction, context );
 }
 
 /**
@@ -119,7 +119,7 @@ int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
  **/
 int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context ) {
 	Client *client = Client::getInstance();
-	return client->registerRawDeviceEvent( eventFunction, context );
+	return client->registerEvent( CallbackStruct::RawDeviceEvent, (void *)eventFunction, context );
 }
 
 /**
@@ -127,7 +127,7 @@ int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *conte
  **/
 int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context) {
 	Client *client = Client::getInstance();
-	return client->registerDeviceChangeEvent( eventFunction, context );
+	return client->registerEvent( CallbackStruct::DeviceChangeEvent, (void *)eventFunction, context );
 }
 
 /**
@@ -135,7 +135,15 @@ int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void 
  **/
 int WINAPI tdRegisterSensorEvent( TDSensorEvent eventFunction, void *context) {
 	Client *client = Client::getInstance();
-	return client->registerSensorEvent( eventFunction, context );
+	return client->registerEvent( CallbackStruct::SensorEvent, (void *)eventFunction, context );
+}
+
+/**
+ * Added in version 2.1.2.
+ **/
+int WINAPI tdRegisterControllerEvent( TDControllerEvent eventFunction, void *context) {
+	Client *client = Client::getInstance();
+	return client->registerEvent( CallbackStruct::ControllerEvent, (void *)eventFunction, context );
 }
 
 /**
@@ -697,5 +705,83 @@ int WINAPI tdSensorValue(const char *protocol, const char *model, int id, int da
 	return TELLSTICK_SUCCESS;
 }
 
+/**
+ * Use this function to iterate over all controllers. Iterate until
+ * TELLSTICK_SUCCESS is not returned
+ *
+ * Added in version 2.1.2.
+ * @param controllerId A byref int where the id of the controller will be placed
+ * @param controllerType A byref int where the type of the controller will be placed
+ * @param name A byref string where the name of the controller will be placed
+ * @param nameLen The length of the \c name parameter
+ * @param available A byref int if the controller is currently available or maybe disconnected
+ * @returns TELLSTICK_SUCCESS if there is more sensors to be fetched
+ * @sa TELLSTICK_CONTROLLER_TELLSTICK
+ * @sa TELLSTICK_CONTROLLER_TELLSTICK_DUO
+ * @sa TELLSTICK_CONTROLLER_TELLSTICK_NET
+ **/
+int WINAPI tdController(int *controllerId, int *controllerType, char *name, int nameLen, int *available) {
+	Client *client = Client::getInstance();
+	return client->getController(controllerId, controllerType, name, nameLen, available);
+}
+
+/**
+ * This function gets a parameter on a controller.
+ * Valid parameters are: \c serial \c and firmware
+ *
+ * Added in version 2.1.2.
+ * @param controllerId The controller to change
+ * @param name The parameter to get.
+ * @param value A byref string where the value of the parameter will be placed
+ **/
+int WINAPI tdControllerValue(int controllerId, const char *name, char *value, int valueLen) {
+	Message msg(L"tdControllerValue");
+	msg.addArgument(controllerId);
+	msg.addArgument(name);
+	std::wstring retval = Client::getWStringFromService(msg);
+	if (retval.length() == 0) {
+		return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+	}
+
+	if (value && valueLen) {
+		strncpy(value, TelldusCore::wideToString(retval).c_str(), valueLen);
+	}
+	return TELLSTICK_SUCCESS;
+}
+
+/**
+ * This function sets a parameter on a controller.
+ * Valid parameters are: \c name
+ *
+ * Added in version 2.1.2.
+ * @param controllerId The controller to change
+ * @param name The parameter to change.
+ * @param value The new value for the parameter.
+ **/
+int WINAPI tdSetControllerValue(int controllerId, const char *name, const char *value) {
+	Message msg(L"tdSetControllerValue");
+	msg.addArgument(controllerId);
+	msg.addArgument(name);
+	msg.addArgument(value);
+	return Client::getIntegerFromService(msg);
+}
+
+/**
+ * This function removes a controller from the list
+ * of controllers. The controller must not be
+ * available (disconnected) for this to work.
+ *
+ * Added in version 2.1.2.
+ * @param controllerId The controller to remove
+ * @returns TELLSTICK_SUCCESS if the controller was
+ * removed, TELLSTICK_ERROR_NOT_FOUND if the controller was
+ * not found, and TELLSTICK_ERROR_PERMISSION_DENIED if the
+ * controller is still connected.
+ **/
+int WINAPI tdRemoveController(int controllerId) {
+	Message msg(L"tdRemoveController");
+	msg.addArgument(controllerId);
+	return Client::getIntegerFromService(msg);
+}
 
 /* @} */

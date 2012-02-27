@@ -47,13 +47,13 @@ DeviceManager::~DeviceManager(void) {
 }
 
 void DeviceManager::fillDevices(){
-	int numberOfDevices = d->set.getNumberOfDevices();
+	int numberOfDevices = d->set.getNumberOfNodes(Settings::Device);
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 
 	for (int i = 0; i < numberOfDevices; ++i) {
-		int id = d->set.getDeviceId(i);
+		int id = d->set.getNodeId(Settings::Device, i);
 		d->devices[id] = new Device(id);
-		d->devices[id]->setName(d->set.getName(id));
+		d->devices[id]->setName(d->set.getName(Settings::Device, id));
 		d->devices[id]->setModel(d->set.getModel(id));
 		d->devices[id]->setProtocolName(d->set.getProtocol(id));
 		d->devices[id]->setPreferredControllerId(d->set.getPreferredControllerId(id));
@@ -235,7 +235,7 @@ int DeviceManager::setDeviceName(int deviceId, const std::wstring &name){
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
 		TelldusCore::MutexLocker deviceLocker(it->second);
-		int ret = d->set.setName(deviceId, name);
+		int ret = d->set.setName(Settings::Device, deviceId, name);
 		if (ret != TELLSTICK_SUCCESS) {
 			return ret;
 		}
@@ -330,7 +330,7 @@ int DeviceManager::getNumberOfDevices(){
 
 int DeviceManager::addDevice(){
 
-	int id = d->set.addDevice();
+	int id = d->set.addNode(Settings::Device);
 	if(id < 0){
 		return id;
 	}
@@ -344,7 +344,7 @@ int DeviceManager::addDevice(){
 }
 
 int DeviceManager::getDeviceId(int deviceIndex) {
-	return d->set.getDeviceId(deviceIndex);
+	return d->set.getNodeId(Settings::Device, deviceIndex);
 }
 
 int DeviceManager::getDeviceType(int deviceId){
@@ -573,7 +573,7 @@ int DeviceManager::removeDevice(int deviceId){
 
 	Device *device = 0;
 	{
-		int ret = d->set.removeDevice(deviceId);		//remove from register/settings
+		int ret = d->set.removeNode(Settings::Device, deviceId);		//remove from register/settings
 		if (ret != TELLSTICK_SUCCESS) {
 			return ret;
 		}

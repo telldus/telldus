@@ -17,71 +17,85 @@
 #include "telldus-core.h"
 
 namespace TelldusCore {
-	template <typename T> struct CallbackStruct {
+
+	/*template <typename T> struct CallbackStruct {
 		T event;
 		int id;
 		void *context;
 		TelldusCore::Mutex mutex;
+	};*/
+	struct CallbackStruct {
+		enum CallbackType { DeviceEvent, DeviceChangeEvent, RawDeviceEvent, SensorEvent, ControllerEvent };
+		CallbackType type;
+		void *event;
+		int id;
+		void *context;
+		TelldusCore::Mutex mutex;
+	};
+	/*typedef CallbackStruct<TDDeviceChangeEvent> DeviceChangeEvent;
+	typedef CallbackStruct<TDRawDeviceEvent> RawDeviceEvent;
+	typedef CallbackStruct<TDSensorEvent> SensorEvent;*/
+
+	class CallbackData: public EventDataBase {
+	public:
+		explicit CallbackData(CallbackStruct::CallbackType t) : EventDataBase(), type(t) {}
+		CallbackStruct::CallbackType type;
 	};
 
-	class TDDeviceEventDispatcher : public Thread {
+	class DeviceEventCallbackData : public CallbackData {
 	public:
-		TDDeviceEventDispatcher(CallbackStruct<TDDeviceEvent> *data, int deviceId, int method, const std::string &strData, TelldusCore::EventRef cbDone);
-		virtual ~TDDeviceEventDispatcher();
-		bool done() const;
-	protected:
-		virtual void run();
-		bool doneRunning;
-	private:
-		CallbackStruct<TDDeviceEvent> *d;
-		int deviceId, method;
-		std::string strData;
-		TelldusCore::EventRef callbackExecuted;
+		DeviceEventCallbackData() : CallbackData(CallbackStruct::DeviceEvent) {}
+		int deviceId;
+		int deviceState;
+		std::string deviceStateValue;
 	};
-	class TDDeviceChangeEventDispatcher : public Thread {
+	class DeviceChangeEventCallbackData : public CallbackData {
 	public:
-		TDDeviceChangeEventDispatcher(CallbackStruct<TDDeviceChangeEvent> *data, int deviceId, int changeEvent, int changeType, TelldusCore::EventRef cbDone);
-		virtual ~TDDeviceChangeEventDispatcher();
-		bool done() const;
-	protected:
-		virtual void run();
-		bool doneRunning;
-	private:
-		CallbackStruct<TDDeviceChangeEvent> *d;
-		int deviceId, changeEvent, changeType;
-		TelldusCore::EventRef callbackExecuted;
+		DeviceChangeEventCallbackData() : CallbackData(CallbackStruct::DeviceChangeEvent) {}
+		int deviceId;
+		int changeEvent;
+		int changeType;
 	};
-	class TDRawDeviceEventDispatcher : public Thread {
+
+	class RawDeviceEventCallbackData : public CallbackData {
 	public:
-		TDRawDeviceEventDispatcher( CallbackStruct<TDRawDeviceEvent> *data, const std::string &strData, int controllerId, TelldusCore::EventRef cbDone);
-		virtual ~TDRawDeviceEventDispatcher();
-		bool done() const;
-	protected:
-		virtual void run();
-		bool doneRunning;
-	private:
-		CallbackStruct<TDRawDeviceEvent> *d;
+		RawDeviceEventCallbackData() : CallbackData(CallbackStruct::RawDeviceEvent) {}
+		std::string data;
 		int controllerId;
-		std::string strData;
-		TelldusCore::EventRef callbackExecuted;
 	};
-	class TDSensorEventDispatcher : public Thread {
+
+	class SensorEventCallbackData : public CallbackData {
 	public:
-		TDSensorEventDispatcher( CallbackStruct<TDSensorEvent> *data, const std::string &protocol, const std::string &model, int id, int dataType, const std::string &value, int timestamp, TelldusCore::EventRef cbDone);
-		virtual ~TDSensorEventDispatcher();
-		bool done() const;
-	protected:
-		virtual void run();
-		bool doneRunning;
-	private:
-		CallbackStruct<TDSensorEvent> *d;
+		SensorEventCallbackData() : CallbackData(CallbackStruct::SensorEvent) {}
 		std::string protocol;
 		std::string model;
-		int sensorId;
+		int id;
 		int dataType;
 		std::string value;
 		int timestamp;
-		TelldusCore::EventRef callbackExecuted;
+	};
+	class ControllerEventCallbackData : public CallbackData {
+	public:
+		ControllerEventCallbackData() : CallbackData(CallbackStruct::ControllerEvent) {}
+		int controllerId;
+		int changeEvent;
+		int changeType;
+		std::string newValue;
+	};
+
+	class TDEventDispatcher : public Thread {
+	public:
+		TDEventDispatcher(EventDataRef callbackData, CallbackStruct *callback, TelldusCore::EventRef cbDone);
+		virtual ~TDEventDispatcher();
+		bool done() const;
+	protected:
+		virtual void run();
+		bool doneRunning;
+	private:
+		void fireEvent();
+		EventDataRef callbackData;
+		CallbackStruct *callback;
+		EventRef callbackExecuted;
 	};
 }
 

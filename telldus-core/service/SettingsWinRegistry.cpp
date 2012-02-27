@@ -15,16 +15,24 @@ const int intMaxRegValueLength = 1000;
 class Settings::PrivateData {
 public:
 	HKEY rootKey;
-	std::wstring strRegPathDevice;
-	std::wstring strRegPath;	
+	std::wstring strRegPath;
+	std::wstring getNodePath(Settings::Node type);
 };
+
+std::wstring Settings::PrivateData::getNodePath(Settings::Node type) {
+	if (type == Settings::Device) {
+		return L"SOFTWARE\\Telldus\\Devices\\";
+	} else if (type == Settings::Controller) {
+		return L"SOFTWARE\\Telldus\\Controllers\\";
+	}
+	return L"";
+}
 
 /*
 * Constructor
 */
 Settings::Settings(void) {
 	d = new PrivateData();
-	d->strRegPathDevice = L"SOFTWARE\\Telldus\\Devices\\";
 	d->strRegPath = L"SOFTWARE\\Telldus\\";
 	d->rootKey = HKEY_LOCAL_MACHINE;
 }
@@ -39,41 +47,41 @@ Settings::~Settings(void) {
 /*
 * Return the number of stored devices
 */
-int Settings::getNumberOfDevices(void) const {
+int Settings::getNumberOfNodes(Node type) const {
 	TelldusCore::MutexLocker locker(&mutex);
 
-	int intNumberOfDevices = 0;
+	int intNumberOfNodes = 0;
 	HKEY hk;
 	
-	long lnExists = RegOpenKeyEx(d->rootKey, d->strRegPathDevice.c_str(), 0, KEY_QUERY_VALUE, &hk);
-				
+	long lnExists = RegOpenKeyEx(d->rootKey, d->getNodePath(type).c_str(), 0, KEY_QUERY_VALUE, &hk);
+					
 	if(lnExists == ERROR_SUCCESS){
 	
 		std::wstring strNumSubKeys;
 		DWORD dNumSubKeys;
 		RegQueryInfoKey(hk, NULL, NULL, NULL, &dNumSubKeys, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 		
-		intNumberOfDevices = (int)dNumSubKeys;
+		intNumberOfNodes = (int)dNumSubKeys;
 
 		RegCloseKey(hk);
 	}
-	return intNumberOfDevices;
+	return intNumberOfNodes;
 }
 
 
-int Settings::getDeviceId(int intDeviceIndex) const {
+int Settings::getNodeId(Node type, int intNodeIndex) const {
 	TelldusCore::MutexLocker locker(&mutex);
 
 	int intReturn = -1;
 	HKEY hk;
 	
-	long lnExists = RegOpenKeyEx(d->rootKey, d->strRegPathDevice.c_str(), 0, KEY_READ, &hk);
+	long lnExists = RegOpenKeyEx(d->rootKey, d->getNodePath(type).c_str(), 0, KEY_READ, &hk);
 				
 	if(lnExists == ERROR_SUCCESS){
 		
 		wchar_t* Buff = new wchar_t[intMaxRegValueLength];
 		DWORD size = intMaxRegValueLength;
-		if (RegEnumKeyEx(hk, intDeviceIndex, (LPWSTR)Buff, &size, NULL, NULL, NULL, NULL) == ERROR_SUCCESS) {
+		if (RegEnumKeyEx(hk, intNodeIndex, (LPWSTR)Buff, &size, NULL, NULL, NULL, NULL) == ERROR_SUCCESS) {
 			intReturn = _wtoi(Buff);
 		}
 
@@ -84,43 +92,43 @@ int Settings::getDeviceId(int intDeviceIndex) const {
 }
 
 /*
-* Add a new device
+* Add a new node
 */
-int Settings::addDevice() {
+int Settings::addNode(Node type) {
 	TelldusCore::MutexLocker locker(&mutex);
 
-	int intDeviceId = -1;
+	int intNodeId = -1;
 	HKEY hk;
 
 	DWORD dwDisp;
-	intDeviceId = getNextDeviceId();
+	intNodeId = getNextNodeId(type);
 
-	std::wstring strCompleteRegPath = d->strRegPathDevice;
-	strCompleteRegPath.append(TelldusCore::intToWstring(intDeviceId));
+	std::wstring strCompleteRegPath = d->getNodePath(type);
+	strCompleteRegPath.append(TelldusCore::intToWstring(intNodeId));
 		
 	if (RegCreateKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hk, &dwDisp)) {
 		//fail
-		intDeviceId = -1;
+		intNodeId = -1;
 	}
 
 	RegCloseKey(hk);
-	return intDeviceId;
+	return intNodeId;
 }
 
 /*
 * Get next available device id
 */
-int Settings::getNextDeviceId() const {
+int Settings::getNextNodeId(Node type) const {
 	//Private, no locks needed
 	int intReturn = -1;
 	HKEY hk;
 	DWORD dwDisp;
 
-	long lnExists = RegCreateKeyEx(d->rootKey, d->strRegPathDevice.c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hk, &dwDisp);	//create or open if already created
+	long lnExists = RegCreateKeyEx(d->rootKey, d->getNodePath(type).c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hk, &dwDisp);	//create or open if already created
 				
 	if(lnExists == ERROR_SUCCESS){
 			
-		DWORD dwLength;
+		DWORD dwLength = sizeof(DWORD);
 		DWORD nResult(0);
 
 		long lngStatus = RegQueryValueEx(hk, L"LastUsedId", NULL, NULL, reinterpret_cast<LPBYTE>(&nResult), &dwLength);
@@ -141,11 +149,11 @@ int Settings::getNextDeviceId() const {
 /*
 * Remove a device
 */
-int Settings::removeDevice(int intDeviceId) {
+int Settings::removeNode(Node type, int intNodeId) {
 	TelldusCore::MutexLocker locker(&mutex);
 	
-	std::wstring strCompleteRegPath = d->strRegPathDevice;
-	strCompleteRegPath.append(TelldusCore::intToWstring(intDeviceId));
+	std::wstring strCompleteRegPath = d->getNodePath(type);
+	strCompleteRegPath.append(TelldusCore::intToWstring(intNodeId));
 
 	long lngSuccess = RegDeleteKey(d->rootKey, strCompleteRegPath.c_str());
 
@@ -184,12 +192,12 @@ std::wstring Settings::getSetting(const std::wstring &strName) const{
 	return strReturn;
 }
 
-std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &name, bool parameter) const {
+std::wstring Settings::getStringSetting(Node type, int intNodeId, const std::wstring &name, bool parameter) const {
 	std::wstring strReturn;
 	HKEY hk;
 
-	std::wstring strCompleteRegPath = d->strRegPathDevice;
-	strCompleteRegPath.append(TelldusCore::intToWstring(intDeviceId));
+	std::wstring strCompleteRegPath = d->getNodePath(type);
+	strCompleteRegPath.append(TelldusCore::intToWstring(intNodeId));
 	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &hk);
 			
 	if(lnExists == ERROR_SUCCESS){
@@ -212,14 +220,14 @@ std::wstring Settings::getStringSetting(int intDeviceId, const std::wstring &nam
 	return strReturn;
 }
 
-int Settings::setStringSetting(int intDeviceId, const std::wstring &name, const std::wstring &value, bool parameter) {
+int Settings::setStringSetting(Node type, int intNodeId, const std::wstring &name, const std::wstring &value, bool parameter) {
 
 	HKEY hk;
 	int ret = TELLSTICK_SUCCESS;
 		
-	std::wstring bla = TelldusCore::intToWstring(intDeviceId);
-	std::wstring strCompleteRegPath = d->strRegPathDevice;
-	strCompleteRegPath.append(bla);
+	std::wstring strNodeId = TelldusCore::intToWstring(intNodeId);
+	std::wstring strCompleteRegPath = d->getNodePath(type);
+	strCompleteRegPath.append(strNodeId);
 	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_WRITE, &hk);
 				
 	if (lnExists == ERROR_SUCCESS){
@@ -234,23 +242,23 @@ int Settings::setStringSetting(int intDeviceId, const std::wstring &name, const 
 
 }
 
-int Settings::getIntSetting(int intDeviceId, const std::wstring &name, bool parameter) const {
+int Settings::getIntSetting(Node type, int intNodeId, const std::wstring &name, bool parameter) const {
 	int intReturn = 0;
 
-	std::wstring strSetting = getStringSetting(intDeviceId, name, parameter);
+	std::wstring strSetting = getStringSetting(type, intNodeId, name, parameter);
 	if (strSetting.length()) {
-		intReturn = (int)strSetting[0];
+		intReturn = (int)strSetting[0]; //TODO: do real conversion instead
 	}
 
 	return intReturn;
 }
 
-int Settings::setIntSetting(int intDeviceId, const std::wstring &name, int value, bool parameter) {
+int Settings::setIntSetting(Node type, int intNodeId, const std::wstring &name, int value, bool parameter) {
 	int intReturn = TELLSTICK_ERROR_UNKNOWN;
 	HKEY hk;
 
-	std::wstring strCompleteRegPath =  d->strRegPathDevice;
-	strCompleteRegPath.append(TelldusCore::intToWstring(intDeviceId));
+	std::wstring strCompleteRegPath =  d->getNodePath(type);
+	strCompleteRegPath.append(TelldusCore::intToWstring(intNodeId));
 	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_WRITE, &hk);
 	if (lnExists == ERROR_SUCCESS) {
 		DWORD dwVal = value;

@@ -10,13 +10,14 @@ public:
 	TelldusCore::EventRef event, deviceUpdateEvent;
 	bool done;
 	DeviceManager *deviceManager;
+	ControllerManager *controllerManager;
 };
 
 ClientCommunicationHandler::ClientCommunicationHandler(){
 
 }
 
-ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clientSocket, TelldusCore::EventRef event, DeviceManager *deviceManager, TelldusCore::EventRef deviceUpdateEvent)
+ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clientSocket, TelldusCore::EventRef event, DeviceManager *deviceManager, TelldusCore::EventRef deviceUpdateEvent, ControllerManager *controllerManager)
 	:Thread()
 {
 	d = new PrivateData;
@@ -25,7 +26,7 @@ ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clie
 	d->done = false;
 	d->deviceManager = deviceManager;
 	d->deviceUpdateEvent = deviceUpdateEvent;
-
+	d->controllerManager = controllerManager;
 }
 
 ClientCommunicationHandler::~ClientCommunicationHandler(void)
@@ -230,8 +231,25 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int dataType = TelldusCore::Message::takeInt(&msg);
 		(*wstringReturn) = d->deviceManager->getSensorValue(protocol, model, id, dataType);
 
-	}
-	else{
+	} else if (function == L"tdController") {
+		(*wstringReturn) = d->controllerManager->getControllers();
+
+	} else if (function == L"tdControllerValue") {
+		int id = TelldusCore::Message::takeInt(&msg);
+		std::wstring name = TelldusCore::Message::takeString(&msg);
+		(*wstringReturn) = d->controllerManager->getControllerValue(id, name);
+
+	} else if (function == L"tdSetControllerValue") {
+		int id = TelldusCore::Message::takeInt(&msg);
+		std::wstring name = TelldusCore::Message::takeString(&msg);
+		std::wstring value = TelldusCore::Message::takeString(&msg);
+		(*intReturn) = d->controllerManager->setControllerValue(id, name, value);
+
+	} else if (function == L"tdRemoveController") {
+		int controllerId = TelldusCore::Message::takeInt(&msg);
+		(*intReturn) = d->controllerManager->removeController(controllerId);
+
+	} else{
 		(*intReturn) = TELLSTICK_ERROR_UNKNOWN;
 	}
 }

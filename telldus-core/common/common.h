@@ -5,6 +5,9 @@
 //
 //
 
+#ifndef COMMON_H
+#define COMMON_H
+
 #ifdef _WINDOWS
 #include <windows.h>
 #include <ole2.h>
@@ -75,3 +78,5 @@ inline char *wrapStdString( const std::string &string) {
 inline char *wrapStdWstring( const std::wstring &wstring) {
 	return wrapStdString(TelldusCore::wideToString(wstring));
 }
+
+#endif //COMMON_H

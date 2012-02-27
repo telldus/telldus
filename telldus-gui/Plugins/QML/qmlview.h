@@ -17,6 +17,7 @@ signals:
 public slots:
 	void load(const QString &url);
 	void setProperty( const QString & name, const QScriptValue &value );
+	void sizeRootObjectToView(bool enable);
 
 private:
 	class PrivateData;

@@ -16,39 +16,6 @@
 #include "EventHandler.h"
 
 namespace TelldusCore {
-	class DeviceChangeEventCallbackData : public EventDataBase {
-	public:
-		CallbackStruct<TDDeviceChangeEvent> *data;
-		int deviceId;
-		int eventDeviceChanges;
-		int eventChangeType;
-	};
-
-	class DeviceEventCallbackData : public EventDataBase {
-	public:
-		CallbackStruct<TDDeviceEvent> *data;
-		int deviceId;
-		int deviceState;
-		std::string deviceStateValue;
-	};
-
-	class RawDeviceEventCallbackData : public EventDataBase {
-	public:
-		CallbackStruct<TDRawDeviceEvent> *data;
-		int controllerId;
-		std::string command;
-	};
-
-	class SensorEventCallbackData : public EventDataBase {
-	public:
-		CallbackStruct<TDSensorEvent> *data;
-		std::string protocol;
-		std::string model;
-		int id;
-		int dataType;
-		std::string value;
-		int timestamp;
-	};
 
 	class CallbackMainDispatcher  : public Thread
 	{
@@ -57,7 +24,10 @@ namespace TelldusCore {
 		~CallbackMainDispatcher(void);
 
 		EventRef retrieveCallbackEvent();
-		
+
+		int registerCallback( TelldusCore::CallbackStruct::CallbackType type, void *eventFunction, void *context );
+		bool unregisterCallback( int callbackId );
+
 	protected:
 		void run();
 

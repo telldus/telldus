@@ -29,6 +29,7 @@ typedef void (WINAPI *TDDeviceEvent)(int deviceId, int method, const char *data,
 typedef void (WINAPI *TDDeviceChangeEvent)(int deviceId, int changeEvent, int changeType, int callbackId, void *context);
 typedef void (WINAPI *TDRawDeviceEvent)(const char *data, int controllerId, int callbackId, void *context);
 typedef void (WINAPI *TDSensorEvent)(const char *protocol, const char *model, int id, int dataType, const char *value, int timestamp, int callbackId, void *context);
+typedef void (WINAPI *TDControllerEvent)(int controllerId, int changeEvent, int changeType, const char *newValue, int callbackId, void *context);
 
 #ifndef __cplusplus
 	#define bool char
@@ -42,6 +43,7 @@ extern "C" {
 	TELLSTICK_API int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context);
 	TELLSTICK_API int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context );
 	TELLSTICK_API int WINAPI tdRegisterSensorEvent( TDSensorEvent eventFunction, void *context );
+	TELLSTICK_API int WINAPI tdRegisterControllerEvent( TDControllerEvent eventFunction, void *context);
 	TELLSTICK_API int WINAPI tdUnregisterCallback( int callbackId );
 	TELLSTICK_API void WINAPI tdClose(void);
 	TELLSTICK_API void WINAPI tdReleaseString(char *string);
@@ -86,6 +88,11 @@ extern "C" {
 	TELLSTICK_API int WINAPI tdSensor(char *protocol, int protocolLen, char *model, int modelLen, int *id, int *dataTypes);
 	TELLSTICK_API int WINAPI tdSensorValue(const char *protocol, const char *model, int id, int dataType, char *value, int len, int *timestamp);
 
+	TELLSTICK_API int WINAPI tdController(int *controllerId, int *controllerType, char *name, int nameLen, int *available);
+	TELLSTICK_API int WINAPI tdControllerValue(int controllerId, const char *name, char *value, int valueLen);
+	TELLSTICK_API int WINAPI tdSetControllerValue(int controllerId, const char *name, const char *value);
+	TELLSTICK_API int WINAPI tdRemoveController(int controllerId);
+
 #ifdef __cplusplus
 }
 #endif
@@ -125,6 +132,11 @@ extern "C" {
 #define TELLSTICK_TYPE_GROUP	2
 #define TELLSTICK_TYPE_SCENE	3
 
+//Controller typedef
+#define TELLSTICK_CONTROLLER_TELLSTICK      1
+#define TELLSTICK_CONTROLLER_TELLSTICK_DUO  2
+#define TELLSTICK_CONTROLLER_TELLSTICK_NET  3
+
 //Device changes
 #define TELLSTICK_DEVICE_ADDED			1
 #define TELLSTICK_DEVICE_CHANGED		2
@@ -136,5 +148,7 @@ extern "C" {
 #define TELLSTICK_CHANGE_PROTOCOL		2
 #define TELLSTICK_CHANGE_MODEL			3
 #define TELLSTICK_CHANGE_METHOD			4
+#define TELLSTICK_CHANGE_AVAILABLE		5
+#define TELLSTICK_CHANGE_FIRMWARE		6
 
 #endif
