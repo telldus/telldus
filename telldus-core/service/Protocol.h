@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROTOCOL_H
-#define PROTOCOL_H
+#ifndef TELLDUS_CORE_SERVICE_PROTOCOL_H_
+#define TELLDUS_CORE_SERVICE_PROTOCOL_H_
 
 #include <string>
 #include <list>
@@ -44,4 +44,4 @@ private:
 	PrivateData *d;
 };
 
-#endif //PROTOCOL_H
+#endif  // TELLDUS_CORE_SERVICE_PROTOCOL_H_

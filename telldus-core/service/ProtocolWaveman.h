@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROTOCOLWAVEMAN_H
-#define PROTOCOLWAVEMAN_H
+#ifndef TELLDUS_CORE_SERVICE_PROTOCOLWAVEMAN_H_
+#define TELLDUS_CORE_SERVICE_PROTOCOLWAVEMAN_H_
 
 #include "service/ProtocolNexa.h"
 
@@ -22,4 +22,4 @@ private:
 	static int lastArctecCodeSwitchWasTurnOff;
 };
 
-#endif //PROTOCOLWAVEMAN_H
+#endif  // TELLDUS_CORE_SERVICE_PROTOCOLWAVEMAN_H_

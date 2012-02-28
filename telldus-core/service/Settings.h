@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef SETTINGS_H
-#define SETTINGS_H
+#ifndef TELLDUS_CORE_SERVICE_SETTINGS_H_
+#define TELLDUS_CORE_SERVICE_SETTINGS_H_
 
 #include <string>
 #include "common/Mutex.h"
@@ -57,4 +57,4 @@ private:
 	static TelldusCore::Mutex mutex;
 };
 
-#endif
+#endif  // TELLDUS_CORE_SERVICE_SETTINGS_H_

@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROTOCOLEVERFLOURISH_H
-#define PROTOCOLEVERFLOURISH_H
+#ifndef TELLDUS_CORE_SERVICE_PROTOCOLEVERFLOURISH_H_
+#define TELLDUS_CORE_SERVICE_PROTOCOLEVERFLOURISH_H_
 
 #include "service/Protocol.h"
 #include "service/ControllerMessage.h"
@@ -21,4 +21,4 @@ private:
 	static unsigned int calculateChecksum(unsigned int x);
 };
 
-#endif //PROTOCOLEVERFLOURISH_H
+#endif  // TELLDUS_CORE_SERVICE_PROTOCOLEVERFLOURISH_H_

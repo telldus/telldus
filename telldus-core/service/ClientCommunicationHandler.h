@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef CLIENTCOMMUNICATIONHANDLER_H
-#define CLIENTCOMMUNICATIONHANDLER_H
+#ifndef TELLDUS_CORE_SERVICE_CLIENTCOMMUNICATIONHANDLER_H_
+#define TELLDUS_CORE_SERVICE_CLIENTCOMMUNICATIONHANDLER_H_
 
 #include <string>
 #include "common/Thread.h"
@@ -39,4 +39,4 @@ private:
 	void sendDeviceSignal(int deviceId, int eventDeviceChanges, int eventChangeType);
 };
 
-#endif //CLIENTCOMMUNICATIONHANDLER_H
+#endif  // TELLDUS_CORE_SERVICE_CLIENTCOMMUNICATIONHANDLER_H_

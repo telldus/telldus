@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef MESSAGE_H
-#define MESSAGE_H
+#ifndef TELLDUS_CORE_COMMON_MESSAGE_H_
+#define TELLDUS_CORE_COMMON_MESSAGE_H_
 
 #include <string>
 
@@ -22,16 +22,16 @@ namespace TelldusCore {
 		//void addSpecialArgument(const char *);
 		void addArgument(int);
 		void addArgument(const char *);
-				
+
 		static bool nextIsInt(const std::wstring &);
 		static bool nextIsString(const std::wstring &);
 
 		static std::wstring takeString(std::wstring *);
 		static int takeInt(std::wstring *);
-		
+
 	private:
-		
+
 	};
 }
 
-#endif //MESSAGE_H
+#endif  // TELLDUS_CORE_COMMON_MESSAGE_H_

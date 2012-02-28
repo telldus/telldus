@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef CONNECTIONLISTENER_H
-#define CONNECTIONLISTENER_H
+#ifndef TELLDUS_CORE_SERVICE_CONNECTIONLISTENER_H_
+#define TELLDUS_CORE_SERVICE_CONNECTIONLISTENER_H_
 
 #include <string>
 #include "common/Thread.h"
@@ -34,4 +34,4 @@ private:
 	PrivateData *d;
 };
 
-#endif //CONNECTIONLISTENER_H
+#endif  // TELLDUS_CORE_SERVICE_CONNECTIONLISTENER_H_

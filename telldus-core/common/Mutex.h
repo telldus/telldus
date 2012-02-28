@@ -9,8 +9,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef MUTEX_H
-#define MUTEX_H
+#ifndef TELLDUS_CORE_COMMON_MUTEX_H_
+#define TELLDUS_CORE_COMMON_MUTEX_H_
 
 namespace TelldusCore {
 	class Mutex {
@@ -42,4 +42,4 @@ namespace TelldusCore {
 	};
 }
 
-#endif //MUTEX_H
+#endif  // TELLDUS_CORE_COMMON_MUTEX_H_

@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROTOCOLMANDOLYN_H
-#define PROTOCOLMANDOLYN_H
+#ifndef TELLDUS_CORE_SERVICE_PROTOCOLMANDOLYN_H_
+#define TELLDUS_CORE_SERVICE_PROTOCOLMANDOLYN_H_
 
 #include "service/Protocol.h"
 #include "service/ControllerMessage.h"
@@ -16,4 +16,4 @@ public:
 	static std::string decodeData(ControllerMessage &dataMsg);
 };
 
-#endif //PROTOCOLMANDOLYN_H
+#endif  // TELLDUS_CORE_SERVICE_PROTOCOLMANDOLYN_H_

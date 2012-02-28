@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef SENSOR_H
-#define SENSOR_H
+#ifndef TELLDUS_CORE_SERVICE_SENSOR_H_
+#define TELLDUS_CORE_SERVICE_SENSOR_H_
 
 #include "common/Mutex.h"
 #include <string>
@@ -31,4 +31,4 @@ private:
 	PrivateData *d;
 };
 
-#endif // SENSOR_H
+#endif  // TELLDUS_CORE_SERVICE_SENSOR_H_

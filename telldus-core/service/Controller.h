@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef CONTROLLER_H
-#define CONTROLLER_H
+#ifndef TELLDUS_CORE_SERVICE_CONTROLLER_H_
+#define TELLDUS_CORE_SERVICE_CONTROLLER_H_
 
 #include "common/Event.h"
 #include <string>
@@ -35,4 +35,4 @@ private:
 	PrivateData *d;
 };
 
-#endif //CONTROLLER_H
+#endif  // TELLDUS_CORE_SERVICE_CONTROLLER_H_

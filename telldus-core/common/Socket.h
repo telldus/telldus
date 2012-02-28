@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef SOCKET_H
-#define SOCKET_H
+#ifndef TELLDUS_CORE_COMMON_SOCKET_H_
+#define TELLDUS_CORE_COMMON_SOCKET_H_
 
 #include <string>
 
@@ -30,10 +30,10 @@ namespace TelldusCore {
 		std::wstring read(int timeout);
 		void stopReadWait();
 		void write(const std::wstring &msg);
-		
+
 	private:
 		class PrivateData;
 		PrivateData *d;
 	};
 }
-#endif //SOCKET_H
+#endif  // TELLDUS_CORE_COMMON_SOCKET_H_

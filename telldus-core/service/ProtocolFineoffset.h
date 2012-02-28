@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROTOCOLFINEOFFSET_H
-#define PROTOCOLFINEOFFSET_H
+#ifndef TELLDUS_CORE_SERVICE_PROTOCOLFINEOFFSET_H_
+#define TELLDUS_CORE_SERVICE_PROTOCOLFINEOFFSET_H_
 
 #include "service/Protocol.h"
 #include "service/ControllerMessage.h"
@@ -16,4 +16,4 @@ public:
 	static std::string decodeData(ControllerMessage &dataMsg);
 };
 
-#endif //PROTOCOLFINEOFFSET_H
+#endif  // TELLDUS_CORE_SERVICE_PROTOCOLFINEOFFSET_H_

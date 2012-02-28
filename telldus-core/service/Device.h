@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef DEVICE_H
-#define DEVICE_H
+#ifndef TELLDUS_CORE_SERVICE_DEVICE_H_
+#define TELLDUS_CORE_SERVICE_DEVICE_H_
 
 #include "service/Controller.h"
 #include "common/Mutex.h"
@@ -48,4 +48,4 @@ private:
 	PrivateData *d;
 };
 
-#endif //DEVICE_H
+#endif  // TELLDUS_CORE_SERVICE_DEVICE_H_

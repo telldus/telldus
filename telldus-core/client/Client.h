@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef CLIENT_H
-#define CLIENT_H
+#ifndef TELLDUS_CORE_CLIENT_CLIENT_H_
+#define TELLDUS_CORE_CLIENT_CLIENT_H_
 
 #include "client/telldus-core.h"
 #include "client/CallbackDispatcher.h"
@@ -45,4 +45,4 @@ namespace TelldusCore {
 	};
 }
 
-#endif //CLIENT_H
+#endif  // TELLDUS_CORE_CLIENT_CLIENT_H_

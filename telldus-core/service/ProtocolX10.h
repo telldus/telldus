@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROTOCOLX10_H
-#define PROTOCOLX10_H
+#ifndef TELLDUS_CORE_SERVICE_PROTOCOLX10_H_
+#define TELLDUS_CORE_SERVICE_PROTOCOLX10_H_
 
 #include "service/Protocol.h"
 #include "service/ControllerMessage.h"
@@ -19,4 +19,4 @@ public:
 	static std::string decodeData(ControllerMessage& dataMsg);
 };
 
-#endif //PROTOCOLX10_H
+#endif  // TELLDUS_CORE_SERVICE_PROTOCOLX10_H_

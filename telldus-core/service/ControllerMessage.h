@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef CONTROLLERMESSAGE_H
-#define CONTROLLERMESSAGE_H
+#ifndef TELLDUS_CORE_SERVICE_CONTROLLERMESSAGE_H_
+#define TELLDUS_CORE_SERVICE_CONTROLLERMESSAGE_H_
 
 #include <string>
 
@@ -28,4 +28,4 @@ private:
 	PrivateData *d;
 };
 
-#endif //CONTROLLERMESSAGE_H
+#endif  // TELLDUS_CORE_SERVICE_CONTROLLERMESSAGE_H_

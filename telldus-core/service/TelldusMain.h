@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef TELLDUSMAIN_H
-#define TELLDUSMAIN_H
+#ifndef TELLDUS_CORE_SERVICE_TELLDUSMAIN_H_
+#define TELLDUS_CORE_SERVICE_TELLDUSMAIN_H_
 
 class TelldusMain
 {
@@ -26,4 +26,4 @@ private:
 	PrivateData *d;
 };
 
-#endif //TELLDUSMAIN_H
+#endif  // TELLDUS_CORE_SERVICE_TELLDUSMAIN_H_

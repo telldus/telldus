@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef LOG_H
-#define LOG_H
+#ifndef TELLDUS_CORE_SERVICE_LOG_H_
+#define TELLDUS_CORE_SERVICE_LOG_H_
 
 #include <stdio.h>
 #include <stdarg.h>
@@ -37,4 +37,4 @@ private:
 };
 
 
-#endif //LOG_H
+#endif  // TELLDUS_CORE_SERVICE_LOG_H_

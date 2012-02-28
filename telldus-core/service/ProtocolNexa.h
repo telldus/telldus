@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROTOCOLNEXA_H
-#define PROTOCOLNEXA_H
+#ifndef TELLDUS_CORE_SERVICE_PROTOCOLNEXA_H_
+#define TELLDUS_CORE_SERVICE_PROTOCOLNEXA_H_
 
 #include "service/ControllerMessage.h"
 #include "service/Device.h"
@@ -31,4 +31,4 @@ private:
 	static std::string decodeDataSelfLearning(long allData);
 };
 
-#endif //PROTOCOLNEXA_H
+#endif  // TELLDUS_CORE_SERVICE_PROTOCOLNEXA_H_

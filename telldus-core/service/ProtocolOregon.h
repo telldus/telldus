@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROTOCOLOREGON_H
-#define PROTOCOLOREGON_H
+#ifndef TELLDUS_CORE_SERVICE_PROTOCOLOREGON_H_
+#define TELLDUS_CORE_SERVICE_PROTOCOLOREGON_H_
 
 #include "service/Protocol.h"
 #include "service/ControllerMessage.h"
@@ -20,4 +20,4 @@ protected:
 	static std::string decode1A2D(const std::string &data);
 };
 
-#endif //PROTOCOLOREGON_H
+#endif  // TELLDUS_CORE_SERVICE_PROTOCOLOREGON_H_

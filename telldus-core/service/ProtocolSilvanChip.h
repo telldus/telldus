@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROTOCOLSILVANCHIP_H
-#define PROTOCOLSILVANCHIP_H
+#ifndef TELLDUS_CORE_SERVICE_PROTOCOLSILVANCHIP_H_
+#define TELLDUS_CORE_SERVICE_PROTOCOLSILVANCHIP_H_
 
 #include "service/Protocol.h"
 
@@ -19,4 +19,4 @@ protected:
 	virtual std::string getString(const std::string &preamble, const std::string &one, const std::string &zero, int button);
 };
 
-#endif //PROTOCOLSILVANCHIP_H
+#endif  // TELLDUS_CORE_SERVICE_PROTOCOLSILVANCHIP_H_

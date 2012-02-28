@@ -9,8 +9,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef THREAD_H
-#define THREAD_H
+#ifndef TELLDUS_CORE_COMMON_THREAD_H_
+#define TELLDUS_CORE_COMMON_THREAD_H_
 
 #include <string>
 #include "common/Mutex.h"
@@ -34,4 +34,4 @@ namespace TelldusCore {
 	};
 }
 
-#endif
+#endif  // TELLDUS_CORE_COMMON_THREAD_H_

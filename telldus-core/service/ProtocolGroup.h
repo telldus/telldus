@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROTOCOLGROUP_H
-#define PROTOCOLGROUP_H
+#ifndef TELLDUS_CORE_SERVICE_PROTOCOLGROUP_H_
+#define TELLDUS_CORE_SERVICE_PROTOCOLGROUP_H_
 
 #include "service/Protocol.h"
 
@@ -16,7 +16,7 @@ public:
 
 };
 
-#endif //PROTOCOLGROUP_H
+#endif  // TELLDUS_CORE_SERVICE_PROTOCOLGROUP_H_
 
 
 

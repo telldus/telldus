@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef EVENT_H
-#define EVENT_H
+#ifndef TELLDUS_CORE_COMMON_EVENT_H_
+#define TELLDUS_CORE_COMMON_EVENT_H_
 
 #include "Thread.h"
 
@@ -77,4 +77,4 @@ namespace TelldusCore {
 	typedef std::tr1::shared_ptr<Event> EventRef;
 }
 
-#endif //EVENT_H
+#endif  // TELLDUS_CORE_COMMON_EVENT_H_

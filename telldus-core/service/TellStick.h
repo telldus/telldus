@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef TELLSTICK_H
-#define TELLSTICK_H
+#ifndef TELLDUS_CORE_SERVICE_TELLSTICK_H_
+#define TELLDUS_CORE_SERVICE_TELLSTICK_H_
 
 #include <list>
 #include "service/Controller.h"
@@ -50,4 +50,4 @@ private:
 	PrivateData *d;
 };
 
-#endif
+#endif  // TELLDUS_CORE_SERVICE_TELLSTICK_H_

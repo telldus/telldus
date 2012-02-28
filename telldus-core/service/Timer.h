@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef TIMER_H
-#define TIMER_H
+#ifndef TELLDUS_CORE_SERVICE_TIMER_H_
+#define TELLDUS_CORE_SERVICE_TIMER_H_
 
 #include "common/Event.h"
 #include "common/Thread.h"
@@ -27,4 +27,4 @@ private:
 };
 
 
-#endif //TIMER_H
+#endif  // TELLDUS_CORE_SERVICE_TIMER_H_

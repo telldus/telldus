@@ -7,8 +7,8 @@
  *
  */
 
-#ifndef CALLBACKDISPATCHER_H
-#define CALLBACKDISPATCHER_H
+#ifndef TELLDUS_CORE_CLIENT_CALLBACKDISPATCHER_H_
+#define TELLDUS_CORE_CLIENT_CALLBACKDISPATCHER_H_
 
 #include "common/common.h"
 #include "common/Event.h"
@@ -99,4 +99,4 @@ namespace TelldusCore {
 	};
 }
 
-#endif //CALLBACKDISPATCHER_H
+#endif  // TELLDUS_CORE_CLIENT_CALLBACKDISPATCHER_H_

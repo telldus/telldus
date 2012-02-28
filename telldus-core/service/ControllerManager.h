@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef CONTROLLERMANAGER_H
-#define CONTROLLERMANAGER_H
+#ifndef TELLDUS_CORE_SERVICE_CONTROLLERMANAGER_H_
+#define TELLDUS_CORE_SERVICE_CONTROLLERMANAGER_H_
 
 #include "common/Event.h"
 class Controller;
@@ -36,4 +36,4 @@ private:
 	PrivateData *d;
 };
 
-#endif //CONTROLLERMANAGER_H
+#endif  // TELLDUS_CORE_SERVICE_CONTROLLERMANAGER_H_

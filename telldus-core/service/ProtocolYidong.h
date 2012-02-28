@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROTOCOLYIDONG_H
-#define PROTOCOLYIDONG_H
+#ifndef TELLDUS_CORE_SERVICE_PROTOCOLYIDONG_H_
+#define TELLDUS_CORE_SERVICE_PROTOCOLYIDONG_H_
 
 #include "service/ProtocolSartano.h"
 
@@ -15,4 +15,4 @@ public:
 	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller);
 };
 
-#endif //PROTOCOLYIDONG_H
+#endif  // TELLDUS_CORE_SERVICE_PROTOCOLYIDONG_H_

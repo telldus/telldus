@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROTOCOLHASTA_H
-#define PROTOCOLHASTA_H
+#ifndef TELLDUS_CORE_SERVICE_PROTOCOLHASTA_H_
+#define TELLDUS_CORE_SERVICE_PROTOCOLHASTA_H_
 
 #include "service/Protocol.h"
 
@@ -19,4 +19,4 @@ protected:
 	static std::string convertByte(unsigned char byte);
 };
 
-#endif //PROTOCOLHASTA_H
+#endif  // TELLDUS_CORE_SERVICE_PROTOCOLHASTA_H_

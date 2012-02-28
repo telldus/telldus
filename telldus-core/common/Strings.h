@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef STRING_H
-#define STRING_H
+#ifndef TELLDUS_CORE_COMMON_STRINGS_H_
+#define TELLDUS_CORE_COMMON_STRINGS_H_
 
 #include <string>
 #include <stdarg.h>
@@ -36,4 +36,4 @@ namespace TelldusCore {
 	std::string sformatf(const char *format, va_list ap);
 }
 
-#endif //STRING_H
+#endif  // TELLDUS_CORE_COMMON_STRINGS_H_

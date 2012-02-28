@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef CONTROLLERLISTENER_H
-#define CONTROLLERLISTENER_H
+#ifndef TELLDUS_CORE_SERVICE_CONTROLLERLISTENER_H_
+#define TELLDUS_CORE_SERVICE_CONTROLLERLISTENER_H_
 
 #include "common/Thread.h"
 #include "common/Event.h"
@@ -29,4 +29,4 @@ private:
 	PrivateData *d;
 };
 
-#endif //CONTROLLERLISTENER_H
+#endif  // TELLDUS_CORE_SERVICE_CONTROLLERLISTENER_H_

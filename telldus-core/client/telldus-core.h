@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef TELLDUSCORE_H
-#define TELLDUSCORE_H
+#ifndef TELLDUS_CORE_CLIENT_TELLDUS_CORE_H_
+#define TELLDUS_CORE_CLIENT_TELLDUS_CORE_H_
 
 // The following ifdef block is the standard way of creating macros
 // which make exporting from a DLL simpler.  All files within this DLL
@@ -158,4 +158,4 @@ extern "C" {
 #define TELLSTICK_CHANGE_AVAILABLE		5
 #define TELLSTICK_CHANGE_FIRMWARE		6
 
-#endif
+#endif  // TELLDUS_CORE_CLIENT_TELLDUS_CORE_H_

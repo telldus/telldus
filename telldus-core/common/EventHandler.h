@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef EVENTHANDLER_H
-#define EVENTHANDLER_H
+#ifndef TELLDUS_CORE_COMMON_EVENTHANDLER_H_
+#define TELLDUS_CORE_COMMON_EVENTHANDLER_H_
 
 #include "common/Event.h"
 
@@ -32,4 +32,4 @@ namespace TelldusCore {
 	};
 }
 
-#endif //EVENTHANDLER_H
+#endif  // TELLDUS_CORE_COMMON_EVENTHANDLER_H_

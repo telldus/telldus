@@ -5,8 +5,8 @@
 //
 //
 
-#ifndef COMMON_H
-#define COMMON_H
+#ifndef TELLDUS_CORE_COMMON_COMMON_H_
+#define TELLDUS_CORE_COMMON_COMMON_H_
 
 #ifdef _WINDOWS
 #include <windows.h>
@@ -80,4 +80,4 @@ inline char *wrapStdWstring( const std::wstring &wstring) {
 	return wrapStdString(TelldusCore::wideToString(wstring));
 }
 
-#endif //COMMON_H
+#endif  // TELLDUS_CORE_COMMON_COMMON_H_

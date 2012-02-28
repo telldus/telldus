@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef EVENTUPDATEMANAGER_H
-#define EVENTUPDATEMANAGER_H
+#ifndef TELLDUS_CORE_SERVICE_EVENTUPDATEMANAGER_H_
+#define TELLDUS_CORE_SERVICE_EVENTUPDATEMANAGER_H_
 
 #include "common/Thread.h"
 #include "common/Event.h"
@@ -47,4 +47,4 @@ private:
 	void sendMessageToClients(EventUpdateData *data);
 };
 
-#endif //EVENTUPDATEMANAGER_H
+#endif  // TELLDUS_CORE_SERVICE_EVENTUPDATEMANAGER_H_

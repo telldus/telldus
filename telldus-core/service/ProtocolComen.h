@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROTOCOLCOMEN_H
-#define PROTOCOLCOMEN_H
+#ifndef TELLDUS_CORE_SERVICE_PROTOCOLCOMEN_H_
+#define TELLDUS_CORE_SERVICE_PROTOCOLCOMEN_H_
 
 #include "service/ProtocolNexa.h"
 #include <string>
@@ -16,4 +16,4 @@ public:
 	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller);
 };
 
-#endif //PROTOCOLCOMEN_H
+#endif  // TELLDUS_CORE_SERVICE_PROTOCOLCOMEN_H_

@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef DEVICEMANAGER_H
-#define DEVICEMANAGER_H
+#ifndef TELLDUS_CORE_SERVICE_DEVICEMANAGER_H_
+#define TELLDUS_CORE_SERVICE_DEVICEMANAGER_H_
 
 #include "service/Device.h"
 #include "service/ControllerManager.h"
@@ -62,4 +62,4 @@ private:
 	PrivateData *d;
 };
 
-#endif //DEVICEMANAGER_H
+#endif  // TELLDUS_CORE_SERVICE_DEVICEMANAGER_H_

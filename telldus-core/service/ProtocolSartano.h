@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROTOCOLSARTANO_H
-#define PROTOCOLSARTANO_H
+#ifndef TELLDUS_CORE_SERVICE_PROTOCOLSARTANO_H_
+#define TELLDUS_CORE_SERVICE_PROTOCOLSARTANO_H_
 
 #include "service/Protocol.h"
 #include "service/ControllerMessage.h"
@@ -21,4 +21,4 @@ protected:
 	std::string getStringForCode(const std::wstring &code, int method);
 };
 
-#endif //PROTOCOLSARTANO_H
+#endif  // TELLDUS_CORE_SERVICE_PROTOCOLSARTANO_H_

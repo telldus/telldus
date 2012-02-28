@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROTOCOLBRATECK_H
-#define PROTOCOLBRATECK_H
+#ifndef TELLDUS_CORE_SERVICE_PROTOCOLBRATECK_H_
+#define TELLDUS_CORE_SERVICE_PROTOCOLBRATECK_H_
 
 #include "service/Protocol.h"
 
@@ -16,4 +16,4 @@ public:
 	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller);
 };
 
-#endif //PROTOCOLBRATECK_H
+#endif  // TELLDUS_CORE_SERVICE_PROTOCOLBRATECK_H_

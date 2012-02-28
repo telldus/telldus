@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef PROTOCOLRISINGSUN_H
-#define PROTOCOLRISINGSUN_H
+#ifndef TELLDUS_CORE_SERVICE_PROTOCOLRISINGSUN_H_
+#define TELLDUS_CORE_SERVICE_PROTOCOLRISINGSUN_H_
 
 #include "service/Protocol.h"
 
@@ -21,4 +21,4 @@ protected:
 	static std::string getCodeSwitchTuple(int code);
 };
 
-#endif //PROTOCOLRISINGSUN_H
+#endif  // TELLDUS_CORE_SERVICE_PROTOCOLRISINGSUN_H_
