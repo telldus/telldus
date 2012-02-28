@@ -16,8 +16,7 @@
 
 class Sensor;
 
-class DeviceManager
-{
+class DeviceManager {
 public:
 	DeviceManager(ControllerManager *controllerManager, TelldusCore::EventRef deviceUpdateEvent);
 	~DeviceManager(void);

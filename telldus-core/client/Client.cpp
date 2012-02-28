@@ -29,8 +29,7 @@ public:
 Client *Client::instance = 0;
 
 Client::Client()
-	: Thread()
-{
+	: Thread() {
 	d = new PrivateData;
 	d->running = true;
 	d->sensorCached = false;
@@ -83,16 +82,15 @@ int Client::registerEvent( CallbackStruct::CallbackType type, void *eventFunctio
 	return d->callbackMainDispatcher.registerCallback(type, eventFunction, context );
 }
 
-void Client::run(){
-	//listen here
+void Client::run() {
+	// listen here
 	d->eventSocket.connect(L"TelldusEvents");
 
-	while(d->running){
-
-		if(!d->eventSocket.isConnected()){
-			d->eventSocket.connect(L"TelldusEvents");	//try to reconnect to service
-			if(!d->eventSocket.isConnected()){
-				//reconnect didn't succeed, wait a while and try again
+	while(d->running) {
+		if(!d->eventSocket.isConnected()) {
+			d->eventSocket.connect(L"TelldusEvents");  // try to reconnect to service
+			if(!d->eventSocket.isConnected()) {
+				// reconnect didn't succeed, wait a while and try again
 				msleep(2000);
 				continue;
 			}
@@ -100,30 +98,30 @@ void Client::run(){
 
 		std::wstring clientMessage = d->eventSocket.read(1000);	//testing 5 second timeout
 
-		while(clientMessage != L""){
-			//a message arrived
+		while(clientMessage != L"") {
+			// a message arrived
 			std::wstring type = Message::takeString(&clientMessage);
-			if(type == L"TDDeviceChangeEvent"){
+			if(type == L"TDDeviceChangeEvent") {
 				DeviceChangeEventCallbackData *data = new DeviceChangeEventCallbackData();
 				data->deviceId = Message::takeInt(&clientMessage);
 				data->changeEvent = Message::takeInt(&clientMessage);
 				data->changeType = Message::takeInt(&clientMessage);
 				d->callbackMainDispatcher.retrieveCallbackEvent()->signal(data);
 
-			} else if(type == L"TDDeviceEvent"){
+			} else if(type == L"TDDeviceEvent") {
 				DeviceEventCallbackData *data = new DeviceEventCallbackData();
 				data->deviceId = Message::takeInt(&clientMessage);
 				data->deviceState = Message::takeInt(&clientMessage);
 				data->deviceStateValue = TelldusCore::wideToString(Message::takeString(&clientMessage));
 				d->callbackMainDispatcher.retrieveCallbackEvent()->signal(data);
 
-			} else if(type == L"TDRawDeviceEvent"){
+			} else if(type == L"TDRawDeviceEvent") {
 				RawDeviceEventCallbackData *data = new RawDeviceEventCallbackData();
 				data->data = TelldusCore::wideToString(Message::takeString(&clientMessage));
 				data->controllerId = Message::takeInt(&clientMessage);
 				d->callbackMainDispatcher.retrieveCallbackEvent()->signal(data);
 
-			} else if(type == L"TDSensorEvent"){
+			} else if(type == L"TDSensorEvent") {
 				SensorEventCallbackData *data = new SensorEventCallbackData();
 				data->protocol = TelldusCore::wideToString(Message::takeString(&clientMessage));
 				data->model = TelldusCore::wideToString(Message::takeString(&clientMessage));
@@ -152,9 +150,9 @@ std::wstring Client::sendToService(const Message &msg) {
 
 	int tries = 0;
 	std::wstring readData;
-	while(tries < 20){
+	while(tries < 20) {
 		tries++;
-		if(tries == 20){
+		if(tries == 20) {
 			TelldusCore::Message msg;
 			msg.addArgument(TELLSTICK_ERROR_CONNECTING_SERVICE);
 			return msg;
@@ -170,8 +168,8 @@ std::wstring Client::sendToService(const Message &msg) {
 			msleep(500);
 			continue; //retry
 		}
-		readData = s.read(8000);  //TODO changed to 10000 from 5000, how much does this do...?
-		if(readData == L""){
+		readData = s.read(8000);  // TODO changed to 10000 from 5000, how much does this do...?
+		if(readData == L"") {
 			msleep(500);
 			continue; //TODO can we be really sure it SHOULD be anything?
 			//TODO perhaps break here instead?
@@ -187,7 +185,7 @@ std::wstring Client::sendToService(const Message &msg) {
 	return readData;
 }
 
-void Client::stopThread(){
+void Client::stopThread() {
 	d->running = false;
 	d->eventSocket.stopReadWait();
 }

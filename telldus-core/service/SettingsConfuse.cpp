@@ -32,8 +32,7 @@ const char* VAR_CONFIG_FILE = VAR_CONFIG_PATH "/telldus-core.conf";
 /*
 * Constructor
 */
-Settings::Settings(void)
-{
+Settings::Settings(void) {
 	TelldusCore::MutexLocker locker(&mutex);
 	d = new PrivateData;
 	readConfig(&d->cfg);
@@ -43,8 +42,7 @@ Settings::Settings(void)
 /*
 * Destructor
 */
-Settings::~Settings(void)
-{
+Settings::~Settings(void) {
 	TelldusCore::MutexLocker locker(&mutex);
 	if (d->cfg > 0) {
 		cfg_free(d->cfg);
@@ -100,7 +98,7 @@ int Settings::getNodeId(Node type, int intDeviceIndex) const {
 /*
 * Add a new node
 */
-int Settings::addNode(Node type){
+int Settings::addNode(Node type) {
 	TelldusCore::MutexLocker locker(&mutex);
 	int intNodeId = getNextNodeId(type);
 
@@ -148,7 +146,7 @@ int Settings::getNextNodeId(Node type) const {
 /*
 * Remove a device
 */
-int Settings::removeNode(Node type, int intNodeId){
+int Settings::removeNode(Node type, int intNodeId) {
 	TelldusCore::MutexLocker locker(&mutex);
 	FILE *fp = fopen(CONFIG_FILE, "w");
 	if (!fp) {
@@ -199,7 +197,7 @@ bool Settings::setDeviceState( int intDeviceId, int intDeviceState, const std::w
 			cfg_setstr(cfg_device, "stateValue", TelldusCore::wideToString(strDeviceStateValue).c_str());
 
 			FILE *fp = fopen(VAR_CONFIG_FILE, "w");
-			if(fp == 0){
+			if(fp == 0) {
 				return false;
 			}
 			cfg_print(d->var_cfg, fp);

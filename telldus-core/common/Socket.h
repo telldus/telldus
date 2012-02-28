@@ -17,8 +17,7 @@
 #endif
 
 namespace TelldusCore {
-	class Socket
-	{
+	class Socket {
 	public:
 		Socket();
 		explicit Socket(SOCKET_T hPipe);

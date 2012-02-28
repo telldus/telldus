@@ -25,8 +25,7 @@ public:
 	bool running;
 };
 
-ConnectionListener::ConnectionListener(const std::wstring &name, TelldusCore::EventRef waitEvent)
-{
+ConnectionListener::ConnectionListener(const std::wstring &name, TelldusCore::EventRef waitEvent) {
 	d = new PrivateData;
 	d->waitEvent = waitEvent;
 
@@ -43,7 +42,7 @@ ConnectionListener::~ConnectionListener(void) {
 	delete d;
 }
 
-void ConnectionListener::run(){
+void ConnectionListener::run() {
 	struct timeval tv = { 0, 0 };
 
 	//Timeout for select

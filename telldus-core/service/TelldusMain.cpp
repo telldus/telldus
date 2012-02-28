@@ -25,8 +25,7 @@ public:
 	TelldusCore::EventRef stopEvent, controllerChangeEvent;
 };
 
-TelldusMain::TelldusMain(void)
-{
+TelldusMain::TelldusMain(void) {
 	d = new PrivateData;
 	d->stopEvent = d->eventHandler.addEvent();
 	d->controllerChangeEvent = d->eventHandler.addEvent();
@@ -121,8 +120,8 @@ void TelldusMain::start(void) {
 
 		if (handlerEvent->isSignaled()) {
 			handlerEvent->popSignal();
-			for ( std::list<ClientCommunicationHandler *>::iterator it = clientCommunicationHandlerList.begin(); it != clientCommunicationHandlerList.end(); ){
-				if ((*it)->isDone()){
+			for ( std::list<ClientCommunicationHandler *>::iterator it = clientCommunicationHandlerList.begin(); it != clientCommunicationHandlerList.end(); ) {
+				if ((*it)->isDone()) {
 					delete *it;
 					it = clientCommunicationHandlerList.erase(it);
 
@@ -143,6 +142,6 @@ void TelldusMain::start(void) {
 	supervisor.stop();
 }
 
-void TelldusMain::stop(void){
+void TelldusMain::stop(void) {
 	d->stopEvent->signal();
 }

@@ -25,8 +25,7 @@ public:
 };
 
 EventUpdateManager::EventUpdateManager()
-	:Thread()
-{
+	:Thread() {
 	d = new PrivateData;
 	d->stopEvent = d->eventHandler.addEvent();
 	d->updateEvent = d->eventHandler.addEvent();
@@ -46,63 +45,60 @@ EventUpdateManager::~EventUpdateManager(void) {
 	delete d;
 }
 
-TelldusCore::EventRef EventUpdateManager::retrieveUpdateEvent(){
-
+TelldusCore::EventRef EventUpdateManager::retrieveUpdateEvent() {
 	return d->updateEvent;
 }
 
-void EventUpdateManager::run(){
-
-	while(!d->stopEvent->isSignaled()){
+void EventUpdateManager::run() {
+	while(!d->stopEvent->isSignaled()) {
 		if (!d->eventHandler.waitForAny()) {
 			continue;
 		}
 
-		if(d->clientConnectEvent->isSignaled()){
-			//new client added
+		if(d->clientConnectEvent->isSignaled()) {
+			// new client added
 			TelldusCore::EventDataRef eventData = d->clientConnectEvent->takeSignal();
 			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventData.get());
-			if(data){
+			if(data) {
 				d->clients.push_back(data->socket);
 			}
 		}
-		else if(d->updateEvent->isSignaled()){
-			//device event, signal all clients
+		else if(d->updateEvent->isSignaled()) {
+			// device event, signal all clients
 			TelldusCore::EventDataRef eventData = d->updateEvent->takeSignal();
 			EventUpdateData *data = reinterpret_cast<EventUpdateData*>(eventData.get());
-			if(data){
+			if(data) {
 				sendMessageToClients(data);
 			}
 		}
 	}
 }
 
-void EventUpdateManager::sendMessageToClients(EventUpdateData *data){
-
+void EventUpdateManager::sendMessageToClients(EventUpdateData *data) {
 	int connected = 0;
-	for(SocketList::iterator it = d->clients.begin(); it != d->clients.end();){
-		if((*it)->isConnected()){
+	for(SocketList::iterator it = d->clients.begin(); it != d->clients.end();) {
+		if((*it)->isConnected()) {
 			connected++;
 			TelldusCore::Message msg;
 
-			if(data->messageType == L"TDDeviceEvent"){
+			if(data->messageType == L"TDDeviceEvent") {
 				msg.addArgument("TDDeviceEvent");
 				msg.addArgument(data->deviceId);
 				msg.addArgument(data->eventState);
 				msg.addArgument(data->eventValue);	//string
 			}
-			else if(data->messageType == L"TDDeviceChangeEvent"){
+			else if(data->messageType == L"TDDeviceChangeEvent") {
 				msg.addArgument("TDDeviceChangeEvent");
 				msg.addArgument(data->deviceId);
 				msg.addArgument(data->eventDeviceChanges);
 				msg.addArgument(data->eventChangeType);
 			}
-			else if(data->messageType == L"TDRawDeviceEvent"){
+			else if(data->messageType == L"TDRawDeviceEvent") {
 				msg.addArgument("TDRawDeviceEvent");
 				msg.addArgument(data->eventValue);	//string
 				msg.addArgument(data->controllerId);
 			}
-			else if(data->messageType == L"TDSensorEvent"){
+			else if(data->messageType == L"TDSensorEvent") {
 				msg.addArgument("TDSensorEvent");
 				msg.addArgument(data->protocol);
 				msg.addArgument(data->model);
@@ -123,8 +119,8 @@ void EventUpdateManager::sendMessageToClients(EventUpdateData *data){
 
 			it++;
 		}
-		else{
-			//connection is dead, remove it
+		else {
+			// connection is dead, remove it
 			delete *it;
 			it = d->clients.erase(it);
 		}

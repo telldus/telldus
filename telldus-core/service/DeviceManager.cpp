@@ -30,7 +30,7 @@ public:
 	 TelldusCore::EventRef deviceUpdateEvent;
 };
 
-DeviceManager::DeviceManager(ControllerManager *controllerManager, TelldusCore::EventRef deviceUpdateEvent){
+DeviceManager::DeviceManager(ControllerManager *controllerManager, TelldusCore::EventRef deviceUpdateEvent) {
 	d = new PrivateData;
 	d->controllerManager = controllerManager;
 	d->deviceUpdateEvent = deviceUpdateEvent;
@@ -52,7 +52,7 @@ DeviceManager::~DeviceManager(void) {
 	delete d;
 }
 
-void DeviceManager::fillDevices(){
+void DeviceManager::fillDevices() {
 	int numberOfDevices = d->set.getNumberOfNodes(Settings::Device);
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 
@@ -74,7 +74,7 @@ void DeviceManager::fillDevices(){
 	}
 }
 
-int DeviceManager::getDeviceLastSentCommand(int deviceId, int methodsSupported){
+int DeviceManager::getDeviceLastSentCommand(int deviceId, int methodsSupported) {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
@@ -87,8 +87,7 @@ int DeviceManager::getDeviceLastSentCommand(int deviceId, int methodsSupported){
 	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 }
 
-int DeviceManager::setDeviceLastSentCommand(int deviceId, int command, const std::wstring &value)
-{
+int DeviceManager::setDeviceLastSentCommand(int deviceId, int command, const std::wstring &value) {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
@@ -99,13 +98,13 @@ int DeviceManager::setDeviceLastSentCommand(int deviceId, int command, const std
 		d->set.setDeviceState(deviceId, command,value);
 		it->second->setLastSentCommand(command, value);
 	}
-	else{
+	else {
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
 	return TELLSTICK_SUCCESS;
 }
 
-std::wstring DeviceManager::getDeviceStateValue(int deviceId){
+std::wstring DeviceManager::getDeviceStateValue(int deviceId) {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return L"UNKNOWN";
@@ -127,7 +126,7 @@ int DeviceManager::getDeviceMethods(int deviceId) {
 	return DeviceManager::getDeviceMethods(deviceId, duplicateDeviceIds);
 }
 
-int DeviceManager::getDeviceMethods(int deviceId, std::set<int> &duplicateDeviceIds){
+int DeviceManager::getDeviceMethods(int deviceId, std::set<int> &duplicateDeviceIds) {
 	int type = 0;
 	int methods = 0;
 	std::wstring deviceIds;
@@ -152,29 +151,28 @@ int DeviceManager::getDeviceMethods(int deviceId, std::set<int> &duplicateDevice
 			}
 		}
 	}
-	if(type == 0){
+	if(type == 0) {
 		return 0;
 	}
-	if(type == TELLSTICK_TYPE_GROUP){
-
-		//get all methods that some device in the groups supports
+	if(type == TELLSTICK_TYPE_GROUP) {
+		// get all methods that some device in the groups supports
 		std::wstring deviceIdBuffer;
 		std::wstringstream devicesstream(deviceIds);
 		methods = 0;
 
 		duplicateDeviceIds.insert(deviceId);
 
-		while(std::getline(devicesstream, deviceIdBuffer, L',')){
+		while(std::getline(devicesstream, deviceIdBuffer, L',')) {
 			int deviceIdInGroup = TelldusCore::wideToInteger(deviceIdBuffer);
-			if(duplicateDeviceIds.count(deviceIdInGroup) == 1){
-				//action for device already executed, or will execute, do nothing to avoid infinite loop
+			if(duplicateDeviceIds.count(deviceIdInGroup) == 1) {
+				// action for device already executed, or will execute, do nothing to avoid infinite loop
 				continue;
 			}
 
 			duplicateDeviceIds.insert(deviceIdInGroup);
 
 			int deviceMethods = getDeviceMethods(deviceIdInGroup, duplicateDeviceIds);
-			if(deviceMethods > 0){
+			if(deviceMethods > 0) {
 				methods |= deviceMethods;
 			}
 		}
@@ -182,8 +180,7 @@ int DeviceManager::getDeviceMethods(int deviceId, std::set<int> &duplicateDevice
 	return methods;
 }
 
-std::wstring DeviceManager::getDeviceModel(int deviceId){
-
+std::wstring DeviceManager::getDeviceModel(int deviceId) {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return L"UNKNOWN";
@@ -196,8 +193,7 @@ std::wstring DeviceManager::getDeviceModel(int deviceId){
 	return L"UNKNOWN";
 }
 
-int DeviceManager::setDeviceModel(int deviceId, const std::wstring &model)
-{
+int DeviceManager::setDeviceModel(int deviceId, const std::wstring &model) {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
@@ -211,15 +207,14 @@ int DeviceManager::setDeviceModel(int deviceId, const std::wstring &model)
 		}
 		it->second->setModel(model);
 	}
-	else{
+	else {
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
 
 	return TELLSTICK_SUCCESS;
 }
 
-std::wstring DeviceManager::getDeviceName(int deviceId){
-
+std::wstring DeviceManager::getDeviceName(int deviceId) {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return L"UNKNOWN";
@@ -232,8 +227,7 @@ std::wstring DeviceManager::getDeviceName(int deviceId){
 	return L"UNKNOWN";
 }
 
-int DeviceManager::setDeviceName(int deviceId, const std::wstring &name){
-
+int DeviceManager::setDeviceName(int deviceId, const std::wstring &name) {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
@@ -247,32 +241,30 @@ int DeviceManager::setDeviceName(int deviceId, const std::wstring &name){
 		}
 		it->second->setName(name);
 	}
-	else{
+	else {
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
 
 	return TELLSTICK_SUCCESS;
 }
 
-std::wstring DeviceManager::getDeviceParameter(int deviceId, const std::wstring &name, const std::wstring &defaultValue){
-
+std::wstring DeviceManager::getDeviceParameter(int deviceId, const std::wstring &name, const std::wstring &defaultValue) {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return defaultValue;
 	}
 	DeviceMap::iterator it = d->devices.find(deviceId);
-	if (it != d->devices.end()){
+	if (it != d->devices.end()) {
 		TelldusCore::MutexLocker deviceLocker(it->second);
 		std::wstring returnString = it->second->getParameter(name);
-		if(returnString != L""){
+		if(returnString != L"") {
 			return returnString;
 		}
 	}
 	return defaultValue;
 }
 
-int DeviceManager::setDeviceParameter(int deviceId, const std::wstring &name, const std::wstring &value)
-{
+int DeviceManager::setDeviceParameter(int deviceId, const std::wstring &name, const std::wstring &value) {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
@@ -286,15 +278,14 @@ int DeviceManager::setDeviceParameter(int deviceId, const std::wstring &name, co
 		}
 		it->second->setParameter(name, value);
 	}
-	else{
+	else {
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
 
 	return TELLSTICK_SUCCESS;
 }
 
-std::wstring DeviceManager::getDeviceProtocol(int deviceId){
-
+std::wstring DeviceManager::getDeviceProtocol(int deviceId) {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return L"UNKNOWN";
@@ -307,8 +298,7 @@ std::wstring DeviceManager::getDeviceProtocol(int deviceId){
 	return L"UNKNOWN";
 }
 
-int DeviceManager::setDeviceProtocol(int deviceId, const std::wstring &protocol)
-{
+int DeviceManager::setDeviceProtocol(int deviceId, const std::wstring &protocol) {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
@@ -322,28 +312,27 @@ int DeviceManager::setDeviceProtocol(int deviceId, const std::wstring &protocol)
 		}
 		it->second->setProtocolName(protocol);
 	}
-	else{
+	else {
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
 
 	return TELLSTICK_SUCCESS;
 }
 
-int DeviceManager::getNumberOfDevices(){
+int DeviceManager::getNumberOfDevices() {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	return (int)d->devices.size();
 }
 
-int DeviceManager::addDevice(){
-
+int DeviceManager::addDevice() {
 	int id = d->set.addNode(Settings::Device);
-	if(id < 0){
+	if(id < 0) {
 		return id;
 	}
 
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	d->devices[id] = new Device(id);
-	if(!d->devices[id]){
+	if(!d->devices[id]) {
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
 	return id;
@@ -353,8 +342,7 @@ int DeviceManager::getDeviceId(int deviceIndex) {
 	return d->set.getNodeId(Settings::Device, deviceIndex);
 }
 
-int DeviceManager::getDeviceType(int deviceId){
-
+int DeviceManager::getDeviceType(int deviceId) {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
@@ -367,8 +355,7 @@ int DeviceManager::getDeviceType(int deviceId){
 	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 }
 
-int DeviceManager::getPreferredControllerId(int deviceId){
-
+int DeviceManager::getPreferredControllerId(int deviceId) {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 
 	if (!d->devices.size()) {
@@ -382,15 +369,15 @@ int DeviceManager::getPreferredControllerId(int deviceId){
 	return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 }
 
-void DeviceManager::connectTellStickController(int vid, int pid, const std::string &serial){
+void DeviceManager::connectTellStickController(int vid, int pid, const std::string &serial) {
 	d->controllerManager->deviceInsertedOrRemoved(vid, pid, serial, true);
 }
 
-void DeviceManager::disconnectTellStickController(int vid, int pid, const std::string &serial){
+void DeviceManager::disconnectTellStickController(int vid, int pid, const std::string &serial) {
 	d->controllerManager->deviceInsertedOrRemoved(vid, pid, serial, false);
 }
 
-int DeviceManager::doAction(int deviceId, int action, unsigned char data){
+int DeviceManager::doAction(int deviceId, int action, unsigned char data) {
 	Device *device = 0;
 	//On the stack and will be released if we have a device lock.
 	std::auto_ptr<TelldusCore::MutexLocker> deviceLocker(0);
@@ -412,7 +399,7 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 
 	int retval = TELLSTICK_ERROR_UNKNOWN;
 
-	if(device->getType() == TELLSTICK_TYPE_GROUP || device->getType() == TELLSTICK_TYPE_SCENE){
+	if(device->getType() == TELLSTICK_TYPE_GROUP || device->getType() == TELLSTICK_TYPE_SCENE) {
 		std::wstring devices = device->getParameter(L"devices");
 		deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(0);
 		std::set<int> *duplicateDeviceIds = new std::set<int>;
@@ -436,26 +423,26 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 			device = it->second;
 		} //devicelist unlocked
 	}
-	else{
+	else {
 		Controller *controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
-		if(!controller){
+		if(!controller) {
 			Log::warning("Trying to execute action, but no controller found. Rescanning USB ports");
 			//no controller found, scan for one, and retry once
 			d->controllerManager->loadControllers();
 			controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
 		}
 
-		if(controller){
+		if(controller) {
 			retval = device->doAction(action, data, controller);
-			if(retval == TELLSTICK_ERROR_BROKEN_PIPE){
+			if(retval == TELLSTICK_ERROR_BROKEN_PIPE) {
 				Log::warning("Error in communication with TellStick when executing action. Resetting USB");
 				d->controllerManager->resetController(controller);
 			}
-			if(retval == TELLSTICK_ERROR_BROKEN_PIPE || retval == TELLSTICK_ERROR_NOT_FOUND){
+			if(retval == TELLSTICK_ERROR_BROKEN_PIPE || retval == TELLSTICK_ERROR_NOT_FOUND) {
 				Log::warning("Rescanning USB ports");
 				d->controllerManager->loadControllers();
 				controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
-				if(!controller){
+				if(!controller) {
 					Log::error("No contoller (TellStick) found, even after reset. Giving up.");
 					return TELLSTICK_ERROR_NOT_FOUND;
 				}
@@ -477,19 +464,18 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data){
 	return retval;
 }
 
-int DeviceManager::doGroupAction(const std::wstring devices, const int action, const unsigned char data, const int type, const int groupDeviceId, std::set<int> *duplicateDeviceIds){
+int DeviceManager::doGroupAction(const std::wstring devices, const int action, const unsigned char data, const int type, const int groupDeviceId, std::set<int> *duplicateDeviceIds) {
 	int retval = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 	std::wstring singledevice;
 	std::wstringstream devicesstream(devices);
 
 	duplicateDeviceIds->insert(groupDeviceId);
 
-	while(std::getline(devicesstream, singledevice, L',')){
-
+	while(std::getline(devicesstream, singledevice, L',')) {
 		int deviceId = TelldusCore::wideToInteger(singledevice);
 
-		if(duplicateDeviceIds->count(deviceId) == 1){
-			//action for device already executed, or will execute, do nothing to avoid infinite loop
+		if(duplicateDeviceIds->count(deviceId) == 1) {
+			// action for device already executed, or will execute, do nothing to avoid infinite loop
 			continue;
 		}
 
@@ -497,20 +483,20 @@ int DeviceManager::doGroupAction(const std::wstring devices, const int action, c
 
 		int deviceReturnValue = TELLSTICK_SUCCESS;
 
-		if(type == TELLSTICK_TYPE_SCENE && (action == TELLSTICK_TURNON || action == TELLSTICK_EXECUTE)){
+		if(type == TELLSTICK_TYPE_SCENE && (action == TELLSTICK_TURNON || action == TELLSTICK_EXECUTE)) {
 			deviceReturnValue = executeScene(singledevice, groupDeviceId);
 		}
-		else if(type == TELLSTICK_TYPE_GROUP){
-			if(deviceId != 0){
+		else if(type == TELLSTICK_TYPE_GROUP) {
+			if(deviceId != 0) {
 				int childType = DeviceManager::getDeviceType(deviceId);
-				if(childType == TELLSTICK_TYPE_DEVICE){
+				if(childType == TELLSTICK_TYPE_DEVICE) {
 					deviceReturnValue = doAction(deviceId, action, data);
 				}
-				else if(childType == TELLSTICK_TYPE_SCENE){
-					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds); //TODO make scenes infinite loops-safe
+				else if(childType == TELLSTICK_TYPE_SCENE) {
+					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds);  // TODO make scenes infinite loops-safe
 				}
-				else{
-					//group (in group)
+				else {
+					// group (in group)
 					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds);
 
 					if(deviceReturnValue == TELLSTICK_SUCCESS) {
@@ -522,15 +508,15 @@ int DeviceManager::doGroupAction(const std::wstring devices, const int action, c
 					}
 				}
 			}
-			else{
-				deviceReturnValue = TELLSTICK_ERROR_DEVICE_NOT_FOUND;	//Probably incorrectly formatted parameter
+			else {
+				deviceReturnValue = TELLSTICK_ERROR_DEVICE_NOT_FOUND;  // Probably incorrectly formatted parameter
 			}
 		}
 
-		if(deviceReturnValue != TELLSTICK_ERROR_METHOD_NOT_SUPPORTED){
-			//if error(s), return the last error, but still try to continue the action with the other devices
-			//if the error is a method not supported we igore is since there might be others supporting it
-			//If no devices support the method the default value will be returned (method not supported)
+		if(deviceReturnValue != TELLSTICK_ERROR_METHOD_NOT_SUPPORTED) {
+			// if error(s), return the last error, but still try to continue the action with the other devices
+			// if the error is a method not supported we igore is since there might be others supporting it
+			// If no devices support the method the default value will be returned (method not supported)
 			retval = deviceReturnValue;
 		}
 
@@ -538,45 +524,43 @@ int DeviceManager::doGroupAction(const std::wstring devices, const int action, c
 	return retval;
 }
 
-int DeviceManager::executeScene(std::wstring singledevice, int groupDeviceId){
-
+int DeviceManager::executeScene(std::wstring singledevice, int groupDeviceId) {
 	std::wstringstream devicestream(singledevice);
 
 	const int deviceParameterLength = 3;
 	std::wstring deviceParts[deviceParameterLength] = {L"", L"", L""};
 	std::wstring devicePart = L"";
 	int i = 0;
-	while(std::getline(devicestream, devicePart, L':') && i < deviceParameterLength){
+	while(std::getline(devicestream, devicePart, L':') && i < deviceParameterLength) {
 		deviceParts[i] = devicePart;
 		i++;
 	}
 
-	if(deviceParts[0] == L"" || deviceParts[1] == L""){
-		return TELLSTICK_ERROR_UNKNOWN;	//malformed or missing parameter
+	if(deviceParts[0] == L"" || deviceParts[1] == L"") {
+		return TELLSTICK_ERROR_UNKNOWN;  // malformed or missing parameter
 	}
 
 	int deviceId = TelldusCore::wideToInteger(deviceParts[0]);
-	if(deviceId == groupDeviceId){
-		return TELLSTICK_ERROR_UNKNOWN;	//the scene itself has been added to its devices, avoid infinite loop
+	if(deviceId == groupDeviceId) {
+		return TELLSTICK_ERROR_UNKNOWN;  // the scene itself has been added to its devices, avoid infinite loop
 	}
-	int method = Device::methodId(TelldusCore::wideToString(deviceParts[1]));	//support methodparts both in the form of integers (e.g. TELLSTICK_TURNON) or text (e.g. "turnon")
-	if(method == 0){
+	int method = Device::methodId(TelldusCore::wideToString(deviceParts[1]));  // support methodparts both in the form of integers (e.g. TELLSTICK_TURNON) or text (e.g. "turnon")
+	if(method == 0) {
 		method = TelldusCore::wideToInteger(deviceParts[1]);
 	}
 	unsigned char devicedata = 0;
-	if(deviceParts[2] != L""){
+	if(deviceParts[2] != L"") {
 		devicedata = TelldusCore::wideToInteger(deviceParts[2]);
 	}
 
-	if(deviceId > 0 && method > 0){	//check for format error in parameter "devices"
+	if(deviceId > 0 && method > 0) {  // check for format error in parameter "devices"
 		return doAction(deviceId, method, devicedata);
 	}
 
 	return TELLSTICK_ERROR_UNKNOWN;
 }
 
-int DeviceManager::removeDevice(int deviceId){
-
+int DeviceManager::removeDevice(int deviceId) {
 	Device *device = 0;
 	{
 		int ret = d->set.removeNode(Settings::Device, deviceId);		//remove from register/settings
@@ -593,7 +577,7 @@ int DeviceManager::removeDevice(int deviceId){
 			device = it->second;
 			d->devices.erase(it);	//remove from list, keep reference
 		}
-		else{
+		else {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
 	}
@@ -679,14 +663,14 @@ void DeviceManager::handleControllerMessage(const ControllerEventData &eventData
 
 		std::list<std::string> parameters = it->second->getParametersForProtocol();
 		bool thisDevice = true;
-		for (std::list<std::string>::iterator paramIt = parameters.begin(); paramIt != parameters.end(); ++paramIt){
-			if(!TelldusCore::comparei(it->second->getParameter(TelldusCore::charToWstring((*paramIt).c_str())), TelldusCore::charToWstring(msg.getParameter(*paramIt).c_str()))){
+		for (std::list<std::string>::iterator paramIt = parameters.begin(); paramIt != parameters.end(); ++paramIt) {
+			if(!TelldusCore::comparei(it->second->getParameter(TelldusCore::charToWstring((*paramIt).c_str())), TelldusCore::charToWstring(msg.getParameter(*paramIt).c_str()))) {
 				thisDevice = false;
 				break;
 			}
 		}
 
-		if(!thisDevice){
+		if(!thisDevice) {
 			continue;
 		}
 
@@ -744,26 +728,25 @@ void DeviceManager::setSensorValueAndSignal( const std::string &dataType, int da
 	d->deviceUpdateEvent->signal(eventData);
 }
 
-int DeviceManager::sendRawCommand(const std::wstring &command, int reserved){
-
+int DeviceManager::sendRawCommand(const std::wstring &command, int reserved) {
 	Controller *controller = d->controllerManager->getBestControllerById(-1);
 
-	if(!controller){
-		//no controller found, scan for one, and retry once
+	if(!controller) {
+		// no controller found, scan for one, and retry once
 		d->controllerManager->loadControllers();
 		controller = d->controllerManager->getBestControllerById(-1);
 	}
 
 	int retval = TELLSTICK_ERROR_UNKNOWN;
-	if(controller){
+	if(controller) {
 		retval = controller->send(TelldusCore::wideToString(command));
-		if(retval == TELLSTICK_ERROR_BROKEN_PIPE){
+		if(retval == TELLSTICK_ERROR_BROKEN_PIPE) {
 			d->controllerManager->resetController(controller);
 		}
-		if(retval == TELLSTICK_ERROR_BROKEN_PIPE || retval == TELLSTICK_ERROR_NOT_FOUND){
+		if(retval == TELLSTICK_ERROR_BROKEN_PIPE || retval == TELLSTICK_ERROR_NOT_FOUND) {
 			d->controllerManager->loadControllers();
 			controller = d->controllerManager->getBestControllerById(-1);
-			if(!controller){
+			if(!controller) {
 				return TELLSTICK_ERROR_NOT_FOUND;
 			}
 			retval = controller->send(TelldusCore::wideToString(command));  //retry one more time

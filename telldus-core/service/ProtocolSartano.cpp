@@ -41,8 +41,7 @@ std::string ProtocolSartano::getStringForCode(const std::wstring &strCode, int m
 
 }
 
-std::string ProtocolSartano::decodeData(ControllerMessage &dataMsg)
-{
+std::string ProtocolSartano::decodeData(ControllerMessage &dataMsg) {
 	std::string data = dataMsg.getParameter("data");
 	signed int allDataIn;
 	signed int allData = 0;
@@ -54,9 +53,9 @@ std::string ProtocolSartano::decodeData(ControllerMessage &dataMsg)
 	sscanf(data.c_str(), "%X", &allDataIn);
 
 	unsigned long mask = (1<<11);
-	for(int i=0;i<12;++i){
+	for(int i=0;i<12;++i) {
 		allData >>= 1;
-		if((allDataIn & mask) == 0){
+		if((allDataIn & mask) == 0) {
 			allData |= (1<<11);
 		}
 		mask >>= 1;
@@ -70,39 +69,39 @@ std::string ProtocolSartano::decodeData(ControllerMessage &dataMsg)
 
 	method2 = allData & 0x1;
 
-	if(method1 == 0 && method2 == 1){
-		method = 0;  //off
+	if(method1 == 0 && method2 == 1) {
+		method = 0;  // off
 	}
-	else if(method1 == 1 && method2 == 0){
-		method = 1; //on
+	else if(method1 == 1 && method2 == 0) {
+		method = 1;  // on
 	}
-	else{
+	else {
 		return "";
 	}
 
-	if(code < 0 || code > 1023){
-		//not sartano
+	if(code < 0 || code > 1023) {
+		// not sartano
 		return "";
 	}
 
 	std::stringstream retString;
 	retString << "class:command;protocol:sartano;model:codeswitch;code:";
 	mask = (1<<9);
-	for(int i=0;i<10;i++){
-		if((code & mask) != 0){
+	for(int i=0;i<10;i++) {
+		if((code & mask) != 0) {
 			retString << 1;
 		}
-		else{
+		else {
 			retString << 0;
 		}
 		mask >>= 1;
 	}
 	retString << ";method:";
 
-	if(method == 0){
+	if(method == 0) {
 		retString << "turnoff;";
 	}
-	else{
+	else {
 		retString << "turnon;";
 	}
 

@@ -14,8 +14,7 @@
 #include "service/DeviceManager.h"
 #include "service/ControllerManager.h"
 
-class ClientCommunicationHandler : public TelldusCore::Thread
-{
+class ClientCommunicationHandler : public TelldusCore::Thread {
 public:
 	ClientCommunicationHandler();
 	ClientCommunicationHandler(

@@ -36,7 +36,7 @@ public:
 	TelldusCore::Mutex mutex;
 };
 
-ControllerManager::ControllerManager(TelldusCore::EventRef event, TelldusCore::EventRef updateEvent){
+ControllerManager::ControllerManager(TelldusCore::EventRef event, TelldusCore::EventRef updateEvent) {
 	d = new PrivateData;
 	d->lastControllerId = 0;
 	d->event = event;
@@ -171,8 +171,8 @@ void ControllerManager::loadControllers() {
 		bool isNew = false;
 		if (!controllerId) {
 			controllerId = d->settings.addNode(Settings::Controller);
-			if(controllerId < 0){
-				//TODO: How to handle this?
+			if(controllerId < 0) {
+				// TODO: How to handle this?
 				continue;
 			}
 			isNew = true;
@@ -212,8 +212,7 @@ void ControllerManager::loadStoredControllers() {
 	}
 }
 
-void ControllerManager::queryControllerStatus(){
-
+void ControllerManager::queryControllerStatus() {
 	std::list<TellStick *> tellStickControllers;
 
 	{
@@ -233,18 +232,18 @@ void ControllerManager::queryControllerStatus(){
 	std::string noop = "N+";
 	for(std::list<TellStick *>::iterator it = tellStickControllers.begin(); it != tellStickControllers.end(); ++it) {
 		int success = (*it)->send(noop);
-		if(success == TELLSTICK_ERROR_BROKEN_PIPE){
+		if(success == TELLSTICK_ERROR_BROKEN_PIPE) {
 			Log::warning("TellStick query: Error in communication with TellStick, resetting USB");
 			resetController(*it);
 		}
-		if(success == TELLSTICK_ERROR_BROKEN_PIPE || success == TELLSTICK_ERROR_NOT_FOUND){
+		if(success == TELLSTICK_ERROR_BROKEN_PIPE || success == TELLSTICK_ERROR_NOT_FOUND) {
 			reloadControllers = true;
 		}
 	}
 
-	if(!tellStickControllers.size() || reloadControllers){
-		//no tellstick at all found, or controller was reset
-		Log::debug("TellStick query: Rescanning USB ports");  //only log as debug, since this will happen all the time if no TellStick is connected
+	if(!tellStickControllers.size() || reloadControllers) {
+		// no tellstick at all found, or controller was reset
+		Log::debug("TellStick query: Rescanning USB ports");  // only log as debug, since this will happen all the time if no TellStick is connected
 		loadControllers();
 	}
 }

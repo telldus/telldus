@@ -11,8 +11,7 @@
 #include "service/Protocol.h"
 #include "service/ControllerMessage.h"
 
-class ProtocolEverflourish :  public Protocol
-{
+class ProtocolEverflourish :  public Protocol {
 public:
 	int methods() const;
 	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller);

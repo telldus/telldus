@@ -11,8 +11,7 @@
 #include "service/Protocol.h"
 #include "service/ControllerMessage.h"
 
-class ProtocolMandolyn : public Protocol
-{
+class ProtocolMandolyn : public Protocol {
 public:
 	static std::string decodeData(ControllerMessage &dataMsg);
 };

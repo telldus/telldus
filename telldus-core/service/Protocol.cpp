@@ -37,8 +37,7 @@ public:
 	std::wstring model;
 };
 
-Protocol::Protocol(){
-
+Protocol::Protocol() {
 	d = new PrivateData;
 }
 
@@ -57,11 +56,11 @@ std::wstring Protocol::model() const {
 	return strModel;
 }
 
-void Protocol::setModel(const std::wstring &model){
+void Protocol::setModel(const std::wstring &model) {
 	d->model = model;
 }
 
-void Protocol::setParameters(ParameterMap &parameterList){
+void Protocol::setParameters(ParameterMap &parameterList) {
 	d->parameterList = parameterList;
 }
 
@@ -96,9 +95,8 @@ bool Protocol::checkBit(int data, int bitno) {
 }
 
 
-Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname){
-
-	if(TelldusCore::comparei(protocolname, L"arctech")){
+Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname) {
+	if(TelldusCore::comparei(protocolname, L"arctech")) {
 		return new ProtocolNexa();
 
 	} else if (TelldusCore::comparei(protocolname, L"brateck")) {
@@ -153,7 +151,7 @@ Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname){
 
 std::list<std::string> Protocol::getParametersForProtocol(const std::wstring &protocolName) {
 	std::list<std::string> parameters;
-	if(TelldusCore::comparei(protocolName, L"arctech")){
+	if(TelldusCore::comparei(protocolName, L"arctech")) {
 		parameters.push_back("house");
 		parameters.push_back("unit");
 

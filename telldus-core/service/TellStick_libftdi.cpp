@@ -40,8 +40,7 @@ public:
 };
 
 TellStick::TellStick(int controllerId, TelldusCore::EventRef event, TelldusCore::EventRef updateEvent, const TellStickDescriptor &td )
-	:Controller(controllerId, event, updateEvent)
-{
+	:Controller(controllerId, event, updateEvent) {
 	d = new PrivateData;
 	d->open = false;
 	d->vid = td.vid;
@@ -140,10 +139,10 @@ void TellStick::processData( const std::string &data ) {
 	}
 }
 
-int TellStick::reset(){
+int TellStick::reset() {
 	int success = ftdi_usb_reset( &d->ftHandle );
-	if(success < 0){
-		return TELLSTICK_ERROR_UNKNOWN; //-1 = FTDI reset failed, -2 = USB device unavailable
+	if(success < 0) {
+		return TELLSTICK_ERROR_UNKNOWN;  // -1 = FTDI reset failed, -2 = USB device unavailable
 	}
 	return TELLSTICK_SUCCESS;
 }
@@ -209,18 +208,18 @@ int TellStick::send( const std::string &strMessage ) {
 
 	delete[] tempMessage;
 
-	if(!c){
+	if(!c) {
 		Log::debug("Broken pipe on send");
 		return TELLSTICK_ERROR_BROKEN_PIPE;
 	}
 
-	if(strMessage.compare("N+") == 0 && ((pid() == 0x0C31 && firmwareVersion() < 5) || (pid() == 0x0C30 && firmwareVersion() < 6))){
-		//these firmware versions doesn't implement ack to noop, just check that the noop can be sent correctly
+	if(strMessage.compare("N+") == 0 && ((pid() == 0x0C31 && firmwareVersion() < 5) || (pid() == 0x0C30 && firmwareVersion() < 6))) {
+		// these firmware versions doesn't implement ack to noop, just check that the noop can be sent correctly
 		return TELLSTICK_SUCCESS;
 	}
 
-	if(d->ignoreControllerConfirmation){
-		//allow TellStick to finish its air-sending
+	if(d->ignoreControllerConfirmation) {
+		// allow TellStick to finish its air-sending
 		msleep(1000);
 		return TELLSTICK_SUCCESS;
 	}

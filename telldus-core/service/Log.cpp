@@ -31,8 +31,7 @@ public:
 Log *Log::PrivateData::instance = 0;
 
 Log::Log()
-	:d(new PrivateData)
-{
+	:d(new PrivateData) {
 #if defined(_LINUX)
 	setlogmask(LOG_UPTO(LOG_INFO));
 	openlog("telldusd", LOG_CONS, LOG_USER);

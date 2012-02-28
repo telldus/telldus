@@ -47,7 +47,7 @@ ControllerMessage::ControllerMessage(const std::string &message) {
 	}
 }
 
-ControllerMessage::~ControllerMessage(){
+ControllerMessage::~ControllerMessage() {
 	delete d;
 }
 

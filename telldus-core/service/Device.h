@@ -13,8 +13,7 @@
 #include <string>
 #include <list>
 
-class Device : public TelldusCore::Mutex
-{
+class Device : public TelldusCore::Mutex {
 public:
 	explicit Device(int id);
 	~Device(void);

@@ -12,8 +12,7 @@
 using namespace TelldusCore;
 
 TDEventDispatcher::TDEventDispatcher(EventDataRef cbd, CallbackStruct *cb, EventRef cbDone)
-	:Thread(), doneRunning(false), callbackData(cbd), callback(cb), callbackExecuted(cbDone)
-{
+	:Thread(), doneRunning(false), callbackData(cbd), callback(cb), callbackExecuted(cbDone) {
 	this->startAndLock(&callback->mutex);
 }
 

@@ -11,8 +11,7 @@
 #include "service/Protocol.h"
 #include "service/ControllerMessage.h"
 
-class ProtocolOregon : public Protocol
-{
+class ProtocolOregon : public Protocol {
 public:
 	static std::string decodeData(ControllerMessage &dataMsg);
 

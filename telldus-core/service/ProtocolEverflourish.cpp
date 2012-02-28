@@ -94,8 +94,7 @@ unsigned int ProtocolEverflourish::calculateChecksum(unsigned int x) {
 	return res;
 }
 
-std::string ProtocolEverflourish::decodeData(ControllerMessage &dataMsg)
-{
+std::string ProtocolEverflourish::decodeData(ControllerMessage &dataMsg) {
 	std::string data = dataMsg.getParameter("data");
 	unsigned int allData;
 	unsigned int house = 0;
@@ -113,20 +112,20 @@ std::string ProtocolEverflourish::decodeData(ControllerMessage &dataMsg)
 
 	method = allData & 0xF;
 
-	if(house < 0 || house > 16383 || unit < 1 || unit > 4){
-		//not everflourish
+	if(house < 0 || house > 16383 || unit < 1 || unit > 4) {
+		// not everflourish
 		return "";
 	}
 
 	std::stringstream retString;
 	retString << "class:command;protocol:everflourish;model:selflearning;house:" << house << ";unit:" << unit << ";method:";
-	if(method == 0){
+	if(method == 0) {
 		retString << "turnoff;";
 	}
-	else if(method == 15){
+	else if(method == 15) {
 		retString << "turnon;";
 	}
-	else if(method == 10){
+	else if(method == 10) {
 		retString << "learn;";
 	}
 	else {

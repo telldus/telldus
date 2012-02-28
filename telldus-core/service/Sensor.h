@@ -10,8 +10,7 @@
 #include "common/Mutex.h"
 #include <string>
 
-class Sensor : public TelldusCore::Mutex
-{
+class Sensor : public TelldusCore::Mutex {
 public:
 	Sensor(const std::wstring &protocol, const std::wstring &model, int id);
 	~Sensor();

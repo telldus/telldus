@@ -29,8 +29,7 @@ public:
 	int timestamp;
 };
 
-class EventUpdateManager  : public TelldusCore::Thread
-{
+class EventUpdateManager  : public TelldusCore::Thread {
 public:
 	EventUpdateManager(void);
 	~EventUpdateManager(void);

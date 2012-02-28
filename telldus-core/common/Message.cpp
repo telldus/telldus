@@ -15,13 +15,11 @@ using namespace TelldusCore;
 
 
 Message::Message()
-	: std::wstring()
-{
+	: std::wstring() {
 }
 
 Message::Message(const std::wstring &functionName)
-	:std::wstring()
-{
+	:std::wstring() {
 	this->addArgument(functionName);
 }
 

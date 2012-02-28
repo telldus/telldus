@@ -10,8 +10,7 @@
 #include <string>
 #include "service/Protocol.h"
 
-class ProtocolUpm : public Protocol
-{
+class ProtocolUpm : public Protocol {
 public:
 	int methods() const;
 	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller);

@@ -29,8 +29,7 @@ public:
 };
 
 CallbackMainDispatcher::CallbackMainDispatcher()
-:Thread()
-{
+:Thread() {
 	d = new PrivateData;
 	d->stopEvent = d->eventHandler.addEvent();
 	d->generalCallbackEvent = d->eventHandler.addEvent();
@@ -39,7 +38,7 @@ CallbackMainDispatcher::CallbackMainDispatcher()
 	d->lastCallbackId = 0;
 }
 
-CallbackMainDispatcher::~CallbackMainDispatcher(void){
+CallbackMainDispatcher::~CallbackMainDispatcher(void) {
 	d->stopEvent->signal();
 	wait();
 	{
@@ -48,7 +47,7 @@ CallbackMainDispatcher::~CallbackMainDispatcher(void){
 	delete d;
 }
 
-EventRef CallbackMainDispatcher::retrieveCallbackEvent(){
+EventRef CallbackMainDispatcher::retrieveCallbackEvent() {
 	return d->generalCallbackEvent;
 }
 
@@ -88,14 +87,13 @@ int CallbackMainDispatcher::unregisterCallback(int callbackId) {
 	return TELLSTICK_ERROR_NOT_FOUND;
 }
 
-void CallbackMainDispatcher::run(){
-
-	while(!d->stopEvent->isSignaled()){
+void CallbackMainDispatcher::run() {
+	while(!d->stopEvent->isSignaled()) {
 		if (!d->eventHandler.waitForAny()) {
 			continue;
 		}
 
-		if(d->generalCallbackEvent->isSignaled()){
+		if(d->generalCallbackEvent->isSignaled()) {
 			EventDataRef eventData = d->generalCallbackEvent->takeSignal();
 
 			CallbackData *cbd = dynamic_cast<CallbackData *>(eventData.get());

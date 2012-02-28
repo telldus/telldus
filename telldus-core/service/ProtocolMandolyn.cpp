@@ -10,8 +10,7 @@
 #include <sstream>
 #include <iomanip>
 
-std::string ProtocolMandolyn::decodeData(ControllerMessage &dataMsg)
-{
+std::string ProtocolMandolyn::decodeData(ControllerMessage &dataMsg) {
 	std::string data = dataMsg.getParameter("data");
 	uint32_t value = (uint32_t)TelldusCore::hexTo64l(data);
 

@@ -28,8 +28,7 @@ public:
 };
 
 Timer::Timer(TelldusCore::EventRef event)
-	:TelldusCore::Thread(), d(new PrivateData)
-{
+	:TelldusCore::Thread(), d(new PrivateData) {
 	d->event = event;
 #ifdef _WINDOWS
 	d->cond = CreateEventW(NULL, false, false, NULL);

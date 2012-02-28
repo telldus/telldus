@@ -7,8 +7,7 @@
 #ifndef TELLDUS_CORE_SERVICE_TELLDUSMAIN_H_
 #define TELLDUS_CORE_SERVICE_TELLDUSMAIN_H_
 
-class TelldusMain
-{
+class TelldusMain {
 public:
 	TelldusMain(void);
 	~TelldusMain(void);

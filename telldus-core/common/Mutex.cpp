@@ -77,8 +77,7 @@ void LoggedMutex::unlock() {
 }
 
 MutexLocker::MutexLocker(Mutex *m)
-	:mutex(m)
-{
+	:mutex(m) {
 	mutex->lock();
 }
 

@@ -39,8 +39,7 @@ Socket::Socket() {
 	FD_ZERO(&d->infds);
 }
 
-Socket::Socket(SOCKET_T socket)
-{
+Socket::Socket(SOCKET_T socket) {
 	d = new PrivateData;
 	d->socket = socket;
 	FD_ZERO(&d->infds);
@@ -48,7 +47,7 @@ Socket::Socket(SOCKET_T socket)
 }
 
 Socket::~Socket(void) {
-	if(d->socket){
+	if(d->socket) {
 		close(d->socket);
 	}
 	delete d;
@@ -74,7 +73,7 @@ void Socket::connect(const std::wstring &server) {
 	d->connected = true;
 }
 
-bool Socket::isConnected(){
+bool Socket::isConnected() {
 	TelldusCore::MutexLocker locker(&d->mutex);
 	return d->connected;
 }
@@ -102,10 +101,10 @@ std::wstring Socket::read(int timeout) {
 		}
 
 		int received = BUFSIZE;
-		while(received >= (BUFSIZE - 1)){
+		while(received >= (BUFSIZE - 1)) {
 			memset(inbuf, '\0', sizeof(inbuf));
 			received = recv(d->socket, inbuf, BUFSIZE - 1, 0);
-			if(received > 0){
+			if(received > 0) {
 				msg.append(std::string(inbuf));
 			}
 		}
@@ -119,7 +118,7 @@ std::wstring Socket::read(int timeout) {
 	return TelldusCore::charToWstring(msg.c_str());
 }
 
-void Socket::stopReadWait(){
+void Socket::stopReadWait() {
 	TelldusCore::MutexLocker locker(&d->mutex);
 	d->connected = false;
 	//TODO somehow signal the socket here?

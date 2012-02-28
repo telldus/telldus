@@ -11,8 +11,7 @@
 #include "service/Protocol.h"
 #include "service/ControllerMessage.h"
 
-class ProtocolX10 : public Protocol
-{
+class ProtocolX10 : public Protocol {
 public:
 	int methods() const;
 	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller);

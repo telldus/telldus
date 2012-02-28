@@ -17,7 +17,7 @@ public:
 	int id, firmwareVersion;
 };
 
-Controller::Controller(int id, TelldusCore::EventRef event, TelldusCore::EventRef updateEvent){
+Controller::Controller(int id, TelldusCore::EventRef event, TelldusCore::EventRef updateEvent) {
 	d = new PrivateData;
 	d->event = event;
 	d->updateEvent = updateEvent;
@@ -25,7 +25,7 @@ Controller::Controller(int id, TelldusCore::EventRef event, TelldusCore::EventRe
 	d->firmwareVersion = 0;
 }
 
-Controller::~Controller(){
+Controller::~Controller() {
 	delete d;
 }
 
@@ -40,7 +40,7 @@ void Controller::decodePublishData(const std::string &data) const {
 
 	std::list<std::string> msgList = Protocol::decodeData(data);
 
-	for (std::list<std::string>::iterator msgIt = msgList.begin(); msgIt != msgList.end(); ++msgIt){
+	for (std::list<std::string>::iterator msgIt = msgList.begin(); msgIt != msgList.end(); ++msgIt) {
 		this->publishData(*msgIt);
 	}
 }

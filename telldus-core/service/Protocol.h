@@ -16,8 +16,7 @@ typedef std::map<std::wstring, std::wstring> ParameterMap;
 
 class Controller;
 
-class Protocol
-{
+class Protocol {
 public:
 	Protocol();
 	virtual ~Protocol(void);

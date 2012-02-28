@@ -73,7 +73,7 @@ std::wstring TelldusCore::charToWstring(const char *value) {
 #endif
 }
 
-int TelldusCore::charToInteger(const char *input){
+int TelldusCore::charToInteger(const char *input) {
 	std::stringstream inputstream;
 	inputstream << input;
 	int retval;
@@ -150,7 +150,7 @@ std::wstring TelldusCore::intToWStringSafe(int value){
 }
 */
 
-uint64_t TelldusCore::hexTo64l(const std::string data){
+uint64_t TelldusCore::hexTo64l(const std::string data) {
 #ifdef _WINDOWS
 	return _strtoui64(data.c_str(), NULL, 16);
 #elif defined(_MACOSX)
@@ -160,7 +160,7 @@ uint64_t TelldusCore::hexTo64l(const std::string data){
 #endif
 }
 
-int TelldusCore::wideToInteger(const std::wstring &input){
+int TelldusCore::wideToInteger(const std::wstring &input) {
 	std::wstringstream inputstream;
 	inputstream << input;
 	int retval;

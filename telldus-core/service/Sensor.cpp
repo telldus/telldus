@@ -18,8 +18,7 @@ public:
 };
 
 Sensor::Sensor(const std::wstring &protocol, const std::wstring &model, int id)
-	:Mutex()
-{
+	:Mutex() {
 	d = new PrivateData;
 	d->protocol = protocol;
 	d->model = model;

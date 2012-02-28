@@ -10,8 +10,7 @@
 #include <sstream>
 #include <iomanip>
 
-std::string ProtocolOregon::decodeData(ControllerMessage &dataMsg)
-{
+std::string ProtocolOregon::decodeData(ControllerMessage &dataMsg) {
 	std::string data = dataMsg.getParameter("data");
 
 	std::wstring model = dataMsg.model();

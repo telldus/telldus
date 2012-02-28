@@ -480,7 +480,7 @@ void WINAPI tdReleaseString(char *thestring) {
  *
  * @since Version 2.0.0
  **/
-int WINAPI tdTurnOn(int intDeviceId){
+int WINAPI tdTurnOn(int intDeviceId) {
 	Message msg(L"tdTurnOn");
 	msg.addArgument(intDeviceId);
 	return Client::getIntegerFromService(msg);
@@ -498,7 +498,7 @@ int WINAPI tdTurnOn(int intDeviceId){
  *
  * @since Version 2.0.0
  **/
-int WINAPI tdTurnOff(int intDeviceId){
+int WINAPI tdTurnOff(int intDeviceId) {
 	Message msg(L"tdTurnOff");
 	msg.addArgument(intDeviceId);
 	return Client::getIntegerFromService(msg);
@@ -516,7 +516,7 @@ int WINAPI tdTurnOff(int intDeviceId){
  *
  * @since Version 2.0.0
  **/
-int WINAPI tdBell(int intDeviceId){
+int WINAPI tdBell(int intDeviceId) {
 	Message msg(L"tdBell");
 	msg.addArgument(intDeviceId);
 	return Client::getIntegerFromService(msg);
@@ -536,7 +536,7 @@ int WINAPI tdBell(int intDeviceId){
  *
  * @since Version 2.0.0
  **/
-int WINAPI tdDim(int intDeviceId, unsigned char level){
+int WINAPI tdDim(int intDeviceId, unsigned char level) {
 	Message msg(L"tdDim");
 	msg.addArgument(intDeviceId);
 	msg.addArgument(level);
@@ -555,7 +555,7 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
  *
  * @since Version 2.1.0
  **/
-int WINAPI tdExecute(int intDeviceId){
+int WINAPI tdExecute(int intDeviceId) {
 	Message msg(L"tdExecute");
 	msg.addArgument(intDeviceId);
 	return Client::getIntegerFromService(msg);
@@ -573,7 +573,7 @@ int WINAPI tdExecute(int intDeviceId){
  *
  * @since Version 2.1.0
  **/
-int WINAPI tdUp(int intDeviceId){
+int WINAPI tdUp(int intDeviceId) {
 	Message msg(L"tdUp");
 	msg.addArgument(intDeviceId);
 	return Client::getIntegerFromService(msg);
@@ -591,7 +591,7 @@ int WINAPI tdUp(int intDeviceId){
  *
  * @since Version 2.1.0
  **/
-int WINAPI tdDown(int intDeviceId){
+int WINAPI tdDown(int intDeviceId) {
 	Message msg(L"tdDown");
 	msg.addArgument(intDeviceId);
 	return Client::getIntegerFromService(msg);
@@ -609,7 +609,7 @@ int WINAPI tdDown(int intDeviceId){
  *
  * @since Version 2.1.0
  */
-int WINAPI tdStop(int intDeviceId){
+int WINAPI tdStop(int intDeviceId) {
 	Message msg(L"tdStop");
 	msg.addArgument(intDeviceId);
 	return Client::getIntegerFromService(msg);
@@ -683,7 +683,7 @@ char * WINAPI tdLastSentValue( int intDeviceId ) {
  *
  * @since Version 2.0.0
  **/
-int WINAPI tdGetNumberOfDevices(void){
+int WINAPI tdGetNumberOfDevices(void) {
 	return Client::getIntegerFromService(Message(L"tdGetNumberOfDevices"));
 }
 
@@ -707,7 +707,7 @@ int WINAPI tdGetNumberOfDevices(void){
  *
  * @since Version 2.0.0
  **/
-int WINAPI tdGetDeviceId(int intDeviceIndex){
+int WINAPI tdGetDeviceId(int intDeviceIndex) {
 	Message msg(L"tdGetDeviceId");
 	msg.addArgument(intDeviceIndex);
 	return Client::getIntegerFromService(msg);
@@ -744,7 +744,7 @@ int WINAPI tdGetDeviceType(int intDeviceId) {
  *
  * @since Version 2.0.0
  **/
-char * WINAPI tdGetName(int intDeviceId){
+char * WINAPI tdGetName(int intDeviceId) {
 	Message msg(L"tdGetName");
 	msg.addArgument(intDeviceId);
 	std::wstring strReturn =  Client::getWStringFromService(msg);
@@ -765,7 +765,7 @@ char * WINAPI tdGetName(int intDeviceId){
  *
  * @since Version 2.0.0
  **/
-bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
+bool WINAPI tdSetName(int intDeviceId, const char* strNewName) {
 	Message msg(L"tdSetName");
 	msg.addArgument(intDeviceId);
 	msg.addArgument(strNewName);
@@ -784,7 +784,7 @@ bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
  *
  * @since Version 2.0.0
  **/
-char* WINAPI tdGetProtocol(int intDeviceId){
+char* WINAPI tdGetProtocol(int intDeviceId) {
 	Message msg(L"tdGetProtocol");
 	msg.addArgument(intDeviceId);
 	std::wstring strReturn =  Client::getWStringFromService(msg);
@@ -808,7 +808,7 @@ char* WINAPI tdGetProtocol(int intDeviceId){
  *
  * @since Version 2.0.0
  **/
-bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
+bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol) {
 	Message msg(L"tdSetProtocol");
 	msg.addArgument(intDeviceId);
 	msg.addArgument(strProtocol);
@@ -827,7 +827,7 @@ bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
  *
  * @since Version 2.0.0
  **/
-char* WINAPI tdGetModel(int intDeviceId){
+char* WINAPI tdGetModel(int intDeviceId) {
 	Message msg(L"tdGetModel");
 	msg.addArgument(intDeviceId);
 	std::wstring strReturn = Client::getWStringFromService(msg);
@@ -848,7 +848,7 @@ char* WINAPI tdGetModel(int intDeviceId){
  *
  * @since Version 2.0.0
  **/
-bool WINAPI tdSetModel(int intDeviceId, const char *strModel){
+bool WINAPI tdSetModel(int intDeviceId, const char *strModel) {
 	Message msg(L"tdSetModel");
 	msg.addArgument(intDeviceId);
 	msg.addArgument(strModel);
@@ -871,7 +871,7 @@ bool WINAPI tdSetModel(int intDeviceId, const char *strModel){
  *
  * @since Version 2.0.0
  **/
-bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const char *strValue){
+bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const char *strValue) {
 	Message msg(L"tdSetDeviceParameter");
 	msg.addArgument(intDeviceId);
 	msg.addArgument(strName);
@@ -896,7 +896,7 @@ bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const cha
  *
  * @since Version 2.0.0
  **/
-char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const char *defaultValue){
+char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const char *defaultValue) {
 	Message msg(L"tdGetDeviceParameter");
 	msg.addArgument(intDeviceId);
 	msg.addArgument(strName);
@@ -916,7 +916,7 @@ char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const c
  *
  * @since Version 2.0.0
  **/
-int WINAPI tdAddDevice(){
+int WINAPI tdAddDevice() {
 	Message msg(L"tdAddDevice");
 	return Client::getIntegerFromService(msg);
 }
@@ -932,7 +932,7 @@ int WINAPI tdAddDevice(){
  *
  * @since Version 2.0.0
  **/
-bool WINAPI tdRemoveDevice(int intDeviceId){
+bool WINAPI tdRemoveDevice(int intDeviceId) {
 	Message msg(L"tdRemoveDevice");
 	msg.addArgument(intDeviceId);
 	return Client::getBoolFromService(msg);
@@ -973,7 +973,7 @@ bool WINAPI tdRemoveDevice(int intDeviceId){
  *
  * @since Version 2.0.0
  **/
-int WINAPI tdMethods(int id, int methodsSupported){
+int WINAPI tdMethods(int id, int methodsSupported) {
 	Message msg(L"tdMethods");
 	msg.addArgument(id);
 	msg.addArgument(methodsSupported);

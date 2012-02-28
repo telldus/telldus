@@ -13,8 +13,7 @@
 #include "common/Thread.h"
 
 namespace TelldusCore {
-	class Client : public Thread
-	{
+	class Client : public Thread {
 	public:
 		~Client(void);
 

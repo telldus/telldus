@@ -48,12 +48,12 @@ EventRef EventHandler::addEvent() {
 	return event;
 }
 
-bool EventHandler::listIsSignalled(){
+bool EventHandler::listIsSignalled() {
 	TelldusCore::MutexLocker locker(&d->listMutex);
 
 	std::list<EventRef>::const_iterator it = d->eventList.begin();
 	for(; it != d->eventList.end(); ++it) {
-		if((*it)->isSignaled()){
+		if((*it)->isSignaled()) {
 			return true;
 		}
 	}

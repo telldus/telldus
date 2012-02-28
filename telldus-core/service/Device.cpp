@@ -23,8 +23,7 @@ public:
 };
 
 Device::Device(int id)
-	:Mutex()
-{
+	:Mutex() {
 	d = new PrivateData;
 	d->protocol = 0;
 	d->preferredControllerId = 0;
@@ -40,8 +39,7 @@ Device::~Device(void) {
 * Get-/Set-methods
 */
 
-int Device::getLastSentCommand(int methodsSupported){
-
+int Device::getLastSentCommand(int methodsSupported) {
 	int lastSentCommand = Device::maskUnsupportedMethods(d->state, methodsSupported);
 
 	if (lastSentCommand == TELLSTICK_BELL) {
@@ -63,32 +61,32 @@ int Device::getMethods() const {
 	return 0;
 }
 
-void Device::setLastSentCommand(int command, std::wstring value){
+void Device::setLastSentCommand(int command, std::wstring value) {
 	d->state = command;
 	d->stateValue = value;
 }
 
-std::wstring Device::getModel(){
+std::wstring Device::getModel() {
 	return d->model;
 }
 
-void Device::setModel(const std::wstring &model){
-	if(d->protocol){
+void Device::setModel(const std::wstring &model) {
+	if(d->protocol) {
 		delete(d->protocol);
 		d->protocol = 0;
 	}
 	d->model = model;
 }
 
-std::wstring Device::getName(){
+std::wstring Device::getName() {
 	return d->name;
 }
 
-void Device::setName(const std::wstring &name){
+void Device::setName(const std::wstring &name) {
 	d->name = name;
 }
 
-std::wstring Device::getParameter(const std::wstring &key){
+std::wstring Device::getParameter(const std::wstring &key) {
 	ParameterMap::iterator it = d->parameterList.find(key);
 	if (it == d->parameterList.end()) {
 		return L"";
@@ -100,18 +98,18 @@ std::list<std::string> Device::getParametersForProtocol() const {
 	return Protocol::getParametersForProtocol(getProtocolName());
 }
 
-void Device::setParameter(const std::wstring &key, const std::wstring &value){
+void Device::setParameter(const std::wstring &key, const std::wstring &value) {
 	d->parameterList[key] = value;
-	if(d->protocol){
+	if(d->protocol) {
 		d->protocol->setParameters(d->parameterList);
 	}
 }
 
-int Device::getPreferredControllerId(){
+int Device::getPreferredControllerId() {
 	return d->preferredControllerId;
 }
 
-void Device::setPreferredControllerId(int controllerId){
+void Device::setPreferredControllerId(int controllerId) {
 	d->preferredControllerId = controllerId;
 }
 
@@ -119,23 +117,23 @@ std::wstring Device::getProtocolName() const {
 	return d->protocolName;
 }
 
-void Device::setProtocolName(const std::wstring &protocolName){
-	if(d->protocol){
+void Device::setProtocolName(const std::wstring &protocolName) {
+	if(d->protocol) {
 		delete(d->protocol);
 		d->protocol = 0;
 	}
 	d->protocolName = protocolName;
 }
 
-std::wstring Device::getStateValue(){
+std::wstring Device::getStateValue() {
 	return d->stateValue;
 }
 
-int Device::getType(){
-	if(d->protocolName == L"group"){
+int Device::getType() {
+	if(d->protocolName == L"group") {
 		return TELLSTICK_TYPE_GROUP;
 	}
-	else if(d->protocolName == L"scene"){
+	else if(d->protocolName == L"scene") {
 		return TELLSTICK_TYPE_SCENE;
 	}
 	return TELLSTICK_TYPE_DEVICE;
@@ -199,7 +197,7 @@ Protocol* Device::retrieveProtocol() const {
 	}
 
 	d->protocol = Protocol::getProtocolInstance(d->protocolName);
-	if(d->protocol){
+	if(d->protocol) {
 		d->protocol->setModel(d->model);
 		d->protocol->setParameters(d->parameterList);
 		return d->protocol;

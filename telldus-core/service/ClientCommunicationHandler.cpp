@@ -20,13 +20,11 @@ public:
 	ControllerManager *controllerManager;
 };
 
-ClientCommunicationHandler::ClientCommunicationHandler(){
-
+ClientCommunicationHandler::ClientCommunicationHandler() {
 }
 
 ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clientSocket, TelldusCore::EventRef event, DeviceManager *deviceManager, TelldusCore::EventRef deviceUpdateEvent, ControllerManager *controllerManager)
-	:Thread()
-{
+	:Thread() {
 	d = new PrivateData;
 	d->clientSocket = clientSocket;
 	d->event = event;
@@ -36,15 +34,14 @@ ClientCommunicationHandler::ClientCommunicationHandler(TelldusCore::Socket *clie
 	d->controllerManager = controllerManager;
 }
 
-ClientCommunicationHandler::~ClientCommunicationHandler(void)
-{
+ClientCommunicationHandler::~ClientCommunicationHandler(void) {
 	wait();
 	delete(d->clientSocket);
 	delete d;
 }
 
-void ClientCommunicationHandler::run(){
-	//run thread
+void ClientCommunicationHandler::run() {
+	// run thread
 
 	std::wstring clientMessage = d->clientSocket->read(2000);
 
@@ -55,10 +52,10 @@ void ClientCommunicationHandler::run(){
 
 	TelldusCore::Message msg;
 
-	if(strReturn == L""){
+	if(strReturn == L"") {
 		msg.addArgument(intReturn);
 	}
-	else{
+	else {
 		msg.addArgument(strReturn);
 	}
 	msg.append(L"\n");
@@ -69,13 +66,12 @@ void ClientCommunicationHandler::run(){
 	d->event->signal();
 }
 
-bool ClientCommunicationHandler::isDone(){
+bool ClientCommunicationHandler::isDone() {
 	return d->done;
 }
 
 
-void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage, int *intReturn, std::wstring *wstringReturn){
-
+void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage, int *intReturn, std::wstring *wstringReturn) {
 	(*intReturn) = 0;
 	(*wstringReturn) = L"";
 	std::wstring msg(clientMessage);	//Copy
@@ -127,8 +123,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		(*wstringReturn) = d->deviceManager->getDeviceStateValue(deviceId);
 
-	} else if(function == L"tdGetNumberOfDevices"){
-
+	} else if(function == L"tdGetNumberOfDevices") {
 		(*intReturn) = d->deviceManager->getNumberOfDevices();
 
 	} else if (function == L"tdGetDeviceId") {
@@ -159,7 +154,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int oldMethods = d->deviceManager->getDeviceMethods(deviceId);
 		(*intReturn) = d->deviceManager->setDeviceProtocol(deviceId, protocol);
 		sendDeviceSignal(deviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_PROTOCOL);
-		if(oldMethods != d->deviceManager->getDeviceMethods(deviceId)){
+		if(oldMethods != d->deviceManager->getDeviceMethods(deviceId)) {
 			sendDeviceSignal(deviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_METHOD);
 		}
 
@@ -173,7 +168,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int oldMethods = d->deviceManager->getDeviceMethods(deviceId);
 		(*intReturn) = d->deviceManager->setDeviceModel(deviceId, model);
 		sendDeviceSignal(deviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_MODEL);
-		if(oldMethods != d->deviceManager->getDeviceMethods(deviceId)){
+		if(oldMethods != d->deviceManager->getDeviceMethods(deviceId)) {
 			sendDeviceSignal(deviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_METHOD);
 		}
 
@@ -189,20 +184,20 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		std::wstring value = TelldusCore::Message::takeString(&msg);
 		int oldMethods = d->deviceManager->getDeviceMethods(deviceId);
 		(*intReturn) = d->deviceManager->setDeviceParameter(deviceId, name, value);
-		if(oldMethods != d->deviceManager->getDeviceMethods(deviceId)){
+		if(oldMethods != d->deviceManager->getDeviceMethods(deviceId)) {
 			sendDeviceSignal(deviceId, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_METHOD);
 		}
 
 	} else if (function == L"tdAddDevice") {
 		(*intReturn) = d->deviceManager->addDevice();
-		if((*intReturn) >= 0){
+		if((*intReturn) >= 0) {
 			sendDeviceSignal((*intReturn), TELLSTICK_DEVICE_ADDED, 0);
 		}
 
 	} else if (function == L"tdRemoveDevice") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		(*intReturn) = d->deviceManager->removeDevice(deviceId);
-		if((*intReturn) == TELLSTICK_SUCCESS){
+		if((*intReturn) == TELLSTICK_SUCCESS) {
 			sendDeviceSignal(deviceId, TELLSTICK_DEVICE_REMOVED, 0);
 		}
 
@@ -261,8 +256,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 	}
 }
 
-void ClientCommunicationHandler::sendDeviceSignal(int deviceId, int eventDeviceChanges, int eventChangeType){
-
+void ClientCommunicationHandler::sendDeviceSignal(int deviceId, int eventDeviceChanges, int eventChangeType) {
 	EventUpdateData *eventData = new EventUpdateData();
 	eventData->messageType = L"TDDeviceChangeEvent";
 	eventData->deviceId = deviceId;
