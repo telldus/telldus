@@ -94,9 +94,14 @@ IF(Plugin_SRCS)
 	TARGET_LINK_LIBRARIES( ${Plugin_NAME}	${Plugin_LIBRARIES} )
 
 	IF (APPLE)
+		ADD_CUSTOM_COMMAND(TARGET ${Plugin_NAME} POST_BUILD
+			COMMAND ${CMAKE_COMMAND} -E copy
+				${CMAKE_CURRENT_BINARY_DIR}/${CMAKE_CFG_INTDIR}/${Plugin_NAME}.dylib
+				${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Plugins/script
+			COMMENT "Copy plugin ${Plugin_NAME} to destination bundle"
+		)
 		SET_TARGET_PROPERTIES(${Plugin_NAME} PROPERTIES
-			LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/${CMAKE_CFG_INTDIR}/TelldusCenter.app/Contents/Plugins/script
-			PREFIX "../"
+			PREFIX ""
 		)
 		INSTALL(CODE "
 			GET_FILENAME_COMPONENT(DESTDIR \$ENV{DESTDIR} ABSOLUTE)
