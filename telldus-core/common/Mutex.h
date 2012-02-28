@@ -35,7 +35,7 @@ namespace TelldusCore {
 
 	class MutexLocker {
 	public:
-		MutexLocker(Mutex *m);
+		explicit MutexLocker(Mutex *m);
 		~MutexLocker();
 	private:
 		Mutex *mutex;

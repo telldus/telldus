@@ -13,7 +13,7 @@ namespace TelldusCore {
 	class Message : public std::wstring {
 	public:
 		Message();
-		Message(const std::wstring &);
+		explicit Message(const std::wstring &);
 		~Message(void);
 
 		void addArgument(const std::wstring &);

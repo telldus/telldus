@@ -12,7 +12,7 @@
 
 class Timer : public TelldusCore::Thread {
 public:
-	Timer(TelldusCore::EventRef event);
+	explicit Timer(TelldusCore::EventRef event);
 	virtual ~Timer();
 
 	void setInterval(int sec);

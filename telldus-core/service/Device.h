@@ -16,7 +16,7 @@
 class Device : public TelldusCore::Mutex
 {
 public:
-	Device(int id);
+	explicit Device(int id);
 	~Device(void);
 
 	int doAction(int action, unsigned char data, Controller *controller);

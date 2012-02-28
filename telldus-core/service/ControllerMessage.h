@@ -11,7 +11,7 @@
 
 class ControllerMessage {
 public:
-	ControllerMessage(const std::string &rawMessage);
+	explicit ControllerMessage(const std::string &rawMessage);
 	virtual ~ControllerMessage();
 
 	std::string msgClass() const;

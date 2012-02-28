@@ -18,7 +18,7 @@ public:
 
 class ControllerListener : public TelldusCore::Thread {
 public:
-	ControllerListener(TelldusCore::EventRef event);
+	explicit ControllerListener(TelldusCore::EventRef event);
 	virtual ~ControllerListener();
 
 protected:

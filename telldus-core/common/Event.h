@@ -46,7 +46,7 @@ namespace TelldusCore {
 		EventDataRef takeSignal();
 
 	protected:
-		EventBase(EventHandler *handler);
+		explicit EventBase(EventHandler *handler);
 		void clearHandler();
 		virtual void clearSignal() = 0;
 		EventHandler *handler() const;
@@ -62,7 +62,7 @@ namespace TelldusCore {
 		virtual ~Event();
 
 	protected:
-		Event(EventHandler *handler);
+		explicit Event(EventHandler *handler);
 		EVENT_T retrieveNative();
 		virtual void clearSignal();
 		virtual void sendSignal();
