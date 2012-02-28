@@ -108,6 +108,7 @@ ENDIF (UNIX)
 
 TARGET_LINK_LIBRARIES( ${telldus-core_TARGET}	${telldus-core_LIBRARIES} )
 
+SET(telldus-core_TARGET ${telldus-core_TARGET} PARENT_SCOPE)
 SET_TARGET_PROPERTIES(${telldus-core_TARGET} PROPERTIES
 	FRAMEWORK TRUE
 	INSTALL_NAME_DIR "/Library/Frameworks"

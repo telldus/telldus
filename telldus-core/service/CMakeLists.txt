@@ -186,6 +186,7 @@ ENDIF (FTDI_ENGINE STREQUAL "ftd2xx")
 
 SOURCE_GROUP("Protocol Files" FILES ${telldus-service_protocol_SRCS})
 
+SET(telldus-service_TARGET ${telldus-service_TARGET} PARENT_SCOPE)
 ADD_EXECUTABLE(${telldus-service_TARGET}
 	${telldus-service_SRCS}
 	${telldus-service_protocol_SRCS}
