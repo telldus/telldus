@@ -60,7 +60,7 @@ void Timer::stop() {
 	d->running = false;
 	SetEvent(d->cond);
 #else
-	//Signal event
+	// Signal event
 	pthread_mutex_lock(&d->waitMutex);
 	if (d->running) {
 		d->running = false;

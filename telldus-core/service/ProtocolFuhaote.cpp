@@ -25,7 +25,7 @@ std::string ProtocolFuhaote::getStringForMethod(int method, unsigned char, Contr
 		return "";
 	}
 
-	//House code
+	// House code
 	for(size_t i = 0; i < 5; ++i) {
 		if (strCode[i] == '0') {
 			strReturn.append(B0);
@@ -33,7 +33,7 @@ std::string ProtocolFuhaote::getStringForMethod(int method, unsigned char, Contr
 			strReturn.append(B1);
 		}
 	}
-	//Unit code
+	// Unit code
 	for(size_t i = 5; i < 10; ++i) {
 		if (strCode[i] == '0') {
 			strReturn.append(B0);

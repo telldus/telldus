@@ -103,7 +103,7 @@ extern "C" {
 }
 #endif
 
-//Device methods
+// Device methods
 #define TELLSTICK_TURNON	1
 #define TELLSTICK_TURNOFF	2
 #define TELLSTICK_BELL		4
@@ -115,11 +115,11 @@ extern "C" {
 #define TELLSTICK_DOWN		256
 #define TELLSTICK_STOP		512
 
-//Sensor value types
+// Sensor value types
 #define TELLSTICK_TEMPERATURE	1
 #define TELLSTICK_HUMIDITY		2
 
-//Error codes
+// Error codes
 #define TELLSTICK_SUCCESS 0
 #define TELLSTICK_ERROR_NOT_FOUND -1
 #define TELLSTICK_ERROR_PERMISSION_DENIED -2
@@ -134,23 +134,23 @@ extern "C" {
 #define TELLSTICK_ERROR_CONFIG_SYNTAX -11
 #define TELLSTICK_ERROR_UNKNOWN -99
 
-//Device typedef
+// Device typedef
 #define TELLSTICK_TYPE_DEVICE	1
 #define TELLSTICK_TYPE_GROUP	2
 #define TELLSTICK_TYPE_SCENE	3
 
-//Controller typedef
+// Controller typedef
 #define TELLSTICK_CONTROLLER_TELLSTICK      1
 #define TELLSTICK_CONTROLLER_TELLSTICK_DUO  2
 #define TELLSTICK_CONTROLLER_TELLSTICK_NET  3
 
-//Device changes
+// Device changes
 #define TELLSTICK_DEVICE_ADDED			1
 #define TELLSTICK_DEVICE_CHANGED		2
 #define TELLSTICK_DEVICE_REMOVED		3
 #define TELLSTICK_DEVICE_STATE_CHANGED	4
 
-//Change types
+// Change types
 #define TELLSTICK_CHANGE_NAME			1
 #define TELLSTICK_CHANGE_PROTOCOL		2
 #define TELLSTICK_CHANGE_MODEL			3

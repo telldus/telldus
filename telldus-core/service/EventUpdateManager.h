@@ -20,7 +20,7 @@ public:
 	int eventState;
 	std::wstring eventValue;
 
-	//Sensor event
+	// Sensor event
 	std::wstring protocol;
 	std::wstring model;
 	int sensorId;

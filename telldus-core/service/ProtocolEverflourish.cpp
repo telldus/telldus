@@ -30,8 +30,8 @@ std::string ProtocolEverflourish::getStringForMethod(int method, unsigned char, 
 	}
 
 	const char ssss = 85;
-	const char sssl = 84; // 0
-	const char slss = 69; // 1
+	const char sssl = 84;  // 0
+	const char slss = 69;  // 1
 
 	const char bits[2] = {sssl,slss};
 	int i, check;
@@ -108,7 +108,7 @@ std::string ProtocolEverflourish::decodeData(ControllerMessage &dataMsg) {
 
 	unit = allData & 0x300;
 	unit >>= 8;
-	unit++; //unit from 1 to 4
+	unit++;  // unit from 1 to 4
 
 	method = allData & 0xF;
 
@@ -129,7 +129,7 @@ std::string ProtocolEverflourish::decodeData(ControllerMessage &dataMsg) {
 		retString << "learn;";
 	}
 	else {
-		//not everflourish
+		// not everflourish
 		return "";
 	}
 

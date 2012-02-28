@@ -38,7 +38,7 @@ Log::Log()
 #elif defined(_MACOSX)
 	d->logOutput = Log::StdOut;
 #elif defined(_WINDOWS)
-	//Add ourselves to the registy
+	// Add ourselves to the registy
 	HKEY hRegKey = NULL;
 	DWORD dwError = 0;
 	TCHAR filePath[MAX_PATH];
@@ -120,7 +120,7 @@ void Log::setDebug() {
 
 void Log::setLogOutput(LogOutput logOutput) {
 #ifdef _MACOSX
-	//Always stdout
+	// Always stdout
 	return;
 #endif
 	Log *log = Log::instance();

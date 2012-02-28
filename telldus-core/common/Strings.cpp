@@ -26,7 +26,7 @@
 
 std::wstring TelldusCore::charToWstring(const char *value) {
 #ifdef _WINDOWS
-	//Determine size
+	// Determine size
 	int size = MultiByteToWideChar(CP_UTF8, 0, value, -1, NULL, 0);
 	if (size == 0) {
 		return L"";
@@ -44,11 +44,11 @@ std::wstring TelldusCore::charToWstring(const char *value) {
 	size_t utf8Length = strlen(value);
 	size_t outbytesLeft = utf8Length*sizeof(wchar_t);
 
-	//Copy the instring
+	// Copy the instring
 	char *inString = new char[utf8Length+1];
 	strcpy(inString, value);
 
-	//Create buffer for output
+	// Create buffer for output
 	char *outString = (char*)new wchar_t[utf8Length+1];
 	memset(outString, 0, sizeof(wchar_t)*(utf8Length+1));
 
@@ -65,7 +65,7 @@ std::wstring TelldusCore::charToWstring(const char *value) {
 
 	std::wstring retval( (wchar_t *)outString );
 
-	//Cleanup
+	// Cleanup
 	delete[] inString;
 	delete[] outString;
 
@@ -99,17 +99,17 @@ bool TelldusCore::comparei(std::wstring stringA, std::wstring stringB) {
 
 std::wstring TelldusCore::intToWstring(int value) {
 #ifdef _WINDOWS
-	//no stream used
-//TODO! Make effective and safe...
-	wchar_t numstr[21]; // enough to hold all numbers up to 64-bits
+	// no stream used
+	// TODO! Make effective and safe...
+	wchar_t numstr[21];  // enough to hold all numbers up to 64-bits
 	_itow_s(value, numstr, sizeof(numstr), 10);
 	std::wstring newstring(numstr);
 	return newstring;
-	//return TelldusCore::charToWstring(stdstring.c_str());
-	//std::wstring temp = TelldusCore::charToWstring(stdstring.c_str());
-	//std::wstring temp(stdstring.length(), L' ');
-	//std::copy(stdstring.begin(), stdstring.end(), temp.begin());
-	//return temp;
+	// return TelldusCore::charToWstring(stdstring.c_str());
+	// std::wstring temp = TelldusCore::charToWstring(stdstring.c_str());
+	// std::wstring temp(stdstring.length(), L' ');
+	// std::copy(stdstring.begin(), stdstring.end(), temp.begin());
+	// return temp;
 #else
 	std::wstringstream st;
 	st << value;
@@ -118,9 +118,9 @@ std::wstring TelldusCore::intToWstring(int value) {
 }
 
 std::string TelldusCore::intToString(int value) {
-//Not sure if this is neecssary (for ordinary stringstream that is)
+	// Not sure if this is neecssary (for ordinary stringstream that is)
 #ifdef _WINDOWS
-	char numstr[21]; // enough to hold all numbers up to 64-bits
+	char numstr[21];  // enough to hold all numbers up to 64-bits
 	_itoa_s(value, numstr, sizeof(numstr), 10);
 	std::string stdstring(numstr);
 	return stdstring;
@@ -170,7 +170,7 @@ int TelldusCore::wideToInteger(const std::wstring &input) {
 
 std::string TelldusCore::wideToString(const std::wstring &input) {
 #ifdef _WINDOWS
-	//Determine size
+	// Determine size
 	int size = WideCharToMultiByte(CP_UTF8, 0, input.c_str(), -1, NULL, 0, NULL, NULL);
 	if (size == 0) {
 		return "";
@@ -186,13 +186,13 @@ std::string TelldusCore::wideToString(const std::wstring &input) {
 
 #else
 	size_t wideSize = sizeof(wchar_t)*input.length();
-	size_t outbytesLeft = wideSize+sizeof(char); //We cannot know how many wide character there is yet
+	size_t outbytesLeft = wideSize+sizeof(char);  // We cannot know how many wide character there is yet
 
-	//Copy the instring
+	// Copy the instring
 	char *inString = (char*)new wchar_t[input.length()+1];
 	memcpy(inString, input.c_str(), wideSize+sizeof(wchar_t));
 
-	//Create buffer for output
+	// Create buffer for output
 	char *outString = new char[outbytesLeft];
 	memset(outString, 0, sizeof(char)*(outbytesLeft));
 
@@ -209,7 +209,7 @@ std::string TelldusCore::wideToString(const std::wstring &input) {
 
 	std::string retval(outString);
 
-	//Cleanup
+	// Cleanup
 	delete[] inString;
 	delete[] outString;
 
@@ -226,7 +226,7 @@ std::string TelldusCore::formatf(const char *format, ...) {
 }
 
 std::string TelldusCore::sformatf(const char *format, va_list ap) {
-	//This code is based on code from the Linux man-pages project (man vsprintf)
+	// This code is based on code from the Linux man-pages project (man vsprintf)
 	int n;
 	int size = 100;     /* Guess we need no more than 100 bytes. */
 	char *p, *np;

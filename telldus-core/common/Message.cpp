@@ -27,18 +27,18 @@ Message::~Message(void) {
 }
 
 void Message::addArgument(const std::wstring &value) {
-	//std::wstringstream st;
-	//st << (int)value.size();
-	this->append(TelldusCore::intToWstring(value.size())); //st.str());
+	// std::wstringstream st;
+	// st << (int)value.size();
+	this->append(TelldusCore::intToWstring(value.size()));  // st.str());
 	this->append(L":");
 	this->append(value);
 }
 
 void Message::addArgument(int value) {
-	//std::wstringstream st;
-	//st << (int)value;
+	// std::wstringstream st;
+	// st << (int)value;
 	this->append(L"i");
-	this->append(TelldusCore::intToWstring(value)); // st.str());
+	this->append(TelldusCore::intToWstring(value));  // st.str());
 	this->append(L"s");
 }
 

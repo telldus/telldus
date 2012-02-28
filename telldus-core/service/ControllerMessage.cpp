@@ -22,7 +22,7 @@ public:
 ControllerMessage::ControllerMessage(const std::string &message) {
 	d = new PrivateData;
 
-	//Process our message into bits
+	// Process our message into bits
 	size_t prevPos = 0;
 	size_t pos = message.find(";");
 	while(pos != std::string::npos) {

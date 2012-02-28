@@ -33,7 +33,7 @@ CallbackMainDispatcher::CallbackMainDispatcher()
 	d = new PrivateData;
 	d->stopEvent = d->eventHandler.addEvent();
 	d->generalCallbackEvent = d->eventHandler.addEvent();
-	d->janitor = d->eventHandler.addEvent(); //Used for cleanups
+	d->janitor = d->eventHandler.addEvent();  // Used for cleanups
 
 	d->lastCallbackId = 0;
 }
@@ -77,7 +77,7 @@ int CallbackMainDispatcher::unregisterCallback(int callbackId) {
 	}
 	if (newEventList.size()) {
 		CallbackList::iterator it = newEventList.begin();
-		{ //Lock and unlock to make sure no one else uses the object
+		{  // Lock and unlock to make sure no one else uses the object
 			TelldusCore::MutexLocker locker( &(*it)->mutex );
 		}
 		delete (*it);
@@ -109,7 +109,7 @@ void CallbackMainDispatcher::run() {
 			}
 		}
 		if (d->janitor->isSignaled()) {
-			//Clear all of them if there is more than one
+			// Clear all of them if there is more than one
 			while(d->janitor->isSignaled()) {
 				d->janitor->popSignal();
 			}
@@ -121,7 +121,7 @@ void CallbackMainDispatcher::run() {
 void CallbackMainDispatcher::cleanupCallbacks() {
 	bool again = false;
 
-	//Device Event
+	// Device Event
 	do {
 		again = false;
 		MutexLocker locker(&d->mutex);

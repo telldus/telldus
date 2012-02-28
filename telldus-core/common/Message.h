@@ -17,9 +17,9 @@ namespace TelldusCore {
 		~Message(void);
 
 		void addArgument(const std::wstring &);
-		//void addSpecialArgument(const std::wstring &);
-		//void addSpecialArgument(int);
-		//void addSpecialArgument(const char *);
+		// void addSpecialArgument(const std::wstring &);
+		// void addSpecialArgument(int);
+		// void addSpecialArgument(const char *);
 		void addArgument(int);
 		void addArgument(const char *);
 

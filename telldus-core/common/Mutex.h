@@ -22,7 +22,7 @@ namespace TelldusCore {
 		virtual void unlock();
 
 	private:
-		Mutex(const Mutex&); //Disable copy
+		Mutex(const Mutex&);  // Disable copy
 		Mutex& operator = (const Mutex&);
 		class PrivateData;
 		PrivateData *d;

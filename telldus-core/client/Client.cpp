@@ -96,7 +96,7 @@ void Client::run() {
 			}
 		}
 
-		std::wstring clientMessage = d->eventSocket.read(1000);	//testing 5 second timeout
+		std::wstring clientMessage = d->eventSocket.read(1000);  // testing 5 second timeout
 
 		while(clientMessage != L"") {
 			// a message arrived
@@ -140,7 +140,7 @@ void Client::run() {
 				d->callbackMainDispatcher.retrieveCallbackEvent()->signal(data);
 
 			} else {
-				clientMessage = L"";  //cleanup, if message contained garbage/unhandled data
+				clientMessage = L"";  // cleanup, if message contained garbage/unhandled data
 			}
 		}
 	}
@@ -159,25 +159,25 @@ std::wstring Client::sendToService(const Message &msg) {
 		}
 		Socket s;
 		s.connect(L"TelldusClient");
-		if (!s.isConnected()) { //Connection failed
+		if (!s.isConnected()) {  // Connection failed
 			msleep(500);
-			continue; //retry
+			continue;  // retry
 		}
 		s.write(msg.data());
-		if (!s.isConnected()) { //Connection failed sometime during operation... (better check here, instead of 5 seconds timeout later)
+		if (!s.isConnected()) {  // Connection failed sometime during operation... (better check here, instead of 5 seconds timeout later)
 			msleep(500);
-			continue; //retry
+			continue;  // retry
 		}
 		readData = s.read(8000);  // TODO changed to 10000 from 5000, how much does this do...?
 		if(readData == L"") {
 			msleep(500);
-			continue; //TODO can we be really sure it SHOULD be anything?
-			//TODO perhaps break here instead?
+			continue;  // TODO can we be really sure it SHOULD be anything?
+			// TODO perhaps break here instead?
 		}
 
-		if (!s.isConnected()) { //Connection failed sometime during operation...
+		if (!s.isConnected()) {  // Connection failed sometime during operation...
 			msleep(500);
-			continue; //retry
+			continue;  // retry
 		}
 		break;
 	}

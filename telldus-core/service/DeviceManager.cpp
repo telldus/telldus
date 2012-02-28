@@ -41,11 +41,11 @@ DeviceManager::~DeviceManager(void) {
 	{
 		TelldusCore::MutexLocker deviceListLocker(&d->lock);
 		for (DeviceMap::iterator it = d->devices.begin(); it != d->devices.end(); ++it) {
-			{TelldusCore::MutexLocker deviceLocker(it->second);}	//aquire lock, and release it, just to see that the device it's not in use anywhere
+			{TelldusCore::MutexLocker deviceLocker(it->second);}  // aquire lock, and release it, just to see that the device it's not in use anywhere
 			delete(it->second);
 		}
 		for (std::list<Sensor *>::iterator it = d->sensorList.begin(); it != d->sensorList.end(); ++it) {
-			{TelldusCore::MutexLocker sensorLocker(*it);}	//aquire lock, and release it, just to see that the device it's not in use anywhere
+			{TelldusCore::MutexLocker sensorLocker(*it);}  // aquire lock, and release it, just to see that the device it's not in use anywhere
 			delete(*it);
 		}
 	}
@@ -133,7 +133,7 @@ int DeviceManager::getDeviceMethods(int deviceId, std::set<int> &duplicateDevice
 	std::wstring protocol;
 
 	{
-		//devices locked
+		// devices locked
 		TelldusCore::MutexLocker deviceListLocker(&d->lock);
 
 		if (!d->devices.size()) {
@@ -379,10 +379,10 @@ void DeviceManager::disconnectTellStickController(int vid, int pid, const std::s
 
 int DeviceManager::doAction(int deviceId, int action, unsigned char data) {
 	Device *device = 0;
-	//On the stack and will be released if we have a device lock.
+	// On the stack and will be released if we have a device lock.
 	std::auto_ptr<TelldusCore::MutexLocker> deviceLocker(0);
 	{
-		//devicelist locked
+		// devicelist locked
 		TelldusCore::MutexLocker deviceListLocker(&d->lock);
 
 		if (!d->devices.size()) {
@@ -390,12 +390,12 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data) {
 		}
 		DeviceMap::iterator it = d->devices.find(deviceId);
 		if (it == d->devices.end()) {
-			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;	//not found
+			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;  // not found
 		}
-		//device locked
+		// device locked
 		deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(new TelldusCore::MutexLocker(it->second));
 		device = it->second;
-	} //devicelist unlocked
+	}  // devicelist unlocked
 
 	int retval = TELLSTICK_ERROR_UNKNOWN;
 
@@ -407,8 +407,8 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data) {
 		delete duplicateDeviceIds;
 
 		{
-			//reaquire device lock, make sure it still exists
-			//devicelist locked
+			// reaquire device lock, make sure it still exists
+			// devicelist locked
 			TelldusCore::MutexLocker deviceListLocker(&d->lock);
 
 			if (!d->devices.size()) {
@@ -416,18 +416,18 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data) {
 			}
 			DeviceMap::iterator it = d->devices.find(deviceId);
 			if (it == d->devices.end()) {
-				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;	//not found
+				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;  // not found
 			}
-			//device locked
+			// device locked
 			deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(new TelldusCore::MutexLocker(it->second));
 			device = it->second;
-		} //devicelist unlocked
+		}  // devicelist unlocked
 	}
 	else {
 		Controller *controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
 		if(!controller) {
 			Log::warning("Trying to execute action, but no controller found. Rescanning USB ports");
-			//no controller found, scan for one, and retry once
+			// no controller found, scan for one, and retry once
 			d->controllerManager->loadControllers();
 			controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
 		}
@@ -446,7 +446,7 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data) {
 					Log::error("No contoller (TellStick) found, even after reset. Giving up.");
 					return TELLSTICK_ERROR_NOT_FOUND;
 				}
-				retval = device->doAction(action, data, controller); //retry one more time
+				retval = device->doAction(action, data, controller);  // retry one more time
 			}
 		} else {
 			Log::error("No contoller (TellStick) found after one retry. Giving up.");
@@ -454,7 +454,7 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data) {
 		}
 	}
 	if(retval == TELLSTICK_SUCCESS && device->getType() != TELLSTICK_TYPE_SCENE && device->getMethods() & action) {
-		//if method isn't explicitly supported by device, but used anyway as a fallback (i.e. bell), don't change state
+		// if method isn't explicitly supported by device, but used anyway as a fallback (i.e. bell), don't change state
 		std::wstring datastring = TelldusCore::charUnsignedToWstring(data);
 		if (this->triggerDeviceStateChange(deviceId, action, datastring)) {
 			device->setLastSentCommand(action, datastring);
@@ -563,7 +563,7 @@ int DeviceManager::executeScene(std::wstring singledevice, int groupDeviceId) {
 int DeviceManager::removeDevice(int deviceId) {
 	Device *device = 0;
 	{
-		int ret = d->set.removeNode(Settings::Device, deviceId);		//remove from register/settings
+		int ret = d->set.removeNode(Settings::Device, deviceId);  // remove from register/settings
 		if (ret != TELLSTICK_SUCCESS) {
 			return ret;
 		}
@@ -575,13 +575,13 @@ int DeviceManager::removeDevice(int deviceId) {
 		DeviceMap::iterator it = d->devices.find(deviceId);
 		if (it != d->devices.end()) {
 			device = it->second;
-			d->devices.erase(it);	//remove from list, keep reference
+			d->devices.erase(it);  // remove from list, keep reference
 		}
 		else {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
 	}
-	{TelldusCore::MutexLocker lock(device);}	//waiting for device lock, if it's aquired, just unlock again. Device is removed from list, and cannot be accessed from anywhere else
+	{TelldusCore::MutexLocker lock(device);}  // waiting for device lock, if it's aquired, just unlock again. Device is removed from list, and cannot be accessed from anywhere else
 	delete device;
 
 	return TELLSTICK_SUCCESS;
@@ -638,7 +638,7 @@ std::wstring DeviceManager::getSensorValue(const std::wstring &protocol, const s
 
 
 void DeviceManager::handleControllerMessage(const ControllerEventData &eventData) {
-	//Trigger raw-event
+	// Trigger raw-event
 	EventUpdateData *eventUpdateData = new EventUpdateData();
 	eventUpdateData->messageType = L"TDRawDeviceEvent";
 	eventUpdateData->controllerId = eventData.controllerId;
@@ -749,7 +749,7 @@ int DeviceManager::sendRawCommand(const std::wstring &command, int reserved) {
 			if(!controller) {
 				return TELLSTICK_ERROR_NOT_FOUND;
 			}
-			retval = controller->send(TelldusCore::wideToString(command));  //retry one more time
+			retval = controller->send(TelldusCore::wideToString(command));  // retry one more time
 		}
 		return retval;
 	} else {

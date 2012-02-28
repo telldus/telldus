@@ -15,7 +15,7 @@ public:
 	void start();
 	void stop();
 
-	//Thread safe!
+	// Thread safe!
 	void deviceInsertedOrRemoved(int vid, int pid, bool inserted);
 	void resume();
 	void suspend();

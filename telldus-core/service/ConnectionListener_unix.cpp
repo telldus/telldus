@@ -45,7 +45,7 @@ ConnectionListener::~ConnectionListener(void) {
 void ConnectionListener::run() {
 	struct timeval tv = { 0, 0 };
 
-	//Timeout for select
+	// Timeout for select
 
 	SOCKET_T serverSocket;
 	struct sockaddr_un name;
@@ -62,7 +62,7 @@ void ConnectionListener::run() {
 	bind(serverSocket, (struct sockaddr *)&name, size);
 	listen(serverSocket, 5);
 
-	//Change permissions to allow everyone
+	// Change permissions to allow everyone
 	chmod(d->name.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
 	len = sizeof(struct sockaddr_un);
 
@@ -80,7 +80,7 @@ void ConnectionListener::run() {
 		} else if (response < 0 ) {
 			continue;
 		}
-		//Make sure it is a new connection
+		// Make sure it is a new connection
 		if (!FD_ISSET(serverSocket, &infds)) {
 			continue;
 		}

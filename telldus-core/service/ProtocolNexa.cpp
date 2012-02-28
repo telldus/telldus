@@ -10,7 +10,7 @@
 #include "service/TellStick.h"
 #include "common/Strings.h"
 
-int ProtocolNexa::lastArctecCodeSwitchWasTurnOff=0;  //TODO, always removing first turnon now, make more flexible (waveman too)
+int ProtocolNexa::lastArctecCodeSwitchWasTurnOff=0;  // TODO, always removing first turnon now, make more flexible (waveman too)
 
 int ProtocolNexa::methods() const {
 	if (TelldusCore::comparei(model(), L"codeswitch")) {
@@ -35,27 +35,27 @@ std::string ProtocolNexa::getStringForMethod(int method, unsigned char data, Con
 		return getStringBell();
 	}
 	if ((method == TELLSTICK_TURNON) && TelldusCore::comparei(model(), L"selflearning-dimmer")) {
-		//Workaround for not letting a dimmer do into "dimming mode"
+		// Workaround for not letting a dimmer do into "dimming mode"
 		return getStringSelflearning(TELLSTICK_DIM, 255);
 	}
 	if (method == TELLSTICK_LEARN) {
 		std::string str = getStringSelflearning(TELLSTICK_TURNON, data);
 
-		//Check to see if we are an old TellStick (fw <= 2, batch <= 8)
+		// Check to see if we are an old TellStick (fw <= 2, batch <= 8)
 		TellStick *ts = reinterpret_cast<TellStick *>(controller);
 		if (!ts) {
 			return str;
 		}
 		if (ts->pid() == 0x0c30 && ts->firmwareVersion() <= 2) {
-			//Workaround for the bug in early firmwares
-			//The TellStick have a fixed pause (max) between two packets.
-			//It is only correct between the first and second packet.
-			//It seems faster to send two packes at a time and some
-			//receivers seems picky about this when learning.
-			//We also return the last packet so Device::doAction() doesn't
-			//report TELLSTICK_ERROR_METHOD_NOT_SUPPORTED
+			// Workaround for the bug in early firmwares
+			// The TellStick have a fixed pause (max) between two packets.
+			// It is only correct between the first and second packet.
+			// It seems faster to send two packes at a time and some
+			// receivers seems picky about this when learning.
+			// We also return the last packet so Device::doAction() doesn't
+			// report TELLSTICK_ERROR_METHOD_NOT_SUPPORTED
 
-			str.insert(0, 1, 2); //Repeat two times
+			str.insert(0, 1, 2);  // Repeat two times
 			str.insert(0, 1, 'R');
 			for (int i = 0; i < 5; ++i) {
 				controller->send(str);
@@ -90,8 +90,8 @@ std::string ProtocolNexa::getStringBell() {
 	std::wstring house = getStringParameter(L"house", L"A");
 	int intHouse = house[0] - L'A';
 	strReturn.append(getCodeSwitchTuple(intHouse));
-	strReturn.append("$kk$$kk$$kk$$k$k"); //Unit 7
-	strReturn.append("$kk$$kk$$kk$$kk$$k+"); //Bell
+	strReturn.append("$kk$$kk$$kk$$k$k");  // Unit 7
+	strReturn.append("$kk$$kk$$kk$$kk$$k+");  // Bell
 	return strReturn;
 }
 
@@ -102,19 +102,19 @@ std::string ProtocolNexa::getStringSelflearning(int method, unsigned char level)
 }
 
 std::string ProtocolNexa::getStringSelflearningForCode(int intHouse, int intCode, int method, unsigned char level) {
-	const unsigned char START[] = {'T',127,255,24,1,0};
-//	const char START[] = {'T',130,255,26,24,0};
+	const unsigned char START[] = {'T', 127, 255, 24, 1, 0};
+	// const char START[] = {'T',130,255,26,24,0};
 
 	std::string strMessage(reinterpret_cast<const char*>(START));
-	strMessage.append(1,(method == TELLSTICK_DIM ? 147 : 132)); //Number of pulses
+	strMessage.append(1, (method == TELLSTICK_DIM ? 147 : 132));  // Number of pulses
 
 	std::string m;
 	for (int i = 25; i >= 0; --i) {
 		m.append( intHouse & 1 << i ? "10" : "01" );
 	}
-	m.append("01"); //Group
+	m.append("01");  // Group
 
-	//On/off
+	// On/off
 	if (method == TELLSTICK_DIM) {
 		m.append("00");
 	} else if (method == TELLSTICK_TURNOFF) {
@@ -136,18 +136,18 @@ std::string ProtocolNexa::getStringSelflearningForCode(int intHouse, int intCode
 		}
 	}
 
-	//The number of data is odd.
-	//Add this to make it even, otherwise the following loop will not work
+	// The number of data is odd.
+	// Add this to make it even, otherwise the following loop will not work
 	m.append("0");
 
-	unsigned char code = 9; //b1001, startcode
+	unsigned char code = 9;  // b1001, startcode
 	for (unsigned int i = 0; i < m.length(); ++i) {
 		code <<= 4;
 		if (m[i] == '1') {
-			code |= 8; //b1000
+			code |= 8;  // b1000
 		} else {
-			code |= 10; //b1010
-//			code |= 11; //b1011
+			code |= 10;  // b1010
+			// code |= 11; //b1011
 		}
 		if (i % 2 == 0) {
 			strMessage.append(1,code);
@@ -210,7 +210,7 @@ std::string ProtocolNexa::decodeDataSelfLearning(long allData) {
 		retString << "turnoff;";
 	}
 	else {
-		//not arctech selflearning
+		// not arctech selflearning
 		return "";
 	}
 
@@ -236,12 +236,12 @@ std::string ProtocolNexa::decodeDataCodeSwitch(long allData) {
 		return "";
 	}
 
-	house = house + 'A'; //house from A to P
+	house = house + 'A';  // house from A to P
 
 	if(method != 6 && lastArctecCodeSwitchWasTurnOff == 1) {
 		lastArctecCodeSwitchWasTurnOff = 0;
-		return ""; //probably a stray turnon or bell	(perhaps: only certain time interval since last, check that it's the same house/unit... Will lose
-						//one turnon/bell, but it's better than the alternative...
+		return "";  // probably a stray turnon or bell	(perhaps: only certain time interval since last, check that it's the same house/unit... Will lose
+						// one turnon/bell, but it's better than the alternative...
 	}
 
 	if(method == 6) {
@@ -261,7 +261,7 @@ std::string ProtocolNexa::decodeDataCodeSwitch(long allData) {
 		retString << ";method:bell;";
 	}
 	else {
-		//not arctech codeswitch
+		// not arctech codeswitch
 		return "";
 	}
 
@@ -271,9 +271,9 @@ std::string ProtocolNexa::decodeDataCodeSwitch(long allData) {
 std::string ProtocolNexa::getCodeSwitchTuple(int intCode) {
 	std::string strReturn = "";
 	for( int i = 0; i < 4; ++i ) {
-		if (intCode & 1) { //Convert 1
+		if (intCode & 1) {  // Convert 1
 			strReturn.append("$kk$");
-		} else { //Convert 0
+		} else {  // Convert 0
 			strReturn.append("$k$k");
 		}
 		intCode >>= 1;

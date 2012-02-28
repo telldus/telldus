@@ -122,10 +122,10 @@ bool TellStick::isSameAsDescriptor(const TellStickDescriptor &td) const {
 
 void TellStick::processData( const std::string &data ) {
 	for (unsigned int i = 0; i < data.length(); ++i) {
-		if (data[i] == 13) { // Skip \r
+		if (data[i] == 13) {  // Skip \r
 			continue;
-		} else if (data[i] == 10) { // \n found
-			if (d->message.substr(0,2).compare("+V") == 0) {
+		} else if (data[i] == 10) {  // \n found
+			if (d->message.substr(0, 2).compare("+V") == 0) {
 				setFirmwareVersion(TelldusCore::charToInteger(d->message.substr(2).c_str()));
 			} else if (d->message.substr(0,2).compare("+R") == 0) {
 				this->publishData(d->message.substr(2));
@@ -133,7 +133,7 @@ void TellStick::processData( const std::string &data ) {
 				this->decodePublishData(d->message.substr(2));
 			}
 			d->message.clear();
-		} else { // Append the character
+		} else {  // Append the character
 			d->message.append( 1, data[i] );
 		}
 	}
@@ -159,12 +159,12 @@ void TellStick::run() {
 		d->running = true;
 	}
 
-	//Send a firmware version request
+	// Send a firmware version request
 	unsigned char msg[] = "V+";
 	ftdi_write_data( &d->ftHandle, msg, 2 ) ;
 
 	while(1) {
-		//Is there any better way then sleeping between reads?
+		// Is there any better way then sleeping between reads?
 		msleep(100);
 		TelldusCore::MutexLocker locker(&d->mutex);
 		if (!d->running) {
@@ -173,9 +173,9 @@ void TellStick::run() {
 		memset(buf, 0, sizeof(buf));
 		dwBytesRead = ftdi_read_data(&d->ftHandle, buf, sizeof(buf));
 		if (dwBytesRead < 0) {
-			//An error occured, avoid flooding by sleeping longer
-			//Hopefully if will start working again
-			msleep(1000); //1s
+			// An error occured, avoid flooding by sleeping longer
+			// Hopefully if will start working again
+			msleep(1000);  // 1s
 		}
 		if (dwBytesRead < 1) {
 			continue;
@@ -193,9 +193,9 @@ int TellStick::send( const std::string &strMessage ) {
 	unsigned char *tempMessage = new unsigned char[strMessage.size()];
 	memcpy(tempMessage, strMessage.c_str(), strMessage.size());
 
-	//This lock does two things
-	// 1 Prevents two calls from different threads to this function
-	// 2 Prevents our running thread from receiving the data we are interested in here
+	// This lock does two things
+	//  1 Prevents two calls from different threads to this function
+	//  2 Prevents our running thread from receiving the data we are interested in here
 	TelldusCore::MutexLocker locker(&d->mutex);
 
 	int ret;
@@ -232,9 +232,9 @@ int TellStick::send( const std::string &strMessage ) {
 			if (in == '\n') {
 				return TELLSTICK_SUCCESS;
 			}
-		} else if(ret == 0) { // No data available
+		} else if(ret == 0) {  // No data available
 			usleep(100);
-		} else { //Error
+		} else {  // Error
 			Log::debug("Broken pipe on read");
 			return TELLSTICK_ERROR_BROKEN_PIPE;
 		}
@@ -322,7 +322,7 @@ void TellStick::stop() {
 			TelldusCore::MutexLocker locker(&d->mutex);
 				d->running = false;
 		}
-		//Unlock the wait-condition
+		// Unlock the wait-condition
 
 		pthread_cond_broadcast(&d->eh.eCondVar);
 	}

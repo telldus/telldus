@@ -14,11 +14,11 @@ int ProtocolUpm::methods() const {
 std::string ProtocolUpm::getStringForMethod(int method, unsigned char, Controller *) {
 	const char S = ';';
 	const char L = '~';
-	const char START[] = {S,0};
-	const char B1[] = {L,S,0};
-	const char B0[] = {S,L,0};
-	//const char BON[] = {S,L,L,S,0};
-	//const char BOFF[] = {S,L,S,L,0};
+	const char START[] = {S, 0};
+	const char B1[] = {L, S, 0};
+	const char B0[] = {S, L, 0};
+	// const char BON[] = {S,L,L,S,0};
+	// const char BOFF[] = {S,L,S,L,0};
 
 	int intUnit = this->getIntParameter(L"unit", 1, 4)-1;
 	std::string strReturn;
@@ -32,7 +32,7 @@ std::string ProtocolUpm::getStringForMethod(int method, unsigned char, Controlle
 		}
 		code >>= 1;
 	}
-	strReturn.insert(0, START); //Startcode, first
+	strReturn.insert(0, START);  // Startcode, first
 
 	code = 0;
 	if (method == TELLSTICK_TURNON || method == TELLSTICK_LEARN) {

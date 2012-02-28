@@ -47,7 +47,7 @@ Protocol::~Protocol(void) {
 
 std::wstring Protocol::model() const {
 	std::wstring strModel = d->model;
-	//Strip anything after : if it is found
+	// Strip anything after : if it is found
 	size_t pos = strModel.find(L":");
 	if (pos != std::wstring::npos) {
 		strModel = strModel.substr(0, pos);
@@ -176,7 +176,7 @@ std::list<std::string> Protocol::getParametersForProtocol(const std::wstring &pr
 	} else if (TelldusCore::comparei(protocolName, L"ikea")) {
 		parameters.push_back("system");
 		parameters.push_back("units");
-		//parameters.push_back("fade");
+		// parameters.push_back("fade");
 
 	} else if (TelldusCore::comparei(protocolName, L"risingsun")) {
 		parameters.push_back("house");

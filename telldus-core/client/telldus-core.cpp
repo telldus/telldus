@@ -319,7 +319,7 @@ using namespace TelldusCore;
  * @since Version 2.0.0
  **/
 void WINAPI tdInit(void) {
-	Client::getInstance(); //Create the manager-object
+	Client::getInstance();  // Create the manager-object
 }
 
 /**
@@ -1023,7 +1023,7 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
 		"Syntax error in the configuration file"
 	};
 	std::string strReturn;
-	intErrorNo = abs(intErrorNo); //We don't use negative values here.
+	intErrorNo = abs(intErrorNo);  // We don't use negative values here.
 	if (intErrorNo >= numResponses) {
 		strReturn = "Unknown error";
 	} else {

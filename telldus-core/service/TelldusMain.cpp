@@ -64,9 +64,9 @@ void TelldusMain::suspend() {
 void TelldusMain::start(void) {
 	TelldusCore::EventRef clientEvent = d->eventHandler.addEvent();
 	TelldusCore::EventRef dataEvent = d->eventHandler.addEvent();
-	TelldusCore::EventRef janitor = d->eventHandler.addEvent(); //Used for regular cleanups
-	Timer supervisor(janitor); //Tells the janitor to go back to work
-	supervisor.setInterval(60); //Once every minute
+	TelldusCore::EventRef janitor = d->eventHandler.addEvent();  // Used for regular cleanups
+	Timer supervisor(janitor);  // Tells the janitor to go back to work
+	supervisor.setInterval(60);  // Once every minute
 	supervisor.start();
 
 	EventUpdateManager eventUpdateManager;
@@ -82,7 +82,7 @@ void TelldusMain::start(void) {
 	TelldusCore::EventRef handlerEvent = d->eventHandler.addEvent();
 
 #ifdef _MACOSX
-	//This is only needed on OS X
+	// This is only needed on OS X
 	ControllerListener controllerListener(d->controllerChangeEvent);
 #endif
 
@@ -92,7 +92,7 @@ void TelldusMain::start(void) {
 			continue;
 		}
 		if (clientEvent->isSignaled()) {
-			//New client connection
+			// New client connection
 			TelldusCore::EventDataRef eventDataRef = clientEvent->takeSignal();
 			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventDataRef.get());
 			if (data) {
@@ -131,7 +131,7 @@ void TelldusMain::start(void) {
 			}
 		}
 		if (janitor->isSignaled()) {
-			//Clear all of them if there is more than one
+			// Clear all of them if there is more than one
 			while(janitor->isSignaled()) {
 				janitor->popSignal();
 			}

@@ -77,9 +77,9 @@ int main(int argc, char **argv) {
 			exit(EXIT_FAILURE);
 		}
 		if (pid > 0) {
-			//We are the parent
-			//Let the parent store the clients pid,
-			//This way anyone starting the daemon can read the pidfile immediately
+			// We are the parent
+			// Let the parent store the clients pid,
+			// This way anyone starting the daemon can read the pidfile immediately
 
 			// Record the pid
 			fd = fopen(PID_FILE,"w");
@@ -103,7 +103,7 @@ int main(int argc, char **argv) {
 		sid = setsid();
 
 		if (sid < 0) {
-			//Something went wrong
+			// Something went wrong
 			printf("Could not set sid\n");
 			exit(EXIT_FAILURE);
 		}

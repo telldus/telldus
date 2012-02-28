@@ -44,12 +44,12 @@ std::string ProtocolWaveman::decodeData(ControllerMessage& dataMsg) {
 		return "";
 	}
 
-	house = house + 'A'; //house from A to P
+	house = house + 'A';  // house from A to P
 
 	if(method != 6 && lastArctecCodeSwitchWasTurnOff == 1) {
 		lastArctecCodeSwitchWasTurnOff = 0;
-		return ""; //probably a stray turnon or bell	(perhaps: only certain time interval since last, check that it's the same house/unit... Will lose
-						//one turnon/bell, but it's better than the alternative...
+		return "";  // probably a stray turnon or bell	(perhaps: only certain time interval since last, check that it's the same house/unit... Will lose
+						// one turnon/bell, but it's better than the alternative...
 	}
 
 	if(method == 6) {
@@ -66,7 +66,7 @@ std::string ProtocolWaveman::decodeData(ControllerMessage& dataMsg) {
 		retString << ";unit:" << unit << ";method:turnon;";
 	}
 	else {
-		//not waveman
+		// not waveman
 		return "";
 	}
 

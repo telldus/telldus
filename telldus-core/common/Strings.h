@@ -25,7 +25,7 @@ namespace TelldusCore {
 
 	bool comparei(std::wstring stringA, std::wstring stringB);
 	std::wstring intToWstring(int value);
-	//std::wstring intToWStringSafe(int value);
+	// std::wstring intToWStringSafe(int value);
 	std::string intToString(int value);
 	uint64_t hexTo64l(const std::string data);
 	std::string wideToString(const std::wstring &input);

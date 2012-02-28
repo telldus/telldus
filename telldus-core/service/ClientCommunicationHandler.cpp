@@ -61,7 +61,7 @@ void ClientCommunicationHandler::run() {
 	msg.append(L"\n");
 	d->clientSocket->write(msg);
 
-	//We are done, signal for removal
+	// We are done, signal for removal
 	d->done = true;
 	d->event->signal();
 }
@@ -74,7 +74,7 @@ bool ClientCommunicationHandler::isDone() {
 void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage, int *intReturn, std::wstring *wstringReturn) {
 	(*intReturn) = 0;
 	(*wstringReturn) = L"";
-	std::wstring msg(clientMessage);	//Copy
+	std::wstring msg(clientMessage);  // Copy
 	std::wstring function(TelldusCore::Message::takeString(&msg));
 
 	if (function == L"tdTurnOn") {

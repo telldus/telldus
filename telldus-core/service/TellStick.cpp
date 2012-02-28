@@ -14,7 +14,7 @@ std::string TellStick::createTPacket( const std::string &msg ) {
 	std::string data;
 	int index = 0;
 	for(size_t i = 0; i < msg.length(); ++i) {
-		//Search to se if it already exists and get the index
+		// Search to se if it already exists and get the index
 		if (times.find(msg.at(i)) == times.end()) {
 			times[msg.at(i)] = index++;
 			if (times.size() > 4) {
@@ -23,7 +23,7 @@ std::string TellStick::createTPacket( const std::string &msg ) {
 		}
 		data.append(1, times[msg.at(i)]);
 	}
-	//Reorder the times
+	// Reorder the times
 	unsigned char t0 = 1, t1 = 1, t2 = 1, t3 = 1;
 	for(std::map<unsigned char, char>::const_iterator it = times.begin(); it != times.end(); ++it) {
 		if ((*it).second == 0) {

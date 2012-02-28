@@ -55,11 +55,11 @@ ControllerManager::~ControllerManager() {
 }
 
 void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, const std::string &serial, bool inserted) {
-	if (vid == 0x0 && pid == 0x0) { //All
+	if (vid == 0x0 && pid == 0x0) {  // All
 		if (inserted) {
 			loadControllers();
 		} else {
-			//Disconnect all
+			// Disconnect all
 			TelldusCore::MutexLocker locker(&d->mutex);
 			while(d->controllers.size()) {
 				ControllerMap::iterator it = d->controllers.begin();
@@ -79,7 +79,7 @@ void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, const std::str
 	if (inserted) {
 		loadControllers();
 	} else {
-		//Autodetect which has been disconnected
+		// Autodetect which has been disconnected
 		TelldusCore::MutexLocker locker(&d->mutex);
 		for(ControllerMap::iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
 			if (!it->second.controller) {
@@ -117,7 +117,7 @@ Controller *ControllerManager::getBestControllerById(int id) {
 	if (it != d->controllers.end() && it->second.controller) {
 		return it->second.controller;
 	}
-	//Find first available controller
+	// Find first available controller
 	for(it = d->controllers.begin(); it != d->controllers.end(); ++it) {
 		if (it->second.controller) {
 			return it->second.controller;
@@ -134,8 +134,8 @@ void ControllerManager::loadControllers() {
 
 	std::list<TellStickDescriptor>::iterator it = list.begin();
 	for(; it != list.end(); ++it) {
-		//Most backend only report non-opened devices.
-		//If they don't make sure we don't open them twice
+		// Most backend only report non-opened devices.
+		// If they don't make sure we don't open them twice
 		bool found = false;
 		ControllerMap::const_iterator cit = d->controllers.begin();
 		for(; cit != d->controllers.end(); ++cit) {
@@ -160,7 +160,7 @@ void ControllerManager::loadControllers() {
 			type = TELLSTICK_CONTROLLER_TELLSTICK_DUO;
 		}
 		int controllerId = 0;
-		//See if the controller matches one of the loaded, non available controllers
+		// See if the controller matches one of the loaded, non available controllers
 		std::wstring serial = TelldusCore::charToWstring((*it).serial.c_str());
 		for(cit = d->controllers.begin(); cit != d->controllers.end(); ++cit) {
 			if (cit->second.type == type && cit->second.serial.compare(serial) == 0) {
@@ -182,7 +182,7 @@ void ControllerManager::loadControllers() {
 			d->settings.setControllerSerial(controllerId, d->controllers[controllerId].serial);
 		}
 
-		//int controllerId = d->lastControllerId+1;
+		// int controllerId = d->lastControllerId+1;
 		TellStick *controller = new TellStick(controllerId, d->event, d->updateEvent, *it);
 		if (!controller->isOpen()) {
 			delete controller;
@@ -251,10 +251,10 @@ void ControllerManager::queryControllerStatus() {
 int ControllerManager::resetController(Controller *controller) {
 	TellStick *tellstick = reinterpret_cast<TellStick*>(controller);
 	if (!tellstick) {
-		return true; //not tellstick, nothing to reset at the moment, just return true
+		return true;  // not tellstick, nothing to reset at the moment, just return true
 	}
 	int success = tellstick->reset();
-	deviceInsertedOrRemoved(tellstick->vid(), tellstick->pid(), tellstick->serial(), false); //remove from list and delete
+	deviceInsertedOrRemoved(tellstick->vid(), tellstick->pid(), tellstick->serial(), false);  // remove from list and delete
 	return success;
 }
 
@@ -304,7 +304,7 @@ int ControllerManager::removeController(int id) {
 		return TELLSTICK_ERROR_NOT_FOUND;
 	}
 	if (it->second.controller) {
-		//Still connected
+		// Still connected
 		return TELLSTICK_ERROR_PERMISSION_DENIED;
 	}
 
@@ -331,7 +331,7 @@ int ControllerManager::setControllerValue(int id, const std::wstring &name, cons
 		d->settings.setName(Settings::Controller, id, value);
 		signalControllerEvent(id, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_NAME, value);
 	} else {
-		return TELLSTICK_ERROR_SYNTAX; //TODO: Is this the best error?
+		return TELLSTICK_ERROR_SYNTAX;  // TODO: Is this the best error?
 	}
 	return TELLSTICK_SUCCESS;
 }

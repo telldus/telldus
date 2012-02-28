@@ -32,7 +32,7 @@ std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Cont
 	} else if (intHouse > 15) {
 		intHouse = 15;
 	}
-	//Translate it
+	// Translate it
 	intHouse = HOUSES[intHouse];
 	int intCode = getIntParameter(L"unit", 1, 16)-1;
 
@@ -68,7 +68,7 @@ std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Cont
 	strReturn.append( B0 );
 	strComplement.append( B1 );
 
-	if (intCode >> 2 & 1) { //Bit 2 of intCode
+	if (intCode >> 2 & 1) {  // Bit 2 of intCode
 		strReturn.append(B1);
 		strComplement.append(B0);
 	} else {
@@ -86,7 +86,7 @@ std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Cont
 		return "";
 	}
 
-	if (intCode & 1) { //Bit 0 of intCode
+	if (intCode & 1) {  // Bit 0 of intCode
 		strReturn.append(B1);
 		strComplement.append(B0);
 	} else {
@@ -94,7 +94,7 @@ std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Cont
 		strComplement.append(B1);
 	}
 
-	if (intCode >> 1 & 1) { //Bit 1 of intCode
+	if (intCode >> 1 & 1) {  // Bit 1 of intCode
 		strReturn.append(B1);
 		strComplement.append(B0);
 	} else {

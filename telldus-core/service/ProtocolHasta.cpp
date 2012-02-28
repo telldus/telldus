@@ -50,8 +50,8 @@ std::string ProtocolHasta::getStringForMethod(int method, unsigned char, Control
 	strReturn.append(convertByte(0x0));
 	strReturn.append(convertByte(0x0));
 
-	//Remove the last pulse
-	strReturn.erase(strReturn.end()-1,strReturn.end());
+	// Remove the last pulse
+	strReturn.erase(strReturn.end()-1, strReturn.end());
 
 	return strReturn;
 }

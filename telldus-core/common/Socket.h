@@ -35,4 +35,5 @@ namespace TelldusCore {
 		PrivateData *d;
 	};
 }
+
 #endif  // TELLDUS_CORE_COMMON_SOCKET_H_

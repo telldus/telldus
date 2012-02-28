@@ -34,7 +34,7 @@ EventHandler::~EventHandler(void) {
 
 	std::list<EventRef>::const_iterator it = d->eventList.begin();
 	for(; it != d->eventList.end(); ++it) {
-		//We clear the handler if someone else still has a reference to the event
+		// We clear the handler if someone else still has a reference to the event
 		(*it)->clearHandler();
 	}
 
@@ -62,7 +62,7 @@ bool EventHandler::listIsSignalled() {
 
 void EventHandler::signal(Event *event) {
 	pthread_mutex_lock(&d->mutex);
-	//event->setSignaled();
+	// event->setSignaled();
 	pthread_cond_signal(&d->event);
 	pthread_mutex_unlock(&d->mutex);
 }

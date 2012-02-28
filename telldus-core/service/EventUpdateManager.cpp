@@ -85,7 +85,7 @@ void EventUpdateManager::sendMessageToClients(EventUpdateData *data) {
 				msg.addArgument("TDDeviceEvent");
 				msg.addArgument(data->deviceId);
 				msg.addArgument(data->eventState);
-				msg.addArgument(data->eventValue);	//string
+				msg.addArgument(data->eventValue);  // string
 			}
 			else if(data->messageType == L"TDDeviceChangeEvent") {
 				msg.addArgument("TDDeviceChangeEvent");
@@ -95,7 +95,7 @@ void EventUpdateManager::sendMessageToClients(EventUpdateData *data) {
 			}
 			else if(data->messageType == L"TDRawDeviceEvent") {
 				msg.addArgument("TDRawDeviceEvent");
-				msg.addArgument(data->eventValue);	//string
+				msg.addArgument(data->eventValue);  // string
 				msg.addArgument(data->controllerId);
 			}
 			else if(data->messageType == L"TDSensorEvent") {
