@@ -98,7 +98,7 @@ int DeviceManager::setDeviceLastSentCommand(int deviceId, int command, const std
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
 		TelldusCore::MutexLocker deviceLocker(it->second);
-		d->set.setDeviceState(deviceId, command,value);
+		d->set.setDeviceState(deviceId, command, value);
 		it->second->setLastSentCommand(command, value);
 	}
 	else {

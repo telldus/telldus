@@ -9,7 +9,7 @@
 #include <sstream>
 #include <string>
 
-const unsigned char HOUSES[] = {6,0xE,2,0xA,1,9,5,0xD,7,0xF,3,0xB,0,8,4,0xC};
+const unsigned char HOUSES[] = {6, 0xE, 2, 0xA, 1, 9, 5, 0xD, 7, 0xF, 3, 0xB, 0, 8, 4, 0xC};
 
 int ProtocolX10::methods() const {
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;
@@ -17,10 +17,10 @@ int ProtocolX10::methods() const {
 
 std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Controller *controller) {
 	const unsigned char S = 59, L = 169;
-	const char B0[] = {S,S,0};
-	const char B1[] = {S,L,0};
-	const unsigned char START_CODE[] = {'S',255,1,255,1,255,1,100,255,1,180,0};
-	const unsigned char STOP_CODE[] = {S,0};
+	const char B0[] = {S, S, 0};
+	const char B1[] = {S, L, 0};
+	const unsigned char START_CODE[] = {'S', 255, 1, 255, 1, 255, 1, 100, 255, 1, 180, 0};
+	const unsigned char STOP_CODE[] = {S, 0};
 
 	std::string strReturn = reinterpret_cast<const char*>(START_CODE);
 	std::string strComplement = "";

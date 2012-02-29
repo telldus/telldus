@@ -126,9 +126,9 @@ void TellStick::processData( const std::string &data ) {
 		} else if (data[i] == 10) {  // \n found
 			if (d->message.substr(0, 2).compare("+V") == 0) {
 				setFirmwareVersion(TelldusCore::charToInteger(d->message.substr(2).c_str()));
-			} else if (d->message.substr(0,2).compare("+R") == 0) {
+			} else if (d->message.substr(0, 2).compare("+R") == 0) {
 				this->publishData(d->message.substr(2));
-			} else if(d->message.substr(0,2).compare("+W") == 0) {
+			} else if(d->message.substr(0, 2).compare("+W") == 0) {
 				this->decodePublishData(d->message.substr(2));
 			}
 			d->message.clear();

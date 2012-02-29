@@ -71,7 +71,7 @@ int ControllerMessage::getIntParameter(const std::string &key) const {
 	if (strValue.compare("") == 0) {
 		return -1;
 	}
-	if (strValue.substr(0,2).compare("0x") == 0) {
+	if (strValue.substr(0, 2).compare("0x") == 0) {
 		return strtol(strValue.c_str(), NULL, 16);
 	}
 	return strtol(strValue.c_str(), NULL, 10);

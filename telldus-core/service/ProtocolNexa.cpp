@@ -151,7 +151,7 @@ std::string ProtocolNexa::getStringSelflearningForCode(int intHouse, int intCode
 			// code |= 11; //b1011
 		}
 		if (i % 2 == 0) {
-			strMessage.append(1,code);
+			strMessage.append(1, code);
 			code = 0;
 		}
 	}

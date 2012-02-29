@@ -14,10 +14,10 @@ int ProtocolFuhaote::methods() const {
 std::string ProtocolFuhaote::getStringForMethod(int method, unsigned char, Controller *) {
 	const char S = 19;
 	const char L = 58;
-	const char B0[] = {S,L,L,S,0};
-	const char B1[] = {L,S,L,S,0};
-	const char OFF[] = {S,L,S,L,S,L,L,S,0};
-	const char ON[]  = {S,L,L,S,S,L,S,L,0};
+	const char B0[] = {S, L, L, S, 0};
+	const char B1[] = {L, S, L, S, 0};
+	const char OFF[] = {S, L, S, L, S, L, L, S, 0};
+	const char ON[]  = {S, L, L, S, S, L, S, L, 0};
 
 	std::string strReturn = "S";
 	std::wstring strCode = this->getStringParameter(L"code", L"");

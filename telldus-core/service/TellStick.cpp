@@ -38,7 +38,7 @@ std::string TellStick::createTPacket( const std::string &msg ) {
 		}
 	}
 
-	return TellStick::convertSToT(t0,t1,t2,t3,data);
+	return TellStick::convertSToT(t0, t1, t2, t3, data);
 }
 
 std::string TellStick::convertSToT( unsigned char t0, unsigned char t1, unsigned char t2, unsigned char t3, const std::string &data ) {

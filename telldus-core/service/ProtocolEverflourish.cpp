@@ -33,7 +33,7 @@ std::string ProtocolEverflourish::getStringForMethod(int method, unsigned char, 
 	const char sssl = 84;  // 0
 	const char slss = 69;  // 1
 
-	const char bits[2] = {sssl,slss};
+	const char bits[2] = {sssl, slss};
 	int i, check;
 
 	std::string strCode;
@@ -42,7 +42,7 @@ std::string ProtocolEverflourish::getStringForMethod(int method, unsigned char, 
 
 	check = calculateChecksum(deviceCode);
 
-	char preamble[] = {'R', 5, 'T', 114,60,1,1,105,ssss,ssss,0};
+	char preamble[] = {'R', 5, 'T', 114, 60, 1, 1, 105, ssss, ssss, 0};
 	strCode.append(preamble);
 
 	for(i=15;i>=0;i--) {
@@ -64,15 +64,15 @@ std::string ProtocolEverflourish::getStringForMethod(int method, unsigned char, 
 // The calculation used in this function is provided by Frank Stevenson
 unsigned int ProtocolEverflourish::calculateChecksum(unsigned int x) {
 	unsigned int bits[16] = {
-		0xf ,0xa ,0x7 ,0xe,
-		0xf ,0xd ,0x9 ,0x1,
-		0x1 ,0x2 ,0x4 ,0x8,
-		0x3 ,0x6 ,0xc ,0xb
+		0xf, 0xa, 0x7, 0xe,
+		0xf, 0xd, 0x9, 0x1,
+		0x1, 0x2, 0x4, 0x8,
+		0x3, 0x6, 0xc, 0xb
 	};
 	unsigned int bit = 1;
 	unsigned int res = 0x5;
 	int i;
-	unsigned int lo,hi;
+	unsigned int lo, hi;
 
 	if ((x&0x3)==3) {
 		lo = x & 0x00ff;

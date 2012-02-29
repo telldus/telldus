@@ -82,9 +82,9 @@ int main(int argc, char **argv) {
 			// This way anyone starting the daemon can read the pidfile immediately
 
 			// Record the pid
-			fd = fopen(PID_FILE,"w");
+			fd = fopen(PID_FILE, "w");
 			if (fd) {
-				fprintf(fd,"%d\n",pid);
+				fprintf(fd, "%d\n", pid);
 				fclose(fd);
 			} else {
 				Log::error("Could not open pid file %s: %s", PID_FILE, strerror(errno));

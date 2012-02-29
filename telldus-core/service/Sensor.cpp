@@ -55,7 +55,7 @@ int Sensor::dataTypes() const {
 }
 
 void Sensor::setValue(int type, const std::string &value, time_t timestamp) {
-	if (value.substr(0,2).compare("0x") == 0) {
+	if (value.substr(0, 2).compare("0x") == 0) {
 		int intval = strtol(value.c_str(), NULL, 16);
 		d->values[type] = TelldusCore::intToString(intval);
 	} else {
