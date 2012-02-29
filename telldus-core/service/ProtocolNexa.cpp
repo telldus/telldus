@@ -11,7 +11,7 @@
 #include "service/TellStick.h"
 #include "common/Strings.h"
 
-int ProtocolNexa::lastArctecCodeSwitchWasTurnOff=0;  // TODO, always removing first turnon now, make more flexible (waveman too)
+int ProtocolNexa::lastArctecCodeSwitchWasTurnOff = 0;  // TODO, always removing first turnon now, make more flexible (waveman too)
 
 int ProtocolNexa::methods() const {
 	if (TelldusCore::comparei(model(), L"codeswitch")) {

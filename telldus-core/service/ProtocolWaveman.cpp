@@ -9,7 +9,7 @@
 #include <sstream>
 #include <string>
 
-int ProtocolWaveman::lastArctecCodeSwitchWasTurnOff=0;
+int ProtocolWaveman::lastArctecCodeSwitchWasTurnOff = 0;
 
 int ProtocolWaveman::methods() const {
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;

@@ -92,7 +92,7 @@ int Protocol::getIntParameter(const std::wstring &name, int min, int max) const 
 }
 
 bool Protocol::checkBit(int data, int bitno) {
-	return ((data>>bitno)&0x01);
+	return ((data >> bitno)&0x01);
 }
 
 

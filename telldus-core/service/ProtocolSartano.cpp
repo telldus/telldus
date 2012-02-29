@@ -52,7 +52,7 @@ std::string ProtocolSartano::decodeData(ControllerMessage &dataMsg) {
 	sscanf(data.c_str(), "%X", &allDataIn);
 
 	unsigned long mask = (1<<11);
-	for(int i=0;i<12;++i) {
+	for(int i = 0; i < 12; ++i) {
 		allData >>= 1;
 		if((allDataIn & mask) == 0) {
 			allData |= (1<<11);
@@ -86,7 +86,7 @@ std::string ProtocolSartano::decodeData(ControllerMessage &dataMsg) {
 	std::stringstream retString;
 	retString << "class:command;protocol:sartano;model:codeswitch;code:";
 	mask = (1<<9);
-	for(int i=0;i<10;i++) {
+	for(int i = 0; i < 10; i++) {
 		if((code & mask) != 0) {
 			retString << 1;
 		}

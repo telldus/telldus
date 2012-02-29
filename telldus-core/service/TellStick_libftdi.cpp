@@ -48,7 +48,7 @@ TellStick::TellStick(int controllerId, TelldusCore::EventRef event, TelldusCore:
 	d->running = false;
 
 	Settings set;
-	d->ignoreControllerConfirmation = set.getSetting(L"ignoreControllerConfirmation")==L"true";
+	d->ignoreControllerConfirmation = set.getSetting(L"ignoreControllerConfirmation") == L"true";
 
 	ftdi_init(&d->ftHandle);
 	ftdi_set_interface(&d->ftHandle, INTERFACE_ANY);

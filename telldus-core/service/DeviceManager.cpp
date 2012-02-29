@@ -658,7 +658,7 @@ void DeviceManager::handleControllerMessage(const ControllerEventData &eventData
 		if (!TelldusCore::comparei(it->second->getProtocolName(), msg.protocol())) {
 			continue;
 		}
-		if (! (it->second->getMethods() & msg.method())) {
+		if ( !(it->second->getMethods() & msg.method()) ) {
 			continue;
 		}
 

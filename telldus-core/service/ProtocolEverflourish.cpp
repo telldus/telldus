@@ -45,14 +45,14 @@ std::string ProtocolEverflourish::getStringForMethod(int method, unsigned char, 
 	char preamble[] = {'R', 5, 'T', 114, 60, 1, 1, 105, ssss, ssss, 0};
 	strCode.append(preamble);
 
-	for(i=15;i>=0;i--) {
-		strCode.append(1, bits[(deviceCode>>i)&0x01]);
+	for(i = 15; i >= 0; i--) {
+		strCode.append(1, bits[(deviceCode >> i)&0x01]);
 	}
-	for(i=3;i>=0;i--) {
-		strCode.append(1, bits[(check>>i)&0x01]);
+	for(i = 3; i >= 0; i--) {
+		strCode.append(1, bits[(check >> i)&0x01]);
 	}
-	for(i=3;i>=0;i--) {
-		strCode.append(1, bits[(action>>i)&0x01]);
+	for(i = 3; i >= 0; i--) {
+		strCode.append(1, bits[(action >> i)&0x01]);
 	}
 
 	strCode.append(1, ssss);
@@ -74,7 +74,7 @@ unsigned int ProtocolEverflourish::calculateChecksum(unsigned int x) {
 	int i;
 	unsigned int lo, hi;
 
-	if ((x&0x3)==3) {
+	if ((x&0x3) == 3) {
 		lo = x & 0x00ff;
 		hi = x & 0xff00;
 		lo += 4;
@@ -84,7 +84,7 @@ unsigned int ProtocolEverflourish::calculateChecksum(unsigned int x) {
 		x = lo | hi;
 	}
 
-	for(i=0;i<16;i++) {
+	for(i = 0; i < 16; i++) {
 		if (x&bit) {
 			res = res ^ bits[i];
 		}

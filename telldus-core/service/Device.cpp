@@ -151,7 +151,7 @@ int Device::doAction(int action, unsigned char data, Controller *controller) {
 	int methods = p->methods();
 	if ((action & methods) == 0) {
 		// Loop all methods an see if any method masks to this one
-		for(int i = 1; i <= methods; i<<=1) {
+		for(int i = 1; i <= methods; i <<= 1) {
 			if ((i & methods) == 0) {
 				continue;
 			}

@@ -60,7 +60,7 @@ std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Co
 	int checksum1 = 0;
 	int checksum2 = 0;
 	for (int i = 13; i >= 0; --i) {
-		if ((intCode>>i) & 1) {
+		if ((intCode >> i) & 1) {
 			strChannels.append("TT");
 			if (i % 2 == 0)
 				checksum2++;
@@ -112,7 +112,7 @@ std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Co
 	checksum1 = 0;
 	checksum2 = 0;
 	for (int i = 0; i < 6; ++i) {
-		if ((intCode>>i) & 1) {
+		if ((intCode >> i) & 1) {
 			strReturn.append("TT");
 			if (i % 2 == 0)
 				checksum1++;
