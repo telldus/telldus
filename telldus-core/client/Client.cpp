@@ -23,7 +23,6 @@ public:
 	std::wstring sensorCache, controllerCache;
 	TelldusCore::Mutex mutex;
 	CallbackMainDispatcher callbackMainDispatcher;
-
 };
 
 Client *Client::instance = 0;
@@ -147,7 +146,6 @@ void Client::run() {
 }
 
 std::wstring Client::sendToService(const Message &msg) {
-
 	int tries = 0;
 	std::wstring readData;
 	while(tries < 20) {

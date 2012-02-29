@@ -37,7 +37,6 @@ void Controller::publishData(const std::string &msg) const {
 }
 
 void Controller::decodePublishData(const std::string &data) const {
-
 	std::list<std::string> msgList = Protocol::decodeData(data);
 
 	for (std::list<std::string>::iterator msgIt = msgList.begin(); msgIt != msgList.end(); ++msgIt) {

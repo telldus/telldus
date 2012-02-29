@@ -156,7 +156,6 @@ int Settings::removeNode(Node type, int intNodeId) {
 
 	// Print all opts
 	for(int i = 0; d->cfg->opts[i].name; i++) {
-
 		// Check if it isn't a device section
 		if (strcmp(d->cfg->opts[i].name, strType.c_str()) != 0) {
 			cfg_opt_print(&d->cfg->opts[i], fp);
@@ -416,7 +415,6 @@ bool readConfig(cfg_t **cfg) {
 }
 
 bool readVarConfig(cfg_t **cfg) {
-
 	cfg_opt_t device_opts[] = {
 		CFG_INT(const_cast<char *>("state"), 0, CFGF_NONE),
 		CFG_STR(const_cast<char *>("stateValue"), const_cast<char *>(""), CFGF_NONE),

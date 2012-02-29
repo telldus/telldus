@@ -14,7 +14,6 @@ class ProtocolGroup : public Protocol {
 public:
 	virtual int methods() const;
 	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller);
-
 };
 
 #endif  // TELLDUS_CORE_SERVICE_PROTOCOLGROUP_H_

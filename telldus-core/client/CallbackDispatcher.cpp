@@ -65,6 +65,5 @@ void TDEventDispatcher::fireEvent() {
 			return;
 		}
 		((TDControllerEvent)callback->event)(data->controllerId, data->changeEvent, data->changeType, data->newValue.c_str(), callback->id, callback->context);
-
 	}
 }

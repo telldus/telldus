@@ -144,7 +144,6 @@ int DeviceManager::getDeviceMethods(int deviceId, std::set<int> &duplicateDevice
 		}
 		DeviceMap::iterator it = d->devices.find(deviceId);
 		if (it != d->devices.end()) {
-
 			{
 				TelldusCore::MutexLocker deviceLocker(it->second);
 				type = it->second->getType();
@@ -522,7 +521,6 @@ int DeviceManager::doGroupAction(const std::wstring devices, const int action, c
 			// If no devices support the method the default value will be returned (method not supported)
 			retval = deviceReturnValue;
 		}
-
 	}
 	return retval;
 }

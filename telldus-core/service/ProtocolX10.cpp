@@ -111,7 +111,6 @@ std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Cont
 	strReturn.append( reinterpret_cast<const char*>(STOP_CODE) );
 	strReturn.append("+");
 	return strReturn;
-
 }
 
 std::string ProtocolX10::decodeData(ControllerMessage& dataMsg) {

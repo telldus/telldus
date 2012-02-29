@@ -129,5 +129,4 @@ std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Co
 	strReturn.append("+");
 
 	return strReturn;
-
 }

@@ -100,11 +100,9 @@ std::string ProtocolRisingSun::getStringCodeSwitch(int method) {
 		return "";
 	}
 	return strReturn;
-
 }
 
 std::string ProtocolRisingSun::getCodeSwitchTuple(int intToConvert) {
-
 	std::string strReturn = "";
 	for(int i = 0; i < 4; ++i) {
 		if (i == intToConvert) {
@@ -114,5 +112,4 @@ std::string ProtocolRisingSun::getCodeSwitchTuple(int intToConvert) {
 		}
 	}
 	return strReturn;
-
 }

@@ -50,7 +50,6 @@ int Device::getLastSentCommand(int methodsSupported) {
 		lastSentCommand = TELLSTICK_TURNOFF;
 	}
 	return lastSentCommand;
-
 }
 
 int Device::getMethods() const {

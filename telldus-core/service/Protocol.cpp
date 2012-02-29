@@ -207,7 +207,7 @@ std::list<std::string> Protocol::getParametersForProtocol(const std::wstring &pr
 	} else if (TelldusCore::comparei(protocolName, L"group")) {
 		parameters.push_back("devices");
 
-	}  else if (TelldusCore::comparei(protocolName, L"scene")) {
+	} else if (TelldusCore::comparei(protocolName, L"scene")) {
 		parameters.push_back("devices");
 	}
 

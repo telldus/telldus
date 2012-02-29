@@ -56,6 +56,5 @@ std::string ProtocolFuhaote::getStringForMethod(int method, unsigned char, Contr
 	strReturn.append(1, S);
 	strReturn.append("+");
 	return strReturn;
-
 }
 

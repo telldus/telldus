@@ -19,7 +19,6 @@ std::string ProtocolSartano::getStringForMethod(int method, unsigned char, Contr
 }
 
 std::string ProtocolSartano::getStringForCode(const std::wstring &strCode, int method) {
-
 	std::string strReturn("S");
 
 	for (size_t i = 0; i < strCode.length(); ++i) {
@@ -39,7 +38,6 @@ std::string ProtocolSartano::getStringForCode(const std::wstring &strCode, int m
 	}
 
 	return strReturn;
-
 }
 
 std::string ProtocolSartano::decodeData(ControllerMessage &dataMsg) {

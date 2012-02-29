@@ -127,7 +127,6 @@ Controller *ControllerManager::getBestControllerById(int id) {
 		}
 	}
 	return 0;
-
 }
 
 void ControllerManager::loadControllers() {

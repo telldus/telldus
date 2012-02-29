@@ -65,7 +65,6 @@ TellStick::TellStick(int controllerId, TelldusCore::EventRef event, TelldusCore:
 	ftdi_set_latency_timer(&d->ftHandle, 16);
 
 	if (d->open) {
-
 		if (td.pid == 0x0C31) {
 			this->setBaud(9600);
 		} else {
@@ -258,7 +257,6 @@ std::list<TellStickDescriptor> TellStick::findAll() {
 	}
 
 	return tellstick;
-
 }
 
 bool TellStick::stillConnected() const {

@@ -30,7 +30,6 @@ namespace TelldusCore {
 		static int takeInt(std::wstring *);
 
 	private:
-
 	};
 }
 

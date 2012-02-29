@@ -109,7 +109,6 @@ bool Message::nextIsString(const std::wstring &message) {
 }
 
 std::wstring Message::takeString(std::wstring *message) {
-
 	if (!Message::nextIsString(*message)) {
 		return L"";
 	}

@@ -87,7 +87,6 @@ void ConnectionListener::run() {
 		ConnectionListenerEventData *data = new ConnectionListenerEventData();
 		data->socket = new TelldusCore::Socket(clientSocket);
 		d->waitEvent->signal(data);
-
 	}
 	close(serverSocket);
 }

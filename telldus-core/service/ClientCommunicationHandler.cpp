@@ -111,7 +111,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_STOP, 0);
 
-	}  else if (function == L"tdLearn") {
+	} else if (function == L"tdLearn") {
 		int deviceId = TelldusCore::Message::takeInt(&msg);
 		(*intReturn) = d->deviceManager->doAction(deviceId, TELLSTICK_LEARN, 0);
 
@@ -252,7 +252,7 @@ void ClientCommunicationHandler::parseMessage(const std::wstring &clientMessage,
 		int controllerId = TelldusCore::Message::takeInt(&msg);
 		(*intReturn) = d->controllerManager->removeController(controllerId);
 
-	} else{
+	} else {
 		(*intReturn) = TELLSTICK_ERROR_UNKNOWN;
 	}
 }

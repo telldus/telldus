@@ -122,7 +122,6 @@ std::string ProtocolSilvanChip::getStringForMethod(int method, unsigned char dat
 }
 
 std::string ProtocolSilvanChip::getString(const std::string &preamble, const std::string &one, const std::string &zero, int button) {
-
 	int intHouse = this->getIntParameter(L"house", 1, 1048575);
 	std::string strReturn = preamble;
 
