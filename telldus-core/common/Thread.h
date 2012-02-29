@@ -1,7 +1,7 @@
 //
 // C++ Interface: Thread
 //
-// Description: 
+// Description:
 //
 //
 // Author: Micke Prag <micke.prag@telldus.se>, (C) 2009
@@ -24,10 +24,10 @@ namespace TelldusCore {
 			void start();
 			void startAndLock(Mutex *);
 			bool wait();
-						
+
 		protected:
 			virtual void run() = 0;
-		
+
 		private:
 			static void* exec( void *ptr );
 			ThreadPrivate *d;

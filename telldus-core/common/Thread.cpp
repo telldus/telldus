@@ -1,7 +1,7 @@
 //
 // C++ Implementation: Thread
 //
-// Description: 
+// Description:
 //
 //
 // Author: Micke Prag <micke.prag@telldus.se>, (C) 2009
