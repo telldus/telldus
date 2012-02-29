@@ -62,11 +62,9 @@ std::string ProtocolWaveman::decodeData(ControllerMessage& dataMsg) {
 
 	if(method == 0) {
 		retString << ";unit:" << unit << ";method:turnoff;";
-
 	} else if(method == 14) {
 		retString << ";unit:" << unit << ";method:turnon;";
-	}
-	else {
+	}	else {
 		// not waveman
 		return "";
 	}

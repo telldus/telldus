@@ -62,8 +62,7 @@ void EventUpdateManager::run() {
 			if(data) {
 				d->clients.push_back(data->socket);
 			}
-		}
-		else if(d->updateEvent->isSignaled()) {
+		} else if(d->updateEvent->isSignaled()) {
 			// device event, signal all clients
 			TelldusCore::EventDataRef eventData = d->updateEvent->takeSignal();
 			EventUpdateData *data = reinterpret_cast<EventUpdateData*>(eventData.get());

@@ -141,9 +141,8 @@ Protocol *Protocol::getProtocolInstance(const std::wstring &protocolname) {
 
 	} else if (TelldusCore::comparei(protocolname, L"group")) {
 		return new ProtocolGroup();
-	}
 
-	else if (TelldusCore::comparei(protocolname, L"scene")) {
+	} else if (TelldusCore::comparei(protocolname, L"scene")) {
 		return new ProtocolScene();
 	}
 
@@ -232,32 +231,27 @@ std::list<std::string> Protocol::decodeData(const std::string &fullData) {
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
-	}
-	else if(TelldusCore::comparei(dataMsg.protocol(), L"everflourish") ) {
+	} else if(TelldusCore::comparei(dataMsg.protocol(), L"everflourish") ) {
 		decoded = ProtocolEverflourish::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
-	}
-	else if(TelldusCore::comparei(dataMsg.protocol(), L"fineoffset") ) {
+	} else if(TelldusCore::comparei(dataMsg.protocol(), L"fineoffset") ) {
 		decoded = ProtocolFineoffset::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
-	}
-	else if(TelldusCore::comparei(dataMsg.protocol(), L"mandolyn") ) {
+	} else if(TelldusCore::comparei(dataMsg.protocol(), L"mandolyn") ) {
 		decoded = ProtocolMandolyn::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
-	}
-	else if(TelldusCore::comparei(dataMsg.protocol(), L"oregon") ) {
+	} else if(TelldusCore::comparei(dataMsg.protocol(), L"oregon") ) {
 		decoded = ProtocolOregon::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
-	}
-	else if(TelldusCore::comparei(dataMsg.protocol(), L"x10") ) {
+	} else if(TelldusCore::comparei(dataMsg.protocol(), L"x10") ) {
 		decoded = ProtocolX10::decodeData(dataMsg);
 		if (decoded != "") {
 			retval.push_back(decoded);

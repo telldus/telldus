@@ -131,8 +131,7 @@ std::wstring Device::getStateValue() {
 int Device::getType() {
 	if(d->protocolName == L"group") {
 		return TELLSTICK_TYPE_GROUP;
-	}
-	else if(d->protocolName == L"scene") {
+	} else if(d->protocolName == L"scene") {
 		return TELLSTICK_TYPE_SCENE;
 	}
 	return TELLSTICK_TYPE_DEVICE;
