@@ -326,6 +326,9 @@ LiveMessageToken LiveObject::generateVersionToken() {
 		case QSysInfo::MV_SNOWLEOPARD+1: //TODO: MV_LION when we build against Qt-4.8
 			token.dictVal["os-version"] = LiveMessageToken("lion");
 			break;
+		case QSysInfo::MV_SNOWLEOPARD+2: //TODO: MV_MOUNTAINLION? when Qt has it
+			token.dictVal["os-version"] = LiveMessageToken("mountainlion");
+			break;
 		default:
 			token.dictVal["os-version"] = LiveMessageToken("unknown");
 	 }
