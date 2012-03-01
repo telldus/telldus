@@ -312,7 +312,7 @@ LiveMessageToken LiveObject::generateVersionToken() {
 			token.dictVal["os-version"] = LiveMessageToken("win7");
 			break;
 		default:
-			token.dictVal["os-version"] = LiveMessageToken("unknown");
+			token.dictVal["os-version"] = LiveMessageToken(QString("unknown %1").arg(QSysInfo::WindowsVersion));
 	}
 #elif defined(Q_OS_MAC)
 	token.dictVal["os"] = LiveMessageToken("macosx");
