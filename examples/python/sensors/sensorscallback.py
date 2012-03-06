@@ -29,9 +29,9 @@ def callbackfunction(protocol, model, id, dataType, value, timestamp, callbackId
 
 
 if (platform.system() == 'Windows'):
-	CMPFUNC = WINFUNCTYPE(c_void_p, POINTER(c_ubyte), POINTER(c_ubyte), c_int, c_int, POINTER(c_ubyte), c_int, c_int, c_void_p) #first is return type
+	CMPFUNC = WINFUNCTYPE(None, POINTER(c_ubyte), POINTER(c_ubyte), c_int, c_int, POINTER(c_ubyte), c_int, c_int, c_void_p) #first is return type
 else:
-	CMPFUNC = CFUNCTYPE(c_void_p, POINTER(c_ubyte), POINTER(c_ubyte), c_int, c_int, POINTER(c_ubyte), c_int, c_int, c_void_p)
+	CMPFUNC = CFUNCTYPE(None, POINTER(c_ubyte), POINTER(c_ubyte), c_int, c_int, POINTER(c_ubyte), c_int, c_int, c_void_p)
 
 cmp_func = CMPFUNC(callbackfunction)
 
