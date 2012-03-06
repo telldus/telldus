@@ -110,7 +110,7 @@ void WINAPI tdInit(void) {
  * Added in version 2.0.0.
  **/
 int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
-	eventFunction;	Client *client = Client::getInstance();
+	Client *client = Client::getInstance();
 	return client->registerEvent( CallbackStruct::DeviceEvent, (void *)eventFunction, context );
 }
 
