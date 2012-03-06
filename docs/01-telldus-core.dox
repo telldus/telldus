@@ -44,7 +44,7 @@
  * \code
  * int intNumberOfDevices = tdGetNumberOfDevices();
  * for (int i = 0; i < intNumberOfDevices; i++) {
- *   int id = tdGetDeviceId( index );
+ *   int id = tdGetDeviceId( i );
  *   char *name = tdGetName( id );
  *   printf("%d\t%s\n", id, name);
  *   tdReleaseString(name);
