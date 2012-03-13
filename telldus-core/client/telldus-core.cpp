@@ -100,14 +100,14 @@ using namespace TelldusCore;
  * This function initiates the library. Call this function before any other
  * call to a function in telldus-core.
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 void WINAPI tdInit(void) {
 	Client::getInstance(); //Create the manager-object
 }
 
 /**
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
 	eventFunction;	Client *client = Client::getInstance();
@@ -115,7 +115,7 @@ int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
 }
 
 /**
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context ) {
 	Client *client = Client::getInstance();
@@ -123,7 +123,7 @@ int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *conte
 }
 
 /**
- * Added in version 2.1.0.
+ * @since Version 2.1.0
  **/
 int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context) {
 	Client *client = Client::getInstance();
@@ -131,7 +131,7 @@ int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void 
 }
 
 /**
- * Added in version 2.1.0.
+ * @since Version 2.1.0
  **/
 int WINAPI tdRegisterSensorEvent( TDSensorEvent eventFunction, void *context) {
 	Client *client = Client::getInstance();
@@ -139,7 +139,7 @@ int WINAPI tdRegisterSensorEvent( TDSensorEvent eventFunction, void *context) {
 }
 
 /**
- * Added in version 2.1.2.
+ * @since Version 2.1.2
  **/
 int WINAPI tdRegisterControllerEvent( TDControllerEvent eventFunction, void *context) {
 	Client *client = Client::getInstance();
@@ -147,7 +147,7 @@ int WINAPI tdRegisterControllerEvent( TDControllerEvent eventFunction, void *con
 }
 
 /**
- * Added in version 2.1.0.
+ * @since Version 2.1.0
  **/
 int WINAPI tdUnregisterCallback( int callbackId ) {
 	Client *client = Client::getInstance();
@@ -158,7 +158,7 @@ int WINAPI tdUnregisterCallback( int callbackId ) {
  * Close the library and clean up the cache it uses.
  * This should be called when the library is not supposed to be used anymore
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 void WINAPI tdClose(void) {
 	Client::close();
@@ -168,7 +168,7 @@ void WINAPI tdClose(void) {
  * This method releases resources allocated by telldus-core.
  * It should be called on the returned value from all functions return <tt>char *</tt>
  *
- * Added in version 2.0.1.
+ * @since Version 2.0.1
  **/
 void WINAPI tdReleaseString(char *string) {
 #ifdef _WINDOWS
@@ -184,7 +184,7 @@ void WINAPI tdReleaseString(char *string) {
  * call to this function.
  * @param intDeviceId The device id to turn on.
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 int WINAPI tdTurnOn(int intDeviceId){
 	Message msg(L"tdTurnOn");
@@ -198,7 +198,7 @@ int WINAPI tdTurnOn(int intDeviceId){
  * call to this function.
  * @param intDeviceId The device id to turn off.
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 int WINAPI tdTurnOff(int intDeviceId){
 	Message msg(L"tdTurnOff");
@@ -212,7 +212,7 @@ int WINAPI tdTurnOff(int intDeviceId){
  * call to this function.
  * @param intDeviceId The device id to send bell to
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 int WINAPI tdBell(int intDeviceId){
 	Message msg(L"tdBell");
@@ -227,7 +227,7 @@ int WINAPI tdBell(int intDeviceId){
  * @param intDeviceId The device id to dim
  * @param level The level the device should dim to. This value should be 0-255
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 int WINAPI tdDim(int intDeviceId, unsigned char level){
 	Message msg(L"tdDim");
@@ -242,7 +242,7 @@ int WINAPI tdDim(int intDeviceId, unsigned char level){
  * call to this function.
  * @param intDeviceId The id to execute
  *
- * Added in version 2.1.0.
+ * @since Version 2.1.0
  **/
 int WINAPI tdExecute(int intDeviceId){
 	Message msg(L"tdExecute");
@@ -256,7 +256,7 @@ int WINAPI tdExecute(int intDeviceId){
  * call to this function.
  * @param intDeviceId The device id to send the command to
  *
- * Added in version 2.1.0.
+ * @since Version 2.1.0
  **/
 int WINAPI tdUp(int intDeviceId){
 	Message msg(L"tdUp");
@@ -270,7 +270,7 @@ int WINAPI tdUp(int intDeviceId){
  * call to this function.
  * @param intDeviceId The device id to send the command to
  *
- * Added in version 2.1.0.
+ * @since Version 2.1.0
  **/
 int WINAPI tdDown(int intDeviceId){
 	Message msg(L"tdDown");
@@ -284,7 +284,7 @@ int WINAPI tdDown(int intDeviceId){
  * call to this function.
  * @param intDeviceId The device id to stop
  *
- * Added in version 2.1.0.
+ * @since Version 2.1.0
  */
 int WINAPI tdStop(int intDeviceId){
 	Message msg(L"tdStop");
@@ -299,7 +299,7 @@ int WINAPI tdStop(int intDeviceId){
  * call to this function.
  * @param intDeviceId The device id to learn.
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 int WINAPI tdLearn(int intDeviceId) {
 	Message msg(L"tdLearn");
@@ -313,7 +313,7 @@ int WINAPI tdLearn(int intDeviceId) {
  * @param methodsSupported The methods supported by the client. See tdMethods() for more information.
  * @returns the last sent command as integer, example TELLSTICK_TURNON or TELLSTICK_TURNOFF
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 int WINAPI tdLastSentCommand(int intDeviceId, int methodsSupported ) {
 	Message msg(L"tdLastSentCommand");
@@ -327,7 +327,7 @@ int WINAPI tdLastSentCommand(int intDeviceId, int methodsSupported ) {
  * @param intDeviceId The device id to query
  * @returns the the value as a human readable string, example "128" for 50%
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 char * WINAPI tdLastSentValue( int intDeviceId ) {
 	Message msg(L"tdLastSentValue");
@@ -340,7 +340,7 @@ char * WINAPI tdLastSentValue( int intDeviceId ) {
  * This function returns the number of devices configured
  * @returns an integer of the total number of devices configured
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 int WINAPI tdGetNumberOfDevices(void){
 	return Client::getIntegerFromService(Message(L"tdGetNumberOfDevices"));
@@ -359,7 +359,7 @@ int WINAPI tdGetNumberOfDevices(void){
  * @param intDeviceIndex The device index to query. The index starts from 0.
  * @returns the unique id for the device or -1 if the device is not found.
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 int WINAPI tdGetDeviceId(int intDeviceIndex){
 	Message msg(L"tdGetDeviceId");
@@ -371,7 +371,7 @@ int WINAPI tdGetDeviceId(int intDeviceIndex){
  * Returns which type the device is. The device could be either
  * TELLSTICK_TYPE_DEVICE, TELLSTICK_TYPE_GROUP or TELLSTICK_TYPE_SCENE
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 int WINAPI tdGetDeviceType(int intDeviceId) {
 	Message msg(L"tdGetDeviceType");
@@ -384,7 +384,7 @@ int WINAPI tdGetDeviceType(int intDeviceId) {
  * @param intDeviceId The unique id of the device to query
  * @returns The name of the device or an empty string if the device is not found.
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 char * WINAPI tdGetName(int intDeviceId){
 	Message msg(L"tdGetName");
@@ -400,7 +400,7 @@ char * WINAPI tdGetName(int intDeviceId){
  * @param strNewName The new name for the devices
  * @returns \c true on success, \c false otherwise.
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
 	Message msg(L"tdSetName");
@@ -413,7 +413,7 @@ bool WINAPI tdSetName(int intDeviceId, const char* strNewName){
  * @returns the protocol used by a specific device.
  * @param intDeviceId The device id to query.
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 char* WINAPI tdGetProtocol(int intDeviceId){
 	Message msg(L"tdGetProtocol");
@@ -431,7 +431,7 @@ char* WINAPI tdGetProtocol(int intDeviceId){
  * @sa tdSetModel()
  * @sa tdSetDeviceParameter()
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
 	Message msg(L"tdSetProtocol");
@@ -444,7 +444,7 @@ bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol){
  * @returns the model for a device. Not all protocols uses this.
  * @param intDeviceId The device to query.
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 char* WINAPI tdGetModel(int intDeviceId){
 	Message msg(L"tdGetModel");
@@ -460,7 +460,7 @@ char* WINAPI tdGetModel(int intDeviceId){
  * @param strModel The new model
  * @returns \c true on success, \c false otherwise.
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 bool WINAPI tdSetModel(int intDeviceId, const char *strModel){
 	Message msg(L"tdSetModel");
@@ -477,7 +477,7 @@ bool WINAPI tdSetModel(int intDeviceId, const char *strModel){
  * @param strValue The new value for the parameter.
  * @returns \c true on success, \c false otherwise.
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const char *strValue){
 	Message msg(L"tdSetDeviceParameter");
@@ -493,7 +493,7 @@ bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const cha
  * @param strName The name of the parameter to query.
  * @param defaultValue A defaultValue to return if the current parameter hasn't previously been set.
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const char *defaultValue){
 	Message msg(L"tdGetDeviceParameter");
@@ -510,7 +510,7 @@ char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const c
  * @returns the new device id for the newly created device. If the creation fails it returnes a
  * negative value.
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 int WINAPI tdAddDevice(){
 	Message msg(L"tdAddDevice");
@@ -521,7 +521,7 @@ int WINAPI tdAddDevice(){
  * Removes a device.
  * @returns \c true on success, \c false otherwise.
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 bool WINAPI tdRemoveDevice(int intDeviceId){
 	Message msg(L"tdRemoveDevice");
@@ -552,7 +552,7 @@ bool WINAPI tdRemoveDevice(int intDeviceId){
  * @sa TELLSTICK_DOWN
  * @sa TELLSTICK_STOP
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 int WINAPI tdMethods(int id, int methodsSupported){
 	Message msg(L"tdMethods");
@@ -579,7 +579,7 @@ int WINAPI tdMethods(int id, int methodsSupported){
  * @sa TELLSTICK_ERROR_COMMUNICATING_SERVICE
  * @sa TELLSTICK_ERROR_UNKNOWN
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 char * WINAPI tdGetErrorString(int intErrorNo) {
 	const int numResponses = 10;
@@ -614,7 +614,7 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
  * @param reserved Reserved for future use
  * @returns TELLSTICK_SUCCESS on success or one of the errorcodes on failure
  *
- * Added in version 2.0.0.
+ * @since Version 2.0.0
  **/
 int WINAPI tdSendRawCommand(const char *command, int reserved) {
 	std::wstring wcommand;
@@ -628,7 +628,7 @@ int WINAPI tdSendRawCommand(const char *command, int reserved) {
 }
 
 /**
- * Added in version 2.1.0.
+ * @since Version 2.1.0
  **/
 void WINAPI tdConnectTellStickController(int vid, int pid, const char *serial) {
 	Message msg(L"tdConnectTellStickController");
@@ -639,7 +639,7 @@ void WINAPI tdConnectTellStickController(int vid, int pid, const char *serial) {
 }
 
 /**
- * Added in version 2.1.0.
+ * @since Version 2.1.0
  **/
 void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial) {
 	Message msg(L"tdDisconnectTellStickController");
@@ -653,7 +653,6 @@ void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial
  * Use this function to iterate over all sensors. Iterate until
  * TELLSTICK_SUCCESS is not returned
  *
- * Added in version 2.1.0.
  * @param protocol A byref string where the protocol of the sensor will be placed
  * @param protocolLen The length of the \c protocol parameter
  * @param model A byref string where the model of the sensor will be placed
@@ -661,6 +660,8 @@ void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial
  * @param id A byref int where the id of the sensor will be placed
  * @param dataTypes A byref int with flags for the supported sensor values
  * @returns TELLSTICK_SUCCESS if there is more sensors to be fetched
+ *
+ * @since Version 2.1.0
  */
 int WINAPI tdSensor(char *protocol, int protocolLen, char *model, int modelLen, int *id, int *dataTypes) {
 	Client *client = Client::getInstance();
@@ -672,7 +673,6 @@ int WINAPI tdSensor(char *protocol, int protocolLen, char *model, int modelLen, 
  * the value type first by calling tdSensor(). The triplet \c protocol,
  * \c model, and \c id together identifies a sensor.
  *
- * Added in version 2.1.0.
  * @param protocol The protocol for the sensor
  * @param model The model for the sensor
  * @param id The id of the sensor
@@ -682,6 +682,8 @@ int WINAPI tdSensor(char *protocol, int protocolLen, char *model, int modelLen, 
  * @param timestamp A byref int where the timestamp of the value will be placed
  * @returns TELLSTICK_SUCCESS if the value could be fetched or one of the
  * errorcodes on failure
+ *
+ * @since Version 2.1.0
  */
 int WINAPI tdSensorValue(const char *protocol, const char *model, int id, int dataType, char *value, int len, int *timestamp) {
 	Message msg(L"tdSensorValue");
@@ -709,7 +711,6 @@ int WINAPI tdSensorValue(const char *protocol, const char *model, int id, int da
  * Use this function to iterate over all controllers. Iterate until
  * TELLSTICK_SUCCESS is not returned
  *
- * Added in version 2.1.2.
  * @param controllerId A byref int where the id of the controller will be placed
  * @param controllerType A byref int where the type of the controller will be placed
  * @param name A byref string where the name of the controller will be placed
@@ -719,6 +720,8 @@ int WINAPI tdSensorValue(const char *protocol, const char *model, int id, int da
  * @sa TELLSTICK_CONTROLLER_TELLSTICK
  * @sa TELLSTICK_CONTROLLER_TELLSTICK_DUO
  * @sa TELLSTICK_CONTROLLER_TELLSTICK_NET
+ *
+ * @since Version 2.1.2
  **/
 int WINAPI tdController(int *controllerId, int *controllerType, char *name, int nameLen, int *available) {
 	Client *client = Client::getInstance();
@@ -729,10 +732,11 @@ int WINAPI tdController(int *controllerId, int *controllerType, char *name, int 
  * This function gets a parameter on a controller.
  * Valid parameters are: \c serial \c and firmware
  *
- * Added in version 2.1.2.
  * @param controllerId The controller to change
  * @param name The parameter to get.
  * @param value A byref string where the value of the parameter will be placed
+ *
+ * @since Version 2.1.2
  **/
 int WINAPI tdControllerValue(int controllerId, const char *name, char *value, int valueLen) {
 	Message msg(L"tdControllerValue");
@@ -753,10 +757,11 @@ int WINAPI tdControllerValue(int controllerId, const char *name, char *value, in
  * This function sets a parameter on a controller.
  * Valid parameters are: \c name
  *
- * Added in version 2.1.2.
  * @param controllerId The controller to change
  * @param name The parameter to change.
  * @param value The new value for the parameter.
+ *
+ * @since Version 2.1.2
  **/
 int WINAPI tdSetControllerValue(int controllerId, const char *name, const char *value) {
 	Message msg(L"tdSetControllerValue");
@@ -771,12 +776,13 @@ int WINAPI tdSetControllerValue(int controllerId, const char *name, const char *
  * of controllers. The controller must not be
  * available (disconnected) for this to work.
  *
- * Added in version 2.1.2.
  * @param controllerId The controller to remove
  * @returns TELLSTICK_SUCCESS if the controller was
  * removed, TELLSTICK_ERROR_NOT_FOUND if the controller was
  * not found, and TELLSTICK_ERROR_PERMISSION_DENIED if the
  * controller is still connected.
+ *
+ * @since Version 2.1.2
  **/
 int WINAPI tdRemoveController(int controllerId) {
 	Message msg(L"tdRemoveController");
