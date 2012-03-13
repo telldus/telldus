@@ -15,7 +15,8 @@ using namespace TelldusCore;
 
 
 /**
- * @name Device method flags
+ * @name Device flags
+ * Flags returned from tdMethods() indicating which methods a device supports.
  * @{
  *
  * @def TELLSTICK_TURNON
@@ -47,11 +48,12 @@ using namespace TelldusCore;
  *
  * @def TELLSTICK_LEARN
  * Device-flag for devices supporting the tdLearn() call.
- */
-/** @} */
+ *
+ **//** @} */
 
 /**
  * @name Device types
+ * The device type as returned from tdGetDeviceType().
  * @{
  *
  * @def TELLSTICK_TYPE_DEVICE
@@ -63,8 +65,80 @@ using namespace TelldusCore;
  * @def TELLSTICK_TYPE_SCENE
  * Device type of a device which contains other devices that are sent different
  * commands when executed (i.e. one device turns on, another turns off).
- */
-/** @} */
+ *
+ **//** @} */
+
+/**
+ * @name Sensor value types
+ * The supported sensor value types are returned from tdSensor() and used when
+ * querying a sensor for a specific value in tdSensorValue().
+ * @{
+ *
+ * @def TELLSTICK_TEMPERATURE
+ * The sensor can report the temperature.
+ *
+ * @def TELLSTICK_HUMIDITY
+ * The sensor can report the humidity.
+ *
+ **//** @} */
+
+/**
+ * @name Controller type
+ * The controller type as returned from tdController().
+ * @{
+ *
+ * @def TELLSTICK_CONTROLLER_TELLSTICK
+ * The controller is a TellStick.
+ *
+ * @def TELLSTICK_CONTROLLER_TELLSTICK_DUO
+ * The controller is a TellStick Duo.
+ *
+ * @def TELLSTICK_CONTROLLER_TELLSTICK_NET
+ * The controller is a TellStick Net.
+ *
+ **//** @} */
+
+/**
+ * @name Device changes
+ * @{
+ *
+ * @def TELLSTICK_DEVICE_ADDED
+ * A new device was added.
+ *
+ * @def TELLSTICK_DEVICE_CHANGED
+ * A device was changed.
+ *
+ * @def TELLSTICK_DEVICE_REMOVED
+ * A device was removed.
+ *
+ * @def TELLSTICK_DEVICE_STATE_CHANGED
+ * The state changed for a device.
+ *
+ **//** @} */
+
+/**
+ * @name Change types
+ * @{
+ *
+ * @def TELLSTICK_CHANGE_NAME
+ * The name has changed.
+ *
+ * @def TELLSTICK_CHANGE_PROTOCOL
+ * The protocol has changed.
+ *
+ * @def TELLSTICK_CHANGE_MODEL
+ * The model has changed.
+ *
+ * @def TELLSTICK_CHANGE_METHOD
+ * The method has changed.
+ *
+ * @def TELLSTICK_CHANGE_AVAILABLE
+ * The controller is now available or unavailable.
+ *
+ * @def TELLSTICK_CHANGE_FIRMWARE
+ * The firmware has changed.
+ *
+ **//** @} */
 
 /**
  * @name Error codes
@@ -110,8 +184,7 @@ using namespace TelldusCore;
  *
  * @def TELLSTICK_ERROR_UNKNOWN
  * Error code. An unkown error has occurred.
- */
-/** @} */
+ **//** @} */
 
 /**
  * This function initiates the library. Call this function before any other
