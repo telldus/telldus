@@ -727,7 +727,7 @@ int WINAPI tdController(int *controllerId, int *controllerType, char *name, int 
 
 /**
  * This function gets a parameter on a controller.
- * Valid parameters are: \c serial \c and firmware
+ * Valid parameters are: \c serial, \c name and \c firmware
  *
  * Added in version 2.1.2.
  * @param controllerId The controller to change

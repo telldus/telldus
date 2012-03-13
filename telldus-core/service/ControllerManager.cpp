@@ -277,6 +277,8 @@ std::wstring ControllerManager::getControllerValue(int id, const std::wstring &n
 	}
 	if (name == L"serial") {
 		return it->second.serial;
+	} else if (name == L"name") {
+		return it->second.name;
 	} else if (name == L"firmware") {
 		if (!it->second.controller) {
 			return L"-1";
