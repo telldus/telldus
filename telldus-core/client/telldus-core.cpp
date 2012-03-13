@@ -187,6 +187,21 @@ using namespace TelldusCore;
  **//** @} */
 
 /**
+ * @name Callback typedefs
+ *
+ * @typedef TDDeviceEvent
+ *
+ * @typedef TDDeviceChangeEvent
+ *
+ * @typedef TDRawDeviceEvent
+ *
+ * @typedef TDSensorEvent
+ *
+ * @typedef TDControllerEvent
+ *
+ **//** @} */
+
+/**
  * This function initiates the library. Call this function before any other
  * call to a function in telldus-core.
  *
