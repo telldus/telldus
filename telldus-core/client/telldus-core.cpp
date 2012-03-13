@@ -15,6 +15,9 @@ using namespace TelldusCore;
 
 
 /**
+ * @name Device method flags
+ * @{
+ *
  * @def TELLSTICK_TURNON
  * Device-flag for devices supporting the tdTurnOn() call.
  *
@@ -44,6 +47,12 @@ using namespace TelldusCore;
  *
  * @def TELLSTICK_LEARN
  * Device-flag for devices supporting the tdLearn() call.
+ */
+/** @} */
+
+/**
+ * @name Device types
+ * @{
  *
  * @def TELLSTICK_TYPE_DEVICE
  * Device type of a single device.
@@ -52,13 +61,17 @@ using namespace TelldusCore;
  * Device type of a device which contains other devices.
  *
  * @def TELLSTICK_TYPE_SCENE
- * Device type of a device which contains other devices that are sent different commands when executed (i.e. one device turns on, another turns off).
+ * Device type of a device which contains other devices that are sent different
+ * commands when executed (i.e. one device turns on, another turns off).
+ */
+/** @} */
+
+/**
+ * @name Error codes
+ * @{
  *
  * @def TELLSTICK_SUCCESS
  * Error code. Returned when the command succeeded.
- *
- * @def TELLSTICK_ERROR_BROKEN_PIPE
- * Error code. Pipe broken during communication.
  *
  * @def TELLSTICK_ERROR_NOT_FOUND
  * Error code. Returned if a TellStick was not found on the system.
@@ -89,12 +102,16 @@ using namespace TelldusCore;
  * Error code. Input/command could not be parsed or didn't follow
  * input rules.
  *
+ * @def TELLSTICK_ERROR_BROKEN_PIPE
+ * Error code. Pipe broken during communication.
+ *
  * @def TELLSTICK_ERROR_COMMUNICATING_SERVICE
  * Error code. Timeout waiting for response from the Telldus Service.
  *
  * @def TELLSTICK_ERROR_UNKNOWN
  * Error code. An unkown error has occurred.
  */
+/** @} */
 
 /**
  * This function initiates the library. Call this function before any other
