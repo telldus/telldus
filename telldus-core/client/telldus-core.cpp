@@ -840,6 +840,7 @@ int WINAPI tdController(int *controllerId, int *controllerType, char *name, int 
  * @param controllerId The controller to change
  * @param name The parameter to get.
  * @param value A byref string where the value of the parameter will be placed
+ * @param valueLen The length of the \c value parameter
  *
  * @since Version 2.1.2
  **/
