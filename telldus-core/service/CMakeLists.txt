@@ -240,8 +240,17 @@ ENDIF (UNIX)
 IF (UNIX AND NOT APPLE)
 	INSTALL(TARGETS ${telldus-service_TARGET} RUNTIME DESTINATION sbin)
 	SET(SYSCONF_INSTALL_DIR "/etc" CACHE PATH "The sysconfig install dir (default prefix/etc)" )
-	SET(STATE_INSTALL_DIR	"/var/state" CACHE PATH "The directory to store state information of the devices" )
 
+	IF (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
+		SET(STATE_INSTALL_DIR "/var/spool" CACHE PATH "The directory to store state information of the devices")
+	ELSE (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
+		SET(STATE_INSTALL_DIR "/var/state" CACHE PATH "The directory to store state information of the devices")
+	ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
+
+	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/SettingsConfusePaths.h.in
+		${CMAKE_CURRENT_BINARY_DIR}/SettingsConfusePaths.h)
+	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+	
 	INSTALL(FILES tellstick.conf
 		DESTINATION ${SYSCONF_INSTALL_DIR}
 	)
