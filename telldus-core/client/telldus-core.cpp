@@ -49,7 +49,7 @@ using namespace TelldusCore;
  * @def TELLSTICK_LEARN
  * Device-flag for devices supporting the tdLearn() call.
  *
- **//** @} */
+ **//* @} */
 
 /**
  * @name Device types
@@ -66,7 +66,7 @@ using namespace TelldusCore;
  * Device type of a device which contains other devices that are sent different
  * commands when executed (i.e. one device turns on, another turns off).
  *
- **//** @} */
+ **//* @} */
 
 /**
  * @name Sensor value types
@@ -80,7 +80,7 @@ using namespace TelldusCore;
  * @def TELLSTICK_HUMIDITY
  * The sensor can report the humidity.
  *
- **//** @} */
+ **//* @} */
 
 /**
  * @name Controller type
@@ -96,7 +96,7 @@ using namespace TelldusCore;
  * @def TELLSTICK_CONTROLLER_TELLSTICK_NET
  * The controller is a TellStick Net.
  *
- **//** @} */
+ **//* @} */
 
 /**
  * @name Device changes
@@ -114,7 +114,7 @@ using namespace TelldusCore;
  * @def TELLSTICK_DEVICE_STATE_CHANGED
  * The state changed for a device.
  *
- **//** @} */
+ **//* @} */
 
 /**
  * @name Change types
@@ -138,7 +138,7 @@ using namespace TelldusCore;
  * @def TELLSTICK_CHANGE_FIRMWARE
  * The firmware has changed.
  *
- **//** @} */
+ **//* @} */
 
 /**
  * @name Error codes
@@ -184,22 +184,33 @@ using namespace TelldusCore;
  *
  * @def TELLSTICK_ERROR_UNKNOWN
  * Error code. An unkown error has occurred.
- **//** @} */
+ **//* @} */
 
 /**
  * @name Callback typedefs
+ * @{
  *
  * @typedef TDDeviceEvent
+ * The callback type for device events.
+ * @sa tdRegisterDeviceEvent
  *
  * @typedef TDDeviceChangeEvent
+ * The callback type for device change events.
+ * @sa tdRegisterDeviceChangeEvent
  *
  * @typedef TDRawDeviceEvent
+ * The callback type for raw events.
+ * @sa tdRegisterRawDeviceEvent
  *
  * @typedef TDSensorEvent
+ * The callback type for sensor events.
+ * @sa tdRegisterSensorEvent
  *
  * @typedef TDControllerEvent
+ * The callback type for controller events.
+ * @sa tdRegisterControllerEvent
  *
- **//** @} */
+ **//* @} */
 
 /**
  * This function initiates the library. Call this function before any other
@@ -212,6 +223,15 @@ void WINAPI tdInit(void) {
 }
 
 /**
+ * Register a callback that will receive device events.
+ *
+ * @param eventFunction Callback function
+ * @param context Pointer that will be passed back in the callback.
+ *
+ * @returns An id identifying the callback. Pass this id to
+ * tdUnregisterCallback() to stop receiving callbacks.
+ *
+ * @sa @ref sec_events_registering
  * @since Version 2.0.0
  **/
 int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
@@ -220,6 +240,15 @@ int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
 }
 
 /**
+ * Register a callback that will receive raw (i.e. all) events.
+ *
+ * @param eventFunction Callback function
+ * @param context Pointer that will be passed back in the callback.
+ *
+ * @returns An id identifying the callback. Pass this id to
+ * tdUnregisterCallback() to stop receiving callbacks.
+ *
+ * @sa @ref sec_events_registering
  * @since Version 2.0.0
  **/
 int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context ) {
@@ -228,6 +257,15 @@ int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *conte
 }
 
 /**
+ * Register a callback that will receive device change events.
+ *
+ * @param eventFunction Callback function
+ * @param context Pointer that will be passed back in the callback.
+ *
+ * @returns An id identifying the callback. Pass this id to
+ * tdUnregisterCallback() to stop receiving callbacks.
+ *
+ * @sa @ref sec_events_registering
  * @since Version 2.1.0
  **/
 int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context) {
@@ -236,6 +274,15 @@ int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void 
 }
 
 /**
+ * Register a callback that will receive sensor events.
+ *
+ * @param eventFunction Callback function
+ * @param context Pointer that will be passed back in the callback.
+ *
+ * @returns An id identifying the callback. Pass this id to
+ * tdUnregisterCallback() to stop receiving callbacks.
+ *
+ * @sa @ref sec_events_registering
  * @since Version 2.1.0
  **/
 int WINAPI tdRegisterSensorEvent( TDSensorEvent eventFunction, void *context) {
@@ -244,6 +291,15 @@ int WINAPI tdRegisterSensorEvent( TDSensorEvent eventFunction, void *context) {
 }
 
 /**
+ * Register a callback that will receive controller events.
+ *
+ * @param eventFunction Callback function
+ * @param context Pointer that will be passed back in the callback.
+ *
+ * @returns An id identifying the callback. Pass this id to
+ * tdUnregisterCallback() to stop receiving callbacks.
+ *
+ * @sa @ref sec_events_registering
  * @since Version 2.1.2
  **/
 int WINAPI tdRegisterControllerEvent( TDControllerEvent eventFunction, void *context) {
@@ -252,6 +308,11 @@ int WINAPI tdRegisterControllerEvent( TDControllerEvent eventFunction, void *con
 }
 
 /**
+ * Unregister a callback.
+ *
+ * @param callbackId The returned id from one of the tdRegister* functions.
+ *
+ * @sa @ref sec_events_registering
  * @since Version 2.1.0
  **/
 int WINAPI tdUnregisterCallback( int callbackId ) {
