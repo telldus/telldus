@@ -245,7 +245,24 @@ using namespace TelldusCore;
  *
  * @typedef TDSensorEvent
  * The callback type for sensor events.
+ *
+ * @attention The callback will be called by another thread than the thread
+ * used by the application and some measures must be taken to synchronize it
+ * with the main thread.
+ *
+ * @param protocol The sensor's protocol.
+ * @param model The model of the sensor.
+ * @param id The unique id for the sensor.
+ * @param dataType The type that @a value is. Can be one of @ref
+ * TELLSTICK_TEMPERATURE or @ref TELLSTICK_HUMIDITY.
+ * @param value A human readable string of the data.
+ * @param timestamp The time (as returned by the time() system call) when the
+ * value was received.
+ * @param callbackId The id of the callback.
+ * @param context The pointer passed when registering for the event.
+ *
  * @sa tdRegisterSensorEvent
+ *
  *
  * @typedef TDControllerEvent
  * The callback type for controller events.
