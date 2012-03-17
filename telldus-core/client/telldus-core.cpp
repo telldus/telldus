@@ -230,7 +230,18 @@ using namespace TelldusCore;
  *
  * @typedef TDRawDeviceEvent
  * The callback type for raw events.
+ *
+ * @attention The callback will be called by another thread than the thread
+ * used by the application and some measures must be taken to synchronize it
+ * with the main thread.
+ *
+ * @param data Raw device data.
+ * @param controllerId Id of receiving controller.
+ * @param callbackId The id of the callback.
+ * @param context The pointer passed when registering for the event.
+ *
  * @sa tdRegisterRawDeviceEvent
+ *
  *
  * @typedef TDSensorEvent
  * The callback type for sensor events.
