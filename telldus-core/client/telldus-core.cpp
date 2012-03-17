@@ -196,7 +196,23 @@ using namespace TelldusCore;
  *
  * @typedef TDDeviceChangeEvent
  * The callback type for device change events.
+ *
+ * @attention The callback will be called by another thread than the thread
+ * used by the application and some measures must be taken to synchronize it
+ * with the main thread.
+ *
+ * @param deviceId The id for the device that was added, changed or removed.
+ * @param changeEvent One of the constants @ref TELLSTICK_DEVICE_ADDED, @ref
+ * TELLSTICK_DEVICE_CHANGED or @ref TELLSTICK_DEVICE_REMOVED.
+ * @param changeType If @a changeEvent was @ref TELLSTICK_DEVICE_CHANGED, this
+ * parameter indicates what has changed. It is one of the constants @ref
+ * TELLSTICK_CHANGE_NAME, @ref TELLSTICK_CHANGE_PROTOCOL, @ref
+ * TELLSTICK_CHANGE_MODEL or @ref TELLSTICK_CHANGE_METHOD.
+ * @param callbackId The id of the callback.
+ * @param context The pointer passed when registering for the event.
+ *
  * @sa tdRegisterDeviceChangeEvent
+ *
  *
  * @typedef TDRawDeviceEvent
  * The callback type for raw events.
@@ -257,7 +273,9 @@ int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *conte
 }
 
 /**
- * Register a callback that will receive device change events.
+ * Register a callback that will receive device change events. This includes
+ * addition of new devices, changes of device properties (e.g. name) and
+ * removal of existing devices.
  *
  * @param eventFunction Callback function
  * @param context Pointer that will be passed back in the callback.
