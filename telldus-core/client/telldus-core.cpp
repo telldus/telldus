@@ -192,7 +192,21 @@ using namespace TelldusCore;
  *
  * @typedef TDDeviceEvent
  * The callback type for device events.
+ *
+ * @attention The callback will be called by another thread than the thread
+ * used by the application and some measures must be taken to synchronize it
+ * with the main thread.
+ *
+ * @param deviceId The id of the device that changed.
+ * @param method The new device state. Can be @ref TELLSTICK_TURNON, @ref
+ * TELLSTICK_TURNOFF, etc.
+ * @param data If @a method is @ref TELLSTICK_DIM this holds the current value
+ * as a human readable string, example "128" for 50%.
+ * @param callbackId The id of the callback.
+ * @param context The pointer passed when registering for the event.
+ *
  * @sa tdRegisterDeviceEvent
+ *
  *
  * @typedef TDDeviceChangeEvent
  * The callback type for device change events.
@@ -201,7 +215,7 @@ using namespace TelldusCore;
  * used by the application and some measures must be taken to synchronize it
  * with the main thread.
  *
- * @param deviceId The id for the device that was added, changed or removed.
+ * @param deviceId The id of the device that was added, changed or removed.
  * @param changeEvent One of the constants @ref TELLSTICK_DEVICE_ADDED, @ref
  * TELLSTICK_DEVICE_CHANGED or @ref TELLSTICK_DEVICE_REMOVED.
  * @param changeType If @a changeEvent was @ref TELLSTICK_DEVICE_CHANGED, this
