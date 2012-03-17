@@ -266,6 +266,27 @@ using namespace TelldusCore;
  *
  * @typedef TDControllerEvent
  * The callback type for controller events.
+ *
+ * @attention The callback will be called by another thread than the thread
+ * used by the application and some measures must be taken to synchronize it
+ * with the main thread.
+ *
+ * @param controllerId The id of the controller that was added, changed or
+ * removed.
+ * @param changeEvent One of the constants @ref TELLSTICK_DEVICE_ADDED, @ref
+ * TELLSTICK_DEVICE_STATE_CHANGED or @ref TELLSTICK_DEVICE_REMOVED.
+ * @param changeType If @a changeEvent is @ref TELLSTICK_DEVICE_ADDED this is
+ * the controller's type (e.g. @ref TELLSTICK_CONTROLLER_TELLSTICK or @ref
+ * TELLSTICK_CONTROLLER_TELLSTICK_DUO); if @a changeEvent is @ref
+ * TELLSTICK_DEVICE_CHANGED this indicates what has changed (e.g. @ref
+ * TELLSTICK_CHANGE_AVAILABLE, @ref TELLSTICK_CHANGE_NAME or @ref
+ * TELLSTICK_CHANGE_FIRMWARE).
+ * @param newValue If @a changeEvent is @ref TELLSTICK_DEVICE_CHANGED this is
+ * the property's new value. For @ref TELLSTICK_CHANGE_AVAILABLE this is either
+ * 0 or 1.
+ * @param callbackId The id of the callback.
+ * @param context The pointer passed when registering for the event.
+ *
  * @sa tdRegisterControllerEvent
  *
  **//* @} */
