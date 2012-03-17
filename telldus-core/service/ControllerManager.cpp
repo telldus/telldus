@@ -199,9 +199,10 @@ void ControllerManager::loadStoredControllers() {
 		int id = d->settings.getNodeId(Settings::Controller, i);
 		d->controllers[id].controller = NULL;
 		d->controllers[id].name = d->settings.getName(Settings::Controller, id);
-		d->controllers[id].type = d->settings.getControllerType(id);
+		const int type = d->settings.getControllerType(id);
+		d->controllers[id].type = type;
 		d->controllers[id].serial = d->settings.getControllerSerial(id);
-		signalControllerEvent(id, TELLSTICK_DEVICE_ADDED, 0, L"");
+		signalControllerEvent(id, TELLSTICK_DEVICE_ADDED, type, L"");
 	}
 }
 
