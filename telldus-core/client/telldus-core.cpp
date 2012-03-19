@@ -1,6 +1,6 @@
 /**
  * @defgroup core telldus-core
- * Telldus Core is the base module used to interface a Telldus TellStick.
+ *   Telldus Core is the base module used to interface a Telldus TellStick.
  * @{
  */
 
@@ -294,7 +294,7 @@ using namespace TelldusCore;
  *     @arg @ref TELLSTICK_DEVICE_REMOVED this is unused.
  * @param newValue
  *   If @a changeEvent is:
- *     @arg @ref TELLSTICK_DEVICE_CHANGED this is the property's new value.
+ *     @arg @ref TELLSTICK_DEVICE_CHANGED this is the property's new value,
  *     @arg @ref TELLSTICK_DEVICE_STATE_CHANGED this is the new state. For @ref
  *     TELLSTICK_CHANGE_AVAILABLE this is either 0 or 1.
  * @param callbackId
@@ -697,7 +697,7 @@ int WINAPI tdGetNumberOfDevices(void){
  *   The device index to query. The index starts from 0.
  *
  * @returns
- *   The unique id for the device or -1 if the device is not found.
+ *   The unique id for the device or @c -1 if the device is not found.
  *
  * @since Version 2.0.0
  **/
