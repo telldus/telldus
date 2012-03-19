@@ -594,7 +594,7 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
 		"Received an unknown response",
 		"Syntax error",
 		"Broken pipe"
-		"An error occured while communicating with the Telldus Service"
+		"An error occurred while communicating with the Telldus Service"
 	};
 	std::string strReturn;
 	intErrorNo = abs(intErrorNo); //We don't use negative values here.
