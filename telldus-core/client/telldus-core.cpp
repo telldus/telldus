@@ -15,8 +15,9 @@ using namespace TelldusCore;
 
 
 /**
- * @name Device flags
- * Flags returned from tdMethods() indicating which methods a device supports.
+ * @name Device method flags
+ * Flags for the different methods/commands a device can support. Can be used
+ * as bitflags in e.g. tdMethods().
  * @{
  *
  * @def TELLSTICK_TURNON
@@ -34,6 +35,9 @@ using namespace TelldusCore;
  * @def TELLSTICK_DIM
  * Device-flag for devices supporting the tdDim() call.
  *
+ * @def TELLSTICK_LEARN
+ * Device-flag for devices supporting the tdLearn() call.
+ *
  * @def TELLSTICK_EXECUTE
  * Device-flag for devices (scenes) supporting the tdExecute() call.
  *
@@ -45,9 +49,6 @@ using namespace TelldusCore;
  *
  * @def TELLSTICK_STOP
  * Device-flag for devices supporting the tdStop() call.
- *
- * @def TELLSTICK_LEARN
- * Device-flag for devices supporting the tdLearn() call.
  *
  **//* @} */
 
@@ -100,6 +101,7 @@ using namespace TelldusCore;
 
 /**
  * @name Device changes
+ * Flags used in event callbacks.
  * @{
  *
  * @def TELLSTICK_DEVICE_ADDED
@@ -118,6 +120,7 @@ using namespace TelldusCore;
 
 /**
  * @name Change types
+ * Flags used in event callbacks.
  * @{
  *
  * @def TELLSTICK_CHANGE_NAME
@@ -142,6 +145,7 @@ using namespace TelldusCore;
 
 /**
  * @name Error codes
+ * The error codes returned from all API functions returning int.
  * @{
  *
  * @def TELLSTICK_SUCCESS
@@ -218,10 +222,10 @@ using namespace TelldusCore;
  * @param deviceId The id of the device that was added, changed or removed.
  * @param changeEvent One of the constants @ref TELLSTICK_DEVICE_ADDED, @ref
  * TELLSTICK_DEVICE_CHANGED or @ref TELLSTICK_DEVICE_REMOVED.
- * @param changeType If @a changeEvent was @ref TELLSTICK_DEVICE_CHANGED, this
- * parameter indicates what has changed. It is one of the constants @ref
- * TELLSTICK_CHANGE_NAME, @ref TELLSTICK_CHANGE_PROTOCOL, @ref
- * TELLSTICK_CHANGE_MODEL or @ref TELLSTICK_CHANGE_METHOD.
+ * @param changeType If @a changeEvent is @ref TELLSTICK_DEVICE_CHANGED, this
+ * parameter indicates what has changed (e.g @ref TELLSTICK_CHANGE_NAME, @ref
+ * TELLSTICK_CHANGE_PROTOCOL, @ref TELLSTICK_CHANGE_MODEL or @ref
+ * TELLSTICK_CHANGE_METHOD).
  * @param callbackId The id of the callback.
  * @param context The pointer passed when registering for the event.
  *
@@ -274,16 +278,21 @@ using namespace TelldusCore;
  * @param controllerId The id of the controller that was added, changed or
  * removed.
  * @param changeEvent One of the constants @ref TELLSTICK_DEVICE_ADDED, @ref
- * TELLSTICK_DEVICE_STATE_CHANGED or @ref TELLSTICK_DEVICE_REMOVED.
- * @param changeType If @a changeEvent is @ref TELLSTICK_DEVICE_ADDED this is
- * the controller's type (e.g. @ref TELLSTICK_CONTROLLER_TELLSTICK or @ref
- * TELLSTICK_CONTROLLER_TELLSTICK_DUO); if @a changeEvent is @ref
- * TELLSTICK_DEVICE_CHANGED this indicates what has changed (e.g. @ref
- * TELLSTICK_CHANGE_AVAILABLE, @ref TELLSTICK_CHANGE_NAME or @ref
- * TELLSTICK_CHANGE_FIRMWARE).
- * @param newValue If @a changeEvent is @ref TELLSTICK_DEVICE_CHANGED this is
- * the property's new value. For @ref TELLSTICK_CHANGE_AVAILABLE this is either
- * 0 or 1.
+ * TELLSTICK_DEVICE_CHANGED, @ref TELLSTICK_DEVICE_STATE_CHANGED or @ref
+ * TELLSTICK_DEVICE_REMOVED.
+
+ * @param changeType If @a changeEvent is:
+ *  @arg @ref TELLSTICK_DEVICE_ADDED this is the controller's type (e.g. @ref
+ *  TELLSTICK_CONTROLLER_TELLSTICK or @ref TELLSTICK_CONTROLLER_TELLSTICK_DUO),
+ *  @arg @ref TELLSTICK_DEVICE_CHANGED this indicates what has changed
+ *  (e.g. @ref TELLSTICK_CHANGE_NAME or @ref TELLSTICK_CHANGE_FIRMWARE),
+ *  @arg @ref TELLSTICK_DEVICE_STATE_CHANGED this indicates which state that
+ *  has changed (e.g. @ref TELLSTICK_CHANGE_AVAILABLE),
+ *  @arg @ref TELLSTICK_DEVICE_REMOVED this is unused.
+ * @param newValue If @a changeEvent is:
+ *  @arg @ref TELLSTICK_DEVICE_CHANGED this is the property's new value.
+ *  @arg @ref TELLSTICK_DEVICE_STATE_CHANGED this is the new state. For @ref
+ *  TELLSTICK_CHANGE_AVAILABLE this is either 0 or 1.
  * @param callbackId The id of the callback.
  * @param context The pointer passed when registering for the event.
  *
@@ -646,13 +655,13 @@ int WINAPI tdGetNumberOfDevices(void){
 /**
  * This function returns the unique id of a device with a specific index.
  * To get all the id numbers you should loop over all the devices:
- * \code
+ * @code
  * int intNumberOfDevices = tdGetNumberOfDevices();
  * for (int i = 0; i < intNumberOfDevices; i++) {
  *   int id = tdGetDeviceId( i );
  *   // id now contains the id number of the device with index of i
  * }
- * \endcode
+ * @endcode
  *
  * @param intDeviceIndex The device index to query. The index starts from 0.
  *
@@ -707,7 +716,7 @@ char * WINAPI tdGetName(int intDeviceId){
  * @param intDeviceId The device id to change the name for
  * @param strNewName The new name for the devices
  *
- * @returns \c true on success, \c false otherwise.
+ * @returns @c true on success, @c false otherwise.
  *
  * @since Version 2.0.0
  **/
@@ -741,7 +750,7 @@ char* WINAPI tdGetProtocol(int intDeviceId){
  * @param intDeviceId The device to change.
  * @param strProtocol The new protocol to use.
  *
- * @returns \c true on success, \c false otherwise.
+ * @returns @c true on success, @c false otherwise.
  *
  * @sa tdSetModel()
  * @sa tdSetDeviceParameter()
@@ -779,7 +788,7 @@ char* WINAPI tdGetModel(int intDeviceId){
  * @param intDeviceId The device to change
  * @param strModel The new model
  *
- * @returns \c true on success, \c false otherwise.
+ * @returns @c true on success, @c false otherwise.
  *
  * @since Version 2.0.0
  **/
@@ -798,7 +807,7 @@ bool WINAPI tdSetModel(int intDeviceId, const char *strModel){
  * @param strName The parameter to change.
  * @param strValue The new value for the parameter.
  *
- * @returns \c true on success, \c false otherwise.
+ * @returns @c true on success, @c false otherwise.
  *
  * @since Version 2.0.0
  **/
@@ -818,7 +827,7 @@ bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const cha
  * @param defaultValue A default value to return if the current parameter
  * hasn't previously been set.
  *
- * @returns The protocol specific parameter specified by \c strName. The
+ * @returns The protocol specific parameter specified by @a strName. The
  * returned string must be freed by calling tdReleaseString().
  *
  * @since Version 2.0.0
@@ -852,7 +861,7 @@ int WINAPI tdAddDevice(){
  *
  * @param intDeviceId The device to query.
  *
- * @returns \c true on success, \c false otherwise.
+ * @returns @c true on success, @c false otherwise.
  *
  * @since Version 2.0.0
  **/
@@ -868,12 +877,14 @@ bool WINAPI tdRemoveDevice(int intDeviceId){
  * the application.
  *
  * Example of querying a device supporting TELLSTICK_BELL:
- * \code
- * int methods = tdMethods(id, TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL);
- * //methods is now TELLSTICK_BELL
+ * @code
+ * int methods = tdMethods(
+ *   id, TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_BELL);
+ * // methods is now TELLSTICK_BELL
  * int methods = tdMethods(idm TELLSTICK_TURNON | TELLSTICK_TURNOFF);
- * //methods is now TELLSTICK_TURNON because the client application doesn't support TELLSTICK_BELL
- * \endcode
+ * // methods is now TELLSTICK_TURNON because the client application doesn't
+ * // support TELLSTICK_BELL
+ * @endcode
  *
  * @param id The device id to query
  * @param methodsSupported The methods the client application supports
@@ -1012,9 +1023,9 @@ void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial
  *
  * @param protocol A byref string where the protocol of the sensor will be
  * placed
- * @param protocolLen The length of the \c protocol parameter
+ * @param protocolLen The length of the @a protocol parameter
  * @param model A byref string where the model of the sensor will be placed
- * @param modelLen The length of the \c model parameter
+ * @param modelLen The length of the @a model parameter
  * @param id A byref int where the id of the sensor will be placed
  * @param dataTypes A byref int with flags for the supported sensor values
  *
@@ -1029,15 +1040,15 @@ int WINAPI tdSensor(char *protocol, int protocolLen, char *model, int modelLen, 
 
 /**
  * Get one of the supported sensor values from a sensor. Make sure it support
- * the value type first by calling tdSensor(). The triplet \c protocol,
- * \c model and \c id together identifies a sensor.
+ * the value type first by calling tdSensor(). The triplet @a protocol,
+ * @a model and @a id together identifies a sensor.
  *
  * @param protocol The protocol for the sensor
  * @param model The model for the sensor
  * @param id The id of the sensor
  * @param dataType One of the datatype to retrieve
  * @param value A byref string where the value will be places
- * @param len The length of the \c value parameter
+ * @param len The length of the @a value parameter
  * @param timestamp A byref int where the timestamp of the value will be placed
  *
  * @returns @ref TELLSTICK_SUCCESS if the value could be fetched or one of the
@@ -1074,7 +1085,7 @@ int WINAPI tdSensorValue(const char *protocol, const char *model, int id, int da
  * @param controllerId A byref int where the id of the controller will be placed
  * @param controllerType A byref int where the type of the controller will be placed
  * @param name A byref string where the name of the controller will be placed
- * @param nameLen The length of the \c name parameter
+ * @param nameLen The length of the @a name parameter
  * @param available A byref int if the controller is currently available or maybe disconnected
  * @returns TELLSTICK_SUCCESS if there is more sensors to be fetched
  * @sa TELLSTICK_CONTROLLER_TELLSTICK
@@ -1090,12 +1101,12 @@ int WINAPI tdController(int *controllerId, int *controllerType, char *name, int 
 
 /**
  * This function gets a parameter on a controller.
- * Valid parameters are: \c serial and \c firmware
+ * Valid parameters are: @c serial and @c firmware
  *
  * @param controllerId The controller to change
  * @param name The parameter to get.
  * @param value A byref string where the value of the parameter will be placed
- * @param valueLen The length of the \c value parameter
+ * @param valueLen The length of the @a value parameter
  *
  * @returns @ref TELLSTICK_SUCCESS on success, or an error code on failure.
  *
@@ -1118,7 +1129,7 @@ int WINAPI tdControllerValue(int controllerId, const char *name, char *value, in
 
 /**
  * This function sets a parameter on a controller.
- * Valid parameters are: \c name
+ * Valid parameters are: @c name
  *
  * @param controllerId The controller to change
  * @param name The parameter to change.
