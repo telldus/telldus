@@ -296,7 +296,7 @@ using namespace TelldusCore;
  *   If @a changeEvent is:
  *     @arg @ref TELLSTICK_DEVICE_CHANGED this is the property's new value,
  *     @arg @ref TELLSTICK_DEVICE_STATE_CHANGED this is the new state. For @ref
- *     TELLSTICK_CHANGE_AVAILABLE this is either 0 or 1.
+ *     TELLSTICK_CHANGE_AVAILABLE this is either @c "0" or @c "1".
  * @param callbackId
  *   The id of the callback.
  * @param context
