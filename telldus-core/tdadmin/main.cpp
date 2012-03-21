@@ -47,6 +47,9 @@ static error_t parse_opt (int key, char *arg, struct argp_state *state) {
 			argp_usage (state);
 
 		case ARGP_KEY_ARG:
+			if (state->next == state->argc) {
+				argp_usage (state);
+			}
 			command = arg;
 			action = state->argv[state->next];
 			state->next = state->argc;
