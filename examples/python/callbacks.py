@@ -58,11 +58,11 @@ def rawcallbackfunction(data, controllerId, callbackId, context):
 	print string_at(data)
 
 if (platform.system() == 'Windows'):
-	CMPFUNC = WINFUNCTYPE(c_void_p, c_int, c_int, POINTER(c_ubyte), c_int, c_void_p) #first is return type
-	CMPFUNCRAW = WINFUNCTYPE(c_void_p, POINTER(c_ubyte), c_int, c_int, c_void_p)
+	CMPFUNC = WINFUNCTYPE(None, c_int, c_int, POINTER(c_ubyte), c_int, c_void_p) #first is return type
+	CMPFUNCRAW = WINFUNCTYPE(None, POINTER(c_ubyte), c_int, c_int, c_void_p)
 else:
-	CMPFUNC = CFUNCTYPE(c_void_p, c_int, c_int, POINTER(c_ubyte), c_int, c_void_p)
-	CMPFUNCRAW = CFUNCTYPE(c_void_p, POINTER(c_ubyte), c_int, c_int, c_void_p)
+	CMPFUNC = CFUNCTYPE(None, c_int, c_int, POINTER(c_ubyte), c_int, c_void_p)
+	CMPFUNCRAW = CFUNCTYPE(None, POINTER(c_ubyte), c_int, c_int, c_void_p)
 
 cmp_func = CMPFUNC(callbackfunction)
 cmp_funcraw = CMPFUNCRAW(rawcallbackfunction)

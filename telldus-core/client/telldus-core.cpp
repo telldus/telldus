@@ -332,7 +332,7 @@ void WINAPI tdInit(void) {
  * @since Version 2.0.0
  **/
 int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
-	eventFunction;	Client *client = Client::getInstance();
+	Client *client = Client::getInstance();
 	return client->registerEvent( CallbackStruct::DeviceEvent, (void *)eventFunction, context );
 }
 
@@ -1013,7 +1013,7 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
 		"Received an unknown response",
 		"Syntax error",
 		"Broken pipe"
-		"An error occured while communicating with the Telldus Service"
+		"An error occurred while communicating with the Telldus Service"
 	};
 	std::string strReturn;
 	intErrorNo = abs(intErrorNo); //We don't use negative values here.

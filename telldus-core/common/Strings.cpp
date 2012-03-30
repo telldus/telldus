@@ -39,7 +39,7 @@ std::wstring TelldusCore::charToWstring(const char *value) {
 	size_t outbytesLeft = utf8Length*sizeof(wchar_t);
 
 	//Copy the instring
-	char *inString = new char[strlen(value)+1];
+	char *inString = new char[utf8Length+1];
 	strcpy(inString, value);
 
 	//Create buffer for output
