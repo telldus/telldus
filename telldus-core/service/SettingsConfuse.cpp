@@ -10,6 +10,7 @@
 //
 //
 #include "Settings.h"
+#include "SettingsConfusePaths.h"
 #include "../client/telldus-core.h"
 #include "Strings.h"
 #include <confuse.h>
@@ -28,12 +29,8 @@ public:
 bool readConfig(cfg_t **cfg);
 bool readVarConfig(cfg_t **cfg);
 
-const char* CONFIG_FILE = "/etc/tellstick.conf";
-#ifdef __FreeBSD__
-const char* VAR_CONFIG_FILE = "/var/spool/telldus-core.conf";
-#else
-const char* VAR_CONFIG_FILE = "/var/state/telldus-core.conf";
-#endif
+const char* CONFIG_FILE = CONFIG_PATH "/tellstick.conf";
+const char* VAR_CONFIG_FILE = VAR_CONFIG_PATH "/telldus-core.conf";
 
 /*
 * Constructor
