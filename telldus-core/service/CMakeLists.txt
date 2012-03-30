@@ -242,15 +242,16 @@ IF (UNIX AND NOT APPLE)
 	SET(SYSCONF_INSTALL_DIR "/etc" CACHE PATH "The sysconfig install dir (default prefix/etc)" )
 
 	IF (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
-		SET(STATE_INSTALL_DIR "/var/spool" CACHE PATH "The directory to store state information of the devices")
-	ELSE (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
-		SET(STATE_INSTALL_DIR "/var/state" CACHE PATH "The directory to store state information of the devices")
-	ENDIF (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
+		SET(DEFAULT_STATE_INSTALL_DIR "/var/spool")
+	ELSE ()
+		SET(DEFAULT_STATE_INSTALL_DIR "/var/state")
+	ENDIF ()
+	SET(STATE_INSTALL_DIR "${DEFAULT_STATE_INSTALL_DIR}" CACHE PATH "The directory to store state information of the devices")
 
 	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/SettingsConfusePaths.h.in
 		${CMAKE_CURRENT_BINARY_DIR}/SettingsConfusePaths.h)
 	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
-	
+
 	INSTALL(FILES tellstick.conf
 		DESTINATION ${SYSCONF_INSTALL_DIR}
 	)
