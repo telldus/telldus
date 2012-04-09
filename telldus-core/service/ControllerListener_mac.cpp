@@ -21,6 +21,7 @@ public:
 	CFRunLoopRef			gRunLoop;
 	io_iterator_t			gAddedIter;
 	TelldusCore::EventRef				event;
+	bool running;
 	
 	void addUsbFilter(int vid, int pid);
 	static void DeviceAdded(void *refCon, io_iterator_t iterator);
@@ -32,11 +33,16 @@ ControllerListener::ControllerListener(TelldusCore::EventRef event)
 {
 	d = new PrivateData;
 	d->event = event;
+	d->running = true;
+	d->gRunLoop = NULL;
 	this->start();
 }
 
 ControllerListener::~ControllerListener() {
-	CFRunLoopStop(d->gRunLoop);
+	d->running = false;
+	if(d->gRunLoop != NULL)
+		CFRunLoopStop(d->gRunLoop);
+
 	this->wait();
 	delete d;
 }
@@ -53,7 +59,10 @@ void ControllerListener::run() {
 	d->addUsbFilter(0x1781, 0x0c30);
 	d->addUsbFilter(0x1781, 0x0c31);
 	
-	CFRunLoopRun();
+	// Race check, if destructor was called really close to thread init,
+	// running might have gone false. Make sure we don't get stuck
+	if(d->running)
+		CFRunLoopRun();
 }
 
 void ControllerListener::PrivateData::addUsbFilter(int vid, int pid) {
