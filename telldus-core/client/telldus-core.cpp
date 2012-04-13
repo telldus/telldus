@@ -425,7 +425,7 @@ int WINAPI tdRegisterControllerEvent( TDControllerEvent eventFunction, void *con
  *   The returned id from one of the tdRegister* functions.
  *
  * @returns
- *   1 on success, or 0 on failure.
+ *   @ref TELLSTICK_SUCCESS on success or appropriate error code on failure.
  *
  * @sa @ref sec_events_registering
  * @since Version 2.1.0

@@ -185,7 +185,7 @@ void Client::stopThread(){
 	d->eventSocket.stopReadWait();
 }
 
-bool Client::unregisterCallback( int callbackId ) {
+int Client::unregisterCallback( int callbackId ) {
 	return d->callbackMainDispatcher.unregisterCallback(callbackId);
 }
 

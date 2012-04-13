@@ -26,7 +26,7 @@ namespace TelldusCore {
 		EventRef retrieveCallbackEvent();
 
 		int registerCallback( TelldusCore::CallbackStruct::CallbackType type, void *eventFunction, void *context );
-		bool unregisterCallback( int callbackId );
+		int unregisterCallback( int callbackId );
 
 	protected:
 		void run();

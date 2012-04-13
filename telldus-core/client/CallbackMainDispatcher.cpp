@@ -64,7 +64,7 @@ int CallbackMainDispatcher::registerCallback(CallbackStruct::CallbackType type, 
 	return id;
 }
 
-bool CallbackMainDispatcher::unregisterCallback(int callbackId) {
+int CallbackMainDispatcher::unregisterCallback(int callbackId) {
 	CallbackList newEventList;
 	{
 		TelldusCore::MutexLocker locker(&d->mutex);
@@ -83,9 +83,9 @@ bool CallbackMainDispatcher::unregisterCallback(int callbackId) {
 		}
 		delete (*it);
 		newEventList.erase(it);
-		return true;
+		return TELLSTICK_SUCCESS;
 	}
-	return false;
+	return TELLSTICK_ERROR_NOT_FOUND;
 }
 
 void CallbackMainDispatcher::run(){

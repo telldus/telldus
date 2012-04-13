@@ -17,7 +17,7 @@ namespace TelldusCore {
 
 		int registerEvent(CallbackStruct::CallbackType type, void *eventFunction, void *context );
 		void stopThread(void);
-		bool unregisterCallback( int callbackId );
+		int unregisterCallback( int callbackId );
 
 		int getSensor(char *protocol, int protocolLen, char *model, int modelLen, int *id, int *dataTypes);
 		int getController(int *controllerId, int *controllerType, char *name, int nameLen, int *available);
