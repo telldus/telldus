@@ -1001,7 +1001,7 @@ int WINAPI tdMethods(int id, int methodsSupported){
  * @since Version 2.0.0
  **/
 char * WINAPI tdGetErrorString(int intErrorNo) {
-	const int numResponses = 11;
+	const int numResponses = 12;
 	const char *responses[numResponses] = {
 		"Success",
 		"TellStick not found",
@@ -1013,7 +1013,8 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
 		"Received an unknown response",
 		"Syntax error",
 		"Broken pipe",
-		"An error occurred while communicating with the Telldus Service"
+		"An error occurred while communicating with the Telldus Service",
+		"Syntax error in the configuration file"
 	};
 	std::string strReturn;
 	intErrorNo = abs(intErrorNo); //We don't use negative values here.
