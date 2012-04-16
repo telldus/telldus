@@ -89,6 +89,7 @@ void MainWindow::setupMenu() {
 	config->setMenuRole(QAction::PreferencesRole);
 	fileMenu->addSeparator();
 	QAction *quit = fileMenu->addAction(tr("&Quit"), qApp, SLOT(quit()));
+	quit->setShortcut(QKeySequence::Quit);
 	quit->setMenuRole( QAction::QuitRole );
 
 	// Help
