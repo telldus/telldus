@@ -5,6 +5,8 @@
 #include <QScriptValue>
 #include <telldus-core.h>
 
+class Controller;
+
 class ControllerList : public QAbstractListModel
 {
 	Q_OBJECT
@@ -27,6 +29,7 @@ private slots:
 	void controllerEventSlot(int controllerId, int changeEvent, int changeType, const QString &newValue);
 
 private:
+	static Controller *loadController(int id, int type, const QString &name, QObject *parent);
 	static void WINAPI controllerEvent( int controllerId, int changeEvent, int changeType, const char *newValue, int callbackId, void *context);
 	class PrivateData;
 	PrivateData *d;

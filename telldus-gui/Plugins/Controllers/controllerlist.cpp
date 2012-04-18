@@ -1,5 +1,6 @@
 #include "controllerlist.h"
 #include "controller.h"
+#include "tellstick.h"
 
 #include <QDebug>
 
@@ -25,7 +26,7 @@ ControllerList::ControllerList(QObject *parent) :
 	char name[DATA_LENGTH];
 	int available, controllerId, type;
 	while(tdController(&controllerId, &type, name, DATA_LENGTH, &available) == TELLSTICK_SUCCESS) {
-		Controller *controller = new Controller(controllerId, type, QString::fromUtf8(name), this);
+		Controller *controller = loadController(controllerId, type, QString::fromUtf8(name), this);
 		controller->setAvailable(available);
 		connect(controller, SIGNAL(nameChanged()), this, SIGNAL(changed()));
 		d->list.append(controller);
@@ -72,7 +73,7 @@ void ControllerList::controllerEventSlot(int controllerId, int changeEvent, int 
 
 	if (changeEvent == TELLSTICK_DEVICE_ADDED) {
 		beginInsertRows( QModelIndex(), d->list.size(), d->list.size() );
-		Controller *controller = new Controller(controllerId, changeType, "", this);
+		Controller *controller = loadController(controllerId, changeType, "", this);
 		controller->setAvailable(true);
 		connect(controller, SIGNAL(nameChanged()), this, SIGNAL(changed()));
 		d->list.append(controller);
@@ -91,6 +92,13 @@ void ControllerList::controllerEventSlot(int controllerId, int changeEvent, int 
 		}
 		return;
 	}
+}
+
+Controller *ControllerList::loadController(int id, int type, const QString &name, QObject *parent) {
+	if (type == 1) {
+		return new TellStick(id, type, "", parent);
+	}
+	return new Controller(id, type, "", parent);
 }
 
 void WINAPI ControllerList::controllerEvent( int controllerId, int changeEvent, int changeType, const char *newValue, int callbackId, void *context) {
