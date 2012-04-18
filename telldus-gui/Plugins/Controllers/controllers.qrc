@@ -1,0 +1,7 @@
+<RCC>
+	<qresource prefix="/">
+		<file>firmware/TellStick.hex</file>
+		<file>firmware/TellStickDuo.hex</file>
+		<file>firmware/TellStickNet.hex</file>
+	</qresource>
+</RCC>

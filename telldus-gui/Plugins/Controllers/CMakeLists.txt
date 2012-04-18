@@ -23,6 +23,10 @@ SET( Plugin_MOC_HDRS
 	tellstick.h
 )
 
+SET( Plugin_RESOURCES
+	controllers.qrc
+)
+
 SET( Plugin_PATH "com.telldus.controllers" )
 
 SET( Plugin_EXTRA
