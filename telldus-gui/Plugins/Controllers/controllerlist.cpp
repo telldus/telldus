@@ -95,7 +95,7 @@ void ControllerList::controllerEventSlot(int controllerId, int changeEvent, int 
 }
 
 Controller *ControllerList::loadController(int id, int type, const QString &name, QObject *parent) {
-	if (type == 1) {
+	if (type == 1 || type == 2) {
 		return new TellStick(id, type, "", parent);
 	}
 	return new Controller(id, type, "", parent);
