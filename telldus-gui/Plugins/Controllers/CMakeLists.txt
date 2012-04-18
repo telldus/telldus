@@ -38,6 +38,7 @@ SET( Plugin_EXTRA
 	main.qml
 	qmldir
 	row_bg.png
+	StateLabel.qml
 	tellstick.png
 	tellstick_duo.png
 )
