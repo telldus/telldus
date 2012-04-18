@@ -2,11 +2,37 @@ import QtQuick 1.1
 import QtDesktop 0.1
 
 BorderImage {
+	id: view
 	source: "row_bg.png"
 	border.left: 5; border.top: 5
 	border.right: 5; border.bottom: 5
 	width: parent.width
 	height: content.height + content.anchors.margins*2
+
+	property variant c: controller //Needed for upgradeDialogComponent
+
+	Component {
+		id: upgradeDialogComponent
+		ControllerUpgradeDialog {
+			controller: c
+		}
+	}
+	Loader {
+		id: upgradeDialog
+		visible: false
+		onVisibleChanged: {
+			if (visible) {
+				upgradeDialog.sourceComponent = upgradeDialogComponent
+				upgradeDialog.item.visible = true
+			} else {
+				upgradeDialog.sourceComponent = undefined
+			}
+		}
+		Connections {
+			target: upgradeDialog.item
+			onVisibleChanged: upgradeDialog.visible = upgradeDialog.item.visible
+		}
+	}
 
 	Item {
 		id: content
@@ -48,6 +74,15 @@ BorderImage {
 				MouseArea {
 					anchors.fill: parent
 					onClicked: controller.tryRemove();
+				}
+			}
+			Image {
+				source: "btn_action_remove.png"
+				rotation: 90
+				visible: controller.upgradable
+				MouseArea {
+					anchors.fill: parent
+					onClicked: upgradeDialog.visible = true
 				}
 			}
 		}
