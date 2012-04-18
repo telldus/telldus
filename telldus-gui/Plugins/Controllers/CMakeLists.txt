@@ -10,6 +10,7 @@ SET( Plugin_SRCS
 	controller.cpp
 	controllerlist.cpp
 	controllersplugin.cpp
+	tellstick.cpp
 )
 
 SET( Plugin_HDRS
@@ -19,6 +20,7 @@ SET( Plugin_HDRS
 SET( Plugin_MOC_HDRS
 	controller.h
 	controllerlist.h
+	tellstick.h
 )
 
 SET( Plugin_PATH "com.telldus.controllers" )
