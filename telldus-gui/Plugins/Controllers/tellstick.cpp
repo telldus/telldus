@@ -43,7 +43,21 @@ void TellStick::setAvailable(bool available) {
 }
 
 bool TellStick::isUpgradable() const {
-	return true; //TODO: check version
+	QString fw = firmware();
+	if (fw == "?") {
+		return false;
+	}
+	int firmware = fw.toInt();
+	if (type() == 1) {
+		//TellStick
+		if (firmware <= 3) {
+			return false;
+		}
+		if (firmware < 6) {
+			return true;
+		}
+	}
+	return false;
 }
 
 void TellStick::aquireTellStick() {
