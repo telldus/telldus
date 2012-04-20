@@ -56,6 +56,12 @@ bool TellStick::isUpgradable() const {
 		if (firmware < 6) {
 			return true;
 		}
+
+	} else if (type() == 2) {
+		//TellStick Duo
+		if (firmware < 5) {
+			return true;
+		}
 	}
 	return false;
 }
@@ -66,7 +72,11 @@ void TellStick::aquireTellStick() {
 	strcpy_s(tempSerial, serial().size()+1, serial().toLocal8Bit());
 #else
 	strcpy(tempSerial, serial().toLocal8Bit());
-	FT_SetVIDPID(0x1781, 0x0c30); //TODO: Make dynamic for TellStick Duo
+	int pid = 0x0C30;
+	if (type() == 2) {
+		pid = 0x0C31;
+	}
+	FT_SetVIDPID(0x1781, pid);
 #endif
 	FT_STATUS ftStatus = FT_OpenEx(tempSerial, FT_OPEN_BY_SERIAL_NUMBER, &d->ftHandle);
 	delete tempSerial;
@@ -75,11 +85,11 @@ void TellStick::aquireTellStick() {
 	}
 	//open = true;
 
-	//if (this->field("pid").toInt() == 0x0C31) {
-	//	FT_SetBaudRate(ftHandle, 115200);
-	//} else {
+	if (type() == 2) {
+		FT_SetBaudRate(d->ftHandle, 115200);
+	} else {
 		FT_SetBaudRate(d->ftHandle, 9600);
-	//}
+	}
 	FT_SetFlowControl(d->ftHandle, FT_FLOW_NONE, 0, 0);
 	FT_SetTimeouts(d->ftHandle,1000,0);
 
@@ -113,10 +123,10 @@ void TellStick::enterBootloader() {
 void TellStick::downloadFirmware() {
 	QString filename = "TellStick";
 	int bootloaderStart = 0x3A00;
-	/*if (this->field("pid").toInt() == 0x0C31) {
+	if (type() == 2) {
 		filename = "TellStickDuo";
 		bootloaderStart = 0x7A00;
-	}*/
+	}
 	QString path;
 	//if (QApplication::arguments().count() > 1) {
 	//	path = QApplication::arguments().at(1);
@@ -163,7 +173,11 @@ void TellStick::rebootTellStick() {
 }
 
 void TellStick::connectTellStick() {
-	tdConnectTellStickController(0x1781, 0x0C30, this->serial().toUtf8());
+	int pid = 0x0C30;
+	if (type() == 2) {
+		pid = 0x0C31;
+	}
+	tdConnectTellStickController(0x1781, pid, this->serial().toUtf8());
 	setUpgradeStep(-1);
 	emit upgradableChanged();
 	emit upgradeDone();
@@ -315,5 +329,9 @@ int TellStick::parseHex(const QByteArray &characters, int start, int length) {
 
 void TellStick::upgrade() {
 	setUpgradeStep(0);
-	tdDisconnectTellStickController(0x1781, 0x0C30, serial().toUtf8()); //TODO: Make dynamic for TellStick Duo
+	int pid = 0x0C30;
+	if (type() == 2) {
+		pid = 0x0C31;
+	}
+	tdDisconnectTellStickController(0x1781, pid, serial().toUtf8()); //TODO: Make dynamic for TellStick Duo
 }
