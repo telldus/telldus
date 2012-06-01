@@ -298,12 +298,15 @@ int Settings::setStringSetting(Node type, int intDeviceId, const std::wstring &n
 		cfg_device = cfg_getnsec(d->cfg, strType.c_str(), i);
 		if (cfg_getint(cfg_device, "id") == intDeviceId)  {
 			std::string newValue = TelldusCore::wideToString(value);
+			cfg_t *p = cfg_device;
 			if (parameter) {
-				cfg_t *cfg_parameters = cfg_getsec(cfg_device, "parameters");
-				cfg_setstr(cfg_parameters, TelldusCore::wideToString(name).c_str(), newValue.c_str());
-			} else {
-				cfg_setstr(cfg_device, TelldusCore::wideToString(name).c_str(), newValue.c_str());
+				cfg_t *cfg_p = cfg_getsec(cfg_device, "parameters");
 			}
+			cfg_opt_t *opt = cfg_getopt(p, TelldusCore::wideToString(name).c_str());
+			if (!opt) {
+				return TELLSTICK_ERROR_CONFIG_SYNTAX;
+			}
+			cfg_setstr(p, TelldusCore::wideToString(name).c_str(), newValue.c_str());
 			FILE *fp = fopen(CONFIG_FILE, "w");
 			if (!fp) {
 				return TELLSTICK_ERROR_PERMISSION_DENIED;
