@@ -38,7 +38,7 @@ std::string ProtocolFineoffset::decodeData(const ControllerMessage &dataMsg) {
 	retString << "class:sensor;protocol:fineoffset;id:" << id << ";model:";
 
 	if (humidity <= 100) {
-		retString << "temperaturehumidity;humidity:" << (int)humidity << ";";
+		retString << "temperaturehumidity;humidity:" << static_cast<int>(humidity) << ";";
 	} else if (humidity == 0xFF) {
 		retString << "temperature;";
 	} else {

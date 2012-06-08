@@ -167,7 +167,7 @@ std::string ProtocolNexa::getStringSelflearningForCode(int intHouse, int intCode
 std::string ProtocolNexa::decodeData(const ControllerMessage& dataMsg) {
 	uint32_t allData = 0;
 
-	sscanf(dataMsg.getParameter("data").c_str(), "%lx", (long*)&allData);  // NOLINT(runtime/int)
+	sscanf(dataMsg.getParameter("data").c_str(), "%lx", reinterpret_cast<long*>(&allData));  // NOLINT(runtime/int)
 
 	if(TelldusCore::comparei(dataMsg.model(), L"selflearning")) {
 		// selflearning
@@ -247,7 +247,7 @@ std::string ProtocolNexa::decodeDataCodeSwitch(uint32_t allData) {
 	}
 
 	std::stringstream retString;
-	retString << "class:command;protocol:arctech;model:codeswitch;house:" << char(house);
+	retString << "class:command;protocol:arctech;model:codeswitch;house:" << static_cast<char>(house);
 
 	if(method == 6) {
 		retString << ";unit:" << unit << ";method:turnoff;";

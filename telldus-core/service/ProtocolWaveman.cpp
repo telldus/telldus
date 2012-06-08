@@ -30,7 +30,7 @@ std::string ProtocolWaveman::decodeData(const ControllerMessage& dataMsg) {
 	unsigned int unit = 0;
 	unsigned int method = 0;
 
-	sscanf(dataMsg.getParameter("data").c_str(), "%lx", (long*)&allData);  // NOLINT(runtime/int)
+	sscanf(dataMsg.getParameter("data").c_str(), "%lx", reinterpret_cast<long*>(&allData));  // NOLINT(runtime/int)
 
 	method = allData & 0xF00;
 	method >>= 8;
@@ -59,7 +59,7 @@ std::string ProtocolWaveman::decodeData(const ControllerMessage& dataMsg) {
 	}
 
 	std::stringstream retString;
-	retString << "class:command;protocol:waveman;model:codeswitch;house:" << char(house);
+	retString << "class:command;protocol:waveman;model:codeswitch;house:" << static_cast<char>(house);
 
 	if(method == 0) {
 		retString << ";unit:" << unit << ";method:turnoff;";

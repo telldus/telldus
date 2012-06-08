@@ -318,7 +318,7 @@ int DeviceManager::setDeviceProtocol(int deviceId, const std::wstring &protocol)
 
 int DeviceManager::getNumberOfDevices() {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
-	return (int)d->devices.size();
+	return static_cast<int>(d->devices.size());
 }
 
 int DeviceManager::addDevice() {
@@ -582,7 +582,7 @@ std::wstring DeviceManager::getSensors() const {
 
 	TelldusCore::Message msg;
 
-	msg.addArgument((int)d->sensorList.size());
+	msg.addArgument(static_cast<int>(d->sensorList.size()));
 
 	for (std::list<Sensor *>::iterator it = d->sensorList.begin(); it != d->sensorList.end(); ++it) {
 		TelldusCore::MutexLocker sensorLocker(*it);
@@ -621,7 +621,7 @@ std::wstring DeviceManager::getSensorValue(const std::wstring &protocol, const s
 	std::string value = sensor->value(dataType);
 	if (value.length() > 0) {
 		msg.addArgument(TelldusCore::charToWstring(value.c_str()));
-		msg.addArgument((int)sensor->timestamp());
+		msg.addArgument(static_cast<int>(sensor->timestamp()));
 	}
 	return msg;
 }
@@ -714,7 +714,7 @@ void DeviceManager::setSensorValueAndSignal( const std::string &dataType, int da
 	eventData->sensorId = sensor->id();
 	eventData->dataType = dataTypeId;
 	eventData->value = TelldusCore::charToWstring(sensor->value(dataTypeId).c_str());
-	eventData->timestamp = (int)timestamp;
+	eventData->timestamp = static_cast<int>(timestamp);
 	d->deviceUpdateEvent->signal(eventData);
 }
 

@@ -58,7 +58,7 @@ inline void debuglog(const int intMessage, const std::string strMessage) {
 
 #elif !defined(_MACOSX) && !defined(__FreeBSD__)
 	pthread_t thread = pthread_self();
-	printf("[%i] %i - %s\n", (int)thread, intMessage, strMessage.c_str());
+	printf("[%i] %i - %s\n", static_cast<int>(thread), intMessage, strMessage.c_str());
 	fflush(stdout);
 #else
 	printf("%i - %s\n", intMessage, strMessage.c_str());
@@ -67,10 +67,10 @@ inline void debuglog(const int intMessage, const std::string strMessage) {
 
 inline char *wrapStdString( const std::string &string) {
 #ifdef _WINDOWS
-	return (char *)SysAllocStringByteLen(string.c_str(), (unsigned int)string.size());
+	return reinterpret_cast<char *>(SysAllocStringByteLen(string.c_str(), (unsigned int)string.size()));
 #else
 	char *returnVal;
-	returnVal = (char *)malloc(sizeof(*returnVal) * (string.size()+1));
+	returnVal = reinterpret_cast<char *>(malloc(sizeof(*returnVal) * (string.size()+1)));
 	strcpy(returnVal, string.c_str());
 	return returnVal;
 #endif

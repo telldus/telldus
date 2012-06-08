@@ -63,7 +63,7 @@ std::string ProtocolOregon::decodeEA4C(const std::string &data) {
 	}
 
 	std::stringstream retString;
-	retString << "class:sensor;protocol:oregon;model:EA4C;id:" << (int)address
+	retString << "class:sensor;protocol:oregon;model:EA4C;id:" << static_cast<int>(address)
 		<< ";temp:" << std::fixed << std::setprecision(1) << temperature << ";";
 
 	return retString.str();
@@ -114,7 +114,7 @@ std::string ProtocolOregon::decode1A2D(const std::string &data) {
 	}
 
 	std::stringstream retString;
-	retString << "class:sensor;protocol:oregon;model:1A2D;id:" << (int)address
+	retString << "class:sensor;protocol:oregon;model:1A2D;id:" << static_cast<int>(address)
 		<< ";temp:" << std::fixed << std::setprecision(1) << temperature << ";";
 
 	return retString.str();

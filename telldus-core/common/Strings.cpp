@@ -50,7 +50,7 @@ std::wstring TelldusCore::charToWstring(const char *value) {
 	strcpy(inString, value);
 
 	// Create buffer for output
-	char *outString = (char*)new wchar_t[utf8Length+1];
+	char *outString = reinterpret_cast<char*>(new wchar_t[utf8Length+1]);
 	memset(outString, 0, sizeof(wchar_t)*(utf8Length+1));
 
 #ifdef _FREEBSD
@@ -64,7 +64,7 @@ std::wstring TelldusCore::charToWstring(const char *value) {
 	iconv(convDesc, &inPointer, &utf8Length, &outPointer, &outbytesLeft);
 	iconv_close(convDesc);
 
-	std::wstring retval( (wchar_t *)outString );
+	std::wstring retval( reinterpret_cast<wchar_t *>(outString) );
 
 	// Cleanup
 	delete[] inString;
@@ -191,7 +191,7 @@ std::string TelldusCore::wideToString(const std::wstring &input) {
 	size_t outbytesLeft = wideSize+sizeof(char);  // NOLINT(runtime/sizeof)
 
 	// Copy the instring
-	char *inString = (char*)new wchar_t[input.length()+1];
+	char *inString = reinterpret_cast<char*>(new wchar_t[input.length()+1]);
 	memcpy(inString, input.c_str(), wideSize+sizeof(wchar_t));
 
 	// Create buffer for output
@@ -233,7 +233,7 @@ std::string TelldusCore::sformatf(const char *format, va_list ap) {
 	int size = 100;     /* Guess we need no more than 100 bytes. */
 	char *p, *np;
 
-	if ((p = (char*)malloc(size)) == NULL) {
+	if ((p = reinterpret_cast<char*>(malloc(size))) == NULL) {
 		return "";
 	}
 
@@ -255,7 +255,7 @@ std::string TelldusCore::sformatf(const char *format, va_list ap) {
 		} else {        /* glibc 2.0 */
 			size *= 2;  /* twice the old size */
 		}
-		if ((np = (char *)realloc (p, size)) == NULL) {
+		if ((np = reinterpret_cast<char *>(realloc (p, size))) == NULL) {
 			free(p);
 			return "";
 		} else {

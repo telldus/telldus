@@ -18,7 +18,7 @@ std::string ProtocolMandolyn::decodeData(const ControllerMessage &dataMsg) {
 	bool parity = value & 0x1;
 	value >>= 1;
 
-	double temp = (double)(value & 0x7FFF) - (double)6400;
+	double temp = static_cast<double>(value & 0x7FFF) - static_cast<double>(6400);
 	temp = temp/128.0;
 	value >>= 15;
 
@@ -38,7 +38,7 @@ std::string ProtocolMandolyn::decodeData(const ControllerMessage &dataMsg) {
 		<< house*10+channel
 		<< ";model:temperaturehumidity;"
 		<< "temp:" << std::fixed << std::setprecision(1) << temp
-		<< ";humidity:" << (int)humidity << ";";
+		<< ";humidity:" << static_cast<int>(humidity) << ";";
 
 	return retString.str();
 }

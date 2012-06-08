@@ -167,7 +167,7 @@ std::string ProtocolX10::decodeData(const ControllerMessage& dataMsg) {
 
 	std::stringstream retString;
 	retString << "class:command;protocol:x10;model:codeswitch;";
-	retString << "house:" << (char)('A' + intHouse);
+	retString << "house:" << static_cast<char>('A' + intHouse);
 	retString << ";unit:" << unit+1;
 	retString << ";method:";
 	if(method == 0) {

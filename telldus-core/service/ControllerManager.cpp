@@ -265,7 +265,7 @@ std::wstring ControllerManager::getControllers() const {
 
 	TelldusCore::Message msg;
 
-	msg.addArgument((int)d->controllers.size());
+	msg.addArgument(static_cast<int>(d->controllers.size()));
 
 	for(ControllerMap::iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
 		msg.addArgument(it->first);
