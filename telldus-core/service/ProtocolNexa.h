@@ -7,6 +7,7 @@
 #ifndef TELLDUS_CORE_SERVICE_PROTOCOLNEXA_H_
 #define TELLDUS_CORE_SERVICE_PROTOCOLNEXA_H_
 
+#include <stdint.h>
 #include <string>
 #include "service/ControllerMessage.h"
 #include "service/Device.h"
@@ -27,8 +28,8 @@ protected:
 
 private:
 	static int lastArctecCodeSwitchWasTurnOff;
-	static std::string decodeDataCodeSwitch(long allData);
-	static std::string decodeDataSelfLearning(long allData);
+	static std::string decodeDataCodeSwitch(uint32_t allData);
+	static std::string decodeDataSelfLearning(uint32_t allData);
 };
 
 #endif  // TELLDUS_CORE_SERVICE_PROTOCOLNEXA_H_

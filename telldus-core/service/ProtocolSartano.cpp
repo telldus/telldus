@@ -5,6 +5,7 @@
 //
 //
 #include "service/ProtocolSartano.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <sstream>
 #include <string>
@@ -51,7 +52,7 @@ std::string ProtocolSartano::decodeData(ControllerMessage &dataMsg) {
 
 	sscanf(data.c_str(), "%X", &allDataIn);
 
-	unsigned long mask = (1<<11);
+	uint16_t mask = (1<<11);
 	for(int i = 0; i < 12; ++i) {
 		allData >>= 1;
 		if((allDataIn & mask) == 0) {

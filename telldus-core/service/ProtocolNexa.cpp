@@ -165,9 +165,9 @@ std::string ProtocolNexa::getStringSelflearningForCode(int intHouse, int intCode
 }
 
 std::string ProtocolNexa::decodeData(ControllerMessage& dataMsg) {
-	unsigned long allData = 0;
+	uint32_t allData = 0;
 
-	sscanf(dataMsg.getParameter("data").c_str(), "%lx", &allData);
+	sscanf(dataMsg.getParameter("data").c_str(), "%lx", (long*)&allData);  // NOLINT(runtime/int)
 
 	if(TelldusCore::comparei(dataMsg.model(), L"selflearning")) {
 		// selflearning
@@ -179,7 +179,7 @@ std::string ProtocolNexa::decodeData(ControllerMessage& dataMsg) {
 	}
 }
 
-std::string ProtocolNexa::decodeDataSelfLearning(long allData) {
+std::string ProtocolNexa::decodeDataSelfLearning(uint32_t allData) {
 	unsigned int house = 0;
 	unsigned int unit = 0;
 	unsigned int group = 0;
@@ -218,7 +218,7 @@ std::string ProtocolNexa::decodeDataSelfLearning(long allData) {
 	return retString.str();
 }
 
-std::string ProtocolNexa::decodeDataCodeSwitch(long allData) {
+std::string ProtocolNexa::decodeDataCodeSwitch(uint32_t allData) {
 	unsigned int house = 0;
 	unsigned int unit = 0;
 	unsigned int method = 0;

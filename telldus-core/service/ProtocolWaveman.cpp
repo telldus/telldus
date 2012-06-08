@@ -5,6 +5,7 @@
 //
 //
 #include "service/ProtocolWaveman.h"
+#include <stdint.h>
 #include <stdio.h>
 #include <sstream>
 #include <string>
@@ -24,12 +25,12 @@ std::string ProtocolWaveman::getOffCode() const {
 }
 
 std::string ProtocolWaveman::decodeData(ControllerMessage& dataMsg) {
-	unsigned long allData = 0;
+	uint32_t allData = 0;
 	unsigned int house = 0;
 	unsigned int unit = 0;
 	unsigned int method = 0;
 
-	sscanf(dataMsg.getParameter("data").c_str(), "%lx", &allData);
+	sscanf(dataMsg.getParameter("data").c_str(), "%lx", (long*)&allData);  // NOLINT(runtime/int)
 
 	method = allData & 0xF00;
 	method >>= 8;
