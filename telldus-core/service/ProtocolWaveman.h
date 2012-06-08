@@ -14,7 +14,7 @@ class ProtocolWaveman : public ProtocolNexa {
 public:
 	int methods() const;
 	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller);
-	static std::string decodeData(ControllerMessage& dataMsg);
+	static std::string decodeData(const ControllerMessage &dataMsg);
 
 protected:
 	virtual std::string getOffCode() const;

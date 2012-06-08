@@ -13,7 +13,7 @@
 
 class ProtocolMandolyn : public Protocol {
 public:
-	static std::string decodeData(ControllerMessage &dataMsg);
+	static std::string decodeData(const ControllerMessage &dataMsg);
 };
 
 #endif  // TELLDUS_CORE_SERVICE_PROTOCOLMANDOLYN_H_

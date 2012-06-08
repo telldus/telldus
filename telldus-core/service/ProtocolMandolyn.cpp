@@ -11,7 +11,7 @@
 #include <string>
 #include "common/Strings.h"
 
-std::string ProtocolMandolyn::decodeData(ControllerMessage &dataMsg) {
+std::string ProtocolMandolyn::decodeData(const ControllerMessage &dataMsg) {
 	std::string data = dataMsg.getParameter("data");
 	uint32_t value = (uint32_t)TelldusCore::hexTo64l(data);
 

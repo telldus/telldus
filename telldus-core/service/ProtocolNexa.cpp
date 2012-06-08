@@ -164,7 +164,7 @@ std::string ProtocolNexa::getStringSelflearningForCode(int intHouse, int intCode
 	return strMessage;
 }
 
-std::string ProtocolNexa::decodeData(ControllerMessage& dataMsg) {
+std::string ProtocolNexa::decodeData(const ControllerMessage& dataMsg) {
 	uint32_t allData = 0;
 
 	sscanf(dataMsg.getParameter("data").c_str(), "%lx", (long*)&allData);  // NOLINT(runtime/int)

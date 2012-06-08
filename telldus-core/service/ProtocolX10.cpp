@@ -113,7 +113,7 @@ std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Cont
 	return strReturn;
 }
 
-std::string ProtocolX10::decodeData(ControllerMessage& dataMsg) {
+std::string ProtocolX10::decodeData(const ControllerMessage& dataMsg) {
 	int intData = 0, currentBit = 31;
 	bool method = 0;
 	sscanf(dataMsg.getParameter("data").c_str(), "%X", &intData);

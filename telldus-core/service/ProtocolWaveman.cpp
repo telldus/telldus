@@ -24,7 +24,7 @@ std::string ProtocolWaveman::getOffCode() const {
 	return "$k$k$k$k$k$k$k$k$k+";
 }
 
-std::string ProtocolWaveman::decodeData(ControllerMessage& dataMsg) {
+std::string ProtocolWaveman::decodeData(const ControllerMessage& dataMsg) {
 	uint32_t allData = 0;
 	unsigned int house = 0;
 	unsigned int unit = 0;

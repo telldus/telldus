@@ -74,7 +74,7 @@ unsigned int ProtocolEverflourish::calculateChecksum(unsigned int x) {
 	int i;
 	unsigned int lo, hi;
 
-	if ((x&0x3) == 3) {
+	if ((x & 0x3) == 3) {
 		lo = x & 0x00ff;
 		hi = x & 0xff00;
 		lo += 4;
@@ -85,7 +85,7 @@ unsigned int ProtocolEverflourish::calculateChecksum(unsigned int x) {
 	}
 
 	for(i = 0; i < 16; i++) {
-		if (x&bit) {
+		if (x & bit) {
 			res = res ^ bits[i];
 		}
 		bit = bit << 1;
@@ -94,7 +94,7 @@ unsigned int ProtocolEverflourish::calculateChecksum(unsigned int x) {
 	return res;
 }
 
-std::string ProtocolEverflourish::decodeData(ControllerMessage &dataMsg) {
+std::string ProtocolEverflourish::decodeData(const ControllerMessage &dataMsg) {
 	std::string data = dataMsg.getParameter("data");
 	unsigned int allData;
 	unsigned int house = 0;

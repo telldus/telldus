@@ -41,7 +41,7 @@ std::string ProtocolSartano::getStringForCode(const std::wstring &strCode, int m
 	return strReturn;
 }
 
-std::string ProtocolSartano::decodeData(ControllerMessage &dataMsg) {
+std::string ProtocolSartano::decodeData(const ControllerMessage &dataMsg) {
 	std::string data = dataMsg.getParameter("data");
 	signed int allDataIn;
 	signed int allData = 0;

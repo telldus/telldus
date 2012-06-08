@@ -52,7 +52,7 @@ public:
 private:
 	void handleSensorMessage(const ControllerMessage &msg);
 	void setSensorValueAndSignal( const std::string &dataType, int dataTypeId, Sensor *sensor, const ControllerMessage &msg, time_t timestamp) const;
-	int getDeviceMethods(int deviceId, std::set<int> &duplicateDeviceIds);
+	int getDeviceMethods(int deviceId, std::set<int> *duplicateDeviceIds);
 	int doGroupAction(const std::wstring deviceIds, int action, unsigned char data, const int type, int groupDeviceId, std::set<int> *duplicateDeviceIds);
 	int executeScene(std::wstring singledevice, int groupDeviceId);
 	bool triggerDeviceStateChange(int deviceId, int intDeviceState, const std::wstring &strDeviceStateValue );

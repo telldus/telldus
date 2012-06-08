@@ -11,7 +11,7 @@
 #include <string>
 #include "common/Strings.h"
 
-std::string ProtocolFineoffset::decodeData(ControllerMessage &dataMsg) {
+std::string ProtocolFineoffset::decodeData(const ControllerMessage &dataMsg) {
 	std::string data = dataMsg.getParameter("data");
 	if (data.length() < 8) {
 		return "";

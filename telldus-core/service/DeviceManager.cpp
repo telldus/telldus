@@ -126,10 +126,10 @@ int DeviceManager::getDeviceMethods(int deviceId, int methodsSupported) {
 
 int DeviceManager::getDeviceMethods(int deviceId) {
 	std::set<int> duplicateDeviceIds;
-	return DeviceManager::getDeviceMethods(deviceId, duplicateDeviceIds);
+	return DeviceManager::getDeviceMethods(deviceId, &duplicateDeviceIds);
 }
 
-int DeviceManager::getDeviceMethods(int deviceId, std::set<int> &duplicateDeviceIds) {
+int DeviceManager::getDeviceMethods(int deviceId, std::set<int> *duplicateDeviceIds) {
 	int type = 0;
 	int methods = 0;
 	std::wstring deviceIds;
@@ -162,16 +162,16 @@ int DeviceManager::getDeviceMethods(int deviceId, std::set<int> &duplicateDevice
 		std::wstringstream devicesstream(deviceIds);
 		methods = 0;
 
-		duplicateDeviceIds.insert(deviceId);
+		duplicateDeviceIds->insert(deviceId);
 
 		while(std::getline(devicesstream, deviceIdBuffer, L',')) {
 			int deviceIdInGroup = TelldusCore::wideToInteger(deviceIdBuffer);
-			if(duplicateDeviceIds.count(deviceIdInGroup) == 1) {
+			if(duplicateDeviceIds->count(deviceIdInGroup) == 1) {
 				// action for device already executed, or will execute, do nothing to avoid infinite loop
 				continue;
 			}
 
-			duplicateDeviceIds.insert(deviceIdInGroup);
+			duplicateDeviceIds->insert(deviceIdInGroup);
 
 			int deviceMethods = getDeviceMethods(deviceIdInGroup, duplicateDeviceIds);
 			if(deviceMethods > 0) {

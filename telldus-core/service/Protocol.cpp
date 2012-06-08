@@ -61,7 +61,7 @@ void Protocol::setModel(const std::wstring &model) {
 	d->model = model;
 }
 
-void Protocol::setParameters(ParameterMap &parameterList) {
+void Protocol::setParameters(const ParameterMap &parameterList) {
 	d->parameterList = parameterList;
 }
 

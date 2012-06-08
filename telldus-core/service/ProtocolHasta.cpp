@@ -26,8 +26,8 @@ std::string ProtocolHasta::getStringForMethod(int method, unsigned char, Control
 	strReturn.append(1, 190);
 	strReturn.append(1, 190);
 
-	strReturn.append(convertByte( (house&0xFF) ));
-	strReturn.append(convertByte( (house>>8)&0xFF ));
+	strReturn.append(convertByte( (house & 0xFF) ));
+	strReturn.append(convertByte( (house>>8) & 0xFF ));
 
 	int byte = unit&0x0F;
 

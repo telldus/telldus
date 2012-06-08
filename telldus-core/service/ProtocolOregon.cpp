@@ -11,7 +11,7 @@
 #include <string>
 #include "common/Strings.h"
 
-std::string ProtocolOregon::decodeData(ControllerMessage &dataMsg) {
+std::string ProtocolOregon::decodeData(const ControllerMessage &dataMsg) {
 	std::string data = dataMsg.getParameter("data");
 
 	std::wstring model = dataMsg.model();
