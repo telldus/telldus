@@ -4,6 +4,7 @@
 #include "Strings.h"
 
 #include <stdio.h>
+#include <unistd.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <math.h>
