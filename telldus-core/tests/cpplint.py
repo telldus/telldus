@@ -1883,9 +1883,9 @@ def CheckSpacing(filename, clean_lines, linenum, error):
   # an initializer list, for instance), you should have spaces before your
   # braces. And since you should never have braces at the beginning of a line,
   # this is an easy test.
-  if Search(r'[^ ({]{', line):
+  if Search(r'[^ \t({]{', line):  # The check for tab was added by Telldus
     error(filename, linenum, 'whitespace/braces', 5,
-          'Missing space before {')
+          'Missing whitespace before {')
 
   # Make sure '} else {' has spaces.
   if Search(r'}else', line):
