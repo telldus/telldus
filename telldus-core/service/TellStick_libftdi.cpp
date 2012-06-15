@@ -159,7 +159,7 @@ void TellStick::run() {
 
 	// Send a firmware version request
 	unsigned char msg[] = "V+";
-	ftdi_write_data( &d->ftHandle, msg, 2 ) ;
+	ftdi_write_data( &d->ftHandle, msg, 2 );
 
 	while(1) {
 		// Is there any better way then sleeping between reads?
@@ -197,7 +197,7 @@ int TellStick::send( const std::string &strMessage ) {
 	TelldusCore::MutexLocker locker(&d->mutex);
 
 	int ret;
-	ret = ftdi_write_data( &d->ftHandle, tempMessage, strMessage.length() ) ;
+	ret = ftdi_write_data( &d->ftHandle, tempMessage, strMessage.length() );
 	if(ret < 0) {
 		c = false;
 	} else if(ret != strMessage.length()) {

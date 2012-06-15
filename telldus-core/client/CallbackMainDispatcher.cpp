@@ -126,7 +126,7 @@ void CallbackMainDispatcher::cleanupCallbacks() {
 		again = false;
 		MutexLocker locker(&d->mutex);
 		std::list<std::tr1::shared_ptr<TDEventDispatcher> >::iterator it = d->eventThreadList.begin();
-		for (;it != d->eventThreadList.end(); ++it) {
+		for (; it != d->eventThreadList.end(); ++it) {
 			if ((*it)->done()) {
 				d->eventThreadList.erase(it);
 				again = true;

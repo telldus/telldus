@@ -1049,7 +1049,7 @@ char * WINAPI tdGetErrorString(int intErrorNo) {
  **/
 int WINAPI tdSendRawCommand(const char *command, int reserved) {
 	std::wstring wcommand;
-	for(int i = 0; i < strlen(command);++i) {
+	for(int i = 0; i < strlen(command); ++i) {
 		wcommand.append(1, (unsigned char)command[i]);
 	}
 	Message msg(L"tdSendRawCommand");
