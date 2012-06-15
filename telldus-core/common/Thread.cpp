@@ -16,9 +16,9 @@
 #endif
 #include "common/EventHandler.h"
 
-using namespace TelldusCore;
+namespace TelldusCore {
 
-class TelldusCore::ThreadPrivate {
+class ThreadPrivate {
 public:
 	bool running;
 	EventRef threadStarted;
@@ -92,3 +92,5 @@ void *Thread::exec( void *ptr ) {
 #endif
 	return 0;
 }
+
+}  // namespace TelldusCore

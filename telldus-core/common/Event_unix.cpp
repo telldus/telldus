@@ -8,7 +8,7 @@
 #include "common/EventHandler.h"
 #include "common/Thread.h"
 
-using namespace TelldusCore;
+namespace TelldusCore {
 
 class Event::PrivateData {
 public:
@@ -32,3 +32,5 @@ void Event::sendSignal() {
 		handler->signal(this);
 	}
 }
+
+}  // namespace TelldusCore

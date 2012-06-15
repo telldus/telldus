@@ -14,8 +14,6 @@
 #include "client/telldus-core.h"
 #include "common/Strings.h"
 
-using namespace std;
-
 class Settings::PrivateData {
 public:
 	cfg_t *cfg;

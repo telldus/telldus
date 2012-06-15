@@ -9,8 +9,7 @@
 #include "common/EventHandler.h"
 #include "common/Mutex.h"
 
-
-using namespace TelldusCore;
+namespace TelldusCore {
 
 EventData::~EventData() {
 }
@@ -81,3 +80,5 @@ EventDataRef EventBase::takeSignal() {
 	}
 	return data;
 }
+
+}  // namespace TelldusCore

@@ -9,7 +9,7 @@
 
 #include "client/CallbackDispatcher.h"
 
-using namespace TelldusCore;
+namespace TelldusCore {
 
 TDEventDispatcher::TDEventDispatcher(EventDataRef cbd, CallbackStruct *cb, EventRef cbDone)
 	:Thread(), doneRunning(false), callbackData(cbd), callback(cb), callbackExecuted(cbDone) {
@@ -67,3 +67,5 @@ void TDEventDispatcher::fireEvent() {
 		((TDControllerEvent)callback->event)(data->controllerId, data->changeEvent, data->changeType, data->newValue.c_str(), callback->id, callback->context);
 	}
 }
+
+}  // namespace TelldusCore

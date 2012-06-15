@@ -18,7 +18,7 @@
 
 #define BUFSIZE 512
 
-using namespace TelldusCore;
+namespace TelldusCore {
 
 int connectWrapper(int sockfd, const struct sockaddr *addr, socklen_t addrlen) {
 	return connect(sockfd, addr, addrlen);
@@ -132,3 +132,5 @@ void Socket::write(const std::wstring &msg) {
 		d->connected = false;
 	}
 }
+
+}  // namespace TelldusCore

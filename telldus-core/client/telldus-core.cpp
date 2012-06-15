@@ -18,8 +18,6 @@
 #include "common/Message.h"
 #include "common/Socket.h"
 
-using namespace TelldusCore;
-
 /**
  * @name Device method flags
  *   Flags for the different methods/commands a device can support. Can be used
@@ -319,7 +317,7 @@ using namespace TelldusCore;
  * @since Version 2.0.0
  **/
 void WINAPI tdInit(void) {
-	Client::getInstance();  // Create the manager-object
+	TelldusCore::Client::getInstance();  // Create the manager-object
 }
 
 /**
@@ -338,8 +336,8 @@ void WINAPI tdInit(void) {
  * @since Version 2.0.0
  **/
 int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
-	Client *client = Client::getInstance();
-	return client->registerEvent( CallbackStruct::DeviceEvent, (void *)eventFunction, context );
+	TelldusCore::Client *client = TelldusCore::Client::getInstance();
+	return client->registerEvent( TelldusCore::CallbackStruct::DeviceEvent, reinterpret_cast<void *>(eventFunction), context );
 }
 
 /**
@@ -358,8 +356,8 @@ int WINAPI tdRegisterDeviceEvent( TDDeviceEvent eventFunction, void *context ) {
  * @since Version 2.0.0
  **/
 int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *context ) {
-	Client *client = Client::getInstance();
-	return client->registerEvent( CallbackStruct::RawDeviceEvent, (void *)eventFunction, context );
+	TelldusCore::Client *client = TelldusCore::Client::getInstance();
+	return client->registerEvent( TelldusCore::CallbackStruct::RawDeviceEvent, reinterpret_cast<void *>(eventFunction), context );
 }
 
 /**
@@ -380,8 +378,8 @@ int WINAPI tdRegisterRawDeviceEvent( TDRawDeviceEvent eventFunction, void *conte
  * @since Version 2.1.0
  **/
 int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void *context) {
-	Client *client = Client::getInstance();
-	return client->registerEvent( CallbackStruct::DeviceChangeEvent, (void *)eventFunction, context );
+	TelldusCore::Client *client = TelldusCore::Client::getInstance();
+	return client->registerEvent( TelldusCore::CallbackStruct::DeviceChangeEvent, reinterpret_cast<void *>(eventFunction), context );
 }
 
 /**
@@ -400,8 +398,8 @@ int WINAPI tdRegisterDeviceChangeEvent( TDDeviceChangeEvent eventFunction, void 
  * @since Version 2.1.0
  **/
 int WINAPI tdRegisterSensorEvent( TDSensorEvent eventFunction, void *context) {
-	Client *client = Client::getInstance();
-	return client->registerEvent( CallbackStruct::SensorEvent, (void *)eventFunction, context );
+	TelldusCore::Client *client = TelldusCore::Client::getInstance();
+	return client->registerEvent( TelldusCore::CallbackStruct::SensorEvent, reinterpret_cast<void *>(eventFunction), context );
 }
 
 /**
@@ -420,8 +418,8 @@ int WINAPI tdRegisterSensorEvent( TDSensorEvent eventFunction, void *context) {
  * @since Version 2.1.2
  **/
 int WINAPI tdRegisterControllerEvent( TDControllerEvent eventFunction, void *context) {
-	Client *client = Client::getInstance();
-	return client->registerEvent( CallbackStruct::ControllerEvent, (void *)eventFunction, context );
+	TelldusCore::Client *client = TelldusCore::Client::getInstance();
+	return client->registerEvent( TelldusCore::CallbackStruct::ControllerEvent, reinterpret_cast<void *>(eventFunction), context );
 }
 
 /**
@@ -437,7 +435,7 @@ int WINAPI tdRegisterControllerEvent( TDControllerEvent eventFunction, void *con
  * @since Version 2.1.0
  **/
 int WINAPI tdUnregisterCallback( int callbackId ) {
-	Client *client = Client::getInstance();
+	TelldusCore::Client *client = TelldusCore::Client::getInstance();
 	return client->unregisterCallback( callbackId );
 }
 
@@ -448,7 +446,7 @@ int WINAPI tdUnregisterCallback( int callbackId ) {
  * @since Version 2.0.0
  **/
 void WINAPI tdClose(void) {
-	Client::close();
+	TelldusCore::Client::close();
 }
 
 /**
@@ -481,9 +479,9 @@ void WINAPI tdReleaseString(char *thestring) {
  * @since Version 2.0.0
  **/
 int WINAPI tdTurnOn(int intDeviceId) {
-	Message msg(L"tdTurnOn");
+	TelldusCore::Message msg(L"tdTurnOn");
 	msg.addArgument(intDeviceId);
-	return Client::getIntegerFromService(msg);
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /**
@@ -499,9 +497,9 @@ int WINAPI tdTurnOn(int intDeviceId) {
  * @since Version 2.0.0
  **/
 int WINAPI tdTurnOff(int intDeviceId) {
-	Message msg(L"tdTurnOff");
+	TelldusCore::Message msg(L"tdTurnOff");
 	msg.addArgument(intDeviceId);
-	return Client::getIntegerFromService(msg);
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /**
@@ -517,9 +515,9 @@ int WINAPI tdTurnOff(int intDeviceId) {
  * @since Version 2.0.0
  **/
 int WINAPI tdBell(int intDeviceId) {
-	Message msg(L"tdBell");
+	TelldusCore::Message msg(L"tdBell");
 	msg.addArgument(intDeviceId);
-	return Client::getIntegerFromService(msg);
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /**
@@ -537,10 +535,10 @@ int WINAPI tdBell(int intDeviceId) {
  * @since Version 2.0.0
  **/
 int WINAPI tdDim(int intDeviceId, unsigned char level) {
-	Message msg(L"tdDim");
+	TelldusCore::Message msg(L"tdDim");
 	msg.addArgument(intDeviceId);
 	msg.addArgument(level);
-	return Client::getIntegerFromService(msg);
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /**
@@ -556,9 +554,9 @@ int WINAPI tdDim(int intDeviceId, unsigned char level) {
  * @since Version 2.1.0
  **/
 int WINAPI tdExecute(int intDeviceId) {
-	Message msg(L"tdExecute");
+	TelldusCore::Message msg(L"tdExecute");
 	msg.addArgument(intDeviceId);
-	return Client::getIntegerFromService(msg);
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /**
@@ -574,9 +572,9 @@ int WINAPI tdExecute(int intDeviceId) {
  * @since Version 2.1.0
  **/
 int WINAPI tdUp(int intDeviceId) {
-	Message msg(L"tdUp");
+	TelldusCore::Message msg(L"tdUp");
 	msg.addArgument(intDeviceId);
-	return Client::getIntegerFromService(msg);
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /**
@@ -592,9 +590,9 @@ int WINAPI tdUp(int intDeviceId) {
  * @since Version 2.1.0
  **/
 int WINAPI tdDown(int intDeviceId) {
-	Message msg(L"tdDown");
+	TelldusCore::Message msg(L"tdDown");
 	msg.addArgument(intDeviceId);
-	return Client::getIntegerFromService(msg);
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /**
@@ -610,9 +608,9 @@ int WINAPI tdDown(int intDeviceId) {
  * @since Version 2.1.0
  */
 int WINAPI tdStop(int intDeviceId) {
-	Message msg(L"tdStop");
+	TelldusCore::Message msg(L"tdStop");
 	msg.addArgument(intDeviceId);
-	return Client::getIntegerFromService(msg);
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /**
@@ -629,9 +627,9 @@ int WINAPI tdStop(int intDeviceId) {
  * @since Version 2.0.0
  **/
 int WINAPI tdLearn(int intDeviceId) {
-	Message msg(L"tdLearn");
+	TelldusCore::Message msg(L"tdLearn");
 	msg.addArgument(intDeviceId);
-	return Client::getIntegerFromService(msg);
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /**
@@ -649,10 +647,10 @@ int WINAPI tdLearn(int intDeviceId) {
  * @since Version 2.0.0
  **/
 int WINAPI tdLastSentCommand(int intDeviceId, int methodsSupported ) {
-	Message msg(L"tdLastSentCommand");
+	TelldusCore::Message msg(L"tdLastSentCommand");
 	msg.addArgument(intDeviceId);
 	msg.addArgument(methodsSupported);
-	return Client::getIntegerFromService(msg);
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /**
@@ -669,9 +667,9 @@ int WINAPI tdLastSentCommand(int intDeviceId, int methodsSupported ) {
  * @since Version 2.0.0
  **/
 char * WINAPI tdLastSentValue( int intDeviceId ) {
-	Message msg(L"tdLastSentValue");
+	TelldusCore::Message msg(L"tdLastSentValue");
 	msg.addArgument(intDeviceId);
-	std::wstring strReturn = Client::getWStringFromService(msg);
+	std::wstring strReturn = TelldusCore::Client::getWStringFromService(msg);
 	return wrapStdWstring(strReturn);
 }
 
@@ -684,7 +682,7 @@ char * WINAPI tdLastSentValue( int intDeviceId ) {
  * @since Version 2.0.0
  **/
 int WINAPI tdGetNumberOfDevices(void) {
-	return Client::getIntegerFromService(Message(L"tdGetNumberOfDevices"));
+	return TelldusCore::Client::getIntegerFromService(TelldusCore::Message(L"tdGetNumberOfDevices"));
 }
 
 /**
@@ -708,9 +706,9 @@ int WINAPI tdGetNumberOfDevices(void) {
  * @since Version 2.0.0
  **/
 int WINAPI tdGetDeviceId(int intDeviceIndex) {
-	Message msg(L"tdGetDeviceId");
+	TelldusCore::Message msg(L"tdGetDeviceId");
 	msg.addArgument(intDeviceIndex);
-	return Client::getIntegerFromService(msg);
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /**
@@ -727,9 +725,9 @@ int WINAPI tdGetDeviceId(int intDeviceIndex) {
  * @since Version 2.0.0
  **/
 int WINAPI tdGetDeviceType(int intDeviceId) {
-	Message msg(L"tdGetDeviceType");
+	TelldusCore::Message msg(L"tdGetDeviceType");
 	msg.addArgument(intDeviceId);
-	return Client::getIntegerFromService(msg);
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /**
@@ -745,9 +743,9 @@ int WINAPI tdGetDeviceType(int intDeviceId) {
  * @since Version 2.0.0
  **/
 char * WINAPI tdGetName(int intDeviceId) {
-	Message msg(L"tdGetName");
+	TelldusCore::Message msg(L"tdGetName");
 	msg.addArgument(intDeviceId);
-	std::wstring strReturn =  Client::getWStringFromService(msg);
+	std::wstring strReturn =  TelldusCore::Client::getWStringFromService(msg);
 	return wrapStdWstring(strReturn);
 }
 
@@ -766,10 +764,10 @@ char * WINAPI tdGetName(int intDeviceId) {
  * @since Version 2.0.0
  **/
 bool WINAPI tdSetName(int intDeviceId, const char* strNewName) {
-	Message msg(L"tdSetName");
+	TelldusCore::Message msg(L"tdSetName");
 	msg.addArgument(intDeviceId);
 	msg.addArgument(strNewName);
-	return Client::getBoolFromService(msg);
+	return TelldusCore::Client::getBoolFromService(msg);
 }
 
 /**
@@ -785,9 +783,9 @@ bool WINAPI tdSetName(int intDeviceId, const char* strNewName) {
  * @since Version 2.0.0
  **/
 char* WINAPI tdGetProtocol(int intDeviceId) {
-	Message msg(L"tdGetProtocol");
+	TelldusCore::Message msg(L"tdGetProtocol");
 	msg.addArgument(intDeviceId);
-	std::wstring strReturn =  Client::getWStringFromService(msg);
+	std::wstring strReturn =  TelldusCore::Client::getWStringFromService(msg);
 	return wrapStdWstring(strReturn);
 }
 
@@ -809,10 +807,10 @@ char* WINAPI tdGetProtocol(int intDeviceId) {
  * @since Version 2.0.0
  **/
 bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol) {
-	Message msg(L"tdSetProtocol");
+	TelldusCore::Message msg(L"tdSetProtocol");
 	msg.addArgument(intDeviceId);
 	msg.addArgument(strProtocol);
-	return Client::getBoolFromService(msg);
+	return TelldusCore::Client::getBoolFromService(msg);
 }
 
 /**
@@ -828,9 +826,9 @@ bool WINAPI tdSetProtocol(int intDeviceId, const char* strProtocol) {
  * @since Version 2.0.0
  **/
 char* WINAPI tdGetModel(int intDeviceId) {
-	Message msg(L"tdGetModel");
+	TelldusCore::Message msg(L"tdGetModel");
 	msg.addArgument(intDeviceId);
-	std::wstring strReturn = Client::getWStringFromService(msg);
+	std::wstring strReturn = TelldusCore::Client::getWStringFromService(msg);
 	return wrapStdWstring(strReturn);
 }
 
@@ -849,10 +847,10 @@ char* WINAPI tdGetModel(int intDeviceId) {
  * @since Version 2.0.0
  **/
 bool WINAPI tdSetModel(int intDeviceId, const char *strModel) {
-	Message msg(L"tdSetModel");
+	TelldusCore::Message msg(L"tdSetModel");
 	msg.addArgument(intDeviceId);
 	msg.addArgument(strModel);
-	return Client::getBoolFromService(msg);
+	return TelldusCore::Client::getBoolFromService(msg);
 }
 
 /**
@@ -872,11 +870,11 @@ bool WINAPI tdSetModel(int intDeviceId, const char *strModel) {
  * @since Version 2.0.0
  **/
 bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const char *strValue) {
-	Message msg(L"tdSetDeviceParameter");
+	TelldusCore::Message msg(L"tdSetDeviceParameter");
 	msg.addArgument(intDeviceId);
 	msg.addArgument(strName);
 	msg.addArgument(strValue);
-	return Client::getBoolFromService(msg);
+	return TelldusCore::Client::getBoolFromService(msg);
 }
 
 /**
@@ -897,11 +895,11 @@ bool WINAPI tdSetDeviceParameter(int intDeviceId, const char *strName, const cha
  * @since Version 2.0.0
  **/
 char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const char *defaultValue) {
-	Message msg(L"tdGetDeviceParameter");
+	TelldusCore::Message msg(L"tdGetDeviceParameter");
 	msg.addArgument(intDeviceId);
 	msg.addArgument(strName);
 	msg.addArgument(defaultValue);
-	std::wstring strReturn = Client::getWStringFromService(msg);
+	std::wstring strReturn = TelldusCore::Client::getWStringFromService(msg);
 	return wrapStdWstring(strReturn);
 }
 
@@ -917,8 +915,8 @@ char * WINAPI tdGetDeviceParameter(int intDeviceId, const char *strName, const c
  * @since Version 2.0.0
  **/
 int WINAPI tdAddDevice() {
-	Message msg(L"tdAddDevice");
-	return Client::getIntegerFromService(msg);
+	TelldusCore::Message msg(L"tdAddDevice");
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /**
@@ -933,9 +931,9 @@ int WINAPI tdAddDevice() {
  * @since Version 2.0.0
  **/
 bool WINAPI tdRemoveDevice(int intDeviceId) {
-	Message msg(L"tdRemoveDevice");
+	TelldusCore::Message msg(L"tdRemoveDevice");
 	msg.addArgument(intDeviceId);
-	return Client::getBoolFromService(msg);
+	return TelldusCore::Client::getBoolFromService(msg);
 }
 
 /**
@@ -974,10 +972,10 @@ bool WINAPI tdRemoveDevice(int intDeviceId) {
  * @since Version 2.0.0
  **/
 int WINAPI tdMethods(int id, int methodsSupported) {
-	Message msg(L"tdMethods");
+	TelldusCore::Message msg(L"tdMethods");
 	msg.addArgument(id);
 	msg.addArgument(methodsSupported);
-	return Client::getIntegerFromService(msg);
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /**
@@ -1052,10 +1050,10 @@ int WINAPI tdSendRawCommand(const char *command, int reserved) {
 	for(int i = 0; i < strlen(command); ++i) {
 		wcommand.append(1, (unsigned char)command[i]);
 	}
-	Message msg(L"tdSendRawCommand");
+	TelldusCore::Message msg(L"tdSendRawCommand");
 	msg.addArgument(wcommand);
 	msg.addArgument(reserved);
-	return Client::getIntegerFromService(msg);
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /**
@@ -1071,11 +1069,11 @@ int WINAPI tdSendRawCommand(const char *command, int reserved) {
  * @since Version 2.1.0
  **/
 void WINAPI tdConnectTellStickController(int vid, int pid, const char *serial) {
-	Message msg(L"tdConnectTellStickController");
+	TelldusCore::Message msg(L"tdConnectTellStickController");
 	msg.addArgument(vid);
 	msg.addArgument(pid);
 	msg.addArgument(serial);
-	Client::getWStringFromService(msg);
+	TelldusCore::Client::getWStringFromService(msg);
 }
 
 /**
@@ -1091,11 +1089,11 @@ void WINAPI tdConnectTellStickController(int vid, int pid, const char *serial) {
  * @since Version 2.1.0
  **/
 void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial) {
-	Message msg(L"tdDisconnectTellStickController");
+	TelldusCore::Message msg(L"tdDisconnectTellStickController");
 	msg.addArgument(vid);
 	msg.addArgument(pid);
 	msg.addArgument(serial);
-	Client::getWStringFromService(msg);
+	TelldusCore::Client::getWStringFromService(msg);
 }
 
 /**
@@ -1121,7 +1119,7 @@ void WINAPI tdDisconnectTellStickController(int vid, int pid, const char *serial
  * @since Version 2.1.0
  */
 int WINAPI tdSensor(char *protocol, int protocolLen, char *model, int modelLen, int *id, int *dataTypes) {
-	Client *client = Client::getInstance();
+	TelldusCore::Client *client = TelldusCore::Client::getInstance();
 	return client->getSensor(protocol, protocolLen, model, modelLen, id, dataTypes);
 }
 
@@ -1153,18 +1151,18 @@ int WINAPI tdSensor(char *protocol, int protocolLen, char *model, int modelLen, 
  * @since Version 2.1.0
  */
 int WINAPI tdSensorValue(const char *protocol, const char *model, int id, int dataType, char *value, int len, int *timestamp) {
-	Message msg(L"tdSensorValue");
+	TelldusCore::Message msg(L"tdSensorValue");
 	msg.addArgument(protocol);
 	msg.addArgument(model);
 	msg.addArgument(id);
 	msg.addArgument(dataType);
-	std::wstring retval = Client::getWStringFromService(msg);
+	std::wstring retval = TelldusCore::Client::getWStringFromService(msg);
 	if (retval.length() == 0) {
 		return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 	}
 
-	std::wstring v = Message::takeString(&retval);
-	int t = Message::takeInt(&retval);
+	std::wstring v = TelldusCore::Message::takeString(&retval);
+	int t = TelldusCore::Message::takeInt(&retval);
 	if (value && len) {
 		strncpy(value, TelldusCore::wideToString(v).c_str(), len);
 	}
@@ -1200,7 +1198,7 @@ int WINAPI tdSensorValue(const char *protocol, const char *model, int id, int da
  * @since Version 2.1.2
  **/
 int WINAPI tdController(int *controllerId, int *controllerType, char *name, int nameLen, int *available) {
-	Client *client = Client::getInstance();
+	TelldusCore::Client *client = TelldusCore::Client::getInstance();
 	return client->getController(controllerId, controllerType, name, nameLen, available);
 }
 
@@ -1223,10 +1221,10 @@ int WINAPI tdController(int *controllerId, int *controllerType, char *name, int 
  * @since Version 2.1.2
  **/
 int WINAPI tdControllerValue(int controllerId, const char *name, char *value, int valueLen) {
-	Message msg(L"tdControllerValue");
+	TelldusCore::Message msg(L"tdControllerValue");
 	msg.addArgument(controllerId);
 	msg.addArgument(name);
-	std::wstring retval = Client::getWStringFromService(msg);
+	std::wstring retval = TelldusCore::Client::getWStringFromService(msg);
 	if (retval.length() == 0) {
 		return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 	}
@@ -1254,11 +1252,11 @@ int WINAPI tdControllerValue(int controllerId, const char *name, char *value, in
  * @since Version 2.1.2
  **/
 int WINAPI tdSetControllerValue(int controllerId, const char *name, const char *value) {
-	Message msg(L"tdSetControllerValue");
+	TelldusCore::Message msg(L"tdSetControllerValue");
 	msg.addArgument(controllerId);
 	msg.addArgument(name);
 	msg.addArgument(value);
-	return Client::getIntegerFromService(msg);
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /**
@@ -1276,9 +1274,9 @@ int WINAPI tdSetControllerValue(int controllerId, const char *name, const char *
  * @since Version 2.1.2
  **/
 int WINAPI tdRemoveController(int controllerId) {
-	Message msg(L"tdRemoveController");
+	TelldusCore::Message msg(L"tdRemoveController");
 	msg.addArgument(controllerId);
-	return Client::getIntegerFromService(msg);
+	return TelldusCore::Client::getIntegerFromService(msg);
 }
 
 /* @} */

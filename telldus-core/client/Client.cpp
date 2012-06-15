@@ -14,7 +14,7 @@
 #include "common/Strings.h"
 #include "common/Mutex.h"
 
-using namespace TelldusCore;
+namespace TelldusCore {
 
 class Client::PrivateData {
 public:
@@ -267,3 +267,5 @@ int Client::getController(int *controllerId, int *controllerType, char *name, in
 
 	return TELLSTICK_SUCCESS;
 }
+
+}  // namespace TelldusCore

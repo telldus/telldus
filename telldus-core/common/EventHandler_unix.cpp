@@ -12,7 +12,7 @@
 #include "common/Mutex.h"
 #include "common/Thread.h"
 
-using namespace TelldusCore;
+namespace TelldusCore {
 
 class EventHandler::PrivateData {
 public:
@@ -76,3 +76,5 @@ bool EventHandler::waitForAny() {
 
 	return true;
 }
+
+}  // namespace TelldusCore

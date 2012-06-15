@@ -12,8 +12,6 @@
 
 #include "common/Mutex.h"
 
-using namespace TelldusCore;
-
 #ifdef _WINDOWS
 	#include <windows.h>
 	typedef HANDLE MUTEX_T;
@@ -23,6 +21,8 @@ using namespace TelldusCore;
 #endif
 
 #include "common/common.h"
+
+namespace TelldusCore {
 
 class Mutex::PrivateData {
 public:
@@ -84,3 +84,5 @@ MutexLocker::MutexLocker(Mutex *m)
 MutexLocker::~MutexLocker() {
 	mutex->unlock();
 }
+
+}  // namespace TelldusCore

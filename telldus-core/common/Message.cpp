@@ -11,7 +11,7 @@
 #include "common/Socket.h"
 #include "common/Strings.h"
 
-using namespace TelldusCore;
+namespace TelldusCore {
 
 Message::Message()
 	: std::wstring() {
@@ -128,3 +128,5 @@ int Message::takeInt(std::wstring *message) {
 	message->erase(0, index+1);
 	return value;
 }
+
+}  // namespace TelldusCore

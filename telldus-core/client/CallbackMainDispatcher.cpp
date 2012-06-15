@@ -11,7 +11,7 @@
 
 #include <list>
 
-using namespace TelldusCore;
+namespace TelldusCore {
 
 typedef std::list<CallbackStruct *> CallbackList;
 
@@ -135,3 +135,5 @@ void CallbackMainDispatcher::cleanupCallbacks() {
 		}
 	} while (again);
 }
+
+}  // namespace TelldusCore
