@@ -71,11 +71,9 @@ std::string ProtocolSartano::decodeData(const ControllerMessage &dataMsg) {
 
 	if(method1 == 0 && method2 == 1) {
 		method = 0;  // off
-	}
-	else if(method1 == 1 && method2 == 0) {
+	} else if(method1 == 1 && method2 == 0) {
 		method = 1;  // on
-	}
-	else {
+	} else {
 		return "";
 	}
 
@@ -90,8 +88,7 @@ std::string ProtocolSartano::decodeData(const ControllerMessage &dataMsg) {
 	for(int i = 0; i < 10; i++) {
 		if((code & mask) != 0) {
 			retString << 1;
-		}
-		else {
+		} else {
 			retString << 0;
 		}
 		mask >>= 1;
@@ -100,8 +97,7 @@ std::string ProtocolSartano::decodeData(const ControllerMessage &dataMsg) {
 
 	if(method == 0) {
 		retString << "turnoff;";
-	}
-	else {
+	} else {
 		retString << "turnon;";
 	}
 

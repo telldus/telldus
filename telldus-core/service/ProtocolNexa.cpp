@@ -172,8 +172,7 @@ std::string ProtocolNexa::decodeData(const ControllerMessage& dataMsg) {
 	if(TelldusCore::comparei(dataMsg.model(), L"selflearning")) {
 		// selflearning
 		return decodeDataSelfLearning(allData);
-	}
-	else {
+	} else {
 		// codeswitch
 		return decodeDataCodeSwitch(allData);
 	}
@@ -206,11 +205,9 @@ std::string ProtocolNexa::decodeDataSelfLearning(uint32_t allData) {
 	retString << "class:command;protocol:arctech;model:selflearning;house:" << house << ";unit:" << unit << ";group:" << group << ";method:";
 	if(method == 1) {
 		retString << "turnon;";
-	}
-	else if(method == 0) {
+	} else if(method == 0) {
 		retString << "turnoff;";
-	}
-	else {
+	} else {
 		// not arctech selflearning
 		return "";
 	}
@@ -254,14 +251,11 @@ std::string ProtocolNexa::decodeDataCodeSwitch(uint32_t allData) {
 
 	if(method == 6) {
 		retString << ";unit:" << unit << ";method:turnoff;";
-	}
-	else if(method == 14) {
+	} else if(method == 14) {
 		retString << ";unit:" << unit << ";method:turnon;";
-	}
-	else if(method == 15) {
+	} else if(method == 15) {
 		retString << ";method:bell;";
-	}
-	else {
+	} else {
 		// not arctech codeswitch
 		return "";
 	}

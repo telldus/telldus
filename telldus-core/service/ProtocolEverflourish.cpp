@@ -121,14 +121,11 @@ std::string ProtocolEverflourish::decodeData(const ControllerMessage &dataMsg) {
 	retString << "class:command;protocol:everflourish;model:selflearning;house:" << house << ";unit:" << unit << ";method:";
 	if(method == 0) {
 		retString << "turnoff;";
-	}
-	else if(method == 15) {
+	} else if(method == 15) {
 		retString << "turnon;";
-	}
-	else if(method == 10) {
+	} else if(method == 10) {
 		retString << "learn;";
-	}
-	else {
+	} else {
 		// not everflourish
 		return "";
 	}

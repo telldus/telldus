@@ -85,19 +85,16 @@ void EventUpdateManager::sendMessageToClients(EventUpdateData *data) {
 				msg.addArgument(data->deviceId);
 				msg.addArgument(data->eventState);
 				msg.addArgument(data->eventValue);  // string
-			}
-			else if(data->messageType == L"TDDeviceChangeEvent") {
+			} else if(data->messageType == L"TDDeviceChangeEvent") {
 				msg.addArgument("TDDeviceChangeEvent");
 				msg.addArgument(data->deviceId);
 				msg.addArgument(data->eventDeviceChanges);
 				msg.addArgument(data->eventChangeType);
-			}
-			else if(data->messageType == L"TDRawDeviceEvent") {
+			} else if(data->messageType == L"TDRawDeviceEvent") {
 				msg.addArgument("TDRawDeviceEvent");
 				msg.addArgument(data->eventValue);  // string
 				msg.addArgument(data->controllerId);
-			}
-			else if(data->messageType == L"TDSensorEvent") {
+			} else if(data->messageType == L"TDSensorEvent") {
 				msg.addArgument("TDSensorEvent");
 				msg.addArgument(data->protocol);
 				msg.addArgument(data->model);
@@ -105,8 +102,7 @@ void EventUpdateManager::sendMessageToClients(EventUpdateData *data) {
 				msg.addArgument(data->dataType);
 				msg.addArgument(data->value);
 				msg.addArgument(data->timestamp);
-			}
-			else if(data->messageType == L"TDControllerEvent") {
+			} else if(data->messageType == L"TDControllerEvent") {
 				msg.addArgument("TDControllerEvent");
 				msg.addArgument(data->controllerId);
 				msg.addArgument(data->eventState);
@@ -117,8 +113,7 @@ void EventUpdateManager::sendMessageToClients(EventUpdateData *data) {
 			(*it)->write(msg);
 
 			it++;
-		}
-		else {
+		} else {
 			// connection is dead, remove it
 			delete *it;
 			it = d->clients.erase(it);

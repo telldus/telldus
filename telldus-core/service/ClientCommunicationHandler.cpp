@@ -55,8 +55,7 @@ void ClientCommunicationHandler::run() {
 
 	if(strReturn == L"") {
 		msg.addArgument(intReturn);
-	}
-	else {
+	} else {
 		msg.addArgument(strReturn);
 	}
 	msg.append(L"\n");

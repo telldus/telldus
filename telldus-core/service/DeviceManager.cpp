@@ -93,15 +93,14 @@ int DeviceManager::getDeviceLastSentCommand(int deviceId, int methodsSupported) 
 int DeviceManager::setDeviceLastSentCommand(int deviceId, int command, const std::wstring &value) {
 	TelldusCore::MutexLocker deviceListLocker(&d->lock);
 	if (!d->devices.size()) {
-			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
+		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
 	DeviceMap::iterator it = d->devices.find(deviceId);
 	if (it != d->devices.end()) {
 		TelldusCore::MutexLocker deviceLocker(it->second);
 		d->set.setDeviceState(deviceId, command, value);
 		it->second->setLastSentCommand(command, value);
-	}
-	else {
+	} else {
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
 	return TELLSTICK_SUCCESS;
@@ -208,8 +207,7 @@ int DeviceManager::setDeviceModel(int deviceId, const std::wstring &model) {
 			return ret;
 		}
 		it->second->setModel(model);
-	}
-	else {
+	} else {
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
 
@@ -242,8 +240,7 @@ int DeviceManager::setDeviceName(int deviceId, const std::wstring &name) {
 			return ret;
 		}
 		it->second->setName(name);
-	}
-	else {
+	} else {
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
 
@@ -279,8 +276,7 @@ int DeviceManager::setDeviceParameter(int deviceId, const std::wstring &name, co
 			return ret;
 		}
 		it->second->setParameter(name, value);
-	}
-	else {
+	} else {
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
 
@@ -313,8 +309,7 @@ int DeviceManager::setDeviceProtocol(int deviceId, const std::wstring &protocol)
 			return ret;
 		}
 		it->second->setProtocolName(protocol);
-	}
-	else {
+	} else {
 		return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 	}
 
@@ -424,8 +419,7 @@ int DeviceManager::doAction(int deviceId, int action, unsigned char data) {
 			deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(new TelldusCore::MutexLocker(it->second));
 			device = it->second;
 		}  // devicelist unlocked
-	}
-	else {
+	} else {
 		Controller *controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
 		if(!controller) {
 			Log::warning("Trying to execute action, but no controller found. Rescanning USB ports");
@@ -487,17 +481,14 @@ int DeviceManager::doGroupAction(const std::wstring devices, const int action, c
 
 		if(type == TELLSTICK_TYPE_SCENE && (action == TELLSTICK_TURNON || action == TELLSTICK_EXECUTE)) {
 			deviceReturnValue = executeScene(singledevice, groupDeviceId);
-		}
-		else if(type == TELLSTICK_TYPE_GROUP) {
+		} else if(type == TELLSTICK_TYPE_GROUP) {
 			if(deviceId != 0) {
 				int childType = DeviceManager::getDeviceType(deviceId);
 				if(childType == TELLSTICK_TYPE_DEVICE) {
 					deviceReturnValue = doAction(deviceId, action, data);
-				}
-				else if(childType == TELLSTICK_TYPE_SCENE) {
+				} else if(childType == TELLSTICK_TYPE_SCENE) {
 					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds);  // TODO make scenes infinite loops-safe
-				}
-				else {
+				} else {
 					// group (in group)
 					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds);
 
@@ -509,8 +500,7 @@ int DeviceManager::doGroupAction(const std::wstring devices, const int action, c
 						}
 					}
 				}
-			}
-			else {
+			} else {
 				deviceReturnValue = TELLSTICK_ERROR_DEVICE_NOT_FOUND;  // Probably incorrectly formatted parameter
 			}
 		}
@@ -577,8 +567,7 @@ int DeviceManager::removeDevice(int deviceId) {
 		if (it != d->devices.end()) {
 			device = it->second;
 			d->devices.erase(it);  // remove from list, keep reference
-		}
-		else {
+		} else {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
 		}
 	}
