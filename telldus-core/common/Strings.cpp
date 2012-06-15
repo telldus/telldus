@@ -101,7 +101,7 @@ bool TelldusCore::comparei(std::wstring stringA, std::wstring stringB) {
 std::wstring TelldusCore::intToWstring(int value) {
 #ifdef _WINDOWS
 	// no stream used
-	// TODO! Make effective and safe...
+	// TODO(stefan): Make effective and safe...
 	wchar_t numstr[21];  // enough to hold all numbers up to 64-bits
 	_itow_s(value, numstr, sizeof(numstr), 10);
 	std::wstring newstring(numstr);

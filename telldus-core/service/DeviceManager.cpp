@@ -487,7 +487,7 @@ int DeviceManager::doGroupAction(const std::wstring devices, const int action, c
 				if(childType == TELLSTICK_TYPE_DEVICE) {
 					deviceReturnValue = doAction(deviceId, action, data);
 				} else if(childType == TELLSTICK_TYPE_SCENE) {
-					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds);  // TODO make scenes infinite loops-safe
+					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds);  // TODO(stefan) make scenes infinite loops-safe
 				} else {
 					// group (in group)
 					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds);

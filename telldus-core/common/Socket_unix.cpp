@@ -121,7 +121,7 @@ std::wstring Socket::read(int timeout) {
 void Socket::stopReadWait() {
 	TelldusCore::MutexLocker locker(&d->mutex);
 	d->connected = false;
-	// TODO somehow signal the socket here?
+	// TODO(stefan): somehow signal the socket here?
 }
 
 void Socket::write(const std::wstring &msg) {

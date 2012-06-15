@@ -103,7 +103,7 @@ std::string ProtocolOregon::decode1A2D(const std::string &data) {
 
 	checksum += 0x1 + 0xA + 0x2 + 0xD - 0xA;
 
-	// TODO: Find out how checksum2 works
+	// TODO(micke): Find out how checksum2 works
 	if (checksum != checksum1) {
 		return "";
 	}

@@ -166,11 +166,11 @@ std::wstring Client::sendToService(const Message &msg) {
 			msleep(500);
 			continue;  // retry
 		}
-		readData = s.read(8000);  // TODO changed to 10000 from 5000, how much does this do...?
+		readData = s.read(8000);  // TODO(stefan) changed to 10000 from 5000, how much does this do...?
 		if(readData == L"") {
 			msleep(500);
-			continue;  // TODO can we be really sure it SHOULD be anything?
-			// TODO perhaps break here instead?
+			continue;  // TODO(stefan): can we be really sure it SHOULD be anything?
+			// TODO(stefan): perhaps break here instead?
 		}
 
 		if (!s.isConnected()) {  // Connection failed sometime during operation...

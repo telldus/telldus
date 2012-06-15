@@ -174,7 +174,7 @@ void ControllerManager::loadControllers() {
 		if (!controllerId) {
 			controllerId = d->settings.addNode(Settings::Controller);
 			if(controllerId < 0) {
-				// TODO: How to handle this?
+				// TODO(micke): How to handle this?
 				continue;
 			}
 			isNew = true;
@@ -333,7 +333,7 @@ int ControllerManager::setControllerValue(int id, const std::wstring &name, cons
 		d->settings.setName(Settings::Controller, id, value);
 		signalControllerEvent(id, TELLSTICK_DEVICE_CHANGED, TELLSTICK_CHANGE_NAME, value);
 	} else {
-		return TELLSTICK_ERROR_SYNTAX;  // TODO: Is this the best error?
+		return TELLSTICK_ERROR_SYNTAX;  // TODO(micke): Is this the best error?
 	}
 	return TELLSTICK_SUCCESS;
 }
