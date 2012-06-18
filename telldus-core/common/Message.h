@@ -13,21 +13,21 @@ namespace TelldusCore {
 	class Message : public std::wstring {
 	public:
 		Message();
-		explicit Message(const std::wstring &);
+		explicit Message(const std::wstring &functionName);
 		~Message(void);
 
-		void addArgument(const std::wstring &);
+		void addArgument(const std::wstring &value);
 		// void addSpecialArgument(const std::wstring &);
 		// void addSpecialArgument(int);
 		// void addSpecialArgument(const char *);
-		void addArgument(int);
-		void addArgument(const char *);
+		void addArgument(int value);
+		void addArgument(const char *value);
 
-		static bool nextIsInt(const std::wstring &);
-		static bool nextIsString(const std::wstring &);
+		static bool nextIsInt(const std::wstring &message);
+		static bool nextIsString(const std::wstring &message);
 
-		static std::wstring takeString(std::wstring *);
-		static int takeInt(std::wstring *);
+		static std::wstring takeString(std::wstring *message);
+		static int takeInt(std::wstring *message);
 
 	private:
 	};

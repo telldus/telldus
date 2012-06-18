@@ -22,7 +22,7 @@ namespace TelldusCore {
 			Thread();
 			virtual ~Thread();
 			void start();
-			void startAndLock(Mutex *);
+			void startAndLock(Mutex *lock);
 			bool wait();
 
 		protected:
