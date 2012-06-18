@@ -178,7 +178,7 @@ std::string TelldusCore::wideToString(const std::wstring &input) {
 	}
 	char *buffer;
 	buffer = new char[size];
-	memset(buffer, 0, sizeof(char)*size);
+	memset(buffer, 0, sizeof(*buffer)*size);
 
 	int bytes = WideCharToMultiByte(CP_UTF8, 0, input.c_str(), -1, buffer, size, NULL, NULL);
 	std::string retval(buffer);
@@ -187,7 +187,8 @@ std::string TelldusCore::wideToString(const std::wstring &input) {
 
 #else
 	size_t wideSize = sizeof(wchar_t)*input.length();
-	size_t outbytesLeft = wideSize+sizeof(char);  // We cannot know how many wide character there is yet
+	// We cannot know how many wide character there is yet
+	size_t outbytesLeft = wideSize+sizeof(char);  // NOLINT(runtime/sizeof)
 
 	// Copy the instring
 	char *inString = (char*)new wchar_t[input.length()+1];
@@ -195,7 +196,7 @@ std::string TelldusCore::wideToString(const std::wstring &input) {
 
 	// Create buffer for output
 	char *outString = new char[outbytesLeft];
-	memset(outString, 0, sizeof(char)*(outbytesLeft));
+	memset(outString, 0, sizeof(*outString)*(outbytesLeft));
 
 #ifdef _FREEBSD
 	const char *inPointer = inString;

@@ -69,7 +69,8 @@ inline char *wrapStdString( const std::string &string) {
 #ifdef _WINDOWS
 	return (char *)SysAllocStringByteLen(string.c_str(), (unsigned int)string.size());
 #else
-	char *returnVal = (char *)malloc(sizeof(char) * (string.size()+1));
+	char *returnVal;
+	returnVal = (char *)malloc(sizeof(*returnVal) * (string.size()+1));
 	strcpy(returnVal, string.c_str());
 	return returnVal;
 #endif
