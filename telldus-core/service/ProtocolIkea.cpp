@@ -15,6 +15,9 @@ int ProtocolIkea::methods() const {
 }
 
 std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Controller *) {
+	const char B1[] = {84, 84, 0};
+	const char B0[] = {170, 0};
+
 	int intSystem = this->getIntParameter(L"system", 1, 16)-1;
 	int intFadeStyle = TelldusCore::comparei(this->getStringParameter(L"fade", L"true"), L"true");
 	std::wstring wstrUnits = this->getStringParameter(L"units", L"");
@@ -53,7 +56,15 @@ std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Co
 
 	delete[] tempUnits;
 
-	std::string strReturn = "STTTTTTª";  // Startcode, always like this;
+	std::string strReturn;
+	strReturn.append(1, 'S');
+	strReturn.append(1, 84);
+	strReturn.append(1, 84);
+	strReturn.append(1, 84);
+	strReturn.append(1, 84);
+	strReturn.append(1, 84);
+	strReturn.append(1, 84);
+	strReturn.append(1, 170);
 
 	std::string strChannels = "";
 	int intCode = (intSystem << 10) | intUnits;
@@ -61,19 +72,19 @@ std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Co
 	int checksum2 = 0;
 	for (int i = 13; i >= 0; --i) {
 		if ((intCode >> i) & 1) {
-			strChannels.append("TT");
+			strChannels.append(B1);
 			if (i % 2 == 0)
 				checksum2++;
 			else
 				checksum1++;
 		} else {
-			strChannels.append("ª");
+			strChannels.append(B0);
 		}
 	}
 	strReturn.append(strChannels);  // System + Units
 
-	strReturn.append(checksum1 %2 == 0 ? "TT" : "ª");  // 1st checksum
-	strReturn.append(checksum2 %2 == 0 ? "TT" : "ª");  // 2nd checksum
+	strReturn.append(checksum1 %2 == 0 ? B1 : B0);  // 1st checksum
+	strReturn.append(checksum2 %2 == 0 ? B1 : B0);  // 2nd checksum
 
 	int intLevel = 0;
 	if (level <= 12) {
@@ -113,18 +124,18 @@ std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Co
 	checksum2 = 0;
 	for (int i = 0; i < 6; ++i) {
 		if ((intCode >> i) & 1) {
-			strReturn.append("TT");
+			strReturn.append(B1);
 			if (i % 2 == 0)
 				checksum1++;
 			else
 				checksum2++;
 		} else {
-			strReturn.append("ª");
+			strReturn.append(B0);
 		}
 	}
 
-	strReturn.append(checksum1 %2 == 0 ? "TT" : "ª");  // 1st checksum
-	strReturn.append(checksum2 %2 == 0 ? "TT" : "ª");  // 2nd checksum
+	strReturn.append(checksum1 %2 == 0 ? B1 : B0);  // 1st checksum
+	strReturn.append(checksum2 %2 == 0 ? B1 : B0);  // 2nd checksum
 
 	strReturn.append("+");
 
