@@ -7,6 +7,7 @@
 #ifndef TELLDUS_CORE_SERVICE_CONTROLLERMESSAGE_H_
 #define TELLDUS_CORE_SERVICE_CONTROLLERMESSAGE_H_
 
+#include <stdint.h>
 #include <string>
 
 class ControllerMessage {
@@ -15,7 +16,7 @@ public:
 	virtual ~ControllerMessage();
 
 	std::string msgClass() const;
-	int getIntParameter(const std::string &key) const;
+	uint64_t getInt64Parameter(const std::string &key) const;
 	std::string getParameter(const std::string &key) const;
 	int method() const;
 	std::wstring protocol() const;

@@ -682,7 +682,7 @@ void DeviceManager::handleSensorMessage(const ControllerMessage &msg) {
 		if (!TelldusCore::comparei((*it)->model(), msg.model())) {
 			continue;
 		}
-		if ((*it)->id() != msg.getIntParameter("id")) {
+		if ((*it)->id() != msg.getInt64Parameter("id")) {
 			continue;
 		}
 		sensor = *it;
@@ -690,7 +690,7 @@ void DeviceManager::handleSensorMessage(const ControllerMessage &msg) {
 	}
 
 	if (!sensor) {
-		sensor = new Sensor(msg.protocol(), msg.model(), msg.getIntParameter("id"));
+		sensor = new Sensor(msg.protocol(), msg.model(), msg.getInt64Parameter("id"));
 		d->sensorList.push_back(sensor);
 	}
 	TelldusCore::MutexLocker sensorLocker(sensor);
