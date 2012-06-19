@@ -62,7 +62,7 @@ void Socket::connect(const std::wstring &server) {
 	}
 	std::string name = "/tmp/" + std::string(server.begin(), server.end());
 	remote.sun_family = AF_UNIX;
-	strcpy(remote.sun_path, name.c_str());
+	snprintf(remote.sun_path, sizeof(remote.sun_path), "%s", name.c_str());
 
 	len = SUN_LEN(&remote);
 	if (connectWrapper(d->socket, (struct sockaddr *)&remote, len) == -1) {

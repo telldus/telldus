@@ -5,6 +5,7 @@
 //
 //
 #include "service/ProtocolIkea.h"
+#include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
 #include <string>
@@ -42,7 +43,7 @@ std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Co
 #ifdef _WINDOWS
 	strcpy_s(tempUnits, strUnits.size()+1, strUnits.c_str());
 #else
-	strcpy(tempUnits, strUnits.c_str());
+	snprintf(tempUnits, strUnits.size()+1, "%s", strUnits.c_str());
 #endif
 
 	char *saveptr;

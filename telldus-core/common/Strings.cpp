@@ -47,7 +47,7 @@ std::wstring TelldusCore::charToWstring(const char *value) {
 
 	// Copy the instring
 	char *inString = new char[utf8Length+1];
-	strcpy(inString, value);
+	snprintf(inString, utf8Length+1, "%s", value);
 
 	// Create buffer for output
 	char *outString = reinterpret_cast<char*>(new wchar_t[utf8Length+1]);

@@ -71,7 +71,7 @@ inline char *wrapStdString( const std::string &string) {
 #else
 	char *returnVal;
 	returnVal = reinterpret_cast<char *>(malloc(sizeof(*returnVal) * (string.size()+1)));
-	strcpy(returnVal, string.c_str());
+	snprintf(returnVal, string.size()+1, "%s", string.c_str());
 	return returnVal;
 #endif
 }
