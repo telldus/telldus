@@ -119,14 +119,18 @@ int main(int argc, char **argv) {
 		std::string user = TelldusCore::wideToString(settings.getSetting(L"user"));
 		std::string group = TelldusCore::wideToString(settings.getSetting(L"group"));
 
-		struct group *grp = getgrnam(group.c_str());
+		// We use the non threadsafe function getgrnam() here. Since this is startup code
+		// and no other threads have been started yet.
+		struct group *grp = getgrnam(group.c_str());  // NOLINT(runtime/threadsafe_fn)
 		if (grp) {
 			setgid(grp->gr_gid);
 		} else {
 			Log::warning("Group %s could not be found", group.c_str());
 			exit(EXIT_FAILURE);
 		}
-		struct passwd *pw = getpwnam(user.c_str());
+		// We use the non threadsafe function getpwnam() here. Since this is startup code
+		// and no other threads have been started yet.
+		struct passwd *pw = getpwnam(user.c_str());  // NOLINT(runtime/threadsafe_fn)
 		if (pw) {
 			setuid( pw->pw_uid );
 		} else {
