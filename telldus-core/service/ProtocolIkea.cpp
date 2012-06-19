@@ -45,14 +45,15 @@ std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Co
 	strcpy(tempUnits, strUnits.c_str());
 #endif
 
-	char *strToken = strtok(tempUnits, ",");
+	char *saveptr;
+	char *strToken = strtok_r(tempUnits, ",", &saveptr);
 	do {
 		int intUnit = atoi(strToken);
 		if (intUnit == 10) {
 			intUnit = 0;
 		}
 		intUnits = intUnits | ( 1<<(9-intUnit) );
-	} while ( (strToken = strtok(NULL, ",")) != NULL );
+	} while ( (strToken = strtok_r(NULL, ",", &saveptr)) != NULL );
 
 	delete[] tempUnits;
 
