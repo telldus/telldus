@@ -116,7 +116,8 @@ std::string ProtocolX10::getStringForMethod(int method, unsigned char data, Cont
 std::string ProtocolX10::decodeData(const ControllerMessage& dataMsg) {
 	int intData = 0, currentBit = 31;
 	bool method = 0;
-	sscanf(dataMsg.getParameter("data").c_str(), "%X", &intData);
+	// TODO(micke): Convert sscanf. This is slow and can overflow buffers!
+	sscanf(dataMsg.getParameter("data").c_str(), "%X", &intData);  // NOLINT(runtime/printf)
 
 	int unit = 0;
 	int rawHouse = 0;

@@ -50,7 +50,8 @@ std::string ProtocolSartano::decodeData(const ControllerMessage &dataMsg) {
 	unsigned int method2 = 0;
 	unsigned int method = 0;
 
-	sscanf(data.c_str(), "%X", &allDataIn);
+	// TODO(micke): Convert sscanf. This is slow and can overflow buffers!
+	sscanf(data.c_str(), "%X", &allDataIn);  // NOLINT(runtime/printf)
 
 	uint16_t mask = (1<<11);
 	for(int i = 0; i < 12; ++i) {

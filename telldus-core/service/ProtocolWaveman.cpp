@@ -30,7 +30,8 @@ std::string ProtocolWaveman::decodeData(const ControllerMessage& dataMsg) {
 	unsigned int unit = 0;
 	unsigned int method = 0;
 
-	sscanf(dataMsg.getParameter("data").c_str(), "%lx", reinterpret_cast<long*>(&allData));  // NOLINT(runtime/int)
+	// TODO(micke): Convert sscanf. This is slow and can overflow buffers!
+	sscanf(dataMsg.getParameter("data").c_str(), "%lx", reinterpret_cast<long*>(&allData));  // NOLINT
 
 	method = allData & 0xF00;
 	method >>= 8;

@@ -101,7 +101,8 @@ std::string ProtocolEverflourish::decodeData(const ControllerMessage &dataMsg) {
 	unsigned int unit = 0;
 	unsigned int method = 0;
 
-	sscanf(data.c_str(), "%X", &allData);
+	// TODO(micke): Convert sscanf. This is slow and can overflow buffers!
+	sscanf(data.c_str(), "%X", &allData);  // NOLINT(runtime/printf)
 
 	house = allData & 0xFFFC00;
 	house >>= 10;

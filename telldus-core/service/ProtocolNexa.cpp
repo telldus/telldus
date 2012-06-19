@@ -167,7 +167,8 @@ std::string ProtocolNexa::getStringSelflearningForCode(int intHouse, int intCode
 std::string ProtocolNexa::decodeData(const ControllerMessage& dataMsg) {
 	uint32_t allData = 0;
 
-	sscanf(dataMsg.getParameter("data").c_str(), "%lx", reinterpret_cast<long*>(&allData));  // NOLINT(runtime/int)
+	// TODO(micke): Convert sscanf. This is slow and can overflow buffers!
+	sscanf(dataMsg.getParameter("data").c_str(), "%lx", reinterpret_cast<long*>(&allData));  // NOLINT
 
 	if(TelldusCore::comparei(dataMsg.model(), L"selflearning")) {
 		// selflearning
