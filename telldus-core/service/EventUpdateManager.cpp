@@ -58,7 +58,7 @@ void EventUpdateManager::run() {
 		if(d->clientConnectEvent->isSignaled()) {
 			// new client added
 			TelldusCore::EventDataRef eventData = d->clientConnectEvent->takeSignal();
-			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventData.get());
+			ConnectionListenerEventData *data = dynamic_cast<ConnectionListenerEventData*>(eventData.get());
 			if(data) {
 				d->clients.push_back(data->socket);
 			}

@@ -96,7 +96,7 @@ void TelldusMain::start(void) {
 		if (clientEvent->isSignaled()) {
 			// New client connection
 			TelldusCore::EventDataRef eventDataRef = clientEvent->takeSignal();
-			ConnectionListenerEventData *data = reinterpret_cast<ConnectionListenerEventData*>(eventDataRef.get());
+			ConnectionListenerEventData *data = dynamic_cast<ConnectionListenerEventData*>(eventDataRef.get());
 			if (data) {
 				ClientCommunicationHandler *clientCommunication = new ClientCommunicationHandler(data->socket, handlerEvent, &deviceManager, deviceUpdateEvent, &controllerManager);
 				clientCommunication->start();
@@ -106,7 +106,7 @@ void TelldusMain::start(void) {
 
 		if (d->controllerChangeEvent->isSignaled()) {
 			TelldusCore::EventDataRef eventDataRef = d->controllerChangeEvent->takeSignal();
-			ControllerChangeEventData *data = reinterpret_cast<ControllerChangeEventData*>(eventDataRef.get());
+			ControllerChangeEventData *data = dynamic_cast<ControllerChangeEventData*>(eventDataRef.get());
 			if (data) {
 				controllerManager.deviceInsertedOrRemoved(data->vid, data->pid, "", data->inserted);
 			}
@@ -114,7 +114,7 @@ void TelldusMain::start(void) {
 
 		if (dataEvent->isSignaled()) {
 			TelldusCore::EventDataRef eventData = dataEvent->takeSignal();
-			ControllerEventData *data = reinterpret_cast<ControllerEventData*>(eventData.get());
+			ControllerEventData *data = dynamic_cast<ControllerEventData*>(eventData.get());
 			if (data) {
 				deviceManager.handleControllerMessage(*data);
 			}
