@@ -88,7 +88,10 @@ void DeviceSettingNexa::saveParameters() {
 
 void DeviceSettingNexa::setValue( const QString &name, const QString &value ) {
 	if (name == "house") {
-		uint intHouse = value[0].toUpper().toAscii() - 'A';
+		uint intHouse = 0;
+		if (value.length() > 0) {
+			intHouse = value[0].toUpper().toAscii() - 'A';
+		}
 		dialHouse->setValue( intHouse );
 	} else if (name == "unit") {
 		dialUnit->setValue( value.toInt() );
