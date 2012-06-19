@@ -1,8 +1,8 @@
 #ifndef CONTROLLERLISTENER_H
 #define CONTROLLERLISTENER_H
 
-#include "Thread.h"
-#include "Event.h"
+#include "common/Thread.h"
+#include "common/Event.h"
 
 class ControllerChangeEventData : public TelldusCore::EventDataBase {
 public:

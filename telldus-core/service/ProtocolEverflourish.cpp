@@ -1,7 +1,7 @@
 #include "ProtocolEverflourish.h"
 #include <sstream>
 #include <stdio.h>
-#include "ControllerMessage.h"
+#include "service/ControllerMessage.h"
 
 int ProtocolEverflourish::methods() const {
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN;
@@ -21,7 +21,7 @@ std::string ProtocolEverflourish::getStringForMethod(int method, unsigned char, 
 	} else {
 		return "";
 	}
-	
+
 	const char ssss = 85;
 	const char sssl = 84; // 0
 	const char slss = 69; // 1
@@ -32,7 +32,7 @@ std::string ProtocolEverflourish::getStringForMethod(int method, unsigned char, 
 	std::string strCode;
 
 	deviceCode = (deviceCode << 2) | intCode;
-	
+
 	check = calculateChecksum(deviceCode);
 
 	char preamble[] = {'R', 5, 'T', 114,60,1,1,105,ssss,ssss,0};
@@ -47,7 +47,7 @@ std::string ProtocolEverflourish::getStringForMethod(int method, unsigned char, 
 	for(i=3;i>=0;i--) {
 		strCode.append(1, bits[(action>>i)&0x01]);
 	}
-	
+
 	strCode.append(1, ssss);
 	strCode.append(1, '+');
 
@@ -84,7 +84,7 @@ unsigned int ProtocolEverflourish::calculateChecksum(unsigned int x) {
 		bit = bit << 1;
 	}
 
-	return res; 
+	return res;
 }
 
 std::string ProtocolEverflourish::decodeData(ControllerMessage &dataMsg)
@@ -94,23 +94,23 @@ std::string ProtocolEverflourish::decodeData(ControllerMessage &dataMsg)
 	unsigned int house = 0;
 	unsigned int unit = 0;
 	unsigned int method = 0;
-	
+
 	sscanf(data.c_str(), "%X", &allData);
-	
+
 	house = allData & 0xFFFC00;
 	house >>= 10;
-	
+
 	unit = allData & 0x300;
 	unit >>= 8;
 	unit++; //unit from 1 to 4
-	
+
 	method = allData & 0xF;
-	
+
 	if(house < 0 || house > 16383 || unit < 1 || unit > 4){
 		//not everflourish
 		return "";
 	}
-	
+
 	std::stringstream retString;
 	retString << "class:command;protocol:everflourish;model:selflearning;house:" << house << ";unit:" << unit << ";method:";
 	if(method == 0){
@@ -126,6 +126,6 @@ std::string ProtocolEverflourish::decodeData(ControllerMessage &dataMsg)
 		//not everflourish
 		return "";
 	}
-	
+
 	return retString.str();
 }

@@ -4,7 +4,7 @@
 #include <string>
 #include <list>
 #include <map>
-#include "../client/telldus-core.h"
+#include "client/telldus-core.h"
 
 typedef std::map<std::wstring, std::wstring> ParameterMap;
 

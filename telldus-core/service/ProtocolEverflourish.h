@@ -1,8 +1,8 @@
 #ifndef PROTOCOLEVERFLOURISH_H
 #define PROTOCOLEVERFLOURISH_H
 
-#include "ControllerMessage.h"
-#include "Protocol.h"
+#include "service/Protocol.h"
+#include "service/ControllerMessage.h"
 
 class ProtocolEverflourish :  public Protocol
 {

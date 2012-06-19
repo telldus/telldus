@@ -1,9 +1,9 @@
 #ifndef DEVICE_H
 #define DEVICE_H
 
-#include "Controller.h"
-#include "Mutex.h"
-#include "Protocol.h"
+#include "service/Controller.h"
+#include "common/Mutex.h"
+#include "service/Protocol.h"
 #include <string>
 #include <list>
 
@@ -34,7 +34,7 @@ public:
 
 	static int maskUnsupportedMethods(int methods, int supportedMethods);
 	static int methodId( const std::string &methodName );
-	
+
 private:
 	Protocol *retrieveProtocol() const;
 

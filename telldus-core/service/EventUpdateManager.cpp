@@ -1,9 +1,9 @@
-#include "EventUpdateManager.h"
+#include "service/EventUpdateManager.h"
 
-#include "ConnectionListener.h"
-#include "EventHandler.h"
-#include "Message.h"
-#include "Socket.h"
+#include "service/ConnectionListener.h"
+#include "common/EventHandler.h"
+#include "common/Message.h"
+#include "common/Socket.h"
 
 #include <list>
 #include <memory>

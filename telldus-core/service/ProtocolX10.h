@@ -1,8 +1,8 @@
 #ifndef PROTOCOLX10_H
 #define PROTOCOLX10_H
 
-#include "Protocol.h"
-#include "ControllerMessage.h"
+#include "service/Protocol.h"
+#include "service/ControllerMessage.h"
 
 class ProtocolX10 : public Protocol
 {

@@ -24,9 +24,7 @@ SET( telldus-core_PUB_HDRS
 FIND_PACKAGE(Threads)
 LIST(APPEND telldus-core_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
 
-INCLUDE_DIRECTORIES(
-	${CMAKE_CURRENT_SOURCE_DIR}/../common
-)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
 
 ######## Configurable options for the platform  ########
 

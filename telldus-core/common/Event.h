@@ -11,6 +11,7 @@
 #include <tr1/memory>
 	typedef void* EVENT_T;
 #endif
+#include "common/Thread.h"
 
 namespace TelldusCore {
 	class EventHandler;

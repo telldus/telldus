@@ -1,5 +1,5 @@
-#include "ProtocolMandolyn.h"
-#include "Strings.h"
+#include "service/ProtocolMandolyn.h"
+#include "common/Strings.h"
 #include <stdlib.h>
 #include <sstream>
 #include <iomanip>

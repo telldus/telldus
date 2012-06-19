@@ -1,4 +1,4 @@
-#include "ProtocolBrateck.h"
+#include "service/ProtocolBrateck.h"
 
 int ProtocolBrateck::methods() const {
 	return TELLSTICK_UP | TELLSTICK_DOWN | TELLSTICK_STOP;

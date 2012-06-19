@@ -1,9 +1,9 @@
-#include "Message.h"
-#include "Socket.h"
-#include "Strings.h"
-#include <sstream>
 #include <wctype.h>
 #include <stdlib.h>
+#include <sstream>
+#include "common/Message.h"
+#include "common/Socket.h"
+#include "common/Strings.h"
 
 using namespace TelldusCore;
 
@@ -63,7 +63,7 @@ void Message::addSpecialArgument(const std::wstring &value){
 		this->append(st.str());
 		this->append(L":");
 		this->append(value);
-		
+
 	}
 }
 
@@ -77,7 +77,7 @@ void Message::addSpecialArgument(int value){
 		this->append(L"i");
 		//this->append(st.str());
 		this->append(L"s");
-		
+
 	}
 }
 */
@@ -106,7 +106,7 @@ bool Message::nextIsString(const std::wstring &message) {
 }
 
 std::wstring Message::takeString(std::wstring *message) {
-    
+
 	if (!Message::nextIsString(*message)) {
 		return L"";
 	}

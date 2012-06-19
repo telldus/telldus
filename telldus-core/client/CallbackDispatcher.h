@@ -10,11 +10,11 @@
 #ifndef CALLBACKDISPATCHER_H
 #define CALLBACKDISPATCHER_H
 
-#include "common.h"
-#include "Event.h"
-#include "Thread.h"
-#include "Mutex.h"
-#include "telldus-core.h"
+#include "common/common.h"
+#include "common/Event.h"
+#include "common/Thread.h"
+#include "common/Mutex.h"
+#include "client/telldus-core.h"
 
 namespace TelldusCore {
 

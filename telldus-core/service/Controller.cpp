@@ -1,7 +1,7 @@
-#include "Controller.h"
-#include "Protocol.h"
-#include "EventUpdateManager.h"
-#include "Strings.h"
+#include "service/Controller.h"
+#include "service/Protocol.h"
+#include "service/EventUpdateManager.h"
+#include "common/Strings.h"
 
 class Controller::PrivateData {
 public:

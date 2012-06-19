@@ -1,5 +1,5 @@
-#include "ProtocolSilvanChip.h"
-#include "Strings.h"
+#include "service/ProtocolSilvanChip.h"
+#include "common/Strings.h"
 
 int ProtocolSilvanChip::methods() const {
 	if (TelldusCore::comparei(model(), L"kp100")) {

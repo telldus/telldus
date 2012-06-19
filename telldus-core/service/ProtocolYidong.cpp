@@ -1,4 +1,4 @@
-#include "ProtocolYidong.h"
+#include "service/ProtocolYidong.h"
 
 std::string ProtocolYidong::getStringForMethod(int method, unsigned char, Controller *) {
 	int intCode = this->getIntParameter(L"unit", 1, 4);

@@ -1,6 +1,6 @@
-#include "Device.h"
-#include "Settings.h"
-#include "TellStick.h"
+#include "service/Device.h"
+#include "service/Settings.h"
+#include "service/TellStick.h"
 
 class Device::PrivateData {
 public:

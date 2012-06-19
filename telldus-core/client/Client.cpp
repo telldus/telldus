@@ -1,11 +1,12 @@
-#include "Client.h"
-#include "CallbackDispatcher.h"
-#include "CallbackMainDispatcher.h"
-#include "Socket.h"
-#include "Strings.h"
-#include "Mutex.h"
+#include "client/Client.h"
 
 #include <list>
+
+#include "client/CallbackDispatcher.h"
+#include "client/CallbackMainDispatcher.h"
+#include "common/Socket.h"
+#include "common/Strings.h"
+#include "common/Mutex.h"
 
 using namespace TelldusCore;
 

@@ -1,11 +1,11 @@
-#include "DeviceManager.h"
-#include "ControllerMessage.h"
-#include "Mutex.h"
-#include "Sensor.h"
-#include "Settings.h"
-#include "Strings.h"
-#include "Message.h"
-#include "Log.h"
+#include "service/DeviceManager.h"
+#include "service/ControllerMessage.h"
+#include "common/Mutex.h"
+#include "service/Sensor.h"
+#include "service/Settings.h"
+#include "common/Strings.h"
+#include "common/Message.h"
+#include "service/Log.h"
 
 #include <map>
 #include <memory>

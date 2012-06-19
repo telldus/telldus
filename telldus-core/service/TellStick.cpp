@@ -9,7 +9,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "TellStick.h"
+#include "service/TellStick.h"
 
 #include <map>
 #include <stdio.h>

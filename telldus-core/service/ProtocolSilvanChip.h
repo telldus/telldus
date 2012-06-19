@@ -1,7 +1,7 @@
 #ifndef PROTOCOLSILVANCHIP_H
 #define PROTOCOLSILVANCHIP_H
 
-#include "Protocol.h"
+#include "service/Protocol.h"
 
 class ProtocolSilvanChip : public Protocol
 {

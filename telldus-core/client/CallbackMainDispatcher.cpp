@@ -7,7 +7,7 @@
  *
  */
 
-#include "CallbackMainDispatcher.h"
+#include "client/CallbackMainDispatcher.h"
 
 #include <list>
 

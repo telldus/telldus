@@ -1,8 +1,8 @@
 #ifndef PROTOCOLSARTANO_H
 #define PROTOCOLSARTANO_H
 
-#include "ControllerMessage.h"
-#include "Protocol.h"
+#include "service/Protocol.h"
+#include "service/ControllerMessage.h"
 
 class ProtocolSartano : public Protocol
 {

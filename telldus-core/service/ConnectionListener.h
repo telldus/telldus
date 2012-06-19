@@ -2,8 +2,8 @@
 #define CONNECTIONLISTENER_H
 
 #include <string>
-#include "Thread.h"
-#include "Event.h"
+#include "common/Thread.h"
+#include "common/Event.h"
 
 class Event;
 namespace TelldusCore {

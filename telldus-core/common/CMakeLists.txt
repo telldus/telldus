@@ -22,6 +22,8 @@ SET( telldus-common_HDRS
 	Thread.h
 )
 
+INCLUDE_DIRECTORIES( ${CMAKE_SOURCE_DIR} )
+
 ######## Configurable options for the platform  ########
 
 

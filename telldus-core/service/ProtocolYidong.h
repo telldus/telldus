@@ -1,7 +1,7 @@
 #ifndef PROTOCOLYIDONG_H
 #define PROTOCOLYIDONG_H
 
-#include "ProtocolSartano.h"
+#include "service/ProtocolSartano.h"
 
 class ProtocolYidong : public ProtocolSartano
 {

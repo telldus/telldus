@@ -1,4 +1,4 @@
-#include "Settings.h"
+#include "service/Settings.h"
 
 TelldusCore::Mutex Settings::mutex;
 

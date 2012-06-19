@@ -10,11 +10,11 @@
 //
 //
 
-#include "Thread.h"
+#include "common/Thread.h"
 #ifdef _WINDOWS
 #include <windows.h>
 #endif
-#include "EventHandler.h"
+#include "common/EventHandler.h"
 
 using namespace TelldusCore;
 

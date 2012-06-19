@@ -1,8 +1,8 @@
-#include "ProtocolNexa.h"
-#include <sstream>
+#include "service/ProtocolNexa.h"
 #include <stdio.h>
-#include "TellStick.h"
-#include "Strings.h"
+#include <sstream>
+#include "service/TellStick.h"
+#include "common/Strings.h"
 
 int ProtocolNexa::lastArctecCodeSwitchWasTurnOff=0;  //TODO, always removing first turnon now, make more flexible (waveman too)
 
@@ -160,12 +160,12 @@ std::string ProtocolNexa::getStringSelflearningForCode(int intHouse, int intCode
 std::string ProtocolNexa::decodeData(ControllerMessage& dataMsg)
 {
 	unsigned long allData = 0;
-	
+
 	sscanf(dataMsg.getParameter("data").c_str(), "%lx", &allData);
-	
+
 	if(TelldusCore::comparei(dataMsg.model(), L"selflearning")){
 		//selflearning
-		return decodeDataSelfLearning(allData);	
+		return decodeDataSelfLearning(allData);
 	}
 	else{
 		//codeswitch
@@ -178,24 +178,24 @@ std::string ProtocolNexa::decodeDataSelfLearning(long allData){
 	unsigned int unit = 0;
 	unsigned int group = 0;
 	unsigned int method = 0;
-	
+
 	house = allData & 0xFFFFFFC0;
 	house >>= 6;
-	
+
 	group = allData & 0x20;
 	group >>= 5;
-	
+
 	method = allData & 0x10;
 	method >>= 4;
-		
+
 	unit = allData & 0xF;
 	unit++;
-	
+
 	if(house < 1 || house > 67108863 || unit < 1 || unit > 16){
 		//not arctech selflearning
 		return "";
 	}
-	
+
 	std::stringstream retString;
 	retString << "class:command;protocol:arctech;model:selflearning;house:" << house << ";unit:" << unit << ";group:" << group << ";method:";
 	if(method == 1){
@@ -208,45 +208,45 @@ std::string ProtocolNexa::decodeDataSelfLearning(long allData){
 		//not arctech selflearning
 		return "";
 	}
-	
+
 	return retString.str();
 }
 
 std::string ProtocolNexa::decodeDataCodeSwitch(long allData){
-	
+
 	unsigned int house = 0;
 	unsigned int unit = 0;
 	unsigned int method = 0;
-	
+
 	method = allData & 0xF00;
 	method >>= 8;
-	
+
 	unit = allData & 0xF0;
 	unit >>= 4;
 	unit++;
-	
+
 	house = allData & 0xF;
-	
+
 	if(house < 0 || house > 16 || unit < 1 || unit > 16){
 		//not arctech codeswitch
 		return "";
 	}
-	
+
 	house = house + 'A'; //house from A to P
-	
+
 	if(method != 6 && lastArctecCodeSwitchWasTurnOff == 1){
 		lastArctecCodeSwitchWasTurnOff = 0;
 		return ""; //probably a stray turnon or bell	(perhaps: only certain time interval since last, check that it's the same house/unit... Will lose
-						//one turnon/bell, but it's better than the alternative...	
+						//one turnon/bell, but it's better than the alternative...
 	}
-	
+
 	if(method == 6){
 		lastArctecCodeSwitchWasTurnOff = 1;
 	}
-	
+
 	std::stringstream retString;
 	retString << "class:command;protocol:arctech;model:codeswitch;house:" << char(house);
-	
+
 	if(method == 6){
 		retString << ";unit:" << unit << ";method:turnoff;";
 	}
@@ -260,7 +260,7 @@ std::string ProtocolNexa::decodeDataCodeSwitch(long allData){
 		//not arctech codeswitch
 		return "";
 	}
-	
+
 	return retString.str();
 }
 

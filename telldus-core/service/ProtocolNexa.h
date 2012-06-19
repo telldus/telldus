@@ -1,8 +1,8 @@
 #ifndef PROTOCOLNEXA_H
 #define PROTOCOLNEXA_H
 
-#include "ControllerMessage.h"
-#include "Device.h"
+#include "service/ControllerMessage.h"
+#include "service/Device.h"
 #include <string>
 
 class ProtocolNexa : public Protocol {

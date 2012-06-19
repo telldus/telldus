@@ -1,6 +1,6 @@
-#include "Event.h"
-#include "EventHandler.h"
-#include "Thread.h"
+#include "common/Event.h"
+#include "common/EventHandler.h"
+#include "common/Thread.h"
 
 using namespace TelldusCore;
 

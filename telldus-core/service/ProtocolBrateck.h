@@ -1,7 +1,7 @@
 #ifndef PROTOCOLBRATECK_H
 #define PROTOCOLBRATECK_H
 
-#include "Protocol.h"
+#include "service/Protocol.h"
 
 class ProtocolBrateck : public Protocol
 {

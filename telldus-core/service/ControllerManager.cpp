@@ -1,13 +1,13 @@
-#include "ControllerManager.h"
-#include "Controller.h"
-#include "Mutex.h"
-#include "TellStick.h"
-#include "Log.h"
-#include "Message.h"
-#include "Strings.h"
-#include "Settings.h"
-#include "EventUpdateManager.h"
-#include "../client/telldus-core.h"
+#include "service/ControllerManager.h"
+#include "service/Controller.h"
+#include "common/Mutex.h"
+#include "service/TellStick.h"
+#include "service/Log.h"
+#include "common/Message.h"
+#include "common/Strings.h"
+#include "service/Settings.h"
+#include "service/EventUpdateManager.h"
+#include "client/telldus-core.h"
 
 #include <map>
 #include <stdio.h>

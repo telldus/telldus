@@ -1,8 +1,8 @@
 #ifndef PROTOCOLOREGON_H
 #define PROTOCOLOREGON_H
 
-#include "ControllerMessage.h"
-#include "Protocol.h"
+#include "service/Protocol.h"
+#include "service/ControllerMessage.h"
 
 class ProtocolOregon : public Protocol
 {

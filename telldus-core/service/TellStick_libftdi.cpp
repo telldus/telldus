@@ -9,19 +9,19 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "TellStick.h"
-#include "../client/telldus-core.h"
+#include "service/TellStick.h"
+#include "client/telldus-core.h"
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 
 #include <ftdi.h>
-#include "Thread.h"
-#include "Mutex.h"
-#include "Log.h"
-#include "Settings.h"
-#include "Strings.h"
-#include "common.h"
+#include "service/Log.h"
+#include "service/Settings.h"
+#include "common/Thread.h"
+#include "common/Mutex.h"
+#include "common/Strings.h"
+#include "common/common.h"
 
 #include <unistd.h>
 

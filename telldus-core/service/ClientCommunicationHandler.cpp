@@ -1,6 +1,6 @@
 #include "ClientCommunicationHandler.h"
-#include "Message.h"
-#include "Strings.h"
+#include "common/Message.h"
+#include "common/Strings.h"
 
 #include <stdlib.h>
 

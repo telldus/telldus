@@ -12,9 +12,9 @@
 #ifndef TELLSTICK_H
 #define TELLSTICK_H
 
-#include "Controller.h"
-#include "Thread.h"
 #include <list>
+#include "service/Controller.h"
+#include "common/Thread.h"
 
 class TellStickDescriptor {
 public:

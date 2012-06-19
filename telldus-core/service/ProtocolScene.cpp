@@ -1,4 +1,4 @@
-#include "ProtocolScene.h"
+#include "service/ProtocolScene.h"
 
 int ProtocolScene::methods() const {
 	return TELLSTICK_EXECUTE;

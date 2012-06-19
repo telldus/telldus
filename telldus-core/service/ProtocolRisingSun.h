@@ -1,7 +1,7 @@
 #ifndef PROTOCOLRISINGSUN_H
 #define PROTOCOLRISINGSUN_H
 
-#include "Protocol.h"
+#include "service/Protocol.h"
 
 class ProtocolRisingSun : public Protocol
 {

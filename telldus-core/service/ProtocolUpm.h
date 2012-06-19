@@ -1,7 +1,7 @@
 #ifndef PROTOCOLUPM_H
 #define PROTOCOLUPM_H
 
-#include "Protocol.h"
+#include "service/Protocol.h"
 
 class ProtocolUpm : public Protocol
 {

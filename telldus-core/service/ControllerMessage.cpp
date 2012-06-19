@@ -1,8 +1,8 @@
-#include "ControllerMessage.h"
-#include "Device.h"
-#include "Strings.h"
+#include "service/ControllerMessage.h"
+#include "service/Device.h"
+#include "common/Strings.h"
 
-#include "common.h"
+#include "common/common.h"
 
 #include <map>
 

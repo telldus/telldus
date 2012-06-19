@@ -1,5 +1,5 @@
-#include "ProtocolOregon.h"
-#include "Strings.h"
+#include "service/ProtocolOregon.h"
+#include "common/Strings.h"
 #include <stdlib.h>
 #include <sstream>
 #include <iomanip>
@@ -20,7 +20,7 @@ std::string ProtocolOregon::decodeData(ControllerMessage &dataMsg)
 
 std::string ProtocolOregon::decodeEA4C(const std::string &data) {
 	uint64_t value = TelldusCore::hexTo64l(data);
-	
+
 	uint8_t checksum = 0xE + 0xA + 0x4 + 0xC;
 	checksum -= (value & 0xF) * 0x10;
 	checksum -= 0xA;

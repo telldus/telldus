@@ -1,7 +1,7 @@
 #ifndef CONTROLLER_H
 #define CONTROLLER_H
 
-#include "Event.h"
+#include "common/Event.h"
 #include <string>
 
 class ControllerEventData : public TelldusCore::EventDataBase {

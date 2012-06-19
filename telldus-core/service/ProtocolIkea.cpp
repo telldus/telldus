@@ -1,5 +1,5 @@
-#include "ProtocolIkea.h"
-#include "Strings.h"
+#include "service/ProtocolIkea.h"
+#include "common/Strings.h"
 
 #include <stdlib.h>
 #include <string.h>

@@ -4,15 +4,14 @@
  * @{
  */
 
-#include "telldus-core.h"
-#include "common.h"
-#include "Client.h"
-#include "Message.h"
-#include "Socket.h"
 #include <stdlib.h>
+#include "client/telldus-core.h"
+#include "client/Client.h"
+#include "common/common.h"
+#include "common/Message.h"
+#include "common/Socket.h"
 
 using namespace TelldusCore;
-
 
 /**
  * @name Device method flags

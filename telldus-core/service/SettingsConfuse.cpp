@@ -10,9 +10,11 @@
 //
 //
 #include "Settings.h"
-#include "SettingsConfusePaths.h"
-#include "../client/telldus-core.h"
-#include "Strings.h"
+#include "client/telldus-core.h"
+#include "service/Settings.h"
+#include "service/SettingsConfusePaths.h"
+#include "client/telldus-core.h"
+#include "common/Strings.h"
 #include <confuse.h>
 #include <stdlib.h>
 #include <string.h>

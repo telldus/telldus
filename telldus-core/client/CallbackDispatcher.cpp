@@ -7,7 +7,7 @@
  *
  */
 
-#include "CallbackDispatcher.h"
+#include "client/CallbackDispatcher.h"
 
 using namespace TelldusCore;
 

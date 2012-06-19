@@ -1,7 +1,7 @@
 #ifndef PROTOCOLCOMEN_H
 #define PROTOCOLCOMEN_H
 
-#include "ProtocolNexa.h"
+#include "service/ProtocolNexa.h"
 #include <string>
 
 class ProtocolComen : public ProtocolNexa {

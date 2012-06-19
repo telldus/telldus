@@ -2,7 +2,7 @@
 #define SETTINGS_H
 
 #include <string>
-#include "Mutex.h"
+#include "common/Mutex.h"
 
 class Settings {
 public:

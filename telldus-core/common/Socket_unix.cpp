@@ -1,13 +1,13 @@
-#include "Socket.h"
-
-#include "Mutex.h"
-#include "Strings.h"
 
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <math.h>
+
+#include "common/Socket.h"
+#include "common/Mutex.h"
+#include "common/Strings.h"
 
 #define BUFSIZE 512
 

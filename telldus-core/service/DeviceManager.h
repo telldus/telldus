@@ -1,10 +1,10 @@
 #ifndef DEVICEMANAGER_H
 #define DEVICEMANAGER_H
 
-#include "Device.h"
-#include "ControllerManager.h"
-#include "ControllerMessage.h"
-#include "EventUpdateManager.h"
+#include "service/Device.h"
+#include "service/ControllerManager.h"
+#include "service/ControllerMessage.h"
+#include "service/EventUpdateManager.h"
 #include <set>
 
 class Sensor;

@@ -10,10 +10,10 @@
 #ifndef CALLBACKMAINDISPATCHER_H
 #define CALLBACKMAINDISPATCHER_H
 
-#include "CallbackDispatcher.h"
-#include "Thread.h"
-#include "Event.h"
-#include "EventHandler.h"
+#include "client/CallbackDispatcher.h"
+#include "common/Thread.h"
+#include "common/Event.h"
+#include "common/EventHandler.h"
 
 namespace TelldusCore {
 

@@ -1,4 +1,4 @@
-#include "TelldusMain.h"
+#include "service/TelldusMain.h"
 #include <signal.h>
 #include <string.h>
 #include <stdio.h>
@@ -9,9 +9,9 @@
 #include <pwd.h>
 #include <grp.h>
 
-#include "Settings.h"
-#include "Strings.h"
-#include "Log.h"
+#include "service/Settings.h"
+#include "common/Strings.h"
+#include "service/Log.h"
 
 #define DAEMON_NAME "telldusd"
 #define PID_FILE "/var/run/" DAEMON_NAME ".pid"

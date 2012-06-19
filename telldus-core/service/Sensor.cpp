@@ -1,6 +1,6 @@
-#include "Sensor.h"
-#include "common.h"
-#include "../client/telldus-core.h"
+#include "service/Sensor.h"
+#include "common/common.h"
+#include "client/telldus-core.h"
 #include <map>
 
 class Sensor::PrivateData {

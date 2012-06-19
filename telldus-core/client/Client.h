@@ -1,10 +1,10 @@
 #ifndef CLIENT_H
 #define CLIENT_H
 
-#include "Message.h"
-#include "telldus-core.h"
-#include "Thread.h"
-#include "CallbackDispatcher.h"
+#include "client/telldus-core.h"
+#include "client/CallbackDispatcher.h"
+#include "common/Message.h"
+#include "common/Thread.h"
 
 namespace TelldusCore {
 	class Client : public Thread

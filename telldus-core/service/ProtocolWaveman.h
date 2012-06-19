@@ -1,7 +1,7 @@
 #ifndef PROTOCOLWAVEMAN_H
 #define PROTOCOLWAVEMAN_H
 
-#include "ProtocolNexa.h"
+#include "service/ProtocolNexa.h"
 
 class ProtocolWaveman : public ProtocolNexa {
 public:

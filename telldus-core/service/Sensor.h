@@ -1,7 +1,7 @@
 #ifndef SENSOR_H
 #define SENSOR_H
 
-#include "Mutex.h"
+#include "common/Mutex.h"
 #include <string>
 
 class Sensor : public TelldusCore::Mutex

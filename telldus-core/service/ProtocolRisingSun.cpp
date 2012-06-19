@@ -1,5 +1,5 @@
-#include "ProtocolRisingSun.h"
-#include "Strings.h"
+#include "service/ProtocolRisingSun.h"
+#include "common/Strings.h"
 
 int ProtocolRisingSun::methods() const {
 	if (TelldusCore::comparei(model(), L"selflearning")) {

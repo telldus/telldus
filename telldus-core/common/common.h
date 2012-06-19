@@ -22,6 +22,7 @@
 #include <string.h>
 #include <string>
 #include <stdarg.h>
+#include "common/Strings.h"
 
 inline void msleep( const int msec) {
 #ifdef _WINDOWS

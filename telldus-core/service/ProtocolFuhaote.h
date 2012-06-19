@@ -1,7 +1,7 @@
 #ifndef PROTOCOLFUHAOTE_H
 #define PROTOCOLFUHAOTE_H
 
-#include "Protocol.h"
+#include "service/Protocol.h"
 
 class ProtocolFuhaote : public Protocol
 {

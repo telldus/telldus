@@ -2,11 +2,11 @@
 #define CLIENTCOMMUNICATIONHANDLER_H
 
 #include <string>
-#include "Thread.h"
-#include "Socket.h"
-#include "Event.h"
-#include "DeviceManager.h"
-#include "ControllerManager.h"
+#include "common/Thread.h"
+#include "common/Socket.h"
+#include "common/Event.h"
+#include "service/DeviceManager.h"
+#include "service/ControllerManager.h"
 
 class ClientCommunicationHandler : public TelldusCore::Thread
 {

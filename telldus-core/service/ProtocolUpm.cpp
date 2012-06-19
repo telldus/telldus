@@ -1,4 +1,4 @@
-#include "ProtocolUpm.h"
+#include "service/ProtocolUpm.h"
 
 int ProtocolUpm::methods() const {
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN;

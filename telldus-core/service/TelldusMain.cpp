@@ -1,13 +1,13 @@
-#include "TelldusMain.h"
-#include "ConnectionListener.h"
-#include "EventHandler.h"
-#include "ClientCommunicationHandler.h"
-#include "DeviceManager.h"
-#include "ControllerManager.h"
-#include "ControllerListener.h"
-#include "EventUpdateManager.h"
-#include "Timer.h"
-#include "Log.h"
+#include "service/TelldusMain.h"
+#include "service/ConnectionListener.h"
+#include "common/EventHandler.h"
+#include "service/ClientCommunicationHandler.h"
+#include "service/DeviceManager.h"
+#include "service/ControllerManager.h"
+#include "service/ControllerListener.h"
+#include "service/EventUpdateManager.h"
+#include "service/Timer.h"
+#include "service/Log.h"
 
 #include <stdio.h>
 #include <list>

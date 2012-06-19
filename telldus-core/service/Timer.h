@@ -1,8 +1,8 @@
 #ifndef TIMER_H
 #define TIMER_H
 
-#include "Event.h"
-#include "Thread.h"
+#include "common/Event.h"
+#include "common/Thread.h"
 
 class Timer : public TelldusCore::Thread {
 public:

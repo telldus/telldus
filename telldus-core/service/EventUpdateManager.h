@@ -1,8 +1,8 @@
 #ifndef EVENTUPDATEMANAGER_H
 #define EVENTUPDATEMANAGER_H
 
-#include "Thread.h"
-#include "Event.h"
+#include "common/Thread.h"
+#include "common/Event.h"
 
 class EventUpdateData : public TelldusCore::EventDataBase {
 public:

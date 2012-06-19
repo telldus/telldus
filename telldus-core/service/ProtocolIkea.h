@@ -1,7 +1,7 @@
 #ifndef PROTOCOLIKEA_H
 #define PROTOCOLIKEA_H
 
-#include "Protocol.h"
+#include "service/Protocol.h"
 
 class ProtocolIkea : public Protocol
 {

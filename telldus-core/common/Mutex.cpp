@@ -10,8 +10,7 @@
 //
 //
 
-#include "Mutex.h"
-#include "common.h"
+#include "common/Mutex.h"
 
 using namespace TelldusCore;
 
@@ -22,6 +21,8 @@ using namespace TelldusCore;
 	#include <pthread.h>
 	typedef pthread_mutex_t MUTEX_T;
 #endif
+
+#include "common/common.h"
 
 class Mutex::PrivateData {
 public:

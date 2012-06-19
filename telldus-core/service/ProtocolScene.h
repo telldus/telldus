@@ -1,7 +1,7 @@
 #ifndef PROTOCOLSCENE_H
 #define PROTOCOLSCENE_H
 
-#include "Protocol.h"
+#include "service/Protocol.h"
 
 class ProtocolScene : public Protocol {
 public:

@@ -88,9 +88,7 @@ SET( telldus-service_HDRS
 FIND_PACKAGE(Threads REQUIRED)
 LIST(APPEND telldus-service_LIBRARIES ${CMAKE_THREAD_LIBS_INIT})
 
-INCLUDE_DIRECTORIES(
-	${CMAKE_CURRENT_SOURCE_DIR}/../common
-)
+INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
 
 ######## Configurable options for the platform  ########
 
@@ -250,7 +248,7 @@ IF (UNIX AND NOT APPLE)
 	SET(STATE_INSTALL_DIR "${DEFAULT_STATE_INSTALL_DIR}" CACHE PATH "The directory to store state information of the devices")
 
 	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/SettingsConfusePaths.h.in
-		${CMAKE_CURRENT_BINARY_DIR}/SettingsConfusePaths.h)
+		${CMAKE_CURRENT_BINARY_DIR}/service/SettingsConfusePaths.h)
 	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 	INSTALL(FILES tellstick.conf

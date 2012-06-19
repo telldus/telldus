@@ -1,12 +1,12 @@
-#include "Log.h"
+#include "service/Log.h"
 #include <stdarg.h>
 
 #if defined(_LINUX)
 #include <syslog.h>
 #elif defined(_WINDOWS)
 #include <windows.h>
-#include "Strings.h"
-#include "Messages.h"
+#include "service/Strings.h"
+#include "service/Messages.h"
 #endif
 
 class Log::PrivateData {

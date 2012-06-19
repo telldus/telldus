@@ -1,7 +1,7 @@
 #ifndef EVENTHANDLER_H
 #define EVENTHANDLER_H
 
-#include "Event.h"
+#include "common/Event.h"
 
 namespace TelldusCore {
 

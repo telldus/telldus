@@ -1,7 +1,7 @@
 #ifndef PROTOCOLHASTA_H
 #define PROTOCOLHASTA_H
 
-#include "Protocol.h"
+#include "service/Protocol.h"
 
 class ProtocolHasta : public Protocol
 {

@@ -13,7 +13,7 @@
 #define THREAD_H
 
 #include <string>
-#include "Mutex.h"
+#include "common/Mutex.h"
 
 namespace TelldusCore {
 	class ThreadPrivate;

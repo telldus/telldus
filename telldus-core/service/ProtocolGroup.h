@@ -1,7 +1,7 @@
 #ifndef PROTOCOLGROUP_H
 #define PROTOCOLGROUP_H
 
-#include "Protocol.h"
+#include "service/Protocol.h"
 
 class ProtocolGroup : public Protocol {
 public:
