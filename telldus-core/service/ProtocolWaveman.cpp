@@ -25,13 +25,12 @@ std::string ProtocolWaveman::getOffCode() const {
 }
 
 std::string ProtocolWaveman::decodeData(const ControllerMessage& dataMsg) {
-	uint32_t allData = 0;
+	uint64_t allData = 0;
 	unsigned int house = 0;
 	unsigned int unit = 0;
 	unsigned int method = 0;
 
-	// TODO(micke): Convert sscanf. This is slow and can overflow buffers!
-	sscanf(dataMsg.getParameter("data").c_str(), "%lx", reinterpret_cast<long*>(&allData));  // NOLINT
+	allData = dataMsg.getInt64Parameter("data");
 
 	method = allData & 0xF00;
 	method >>= 8;

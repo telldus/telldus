@@ -28,8 +28,8 @@ protected:
 
 private:
 	static int lastArctecCodeSwitchWasTurnOff;
-	static std::string decodeDataCodeSwitch(uint32_t allData);
-	static std::string decodeDataSelfLearning(uint32_t allData);
+	static std::string decodeDataCodeSwitch(uint64_t allData);
+	static std::string decodeDataSelfLearning(uint64_t allData);
 };
 
 #endif  // TELLDUS_CORE_SERVICE_PROTOCOLNEXA_H_
