@@ -1,5 +1,22 @@
 SET(ENABLE_TESTING	FALSE	CACHE BOOL "Enable unit tests")
 
+#We have disabled some of the default tests in the google style guidelines
+# whitespace/tab
+#  We are using tabs for indentation, not spaces, in our code
+#
+# whitespace/parens
+#  We believe grouping of parameters with spaces in some functions could ease the readability
+#
+# whitespace/line_length
+#  Although you should try to keep the lines short it should not be a requirement (at least for now)
+#
+# whitespace/labels
+#  Since we use tabs instead of spaces for indentation, this test makes no sense
+#
+# runtime/rtti
+#  We are using dynamic_cast for the events. We use this to be able to send arbitrary data
+#  trought the events.
+#
 SET(cpplint_filters
 	+whitespace/use_tab_for_indentation,-whitespace/tab,-whitespace/parens,-whitespace/line_length,-whitespace/labels,-runtime/rtti
 )
