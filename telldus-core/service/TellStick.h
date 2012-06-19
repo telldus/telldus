@@ -8,6 +8,7 @@
 #define TELLDUS_CORE_SERVICE_TELLSTICK_H_
 
 #include <list>
+#include <string>
 #include "service/Controller.h"
 #include "common/Thread.h"
 

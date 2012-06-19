@@ -10,6 +10,7 @@
 #ifndef TELLDUS_CORE_CLIENT_CALLBACKDISPATCHER_H_
 #define TELLDUS_CORE_CLIENT_CALLBACKDISPATCHER_H_
 
+#include <string>
 #include "common/common.h"
 #include "common/Event.h"
 #include "common/Thread.h"

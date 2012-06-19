@@ -9,6 +9,7 @@
 #include "common/Strings.h"
 
 #include <stdlib.h>
+#include <string>
 
 class ClientCommunicationHandler::PrivateData {
 public:

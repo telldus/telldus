@@ -7,6 +7,7 @@
 #ifndef TELLDUS_CORE_SERVICE_PROTOCOLGROUP_H_
 #define TELLDUS_CORE_SERVICE_PROTOCOLGROUP_H_
 
+#include <string>
 #include "service/Protocol.h"
 
 class ProtocolGroup : public Protocol {

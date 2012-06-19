@@ -7,6 +7,7 @@
 #ifndef TELLDUS_CORE_SERVICE_PROTOCOLBRATECK_H_
 #define TELLDUS_CORE_SERVICE_PROTOCOLBRATECK_H_
 
+#include <string>
 #include "service/Protocol.h"
 
 class ProtocolBrateck : public Protocol

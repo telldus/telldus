@@ -4,6 +4,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include <string>
 #include "service/ProtocolYidong.h"
 
 std::string ProtocolYidong::getStringForMethod(int method, unsigned char, Controller *) {

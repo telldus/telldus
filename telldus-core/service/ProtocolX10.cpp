@@ -7,6 +7,7 @@
 #include "service/ProtocolX10.h"
 #include <stdio.h>
 #include <sstream>
+#include <string>
 
 const unsigned char HOUSES[] = {6,0xE,2,0xA,1,9,5,0xD,7,0xF,3,0xB,0,8,4,0xC};
 

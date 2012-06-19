@@ -7,6 +7,7 @@
 #ifndef TELLDUS_CORE_SERVICE_DEVICEMANAGER_H_
 #define TELLDUS_CORE_SERVICE_DEVICEMANAGER_H_
 
+#include <string>
 #include "service/Device.h"
 #include "service/ControllerManager.h"
 #include "service/ControllerMessage.h"

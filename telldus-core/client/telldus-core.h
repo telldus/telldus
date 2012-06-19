@@ -52,7 +52,7 @@ extern "C" {
 	TELLSTICK_API int WINAPI tdRegisterControllerEvent( TDControllerEvent eventFunction, void *context);
 	TELLSTICK_API int WINAPI tdUnregisterCallback( int callbackId );
 	TELLSTICK_API void WINAPI tdClose(void);
-	TELLSTICK_API void WINAPI tdReleaseString(char *string);
+	TELLSTICK_API void WINAPI tdReleaseString(char *thestring);
 
 	TELLSTICK_API int WINAPI tdTurnOn(int intDeviceId);
 	TELLSTICK_API int WINAPI tdTurnOff(int intDeviceId);

@@ -8,6 +8,7 @@
 #include <sstream>
 #include <stdio.h>
 #include "service/ControllerMessage.h"
+#include <string>
 
 int ProtocolEverflourish::methods() const {
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN;

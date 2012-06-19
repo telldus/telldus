@@ -5,6 +5,8 @@
 //
 //
 #include "service/Controller.h"
+#include <list>
+#include <string>
 #include "service/Protocol.h"
 #include "service/EventUpdateManager.h"
 #include "common/Strings.h"

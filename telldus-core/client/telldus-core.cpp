@@ -11,6 +11,7 @@
  */
 
 #include <stdlib.h>
+#include <string>
 #include "client/telldus-core.h"
 #include "client/Client.h"
 #include "common/common.h"
@@ -454,16 +455,16 @@ void WINAPI tdClose(void) {
  * This method releases resources allocated by telldus-core.  It should be
  * called on the returned value from all functions returning <tt>char *</tt>.
  *
- * @param string
+ * @param thestring
  *   A string returned from a td* function.
  *
  * @since Version 2.0.1
  **/
-void WINAPI tdReleaseString(char *string) {
+void WINAPI tdReleaseString(char *thestring) {
 #ifdef _WINDOWS
-	SysFreeString((BSTR)string);
+	SysFreeString((BSTR)thestring);
 #else
-	free(string);
+	free(thestring);
 #endif
 }
 

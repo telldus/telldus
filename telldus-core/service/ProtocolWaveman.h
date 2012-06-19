@@ -7,6 +7,7 @@
 #ifndef TELLDUS_CORE_SERVICE_PROTOCOLWAVEMAN_H_
 #define TELLDUS_CORE_SERVICE_PROTOCOLWAVEMAN_H_
 
+#include <string>
 #include "service/ProtocolNexa.h"
 
 class ProtocolWaveman : public ProtocolNexa {

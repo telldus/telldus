@@ -7,6 +7,7 @@
 #ifndef TELLDUS_CORE_SERVICE_PROTOCOLSARTANO_H_
 #define TELLDUS_CORE_SERVICE_PROTOCOLSARTANO_H_
 
+#include <string>
 #include "service/Protocol.h"
 #include "service/ControllerMessage.h"
 

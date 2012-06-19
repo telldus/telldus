@@ -5,6 +5,7 @@
 //
 //
 #include "service/ProtocolComen.h"
+#include <string>
 
 int ProtocolComen::methods() const {
 	return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);

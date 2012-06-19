@@ -9,8 +9,10 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-
+#include <unistd.h>
 #include <ftdi.h>
+#include <list>
+#include <string>
 #include "service/Log.h"
 #include "service/Settings.h"
 #include "common/Thread.h"

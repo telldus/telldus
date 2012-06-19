@@ -7,6 +7,7 @@
 #ifndef TELLDUS_CORE_SERVICE_PROTOCOLYIDONG_H_
 #define TELLDUS_CORE_SERVICE_PROTOCOLYIDONG_H_
 
+#include <string>
 #include "service/ProtocolSartano.h"
 
 class ProtocolYidong : public ProtocolSartano

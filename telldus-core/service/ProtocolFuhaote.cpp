@@ -5,6 +5,7 @@
 //
 //
 #include "service/ProtocolFuhaote.h"
+#include <string>
 
 int ProtocolFuhaote::methods() const {
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;

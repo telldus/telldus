@@ -5,6 +5,7 @@
 //
 //
 #include "service/ProtocolSilvanChip.h"
+#include <string>
 #include "common/Strings.h"
 
 int ProtocolSilvanChip::methods() const {

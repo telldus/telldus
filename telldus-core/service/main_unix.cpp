@@ -14,6 +14,7 @@
 #include <errno.h>
 #include <pwd.h>
 #include <grp.h>
+#include <string>
 
 #include "service/Settings.h"
 #include "common/Strings.h"

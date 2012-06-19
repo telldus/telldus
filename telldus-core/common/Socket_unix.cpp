@@ -10,6 +10,7 @@
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <math.h>
+#include <string>
 
 #include "common/Socket.h"
 #include "common/Mutex.h"

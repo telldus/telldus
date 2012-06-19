@@ -5,6 +5,7 @@
 //
 //
 #include "service/ProtocolRisingSun.h"
+#include <string>
 #include "common/Strings.h"
 
 int ProtocolRisingSun::methods() const {

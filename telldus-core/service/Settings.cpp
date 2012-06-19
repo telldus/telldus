@@ -5,6 +5,7 @@
 //
 //
 #include "service/Settings.h"
+#include <string>
 
 TelldusCore::Mutex Settings::mutex;
 

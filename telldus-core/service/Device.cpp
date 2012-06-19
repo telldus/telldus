@@ -5,6 +5,8 @@
 //
 //
 #include "service/Device.h"
+#include <list>
+#include <string>
 #include "service/Settings.h"
 #include "service/TellStick.h"
 
