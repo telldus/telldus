@@ -204,14 +204,18 @@ _ERROR_CATEGORIES = [
   'whitespace/parens',
   'whitespace/semicolon',
   'whitespace/tab',
-  'whitespace/todo'
+  'whitespace/todo',
+  'whitespace/use_tab_for_indentation'
   ]
 
 # The default state of the category filter. This is overrided by the --filter=
 # flag. By default all errors are on, so only add here categories that should be
 # off by default (i.e., categories that must be enabled by the --filter= flags).
 # All entries here should start with a '-' or '+', as in the --filter= flag.
-_DEFAULT_FILTERS = ['-build/include_alpha']
+_DEFAULT_FILTERS = [
+  '-build/include_alpha',
+  '-whitespace/use_tab_for_indentation'
+]
 
 # We used to check for high-bit characters, but after much discussion we
 # decided those were OK, as long as they were in UTF-8 and didn't represent
@@ -2176,6 +2180,10 @@ def CheckStyle(filename, clean_lines, linenum, file_extension, class_state,
   if line.find('\t') != -1:
     error(filename, linenum, 'whitespace/tab', 1,
           'Tab found; better to use spaces')
+
+  if line and line[0] == ' ':
+    error(filename, linenum, 'whitespace/use_tab_for_indentation', 1,
+          'Space found; use tabs for indentation')
 
   # One or three blank spaces at the beginning of the line is weird; it's
   # hard to reconcile that with 2-space indents.
