@@ -5,6 +5,11 @@
 //
 //
 #include "service/TelldusMain.h"
+
+#include <stdio.h>
+#include <list>
+#include <memory>
+
 #include "service/ConnectionListener.h"
 #include "common/EventHandler.h"
 #include "service/ClientCommunicationHandler.h"
@@ -15,9 +20,6 @@
 #include "service/Timer.h"
 #include "service/Log.h"
 
-#include <stdio.h>
-#include <list>
-#include <memory>
 
 class TelldusMain::PrivateData {
 public:

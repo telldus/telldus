@@ -6,9 +6,6 @@
 //
 
 #include "common/Strings.h"
-#include <algorithm>
-#include <sstream>
-#include <string>
 #include <string.h>
 #include <stdio.h>
 
@@ -17,6 +14,10 @@
 #else
 #include <iconv.h>
 #endif
+#include <algorithm>
+#include <sstream>
+#include <string>
+
 
 #ifdef _MACOSX
 #define WCHAR_T_ENCODING "UCS-4-INTERNAL"

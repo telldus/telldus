@@ -4,16 +4,15 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "Settings.h"
-#include "client/telldus-core.h"
-#include "service/Settings.h"
-#include "service/SettingsConfusePaths.h"
-#include "client/telldus-core.h"
-#include "common/Strings.h"
 #include <confuse.h>
 #include <stdlib.h>
 #include <string.h>
 #include <errno.h>
+#include <string>
+#include "service/Settings.h"
+#include "service/SettingsConfusePaths.h"
+#include "client/telldus-core.h"
+#include "common/Strings.h"
 
 using namespace std;
 

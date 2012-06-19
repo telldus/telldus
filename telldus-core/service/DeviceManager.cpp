@@ -5,6 +5,14 @@
 //
 //
 #include "service/DeviceManager.h"
+#include <time.h>
+#include <list>
+#include <map>
+#include <memory>
+#include <set>
+#include <sstream>
+#include <string>
+
 #include "service/ControllerMessage.h"
 #include "common/Mutex.h"
 #include "service/Sensor.h"
@@ -12,11 +20,6 @@
 #include "common/Strings.h"
 #include "common/Message.h"
 #include "service/Log.h"
-
-#include <map>
-#include <memory>
-#include <sstream>
-#include <time.h>
 
 typedef std::map<int, Device *> DeviceMap;
 

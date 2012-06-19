@@ -6,8 +6,9 @@
 //
 #include "service/TellStick.h"
 
-#include <map>
 #include <stdio.h>
+#include <map>
+#include <string>
 
 std::string TellStick::createTPacket( const std::string &msg ) {
 	std::map<unsigned char, char> times;

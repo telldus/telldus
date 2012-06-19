@@ -5,12 +5,12 @@
 //
 //
 #include "service/Timer.h"
-#include "common/Mutex.h"
 #ifdef _WINDOWS
 #else
 #include <sys/time.h>
 #include <errno.h>
 #endif
+#include "common/Mutex.h"
 
 class Timer::PrivateData {
 public:

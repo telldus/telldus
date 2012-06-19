@@ -4,7 +4,6 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "service/TelldusMain.h"
 #include <signal.h>
 #include <string.h>
 #include <stdio.h>
@@ -16,6 +15,7 @@
 #include <grp.h>
 #include <string>
 
+#include "service/TelldusMain.h"
 #include "service/Settings.h"
 #include "common/Strings.h"
 #include "service/Log.h"

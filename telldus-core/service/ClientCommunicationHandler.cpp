@@ -4,12 +4,13 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "ClientCommunicationHandler.h"
-#include "common/Message.h"
-#include "common/Strings.h"
+#include "service/ClientCommunicationHandler.h"
 
 #include <stdlib.h>
 #include <string>
+
+#include "common/Message.h"
+#include "common/Strings.h"
 
 class ClientCommunicationHandler::PrivateData {
 public:

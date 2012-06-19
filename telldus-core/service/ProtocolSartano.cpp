@@ -5,8 +5,9 @@
 //
 //
 #include "service/ProtocolSartano.h"
-#include <sstream>
 #include <stdio.h>
+#include <sstream>
+#include <string>
 
 int ProtocolSartano::methods() const {
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF;

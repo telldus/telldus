@@ -5,6 +5,12 @@
 //
 //
 #include "service/ControllerManager.h"
+
+#include <stdio.h>
+#include <list>
+#include <map>
+#include <string>
+
 #include "service/Controller.h"
 #include "common/Mutex.h"
 #include "service/TellStick.h"
@@ -14,9 +20,6 @@
 #include "service/Settings.h"
 #include "service/EventUpdateManager.h"
 #include "client/telldus-core.h"
-
-#include <map>
-#include <stdio.h>
 
 class ControllerDescriptor {
 public:

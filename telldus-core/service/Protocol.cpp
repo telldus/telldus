@@ -5,8 +5,11 @@
 //
 //
 #include "service/Protocol.h"
-#include "client/telldus-core.h"
+#include <list>
+#include <sstream>
+#include <string>
 
+#include "client/telldus-core.h"
 #include "service/ControllerMessage.h"
 #include "service/ProtocolBrateck.h"
 #include "service/ProtocolComen.h"
@@ -27,9 +30,7 @@
 #include "service/ProtocolWaveman.h"
 #include "service/ProtocolX10.h"
 #include "service/ProtocolYidong.h"
-
 #include "common/Strings.h"
-#include <sstream>
 
 class Protocol::PrivateData {
 public:

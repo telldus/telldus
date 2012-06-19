@@ -7,8 +7,8 @@
 #ifndef TELLDUS_CORE_SERVICE_SENSOR_H_
 #define TELLDUS_CORE_SERVICE_SENSOR_H_
 
-#include "common/Mutex.h"
 #include <string>
+#include "common/Mutex.h"
 
 class Sensor : public TelldusCore::Mutex {
 public:

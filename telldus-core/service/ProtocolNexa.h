@@ -7,9 +7,9 @@
 #ifndef TELLDUS_CORE_SERVICE_PROTOCOLNEXA_H_
 #define TELLDUS_CORE_SERVICE_PROTOCOLNEXA_H_
 
+#include <string>
 #include "service/ControllerMessage.h"
 #include "service/Device.h"
-#include <string>
 
 class ProtocolNexa : public Protocol {
 public:

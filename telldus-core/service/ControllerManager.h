@@ -7,10 +7,10 @@
 #ifndef TELLDUS_CORE_SERVICE_CONTROLLERMANAGER_H_
 #define TELLDUS_CORE_SERVICE_CONTROLLERMANAGER_H_
 
+#include <string>
 #include "common/Event.h"
 class Controller;
 
-#include <string>
 
 class ControllerManager {
 public:

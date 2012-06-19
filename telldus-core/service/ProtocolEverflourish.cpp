@@ -4,11 +4,11 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "ProtocolEverflourish.h"
-#include <sstream>
+#include "service/ProtocolEverflourish.h"
 #include <stdio.h>
-#include "service/ControllerMessage.h"
+#include <sstream>
 #include <string>
+#include "service/ControllerMessage.h"
 
 int ProtocolEverflourish::methods() const {
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN;

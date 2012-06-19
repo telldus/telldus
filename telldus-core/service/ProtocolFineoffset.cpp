@@ -5,10 +5,11 @@
 //
 //
 #include "service/ProtocolFineoffset.h"
-#include "common/Strings.h"
 #include <stdlib.h>
-#include <sstream>
 #include <iomanip>
+#include <sstream>
+#include <string>
+#include "common/Strings.h"
 
 std::string ProtocolFineoffset::decodeData(ControllerMessage &dataMsg) {
 	std::string data = dataMsg.getParameter("data");

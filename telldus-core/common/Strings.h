@@ -7,7 +7,6 @@
 #ifndef TELLDUS_CORE_COMMON_STRINGS_H_
 #define TELLDUS_CORE_COMMON_STRINGS_H_
 
-#include <string>
 #include <stdarg.h>
 #ifdef _MSC_VER
 typedef unsigned __int8 uint8_t;
@@ -17,6 +16,7 @@ typedef unsigned __int64 uint64_t;
 #else
 #include <stdint.h>
 #endif
+#include <string>
 
 namespace TelldusCore {
 	std::wstring charToWstring(const char *value);

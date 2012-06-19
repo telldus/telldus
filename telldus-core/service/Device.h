@@ -7,11 +7,11 @@
 #ifndef TELLDUS_CORE_SERVICE_DEVICE_H_
 #define TELLDUS_CORE_SERVICE_DEVICE_H_
 
+#include <list>
+#include <string>
 #include "service/Controller.h"
 #include "common/Mutex.h"
 #include "service/Protocol.h"
-#include <string>
-#include <list>
 
 class Device : public TelldusCore::Mutex {
 public:

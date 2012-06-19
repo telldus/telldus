@@ -7,8 +7,8 @@
 #ifndef TELLDUS_CORE_SERVICE_CONTROLLER_H_
 #define TELLDUS_CORE_SERVICE_CONTROLLER_H_
 
-#include "common/Event.h"
 #include <string>
+#include "common/Event.h"
 
 class ControllerEventData : public TelldusCore::EventDataBase {
 public:

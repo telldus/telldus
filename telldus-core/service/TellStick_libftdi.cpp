@@ -4,23 +4,22 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "service/TellStick.h"
-#include "client/telldus-core.h"
+#include <ftdi.h>
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
 #include <unistd.h>
-#include <ftdi.h>
 #include <list>
 #include <string>
+
+#include "service/TellStick.h"
 #include "service/Log.h"
 #include "service/Settings.h"
+#include "client/telldus-core.h"
 #include "common/Thread.h"
 #include "common/Mutex.h"
 #include "common/Strings.h"
 #include "common/common.h"
-
-#include <unistd.h>
 
 typedef struct _EVENT_HANDLE {
 	pthread_cond_t eCondVar;

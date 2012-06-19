@@ -7,14 +7,14 @@
 #ifndef TELLDUS_CORE_COMMON_SOCKET_H_
 #define TELLDUS_CORE_COMMON_SOCKET_H_
 
-#include <string>
-
 #ifdef _WINDOWS
 	#include <windows.h>
 	typedef HANDLE SOCKET_T;
 #else
 	typedef int SOCKET_T;
 #endif
+
+#include <string>
 
 namespace TelldusCore {
 	class Socket {

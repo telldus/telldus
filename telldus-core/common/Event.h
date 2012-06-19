@@ -7,15 +7,14 @@
 #ifndef TELLDUS_CORE_COMMON_EVENT_H_
 #define TELLDUS_CORE_COMMON_EVENT_H_
 
-#include "Thread.h"
 
-#ifdef _WINDOWS
-#include <windows.h>
-#include <memory>
-	typedef HANDLE EVENT_T;
-#else
-#include <tr1/memory>
+#ifndef _WINDOWS
+	#include <tr1/memory>
 	typedef void* EVENT_T;
+#else
+	#include <windows.h>
+	#include <memory>
+	typedef HANDLE EVENT_T;
 #endif
 #include "common/Thread.h"
 

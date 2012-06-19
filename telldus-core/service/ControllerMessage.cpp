@@ -5,12 +5,11 @@
 //
 //
 #include "service/ControllerMessage.h"
+#include <map>
+#include <string>
 #include "service/Device.h"
 #include "common/Strings.h"
-
 #include "common/common.h"
-
-#include <map>
 
 class ControllerMessage::PrivateData {
 public:

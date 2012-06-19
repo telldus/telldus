@@ -5,9 +5,10 @@
 //
 //
 #include "service/Sensor.h"
+#include <map>
+#include <string>
 #include "common/common.h"
 #include "client/telldus-core.h"
-#include <map>
 
 class Sensor::PrivateData {
 public:

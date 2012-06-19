@@ -5,10 +5,10 @@
 //
 //
 #include "common/Event.h"
+#include <list>
 #include "common/EventHandler.h"
 #include "common/Mutex.h"
 
-#include <list>
 
 using namespace TelldusCore;
 

@@ -5,10 +5,10 @@
 //
 //
 #include "service/ProtocolIkea.h"
-#include "common/Strings.h"
-
 #include <stdlib.h>
 #include <string.h>
+#include <string>
+#include "common/Strings.h"
 
 int ProtocolIkea::methods() const {
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_DIM;

@@ -7,6 +7,7 @@
 #include "service/ProtocolNexa.h"
 #include <stdio.h>
 #include <sstream>
+#include <string>
 #include "service/TellStick.h"
 #include "common/Strings.h"
 

@@ -7,8 +7,8 @@
 #ifndef TELLDUS_CORE_SERVICE_PROTOCOLCOMEN_H_
 #define TELLDUS_CORE_SERVICE_PROTOCOLCOMEN_H_
 
-#include "service/ProtocolNexa.h"
 #include <string>
+#include "service/ProtocolNexa.h"
 
 class ProtocolComen : public ProtocolNexa {
 public:

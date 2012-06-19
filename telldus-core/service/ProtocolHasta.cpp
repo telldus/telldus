@@ -5,8 +5,9 @@
 //
 //
 #include "service/ProtocolHasta.h"
-#include <sstream>
 #include <stdio.h>
+#include <sstream>
+#include <string>
 
 int ProtocolHasta::methods() const {
 	return TELLSTICK_UP | TELLSTICK_DOWN | TELLSTICK_STOP | TELLSTICK_LEARN;

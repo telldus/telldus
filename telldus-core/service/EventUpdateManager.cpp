@@ -6,13 +6,13 @@
 //
 #include "service/EventUpdateManager.h"
 
+#include <list>
+#include <memory>
+
 #include "service/ConnectionListener.h"
 #include "common/EventHandler.h"
 #include "common/Message.h"
 #include "common/Socket.h"
-
-#include <list>
-#include <memory>
 
 typedef std::list<TelldusCore::Socket *> SocketList;
 

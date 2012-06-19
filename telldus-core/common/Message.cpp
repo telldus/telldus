@@ -4,15 +4,14 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include "common/Message.h"
 #include <wctype.h>
 #include <stdlib.h>
 #include <sstream>
-#include "common/Message.h"
 #include "common/Socket.h"
 #include "common/Strings.h"
 
 using namespace TelldusCore;
-
 
 Message::Message()
 	: std::wstring() {

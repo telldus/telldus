@@ -4,19 +4,17 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "service/ConnectionListener.h"
-#include "common/Socket.h"
-
-#include <string>
 #include <sys/socket.h>
 #include <sys/un.h>
 #include <sys/types.h>
 #include <sys/stat.h>
-
-
 #include <stdio.h>
 #include <unistd.h>
 #include <errno.h>
+#include <string>
+
+#include "service/ConnectionListener.h"
+#include "common/Socket.h"
 
 class ConnectionListener::PrivateData {
 public:

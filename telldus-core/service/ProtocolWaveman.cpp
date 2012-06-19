@@ -5,8 +5,9 @@
 //
 //
 #include "service/ProtocolWaveman.h"
-#include <sstream>
 #include <stdio.h>
+#include <sstream>
+#include <string>
 
 int ProtocolWaveman::lastArctecCodeSwitchWasTurnOff=0;
 

@@ -7,12 +7,12 @@
 #ifndef TELLDUS_CORE_SERVICE_DEVICEMANAGER_H_
 #define TELLDUS_CORE_SERVICE_DEVICEMANAGER_H_
 
+#include <set>
 #include <string>
 #include "service/Device.h"
 #include "service/ControllerManager.h"
 #include "service/ControllerMessage.h"
 #include "service/EventUpdateManager.h"
-#include <set>
 
 class Sensor;
 
