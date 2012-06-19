@@ -1,3 +1,9 @@
+//
+// Copyright (C) 2012 Telldus Technologies AB. All rights reserved.
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
 /**
  * @defgroup core telldus-core
  *   Telldus Core is the base module used to interface a Telldus TellStick.

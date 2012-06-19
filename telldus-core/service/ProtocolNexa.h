@@ -1,3 +1,9 @@
+//
+// Copyright (C) 2012 Telldus Technologies AB. All rights reserved.
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
 #ifndef PROTOCOLNEXA_H
 #define PROTOCOLNEXA_H
 
@@ -18,7 +24,7 @@ protected:
 	virtual std::string getOffCode() const;
 	static std::string getCodeSwitchTuple(int code);
 	static std::string getStringSelflearningForCode(int house, int unit, int method, unsigned char data);
-	
+
 private:
 	static int lastArctecCodeSwitchWasTurnOff;
 	static std::string decodeDataCodeSwitch(long allData);

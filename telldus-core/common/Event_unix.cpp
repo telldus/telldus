@@ -1,3 +1,9 @@
+//
+// Copyright (C) 2012 Telldus Technologies AB. All rights reserved.
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
 #include "common/Event.h"
 #include "common/EventHandler.h"
 #include "common/Thread.h"
