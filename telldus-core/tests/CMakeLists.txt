@@ -1,7 +1,7 @@
 SET(ENABLE_TESTING	FALSE	CACHE BOOL "Enable unit tests")
 
 SET(cpplint_filters
-	-whitespace/tab,-whitespace/parens,-whitespace/line_length,-whitespace/labels
+	+whitespace/use_tab_for_indentation,-whitespace/tab,-whitespace/parens,-whitespace/line_length,-whitespace/labels,-runtime/rtti
 )
 
 FUNCTION(ADD_SOURCES TARGET PATH)
