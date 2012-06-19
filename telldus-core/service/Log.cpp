@@ -47,13 +47,10 @@ Log::Log()
 	dwError = RegCreateKey( HKEY_LOCAL_MACHINE, path.c_str(), &hRegKey );
 
 	GetModuleFileName( NULL, filePath, MAX_PATH );
-	dwError = RegSetValueEx( hRegKey, L"EventMessageFile", 0,
-                           REG_EXPAND_SZ, (PBYTE) filePath,
-                           (DWORD)(wcslen(filePath) + 1) * sizeof TCHAR );
+	dwError = RegSetValueEx( hRegKey, L"EventMessageFile", 0, REG_EXPAND_SZ, (PBYTE) filePath, (DWORD)(wcslen(filePath) + 1) * sizeof TCHAR );
 
 	DWORD dwTypes = LOG_DEBUG | LOG_NOTICE | LOG_WARNING | LOG_ERR;
-    dwError = RegSetValueEx( hRegKey, L"TypesSupported",
-              0, REG_DWORD, (LPBYTE) &dwTypes, sizeof dwTypes );
+		dwError = RegSetValueEx( hRegKey, L"TypesSupported", 0, REG_DWORD, (LPBYTE) &dwTypes, sizeof dwTypes );
 
 	RegCloseKey(hRegKey);
 
