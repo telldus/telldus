@@ -259,3 +259,16 @@ IF (UNIX AND NOT APPLE)
 		PERMISSIONS OWNER_READ OWNER_WRITE GROUP_READ GROUP_WRITE WORLD_READ WORLD_WRITE
 	)
 ENDIF (UNIX AND NOT APPLE)
+
+IF(ENABLE_TESTING)
+	# Build it once more, but as static library so it can be linked by the test-tool
+	ADD_LIBRARY(TelldusServiceStatic STATIC
+		${telldus-service_SRCS}
+		${telldus-service_protocol_SRCS}
+		${telldus-service_HDRS}
+	)
+	TARGET_LINK_LIBRARIES( TelldusServiceStatic	${telldus-service_LIBRARIES} )
+	IF (UNIX)
+		SET_TARGET_PROPERTIES( TelldusServiceStatic PROPERTIES COMPILE_FLAGS "-fPIC")
+	ENDIF (UNIX)
+ENDIF()
