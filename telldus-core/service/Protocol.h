@@ -33,8 +33,8 @@ public:
 	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller) = 0;
 
 protected:
-	std::wstring getStringParameter(const std::wstring &name, const std::wstring &defaultValue = L"") const;
-	int getIntParameter(const std::wstring &name, int min, int max) const;
+	virtual std::wstring getStringParameter(const std::wstring &name, const std::wstring &defaultValue = L"") const;
+	virtual int getIntParameter(const std::wstring &name, int min, int max) const;
 
 	static bool checkBit(int data, int bit);
 
