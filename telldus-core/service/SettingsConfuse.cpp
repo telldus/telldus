@@ -291,7 +291,7 @@ int Settings::setStringSetting(Node type, int intDeviceId, const std::wstring &n
 			std::string newValue = TelldusCore::wideToString(value);
 			cfg_t *p = cfg_device;
 			if (parameter) {
-				cfg_t *cfg_p = cfg_getsec(cfg_device, "parameters");
+				p = cfg_getsec(cfg_device, "parameters");
 			}
 			cfg_opt_t *opt = cfg_getopt(p, TelldusCore::wideToString(name).c_str());
 			if (!opt) {
