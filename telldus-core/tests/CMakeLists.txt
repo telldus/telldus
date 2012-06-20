@@ -31,10 +31,11 @@ ENDFUNCTION()
 
 IF(ENABLE_TESTING)
 	ADD_SUBDIRECTORY(common)
+	ADD_SUBDIRECTORY(service)
 
 	ADD_EXECUTABLE(TestRunner cppunit.cpp)
-	TARGET_LINK_LIBRARIES(TestRunner cppunit TelldusCommonTests)
-	ADD_DEPENDENCIES(TestRunner TelldusCommonTests)
+	TARGET_LINK_LIBRARIES(TestRunner cppunit TelldusCommonTests TelldusServiceTests)
+	ADD_DEPENDENCIES(TestRunner TelldusCommonTests TelldusServiceTests)
 
 	ADD_SOURCES(TelldusCommon ${CMAKE_SOURCE_DIR}/common)
 	ADD_SOURCES(${telldus-core_TARGET} ${CMAKE_SOURCE_DIR}/client)
