@@ -13,7 +13,9 @@
 class ProtocolComen : public ProtocolNexa {
 public:
 	virtual int methods() const;
-	virtual std::string getStringForMethod(int method, unsigned char data, Controller *controller);
+
+protected:
+	virtual int getIntParameter(const std::wstring &name, int min, int max) const;
 };
 
 #endif  // TELLDUS_CORE_SERVICE_PROTOCOLCOMEN_H_

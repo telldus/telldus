@@ -8,12 +8,16 @@
 #include <string>
 
 int ProtocolComen::methods() const {
-	return (TELLSTICK_TURNON | TELLSTICK_TURNOFF);
+	return (TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_LEARN);
 }
 
-std::string ProtocolComen::getStringForMethod(int method, unsigned char level, Controller *) {
-	int intHouse = getIntParameter(L"house", 1, 33554431);
-	intHouse <<= 1;  // They seem to only accept even codes?
-	int intCode = getIntParameter(L"unit", 1, 16)-1;
-	return getStringSelflearningForCode(intHouse, intCode, method, level);
+int ProtocolComen::getIntParameter(const std::wstring &name, int min, int max) const {
+	if (name.compare(L"house") == 0) {
+		int intHouse = Protocol::getIntParameter(L"house", 1, 16777215);
+		// The last two bits must be hardcoded
+		intHouse <<= 2;
+		intHouse += 2;
+		return intHouse;
+	}
+	return Protocol::getIntParameter(name, min, max);
 }
