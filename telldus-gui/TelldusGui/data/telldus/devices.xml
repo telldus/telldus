@@ -2,6 +2,9 @@
 <devices>
 	<type name="Remote Switches" expanded="true">
 		<!--<text></text> -->
+		<vendor name="Anslut" image="anslut">
+			<device model="selflearning-switch:jula" protocol="comen" widget="17" image="anslut_sl" name="Self Learning on/off">Self Learning on/off</device>
+		</vendor>
 		<vendor name="Brennenstuhl" image="brennenstuhl">
 			<device model="codeswitch:brennenstuhl" protocol="sartano" widget="2" image="brennenstuhl_cs" name="Code Switch">Code Switch</device>
 		</vendor>

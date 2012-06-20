@@ -1,6 +1,7 @@
 <RCC>
 	<qresource prefix="/" >
 		<file alias="data/devices.xml">devices.xml</file>
+		<file>../../images/devices/anslut_sl.png</file>
 		<file>../../images/devices/arctech_cs.png</file>
 		<file>../../images/devices/arctech_sl.png</file>
 		<file>../../images/devices/bell.png</file>
@@ -26,6 +27,7 @@
 		<file>../../images/devices/waveman_cs.png</file>
 		<file>../../images/devices/x10.png</file>
 		<file>../../images/devices/zke-2603.png</file>
+		<file>../../images/vendors/anslut.png</file>
 		<file>../../images/vendors/byebyelogo.png</file>
 		<file>../../images/vendors/chacon.png</file>
 		<file>../../images/vendors/coco.png</file>
