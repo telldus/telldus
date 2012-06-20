@@ -95,14 +95,12 @@ unsigned int ProtocolEverflourish::calculateChecksum(unsigned int x) {
 }
 
 std::string ProtocolEverflourish::decodeData(const ControllerMessage &dataMsg) {
-	std::string data = dataMsg.getParameter("data");
-	unsigned int allData;
+	uint64_t allData;
 	unsigned int house = 0;
 	unsigned int unit = 0;
 	unsigned int method = 0;
 
-	// TODO(micke): Convert sscanf. This is slow and can overflow buffers!
-	sscanf(data.c_str(), "%X", &allData);  // NOLINT(runtime/printf)
+	allData = dataMsg.getInt64Parameter("data");
 
 	house = allData & 0xFFFC00;
 	house >>= 10;
