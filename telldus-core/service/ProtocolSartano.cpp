@@ -42,16 +42,14 @@ std::string ProtocolSartano::getStringForCode(const std::wstring &strCode, int m
 }
 
 std::string ProtocolSartano::decodeData(const ControllerMessage &dataMsg) {
-	std::string data = dataMsg.getParameter("data");
-	signed int allDataIn;
-	signed int allData = 0;
+	uint64_t allDataIn;
+	uint16_t allData = 0;
 	unsigned int code = 0;
 	unsigned int method1 = 0;
 	unsigned int method2 = 0;
 	unsigned int method = 0;
 
-	// TODO(micke): Convert sscanf. This is slow and can overflow buffers!
-	sscanf(data.c_str(), "%X", &allDataIn);  // NOLINT(runtime/printf)
+	allDataIn = dataMsg.getInt64Parameter("data");
 
 	uint16_t mask = (1<<11);
 	for(int i = 0; i < 12; ++i) {
