@@ -158,6 +158,10 @@ ELSE (APPLE) #### Linux ####
 		main_unix.cpp
 		SettingsConfuse.cpp
 	)
+	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/SettingsConfusePaths.h.in
+		${CMAKE_CURRENT_BINARY_DIR}/service/SettingsConfusePaths.h)
+	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
+
 	LIST(APPEND telldus-service_LIBRARIES
 		${CONFUSE_LIBRARY}
 		TelldusCommon
@@ -246,10 +250,6 @@ IF (UNIX AND NOT APPLE)
 		SET(DEFAULT_STATE_INSTALL_DIR "/var/state")
 	ENDIF ()
 	SET(STATE_INSTALL_DIR "${DEFAULT_STATE_INSTALL_DIR}" CACHE PATH "The directory to store state information of the devices")
-
-	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/SettingsConfusePaths.h.in
-		${CMAKE_CURRENT_BINARY_DIR}/service/SettingsConfusePaths.h)
-	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 	INSTALL(FILES tellstick.conf
 		DESTINATION ${SYSCONF_INSTALL_DIR}
