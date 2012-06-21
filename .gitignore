@@ -4,3 +4,4 @@ Doxyfile
 html/
 latex/
 CMakeLists.txt.user
+*.pyc
