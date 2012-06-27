@@ -15,6 +15,7 @@ class Client():
 		self.privateKey = ''
 		self.hashMethod = 'sha1'
 		self.pongTimer = 0
+		self.pingTimer = 0
 		self.supportedMethods = 0
 		self.tellduscore = TelldusCore()
 		self.serverList = ServerList()
@@ -58,6 +59,7 @@ class Client():
 
 		self.socket.write(self.signedMessage(msg))
 		self.pongTimer = time.time()
+		self.pingTimer = time.time()
 		while(1):
 			try:
 				resp = self.socket.read(1024)
@@ -66,8 +68,14 @@ class Client():
 				if (time.time() - self.pongTimer >= 360):  # No pong received
 					print("No pong received, disconnecting")
 					break
+				if (time.time() - self.pingTimer >= 120):
+					# Time to ping
+					msg = LiveMessage("Ping")
+					self.socket.write(self.signedMessage(msg))
+					self.pingTimer = time.time()
 
 				continue
+
 			if (resp == ''):
 				print("no response")
 				break
