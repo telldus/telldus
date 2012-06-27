@@ -14,6 +14,7 @@ class Client():
 		self.publicKey = ''
 		self.privateKey = ''
 		self.hashMethod = 'sha1'
+		self.pongTimer = 0
 		self.supportedMethods = 0
 		self.tellduscore = TelldusCore()
 		self.serverList = ServerList()
@@ -56,23 +57,28 @@ class Client():
 		})
 
 		self.socket.write(self.signedMessage(msg))
+		self.pongTimer = time.time()
 		while(1):
 			try:
 				resp = self.socket.read(1024)
 			except ssl.SSLError:
-				# Timeout, try again
-				# TODO(micke): Check pong timer here
+				# Timeout, try again after some maintenance
+				if (time.time() - self.pongTimer >= 360):  # No pong received
+					print("No pong received, disconnecting")
+					break
+
 				continue
 			if (resp == ''):
 				print("no response")
 				break
-				continue
 
 			envelope = LiveMessage.fromByteArray(resp)
-			if (envelope.verifySignature(self.hashMethod, self.privateKey)):
-				self.handleMessage(LiveMessage.fromByteArray(envelope.argument(0).stringVal))
-			else:
+			if (not envelope.verifySignature(self.hashMethod, self.privateKey)):
 				print "Signature failed"
+				continue
+
+			self.pongTimer = time.time()
+			self.handleMessage(LiveMessage.fromByteArray(envelope.argument(0).stringVal))
 
 	def handleCommand(self, args):
 		if (args['action'].stringVal == 'turnon'):
@@ -105,6 +111,9 @@ class Client():
 
 		if (message.name() == "command"):
 			self.handleCommand(message.argument(0).dictVal)
+			return
+
+		if (message.name() == "pong"):
 			return
 
 		print "Did not understand: %s" % message.toByteArray()
