@@ -32,9 +32,9 @@ class TelldusCore():
 			device['state'] = self.lib.tdLastSentCommand(device['id'], supportedMethods)
 
 	def turnoff(self, id):
-		self.lib.tdTurnOff(id)
 		print "Turning off: %i" % id
+		self.lib.tdTurnOff(id)
 
 	def turnon(self, id):
-		self.lib.tdTurnOn(id)
 		print "Turning on: %i" % id
+		self.lib.tdTurnOn(id)
