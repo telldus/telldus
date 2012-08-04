@@ -9,7 +9,7 @@ print "Devices: %d\n" % devices
 allMethods = telldus.TELLDUS_TURNON | telldus.TELLDUS_TURNOFF | telldus.TELLDUS_BELL | telldus.TELLDUS_DIM
 
 for i in xrange(devices):
-	deviceid = telldus.tdGetDeviceId(i);
+	deviceid = telldus.tdGetDeviceId(i)
 	name = tdGetName(id)
 	
 	print "%s - %s\n" % (deviceid, name)
@@ -31,7 +31,7 @@ for i in xrange(devices):
 		telldus.tdBell(deviceid)
 		time.sleep(1)
 		
-	if methods & telldus.TELLDUS_TOGGLE
+	if methods & telldus.TELLDUS_TOGGLE:
 		print " * Toggle\n"
 		
 	if methods & telldus.TELLDUS_DIM:
