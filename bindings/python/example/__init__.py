@@ -3,7 +3,7 @@ import telldus
 import time
 
 telldus.tdInit()
-devices = telldus.tdGetNumberOfDevices();
+devices = telldus.tdGetNumberOfDevices()
 print "Devices: %d\n" % devices
 
 allMethods = telldus.TELLDUS_TURNON | telldus.TELLDUS_TURNOFF | telldus.TELLDUS_BELL | telldus.TELLDUS_DIM
