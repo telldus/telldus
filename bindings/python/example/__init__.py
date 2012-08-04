@@ -10,7 +10,7 @@ allMethods = telldus.TELLDUS_TURNON | telldus.TELLDUS_TURNOFF | telldus.TELLDUS_
 
 for i in xrange(devices):
 	deviceid = telldus.tdGetDeviceId(i)
-	name = tdGetName(id)
+	name = tdGetName(deviceid)
 	
 	print "%s - %s\n" % (deviceid, name)
 	
