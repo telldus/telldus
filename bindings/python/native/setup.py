@@ -312,7 +312,7 @@ if PLATFORM_IS_WINDOWS:
 	telldus_platform = os.environ.get("TELLDUS_PLATFORM", 'x86_64')
 	telldus_library_dir = os.path.join(telldus_dev_dir, telldus_platform)
 	
-	include_dirs = [sdk_include_dir, os.path.dirname(this_file)]
+	include_dirs = [sdk_include_dir, telldus_dev_dir]
 	library_dirs = [telldus_library_dir]
 	libraries = ['python%i%i' % (sys.version_info[0], sys.version_info[1]) , 'TelldusCore']
 	define_macros = [('_WINDOWS', 1)]
