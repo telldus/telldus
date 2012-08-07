@@ -490,13 +490,20 @@ telldus_tdRegisterSensorEvent(PyObject *self, PyObject *args)
 			
 	return PyLong_FromLong((long) tdRegisterSensorEvent((TDSensorEvent) telldus_sensorEventCallback, &func));
 }
+
+static PyObject *
+telldus_tdUnregisterCallback(PyObject *self, PyObject *args)
+{
+	long id;
+
+	if (!PyArg_ParseTuple(args, "l", &id));
+		return NULL;
+
+	return PyBool_FromLong((long) tdUnregisterCallback(id));
+}
 */
 
 static PyMethodDef telldus_methods[] = {
-	/* The cast of the function is necessary since PyCFunction values
-	* only take two PyObject* parameters, and keywdarg_parrot() takes
-	* three.
-	*/
 	{"tdInit", (PyCFunction) telldus_tdInit, METH_NOARGS, "Initiate telldus."},
 	{"tdClose", (PyCFunction) telldus_tdClose, METH_NOARGS, "Close telldus."},
 	{"tdTurnOn", (PyCFunction) telldus_tdTurnOn, METH_VARARGS, "Turn on device."},
@@ -527,6 +534,7 @@ static PyMethodDef telldus_methods[] = {
 	{"tdRegisterDeviceChangeEvent", (PyCFunction) telldus_tdRegisterDeviceChangeEvent, METH_VARARGS, "RegisterDeviceChangeEvent comment."},
 	{"tdRegisterRawDeviceEvent", (PyCFunction) telldus_tdRegisterRawDeviceEvent, METH_VARARGS, "RegisterRawDeviceEvent comment."},
 	{"tdRegisterSensorEvent", (PyCFunction) telldus_tdRegisterSensorEvent, METH_VARARGS, "RegisterSensorEvent comment."},
+	{"tdUnregisterCallback", (PyCFunction) telldus_tdUnregisterCallback, METH_VARARGS, "UnregisterCallback comment."},
 		
 */
 	{NULL, NULL, 0, NULL}   /* sentinel */
@@ -552,7 +560,9 @@ inittelldus(void)
 	PyObject *TELLSTICK_ERROR_UNKNOWN_GLUE;
 	PyObject *TELLSTICK_TYPE_DEVICE_GLUE;
 	PyObject *TELLSTICK_TYPE_GROUP_GLUE;
-
+	PyObject *TELLSTICK_TEMPERATURE_GLUE;
+	PyObject *TELLSTICK_HUMIDITY_GLUE;
+		
 	/* Create the module and add the functions */
 
 	/* PyEval_InitThreads(); */
@@ -617,5 +627,14 @@ inittelldus(void)
 	
 	TELLSTICK_TYPE_GROUP_GLUE = PyLong_FromLong((long) TELLSTICK_TYPE_GROUP);
 	PyObject_SetAttrString(module, "TELLSTICK_TYPE_GROUP", TELLSTICK_TYPE_GROUP_GLUE);
-	Py_DECREF(TELLSTICK_TYPE_GROUP_GLUE); 
+	Py_DECREF(TELLSTICK_TYPE_GROUP_GLUE);
+
+	PyObject *TELLSTICK_TEMPERATURE_GLUE = PyLong_FromLong((long) TELLSTICK_TEMPERATURE);
+	PyObject_SetAttrString(module, "TELLSTICK_TEMPERATURE", TELLSTICK_TEMPERATURE_GLUE);
+	Py_DECREF(TELLSTICK_TEMPERATURE_GLUE);
+	
+	PyObject *TELLSTICK_HUMIDITY_GLUE = PyLong_FromLong((long) TELLSTICK_HUMIDITY);
+	PyObject_SetAttrString(module, "TELLSTICK_HUMIDITY", TELLSTICK_HUMIDITY_GLUE);
+	Py_DECREF(TELLSTICK_HUMIDITY_GLUE);
+
 }
