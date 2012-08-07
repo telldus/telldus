@@ -31,13 +31,13 @@ if PLATFORM_IS_WINDOWS:
             http://www.microsoft.com/en-us/download/details.aspx?id=6506
             http://jenshuebel.wordpress.com/2009/02/12/visual-c-2008-express-edition-and-64-bit-targets/
             http://www.cppblog.com/Files/xcpp/VCE64BIT_WIN7SDK.zip
-            copy 
-            
+
         For 32bit build:
-          Microsoft Windows SDK for Windows 7 and .NET Framework 3.5
-          http://www.microsoft.com/downloads/en/details.aspx?FamilyID=6b6c21d2-2006-4afa-9702-529fa782d63b
-          Run C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\vcvars32.bat
-          
+            Microsoft Windows SDK for Windows 7 and .NET Framework 3.5
+            http://www.microsoft.com/downloads/en/details.aspx?FamilyID=6b6c21d2-2006-4afa-9702-529fa782d63b
+            Copy C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\vcvars32.bat to
+            C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\vcvarsall.bat
+            
         For 64bit build:
             Microsoft Windows SDK for Windows 7 and .NET Framework 3.5 SP1 (ISO) GRMSDKX_EN_DVD.iso 
             http://www.microsoft.com/en-us/download/details.aspx?id=18950     

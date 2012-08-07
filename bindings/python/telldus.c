@@ -21,7 +21,7 @@ estrdup(char *s)
    register char  *t;
 
    if (NULL == (t = malloc(strlen(s)+1))) {
-      return NULL;
+      return PyErr_NoMemory();
    }
    strcpy(t, s);
    return(t);
@@ -30,6 +30,7 @@ estrdup(char *s)
 static PyObject *
 telldus_tdInit(PyObject *self)
 {
+   /* PyEval_InitThreads(); */
    tdInit();
    Py_INCREF(Py_None);
    return Py_None;
@@ -333,6 +334,172 @@ telldus_tdSendRawCommand(PyObject *self, PyObject *args)
    return PyLong_FromLong((long) tdSendRawCommand(command, reserved));
 }
 
+/*
+    Work in progress event callbacks
+*/
+ 
+/*
+void
+telldus_deviceEventCallback(int deviceId, int method, const char *data, int callbackId, void *pyfunc)
+{
+    PyObject * arglist; 
+    PyObject * result; 
+    PyGILState_STATE gstate;
+    
+    gstate = PyGILState_Ensure();
+    
+    // prepare the arg list to pass into the Python callback function
+    arglist = Py_BuildValue("llsl", deviceId, method, data, callbackId);
+
+    // now call the Python callback function
+    result = PyEval_CallObject(pyfunc, arglist);
+
+    if (result == NULL) {
+        // something went wrong so print to stderr
+        PyErr_Print();
+    }
+
+    // take care of reference handling
+    Py_DECREF(arglist);
+    Py_XDECREF(result);
+    
+    PyGILState_Release(gstate);
+    
+    return;
+}
+    
+void
+telldus_deviceChangeEventCallback(int deviceId, int changeEvent, int changeType, int callbackId, void *pyfunc)
+{
+    PyObject * arglist; 
+    PyObject * result; 
+    PyGILState_STATE gstate;
+    
+    gstate = PyGILState_Ensure();
+    
+    // prepare the arg list to pass into the Python callback function
+    arglist = Py_BuildValue("llll", deviceId, changeEvent, changeType, callbackId);
+
+    // now call the Python callback function
+    result = PyEval_CallObject(pyfunc, arglist);
+
+    if (result == NULL) {
+        // something went wrong so print to stderr
+        PyErr_Print();
+    }
+
+    // take care of reference handling
+    Py_DECREF(arglist);
+    Py_XDECREF(result);
+    
+    PyGILState_Release(gstate);
+    
+    return;   
+}
+    
+void
+telldus_rawDeviceEventCallback(const char *data, int controllerId, int callbackId, void *pyfunc)
+{
+    PyObject * arglist; 
+    PyObject * result; 
+    PyGILState_STATE gstate;
+    
+    gstate = PyGILState_Ensure();
+    
+    // prepare the arg list to pass into the Python callback function
+    arglist = Py_BuildValue("sll", data, controllerId, callbackId);
+
+    // now call the Python callback function
+    result = PyEval_CallObject(pyfunc, arglist);
+
+    if (result == NULL) {
+        // something went wrong so print to stderr
+        PyErr_Print();
+    }
+
+    // take care of reference handling
+    Py_DECREF(arglist);
+    Py_XDECREF(result);
+    
+    PyGILState_Release(gstate);
+    
+    return;
+}
+
+void
+telldus_sensorEventCallback(const char *protocol, const char *model, int id, int dataType, const char *value, int timestamp, int callbackId, void *pyfunc)
+{
+    PyObject * arglist; 
+    PyObject * result; 
+    PyGILState_STATE gstate;
+    
+    gstate = PyGILState_Ensure();
+    
+    // prepare the arg list to pass into the Python callback function
+    arglist = Py_BuildValue("ssllsll", protocol, model, id, dataType, value, timestamp, callbackId);
+
+    // now call the Python callback function
+    result = PyEval_CallObject(pyfunc, arglist);
+
+    if (result == NULL) {
+        // something went wrong so print to stderr
+        PyErr_Print();
+    }
+
+    // take care of reference handling
+    Py_DECREF(arglist);
+    Py_XDECREF(result);
+    
+    PyGILState_Release(gstate);
+    
+    return; 
+}
+
+static PyObject *
+telldus_tdRegisterDeviceEvent(PyObject *self, PyObject *args)
+{
+   PyObject *func;
+
+   if (!PyArg_ParseTuple(args, "O", &func));
+      return NULL;
+      
+    return PyLong_FromLong((long) tdRegisterDeviceEvent((TDDeviceEvent) telldus_deviceEventCallback, &func));
+}
+
+static PyObject *
+telldus_tdRegisterDeviceChangeEvent(PyObject *self, PyObject *args)
+{
+   PyObject *func;
+
+   if (!PyArg_ParseTuple(args, "O", &func));
+      return NULL;
+      
+    return PyLong_FromLong((long) tdRegisterDeviceChangeEvent((TDDeviceChangeEvent) telldus_deviceChangeEventCallback, &func));
+}
+
+static PyObject *
+telldus_tdRegisterRawDeviceEvent(PyObject *self, PyObject *args)
+{
+   PyObject *func;
+
+   if (!PyArg_ParseTuple(args, "O", &func));
+      return NULL;
+      
+    return PyLong_FromLong((long) tdRegisterRawDeviceEvent((TDRawDeviceEvent) telldus_rawDeviceEventCallback, &func));
+}
+
+static PyObject *
+telldus_tdRegisterSensorEvent(PyObject *self, PyObject *args)
+{
+   PyObject *func;
+
+   if (!PyArg_ParseTuple(args, "O", &func));
+      return NULL;
+      
+    return PyLong_FromLong((long) tdRegisterSensorEvent((TDSensorEvent) telldus_sensorEventCallback, &func));
+}
+*/
+
 static PyMethodDef telldus_methods[] = {
    /* The cast of the function is necessary since PyCFunction values
     * only take two PyObject* parameters, and keywdarg_parrot() takes
@@ -363,6 +530,13 @@ static PyMethodDef telldus_methods[] = {
    {"tdAddDevice", (PyCFunction) telldus_tdAddDevice, METH_NOARGS, "AddDevice comment."},
    {"tdRemoveDevice", (PyCFunction) telldus_tdRemoveDevice, METH_VARARGS, "RemoveDevice comment."},
    {"tdSendRawCommand", (PyCFunction) telldus_tdSendRawCommand, METH_VARARGS, "SendRawCommand comment."},
+/*
+   {"tdRegisterDeviceEvent", (PyCFunction) telldus_tdRegisterDeviceEvent, METH_VARARGS, "RegisterDeviceEvent comment."},
+   {"tdRegisterDeviceChangeEvent", (PyCFunction) telldus_tdRegisterDeviceChangeEvent, METH_VARARGS, "RegisterDeviceChangeEvent comment."},
+   {"tdRegisterRawDeviceEvent", (PyCFunction) telldus_tdRegisterRawDeviceEvent, METH_VARARGS, "RegisterRawDeviceEvent comment."},
+   {"tdRegisterSensorEvent", (PyCFunction) telldus_tdRegisterSensorEvent, METH_VARARGS, "RegisterSensorEvent comment."},
+       
+*/
    {NULL, NULL, 0, NULL}   /* sentinel */
 };
 
