@@ -1,4 +1,5 @@
 #include "Python.h"
+#include "datetime.h"
 #include <telldus-core.h>
 #include <stdio.h>
 
@@ -333,15 +334,11 @@ telldus_tdSendRawCommand(PyObject *self, PyObject *args)
 	return PyLong_FromLong((long) tdSendRawCommand(command, reserved));
 }
 
-/*
-	Work in progress event callbacks
-*/
- 
-/*
+
 void
 telldus_deviceEventCallback(int deviceId, int method, const char *data, int callbackId, void *pyfunc)
 {
-	PyObject * arglist; 
+
 	PyObject * result; 
 	PyGILState_STATE gstate;
 	
@@ -501,7 +498,71 @@ telldus_tdUnregisterCallback(PyObject *self, PyObject *args)
 
 	return PyBool_FromLong((long) tdUnregisterCallback(id));
 }
-*/
+
+static PyObject *
+telldus_tdSensor(PyObject *self, PyObject *args)
+{
+	char protocol[DATA_LENGTH];
+	char model[DATA_LENGTH];
+	long sensorId = 0;
+	long dataTypes = 0;
+		
+	long result;
+
+   result = tdSensor(protocol, DATA_LENGTH, model, DATA_LENGTH, &sensorId, &dataTypes);
+   
+	if (result == TELLSTICK_SUCCESS)
+	{
+		return Py_BuildValue("ssll", protocol, model, sensorId, dataTypes);
+	}
+	else
+	{
+	   return PyBool_FromLong(result);
+	}
+
+}
+
+static PyObject *
+telldus_tdSensorValue(PyObject *self, PyObject *args)
+{
+	char protocol[DATA_LENGTH];
+	char model[DATA_LENGTH];
+	long sensorId = 0;
+	long dataType = 0;
+	char value[DATA_LENGTH];
+	long timestamp = 0;
+
+	PyObject *floatObj; 
+	PyObject *timeTuple; 
+	
+	long result;
+
+	PyObject *py_date;
+	
+	if (!PyArg_ParseTuple(args, "ssll", &protocol, &model, &sensorId, &dataType));
+		return NULL;
+	
+	result = tdSensorValue(protocol, model, sensorId, dataType, &value, DATA_LENGTH, &timestamp);
+	
+	floatObj = PyFloat_FromDouble(timestamp); 
+	timeTuple = Py_BuildValue("(O)", floatObj);
+	Py_DECREF(floatObj);	
+			
+	py_date = PyDateTime_FromTimestamp(timeTuple);
+	
+	Py_DECREF(timeTuple);
+	
+	Py_INCREF(py_date);
+	
+	if (result == TELLSTICK_SUCCESS)
+	{
+		return Py_BuildValue("sO", value, py_date);
+	}
+	else
+	{
+	   return PyBool_FromLong(result);
+	}
+}
 
 static PyMethodDef telldus_methods[] = {
 	{"tdInit", (PyCFunction) telldus_tdInit, METH_NOARGS, "Initiate telldus."},
@@ -529,14 +590,15 @@ static PyMethodDef telldus_methods[] = {
 	{"tdAddDevice", (PyCFunction) telldus_tdAddDevice, METH_NOARGS, "AddDevice comment."},
 	{"tdRemoveDevice", (PyCFunction) telldus_tdRemoveDevice, METH_VARARGS, "RemoveDevice comment."},
 	{"tdSendRawCommand", (PyCFunction) telldus_tdSendRawCommand, METH_VARARGS, "SendRawCommand comment."},
-/*
+
 	{"tdRegisterDeviceEvent", (PyCFunction) telldus_tdRegisterDeviceEvent, METH_VARARGS, "RegisterDeviceEvent comment."},
 	{"tdRegisterDeviceChangeEvent", (PyCFunction) telldus_tdRegisterDeviceChangeEvent, METH_VARARGS, "RegisterDeviceChangeEvent comment."},
 	{"tdRegisterRawDeviceEvent", (PyCFunction) telldus_tdRegisterRawDeviceEvent, METH_VARARGS, "RegisterRawDeviceEvent comment."},
 	{"tdRegisterSensorEvent", (PyCFunction) telldus_tdRegisterSensorEvent, METH_VARARGS, "RegisterSensorEvent comment."},
 	{"tdUnregisterCallback", (PyCFunction) telldus_tdUnregisterCallback, METH_VARARGS, "UnregisterCallback comment."},
-		
-*/
+	{"tdSensor", (PyCFunction) telldus_tdSensor, METH_NOARGS, "Sensor comment."},
+	{"tdSensorValue", (PyCFunction) telldus_tdSensorValue, METH_VARARGS, "SensorValue comment."},
+	
 	{NULL, NULL, 0, NULL}   /* sentinel */
 };
 
@@ -629,11 +691,11 @@ inittelldus(void)
 	PyObject_SetAttrString(module, "TELLSTICK_TYPE_GROUP", TELLSTICK_TYPE_GROUP_GLUE);
 	Py_DECREF(TELLSTICK_TYPE_GROUP_GLUE);
 
-	PyObject *TELLSTICK_TEMPERATURE_GLUE = PyLong_FromLong((long) TELLSTICK_TEMPERATURE);
+	TELLSTICK_TEMPERATURE_GLUE = PyLong_FromLong((long) TELLSTICK_TEMPERATURE);
 	PyObject_SetAttrString(module, "TELLSTICK_TEMPERATURE", TELLSTICK_TEMPERATURE_GLUE);
 	Py_DECREF(TELLSTICK_TEMPERATURE_GLUE);
 	
-	PyObject *TELLSTICK_HUMIDITY_GLUE = PyLong_FromLong((long) TELLSTICK_HUMIDITY);
+	TELLSTICK_HUMIDITY_GLUE = PyLong_FromLong((long) TELLSTICK_HUMIDITY);
 	PyObject_SetAttrString(module, "TELLSTICK_HUMIDITY", TELLSTICK_HUMIDITY_GLUE);
 	Py_DECREF(TELLSTICK_HUMIDITY_GLUE);
 

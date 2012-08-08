@@ -322,6 +322,8 @@ else:
 	library_dirs = ['/usr/lib', '/usr/local/lib']
 	libraries = ['telldus-core']
 	define_macros = []
+
+define_macros.extend([('DATA_LENGTH', 20)])
 	
 telldus = Extension(
 	'telldus',
