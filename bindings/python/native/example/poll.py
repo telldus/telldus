@@ -25,4 +25,4 @@ telldus.tdInit()
 	
 			print "\n"
 
-tdClose();
+tdClose()
