@@ -627,7 +627,7 @@ inittelldus(void)
 		
 	/* Create the module and add the functions */
 
-	/* PyEval_InitThreads(); */
+	PyEval_InitThreads();
 	
 	module = Py_InitModule("telldus", telldus_methods);
 	
