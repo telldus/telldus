@@ -31,17 +31,14 @@ estrdup(char *s)
 static PyObject *
 telldus_tdInit(PyObject *self)
 {
-	tdInit();
-	Py_INCREF(Py_None);
-	return Py_None;
+	return PyLong_FromLong(tdInit());
 }
 
 static PyObject *
 telldus_tdClose(PyObject *self)
 {
-	tdClose();
-	Py_INCREF(Py_None);
-	return Py_None;
+	return PyLong_FromLong(tdClose();)
+
 }
 
 static PyObject *
@@ -573,8 +570,7 @@ telldus_tdSensor(PyObject *self, PyObject *args)
 	}
 	else
 	{
-		Py_INCREF(Py_None);
-		return Py_None;
+		return PyLong_FromLong(result);
 	}
 
 }
@@ -614,8 +610,7 @@ telldus_tdSensorValue(PyObject *self, PyObject *args)
 	}
 	else
 	{
-		Py_INCREF(Py_None);
-		return Py_None;
+		return PyLong_FromLong(result);
 	}
 }
 

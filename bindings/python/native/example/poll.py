@@ -4,7 +4,7 @@ telldus.tdInit()
 
 while True:
 	result = telldus.tdSensor()
-	if not result:
+	if not isinstance(result, tuple):
 		break
 	else:
 		protocol, model, sensorId, dataTypes = result
@@ -13,13 +13,13 @@ while True:
 		# Retrieve the values the sensor supports
 		if dataTypes & telldus.TELLSTICK_TEMPERATURE:
 			result = telldus.tdSensorValue(protocol, model, sensorId, telldus.TELLSTICK_TEMPERATURE)
-			if result:
+			if isinstance(result, tuple):
 				value, timestamp = result 
 				print "Temperature:\t%sC\t(%s)\n" % (value, str(timestamp))
 
 		if dataTypes & telldus.TELLSTICK_HUMIDITY:
 			result = telldus.tdSensorValue(protocol, model, sensorId, telldus.TELLSTICK_HUMIDITY)
-			if result:
+			if isinstance(result, tuple):
 				value, timestamp = result 
 				print "Humidity:\t%s\t(%s)\n" % (value, str(timestamp))
 
