@@ -4,18 +4,18 @@
 #include <stdio.h>   	
 
 /* estrdup.c -- duplicate a string, die if error
- * 
- * char  *string;
- * char  *newstring;
- * newstring = estrdup(string);
- * 
- * estrdup returns a copy of its argument, located in memory
- * allocated from the heap.  If it is unable to allocate the
- * necessary memory, estrdup executes PyErr_NoMemory(); 
- * (Generally, the routine error is not expected to return,
- * but if it does, estrdup will return NULL.)
- */
- 	
+	* 
+	* char  *string;
+	* char  *newstring;
+	* newstring = estrdup(string);
+	* 
+	* estrdup returns a copy of its argument, located in memory
+	* allocated from the heap.  If it is unable to allocate the
+	* necessary memory, estrdup executes PyErr_NoMemory(); 
+	* (Generally, the routine error is not expected to return,
+	* but if it does, estrdup will return NULL.)
+*/
+	
 int callbackLen = 0;
 
 typedef struct {
@@ -459,7 +459,7 @@ telldus_tdRegisterDeviceEvent(PyObject *self, PyObject *args)
 	
 	result = tdRegisterDeviceEvent((TDDeviceEvent) &telldus_deviceEventCallback, 0);
 
-    addCallback(func, result);
+	addCallback(func, result);
 
 	return PyLong_FromLong((long) result);
 }
@@ -513,7 +513,7 @@ telldus_tdRegisterDeviceChangeEvent(PyObject *self, PyObject *args)
 	
 	result = tdRegisterDeviceChangeEvent((TDDeviceChangeEvent) &telldus_deviceChangeEventCallback, 0);
 
-    addCallback(func, result);
+	addCallback(func, result);
 		
 	return PyLong_FromLong((long) result);
 }
@@ -567,7 +567,7 @@ telldus_tdRegisterRawDeviceEvent(PyObject *self, PyObject *args)
 	
 	result = tdRegisterRawDeviceEvent((TDRawDeviceEvent) &telldus_rawDeviceEventCallback, 0);
 	
-    addCallback(func, result);
+	addCallback(func, result);
 	
 	return PyLong_FromLong((long) result);
 }
@@ -621,7 +621,7 @@ telldus_tdRegisterSensorEvent(PyObject *self, PyObject *args)
 	
 	result = tdRegisterSensorEvent((TDSensorEvent) &telldus_sensorEventCallback, 0);
 
-    addCallback(func, result);
+	addCallback(func, result);
 	
 	return PyLong_FromLong((long) result);
 }
@@ -631,11 +631,11 @@ telldus_tdUnregisterCallback(PyObject *self, PyObject *args)
 {
 	long id;
 	PyObject *callback;
-    
+	
 	if (!PyArg_ParseTuple(args, "l", &id))
 		return NULL;
 		
-    if (hasCallback(id) == 1) {
+	if (hasCallback(id) == 1) {
 		callback = getCallback(id);
 		Py_DECREF(callback);
 		removeCallback(id);
