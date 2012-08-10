@@ -15,6 +15,80 @@
  * (Generally, the routine error is not expected to return,
  * but if it does, estrdup will return NULL.)
  */
+ 	
+int callbackLen = 0;
+
+typedef struct {
+	PyObject *func;
+	int callbackId;
+} callbackInfo;
+
+static callbackInfo callbackList[20];
+
+void
+addCallback(PyObject *func, int callbackId)
+{
+	if (callbackLen < 20) {
+		callbackList[callbackLen].func = func;
+		callbackList[callbackLen].callbackId = callbackId;
+		callbackLen++;
+	}
+}
+
+void
+removeCallback(int callbackId)
+{
+	int index = -1;
+	
+	int i;
+	int j;
+	
+	for (i = 0; i < callbackLen; i++)
+	{
+		if (callbackList[i].callbackId == callbackId)
+		{
+			index = i;
+		}
+	}
+	if (!(index == -1)) {
+		for (j = index; j < callbackLen; j++)
+		{
+			callbackList[j] = callbackList[j+1];
+		}
+		callbackLen--;
+	}
+}
+
+int
+hasCallback(int callbackId)
+{
+	int i;
+	
+	for (i = 0; i < callbackLen; i++)
+	{
+		if (callbackList[i].callbackId == callbackId)
+		{
+			return 1;
+		}
+	}
+	return 0;
+	
+}
+
+PyObject *
+getCallback(int callbackId)
+{
+	int i;
+	
+	for (i = 0; i < callbackLen; i++)
+	{
+		if (callbackList[i].callbackId == callbackId)
+		{
+			return callbackList[i].func;
+		}
+	}
+	
+}
 
 char *
 estrdup(char *s)
@@ -31,14 +105,17 @@ estrdup(char *s)
 static PyObject *
 telldus_tdInit(PyObject *self)
 {
-	return PyLong_FromLong(tdInit());
+	tdInit();
+	Py_INCREF(Py_None);
+	return Py_None;
 }
 
 static PyObject *
 telldus_tdClose(PyObject *self)
 {
-	return PyLong_FromLong(tdClose();)
-
+	tdClose();
+	Py_INCREF(Py_None);
+	return Py_None;
 }
 
 static PyObject *
@@ -151,7 +228,7 @@ static PyObject *
 telldus_tdGetDeviceId(PyObject *self, PyObject *args)
 {
 	long index;
-   
+
 	if (!PyArg_ParseTuple(args, "l", &index))
 		return NULL;
 		
@@ -382,6 +459,8 @@ telldus_tdRegisterDeviceEvent(PyObject *self, PyObject *args)
 	
 	result = tdRegisterDeviceEvent((TDDeviceEvent) &telldus_deviceEventCallback, 0);
 
+    addCallback(func, result);
+
 	return PyLong_FromLong((long) result);
 }
 
@@ -433,7 +512,9 @@ telldus_tdRegisterDeviceChangeEvent(PyObject *self, PyObject *args)
 	DeviceChangeEventCallback = func;
 	
 	result = tdRegisterDeviceChangeEvent((TDDeviceChangeEvent) &telldus_deviceChangeEventCallback, 0);
-			
+
+    addCallback(func, result);
+		
 	return PyLong_FromLong((long) result);
 }
 
@@ -485,7 +566,9 @@ telldus_tdRegisterRawDeviceEvent(PyObject *self, PyObject *args)
 	RawDeviceEventCallback = func;
 	
 	result = tdRegisterRawDeviceEvent((TDRawDeviceEvent) &telldus_rawDeviceEventCallback, 0);
-		
+	
+    addCallback(func, result);
+	
 	return PyLong_FromLong((long) result);
 }
 
@@ -537,6 +620,8 @@ telldus_tdRegisterSensorEvent(PyObject *self, PyObject *args)
 	SensorEventCallback = func;
 	
 	result = tdRegisterSensorEvent((TDSensorEvent) &telldus_sensorEventCallback, 0);
+
+    addCallback(func, result);
 	
 	return PyLong_FromLong((long) result);
 }
@@ -545,10 +630,17 @@ static PyObject *
 telldus_tdUnregisterCallback(PyObject *self, PyObject *args)
 {
 	long id;
-
+	PyObject *callback;
+    
 	if (!PyArg_ParseTuple(args, "l", &id))
 		return NULL;
-
+		
+    if (hasCallback(id) == 1) {
+		callback = getCallback(id);
+		Py_DECREF(callback);
+		removeCallback(id);
+	}
+	
 	return PyLong_FromLong((long) tdUnregisterCallback(id));
 }
 
