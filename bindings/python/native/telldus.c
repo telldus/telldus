@@ -31,9 +31,6 @@ estrdup(char *s)
 static PyObject *
 telldus_tdInit(PyObject *self)
 {
-	PyEval_InitThreads();
-	PyEval_ReleaseLock();
-		
 	tdInit();
 	Py_INCREF(Py_None);
 	return Py_None;
@@ -157,10 +154,10 @@ static PyObject *
 telldus_tdGetDeviceId(PyObject *self, PyObject *args)
 {
 	long index;
-
+   
 	if (!PyArg_ParseTuple(args, "l", &index))
 		return NULL;
-	
+		
 	return PyLong_FromLong((long) tdGetDeviceId(index));
 }
 
@@ -386,7 +383,7 @@ telldus_tdRegisterDeviceEvent(PyObject *self, PyObject *args)
 	
 	DeviceEventCallback = func;
 	
-	tdRegisterDeviceEvent((TDDeviceEvent) &telldus_deviceEventCallback, 0);
+	result = tdRegisterDeviceEvent((TDDeviceEvent) &telldus_deviceEventCallback, 0);
 
 	return PyLong_FromLong((long) result);
 }
@@ -552,7 +549,7 @@ telldus_tdUnregisterCallback(PyObject *self, PyObject *args)
 {
 	long id;
 
-	if (!PyArg_ParseTuple(args, "l", &id));
+	if (!PyArg_ParseTuple(args, "l", &id))
 		return NULL;
 
 	return PyLong_FromLong((long) tdUnregisterCallback(id));
@@ -568,15 +565,16 @@ telldus_tdSensor(PyObject *self, PyObject *args)
 		
 	long result;
 
-   result = tdSensor(protocol, DATA_LENGTH, model, DATA_LENGTH, &sensorId, &dataTypes);
-   
+	result = tdSensor(protocol, DATA_LENGTH, model, DATA_LENGTH, &sensorId, &dataTypes);
+ 
 	if (result == TELLSTICK_SUCCESS)
 	{
 		return Py_BuildValue("ssll", protocol, model, sensorId, dataTypes);
 	}
 	else
 	{
-	   return PyLong_FromLong(result);
+		Py_INCREF(Py_None);
+		return Py_None;
 	}
 
 }
@@ -590,36 +588,21 @@ telldus_tdSensorValue(PyObject *self, PyObject *args)
 	long dataType = 0;
 	char value[DATA_LENGTH];
 	long timestamp = 0;
-
-	PyObject *floatObj; 
-	PyObject *timeTuple; 
-	
 	long result;
 
-	PyObject *py_date;
-	
-	if (!PyArg_ParseTuple(args, "ssll", &protocol, &model, &sensorId, &dataType));
+	if (!PyArg_ParseTuple(args, "ssll", &protocol, &model, &sensorId, &dataType))
 		return NULL;
 	
 	result = tdSensorValue(protocol, model, sensorId, dataType, &value, DATA_LENGTH, &timestamp);
 	
-	floatObj = PyFloat_FromDouble(timestamp); 
-	timeTuple = Py_BuildValue("(O)", floatObj);
-	Py_DECREF(floatObj);	
-			
-	py_date = PyDateTime_FromTimestamp(timeTuple);
-	
-	Py_DECREF(timeTuple);
-	
-	Py_INCREF(py_date);
-	
 	if (result == TELLSTICK_SUCCESS)
 	{
-		return Py_BuildValue("sO", value, py_date);
+		return Py_BuildValue("sl", value, timestamp);
 	}
 	else
 	{
-	   return PyLong_FromLong(result);
+		Py_INCREF(Py_None);
+		return Py_None;
 	}
 }
 
