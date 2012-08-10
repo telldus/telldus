@@ -590,14 +590,27 @@ telldus_tdSensorValue(PyObject *self, PyObject *args)
 	long timestamp = 0;
 	long result;
 
+	PyObject *floatObj = NULL;  
+	PyObject *timeTuple = NULL;  
+	PyObject *dateTime = NULL;  
+
+
 	if (!PyArg_ParseTuple(args, "ssll", &protocol, &model, &sensorId, &dataType))
 		return NULL;
 	
 	result = tdSensorValue(protocol, model, sensorId, dataType, &value, DATA_LENGTH, &timestamp);
-	
+
 	if (result == TELLSTICK_SUCCESS)
 	{
-		return Py_BuildValue("sl", value, timestamp);
+			
+		floatObj = PyFloat_FromDouble((double) timestamp);  
+		timeTuple = Py_BuildValue("(O)", floatObj);  
+		dateTime = PyDateTime_FromTimestamp(timeTuple);
+		
+		Py_DECREF(floatObj);
+		Py_DECREF(timeTuple);
+			
+		return Py_BuildValue("sO", value, dateTime);
 	}
 	else
 	{

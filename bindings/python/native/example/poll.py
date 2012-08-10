@@ -16,7 +16,7 @@ while True:
 			if result:
 				value, timestamp = result 
 				print "Temperature:\t%sC\t(%s)\n" % (value, str(timestamp))
-			   
+
 		if dataTypes & telldus.TELLSTICK_HUMIDITY:
 			result = telldus.tdSensorValue(protocol, model, sensorId, telldus.TELLSTICK_HUMIDITY)
 			if result:
