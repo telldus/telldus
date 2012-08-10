@@ -1,7 +1,7 @@
 #include "Python.h"
 #include "datetime.h"
 #include <telldus-core.h>
-#include <stdio.h>
+#include <stdio.h>   	
 
 /* estrdup.c -- duplicate a string, die if error
  * 
@@ -31,6 +31,9 @@ estrdup(char *s)
 static PyObject *
 telldus_tdInit(PyObject *self)
 {
+	PyEval_InitThreads();
+	PyEval_ReleaseLock();
+		
 	tdInit();
 	Py_INCREF(Py_None);
 	return Py_None;
@@ -52,7 +55,7 @@ telldus_tdTurnOn(PyObject *self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "l", &id))
 		return NULL;
 	
-	return PyBool_FromLong((long) tdTurnOn(id));
+	return PyLong_FromLong((long) tdTurnOn(id));
 }
 
 static PyObject *
@@ -63,7 +66,7 @@ telldus_tdTurnOff(PyObject *self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "l", &id))
 		return NULL;
 	
-	return PyBool_FromLong((long) tdTurnOff(id));
+	return PyLong_FromLong((long) tdTurnOff(id));
 }
 
 static PyObject *
@@ -74,7 +77,7 @@ telldus_tdBell(PyObject *self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "l", &id))
 		return NULL;
 	
-	return PyBool_FromLong((long) tdBell(id));
+	return PyLong_FromLong((long) tdBell(id));
 }
 
 static PyObject *
@@ -89,7 +92,7 @@ telldus_tdDim(PyObject *self, PyObject *args)
 	if (level < 0 || level > 255)
 		return NULL;
 
-	return PyBool_FromLong((long) tdDim(id, level));
+	return PyLong_FromLong((long) tdDim(id, level));
 }
 
 static PyObject *
@@ -100,7 +103,7 @@ telldus_tdLearn(PyObject *self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "l", &id))
 		return NULL;
 	
-	return PyBool_FromLong((long) tdLearn(id));
+	return PyLong_FromLong((long) tdLearn(id));
 }
 
 static PyObject *
@@ -213,7 +216,7 @@ telldus_tdSetName(PyObject *self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "ls", &id, &name))
 		return NULL;
 	
-	return PyBool_FromLong((long) tdSetName(id, name));
+	return PyLong_FromLong((long) tdSetName(id, name));
 }
 
 static PyObject *
@@ -241,7 +244,7 @@ telldus_tdSetProtocol(PyObject *self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "ls", &id, &protocol))
 		return NULL;
 	
-	return PyBool_FromLong((long) tdSetProtocol(id, protocol));
+	return PyLong_FromLong((long) tdSetProtocol(id, protocol));
 
 }
 
@@ -270,7 +273,7 @@ telldus_tdSetModel(PyObject *self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "ls", &id, &model))
 		return NULL;
 	
-	return PyBool_FromLong((long) tdSetProtocol(id, model));
+	return PyLong_FromLong((long) tdSetProtocol(id, model));
 
 }
 
@@ -302,7 +305,7 @@ telldus_tdSetDeviceParameter(PyObject *self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "lss", &id, &name, &value))
 		return NULL;
 	
-	return PyBool_FromLong((long) tdSetDeviceParameter(id, name, value));
+	return PyLong_FromLong((long) tdSetDeviceParameter(id, name, value));
 }
 
 static PyObject *
@@ -319,7 +322,7 @@ telldus_tdRemoveDevice(PyObject *self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "l", &id))
 		return NULL;
 	
-	return PyBool_FromLong((long) tdRemoveDevice(id));
+	return PyLong_FromLong((long) tdRemoveDevice(id));
 }
 
 static PyObject *
@@ -334,18 +337,17 @@ telldus_tdSendRawCommand(PyObject *self, PyObject *args)
 	return PyLong_FromLong((long) tdSendRawCommand(command, reserved));
 }
 
+static PyObject *DeviceEventCallback = NULL;
 
 void
-telldus_deviceEventCallback(int deviceId, int method, const char *data, int callbackId, void *pyfunc)
+telldus_deviceEventCallback(int deviceId, int method, const char *data, int callbackId, int context)
 {
 
 	PyObject * result; 
-	PyGILState_STATE gstate;
-	
-	gstate = PyGILState_Ensure();
+	PyGILState_STATE gstate = PyGILState_Ensure();
 
 	// now call the Python callback function
-	result = PyObject_CallFunction(pyfunc, "llsl", deviceId, method, data, callbackId);
+	result = PyObject_CallFunction(DeviceEventCallback, "llsl", deviceId, method, data, callbackId);
 
 	if (result == NULL) {
 		// something went wrong so print to stderr
@@ -360,16 +362,45 @@ telldus_deviceEventCallback(int deviceId, int method, const char *data, int call
 	return;
 }
 	
+static PyObject *
+telldus_tdRegisterDeviceEvent(PyObject *self, PyObject *args)
+{
+
+	int result;
+	PyObject *func;
+
+	if (!PyArg_ParseTuple(args, "O:tdRegisterDeviceEvent", &func)) {
+		PyErr_SetString(PyExc_StandardError, "Parse error!");
+		return NULL;
+	}
+		
+	if (!PyCallable_Check(func)) {
+		// Error
+		PyErr_SetString(PyExc_StandardError, "The object should be callable!");
+		return NULL;
+	}
+	
+	Py_XDECREF(DeviceEventCallback);
+	// stick around till we need you
+	Py_XINCREF(func);
+	
+	DeviceEventCallback = func;
+	
+	tdRegisterDeviceEvent((TDDeviceEvent) &telldus_deviceEventCallback, 0);
+
+	return PyLong_FromLong((long) result);
+}
+
+static PyObject *DeviceChangeEventCallback = NULL;
+
 void
-telldus_deviceChangeEventCallback(int deviceId, int changeEvent, int changeType, int callbackId, void *pyfunc)
+telldus_deviceChangeEventCallback(int deviceId, int changeEvent, int changeType, int callbackId, int context)
 {
 	PyObject * result; 
-	PyGILState_STATE gstate;
-	
-	gstate = PyGILState_Ensure();
+	PyGILState_STATE gstate = PyGILState_Ensure();
 
 	// now call the Python callback function
-	result = PyObject_CallFunction(pyfunc, "llll", deviceId, changeEvent, changeType, callbackId);
+	result = PyObject_CallFunction(DeviceChangeEventCallback, "llll", deviceId, changeEvent, changeType, callbackId);
 
 	if (result == NULL) {
 		// something went wrong so print to stderr
@@ -383,17 +414,45 @@ telldus_deviceChangeEventCallback(int deviceId, int changeEvent, int changeType,
 	
 	return;   
 }
+
+static PyObject *
+telldus_tdRegisterDeviceChangeEvent(PyObject *self, PyObject *args)
+{
+	int result;
+	PyObject *func;
+
+	if (!PyArg_ParseTuple(args, "O", &func)) {
+		PyErr_SetString(PyExc_StandardError, "Parse error!");
+		return NULL;
+	}
+		
+	if (!PyCallable_Check(func)) {
+		// Error
+		PyErr_SetString(PyExc_StandardError, "The object should be callable!");
+		return NULL;
+	}
+	
+	Py_XDECREF(DeviceChangeEventCallback);
+	// stick around till we need you
+	Py_XINCREF(func);
+	
+	DeviceChangeEventCallback = func;
+	
+	result = tdRegisterDeviceChangeEvent((TDDeviceChangeEvent) &telldus_deviceChangeEventCallback, 0);
+			
+	return PyLong_FromLong((long) result);
+}
+
+static PyObject *RawDeviceEventCallback = NULL;
 	
 void
-telldus_rawDeviceEventCallback(const char *data, int controllerId, int callbackId, void *pyfunc)
+telldus_rawDeviceEventCallback(const char *data, int controllerId, int callbackId, int context)
 {
 	PyObject * result; 
-	PyGILState_STATE gstate;
-	
-	gstate = PyGILState_Ensure();
+	PyGILState_STATE gstate = PyGILState_Ensure();
 
 	// now call the Python callback function
-	result = PyObject_CallFunction(pyfunc, "sll", data, controllerId, callbackId);
+	result = PyObject_CallFunction(RawDeviceEventCallback, "sll", data, controllerId, callbackId);
 
 	if (result == NULL) {
 		// something went wrong so print to stderr
@@ -408,16 +467,44 @@ telldus_rawDeviceEventCallback(const char *data, int controllerId, int callbackI
 	return;
 }
 
+static PyObject *
+telldus_tdRegisterRawDeviceEvent(PyObject *self, PyObject *args)
+{
+	int result;
+	PyObject *func;
+
+	if (!PyArg_ParseTuple(args, "O", &func)) {
+		PyErr_SetString(PyExc_StandardError, "Parse error!");
+		return NULL;
+	}
+		
+	if (!PyCallable_Check(func)) {
+		// Error
+		PyErr_SetString(PyExc_StandardError, "The object should be callable!");
+		return NULL;
+	}
+	
+	Py_XDECREF(RawDeviceEventCallback);
+	// stick around till we need you
+	Py_XINCREF(func);
+	
+	RawDeviceEventCallback = func;
+	
+	result = tdRegisterRawDeviceEvent((TDRawDeviceEvent) &telldus_rawDeviceEventCallback, 0);
+		
+	return PyLong_FromLong((long) result);
+}
+
+static PyObject *SensorEventCallback = NULL;
+
 void
-telldus_sensorEventCallback(const char *protocol, const char *model, int id, int dataType, const char *value, int timestamp, int callbackId, void *pyfunc)
+telldus_sensorEventCallback(const char *protocol, const char *model, int id, int dataType, const char *value, int timestamp, int callbackId, int context)
 {
 	PyObject * result; 
-	PyGILState_STATE gstate;
-	
-	gstate = PyGILState_Ensure();
+	PyGILState_STATE gstate = PyGILState_Ensure();
 
 	// now call the Python callback function
-	result = PyObject_CallFunction(pyfunc, "ssllsll", protocol, model, id, dataType, value, timestamp, callbackId);
+	result = PyObject_CallFunction(SensorEventCallback, "ssllsll", protocol, model, id, dataType, value, timestamp, callbackId);
 
 	if (result == NULL) {
 		// something went wrong so print to stderr
@@ -433,59 +520,31 @@ telldus_sensorEventCallback(const char *protocol, const char *model, int id, int
 }
 
 static PyObject *
-telldus_tdRegisterDeviceEvent(PyObject *self, PyObject *args)
-{
-	PyObject *func;
-
-	if (!PyArg_ParseTuple(args, "O", &func));
-		return NULL;
-		
-	// stick around till we need you
-	Py_INCREF(func);
-	
-	return PyLong_FromLong((long) tdRegisterDeviceEvent((TDDeviceEvent) telldus_deviceEventCallback, &func));
-}
-
-static PyObject *
-telldus_tdRegisterDeviceChangeEvent(PyObject *self, PyObject *args)
-{
-	PyObject *func;
-
-	if (!PyArg_ParseTuple(args, "O", &func));
-		return NULL;
-		
-	// stick around till we need you
-	Py_INCREF(func);
-			
-	return PyLong_FromLong((long) tdRegisterDeviceChangeEvent((TDDeviceChangeEvent) telldus_deviceChangeEventCallback, &func));
-}
-
-static PyObject *
-telldus_tdRegisterRawDeviceEvent(PyObject *self, PyObject *args)
-{
-	PyObject *func;
-
-	if (!PyArg_ParseTuple(args, "O", &func));
-		return NULL;
-			
-	// stick around till we need you
-	Py_INCREF(func);
-		
-	return PyLong_FromLong((long) tdRegisterRawDeviceEvent((TDRawDeviceEvent) telldus_rawDeviceEventCallback, &func));
-}
-
-static PyObject *
 telldus_tdRegisterSensorEvent(PyObject *self, PyObject *args)
 {
+	int result;
 	PyObject *func;
 
-	if (!PyArg_ParseTuple(args, "O", &func));
+	if (!PyArg_ParseTuple(args, "O", &func)) {
+		PyErr_SetString(PyExc_StandardError, "Parse error!");
 		return NULL;
+	}
 		
+	if (!PyCallable_Check(func)) {
+		// Error
+		PyErr_SetString(PyExc_StandardError, "The object should be callable!");
+		return NULL;
+	}
+	
+	Py_XDECREF(SensorEventCallback);
 	// stick around till we need you
-	Py_INCREF(func);
-			
-	return PyLong_FromLong((long) tdRegisterSensorEvent((TDSensorEvent) telldus_sensorEventCallback, &func));
+	Py_XINCREF(func);
+	
+	SensorEventCallback = func;
+	
+	result = tdRegisterSensorEvent((TDSensorEvent) &telldus_sensorEventCallback, 0);
+	
+	return PyLong_FromLong((long) result);
 }
 
 static PyObject *
@@ -496,7 +555,7 @@ telldus_tdUnregisterCallback(PyObject *self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "l", &id));
 		return NULL;
 
-	return PyBool_FromLong((long) tdUnregisterCallback(id));
+	return PyLong_FromLong((long) tdUnregisterCallback(id));
 }
 
 static PyObject *
@@ -517,7 +576,7 @@ telldus_tdSensor(PyObject *self, PyObject *args)
 	}
 	else
 	{
-	   return PyBool_FromLong(result);
+	   return PyLong_FromLong(result);
 	}
 
 }
@@ -560,7 +619,7 @@ telldus_tdSensorValue(PyObject *self, PyObject *args)
 	}
 	else
 	{
-	   return PyBool_FromLong(result);
+	   return PyLong_FromLong(result);
 	}
 }
 
@@ -626,8 +685,6 @@ inittelldus(void)
 	PyObject *TELLSTICK_HUMIDITY_GLUE;
 		
 	/* Create the module and add the functions */
-
-	PyEval_InitThreads();
 	
 	module = Py_InitModule("telldus", telldus_methods);
 	
