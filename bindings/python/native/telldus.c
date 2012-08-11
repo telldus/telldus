@@ -23,12 +23,12 @@ typedef struct {
 	int callbackId;
 } callbackInfo;
 
-static callbackInfo callbackList[20];
+static callbackInfo callbackList[CALLBACK_LENGTH];
 
 void
 addCallback(PyObject *func, int callbackId)
 {
-	if (callbackLen < 20) {
+	if (callbackLen < CALLBACK_LENGTH) {
 		callbackList[callbackLen].func = func;
 		callbackList[callbackLen].callbackId = callbackId;
 		callbackLen++;
@@ -687,7 +687,7 @@ telldus_tdSensorValue(PyObject *self, PyObject *args)
 	if (!PyArg_ParseTuple(args, "ssll", &protocol, &model, &sensorId, &dataType))
 		return NULL;
 	
-	result = tdSensorValue(protocol, model, sensorId, dataType, &value, DATA_LENGTH, &timestamp);
+	result = tdSensorValue(protocol, model, sensorId, dataType, value, DATA_LENGTH, &timestamp);
 
 	if (result == TELLSTICK_SUCCESS)
 	{

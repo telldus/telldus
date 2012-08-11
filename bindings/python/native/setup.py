@@ -323,7 +323,7 @@ else:
 	libraries = ['telldus-core']
 	define_macros = []
 
-define_macros.extend([('DATA_LENGTH', 20)])
+define_macros.extend([('DATA_LENGTH', 20), ('CALLBACK_LENGTH', 20)])
 	
 telldus = Extension(
 	'telldus',
