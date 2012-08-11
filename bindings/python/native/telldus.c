@@ -51,7 +51,7 @@ removeCallback(int callbackId)
 		}
 	}
 	if (!(index == -1)) {
-		for (j = index; j < callbackLen; j++)
+		for (j = index; j < callbackLen - 1; j++)
 		{
 			callbackList[j] = callbackList[j+1];
 		}
