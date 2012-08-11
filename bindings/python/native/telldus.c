@@ -87,7 +87,7 @@ getCallback(int callbackId)
 			return callbackList[i].func;
 		}
 	}
-	
+	return NULL;
 }
 
 char *
@@ -96,7 +96,8 @@ estrdup(char *s)
 	register char  *t;
 
 	if (NULL == (t = malloc(strlen(s)+1))) {
-		return PyErr_NoMemory();
+		PyErr_NoMemory();
+		return NULL;
 	}
 	strcpy(t, s);
 	return(t);
