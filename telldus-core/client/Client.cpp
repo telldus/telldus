@@ -73,6 +73,8 @@ std::wstring Client::getWStringFromService(const Message &msg) {
 }
 
 int Client::registerEvent( CallbackStruct::CallbackType type, void *eventFunction, void *context ) {
+	//LOGGA, client is registering callback
+	debuglog(555, "Client, Registering callback");
 	return d->callbackMainDispatcher.registerCallback(type, eventFunction, context );
 }
 
@@ -83,6 +85,8 @@ void Client::run(){
 	while(d->running){
 
 		if(!d->eventSocket.isConnected()){
+			//LOGGA trying to (re)connect to TelldusEvents
+			debuglog(555, "Client, Trying to (re)connect to TelldusEvents");
 			d->eventSocket.connect(L"TelldusEvents");	//try to reconnect to service
 			if(!d->eventSocket.isConnected()){
 				//reconnect didn't succeed, wait a while and try again
@@ -186,6 +190,8 @@ void Client::stopThread(){
 }
 
 int Client::unregisterCallback( int callbackId ) {
+	//LOGGA, client correctly unregistering callback
+	debuglog(555, "Client, correctly unregistering callback");
 	return d->callbackMainDispatcher.unregisterCallback(callbackId);
 }
 

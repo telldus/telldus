@@ -8,6 +8,7 @@
 #include "EventUpdateManager.h"
 #include "Timer.h"
 #include "Log.h"
+#include "common.h" //debug
 
 #include <stdio.h>
 #include <list>
@@ -57,6 +58,8 @@ void TelldusMain::suspend() {
 }
 
 void TelldusMain::start(void) {
+	//Logga, starta service
+	debuglogservice(0, "Starting service");
 	TelldusCore::EventRef clientEvent = d->eventHandler.addEvent();
 	TelldusCore::EventRef dataEvent = d->eventHandler.addEvent();
 	TelldusCore::EventRef janitor = d->eventHandler.addEvent(); //Used for regular cleanups

@@ -1,5 +1,5 @@
 #include "Socket.h"
-
+#include "common.h"
 #include <windows.h>
 #include <AccCtrl.h>
 #include <Aclapi.h>
@@ -120,6 +120,9 @@ std::wstring Socket::read(int timeout){
 			
 		if (!fSuccess) {
 			DWORD err = GetLastError();
+			if(err != ERROR_OPERATION_ABORTED){ //gets this "error" always when nothing was reads
+				debuglog((int)err, "Socket read error");
+			}
 
 			if(err == ERROR_MORE_DATA){
 				moreData = true;
@@ -127,7 +130,8 @@ std::wstring Socket::read(int timeout){
 			else{
 				buf[0] = 0;
 			}
-			if (err == ERROR_BROKEN_PIPE) {
+			if (err == ERROR_BROKEN_PIPE){
+				debuglog(222, "Got an error, close this socket");
 				d->connected = false;
 			}
 		}

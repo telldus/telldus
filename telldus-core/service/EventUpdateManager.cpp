@@ -5,6 +5,11 @@
 #include "Message.h"
 #include "Socket.h"
 
+#include "common.h" //debug
+#include <iostream> //debug
+#include <sstream> //debug
+ 
+
 #include <list>
 #include <memory>
 
@@ -119,8 +124,13 @@ void EventUpdateManager::sendMessageToClients(EventUpdateData *data){
 		}
 		else{
 			//connection is dead, remove it
+			debuglogservice(0, "Lost connection, removing it");
 			delete *it;
 			it = d->clients.erase(it);
 		}
 	}
+	//printf("Sent message to %d connected clients", connected)
+	std::stringstream strMessage;
+	strMessage << "Sent message to " << connected << " clients" << std::endl;
+	debuglogservice(0, strMessage.str());
 }
