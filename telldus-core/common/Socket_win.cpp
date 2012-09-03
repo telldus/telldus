@@ -133,6 +133,7 @@ std::wstring Socket::read(int timeout){
 			if (err == ERROR_BROKEN_PIPE){
 				debuglog(222, "Got an error, close this socket");
 				d->connected = false;
+				break; //TODO is this correct?
 			}
 		}
 		returnString.append(buf);
