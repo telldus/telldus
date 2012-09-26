@@ -1,6 +1,12 @@
-#include "TelldusMain.h"
-#include "Log.h"
+//
+// Copyright (C) 2012 Telldus Technologies AB. All rights reserved.
+//
+// Copyright: See COPYING file that comes with this distribution
+//
+//
 #include <signal.h>
+#include "service/TelldusMain.h"
+#include "service/Log.h"
 
 TelldusMain tm;
 
