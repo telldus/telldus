@@ -81,22 +81,21 @@ int Settings::getNumberOfNodes(Node type) const {
 
 int Settings::getNodeId(Node type, int intNodeIndex) const {
 	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, d->userName, d->hostName );
-	if (!cfarray) return 0;
+	if (!cfarray) {
+		return 0;
+	}
 	CFIndex size = CFArrayGetCount( cfarray );
 	int index = 0;
 	int id = 0;
 	for (CFIndex k = 0; k < size; ++k) {
 		CFStringRef key = (CFStringRef) CFArrayGetValueAtIndex(cfarray, k);
 		if (!CFStringHasSuffix( key, CFSTR(".name") )) {
-			CFRelease( key );
 			continue;
 		}
 		if ( type == Device && !CFStringHasPrefix(key, CFSTR("devices.")) ) {
-			CFRelease( key );
 			continue;
 		}
 		if ( type == Controller && !CFStringHasPrefix(key, CFSTR("controllers.")) ) {
-			CFRelease( key );
 			continue;
 		}
 		if (index == intNodeIndex) {
@@ -123,13 +122,12 @@ int Settings::getNodeId(Node type, int intNodeIndex) const {
 			}
 			free(cp);
 
-			CFRelease(key);
 			CFRelease(split);
-			CFRelease(cfid);
 			break;
 		}
 		index++;
 	}
+	CFRelease(cfarray);
 	return id;
 }
 
