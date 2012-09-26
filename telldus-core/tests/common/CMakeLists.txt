@@ -4,6 +4,6 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR}/common)
 
 ADD_LIBRARY(TelldusCommonTests SHARED ${SRCS} )
 
-TARGET_LINK_LIBRARIES( TelldusCommonTests TelldusCommon )
+TARGET_LINK_LIBRARIES( TelldusCommonTests TelldusCommon ${CPPUNIT} )
 ADD_DEPENDENCIES( TelldusCommonTests TelldusCommon )
 

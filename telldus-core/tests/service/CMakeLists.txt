@@ -4,6 +4,6 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
 
 ADD_LIBRARY(TelldusServiceTests SHARED ${SRCS} )
 
-TARGET_LINK_LIBRARIES( TelldusServiceTests TelldusServiceStatic )
+TARGET_LINK_LIBRARIES( TelldusServiceTests TelldusServiceStatic ${CPPUNIT} )
 ADD_DEPENDENCIES( TelldusServiceTests ${telldus-service_TARGET} )
 
