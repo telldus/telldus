@@ -9,13 +9,13 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "Settings.h"
-#include "Strings.h"
 #include <stdlib.h>
 #include <string.h>
 #include <CoreFoundation/CoreFoundation.h>
-
-#include "../client/telldus-core.h"
+#include <string>
+#include "common/Strings.h"
+#include "service/Settings.h"
+#include "client/telldus-core.h"
 
 class privateVars {
 public:
@@ -34,8 +34,7 @@ public:
 /*
 * Constructor
 */
-Settings::Settings(void)
-{
+Settings::Settings(void) {
 	d = new PrivateData();
 	d->app_ID = CFSTR( "com.telldus.core" );
 	d->userName = kCFPreferencesAnyUser;
@@ -45,8 +44,7 @@ Settings::Settings(void)
 /*
 * Destructor
 */
-Settings::~Settings(void)
-{
+Settings::~Settings(void) {
 	delete d;
 }
 
@@ -103,21 +101,21 @@ int Settings::getNodeId(Node type, int intNodeIndex) const {
 			if ( !split || CFArrayGetCount( split ) != 3 ) continue;
 
 			// This code crashes!
-			//CFNumberRef cfid = (CFNumberRef) CFArrayGetValueAtIndex( split, 1 );
-			//if (cfid)
-			//	CFNumberGetValue( cfid, kCFNumberIntType, &id);
+			// CFNumberRef cfid = (CFNumberRef) CFArrayGetValueAtIndex( split, 1 );
+			// if (cfid)
+			// 	CFNumberGetValue( cfid, kCFNumberIntType, &id);
 
 			CFStringRef cfid = (CFStringRef) CFArrayGetValueAtIndex( split, 1 );
 			char *cp = NULL;
 			CFIndex size = CFStringGetMaximumSizeForEncoding( CFStringGetLength( cfid ), kCFStringEncodingUTF8) + 1;
-			cp = (char *)malloc(size);
+			cp = reinterpret_cast<char *>(malloc(size));
 			CFStringGetCString( cfid, cp, size, kCFStringEncodingUTF8 );
-			char *newcp = (char *)realloc( cp, strlen(cp) + 1);
+			char *newcp = reinterpret_cast<char *>(realloc( cp, strlen(cp) + 1));
 			if (newcp != NULL) {
 				cp = newcp;
 				id = atoi(cp);
 			} else {
-				//Should not happen
+				// Should not happen
 				id = 0;
 			}
 			free(cp);
@@ -136,9 +134,9 @@ int Settings::getNodeId(Node type, int intNodeIndex) const {
 */
 int Settings::addNode(Node type) {
 	int id = getNextNodeId(type);
-	setStringSetting( type, id, L"name", L"", false ); //Create a empty name so the node has an entry
+	setStringSetting( type, id, L"name", L"", false );  // Create a empty name so the node has an entry
 	if (type == Device) {
-		//Is there a reason we do this?
+		// Is there a reason we do this?
 		setStringSetting( type, id, L"model", L"", false );
 	}
 	return id;
@@ -163,9 +161,9 @@ int Settings::getNextNodeId(Node type) const {
 /*
 * Remove a device
 */
-int Settings::removeNode(Node type, int intNodeId){
+int Settings::removeNode(Node type, int intNodeId) {
 	int ret = TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-	CFStringRef filterKey = CFStringCreateWithFormat(0, NULL, CFSTR("%ss.%d."), getNodeString(type).c_str(), intNodeId); // The key to search for
+	CFStringRef filterKey = CFStringCreateWithFormat(0, NULL, CFSTR("%ss.%d."), getNodeString(type).c_str(), intNodeId);  // The key to search for
 
 	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, d->userName, d->hostName );
 	if (!cfarray) {
@@ -175,7 +173,7 @@ int Settings::removeNode(Node type, int intNodeId){
 	for (CFIndex k = 0; k < size; ++k) {
 		CFStringRef key = (CFStringRef) CFArrayGetValueAtIndex(cfarray, k);
 		if (CFStringHasPrefix( key, filterKey ) ) {
-			CFPreferencesSetValue( key, NULL, d->app_ID, d->userName, d->hostName ); //Remove the key
+			CFPreferencesSetValue( key, NULL, d->app_ID, d->userName, d->hostName );  // Remove the key
 			ret = TELLSTICK_SUCCESS;
 		}
 	}
@@ -205,14 +203,14 @@ std::wstring Settings::getStringSetting(Node type, int intNodeId, const std::wst
 	std::wstring retval;
 	char *cp = NULL;
 	CFIndex size = CFStringGetMaximumSizeForEncoding( CFStringGetLength( value ), kCFStringEncodingUTF8) + 1;
-	cp = (char *)malloc(size);
+	cp = reinterpret_cast<char *>(malloc(size));
 	CFStringGetCString( value, cp, size, kCFStringEncodingUTF8 );
-	char *newcp = (char *)realloc( cp, strlen(cp) + 1);
+	char *newcp = reinterpret_cast<char *>(realloc( cp, strlen(cp) + 1));
 	if (newcp != NULL) {
 		cp = newcp;
 		retval = TelldusCore::charToWstring(cp);
 	} else {
-		//Should not happen
+		// Should not happen
 		retval = L"";
 	}
 	free(cp);
