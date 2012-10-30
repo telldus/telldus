@@ -15,7 +15,8 @@ std::string ProtocolMandolyn::decodeData(const ControllerMessage &dataMsg) {
 	std::string data = dataMsg.getParameter("data");
 	uint32_t value = (uint32_t)TelldusCore::hexTo64l(data);
 
-	bool parity = value & 0x1;
+	// parity not used
+	// bool parity = value & 0x1;
 	value >>= 1;
 
 	double temp = static_cast<double>(value & 0x7FFF) - static_cast<double>(6400);
@@ -25,7 +26,8 @@ std::string ProtocolMandolyn::decodeData(const ControllerMessage &dataMsg) {
 	uint8_t humidity = (value & 0x7F);
 	value >>= 7;
 
-	bool battOk = value & 0x1;
+	// battOk not used
+	// bool battOk = value & 0x1;
 	value >>= 3;
 
 	uint8_t channel = (value & 0x3)+1;

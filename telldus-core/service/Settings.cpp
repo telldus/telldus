@@ -115,6 +115,7 @@ std::string Settings::getNodeString(Settings::Node type) const {
 	} else if (type == Controller) {
 		return "controller";
 	}
+	return "";
 }
 
 #ifndef _CONFUSE

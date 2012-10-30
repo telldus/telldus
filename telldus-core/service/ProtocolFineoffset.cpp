@@ -17,7 +17,8 @@ std::string ProtocolFineoffset::decodeData(const ControllerMessage &dataMsg) {
 		return "";
 	}
 
-	uint8_t checksum = (uint8_t)TelldusCore::hexTo64l(data.substr(data.length()-2));
+	// Checksum currently not used
+	// uint8_t checksum = (uint8_t)TelldusCore::hexTo64l(data.substr(data.length()-2));
 	data = data.substr(0, data.length()-2);
 
 	uint8_t humidity = (uint8_t)TelldusCore::hexTo64l(data.substr(data.length()-2));

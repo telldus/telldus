@@ -267,6 +267,7 @@ int list_kv_devices() {
 		printf("\n");
 		index++;
 	}
+	return TELLSTICK_SUCCESS;
 }
 
 

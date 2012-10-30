@@ -72,7 +72,8 @@ std::string ProtocolOregon::decodeEA4C(const std::string &data) {
 
 std::string ProtocolOregon::decode1A2D(const std::string &data) {
 	uint64_t value = TelldusCore::hexTo64l(data);
-	uint8_t checksum2 = value & 0xFF;
+	// checksum2 not used yet
+	// uint8_t checksum2 = value & 0xFF;
 	value >>= 8;
 	uint8_t checksum1 = value & 0xFF;
 	value >>= 8;
@@ -100,7 +101,8 @@ std::string ProtocolOregon::decode1A2D(const std::string &data) {
 	value >>= 8;
 
 	checksum += ((value >> 4) & 0xF) + (value & 0xF);
-	uint8_t channel = (value >> 4) & 0x7;
+	// channel not used
+	// uint8_t channel = (value >> 4) & 0x7;
 
 	checksum += 0x1 + 0xA + 0x2 + 0xD - 0xA;
 

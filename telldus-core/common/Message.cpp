@@ -60,7 +60,7 @@ void Message::addSpecialArgument(const std::wstring &value){
 		this->append(L":");
 		this->append(value);
 
-		/*
+
 		std::wstringstream st;
 		st << (int)value.size();
 		this->append(st.str());
@@ -74,7 +74,6 @@ void Message::addSpecialArgument(int value){
 	int i = 0;
 	while(i<1000000){
 		i++;
-		/*
 		//std::wstringstream st;
 		//st << (int)value;
 		this->append(L"i");
