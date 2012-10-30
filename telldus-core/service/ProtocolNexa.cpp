@@ -227,7 +227,7 @@ std::string ProtocolNexa::decodeDataCodeSwitch(uint64_t allData) {
 
 	house = allData & 0xF;
 
-	if(house < 0 || house > 16 || unit < 1 || unit > 16) {
+	if(house > 16 || unit < 1 || unit > 16) {
 		// not arctech codeswitch
 		return "";
 	}

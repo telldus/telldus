@@ -76,7 +76,7 @@ std::string ProtocolSartano::decodeData(const ControllerMessage &dataMsg) {
 		return "";
 	}
 
-	if(code < 0 || code > 1023) {
+	if(code > 1023) {
 		// not sartano
 		return "";
 	}

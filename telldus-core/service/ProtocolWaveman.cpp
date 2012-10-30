@@ -41,7 +41,7 @@ std::string ProtocolWaveman::decodeData(const ControllerMessage& dataMsg) {
 
 	house = allData & 0xF;
 
-	if(house < 0 || house > 16 || unit < 1 || unit > 16) {
+	if(house > 16 || unit < 1 || unit > 16) {
 		// not waveman
 		return "";
 	}

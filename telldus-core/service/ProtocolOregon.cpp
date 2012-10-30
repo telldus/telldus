@@ -51,7 +51,8 @@ std::string ProtocolOregon::decodeEA4C(const std::string &data) {
 	value >>= 8;
 
 	checksum += ((value >> 4) & 0xF) + (value & 0xF);
-	uint8_t channel = (value >> 4) & 0x7;
+	// channel not used
+	// uint8_t channel = (value >> 4) & 0x7;
 
 	if (checksum != checksumw) {
 		return "";

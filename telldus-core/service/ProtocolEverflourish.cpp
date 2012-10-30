@@ -111,7 +111,7 @@ std::string ProtocolEverflourish::decodeData(const ControllerMessage &dataMsg) {
 
 	method = allData & 0xF;
 
-	if(house < 0 || house > 16383 || unit < 1 || unit > 4) {
+	if(house > 16383 || unit < 1 || unit > 4) {
 		// not everflourish
 		return "";
 	}
