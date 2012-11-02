@@ -66,6 +66,7 @@ void TelldusMain::suspend() {
 void TelldusMain::start(void) {
 	TelldusCore::EventRef clientEvent = d->eventHandler.addEvent();
 	TelldusCore::EventRef dataEvent = d->eventHandler.addEvent();
+	TelldusCore::EventRef executeActionEvent = d->eventHandler.addEvent();
 	TelldusCore::EventRef janitor = d->eventHandler.addEvent();  // Used for regular cleanups
 	Timer supervisor(janitor);  // Tells the janitor to go back to work
 	supervisor.setInterval(60);  // Once every minute
@@ -76,6 +77,7 @@ void TelldusMain::start(void) {
 	eventUpdateManager.start();
 	ControllerManager controllerManager(dataEvent, deviceUpdateEvent);
 	DeviceManager deviceManager(&controllerManager, deviceUpdateEvent);
+	deviceManager.setExecuteActionEvent(executeActionEvent);
 
 	ConnectionListener clientListener(L"TelldusClient", clientEvent);
 
@@ -131,6 +133,9 @@ void TelldusMain::start(void) {
 					++it;
 				}
 			}
+		}
+		if (executeActionEvent->isSignaled()) {
+			deviceManager.executeActionEvent();
 		}
 		if (janitor->isSignaled()) {
 			// Clear all of them if there is more than one

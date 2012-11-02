@@ -9,6 +9,7 @@
 #include <list>
 #include <map>
 #include <memory>
+#include <queue>
 #include <set>
 #include <sstream>
 #include <string>
@@ -30,8 +31,16 @@ public:
 	 Settings set;
 	 TelldusCore::Mutex lock;
 	 ControllerManager *controllerManager;
-	 TelldusCore::EventRef deviceUpdateEvent;
+	 TelldusCore::EventRef deviceUpdateEvent, executeActionEvent;
 };
+
+class ExecuteActionEventData : public TelldusCore::EventDataBase {
+public:
+	int deviceId;
+	int method;
+	unsigned char data;
+};
+
 
 DeviceManager::DeviceManager(ControllerManager *controllerManager, TelldusCore::EventRef deviceUpdateEvent) {
 	d = new PrivateData;
@@ -53,6 +62,66 @@ DeviceManager::~DeviceManager(void) {
 		}
 	}
 	delete d;
+}
+
+void DeviceManager::executeActionEvent() {
+	Device *device = 0;
+	TelldusCore::EventDataRef eventData = d->executeActionEvent->takeSignal();
+	ExecuteActionEventData *data = dynamic_cast<ExecuteActionEventData*>(eventData.get());
+	if (!data) {
+		Log::error("Could not cast executeAction data");
+		return;
+	}
+	Log::notice("Execute a TellStick Action for device %i", data->deviceId);
+
+	std::auto_ptr<TelldusCore::MutexLocker> deviceLocker(0);
+	{
+		// devicelist locked
+		TelldusCore::MutexLocker deviceListLocker(&d->lock);
+
+		DeviceMap::iterator it = d->devices.find(data->deviceId);
+		if (it == d->devices.end()) {
+			return;
+		}
+		// device locked
+		deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(new TelldusCore::MutexLocker(it->second));
+		device = it->second;
+	}  // devicelist unlocked
+
+	Controller *controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
+	if(!controller) {
+		return;
+	}
+
+	int retval = device->doAction(data->method, data->data, controller);
+	if(retval == TELLSTICK_ERROR_BROKEN_PIPE) {
+		Log::warning("Error in communication with TellStick when executing action. Resetting USB");
+		d->controllerManager->resetController(controller);
+	}
+	if(retval == TELLSTICK_ERROR_BROKEN_PIPE || retval == TELLSTICK_ERROR_NOT_FOUND) {
+		Log::warning("Rescanning USB ports");
+		d->controllerManager->loadControllers();
+		controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
+		if(!controller) {
+			Log::error("No contoller (TellStick) found, even after reset. Giving up.");
+			return;
+		}
+		retval = device->doAction(data->method, data->data, controller);  // retry one more time
+	}
+
+	if(retval == TELLSTICK_SUCCESS && device->getMethods() & data->method) {
+		// if method isn't explicitly supported by device, but used anyway as a fallback (i.e. bell), don't change state
+		std::wstring datastring = TelldusCore::charUnsignedToWstring(data->data);
+		if (this->triggerDeviceStateChange(data->deviceId, data->method, datastring)) {
+			device->setLastSentCommand(data->method, datastring);
+			d->set.setDeviceState(data->deviceId, data->method, datastring);
+		}
+	}
+
+}
+
+void DeviceManager::setExecuteActionEvent(TelldusCore::EventRef event) {
+	d->executeActionEvent = event;
 }
 
 void DeviceManager::fillDevices() {
@@ -375,144 +444,100 @@ void DeviceManager::disconnectTellStickController(int vid, int pid, const std::s
 }
 
 int DeviceManager::doAction(int deviceId, int action, unsigned char data) {
-	Device *device = 0;
-	// On the stack and will be released if we have a device lock.
-	std::auto_ptr<TelldusCore::MutexLocker> deviceLocker(0);
+	int deviceType = 0;
 	{
 		// devicelist locked
 		TelldusCore::MutexLocker deviceListLocker(&d->lock);
 
-		if (!d->devices.size()) {
-			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-		}
 		DeviceMap::iterator it = d->devices.find(deviceId);
 		if (it == d->devices.end()) {
 			return TELLSTICK_ERROR_DEVICE_NOT_FOUND;  // not found
 		}
 		// device locked
-		deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(new TelldusCore::MutexLocker(it->second));
-		device = it->second;
-	}  // devicelist unlocked
+		TelldusCore::MutexLocker deviceLocker(it->second);
 
-	int retval = TELLSTICK_ERROR_UNKNOWN;
-
-	if(device->getType() == TELLSTICK_TYPE_GROUP || device->getType() == TELLSTICK_TYPE_SCENE) {
-		std::wstring devices = device->getParameter(L"devices");
-		deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(0);
-		std::set<int> *duplicateDeviceIds = new std::set<int>;
-		retval = doGroupAction(devices, action, data, device->getType(), deviceId, duplicateDeviceIds);
-		delete duplicateDeviceIds;
-
-		{
-			// reaquire device lock, make sure it still exists
-			// devicelist locked
-			TelldusCore::MutexLocker deviceListLocker(&d->lock);
-
-			if (!d->devices.size()) {
-				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;
-			}
-			DeviceMap::iterator it = d->devices.find(deviceId);
-			if (it == d->devices.end()) {
-				return TELLSTICK_ERROR_DEVICE_NOT_FOUND;  // not found
-			}
-			// device locked
-			deviceLocker = std::auto_ptr<TelldusCore::MutexLocker>(new TelldusCore::MutexLocker(it->second));
-			device = it->second;
-		}  // devicelist unlocked
-	} else {
-		Controller *controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
-		if(!controller) {
-			Log::warning("Trying to execute action, but no controller found. Rescanning USB ports");
-			// no controller found, scan for one, and retry once
-			d->controllerManager->loadControllers();
-			controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
-		}
-
-		if(controller) {
-			retval = device->doAction(action, data, controller);
-			if(retval == TELLSTICK_ERROR_BROKEN_PIPE) {
-				Log::warning("Error in communication with TellStick when executing action. Resetting USB");
-				d->controllerManager->resetController(controller);
-			}
-			if(retval == TELLSTICK_ERROR_BROKEN_PIPE || retval == TELLSTICK_ERROR_NOT_FOUND) {
-				Log::warning("Rescanning USB ports");
-				d->controllerManager->loadControllers();
-				controller = d->controllerManager->getBestControllerById(device->getPreferredControllerId());
-				if(!controller) {
-					Log::error("No contoller (TellStick) found, even after reset. Giving up.");
-					return TELLSTICK_ERROR_NOT_FOUND;
-				}
-				retval = device->doAction(action, data, controller);  // retry one more time
-			}
-		} else {
-			Log::error("No contoller (TellStick) found after one retry. Giving up.");
-			return TELLSTICK_ERROR_NOT_FOUND;
+		deviceType = it->second->getType();
+		if (it->second->isMethodSupported(action) <= 0) {
+			return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 		}
 	}
-	if(retval == TELLSTICK_SUCCESS && device->getType() != TELLSTICK_TYPE_SCENE && device->getMethods() & action) {
-		// if method isn't explicitly supported by device, but used anyway as a fallback (i.e. bell), don't change state
-		std::wstring datastring = TelldusCore::charUnsignedToWstring(data);
-		if (this->triggerDeviceStateChange(deviceId, action, datastring)) {
-			device->setLastSentCommand(action, datastring);
-			d->set.setDeviceState(deviceId, action, datastring);
-		}
+
+	if (d->controllerManager->count() == 0) {
+		return TELLSTICK_ERROR_NOT_FOUND;
 	}
-	return retval;
+
+	// The device exists and there is at least one connected controller
+
+	if(deviceType == TELLSTICK_TYPE_GROUP || deviceType == TELLSTICK_TYPE_SCENE) {
+		return this->doGroupSceneAction(deviceId, action, data);
+	}
+
+	ExecuteActionEventData *eventData = new ExecuteActionEventData();
+	eventData->deviceId = deviceId;
+	eventData->method = action;
+	eventData->data = data;
+	d->executeActionEvent->signal(eventData);
+	return TELLSTICK_SUCCESS;
 }
 
-int DeviceManager::doGroupAction(const std::wstring devices, const int action, const unsigned char data, const int type, const int groupDeviceId, std::set<int> *duplicateDeviceIds) {
-	int retval = TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
-	std::wstring singledevice;
-	std::wstringstream devicesstream(devices);
+int DeviceManager::doGroupSceneAction(int deviceId, int action, unsigned char data) {
+	std::set<int> parsedDevices;
+	std::queue<int> devicesToParse;
 
-	duplicateDeviceIds->insert(groupDeviceId);
+	devicesToParse.push(deviceId);
+	while (!devicesToParse.empty()) {
+		int deviceId = devicesToParse.front();
+		devicesToParse.pop();
+		if (parsedDevices.count(deviceId)) {
+			continue;
+		}
+		parsedDevices.insert(deviceId);
 
-	while(std::getline(devicesstream, singledevice, L',')) {
-		int deviceId = TelldusCore::wideToInteger(singledevice);
-
-		if(duplicateDeviceIds->count(deviceId) == 1) {
-			// action for device already executed, or will execute, do nothing to avoid infinite loop
+		TelldusCore::MutexLocker deviceListLocker(&d->lock);
+		DeviceMap::iterator it = d->devices.find(deviceId);
+		if (it == d->devices.end()) {
+			// Not found
 			continue;
 		}
 
-		duplicateDeviceIds->insert(deviceId);
-
-		int deviceReturnValue = TELLSTICK_SUCCESS;
-
-		if(type == TELLSTICK_TYPE_SCENE && (action == TELLSTICK_TURNON || action == TELLSTICK_EXECUTE)) {
-			deviceReturnValue = executeScene(singledevice, groupDeviceId);
-		} else if(type == TELLSTICK_TYPE_GROUP) {
-			if(deviceId != 0) {
-				int childType = DeviceManager::getDeviceType(deviceId);
-				if(childType == TELLSTICK_TYPE_DEVICE) {
-					deviceReturnValue = doAction(deviceId, action, data);
-				} else if(childType == TELLSTICK_TYPE_SCENE) {
-					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds);  // TODO(stefan) make scenes infinite loops-safe
-				} else {
-					// group (in group)
-					deviceReturnValue = doGroupAction(DeviceManager::getDeviceParameter(deviceId, L"devices", L""), action, data, childType, deviceId, duplicateDeviceIds);
-
-					if(deviceReturnValue == TELLSTICK_SUCCESS) {
-						std::wstring datastring = TelldusCore::charUnsignedToWstring(data);
-						if (this->triggerDeviceStateChange(deviceId, action, datastring)) {
-							DeviceManager::setDeviceLastSentCommand(deviceId, action, datastring);
-							d->set.setDeviceState(deviceId, action, datastring);
-						}
-					}
-				}
-			} else {
-				deviceReturnValue = TELLSTICK_ERROR_DEVICE_NOT_FOUND;  // Probably incorrectly formatted parameter
-			}
+		if (it->second->isMethodSupported(action) <= 0) {
+			return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 		}
 
-		if(deviceReturnValue != TELLSTICK_ERROR_METHOD_NOT_SUPPORTED) {
-			// if error(s), return the last error, but still try to continue the action with the other devices
-			// if the error is a method not supported we igore is since there might be others supporting it
-			// If no devices support the method the default value will be returned (method not supported)
-			retval = deviceReturnValue;
+		TelldusCore::MutexLocker deviceLocker(it->second);
+		if (it->second->getType() == TELLSTICK_TYPE_DEVICE) {
+			ExecuteActionEventData *eventData = new ExecuteActionEventData();
+			eventData->deviceId = deviceId;
+			eventData->method = action;
+			eventData->data = data;
+			d->executeActionEvent->signal(eventData);
+			continue;
+		}
+		if (it->second->getType() == TELLSTICK_TYPE_GROUP) {
+			std::string devices = TelldusCore::wideToString(it->second->getParameter(L"devices"));
+			std::stringstream devicesstream(devices);
+			std::string singledevice;
+			while(std::getline(devicesstream, singledevice, ',')) {
+				devicesToParse.push(TelldusCore::charToInteger(singledevice.c_str()));
+			}
+			// Update state
+			if(it->second->getMethods() & action) {
+				// if method isn't explicitly supported by device, but used anyway as a fallback (i.e. bell), don't change state
+				std::wstring datastring = TelldusCore::charUnsignedToWstring(data);
+				if (this->triggerDeviceStateChange(deviceId, action, datastring)) {
+					it->second->setLastSentCommand(action, datastring);
+					d->set.setDeviceState(deviceId, action, datastring);
+				}
+			}
+
+		}
+		if (it->second->getType() == TELLSTICK_TYPE_SCENE) {
+			// TODO(micke): Not supported yet
+			Log::warning("Scenes are not supported yet!");
 		}
 	}
-	return retval;
+
+	return TELLSTICK_SUCCESS;
 }
 
 int DeviceManager::executeScene(std::wstring singledevice, int groupDeviceId) {

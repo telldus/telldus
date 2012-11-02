@@ -24,6 +24,7 @@ public:
 	int addDevice();
 	void connectTellStickController(int vid, int pid, const std::string &serial);
 	void disconnectTellStickController(int vid, int pid, const std::string &serial);
+	void executeActionEvent();
 	int getDeviceId(int deviceIndex);
 	int getDeviceLastSentCommand(int deviceId, int methodsSupported);
 	int setDeviceLastSentCommand(int deviceId, int command, const std::wstring &value);
@@ -44,6 +45,8 @@ public:
 	int removeDevice(int deviceId);
 	int sendRawCommand(const std::wstring &command, int reserved);
 
+	void setExecuteActionEvent(TelldusCore::EventRef event);
+
 	std::wstring getSensors() const;
 	std::wstring getSensorValue(const std::wstring &protocol, const std::wstring &model, int id, int dataType) const;
 
@@ -53,7 +56,7 @@ private:
 	void handleSensorMessage(const ControllerMessage &msg);
 	void setSensorValueAndSignal( const std::string &dataType, int dataTypeId, Sensor *sensor, const ControllerMessage &msg, time_t timestamp) const;
 	int getDeviceMethods(int deviceId, std::set<int> *duplicateDeviceIds);
-	int doGroupAction(const std::wstring deviceIds, int action, unsigned char data, const int type, int groupDeviceId, std::set<int> *duplicateDeviceIds);
+	int doGroupSceneAction(int deviceId, int action, unsigned char data);
 	int executeScene(std::wstring singledevice, int groupDeviceId);
 	bool triggerDeviceStateChange(int deviceId, int intDeviceState, const std::wstring &strDeviceStateValue );
 	void fillDevices(void);
