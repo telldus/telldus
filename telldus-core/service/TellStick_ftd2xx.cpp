@@ -196,7 +196,6 @@ void TellStick::run() {
 		}
 		FT_GetQueueStatus(d->ftHandle, &dwBytesInQueue);
 		if (dwBytesInQueue < 1) {
-			d->mutex.unlock();
 			continue;
 		}
 		buf = reinterpret_cast<char*>(malloc(sizeof(buf) * (dwBytesInQueue+1)));
