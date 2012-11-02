@@ -19,6 +19,7 @@ public:
 	~Device(void);
 
 	int doAction(int action, unsigned char data, Controller *controller);
+	int isMethodSupported(int method) const;
 	std::wstring getStateValue();
 	int getLastSentCommand(int methodsSupported);
 	int getMethods() const;

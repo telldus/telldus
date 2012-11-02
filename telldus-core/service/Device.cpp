@@ -148,23 +148,11 @@ int Device::doAction(int action, unsigned char data, Controller *controller) {
 		return TELLSTICK_ERROR_CONFIG_SYNTAX;
 	}
 	// Try to determine if we need to call another method due to masking
-	int methods = p->methods();
-	if ((action & methods) == 0) {
-		// Loop all methods an see if any method masks to this one
-		for(int i = 1; i <= methods; i <<= 1) {
-			if ((i & methods) == 0) {
-				continue;
-			}
-			if (this->maskUnsupportedMethods(i, action)) {
-				action = i;
-				break;
-			}
-		}
-	}
-	if ((action & methods) == 0) {
+	int method = this->isMethodSupported(action);
+	if (method <= 0) {
 		return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 	}
-	std::string code = p->getStringForMethod(action, data, controller);
+	std::string code = p->getStringForMethod(method, data, controller);
 	if (code == "") {
 		return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
 	}
@@ -187,6 +175,32 @@ int Device::doAction(int action, unsigned char data, Controller *controller) {
 		}
 	}
 	return controller->send(code);
+}
+
+int Device::isMethodSupported(int method) const {
+	Protocol *p = this->retrieveProtocol();
+	if (!p) {
+		// Syntax error in configuration, no such protocol
+		return TELLSTICK_ERROR_CONFIG_SYNTAX;
+	}
+	// Try to determine if we need to call another method due to masking
+	int methods = p->methods();
+	if ((method & methods) == 0) {
+		// Loop all methods an see if any method masks to this one
+		for(int i = 1; i <= methods; i <<= 1) {
+			if ((i & methods) == 0) {
+				continue;
+			}
+			if (this->maskUnsupportedMethods(i, method)) {
+				method = i;
+				break;
+			}
+		}
+	}
+	if ((method & methods) == 0) {
+		return TELLSTICK_ERROR_METHOD_NOT_SUPPORTED;
+	}
+	return method;
 }
 
 Protocol* Device::retrieveProtocol() const {
