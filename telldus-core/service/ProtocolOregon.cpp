@@ -115,10 +115,12 @@ std::string ProtocolOregon::decode1A2D(const std::string &data) {
 	if (neg) {
 		temperature = -temperature;
 	}
+	int humidity = (hum1 * 10.0) + hum2;
 
 	std::stringstream retString;
 	retString << "class:sensor;protocol:oregon;model:1A2D;id:" << static_cast<int>(address)
-		<< ";temp:" << std::fixed << std::setprecision(1) << temperature << ";";
+		<< ";temp:" << std::fixed << std::setprecision(1) << temperature
+		<< ";humidity:" << humidity << ";";
 
 	return retString.str();
 }
