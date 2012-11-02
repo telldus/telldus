@@ -57,6 +57,31 @@ ControllerManager::~ControllerManager() {
 	delete d;
 }
 
+int ControllerManager::count() {
+	unsigned int count = 0;
+	{
+		TelldusCore::MutexLocker locker(&d->mutex);
+		// Find all available controllers
+		for(ControllerMap::const_iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
+			if (it->second.controller) {
+				++count;
+			}
+		}
+	}
+	if (count == 0) {
+		this->loadControllers();
+		// Try again
+		TelldusCore::MutexLocker locker(&d->mutex);
+		// Find all available controllers
+		for(ControllerMap::const_iterator it = d->controllers.begin(); it != d->controllers.end(); ++it) {
+			if (it->second.controller) {
+				++count;
+			}
+		}
+	}
+	return count;
+}
+
 void ControllerManager::deviceInsertedOrRemoved(int vid, int pid, const std::string &serial, bool inserted) {
 	if (vid == 0x0 && pid == 0x0) {  // All
 		if (inserted) {

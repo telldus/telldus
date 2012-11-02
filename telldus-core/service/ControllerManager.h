@@ -19,6 +19,7 @@ public:
 
 	void deviceInsertedOrRemoved(int vid, int pid, const std::string &serial, bool inserted);
 
+	int count();
 	Controller *getBestControllerById(int id);
 	void loadControllers();
 	void loadStoredControllers();
