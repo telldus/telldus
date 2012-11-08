@@ -47,7 +47,6 @@ void ConnectionListener::run() {
 
 	SOCKET_T serverSocket;
 	struct sockaddr_un name;
-	socklen_t len;
 	serverSocket = socket(PF_LOCAL, SOCK_STREAM, 0);
 	if (serverSocket < 0) {
 		return;
@@ -62,7 +61,6 @@ void ConnectionListener::run() {
 
 	// Change permissions to allow everyone
 	chmod(d->name.c_str(), S_IRWXU | S_IRWXG | S_IRWXO);
-	len = sizeof(struct sockaddr_un);
 
 	fd_set infds;
 	FD_ZERO(&infds);

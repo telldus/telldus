@@ -74,7 +74,6 @@ void ControllerListener::run() {
 
 void ControllerListener::PrivateData::addUsbFilter(int vid, int pid) {
 	CFNumberRef				numberRef;
-	kern_return_t			kr;
 	CFMutableDictionaryRef 	matchingDict;
 
 	matchingDict = IOServiceMatching(kIOUSBDeviceClassName);  // Interested in instances of class
@@ -94,19 +93,18 @@ void ControllerListener::PrivateData::addUsbFilter(int vid, int pid) {
 	CFRelease(numberRef);
 
 	// Now set up a notification to be called when a device is first matched by I/O Kit.
-	kr = IOServiceAddMatchingNotification(gNotifyPort,                // notifyPort
-	                                      kIOFirstMatchNotification,  // notificationType
-	                                      matchingDict,               // matching
-	                                      PrivateData::DeviceAdded,   // callback
-	                                      this,                       // refCon
-	                                      &gAddedIter                 // notification
-	                                      );
+	IOServiceAddMatchingNotification(gNotifyPort,                // notifyPort
+	                                 kIOFirstMatchNotification,  // notificationType
+	                                 matchingDict,               // matching
+	                                 PrivateData::DeviceAdded,   // callback
+	                                 this,                       // refCon
+	                                 &gAddedIter                 // notification
+	                                 );
 	// Iterate once to get already-present devices and arm the notification
 	PrivateData::DeviceAdded(this, gAddedIter);
 }
 
 void ControllerListener::PrivateData::DeviceNotification(void *refCon, io_service_t service, natural_t messageType, void *messageArgument) {
-	kern_return_t	kr;
 
 	if (messageType != kIOMessageServiceIsTerminated) {
 		return;
@@ -132,14 +130,13 @@ void ControllerListener::PrivateData::DeviceNotification(void *refCon, io_servic
 	// Free the data we're no longer using now that the device is going away
 	CFRelease(tsd->serialNumber);
 
-	kr = IOObjectRelease(tsd->notification);
+	IOObjectRelease(tsd->notification);
 
 	delete tsd;
 }
 
 void ControllerListener::PrivateData::DeviceAdded(void *refCon, io_iterator_t iterator) {
 	io_service_t usbDevice;
-	kern_return_t kr;
 
 	PrivateData *pd = reinterpret_cast<PrivateData*> (refCon);
 
@@ -172,7 +169,7 @@ void ControllerListener::PrivateData::DeviceAdded(void *refCon, io_iterator_t it
 
 		// Register for an interest notification of this device being removed. Use a reference to our
 		// private data as the refCon which will be passed to the notification callback.
-		kr = IOServiceAddInterestNotification(pd->gNotifyPort, usbDevice, kIOGeneralInterest, DeviceNotification, tsd, &(tsd->notification));
+		IOServiceAddInterestNotification(pd->gNotifyPort, usbDevice, kIOGeneralInterest, DeviceNotification, tsd, &(tsd->notification));
 
 		CFIndex size = CFStringGetLength(serialNumberAsCFString);
 		char *s = new char[size+1];
@@ -180,7 +177,7 @@ void ControllerListener::PrivateData::DeviceAdded(void *refCon, io_iterator_t it
 		std::string serial(s);  // Copy the string to the stack
 		delete[] s;
 
-		kr = IOObjectRelease(usbDevice);
+		IOObjectRelease(usbDevice);
 
 		ControllerChangeEventData *data = new ControllerChangeEventData;
 		data->vid = tsd->vid;

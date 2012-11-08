@@ -97,7 +97,8 @@ void Timer::run() {
 	pthread_mutex_unlock(&d->waitMutex);
 
 	while(1) {
-		int rc =  gettimeofday(&tp, NULL);
+		int rc = 0;
+		gettimeofday(&tp, NULL);
 
 		ts.tv_sec  = tp.tv_sec;
 		ts.tv_nsec = tp.tv_usec * 1000;
