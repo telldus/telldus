@@ -76,6 +76,7 @@ int Settings::getNumberOfNodes(Node type) const {
 			++nodes;
 		}
 	}
+	CFRelease(cfarray);
 	return nodes;
 }
 
@@ -100,7 +101,13 @@ int Settings::getNodeId(Node type, int intNodeIndex) const {
 		}
 		if (index == intNodeIndex) {
 			CFArrayRef split = CFStringCreateArrayBySeparatingStrings( 0, key, CFSTR(".") );
-			if ( !split || CFArrayGetCount( split ) != 3 ) continue;
+			if ( !split ) {
+				continue;
+			}
+			if (CFArrayGetCount( split ) != 3 ) {
+				CFRelease( split );
+				continue;
+			}
 
 			// This code crashes!
 			// CFNumberRef cfid = (CFNumberRef) CFArrayGetValueAtIndex( split, 1 );
@@ -169,6 +176,7 @@ int Settings::removeNode(Node type, int intNodeId) {
 
 	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, d->userName, d->hostName );
 	if (!cfarray) {
+		CFRelease(filterKey);
 		return TELLSTICK_ERROR_UNKNOWN;
 	}
 	CFIndex size = CFArrayGetCount( cfarray );
@@ -181,6 +189,8 @@ int Settings::removeNode(Node type, int intNodeId) {
 	}
 
 	CFPreferencesSynchronize( d->app_ID, d->userName, d->hostName );
+	CFRelease(cfarray);
+	CFRelease(filterKey);
 	return ret;
 }
 
@@ -199,6 +209,8 @@ std::wstring Settings::getStringSetting(Node type, int intNodeId, const std::wst
 
 	value = (CFStringRef)CFPreferencesCopyValue(key, d->app_ID, d->userName, d->hostName);
 	if (!value) {
+		CFRelease(key);
+		CFRelease(cfname);
 		return L"";
 	}
 
@@ -218,6 +230,8 @@ std::wstring Settings::getStringSetting(Node type, int intNodeId, const std::wst
 	free(cp);
 
 	CFRelease(value);
+	CFRelease(key);
+	CFRelease(cfname);
 	return retval;
 }
 
@@ -236,6 +250,9 @@ int Settings::setStringSetting(Node type, int intNodeId, const std::wstring &wna
 
 	CFPreferencesSetValue( key, cfvalue, d->app_ID, d->userName, d->hostName );
 	CFPreferencesSynchronize( d->app_ID, d->userName, d->hostName );
+	CFRelease(key);
+	CFRelease(cfvalue);
+	CFRelease(cfname);
 	return TELLSTICK_SUCCESS;
 }
 
@@ -267,6 +284,8 @@ int Settings::getIntSetting(Node type, int intNodeId, const std::wstring &wname,
 		}
 	}
 
+	CFRelease(key);
+	CFRelease(cfname);
 	return retval;
 }
 
@@ -284,5 +303,8 @@ int Settings::setIntSetting(Node type, int intNodeId, const std::wstring &wname,
 
 	CFPreferencesSetValue( key, cfvalue, d->app_ID, d->userName, d->hostName );
 	CFPreferencesSynchronize( d->app_ID, d->userName, d->hostName );
+	CFRelease(key);
+	CFRelease(cfvalue);
+	CFRelease(cfname);
 	return TELLSTICK_SUCCESS;
 }
