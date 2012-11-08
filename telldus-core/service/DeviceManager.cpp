@@ -117,7 +117,6 @@ void DeviceManager::executeActionEvent() {
 			d->set.setDeviceState(data->deviceId, data->method, datastring);
 		}
 	}
-
 }
 
 void DeviceManager::setExecuteActionEvent(TelldusCore::EventRef event) {
@@ -529,7 +528,6 @@ int DeviceManager::doGroupSceneAction(int deviceId, int action, unsigned char da
 					d->set.setDeviceState(deviceId, action, datastring);
 				}
 			}
-
 		}
 		if (it->second->getType() == TELLSTICK_TYPE_SCENE) {
 			// TODO(micke): Not supported yet

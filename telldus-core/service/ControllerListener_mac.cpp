@@ -105,7 +105,6 @@ void ControllerListener::PrivateData::addUsbFilter(int vid, int pid) {
 }
 
 void ControllerListener::PrivateData::DeviceNotification(void *refCon, io_service_t service, natural_t messageType, void *messageArgument) {
-
 	if (messageType != kIOMessageServiceIsTerminated) {
 		return;
 	}
