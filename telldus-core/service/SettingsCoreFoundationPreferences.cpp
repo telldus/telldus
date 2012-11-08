@@ -60,7 +60,9 @@ std::wstring Settings::getSetting(const std::wstring &strName) const {
 */
 int Settings::getNumberOfNodes(Node type) const {
 	CFArrayRef cfarray = CFPreferencesCopyKeyList( d->app_ID, d->userName, d->hostName );
-	if (!cfarray) return 0;
+	if (!cfarray) {
+		return 0;
+	}
 	CFIndex size = CFArrayGetCount( cfarray );
 	int nodes = 0;
 	for (CFIndex k = 0; k < size; ++k) {
