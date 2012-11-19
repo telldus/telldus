@@ -5,6 +5,8 @@
 //
 //
 #include "service/Controller.h"
+#include <stdlib.h>
+#include <map>
 #include <list>
 #include <string>
 #include "service/Protocol.h"
@@ -15,6 +17,8 @@ class Controller::PrivateData {
 public:
 	TelldusCore::EventRef event, updateEvent;
 	int id, firmwareVersion;
+	unsigned int randSeed;
+	std::map<std::string, time_t> duplicates;
 };
 
 Controller::Controller(int id, TelldusCore::EventRef event, TelldusCore::EventRef updateEvent) {
@@ -23,6 +27,7 @@ Controller::Controller(int id, TelldusCore::EventRef event, TelldusCore::EventRe
 	d->updateEvent = updateEvent;
 	d->id = id;
 	d->firmwareVersion = 0;
+	d->randSeed = time(NULL);
 }
 
 Controller::~Controller() {
@@ -37,6 +42,28 @@ void Controller::publishData(const std::string &msg) const {
 }
 
 void Controller::decodePublishData(const std::string &data) const {
+	// Garbange collect?
+	if (rand_r(&d->randSeed) % 1000 == 1) {
+		time_t t = time(NULL);
+		// Standard associative-container erase idiom
+		for (std::map<std::string, time_t>::iterator it = d->duplicates.begin(); it != d->duplicates.end(); /* no increment */) {
+			if ((*it).second != t) {
+				d->duplicates.erase(it++);
+			} else {
+				++it;
+			}
+		}
+	}
+	// Duplicate check
+	if (d->duplicates.count(data) > 0) {
+		time_t t = d->duplicates[data];
+		if (t == time(NULL)) {
+			// Duplicate message
+			return;
+		}
+	}
+	d->duplicates[data] = time(NULL);
+
 	std::list<std::string> msgList = Protocol::decodeData(data);
 
 	for (std::list<std::string>::iterator msgIt = msgList.begin(); msgIt != msgList.end(); ++msgIt) {
