@@ -229,6 +229,10 @@ void EventUpdateManager::executeScripts(EventUpdateData *data) {
 	for(StringList::iterator it = d->fileList[dir].begin(); it != d->fileList[dir].end(); ++it) {
 		executeScript(TelldusCore::formatf("%s/%s/%s", SCRIPT_PATH, dir.c_str(), (*it).c_str()), (*it), newEnv);
 	}
+	// Cleanup
+	for(int i = 0; newEnv[i] != 0; ++i) {
+		delete[] newEnv[i];
+	}
 #endif  // _LINUX
 }
 
