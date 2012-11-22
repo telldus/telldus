@@ -24,6 +24,7 @@
 #endif  // _LINUX
 
 #include "service/ConnectionListener.h"
+#include "service/config.h"
 #include "common/EventHandler.h"
 #include "common/Message.h"
 #include "common/Socket.h"
@@ -103,7 +104,7 @@ void EventUpdateManager::run() {
 
 void EventUpdateManager::loadScripts(const std::string &folder) {
 #ifdef _LINUX
-	std::string path = TelldusCore::formatf("/usr/local/share/telldus/scripts/%s", folder.c_str());
+	std::string path = TelldusCore::formatf("%s/%s", SCRIPT_PATH, folder.c_str());
 	struct dirent **namelist;
 	int count = scandir(path.c_str(), &namelist, NULL, alphasort);
 	if (count < 0) {
@@ -226,7 +227,7 @@ void EventUpdateManager::executeScripts(EventUpdateData *data) {
 	newEnv[env.size()] = 0;  // Mark end of array
 
 	for(StringList::iterator it = d->fileList[dir].begin(); it != d->fileList[dir].end(); ++it) {
-		executeScript(TelldusCore::formatf("/usr/local/share/telldus/scripts/%s/%s", dir.c_str(), (*it).c_str()), (*it), newEnv);
+		executeScript(TelldusCore::formatf("%s/%s/%s", SCRIPT_PATH, dir.c_str(), (*it).c_str()), (*it), newEnv);
 	}
 #endif  // _LINUX
 }

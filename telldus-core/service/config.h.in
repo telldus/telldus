@@ -4,4 +4,8 @@
 #define CONFIG_PATH "@SYSCONF_INSTALL_DIR@"
 #define VAR_CONFIG_PATH "@STATE_INSTALL_DIR@"
 
+#ifdef _LINUX
+#define SCRIPT_PATH "@SCRIPT_PATH@"
+#endif  // _LINUX
+
 #endif  // CONFIG_H

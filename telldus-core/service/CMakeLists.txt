@@ -92,6 +92,10 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
 
 ######## Configurable options for the platform  ########
 
+IF (UNIX AND NOT APPLE)
+	SET(SCRIPT_PATH "/usr/local/share/telldus/scripts" CACHE PATH "The paths for scripts to execute on sensor events")
+ENDIF()
+
 ######## Platforms-specific, non configurable  ########
 
 IF (APPLE) #### Mac OS X ####
