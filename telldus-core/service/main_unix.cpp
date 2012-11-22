@@ -149,6 +149,15 @@ int main(int argc, char **argv) {
 	signal(SIGINT,  signalHandler);
 	signal(SIGPIPE, signalHandler);
 
+	// Change so we do not need to call wait() for children processes
+	struct sigaction sa;
+	sa.sa_handler = SIG_IGN;
+	sa.sa_flags = SA_NOCLDWAIT;
+	sigemptyset(&sa.sa_mask);
+	if (sigaction(SIGCHLD, &sa, NULL) == -1) {
+		Log::error("Could not set the SA_NOCLDWAIT flag. We will be creating zombie processes!");
+	}
+
 	tm.start();
 
 	Log::notice("%s daemon exited", DAEMON_NAME);

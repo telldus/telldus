@@ -7,6 +7,7 @@
 #ifndef TELLDUS_CORE_SERVICE_EVENTUPDATEMANAGER_H_
 #define TELLDUS_CORE_SERVICE_EVENTUPDATEMANAGER_H_
 
+#include <string>
 #include "common/Thread.h"
 #include "common/Event.h"
 
@@ -44,6 +45,8 @@ private:
 	class PrivateData;
 	PrivateData *d;
 	void sendMessageToClients(EventUpdateData *data);
+	void executeScripts(EventUpdateData *data);
+	static void executeScript(std::string script, char *name, char **env);
 };
 
 #endif  // TELLDUS_CORE_SERVICE_EVENTUPDATEMANAGER_H_
