@@ -161,5 +161,7 @@ int main(int argc, char **argv) {
 	tm.start();
 
 	Log::notice("%s daemon exited", DAEMON_NAME);
+	// Cleanup
+	Log::destroy();
 	exit(EXIT_SUCCESS);
 }
