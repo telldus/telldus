@@ -44,9 +44,10 @@ protected:
 private:
 	class PrivateData;
 	PrivateData *d;
+	void loadScripts(const std::string &folder);
 	void sendMessageToClients(EventUpdateData *data);
 	void executeScripts(EventUpdateData *data);
-	static void executeScript(std::string script, char *name, char **env);
+	static void executeScript(std::string script, const std::string &name, char **env);
 };
 
 #endif  // TELLDUS_CORE_SERVICE_EVENTUPDATEMANAGER_H_

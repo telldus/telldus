@@ -16,6 +16,7 @@
 #include <sys/wait.h>
 #endif  // _LINUX
 #include <list>
+#include <map>
 #include <memory>
 #ifdef _LINUX
 #include <string>
@@ -30,6 +31,7 @@
 #include "common/Strings.h"
 
 typedef std::list<TelldusCore::Socket *> SocketList;
+typedef std::list<std::string> StringList;
 
 class EventUpdateManager::PrivateData {
 public:
@@ -37,6 +39,9 @@ public:
 	TelldusCore::EventRef stopEvent, updateEvent, clientConnectEvent;
 	SocketList clients;
 	ConnectionListener *eventUpdateClientListener;
+#ifdef _LINUX
+	std::map<std::string, StringList> fileList;
+#endif  // _LINUX
 };
 
 EventUpdateManager::EventUpdateManager()
@@ -46,6 +51,13 @@ EventUpdateManager::EventUpdateManager()
 	d->updateEvent = d->eventHandler.addEvent();
 	d->clientConnectEvent = d->eventHandler.addEvent();
 	d->eventUpdateClientListener = new ConnectionListener(L"TelldusEvents", d->clientConnectEvent);
+#ifdef _LINUX
+	loadScripts("deviceevent");
+	loadScripts("devicechangeevent");
+	loadScripts("rawdeviceevent");
+	loadScripts("sensorevent");
+	loadScripts("controllerevent");
+#endif  // _LINUX
 }
 
 EventUpdateManager::~EventUpdateManager(void) {
@@ -87,6 +99,25 @@ void EventUpdateManager::run() {
 			}
 		}
 	}
+}
+
+void EventUpdateManager::loadScripts(const std::string &folder) {
+#ifdef _LINUX
+	std::string path = TelldusCore::formatf("/usr/local/share/telldus/scripts/%s", folder.c_str());
+	struct dirent **namelist;
+	int count = scandir(path.c_str(), &namelist, NULL, alphasort);
+	if (count < 0) {
+		return;
+	}
+
+	for(int i = 0; i < count; ++i) {
+		if (strcmp(namelist[i]->d_name, ".") != 0 && strcmp(namelist[i]->d_name, "..") != 0) {
+			d->fileList[folder].push_back(namelist[i]->d_name);
+		}
+		free(namelist[i]);
+	}
+	free(namelist);
+#endif  // _LINUX
 }
 
 void EventUpdateManager::sendMessageToClients(EventUpdateData *data) {
@@ -194,29 +225,13 @@ void EventUpdateManager::executeScripts(EventUpdateData *data) {
 	}
 	newEnv[env.size()] = 0;  // Mark end of array
 
-	// List files to execute
-	std::string path = TelldusCore::formatf("/usr/local/share/telldus/scripts/%s", dir.c_str());
-	struct dirent **namelist;
-	int count = scandir(path.c_str(), &namelist, NULL, alphasort);
-	if (count <= 0) {
-		return;
+	for(StringList::iterator it = d->fileList[dir].begin(); it != d->fileList[dir].end(); ++it) {
+		executeScript(TelldusCore::formatf("/usr/local/share/telldus/scripts/%s/%s", dir.c_str(), (*it).c_str()), (*it), newEnv);
 	}
-
-	for(int i = 0; i < count; ++i) {
-		if (strcmp(namelist[i]->d_name, ".") == 0 || strcmp(namelist[i]->d_name, "..") == 0) {
-			continue;
-		}
-		executeScript(TelldusCore::formatf("%s/%s", path.c_str(), namelist[i]->d_name), namelist[i]->d_name, newEnv);
-	}
-
-	for(int i = 0; i < count; ++i) {
-		free(namelist[i]);
-	}
-	free(namelist);
 #endif  // _LINUX
 }
 
-void EventUpdateManager::executeScript(std::string script, char *name, char ** env) {
+void EventUpdateManager::executeScript(std::string script, const std::string &name, char ** env) {
 #ifdef _LINUX
 	pid_t pid = fork();
 	if (pid == -1) {
@@ -225,8 +240,11 @@ void EventUpdateManager::executeScript(std::string script, char *name, char ** e
 	}
 
 	if (pid == 0) {
-		static char * argv[] = { name };
+		char *n = new char[name.length()+1];
+		snprintf(n, name.length()+1, "%s", name.c_str());
+		static char * argv[] = { n };
 		execve(script.c_str(), argv, env);
+		delete[] n;
 		Log::error("Could not execute %s (%i): %s", script.c_str(), errno, strerror(errno));
 		exit(1);
 	}
