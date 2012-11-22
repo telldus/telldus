@@ -158,9 +158,6 @@ ELSE (APPLE) #### Linux ####
 		main_unix.cpp
 		SettingsConfuse.cpp
 	)
-	CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/SettingsConfusePaths.h.in
-		${CMAKE_CURRENT_BINARY_DIR}/service/SettingsConfusePaths.h)
-	INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 	LIST(APPEND telldus-service_LIBRARIES
 		${CONFUSE_LIBRARY}
@@ -187,6 +184,10 @@ ENDIF (FTDI_ENGINE STREQUAL "ftd2xx")
 ######## Configuring  ########
 
 SOURCE_GROUP("Protocol Files" FILES ${telldus-service_protocol_SRCS})
+
+CONFIGURE_FILE(${CMAKE_CURRENT_SOURCE_DIR}/config.h.in
+	${CMAKE_CURRENT_BINARY_DIR}/service/config.h)
+INCLUDE_DIRECTORIES(${CMAKE_CURRENT_BINARY_DIR})
 
 SET(telldus-service_TARGET ${telldus-service_TARGET} PARENT_SCOPE)
 ADD_EXECUTABLE(${telldus-service_TARGET}

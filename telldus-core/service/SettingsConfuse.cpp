@@ -10,7 +10,7 @@
 #include <errno.h>
 #include <string>
 #include "service/Settings.h"
-#include "service/SettingsConfusePaths.h"
+#include "service/config.h"
 #include "client/telldus-core.h"
 #include "common/Strings.h"
 
