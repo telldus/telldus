@@ -171,7 +171,7 @@ std::wstring Client::sendToService(const Message &msg) {
 			debuglog(555, "Error in write, should retry");
 			continue; //retry
 		}
-		readData = s.read(1000);  //TODO changed to 10000 from 5000, how much does this do...?
+		readData = s.read(1000);  // TODO(stefan): changed to 10000 from 5000, how much does this do...?
 		if(readData == L""){
 			msleep(500);
 			continue;  // TODO(stefan): can we be really sure it SHOULD be anything?

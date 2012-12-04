@@ -253,7 +253,7 @@ int Settings::getIntSetting(Node type, int intNodeId, const std::wstring &name, 
 
 	std::wstring strSetting = getStringSetting(type, intNodeId, name, parameter);
 	if (strSetting.length()) {
-		intReturn = static_cast<int>(strSetting[0]); //TODO: do real conversion instead
+		intReturn = static_cast<int>(strSetting[0]);  // TODO(micke): do real conversion instead
 	}
 
 	return intReturn;

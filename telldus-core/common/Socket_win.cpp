@@ -140,7 +140,7 @@ std::wstring Socket::read(int timeout){
 			if (err == ERROR_BROKEN_PIPE){
 				debuglog(static_cast<int>(err), "Got an error, close this socket");
 				d->connected = false;
-				break; //TODO is this correct?
+				break;  // TODO(stefan): is this correct?
 			}
 		}
 		returnString.append(buf);
