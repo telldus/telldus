@@ -154,20 +154,23 @@ std::wstring Client::sendToService(const Message &msg) {
 		if(tries == 20){
 			TelldusCore::Message msg;
 			msg.addArgument(TELLSTICK_ERROR_CONNECTING_SERVICE);
+			debuglog(555, "Connection failed, 20 retries, giving up.");
 			return msg;
 		}
 		Socket s;
 		s.connect(L"TelldusClient");
 		if (!s.isConnected()) { //Connection failed
+			debuglog(555, "Connection failed");
 			msleep(500);
 			continue; //retry
 		}
 		s.write(msg.data());
 		if (!s.isConnected()) { //Connection failed sometime during operation... (better check here, instead of 5 seconds timeout later)
 			msleep(500);
+			debuglog(555, "Error in write, should retry");
 			continue; //retry
 		}
-		readData = s.read(8000);  //TODO changed to 10000 from 5000, how much does this do...?
+		readData = s.read(1000);  //TODO changed to 10000 from 5000, how much does this do...?
 		if(readData == L""){
 			msleep(500);
 			continue; //TODO can we be really sure it SHOULD be anything?

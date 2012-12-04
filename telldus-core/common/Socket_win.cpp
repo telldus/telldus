@@ -120,6 +120,7 @@ std::wstring Socket::read(int timeout){
 			
 		if (!fSuccess) {
 			DWORD err = GetLastError();
+			debuglog((int)err, "Something read error");
 			if(err != ERROR_OPERATION_ABORTED){ //gets this "error" always when nothing was reads
 				debuglog((int)err, "Socket read error");
 			}
@@ -131,7 +132,7 @@ std::wstring Socket::read(int timeout){
 				buf[0] = 0;
 			}
 			if (err == ERROR_BROKEN_PIPE){
-				debuglog(222, "Got an error, close this socket");
+				debuglog((int)err, "Got an error, close this socket");
 				d->connected = false;
 				break; //TODO is this correct?
 			}
@@ -158,7 +159,7 @@ void Socket::write(const std::wstring &msg){
 	BOOL writeSuccess = WriteFile(d->hPipe, msg.data(), (DWORD)msg.length()*sizeof(wchar_t), &bytesWritten, &oOverlap);
 	result = GetLastError();
 	if (writeSuccess || result == ERROR_IO_PENDING) {
-		result = WaitForSingleObject(writeEvent, 500);
+		result = WaitForSingleObject(writeEvent, 30000);
 		if (result == WAIT_TIMEOUT) {
 			CancelIo(d->hPipe);
 			WaitForSingleObject(oOverlap.hEvent, INFINITE);
@@ -169,12 +170,18 @@ void Socket::write(const std::wstring &msg){
 			return;
 		}
 		fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &bytesWritten, TRUE);
+		if (!fSuccess){
+			debuglog(result, "Error in GetOverlappedResult");
+			result = GetLastError();
+			debuglog(result, "Error in GetOverlappedResult, this message");
+		}
 	}
 
 	CloseHandle(writeEvent);
 	if (!fSuccess) {
 		CloseHandle(d->hPipe);
 		d->hPipe = 0;
+		debuglog(result, "Error in write event, closing socket");
 		d->connected = false;
 		return;	
 	}

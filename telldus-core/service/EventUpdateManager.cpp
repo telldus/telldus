@@ -130,7 +130,7 @@ void EventUpdateManager::sendMessageToClients(EventUpdateData *data){
 		}
 	}
 	//printf("Sent message to %d connected clients", connected)
-	std::stringstream strMessage;
-	strMessage << "Sent message to " << connected << " clients" << std::endl;
-	debuglogservice(0, strMessage.str());
+	//std::stringstream strMessage;
+	//strMessage << "Sent message to " << connected << " clients" << std::endl;
+	//debuglogservice(0, strMessage.str());
 }
