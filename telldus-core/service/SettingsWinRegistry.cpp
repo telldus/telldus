@@ -67,7 +67,7 @@ int Settings::getNumberOfNodes(Node type) const {
 		DWORD dNumSubKeys;
 		RegQueryInfoKey(hk, NULL, NULL, NULL, &dNumSubKeys, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
 		
-		intNumberOfNodes = (int)dNumSubKeys;
+		intNumberOfNodes = static_cast<int>(dNumSubKeys);
 
 		RegCloseKey(hk);
 	}
@@ -237,7 +237,7 @@ int Settings::setStringSetting(Node type, int intNodeId, const std::wstring &nam
 	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_WRITE, &hk);
 				
 	if (lnExists == ERROR_SUCCESS){
-		int length = (int)value.length() * sizeof(wchar_t);
+		int length = static_cast<int>(value.length()) * sizeof(wchar_t);
 		RegSetValueEx(hk, name.c_str(), 0, REG_SZ, (LPBYTE)value.c_str(), length+1);
 	} else {
 		ret = TELLSTICK_ERROR_UNKNOWN;
@@ -253,7 +253,7 @@ int Settings::getIntSetting(Node type, int intNodeId, const std::wstring &name, 
 
 	std::wstring strSetting = getStringSetting(type, intNodeId, name, parameter);
 	if (strSetting.length()) {
-		intReturn = (int)strSetting[0]; //TODO: do real conversion instead
+		intReturn = static_cast<int>(strSetting[0]); //TODO: do real conversion instead
 	}
 
 	return intReturn;

@@ -126,9 +126,9 @@ std::wstring Socket::read(int timeout){
 			
 		if (!fSuccess) {
 			DWORD err = GetLastError();
-			debuglog((int)err, "Something read error");
+			debuglog(static_cast<int>(err), "Something read error");
 			if(err != ERROR_OPERATION_ABORTED){ //gets this "error" always when nothing was reads
-				debuglog((int)err, "Socket read error");
+				debuglog(static_cast<int>(err), "Socket read error");
 			}
 
 			if(err == ERROR_MORE_DATA){
@@ -138,7 +138,7 @@ std::wstring Socket::read(int timeout){
 				buf[0] = 0;
 			}
 			if (err == ERROR_BROKEN_PIPE){
-				debuglog((int)err, "Got an error, close this socket");
+				debuglog(static_cast<int>(err), "Got an error, close this socket");
 				d->connected = false;
 				break; //TODO is this correct?
 			}
