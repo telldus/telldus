@@ -15,7 +15,7 @@
 #include "common/Strings.h"
 #include "common/common.h" //debug
 
-inline int random( unsigned int* seed ){
+inline int random( unsigned int* seed ) {
 	#ifdef _WINDOWS
 		unsigned int randomNumber;
 		rand_s( &randomNumber ); //no seed needed

@@ -87,10 +87,10 @@ void Client::run() {
 	d->eventSocket.connect(L"TelldusEvents");
 
 	while(d->running) {
-		if(!d->eventSocket.isConnected()){
+		if(!d->eventSocket.isConnected()) {
 			debuglog(555, "Client, Trying to (re)connect to TelldusEvents");
 			d->eventSocket.connect(L"TelldusEvents");	//try to reconnect to service
-			if(!d->eventSocket.isConnected()){
+			if(!d->eventSocket.isConnected()) {
 				//reconnect didn't succeed, wait a while and try again
 				msleep(2000);
 				continue;
@@ -172,7 +172,7 @@ std::wstring Client::sendToService(const Message &msg) {
 			continue; //retry
 		}
 		readData = s.read(1000);  // TODO(stefan): changed to 10000 from 5000, how much does this do...?
-		if(readData == L""){
+		if(readData == L"") {
 			msleep(500);
 			continue;  // TODO(stefan): can we be really sure it SHOULD be anything?
 			// TODO(stefan): perhaps break here instead?

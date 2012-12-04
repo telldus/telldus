@@ -61,7 +61,7 @@ int Settings::getNumberOfNodes(Node type) const {
 	
 	long lnExists = RegOpenKeyEx(d->rootKey, d->getNodePath(type).c_str(), 0, KEY_QUERY_VALUE, &hk);
 					
-	if(lnExists == ERROR_SUCCESS){
+	if(lnExists == ERROR_SUCCESS) {
 	
 		std::wstring strNumSubKeys;
 		DWORD dNumSubKeys;
@@ -83,7 +83,7 @@ int Settings::getNodeId(Node type, int intNodeIndex) const {
 	
 	long lnExists = RegOpenKeyEx(d->rootKey, d->getNodePath(type).c_str(), 0, KEY_READ, &hk);
 				
-	if(lnExists == ERROR_SUCCESS){
+	if(lnExists == ERROR_SUCCESS) {
 		
 		wchar_t* Buff = new wchar_t[intMaxRegValueLength];
 		DWORD size = intMaxRegValueLength;
@@ -132,14 +132,14 @@ int Settings::getNextNodeId(Node type) const {
 
 	long lnExists = RegCreateKeyEx(d->rootKey, d->getNodePath(type).c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hk, &dwDisp);	//create or open if already created
 				
-	if(lnExists == ERROR_SUCCESS){
+	if(lnExists == ERROR_SUCCESS) {
 			
 		DWORD dwLength = sizeof(DWORD);
 		DWORD nResult(0);
 
 		long lngStatus = RegQueryValueEx(hk, L"LastUsedId", NULL, NULL, reinterpret_cast<LPBYTE>(&nResult), &dwLength);
 
-		if(lngStatus == ERROR_SUCCESS){
+		if(lngStatus == ERROR_SUCCESS) {
 			intReturn = nResult + 1;
 		} else {
 			intReturn = 1;
@@ -163,7 +163,7 @@ int Settings::removeNode(Node type, int intNodeId) {
 
 	long lngSuccess = RegDeleteKey(d->rootKey, strCompleteRegPath.c_str());
 
-	if(lngSuccess == ERROR_SUCCESS){
+	if(lngSuccess == ERROR_SUCCESS) {
 		//one of the deletions succeeded
 		return TELLSTICK_SUCCESS;
 	}
@@ -171,19 +171,19 @@ int Settings::removeNode(Node type, int intNodeId) {
 	return TELLSTICK_ERROR_UNKNOWN;
 }
 
-std::wstring Settings::getSetting(const std::wstring &strName) const{
+std::wstring Settings::getSetting(const std::wstring &strName) const {
 	std::wstring strReturn;
 	HKEY hk;
 
 	std::wstring strCompleteRegPath = d->strRegPath;
 	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &hk);
 			
-	if(lnExists == ERROR_SUCCESS){
+	if(lnExists == ERROR_SUCCESS) {
 		wchar_t* Buff = new wchar_t[intMaxRegValueLength];
 		DWORD dwLength = sizeof(wchar_t)*intMaxRegValueLength;
 		long lngStatus = RegQueryValueEx(hk, strName.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
 
-		if(lngStatus == ERROR_MORE_DATA){
+		if(lngStatus == ERROR_MORE_DATA) {
 			//The buffer is to small, recreate it
 			delete[] Buff;
 			Buff = new wchar_t[dwLength];
@@ -206,12 +206,12 @@ std::wstring Settings::getStringSetting(Node type, int intNodeId, const std::wst
 	strCompleteRegPath.append(TelldusCore::intToWstring(intNodeId));
 	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_QUERY_VALUE, &hk);
 			
-	if(lnExists == ERROR_SUCCESS){
+	if(lnExists == ERROR_SUCCESS) {
 		wchar_t* Buff = new wchar_t[intMaxRegValueLength];
 		DWORD dwLength = sizeof(wchar_t)*intMaxRegValueLength;
 		long lngStatus = RegQueryValueEx(hk, name.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
 
-		if(lngStatus == ERROR_MORE_DATA){
+		if(lngStatus == ERROR_MORE_DATA) {
 			//The buffer is to small, recreate it
 			delete[] Buff;
 			Buff = new wchar_t[dwLength];
@@ -236,7 +236,7 @@ int Settings::setStringSetting(Node type, int intNodeId, const std::wstring &nam
 	strCompleteRegPath.append(strNodeId);
 	long lnExists = RegOpenKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, KEY_WRITE, &hk);
 				
-	if (lnExists == ERROR_SUCCESS){
+	if (lnExists == ERROR_SUCCESS) {
 		int length = static_cast<int>(value.length()) * sizeof(wchar_t);
 		RegSetValueEx(hk, name.c_str(), 0, REG_SZ, (LPBYTE)value.c_str(), length+1);
 	} else {

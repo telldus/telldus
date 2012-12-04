@@ -29,8 +29,7 @@ Socket::Socket() {
 	d->running = true;
 }
 
-Socket::Socket(SOCKET_T hPipe)
-{
+Socket::Socket(SOCKET_T hPipe) {
 	d = new PrivateData;
 	d->hPipe = hPipe;
 	d->connected = true;
@@ -38,7 +37,7 @@ Socket::Socket(SOCKET_T hPipe)
 }
 
 
-Socket::~Socket(void){
+Socket::~Socket(void) {
 	d->running = false;
 	SetEvent(d->readEvent);	//signal for break
 	if (d->hPipe != INVALID_HANDLE_VALUE) {
@@ -48,7 +47,7 @@ Socket::~Socket(void){
 	delete d;
 }
 
-void Socket::connect(const std::wstring &server){
+void Socket::connect(const std::wstring &server) {
 	BOOL fSuccess = false;
 
 	std::wstring name(L"\\\\.\\pipe\\" + server);
@@ -79,7 +78,7 @@ void Socket::connect(const std::wstring &server){
 	d->connected = true;
 }
 
-void Socket::stopReadWait(){
+void Socket::stopReadWait() {
 	d->running = false;
 	SetEvent(d->readEvent);
 }
@@ -88,7 +87,7 @@ std::wstring Socket::read() {
 	return read(INFINITE);
 }
 
-std::wstring Socket::read(int timeout){
+std::wstring Socket::read(int timeout) {
 	wchar_t buf[BUFSIZE];
 	int result;
 	DWORD cbBytesRead = 0;
@@ -102,7 +101,7 @@ std::wstring Socket::read(int timeout){
 	std::wstring returnString;
 	bool moreData = true;
 	
-	while(moreData){
+	while(moreData) {
 		moreData = false;
 		memset(&buf, 0, sizeof(buf));
 
@@ -110,7 +109,7 @@ std::wstring Socket::read(int timeout){
 		
 		result = WaitForSingleObject(oOverlap.hEvent, timeout);
 		
-		if(!d->running){
+		if(!d->running) {
 			CancelIo(d->hPipe);
 			WaitForSingleObject(oOverlap.hEvent, INFINITE);
 			d->readEvent = 0;
@@ -127,17 +126,17 @@ std::wstring Socket::read(int timeout){
 		if (!fSuccess) {
 			DWORD err = GetLastError();
 			debuglog(static_cast<int>(err), "Something read error");
-			if(err != ERROR_OPERATION_ABORTED){ //gets this "error" always when nothing was reads
+			if(err != ERROR_OPERATION_ABORTED) { //gets this "error" always when nothing was reads
 				debuglog(static_cast<int>(err), "Socket read error");
 			}
 
-			if(err == ERROR_MORE_DATA){
+			if(err == ERROR_MORE_DATA) {
 				moreData = true;
 			}
-			else{
+			else {
 				buf[0] = 0;
 			}
-			if (err == ERROR_BROKEN_PIPE){
+			if (err == ERROR_BROKEN_PIPE) {
 				debuglog(static_cast<int>(err), "Got an error, close this socket");
 				d->connected = false;
 				break;  // TODO(stefan): is this correct?
@@ -150,7 +149,7 @@ std::wstring Socket::read(int timeout){
 	return returnString;
 }
 
-void Socket::write(const std::wstring &msg){
+void Socket::write(const std::wstring &msg) {
 	
 	OVERLAPPED oOverlap;
 	DWORD bytesWritten = 0;
@@ -176,7 +175,7 @@ void Socket::write(const std::wstring &msg){
 			return;
 		}
 		fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &bytesWritten, TRUE);
-		if (!fSuccess){
+		if (!fSuccess) {
 			debuglog(result, "Error in GetOverlappedResult");
 			result = GetLastError();
 			debuglog(result, "Error in GetOverlappedResult, this message");
@@ -193,7 +192,7 @@ void Socket::write(const std::wstring &msg){
 	}
 }
 
-bool Socket::isConnected(){
+bool Socket::isConnected() {
 	return d->connected;
 }
 

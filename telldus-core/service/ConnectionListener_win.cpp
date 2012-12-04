@@ -23,8 +23,7 @@ public:
 	TelldusCore::EventRef waitEvent;
 };
 
-ConnectionListener::ConnectionListener(const std::wstring &name, TelldusCore::EventRef waitEvent)
-{
+ConnectionListener::ConnectionListener(const std::wstring &name, TelldusCore::EventRef waitEvent) {
 	d = new PrivateData;
 	d->hEvent = 0;
 
@@ -65,8 +64,7 @@ ConnectionListener::ConnectionListener(const std::wstring &name, TelldusCore::Ev
 	if (!SetSecurityDescriptorDacl(pSD, 
 				TRUE,     // bDaclPresent flag   
 				pACL, 
-				FALSE))   // not a default DACL 
-	{  
+				FALSE)) {   // not a default DACL 
 		LocalFree(pSD);
 		FreeSid(pEveryoneSID);
 	}
@@ -123,7 +121,7 @@ void ConnectionListener::run() {
 			alreadyConnected = GetLastError() == ERROR_PIPE_CONNECTED;
 			recreate = false;
 		}
-		if(!alreadyConnected){
+		if(!alreadyConnected) {
 			DWORD result = WaitForSingleObject(oOverlap.hEvent, 1000);
 			if (!d->running) {
 				CancelIo(hPipe);
@@ -131,7 +129,7 @@ void ConnectionListener::run() {
 				break;
 			}
 			
-			if(result == WAIT_TIMEOUT){
+			if(result == WAIT_TIMEOUT) {
 				//CloseHandle(hPipe);
 				continue;
 			}

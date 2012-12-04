@@ -15,8 +15,7 @@ public:
 };
 
 Event::Event(EventHandler *handler)
-	:EventBase(handler)
-{
+	:EventBase(handler) {
 	d = new PrivateData;
 	d->event = CreateEvent(NULL, true, false, NULL);
 }

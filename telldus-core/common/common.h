@@ -43,7 +43,7 @@ inline void dlog(const char *fmt, ...) {
 	fflush(stdout);
 }
 
-inline void debuglogfilename(const int intMessage, const std::string strMessage, const std::string filename){
+inline void debuglogfilename(const int intMessage, const std::string strMessage, const std::string filename) {
 
 #ifdef _WINDOWS
 	static bool firstRun = true;
@@ -76,12 +76,12 @@ inline void debuglogfilename(const int intMessage, const std::string strMessage,
 #endif
 }
 
-inline void debuglogservice(const int intMessage, const std::string strMessage){
+inline void debuglogservice(const int intMessage, const std::string strMessage) {
 	std::string filename("C:/telldus_service_debug.txt");
 	debuglogfilename(intMessage, strMessage, filename);
 }
 
-inline void debuglog(const int intMessage, const std::string strMessage){
+inline void debuglog(const int intMessage, const std::string strMessage) {
 	std::string filename("C:/telldus_client_debug.txt");
 	debuglogfilename(intMessage, strMessage, filename);
 }
