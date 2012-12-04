@@ -11,7 +11,7 @@
 #include <windows.h>
 #include <list>
 
-using namespace TelldusCore;
+namespace TelldusCore {
 
 class EventHandler::PrivateData {
 public:
@@ -73,3 +73,5 @@ bool EventHandler::waitForAny() {
 		return true;
 	}
 }
+
+}  // namespace TelldusCore

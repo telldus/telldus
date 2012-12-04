@@ -12,7 +12,7 @@
 
 #define BUFSIZE 512
 
-using namespace TelldusCore;
+namespace TelldusCore {
 
 class Socket::PrivateData {
 public:
@@ -196,3 +196,5 @@ void Socket::write(const std::wstring &msg){
 bool Socket::isConnected(){
 	return d->connected;
 }
+
+}  // namespace TelldusCore
