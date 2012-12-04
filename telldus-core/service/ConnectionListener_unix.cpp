@@ -47,7 +47,7 @@ void ConnectionListener::run() {
 
 	SOCKET_T serverSocket;
 	struct sockaddr_un name;
-	serverSocket = socket(PF_LOCAL, SOCK_STREAM, 0);
+	serverSocket = socket(PF_LOCAL, SOCK_STREAM | SOCK_CLOEXEC, 0);
 	if (serverSocket < 0) {
 		return;
 	}

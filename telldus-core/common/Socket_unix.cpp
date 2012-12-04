@@ -57,7 +57,7 @@ void Socket::connect(const std::wstring &server) {
 	struct sockaddr_un remote;
 	socklen_t len;
 
-	if ((d->socket = socket(AF_UNIX, SOCK_STREAM, 0)) == -1) {
+	if ((d->socket = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0)) == -1) {
 		return;
 	}
 	std::string name = "/tmp/" + std::string(server.begin(), server.end());

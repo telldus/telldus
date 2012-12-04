@@ -99,7 +99,7 @@ int Settings::addNode(Node type) {
 	TelldusCore::MutexLocker locker(&mutex);
 	int intNodeId = getNextNodeId(type);
 
-	FILE *fp = fopen(CONFIG_FILE, "w");
+	FILE *fp = fopen(CONFIG_FILE, "we");  // e for setting O_CLOEXEC on the file handle
 	if (!fp) {
 		return TELLSTICK_ERROR_PERMISSION_DENIED;
 	}
@@ -145,7 +145,7 @@ int Settings::getNextNodeId(Node type) const {
 */
 int Settings::removeNode(Node type, int intNodeId) {
 	TelldusCore::MutexLocker locker(&mutex);
-	FILE *fp = fopen(CONFIG_FILE, "w");
+	FILE *fp = fopen(CONFIG_FILE, "we");  // e for setting O_CLOEXEC on the file handle
 	if (!fp) {
 		return TELLSTICK_ERROR_PERMISSION_DENIED;
 	}
@@ -192,7 +192,7 @@ bool Settings::setDeviceState( int intDeviceId, int intDeviceState, const std::w
 			cfg_setint(cfg_device, "state", intDeviceState);
 			cfg_setstr(cfg_device, "stateValue", TelldusCore::wideToString(strDeviceStateValue).c_str());
 
-			FILE *fp = fopen(VAR_CONFIG_FILE, "w");
+			FILE *fp = fopen(VAR_CONFIG_FILE, "we");  // e for setting O_CLOEXEC on the file handle
 			if(fp == 0) {
 				return false;
 			}
@@ -202,7 +202,7 @@ bool Settings::setDeviceState( int intDeviceId, int intDeviceState, const std::w
 		}
 	}
 	//  The device is not found in the file, we must create it manualy...
-	FILE *fp = fopen(VAR_CONFIG_FILE, "w");
+	FILE *fp = fopen(VAR_CONFIG_FILE, "we");  // e for setting O_CLOEXEC on the file handle
 	if(!fp) {
 		fprintf(stderr, "Failed to write state to %s: %s\n",
 				VAR_CONFIG_FILE, strerror(errno));
@@ -298,7 +298,7 @@ int Settings::setStringSetting(Node type, int intDeviceId, const std::wstring &n
 				return TELLSTICK_ERROR_CONFIG_SYNTAX;
 			}
 			cfg_setstr(p, TelldusCore::wideToString(name).c_str(), newValue.c_str());
-			FILE *fp = fopen(CONFIG_FILE, "w");
+			FILE *fp = fopen(CONFIG_FILE, "we");  // e for setting O_CLOEXEC on the file handle
 			if (!fp) {
 				return TELLSTICK_ERROR_PERMISSION_DENIED;
 			}
@@ -345,7 +345,7 @@ int Settings::setIntSetting(Node type, int intDeviceId, const std::wstring &name
 			} else {
 				cfg_setint(cfg_device, TelldusCore::wideToString(name).c_str(), value);
 			}
-			FILE *fp = fopen(CONFIG_FILE, "w");
+			FILE *fp = fopen(CONFIG_FILE, "we");  // e for setting O_CLOEXEC on the file handle
 			if (!fp) {
 				return TELLSTICK_ERROR_PERMISSION_DENIED;
 			}
@@ -403,12 +403,18 @@ bool readConfig(cfg_t **cfg) {
 		CFG_END()
 	};
 
+	FILE *fp = fopen(CONFIG_FILE, "re");  // e for setting O_CLOEXEC on the file handle
+	if (!fp) {
+		return false;
+	}
 	(*cfg) = cfg_init(opts, CFGF_NOCASE);
-	if (cfg_parse((*cfg), CONFIG_FILE) == CFG_PARSE_ERROR) {
+	if (cfg_parse_fp((*cfg), fp) == CFG_PARSE_ERROR) {
 		(*cfg) = 0;
+		fclose(fp);
 		return false;
 	}
 
+	fclose(fp);
 	return true;
 }
 
@@ -424,11 +430,17 @@ bool readVarConfig(cfg_t **cfg) {
 		CFG_END()
 	};
 
+	FILE *fp = fopen(VAR_CONFIG_FILE, "re");  // e for setting O_CLOEXEC on the file handle
+	if (!fp) {
+		return false;
+	}
 	(*cfg) = cfg_init(opts, CFGF_NOCASE);
-	if (cfg_parse((*cfg), VAR_CONFIG_FILE) == CFG_PARSE_ERROR) {
+	if (cfg_parse_fp((*cfg), fp) == CFG_PARSE_ERROR) {
 		(*cfg) = 0;
+		fclose(fp);
 		return false;
 	}
 
+	fclose(fp);
 	return true;
 }
