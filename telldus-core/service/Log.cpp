@@ -11,8 +11,8 @@
 #include <syslog.h>
 #elif defined(_WINDOWS)
 #include <windows.h>
-#include "service/Strings.h"
-#include "service/Messages.h"
+#include "common/Strings.h"
+#include "Messages.h"
 #endif
 
 class Log::PrivateData {
@@ -159,16 +159,16 @@ void Log::message(Log::LogLevel logLevel, const char *format, va_list ap) const 
 
 		switch (logLevel) {
 			case Debug:
-				ReportEvent(d->eventSource, EVENTLOG_SUCCESS, NULL, LOG_DEBUG, NULL, 1, 0, reinterpret_cast<LPCWSTR*>(pInsertStrings), NULL);
+				ReportEvent(d->eventSource, EVENTLOG_SUCCESS, NULL, LOG_DEBUG, NULL, 1, 0, (LPCWSTR*)pInsertStrings, NULL);
 				break;
 			case Notice:
-				ReportEvent(d->eventSource, EVENTLOG_INFORMATION_TYPE, NULL, LOG_NOTICE, NULL, 1, 0, reinterpret_cast<LPCWSTR*>(pInsertStrings), NULL);
+				ReportEvent(d->eventSource, EVENTLOG_INFORMATION_TYPE, NULL, LOG_NOTICE, NULL, 1, 0, (LPCWSTR*)pInsertStrings, NULL);
 				break;
 			case Warning:
-				ReportEvent(d->eventSource, EVENTLOG_WARNING_TYPE, NULL, LOG_WARNING, NULL, 1, 0, reinterpret_cast<LPCWSTR*>(pInsertStrings), NULL);
+				ReportEvent(d->eventSource, EVENTLOG_WARNING_TYPE, NULL, LOG_WARNING, NULL, 1, 0, (LPCWSTR*)pInsertStrings, NULL);
 				break;
 			case Error:
-				ReportEvent(d->eventSource, EVENTLOG_ERROR_TYPE, NULL, LOG_ERR, NULL, 1, 0, reinterpret_cast<LPCWSTR*>(pInsertStrings), NULL);
+				ReportEvent(d->eventSource, EVENTLOG_ERROR_TYPE, NULL, LOG_ERR, NULL, 1, 0, (LPCWSTR*)pInsertStrings, NULL);
 				break;
 		}
 #endif

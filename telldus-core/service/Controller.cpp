@@ -4,6 +4,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#define _CRT_RAND_S
 #include "service/Controller.h"
 #include <stdlib.h>
 #include <map>
@@ -13,6 +14,16 @@
 #include "service/EventUpdateManager.h"
 #include "common/Strings.h"
 #include "common/common.h" //debug
+
+inline int random( unsigned int* seed ){
+	#ifdef _WINDOWS
+		unsigned int randomNumber;
+		rand_s( &randomNumber ); //no seed needed
+		return randomNumber;
+	#else
+		return rand_r( seed );
+	#endif
+}
 
 class Controller::PrivateData {
 public:
@@ -44,7 +55,7 @@ void Controller::publishData(const std::string &msg) const {
 
 void Controller::decodePublishData(const std::string &data) const {
 	// Garbange collect?
-	if (rand_r(&d->randSeed) % 1000 == 1) {
+	if (random(&d->randSeed) % 1000 == 1) {
 		time_t t = time(NULL);
 		// Standard associative-container erase idiom
 		for (std::map<std::string, time_t>::iterator it = d->duplicates.begin(); it != d->duplicates.end(); /* no increment */) {

@@ -10,6 +10,9 @@
 #include <string.h>
 #include <string>
 #include "common/Strings.h"
+#ifdef _WINDOWS
+#define strtok_r(s,d,p) strtok_s(s,d,p)
+#endif
 
 int ProtocolIkea::methods() const {
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_DIM;

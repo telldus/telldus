@@ -7,7 +7,11 @@
 #ifndef TELLDUS_CORE_SERVICE_PROTOCOLNEXA_H_
 #define TELLDUS_CORE_SERVICE_PROTOCOLNEXA_H_
 
+#ifdef _MSC_VER
+typedef unsigned __int64 uint64_t;
+#else
 #include <stdint.h>
+#endif
 #include <string>
 #include "service/ControllerMessage.h"
 #include "service/Device.h"

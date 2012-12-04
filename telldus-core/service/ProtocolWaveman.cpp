@@ -5,7 +5,10 @@
 //
 //
 #include "service/ProtocolWaveman.h"
+#ifdef _MSC_VER
+#else
 #include <stdint.h>
+#endif
 #include <stdio.h>
 #include <sstream>
 #include <string>

@@ -1,12 +1,12 @@
 #include "Settings.h"
-#include "Strings.h"
+#include "common/Strings.h"
 #include <Windows.h>
 #include <sstream> 
 #include <string>
 #include <vector>
 #include <iostream>
 #include <fstream>
-#include "common.h"
+#include "common/common.h"
 
 #include "../client/telldus-core.h"
 

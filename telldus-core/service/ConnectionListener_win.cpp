@@ -1,6 +1,6 @@
 #include "ConnectionListener.h"
 #include "Event.h"
-#include "Socket.h"
+#include "common/Socket.h"
 
 #include <windows.h>
 #include <AccCtrl.h>

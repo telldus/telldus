@@ -7,7 +7,11 @@
 #ifndef TELLDUS_CORE_SERVICE_CONTROLLERMESSAGE_H_
 #define TELLDUS_CORE_SERVICE_CONTROLLERMESSAGE_H_
 
+#ifdef _MSC_VER
+typedef unsigned __int64 uint64_t;
+#else
 #include <stdint.h>
+#endif
 #include <string>
 
 class ControllerMessage {
