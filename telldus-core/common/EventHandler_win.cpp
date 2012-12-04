@@ -55,7 +55,7 @@ EventRef EventHandler::addEvent() {
 	return event;
 }
 
-void EventHandler::signal(Event *) {
+void EventHandler::signal(Event *event) {
 }
 
 bool EventHandler::waitForAny() {
