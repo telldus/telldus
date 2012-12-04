@@ -12,6 +12,7 @@
 #include "service/Protocol.h"
 #include "service/EventUpdateManager.h"
 #include "common/Strings.h"
+#include "common/common.h" //debug
 
 class Controller::PrivateData {
 public:

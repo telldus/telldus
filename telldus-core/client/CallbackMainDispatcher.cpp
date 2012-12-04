@@ -60,7 +60,6 @@ int CallbackMainDispatcher::registerCallback(CallbackStruct::CallbackType type, 
 	callback->id = id;
 	callback->context = context;
 	d->callbackList.push_back(callback);
-	//logga callbackprenumeration lades till
 	debuglog(id, "Callback added");
 	return id;
 }
@@ -70,7 +69,6 @@ int CallbackMainDispatcher::unregisterCallback(int callbackId) {
 	{
 		TelldusCore::MutexLocker locker(&d->mutex);
 		for(CallbackList::iterator callback_it = d->callbackList.begin(); callback_it != d->callbackList.end(); ++callback_it) {
-			//logga, avregistrering av callback
 			if ( (*callback_it)->id != callbackId ) {
 				continue;
 			}
@@ -104,15 +102,11 @@ void CallbackMainDispatcher::run() {
 			if (!cbd) {
 				continue;
 			}
-			//logga här, att den fortfarande körs, ev till fil bara för att det kan bli så mkt...
-			//om för mkt, kolla att viss tid gått sedan förra ggn eller ngt...
 			//debuglog(333, "Callbackevent, signalled");
 			TelldusCore::MutexLocker locker(&d->mutex);
-			//logga, har låst
 			//debuglog(333, "Callbackevent, locked");
 			for(CallbackList::iterator callback_it = d->callbackList.begin(); callback_it != d->callbackList.end(); ++callback_it) {
 				if ( (*callback_it)->type == cbd->type ) {
-					//ev logga här också, att det finns ngnstans att skicka till
 					//debuglog((*callback_it)->id, "Callbackevent, sending");
 					std::tr1::shared_ptr<TelldusCore::TDEventDispatcher> ptr(new TelldusCore::TDEventDispatcher(eventData, *callback_it, d->janitor));
 					d->eventThreadList.push_back(ptr);
