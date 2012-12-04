@@ -19,7 +19,7 @@
 #endif
 #include <stdarg.h>
 #include <stdio.h>
-//#include <stdlib.h>
+#include <stdlib.h>
 #include <string.h>
 #include <string>
 #include "common/Strings.h"
@@ -48,7 +48,7 @@ inline void debuglogfilename(const int intMessage, const std::string strMessage,
 #ifdef _WINDOWS
 	static bool firstRun = true;
 	std::ofstream file;
-	
+
 	if (firstRun) {
 		file.open(filename.c_str(), std::ios::out);
 		firstRun = false;
