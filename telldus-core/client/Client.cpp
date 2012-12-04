@@ -78,6 +78,7 @@ std::wstring Client::getWStringFromService(const Message &msg) {
 }
 
 int Client::registerEvent( CallbackStruct::CallbackType type, void *eventFunction, void *context ) {
+	debuglog(555, "Client, Registering callback");
 	return d->callbackMainDispatcher.registerCallback(type, eventFunction, context );
 }
 
@@ -86,10 +87,11 @@ void Client::run() {
 	d->eventSocket.connect(L"TelldusEvents");
 
 	while(d->running) {
-		if(!d->eventSocket.isConnected()) {
-			d->eventSocket.connect(L"TelldusEvents");  // try to reconnect to service
-			if(!d->eventSocket.isConnected()) {
-				// reconnect didn't succeed, wait a while and try again
+		if(!d->eventSocket.isConnected()){
+			debuglog(555, "Client, Trying to (re)connect to TelldusEvents");
+			d->eventSocket.connect(L"TelldusEvents");	//try to reconnect to service
+			if(!d->eventSocket.isConnected()){
+				//reconnect didn't succeed, wait a while and try again
 				msleep(2000);
 				continue;
 			}
@@ -153,21 +155,24 @@ std::wstring Client::sendToService(const Message &msg) {
 		if(tries == 20) {
 			TelldusCore::Message msg;
 			msg.addArgument(TELLSTICK_ERROR_CONNECTING_SERVICE);
+			debuglog(555, "Connection failed, 20 retries, giving up.");
 			return msg;
 		}
 		Socket s;
 		s.connect(L"TelldusClient");
-		if (!s.isConnected()) {  // Connection failed
+		if (!s.isConnected()) { //Connection failed
+			debuglog(555, "Connection failed");
 			msleep(500);
 			continue;  // retry
 		}
 		s.write(msg.data());
 		if (!s.isConnected()) {  // Connection failed sometime during operation... (better check here, instead of 5 seconds timeout later)
 			msleep(500);
-			continue;  // retry
+			debuglog(555, "Error in write, should retry");
+			continue; //retry
 		}
-		readData = s.read(8000);  // TODO(stefan) changed to 10000 from 5000, how much does this do...?
-		if(readData == L"") {
+		readData = s.read(1000);  //TODO changed to 10000 from 5000, how much does this do...?
+		if(readData == L""){
 			msleep(500);
 			continue;  // TODO(stefan): can we be really sure it SHOULD be anything?
 			// TODO(stefan): perhaps break here instead?
@@ -189,6 +194,7 @@ void Client::stopThread() {
 }
 
 int Client::unregisterCallback( int callbackId ) {
+	debuglog(555, "Client, correctly unregistering callback");
 	return d->callbackMainDispatcher.unregisterCallback(callbackId);
 }
 

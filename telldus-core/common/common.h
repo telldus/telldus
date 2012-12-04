@@ -11,6 +11,7 @@
 #ifdef _WINDOWS
 #include <windows.h>
 #include <ole2.h>
+#include <fstream>
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
 #else
@@ -18,10 +19,12 @@
 #endif
 #include <stdarg.h>
 #include <stdio.h>
-#include <stdlib.h>
+//#include <stdlib.h>
 #include <string.h>
 #include <string>
 #include "common/Strings.h"
+
+#include <time.h>
 
 inline void msleep( const int msec) {
 #ifdef _WINDOWS
@@ -40,11 +43,12 @@ inline void dlog(const char *fmt, ...) {
 	fflush(stdout);
 }
 
-inline void debuglog(const int intMessage, const std::string strMessage) {
+inline void debuglogfilename(const int intMessage, const std::string strMessage, const std::string filename){
+
 #ifdef _WINDOWS
 	static bool firstRun = true;
 	std::ofstream file;
-	std::string filename("C:/log_locks.txt");
+	
 	if (firstRun) {
 		file.open(filename.c_str(), std::ios::out);
 		firstRun = false;
@@ -52,7 +56,14 @@ inline void debuglog(const int intMessage, const std::string strMessage) {
 		file.open(filename.c_str(), std::ios::out | std::ios::app);
 	}
 
-	file << "[" << GetCurrentThreadId() << "] " << intMessage << " - " << strMessage << "\n";
+	time_t now = time(0);
+
+	// Convert now to tm struct for local timezone
+	tm* localtm = localtime(&now);
+	char* thetime = asctime(localtm);
+	thetime[strlen(thetime)-1] = '\0';
+
+	file << thetime << " [" << GetCurrentThreadId() << "] " << intMessage << " - " << strMessage << "\n";
 	file.flush();
 	file.close();
 
@@ -63,6 +74,16 @@ inline void debuglog(const int intMessage, const std::string strMessage) {
 #else
 	printf("%i - %s\n", intMessage, strMessage.c_str());
 #endif
+}
+
+inline void debuglogservice(const int intMessage, const std::string strMessage){
+	std::string filename("C:/telldus_service_debug.txt");
+	debuglogfilename(intMessage, strMessage, filename);
+}
+
+inline void debuglog(const int intMessage, const std::string strMessage){
+	std::string filename("C:/telldus_client_debug.txt");
+	debuglogfilename(intMessage, strMessage, filename);
 }
 
 inline char *wrapStdString( const std::string &string) {

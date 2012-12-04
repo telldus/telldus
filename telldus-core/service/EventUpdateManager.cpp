@@ -15,6 +15,10 @@
 #include <sys/types.h>
 #include <sys/wait.h>
 #endif  // _LINUX
+
+#include "common/common.h" //debug
+#include <iostream> //debug
+#include <sstream> //debug
 #include <list>
 #include <map>
 #include <memory>
@@ -162,11 +166,16 @@ void EventUpdateManager::sendMessageToClients(EventUpdateData *data) {
 
 			it++;
 		} else {
-			// connection is dead, remove it
+			//connection is dead, remove it
+			debuglogservice(0, "Lost connection, removing it");
 			delete *it;
 			it = d->clients.erase(it);
 		}
 	}
+	//printf("Sent message to %d connected clients", connected)
+	//std::stringstream strMessage;
+	//strMessage << "Sent message to " << connected << " clients" << std::endl;
+	//debuglogservice(0, strMessage.str());
 }
 
 void EventUpdateManager::executeScripts(EventUpdateData *data) {

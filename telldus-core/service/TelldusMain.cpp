@@ -5,6 +5,7 @@
 //
 //
 #include "service/TelldusMain.h"
+#include "common/common.h" //debug
 
 #include <stdio.h>
 #include <list>
@@ -64,6 +65,7 @@ void TelldusMain::suspend() {
 }
 
 void TelldusMain::start(void) {
+	debuglogservice(0, "Starting service");
 	TelldusCore::EventRef clientEvent = d->eventHandler.addEvent();
 	TelldusCore::EventRef dataEvent = d->eventHandler.addEvent();
 	TelldusCore::EventRef executeActionEvent = d->eventHandler.addEvent();
