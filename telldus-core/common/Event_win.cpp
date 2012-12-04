@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "Event.h"
-#include "Thread.h"
+#include "common/Event.h"
+#include "common/Thread.h"
 
 using namespace TelldusCore;
 

@@ -4,7 +4,7 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "TelldusWinService_win.h"
+#include "service/TelldusWinService_win.h"
 //#include <QCoreApplication>
 
 #include <windows.h>

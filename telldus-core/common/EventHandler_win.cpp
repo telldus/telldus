@@ -4,9 +4,9 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "EventHandler.h"
-#include "Event.h"
-#include "Mutex.h"
+#include "common/EventHandler.h"
+#include "common/Event.h"
+#include "common/Mutex.h"
 
 #include <windows.h>
 #include <list>

@@ -12,7 +12,7 @@
 #elif defined(_WINDOWS)
 #include <windows.h>
 #include "common/Strings.h"
-#include "Messages.h"
+#include "service/Messages.h"
 #endif
 
 class Log::PrivateData {

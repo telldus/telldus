@@ -4,9 +4,9 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "TelldusWinService_win.h"
-#include "TelldusMain.h"
-#include "Log.h"
+#include "service/TelldusWinService_win.h"
+#include "service/TelldusMain.h"
+#include "service/Log.h"
 
 #include <Dbt.h>
 #include <string>

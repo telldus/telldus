@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "Socket.h"
-#include "common.h"
+#include "common/Socket.h"
+#include "common/common.h"
 #include <windows.h>
 #include <AccCtrl.h>
 #include <Aclapi.h>

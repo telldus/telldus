@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "ConnectionListener.h"
-#include "Event.h"
+#include "service/ConnectionListener.h"
+#include "common/Event.h"
 #include "common/Socket.h"
 
 #include <windows.h>
