@@ -4,17 +4,17 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "service/Settings.h"
-#include "common/Strings.h"
 #include <Windows.h>
+#include <fstream>
+#include <iostream>
 #include <sstream> 
 #include <string>
 #include <vector>
-#include <iostream>
-#include <fstream>
-#include "common/common.h"
 
 #include "../client/telldus-core.h"
+#include "common/common.h"
+#include "common/Strings.h"
+#include "service/Settings.h"
 
 const int intMaxRegValueLength = 1000;
 

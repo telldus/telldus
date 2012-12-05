@@ -5,22 +5,20 @@
 //
 //
 #include "service/TelldusMain.h"
-#include "common/common.h" //debug
-
 #include <stdio.h>
 #include <list>
 #include <memory>
 
-#include "service/ConnectionListener.h"
+#include "common/common.h" //debug
 #include "common/EventHandler.h"
 #include "service/ClientCommunicationHandler.h"
-#include "service/DeviceManager.h"
-#include "service/ControllerManager.h"
+#include "service/ConnectionListener.h"
 #include "service/ControllerListener.h"
+#include "service/ControllerManager.h"
+#include "service/DeviceManager.h"
 #include "service/EventUpdateManager.h"
-#include "service/Timer.h"
 #include "service/Log.h"
-
+#include "service/Timer.h"
 
 class TelldusMain::PrivateData {
 public:

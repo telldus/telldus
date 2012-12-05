@@ -9,11 +9,10 @@
 #define TELLDUS_CORE_COMMON_COMMON_H_
 
 #ifdef _WINDOWS
-#include <windows.h>
-#include <ole2.h>
-#include <fstream>
 #define strcasecmp _stricmp
 #define strncasecmp _strnicmp
+#include <ole2.h>
+#include <windows.h>
 #else
 #include <unistd.h>
 #endif
@@ -21,10 +20,13 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <time.h>
+
+#ifdef _WINDOWS
+#include <fstream>
+#endif
 #include <string>
 #include "common/Strings.h"
-
-#include <time.h>
 
 inline void msleep( const int msec) {
 #ifdef _WINDOWS

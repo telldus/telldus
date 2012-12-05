@@ -4,12 +4,11 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "service/TelldusWinService_win.h"
-//#include <QCoreApplication>
-
 #include <windows.h>
 #include <Dbt.h>
 
+#include "service/TelldusWinService_win.h"
+//#include <QCoreApplication>
 
 int main(int argc, char **argv) {
 	g_argc = argc;

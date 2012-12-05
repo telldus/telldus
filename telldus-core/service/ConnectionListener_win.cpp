@@ -5,12 +5,13 @@
 //
 //
 #include "service/ConnectionListener.h"
-#include "common/Event.h"
-#include "common/Socket.h"
 
-#include <windows.h>
 #include <AccCtrl.h>
 #include <Aclapi.h>
+#include <windows.h>
+
+#include "common/Event.h"
+#include "common/Socket.h"
 
 #define BUFSIZE 512
 

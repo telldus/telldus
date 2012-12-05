@@ -16,9 +16,6 @@
 #include <sys/wait.h>
 #endif  // _LINUX
 
-#include "common/common.h" //debug
-#include <iostream> //debug
-#include <sstream> //debug
 #include <list>
 #include <map>
 #include <memory>
@@ -27,13 +24,14 @@
 #include <vector>
 #endif  // _LINUX
 
-#include "service/ConnectionListener.h"
-#include "service/config.h"
+#include "common/common.h" //debug
 #include "common/EventHandler.h"
 #include "common/Message.h"
 #include "common/Socket.h"
-#include "service/Log.h"
 #include "common/Strings.h"
+#include "service/config.h"
+#include "service/ConnectionListener.h"
+#include "service/Log.h"
 
 typedef std::list<TelldusCore::Socket *> SocketList;
 typedef std::list<std::string> StringList;
@@ -172,10 +170,6 @@ void EventUpdateManager::sendMessageToClients(EventUpdateData *data) {
 			it = d->clients.erase(it);
 		}
 	}
-	//printf("Sent message to %d connected clients", connected)
-	//std::stringstream strMessage;
-	//strMessage << "Sent message to " << connected << " clients" << std::endl;
-	//debuglogservice(0, strMessage.str());
 }
 
 void EventUpdateManager::executeScripts(EventUpdateData *data) {

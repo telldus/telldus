@@ -5,12 +5,13 @@
 //
 //
 #include "service/TelldusWinService_win.h"
-#include "service/TelldusMain.h"
-#include "service/Log.h"
 
 #include <Dbt.h>
-#include <string>
 #include <algorithm>
+#include <string>
+
+#include "service/Log.h"
+#include "service/TelldusMain.h"
 
 int g_argc;
 char **g_argv;

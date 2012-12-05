@@ -4,11 +4,12 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#include "common/Socket.h"
-#include "common/common.h"
-#include <windows.h>
 #include <AccCtrl.h>
 #include <Aclapi.h>
+#include <windows.h>
+
+#include "common/common.h"
+#include "common/Socket.h"
 
 #define BUFSIZE 512
 
