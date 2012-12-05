@@ -38,4 +38,4 @@ private:
 	static DWORD WINAPI serviceControlHandler( DWORD controlCode, DWORD dwEventType, LPVOID lpEventData, LPVOID lpContext );
 
 };
-#endif TELLDUSSERVICE_WIN_H
+#endif  // TELLDUSSERVICE_WIN_H
