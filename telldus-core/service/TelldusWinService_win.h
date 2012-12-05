@@ -4,8 +4,8 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
-#ifndef TELLDUSSERVICE_WIN_H
-#define TELLDUSSERVICE_WIN_H
+#ifndef TELLDUS_CORE_SERVICE_TELLDUSWINSERVICE_WIN_H_
+#define TELLDUS_CORE_SERVICE_TELLDUSWINSERVICE_WIN_H_
 
 #include <windows.h>
 
@@ -38,4 +38,4 @@ private:
 	static DWORD WINAPI serviceControlHandler( DWORD controlCode, DWORD dwEventType, LPVOID lpEventData, LPVOID lpContext );
 
 };
-#endif  // TELLDUSSERVICE_WIN_H
+#endif  // TELLDUS_CORE_SERVICE_TELLDUSWINSERVICE_WIN_H_
