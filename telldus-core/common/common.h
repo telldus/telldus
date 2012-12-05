@@ -23,7 +23,7 @@
 #include <time.h>
 
 #ifdef _WINDOWS
-#include <fstream>
+#include <fstream>  // NOLINT(readability/streams)
 #endif
 #include <string>
 #include "common/Strings.h"
