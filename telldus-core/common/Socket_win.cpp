@@ -40,7 +40,7 @@ Socket::Socket(SOCKET_T hPipe) {
 
 Socket::~Socket(void) {
 	d->running = false;
-	SetEvent(d->readEvent);	//signal for break
+	SetEvent(d->readEvent);  // signal for break
 	if (d->hPipe != INVALID_HANDLE_VALUE) {
 		CloseHandle(d->hPipe);
 		d->hPipe = 0;
@@ -68,10 +68,10 @@ void Socket::connect(const std::wstring &server) {
 
 	DWORD dwMode = PIPE_READMODE_MESSAGE;
 	fSuccess = SetNamedPipeHandleState(
-      d->hPipe, // pipe handle
-      &dwMode,  // new pipe mode
-      NULL,     // don't set maximum bytes
-      NULL);    // don't set maximum time
+      d->hPipe,  // pipe handle
+      &dwMode,   // new pipe mode
+      NULL,      // don't set maximum bytes
+      NULL);     // don't set maximum time
 
 	if (!fSuccess) {
 		return;
@@ -127,7 +127,7 @@ std::wstring Socket::read(int timeout) {
 		if (!fSuccess) {
 			DWORD err = GetLastError();
 			debuglog(static_cast<int>(err), "Something read error");
-			if(err != ERROR_OPERATION_ABORTED) { //gets this "error" always when nothing was reads
+			if(err != ERROR_OPERATION_ABORTED) {  // gets this "error" always when nothing was reads
 				debuglog(static_cast<int>(err), "Socket read error");
 			}
 

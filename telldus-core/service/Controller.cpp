@@ -13,12 +13,12 @@
 #include "service/Protocol.h"
 #include "service/EventUpdateManager.h"
 #include "common/Strings.h"
-#include "common/common.h" //debug
+#include "common/common.h"  // debug
 
 inline int random( unsigned int* seed ) {
 	#ifdef _WINDOWS
 		unsigned int randomNumber;
-		rand_s( &randomNumber ); //no seed needed
+		rand_s( &randomNumber );  // no seed needed
 		return randomNumber;
 	#else
 		return rand_r( seed );

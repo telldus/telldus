@@ -9,7 +9,7 @@
 #include <list>
 #include <memory>
 
-#include "common/common.h" //debug
+#include "common/common.h"  // debug
 #include "common/EventHandler.h"
 #include "service/ClientCommunicationHandler.h"
 #include "service/ConnectionListener.h"

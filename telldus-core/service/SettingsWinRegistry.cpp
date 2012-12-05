@@ -111,7 +111,7 @@ int Settings::addNode(Node type) {
 	strCompleteRegPath.append(TelldusCore::intToWstring(intNodeId));
 
 	if (RegCreateKeyEx(d->rootKey, strCompleteRegPath.c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hk, &dwDisp)) {
-		//fail
+		// fail
 		intNodeId = -1;
 	}
 
@@ -123,12 +123,12 @@ int Settings::addNode(Node type) {
 * Get next available device id
 */
 int Settings::getNextNodeId(Node type) const {
-	//Private, no locks needed
+	// Private, no locks needed
 	int intReturn = -1;
 	HKEY hk;
 	DWORD dwDisp;
 
-	long lnExists = RegCreateKeyEx(d->rootKey, d->getNodePath(type).c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hk, &dwDisp);	//create or open if already created
+	long lnExists = RegCreateKeyEx(d->rootKey, d->getNodePath(type).c_str(), 0, NULL, REG_OPTION_NON_VOLATILE, KEY_ALL_ACCESS, NULL, &hk, &dwDisp);	 // create or open if already created
 
 	if(lnExists == ERROR_SUCCESS) {
 		DWORD dwLength = sizeof(DWORD);
@@ -160,7 +160,7 @@ int Settings::removeNode(Node type, int intNodeId) {
 	long lngSuccess = RegDeleteKey(d->rootKey, strCompleteRegPath.c_str());
 
 	if(lngSuccess == ERROR_SUCCESS) {
-		//one of the deletions succeeded
+		// one of the deletions succeeded
 		return TELLSTICK_SUCCESS;
 	}
 
@@ -180,7 +180,7 @@ std::wstring Settings::getSetting(const std::wstring &strName) const {
 		long lngStatus = RegQueryValueEx(hk, strName.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
 
 		if(lngStatus == ERROR_MORE_DATA) {
-			//The buffer is to small, recreate it
+			// The buffer is to small, recreate it
 			delete[] Buff;
 			Buff = new wchar_t[dwLength];
 			lngStatus = RegQueryValueEx(hk, strName.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
@@ -208,7 +208,7 @@ std::wstring Settings::getStringSetting(Node type, int intNodeId, const std::wst
 		long lngStatus = RegQueryValueEx(hk, name.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);
 
 		if(lngStatus == ERROR_MORE_DATA) {
-			//The buffer is to small, recreate it
+			// The buffer is to small, recreate it
 			delete[] Buff;
 			Buff = new wchar_t[dwLength];
 			lngStatus = RegQueryValueEx(hk, name.c_str(), NULL, NULL, (LPBYTE)Buff, &dwLength);

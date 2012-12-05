@@ -8,7 +8,7 @@
 #include <Dbt.h>
 
 #include "service/TelldusWinService_win.h"
-//#include <QCoreApplication>
+// #include <QCoreApplication>
 
 int main(int argc, char **argv) {
 	g_argc = argc;

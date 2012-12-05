@@ -102,12 +102,12 @@ void CallbackMainDispatcher::run() {
 			if (!cbd) {
 				continue;
 			}
-			//debuglog(333, "Callbackevent, signalled");
+			// debuglog(333, "Callbackevent, signalled");
 			TelldusCore::MutexLocker locker(&d->mutex);
-			//debuglog(333, "Callbackevent, locked");
+			// debuglog(333, "Callbackevent, locked");
 			for(CallbackList::iterator callback_it = d->callbackList.begin(); callback_it != d->callbackList.end(); ++callback_it) {
 				if ( (*callback_it)->type == cbd->type ) {
-					//debuglog((*callback_it)->id, "Callbackevent, sending");
+					// debuglog((*callback_it)->id, "Callbackevent, sending");
 					std::tr1::shared_ptr<TelldusCore::TDEventDispatcher> ptr(new TelldusCore::TDEventDispatcher(eventData, *callback_it, d->janitor));
 					d->eventThreadList.push_back(ptr);
 				}

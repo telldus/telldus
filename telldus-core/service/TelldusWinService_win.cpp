@@ -75,7 +75,7 @@ DWORD WINAPI TelldusWinService::deviceNotificationHandler( DWORD controlCode, DW
 	std::wstring name(pDevInf->dbcc_name);
 	transform(name.begin(), name.end(), name.begin(), toupper);
 
-	//Parse VID
+	// Parse VID
 	size_t posStart = name.find(L"VID_");
 	if (posStart == std::wstring::npos) {
 		return ERROR_CALL_NOT_IMPLEMENTED;
@@ -87,7 +87,7 @@ DWORD WINAPI TelldusWinService::deviceNotificationHandler( DWORD controlCode, DW
 	}
 	std::wstring strVID = name.substr(posStart, posEnd-posStart);
 
-	//Parse PID
+	// Parse PID
 	posStart = name.find(L"PID_");
 	if (posStart == std::wstring::npos) {
 		return ERROR_CALL_NOT_IMPLEMENTED;
@@ -125,7 +125,7 @@ DWORD WINAPI TelldusWinService::serviceControlHandler( DWORD controlCode, DWORD 
 void WINAPI TelldusWinService::serviceMain( DWORD argc, TCHAR* argv[] ) {
 	TelldusWinService instance;
 
-	//Enable debug if we hade this supplied
+	// Enable debug if we hade this supplied
 	for(unsigned int i = 1; i < argc; ++i) {
 		if (wcscmp(argv[i], L"--debug") == 0) {
 			Log::setDebug();
@@ -165,7 +165,7 @@ void WINAPI TelldusWinService::serviceMain( DWORD argc, TCHAR* argv[] ) {
 
 		Log::notice("TelldusService started");
 
-		//Start our main-loop
+		// Start our main-loop
 		instance.tm->start();
 
 		Log::notice("TelldusService stopping");

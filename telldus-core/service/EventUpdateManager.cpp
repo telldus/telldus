@@ -24,7 +24,7 @@
 #include <vector>
 #endif  // _LINUX
 
-#include "common/common.h" //debug
+#include "common/common.h"  // debug
 #include "common/EventHandler.h"
 #include "common/Message.h"
 #include "common/Socket.h"
@@ -164,7 +164,7 @@ void EventUpdateManager::sendMessageToClients(EventUpdateData *data) {
 
 			it++;
 		} else {
-			//connection is dead, remove it
+			// connection is dead, remove it
 			debuglogservice(0, "Lost connection, removing it");
 			delete *it;
 			it = d->clients.erase(it);

@@ -89,9 +89,9 @@ void Client::run() {
 	while(d->running) {
 		if(!d->eventSocket.isConnected()) {
 			debuglog(555, "Client, Trying to (re)connect to TelldusEvents");
-			d->eventSocket.connect(L"TelldusEvents");	//try to reconnect to service
+			d->eventSocket.connect(L"TelldusEvents");  // try to reconnect to service
 			if(!d->eventSocket.isConnected()) {
-				//reconnect didn't succeed, wait a while and try again
+				// reconnect didn't succeed, wait a while and try again
 				msleep(2000);
 				continue;
 			}
@@ -160,7 +160,7 @@ std::wstring Client::sendToService(const Message &msg) {
 		}
 		Socket s;
 		s.connect(L"TelldusClient");
-		if (!s.isConnected()) { //Connection failed
+		if (!s.isConnected()) {  // sConnection failed
 			debuglog(555, "Connection failed");
 			msleep(500);
 			continue;  // retry
@@ -169,7 +169,7 @@ std::wstring Client::sendToService(const Message &msg) {
 		if (!s.isConnected()) {  // Connection failed sometime during operation... (better check here, instead of 5 seconds timeout later)
 			msleep(500);
 			debuglog(555, "Error in write, should retry");
-			continue; //retry
+			continue;  // retry
 		}
 		readData = s.read(1000);  // TODO(stefan): changed to 10000 from 5000, how much does this do...?
 		if(readData == L"") {
