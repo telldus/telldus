@@ -58,16 +58,18 @@ inline void debuglogfilename(const int intMessage, const std::string strMessage,
 		file.open(filename.c_str(), std::ios::out | std::ios::app);
 	}
 
-	time_t now = time(0);
+	__time32_t now = _time32(0);
 
 	// Convert now to tm struct for local timezone
-	tm* localtm = localtime(&now);
-	char* thetime = asctime(localtm);
-	thetime[strlen(thetime)-1] = '\0';
-
-	file << thetime << " [" << GetCurrentThreadId() << "] " << intMessage << " - " << strMessage << "\n";
-	file.flush();
-	file.close();
+	struct tm localtm;
+	_localtime32_s(&localtm, &now);
+	char thetime[32];
+	errno_t err = asctime_s(thetime, 32, &localtm);
+	if (!err) {
+		file << thetime << " [" << GetCurrentThreadId() << "] " << intMessage << " - " << strMessage << "\n";
+		file.flush();
+		file.close();
+	}
 
 #elif !defined(_MACOSX) && !defined(__FreeBSD__)
 	pthread_t thread = pthread_self();
