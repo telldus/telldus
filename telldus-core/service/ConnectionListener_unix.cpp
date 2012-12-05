@@ -10,11 +10,16 @@
 #include <sys/stat.h>
 #include <stdio.h>
 #include <unistd.h>
+#include <fcntl.h>
 #include <errno.h>
 #include <string>
 
 #include "service/ConnectionListener.h"
 #include "common/Socket.h"
+
+#if defined(_MACOSX) && !defined(SOCK_CLOEXEC)
+        #define SOCK_CLOEXEC 0
+#endif
 
 class ConnectionListener::PrivateData {
 public:
@@ -51,6 +56,10 @@ void ConnectionListener::run() {
 	if (serverSocket < 0) {
 		return;
 	}
+#if defined(_MACOSX)
+	int op = fcntl(serverSocket, F_GETFD);
+        fcntl(serverSocket, op | FD_CLOEXEC);  // OS X doesn't support SOCK_CLOEXEC yet
+#endif
 	name.sun_family = AF_LOCAL;
 	memset(name.sun_path, '\0', sizeof(name.sun_path));
 	strncpy(name.sun_path, d->name.c_str(), sizeof(name.sun_path));

@@ -9,6 +9,7 @@
 #include <unistd.h>
 #include <sys/socket.h>
 #include <sys/un.h>
+#include <fcntl.h>
 #include <math.h>
 #include <string>
 
@@ -17,6 +18,9 @@
 #include "common/Strings.h"
 
 #define BUFSIZE 512
+#if defined(_MACOSX) && !defined(SOCK_CLOEXEC)
+	#define SOCK_CLOEXEC 0
+#endif
 
 namespace TelldusCore {
 
@@ -60,6 +64,10 @@ void Socket::connect(const std::wstring &server) {
 	if ((d->socket = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0)) == -1) {
 		return;
 	}
+#if defined(_MACOSX)
+	int op = fcntl(d->socket, F_GETFD);
+	fcntl(d->socket, op | FD_CLOEXEC);  // OS X doesn't support SOCK_CLOEXEC yet
+#endif
 	std::string name = "/tmp/" + std::string(server.begin(), server.end());
 	remote.sun_family = AF_UNIX;
 	snprintf(remote.sun_path, sizeof(remote.sun_path), "%s", name.c_str());
