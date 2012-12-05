@@ -150,7 +150,6 @@ std::wstring Socket::read(int timeout) {
 }
 
 void Socket::write(const std::wstring &msg) {
-
 	OVERLAPPED oOverlap;
 	DWORD bytesWritten = 0;
 	int result;

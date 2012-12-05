@@ -24,7 +24,6 @@ public:
 	static void WINAPI serviceMain( DWORD /*argc*/, TCHAR* /*argv*/[] );
 
 protected:
-
 	void stop();
 
 	DWORD WINAPI serviceControlHandler( DWORD controlCode, DWORD dwEventType, LPVOID lpEventData );
@@ -36,6 +35,5 @@ private:
 	SERVICE_STATUS_HANDLE serviceStatusHandle;
 
 	static DWORD WINAPI serviceControlHandler( DWORD controlCode, DWORD dwEventType, LPVOID lpEventData, LPVOID lpContext );
-
 };
 #endif  // TELLDUS_CORE_SERVICE_TELLDUSWINSERVICE_WIN_H_

@@ -46,7 +46,6 @@ inline void dlog(const char *fmt, ...) {
 }
 
 inline void debuglogfilename(const int intMessage, const std::string strMessage, const std::string filename) {
-
 #ifdef _WINDOWS
 	static bool firstRun = true;
 	std::ofstream file;

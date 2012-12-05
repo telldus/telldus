@@ -29,7 +29,6 @@ TelldusWinService::~TelldusWinService() {
 	delete tm;
 }
 
-
 void TelldusWinService::stop() {
 	tm->stop();
 }

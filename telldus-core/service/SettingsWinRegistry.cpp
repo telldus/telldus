@@ -60,7 +60,6 @@ int Settings::getNumberOfNodes(Node type) const {
 	long lnExists = RegOpenKeyEx(d->rootKey, d->getNodePath(type).c_str(), 0, KEY_QUERY_VALUE, &hk);
 
 	if(lnExists == ERROR_SUCCESS) {
-
 		std::wstring strNumSubKeys;
 		DWORD dNumSubKeys;
 		RegQueryInfoKey(hk, NULL, NULL, NULL, &dNumSubKeys, NULL, NULL, NULL, NULL, NULL, NULL, NULL);
@@ -82,7 +81,6 @@ int Settings::getNodeId(Node type, int intNodeIndex) const {
 	long lnExists = RegOpenKeyEx(d->rootKey, d->getNodePath(type).c_str(), 0, KEY_READ, &hk);
 
 	if(lnExists == ERROR_SUCCESS) {
-
 		wchar_t* Buff = new wchar_t[intMaxRegValueLength];
 		DWORD size = intMaxRegValueLength;
 		if (RegEnumKeyEx(hk, intNodeIndex, (LPWSTR)Buff, &size, NULL, NULL, NULL, NULL) == ERROR_SUCCESS) {
@@ -223,7 +221,6 @@ std::wstring Settings::getStringSetting(Node type, int intNodeId, const std::wst
 }
 
 int Settings::setStringSetting(Node type, int intNodeId, const std::wstring &name, const std::wstring &value, bool parameter) {
-
 	HKEY hk;
 	int ret = TELLSTICK_SUCCESS;
 
@@ -241,7 +238,6 @@ int Settings::setStringSetting(Node type, int intNodeId, const std::wstring &nam
 	RegCloseKey(hk);
 
 	return ret;
-
 }
 
 int Settings::getIntSetting(Node type, int intNodeId, const std::wstring &name, bool parameter) const {
