@@ -22,7 +22,7 @@ public:
 	~TelldusWinService();
 
 	static void WINAPI serviceMain( DWORD /*argc*/, TCHAR* /*argv*/[] );
-	
+
 protected:
 
 	void stop();

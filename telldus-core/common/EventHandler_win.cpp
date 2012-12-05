@@ -59,7 +59,6 @@ void EventHandler::signal(Event *event) {
 }
 
 bool EventHandler::waitForAny() {
-	
 	while(1) {
 		int result = WaitForMultipleObjects(d->eventCount, d->eventArray, FALSE, 1000);
 		if (result == WAIT_TIMEOUT) {

@@ -38,12 +38,12 @@ ConnectionListener::ConnectionListener(const std::wstring &name, TelldusCore::Ev
 	PSID pEveryoneSID = NULL;
 	SID_IDENTIFIER_AUTHORITY SIDAuthWorld = SECURITY_WORLD_SID_AUTHORITY;
 
-	pSD = (PSECURITY_DESCRIPTOR) LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH); 
+	pSD = (PSECURITY_DESCRIPTOR) LocalAlloc(LPTR, SECURITY_DESCRIPTOR_MIN_LENGTH);
 	if (pSD == NULL) {
 		return;
-	} 
- 
-	if (!InitializeSecurityDescriptor(pSD, SECURITY_DESCRIPTOR_REVISION)) {  
+	}
+
+	if (!InitializeSecurityDescriptor(pSD, SECURITY_DESCRIPTOR_REVISION)) {
 		LocalFree(pSD);
 		return;
 	}
@@ -60,12 +60,11 @@ ConnectionListener::ConnectionListener(const std::wstring &name, TelldusCore::Ev
 	ea.Trustee.TrusteeType = TRUSTEE_IS_WELL_KNOWN_GROUP;
 	ea.Trustee.ptstrName  = (LPTSTR) pEveryoneSID;
 
- 
-	// Add the ACL to the security descriptor. 
-	if (!SetSecurityDescriptorDacl(pSD, 
-				TRUE,     // bDaclPresent flag   
-				pACL, 
-				FALSE)) {   // not a default DACL 
+	// Add the ACL to the security descriptor.
+	if (!SetSecurityDescriptorDacl(pSD,
+				TRUE,     // bDaclPresent flag
+				pACL,
+				FALSE)) {   // not a default DACL
 		LocalFree(pSD);
 		FreeSid(pEveryoneSID);
 	}
@@ -97,7 +96,7 @@ void ConnectionListener::run() {
 	d->hEvent = CreateEvent(NULL, true, false, NULL);
 	oOverlap.hEvent = d->hEvent;
 	bool recreate = true;
-	
+
 	while (1) {
 		BOOL alreadyConnected = false;
 		if (recreate) {
@@ -129,7 +128,7 @@ void ConnectionListener::run() {
 				WaitForSingleObject(oOverlap.hEvent, INFINITE);
 				break;
 			}
-			
+
 			if(result == WAIT_TIMEOUT) {
 				//CloseHandle(hPipe);
 				continue;

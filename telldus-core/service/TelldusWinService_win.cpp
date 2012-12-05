@@ -66,7 +66,7 @@ DWORD WINAPI TelldusWinService::deviceNotificationHandler( DWORD controlCode, DW
 	if (dwEventType != DBT_DEVICEARRIVAL && dwEventType != DBT_DEVICEREMOVECOMPLETE) {
 		return ERROR_CALL_NOT_IMPLEMENTED;
 	}
-	
+
 	PDEV_BROADCAST_DEVICEINTERFACE pDevInf = reinterpret_cast<PDEV_BROADCAST_DEVICEINTERFACE>(lpEventData);
 	if (!pDevInf) {
 		return ERROR_CALL_NOT_IMPLEMENTED;
@@ -101,7 +101,7 @@ DWORD WINAPI TelldusWinService::deviceNotificationHandler( DWORD controlCode, DW
 
 	long int vid = strtol(std::string(strVID.begin(), strVID.end()).c_str(), NULL, 16);
 	long int pid = strtol(std::string(strPID.begin(), strPID.end()).c_str(), NULL, 16);
-	
+
 	if (dwEventType == DBT_DEVICEARRIVAL) {
 		tm->deviceInsertedOrRemoved(vid, pid, true);
 	} else {
@@ -170,7 +170,7 @@ void WINAPI TelldusWinService::serviceMain( DWORD argc, TCHAR* argv[] ) {
 
 		Log::notice("TelldusService stopping");
 		Log::destroy();
-		
+
 		// service was stopped
 		instance.serviceStatus.dwCurrentState = SERVICE_STOP_PENDING;
 		SetServiceStatus( instance.serviceStatusHandle, &instance.serviceStatus );

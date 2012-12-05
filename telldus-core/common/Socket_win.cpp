@@ -53,25 +53,25 @@ void Socket::connect(const std::wstring &server) {
 
 	std::wstring name(L"\\\\.\\pipe\\" + server);
 	d->hPipe = CreateFile(
-		(const wchar_t *)name.c_str(),           // pipe name 
-		GENERIC_READ |  // read and write access 
-		GENERIC_WRITE, 
-		0,              // no sharing 
+		(const wchar_t *)name.c_str(),           // pipe name
+		GENERIC_READ |  // read and write access
+		GENERIC_WRITE,
+		0,              // no sharing
 		NULL,           // default security attributes
-		OPEN_EXISTING,  // opens existing pipe 
-		FILE_FLAG_OVERLAPPED, // default attributes 
-		NULL);          // no template file 
+		OPEN_EXISTING,  // opens existing pipe
+		FILE_FLAG_OVERLAPPED,  // default attributes
+		NULL);          // no template file
 
 	if (d->hPipe == INVALID_HANDLE_VALUE) {
 		return;
 	}
-	
-	DWORD dwMode = PIPE_READMODE_MESSAGE; 
-	fSuccess = SetNamedPipeHandleState( 
-      d->hPipe, // pipe handle 
-      &dwMode,  // new pipe mode 
-      NULL,     // don't set maximum bytes 
-      NULL);    // don't set maximum time 
+
+	DWORD dwMode = PIPE_READMODE_MESSAGE;
+	fSuccess = SetNamedPipeHandleState(
+      d->hPipe, // pipe handle
+      &dwMode,  // new pipe mode
+      NULL,     // don't set maximum bytes
+      NULL);    // don't set maximum time
 
 	if (!fSuccess) {
 		return;
@@ -92,8 +92,8 @@ std::wstring Socket::read(int timeout) {
 	wchar_t buf[BUFSIZE];
 	int result;
 	DWORD cbBytesRead = 0;
-	OVERLAPPED oOverlap; 
-	
+	OVERLAPPED oOverlap;
+
 	memset(&oOverlap, 0, sizeof(OVERLAPPED));
 
 	d->readEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
@@ -101,15 +101,15 @@ std::wstring Socket::read(int timeout) {
 	BOOL fSuccess = false;
 	std::wstring returnString;
 	bool moreData = true;
-	
+
 	while(moreData) {
 		moreData = false;
 		memset(&buf, 0, sizeof(buf));
 
 		ReadFile( d->hPipe, &buf, sizeof(buf)-sizeof(wchar_t), &cbBytesRead, &oOverlap);
-		
+
 		result = WaitForSingleObject(oOverlap.hEvent, timeout);
-		
+
 		if(!d->running) {
 			CancelIo(d->hPipe);
 			WaitForSingleObject(oOverlap.hEvent, INFINITE);
@@ -123,7 +123,7 @@ std::wstring Socket::read(int timeout) {
 			// Cancel, we still need to cleanup
 		}
 		fSuccess = GetOverlappedResult(d->hPipe, &oOverlap, &cbBytesRead, true);
-			
+
 		if (!fSuccess) {
 			DWORD err = GetLastError();
 			debuglog(static_cast<int>(err), "Something read error");
@@ -151,7 +151,7 @@ std::wstring Socket::read(int timeout) {
 }
 
 void Socket::write(const std::wstring &msg) {
-	
+
 	OVERLAPPED oOverlap;
 	DWORD bytesWritten = 0;
 	int result;
@@ -161,7 +161,7 @@ void Socket::write(const std::wstring &msg) {
 
 	HANDLE writeEvent = CreateEvent(NULL, TRUE, FALSE, NULL);
 	oOverlap.hEvent = writeEvent;
-	
+
 	BOOL writeSuccess = WriteFile(d->hPipe, msg.data(), (DWORD)msg.length()*sizeof(wchar_t), &bytesWritten, &oOverlap);
 	result = GetLastError();
 	if (writeSuccess || result == ERROR_IO_PENDING) {
@@ -189,7 +189,7 @@ void Socket::write(const std::wstring &msg) {
 		d->hPipe = 0;
 		debuglog(result, "Error in write event, closing socket");
 		d->connected = false;
-		return;	
+		return;
 	}
 }
 
