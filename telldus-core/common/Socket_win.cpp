@@ -133,8 +133,7 @@ std::wstring Socket::read(int timeout) {
 
 			if(err == ERROR_MORE_DATA) {
 				moreData = true;
-			}
-			else {
+			} else {
 				buf[0] = 0;
 			}
 			if (err == ERROR_BROKEN_PIPE) {
