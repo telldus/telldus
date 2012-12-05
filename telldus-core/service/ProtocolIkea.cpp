@@ -11,7 +11,7 @@
 #include <string>
 #include "common/Strings.h"
 #ifdef _WINDOWS
-#define strtok_r(s,d,p) strtok_s(s,d,p)
+#define strtok_r(s, d, p) strtok_s(s, d, p)
 #endif
 
 int ProtocolIkea::methods() const {
