@@ -58,7 +58,7 @@ void ConnectionListener::run() {
 	}
 #if defined(_MACOSX)
 	int op = fcntl(serverSocket, F_GETFD);
-        fcntl(serverSocket, op | FD_CLOEXEC);  // OS X doesn't support SOCK_CLOEXEC yet
+        fcntl(serverSocket, F_SETFD, op | FD_CLOEXEC);  // OS X doesn't support SOCK_CLOEXEC yet
 #endif
 	name.sun_family = AF_LOCAL;
 	memset(name.sun_path, '\0', sizeof(name.sun_path));

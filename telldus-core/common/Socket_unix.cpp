@@ -66,7 +66,7 @@ void Socket::connect(const std::wstring &server) {
 	}
 #if defined(_MACOSX)
 	int op = fcntl(d->socket, F_GETFD);
-	fcntl(d->socket, op | FD_CLOEXEC);  // OS X doesn't support SOCK_CLOEXEC yet
+	fcntl(d->socket, F_SETFD, op | FD_CLOEXEC);  // OS X doesn't support SOCK_CLOEXEC yet
 #endif
 	std::string name = "/tmp/" + std::string(server.begin(), server.end());
 	remote.sun_family = AF_UNIX;
