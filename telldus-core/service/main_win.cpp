@@ -16,10 +16,10 @@ int main(int argc, char **argv) {
 
 	SERVICE_TABLE_ENTRY serviceTable[] = {
 		{serviceName, TelldusWinService::serviceMain },
-        { 0, 0 }
-    };
+		{ 0, 0 }
+	};
 
-    StartServiceCtrlDispatcher( serviceTable );
+	StartServiceCtrlDispatcher( serviceTable );
 
 	return 0;
 }

@@ -68,10 +68,10 @@ void Socket::connect(const std::wstring &server) {
 
 	DWORD dwMode = PIPE_READMODE_MESSAGE;
 	fSuccess = SetNamedPipeHandleState(
-      d->hPipe,  // pipe handle
-      &dwMode,   // new pipe mode
-      NULL,      // don't set maximum bytes
-      NULL);     // don't set maximum time
+		d->hPipe,  // pipe handle
+		&dwMode,   // new pipe mode
+		NULL,      // don't set maximum bytes
+		NULL);     // don't set maximum time
 
 	if (!fSuccess) {
 		return;
