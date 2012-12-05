@@ -98,8 +98,8 @@ DWORD WINAPI TelldusWinService::deviceNotificationHandler( DWORD controlCode, DW
 	}
 	std::wstring strPID = name.substr(posStart, posEnd-posStart);
 
-	long int vid = strtol(std::string(strVID.begin(), strVID.end()).c_str(), NULL, 16);
-	long int pid = strtol(std::string(strPID.begin(), strPID.end()).c_str(), NULL, 16);
+	int vid = static_cast<int>(strtol(std::string(strVID.begin(), strVID.end()).c_str(), NULL, 16));
+	int pid = static_cast<int>(strtol(std::string(strPID.begin(), strPID.end()).c_str(), NULL, 16));
 
 	if (dwEventType == DBT_DEVICEARRIVAL) {
 		tm->deviceInsertedOrRemoved(vid, pid, true);
