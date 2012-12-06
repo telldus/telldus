@@ -7,13 +7,13 @@
 #define _CRT_RAND_S
 #include "service/Controller.h"
 #include <stdlib.h>
+#include <time.h>
 #include <map>
 #include <list>
 #include <string>
 #include "service/Protocol.h"
 #include "service/EventUpdateManager.h"
 #include "common/Strings.h"
-#include "common/common.h"  // debug
 
 inline int random( unsigned int* seed ) {
 	#ifdef _WINDOWS

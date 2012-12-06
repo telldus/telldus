@@ -9,7 +9,6 @@
 #include <list>
 #include <memory>
 
-#include "common/common.h"  // debug
 #include "common/EventHandler.h"
 #include "service/ClientCommunicationHandler.h"
 #include "service/ConnectionListener.h"
@@ -63,7 +62,6 @@ void TelldusMain::suspend() {
 }
 
 void TelldusMain::start(void) {
-	debuglogservice(0, "Starting service");
 	TelldusCore::EventRef clientEvent = d->eventHandler.addEvent();
 	TelldusCore::EventRef dataEvent = d->eventHandler.addEvent();
 	TelldusCore::EventRef executeActionEvent = d->eventHandler.addEvent();
