@@ -15,6 +15,9 @@
 #endif
 
 int ProtocolIkea::methods() const {
+	if (TelldusCore::comparei(model(), L"selflearning-switch")) {
+		return TELLSTICK_TURNON | TELLSTICK_TURNOFF;
+	}
 	return TELLSTICK_TURNON | TELLSTICK_TURNOFF | TELLSTICK_DIM;
 }
 
