@@ -37,7 +37,6 @@ void signalHandler(int sig) {
 			tm.stop();
 			break;
 		case SIGPIPE:
-			Log::debug("Received SIGPIPE signal.");
 			break;
 		default:
 			Log::warning("Unhandled signal (%d) %s", sig, strsignal(sig));
