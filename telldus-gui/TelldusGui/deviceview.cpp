@@ -3,6 +3,7 @@
 #include "devicemodel.h"
 #include <QHeaderView>
 #include <QStyledItemDelegate>
+#include <QSortFilterProxyModel>
 #include <QDebug>
 
 class MethodDelegate : public QStyledItemDelegate {
@@ -21,7 +22,7 @@ DeviceView::DeviceView(QWidget *parent)
 	setSelectionMode( QAbstractItemView::SingleSelection );
 	horizontalHeader()->setStretchLastSection( true );
 	verticalHeader()->hide();
-	setItemDelegate(new MethodDelegate(this)); 
+	setItemDelegate(new MethodDelegate(this));
 }
 
 void DeviceView::setModel ( QAbstractItemModel * model ) {
@@ -32,7 +33,7 @@ void DeviceView::setModel ( QAbstractItemModel * model ) {
 }
 
 void DeviceView::rowsUpdated ( const QModelIndex & /*parent*/, int start, int end ) {
-	DeviceModel *model = qobject_cast<DeviceModel*>( this->model() );
+	QSortFilterProxyModel *model = qobject_cast<QSortFilterProxyModel*>( this->model() );
 	if (!model) {
 		return;
 	}
@@ -56,10 +57,15 @@ QWidget *MethodDelegate::createEditor(QWidget *parent, const QStyleOptionViewIte
 	if (!p) {
 		return 0;
 	}
-	DeviceModel *model = qobject_cast<DeviceModel*>( p->model() );
+	QSortFilterProxyModel *sModel = qobject_cast<QSortFilterProxyModel*>( p->model() );
+	if (!sModel) {
+		return 0;
+	}
+
+	DeviceModel *model = qobject_cast<DeviceModel*>( sModel->sourceModel() );
 	if (!model) {
 		return 0;
 	}
-	MethodWidget *widget = new MethodWidget(model->device(index), parent);
+	MethodWidget *widget = new MethodWidget(model->device(sModel->mapToSource(index)), parent);
 	return widget;
  }

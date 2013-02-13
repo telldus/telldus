@@ -4,6 +4,7 @@
 #include <QtGui/QWidget>
 #include <QtGui/QTableView>
 #include <QtGui/QToolButton>
+#include <QtGui/QSortFilterProxyModel>
 #include "devicemodel.h"
 #include "deviceview.h"
 
@@ -32,6 +33,7 @@ private slots:
 
 private:
 	DeviceModel model;
+	QSortFilterProxyModel sortedModel;
 	DeviceView deviceView;
 	QToolButton addToolButton, removeToolButton, editToolButton;
 };

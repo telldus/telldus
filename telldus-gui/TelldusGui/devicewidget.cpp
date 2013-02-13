@@ -23,7 +23,11 @@ DeviceWidget::DeviceWidget(QWidget *parent) :
 	removeToolButton(this),
 	editToolButton(this)
 {
-	deviceView.setModel( &model );
+	sortedModel.setSourceModel(&model);
+	sortedModel.setDynamicSortFilter(true);
+	sortedModel.setSortCaseSensitivity(Qt::CaseInsensitive);
+	sortedModel.sort(1, Qt::AscendingOrder);
+	deviceView.setModel( &sortedModel );
 	deviceView.resizeColumnsToContents();
 	deviceView.resizeRowsToContents();
 	connect( &deviceView, SIGNAL(clicked(const QModelIndex &)), this, SLOT(listActivated(const QModelIndex &)) );
@@ -134,7 +138,7 @@ void DeviceWidget::deleteDevice() {
 	msgBox.setStandardButtons( QMessageBox::Yes | QMessageBox::No );
 	msgBox.setDefaultButton( QMessageBox::No );
 	if ( msgBox.exec() ==  QMessageBox::Yes) {
-		QModelIndex index = deviceView.currentIndex();
+		QModelIndex index = sortedModel.mapToSource(deviceView.currentIndex());
 		Device *device = model.device(index);
 		if (device) {
 			device->remove();
@@ -143,7 +147,7 @@ void DeviceWidget::deleteDevice() {
 }
 
 void DeviceWidget::editDevice() {
-	QModelIndex index = deviceView.currentIndex();
+	QModelIndex index = sortedModel.mapToSource(deviceView.currentIndex());
 	Device device( model.deviceId(index), 0 );
 
 	QDialog *dialog;
