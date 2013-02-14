@@ -26,7 +26,7 @@ Item{
 			anchors.leftMargin: 15
 			height: 40
 			verticalAlignment: Text.AlignVCenter
-			text: modelData.name == '' ? '<unnamed>' : modelData.name;
+			text: modelData.name == '' ? qsTr('<unnamed>') : modelData.name;
 			color: "#004275"
 		}
 		TextField {
@@ -37,7 +37,7 @@ Item{
 			anchors.top: parent.top
 			anchors.topMargin: (40-nameEdit.height)/2
 			text: modelData.name;
-			placeholderText: 'Enter a name'
+			placeholderText: qsTr('Enter a name')
 			onTextChanged: modelData.name = text
 		}
 		Item {
@@ -116,10 +116,10 @@ Item{
 	Dialog{
 		id: confirmDeletion
 		modal: true
-		title: "Confirm deletion"
+		title: qsTr("Confirm deletion")
 		Text{
 			id: descriptionHeadline
-			text:"Delete this sensor?"
+			text: qsTr("Delete this sensor?")
 			font.bold: true
 		}
 		Text{
@@ -129,7 +129,7 @@ Item{
 			width: parent.width - 20
 			anchors.left: parent.left
 			anchors.leftMargin: 10
-			text: "Please note that a sensor that is still transmitting will reappear here again, but it will be hidden in the list by default."
+			text: qsTr("Please note that a sensor that is still transmitting will reappear here again, but it will be hidden in the list by default.")
 			wrapMode: Text.Wrap
 		}
 

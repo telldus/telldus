@@ -14,7 +14,7 @@ Column {
 		border.right: 5; border.bottom: 5
 
 		HeaderTitle {
-			text: "Name"
+			text: qsTr("Name")
 			anchors.left: parent.left
 			anchors.leftMargin: 15
 		}
@@ -26,21 +26,21 @@ Column {
 		}
 		HeaderTitle {
 			id: sensorid
-			text: "ID"
+			text: qsTr("ID")
 			anchors.right: modelTitle.left
 			visible: main.state == "EDIT"
 			width: 50
 		}
 		HeaderTitle {
 			id: modelTitle
-			text: "Model"
+			text: qsTr("Model")
 			anchors.right: visibleinlistTitle.left
 			visible: main.state == "EDIT"
 			width: 100
 		}
 		HeaderTitle {
 			id: visibleinlistTitle
-			text: "Visible in list"
+			text: qsTr("Visible in list")
 			anchors.right: sensorinformationTitle.left
 			horizontalAlignment: Text.AlignHCenter
 			visible: main.state == "EDIT"
@@ -48,13 +48,13 @@ Column {
 		}
 		HeaderTitle {
 			id: sensorinformationTitle
-			text: "Sensor information"
+			text: qsTr("Sensor information")
 			width: 150
 			anchors.right: timestampTitle.left
 		}
 		HeaderTitle {
 			id: timestampTitle
-			text: "Last updated"
+			text: qsTr("Last updated")
 			width: 100
 			anchors.right: parent.right
 			//horizontalAlignment: Text.AlignRight
@@ -67,9 +67,8 @@ Column {
 	Row{
 		spacing: 20
 		Button {
-			width: 50
 			height: 20
-			text: main.state == "VIEW" ? "Edit" : "View"
+			text: main.state == "VIEW" ? qsTr("Edit") : qsTr("View")
 			onClicked: {
 				if(main.state == "VIEW"){
 					main.state = "EDIT"
