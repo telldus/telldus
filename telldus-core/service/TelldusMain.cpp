@@ -140,7 +140,7 @@ void TelldusMain::start(void) {
 			while(janitor->isSignaled()) {
 				janitor->popSignal();
 			}
-#ifdef _MACOSX
+#ifndef _MACOSX
 			controllerManager.queryControllerStatus();
 #endif
 		}
