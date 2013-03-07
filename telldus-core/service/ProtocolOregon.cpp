@@ -34,6 +34,7 @@ std::string ProtocolOregon::decodeEA4C(const std::string &data) {
 
 	uint8_t checksumw = (value >> 4) & 0xF;
 	bool neg = value & (1 << 3);
+	int hundred = value & 3;
 	checksum += (value & 0xF);
 	value >>= 8;
 
@@ -58,7 +59,7 @@ std::string ProtocolOregon::decodeEA4C(const std::string &data) {
 		return "";
 	}
 
-	double temperature = ((temp1 * 100) + (temp2 * 10) + temp3)/10.0;
+	double temperature = ((hundred * 1000) + (temp1 * 100) + (temp2 * 10) + temp3)/10.0;
 	if (neg) {
 		temperature = -temperature;
 	}
