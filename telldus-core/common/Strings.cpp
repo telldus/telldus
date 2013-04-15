@@ -239,7 +239,10 @@ std::string TelldusCore::sformatf(const char *format, va_list ap) {
 
 	while (1) {
 		/* Try to print in the allocated space. */
-		n = vsnprintf(p, size, format, ap);
+		va_list ap2;
+		va_copy(ap2, ap);
+		n = vsnprintf(p, size, format, ap2);
+		va_end(ap2);
 
 		/* If that worked, return the string. */
 		if (n > -1 && n < size) {
