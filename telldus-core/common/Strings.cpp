@@ -25,6 +25,14 @@
 #define WCHAR_T_ENCODING "WCHAR_T"
 #endif
 
+#ifndef va_copy
+#ifdef __va_copy
+#define va_copy(a,b) __va_copy(a,b)
+#else /* !__va_copy */
+#define va_copy(a,b) ((a)=(b))
+#endif /* __va_copy */
+#endif /* va_copy */
+
 std::wstring TelldusCore::charToWstring(const char *value) {
 #ifdef _WINDOWS
 	// Determine size
