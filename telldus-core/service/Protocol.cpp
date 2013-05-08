@@ -256,6 +256,11 @@ std::list<std::string> Protocol::decodeData(const std::string &fullData) {
 		if (decoded != "") {
 			retval.push_back(decoded);
 		}
+	} else if(TelldusCore::comparei(dataMsg.protocol(), L"hasta") ) {
+		decoded = ProtocolHasta::decodeData(dataMsg);
+		if (decoded != "") {
+			retval.push_back(decoded);
+		}
 	}
 
 	return retval;

@@ -124,6 +124,7 @@
 	<type name="Projector screens and blinds" expanded="true">
 	<vendor name="Hasta" image="hasta">
 		<device model="selflearning:hasta" protocol="hasta" widget="16" image="hasta">Blinds</device>
+		<device model="selflearningv2:hasta" protocol="hasta" widget="16" image="hasta">Blinds (version 2)</device>
 	</vendor>
 	<vendor name="Roxcore" image="roxcore">
 		<device model="codeswitch:roxcore" protocol="brateck" widget="6" image="projectorscreen">Projector screen</device>
