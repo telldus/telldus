@@ -189,7 +189,7 @@ std::string ProtocolHasta::decodeData(const ControllerMessage& dataMsg) {
 		if(method == 12){
 			methodstring = "up";
 		}
-		else if(method == 1 or method == 8){ //is method 8 correct?
+		else if(method == 1 || method == 8){ //is method 8 correct?
 			methodstring = "down";
 		}
 		else if(method == 5){
