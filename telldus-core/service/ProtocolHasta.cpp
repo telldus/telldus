@@ -167,32 +167,25 @@ std::string ProtocolHasta::decodeData(const ControllerMessage& dataMsg) {
 		model = "selflearning";
 		if(method == 0) {
 			methodstring = "up";
-		}
-		else if(method == 1) {
+		} else if(method == 1) {
 			methodstring = "down";
-		}
-		else if(method == 5) {
+		} else if(method == 5) {
 			methodstring = "stop";
-		}
-		else {
+		} else {
 			return "";
 		}
-	}
-	else {
+	} else {
 		// version2
 		house = allData & 0xFFFF;
 
 		model = "selflearningv2";
 		if(method == 12) {
 			methodstring = "up";
-		}
-		else if(method == 1 || method == 8) { // is method 8 correct?
+		} else if(method == 1 || method == 8) {  // is method 8 correct?
 			methodstring = "down";
-		}
-		else if(method == 5) {
+		} else if(method == 5) {
 			methodstring = "stop";
-		}
-		else{
+		} else {
 			return "";
 		}
 	}
