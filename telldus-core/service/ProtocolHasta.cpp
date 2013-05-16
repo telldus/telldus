@@ -26,13 +26,12 @@ std::string ProtocolHasta::getStringForMethodv1(int method) {
 	int unit = this->getIntParameter(L"unit", 1, 15);
 	std::string strReturn;
 
-	std::string preamble;
-	strReturn.append(1, 190);
+	strReturn.append(1, 164);
 	strReturn.append(1, 1);
-	strReturn.append(1, 107);
+	strReturn.append(1, 164);
 	strReturn.append(1, 1);
-	strReturn.append(1, 190);
-	strReturn.append(1, 165);
+	strReturn.append(1, 164);
+	strReturn.append(1, 164);
 
 	strReturn.append(convertByte( (house & 0xFF) ));
 	strReturn.append(convertByte( (house>>8) & 0xFF ));
@@ -85,18 +84,16 @@ std::string ProtocolHasta::getStringForMethodv2(int method) {
 	int unit = this->getIntParameter(L"unit", 1, 15);
 	int sum = 0;
 	std::string strReturn;
-
-	std::string preamble;
-	strReturn.append(1, 190);
+	strReturn.append(1, 245);
 	strReturn.append(1, 1);
-	strReturn.append(1, 107);
+	strReturn.append(1, 245);
+	strReturn.append(1, 245);
+	strReturn.append(1, 63);
 	strReturn.append(1, 1);
-	strReturn.append(1, 190);
-	strReturn.append(1, 190);
+	strReturn.append(1, 63);
 	strReturn.append(1, 1);
-	strReturn.append(1, 60);
-	strReturn.append(1, 160);
-	strReturn.append(1, 40);
+	strReturn.append(1, 35);
+	strReturn.append(1, 35);
 
 	strReturn.append(convertBytev2( (house>>8) & 0xFF ));
 	sum = ((house>>8)&0xFF);
@@ -128,8 +125,8 @@ std::string ProtocolHasta::getStringForMethodv2(int method) {
 
 	int checksum = (((int)(sum/256)+1)*256+1) - sum;
 	strReturn.append(convertBytev2(checksum));
-	strReturn.append(1, 68);
-	strReturn.append(1, 36);
+	strReturn.append(1, 63);
+	strReturn.append(1, 35);
 
 	return strReturn;
 }
@@ -138,11 +135,11 @@ std::string ProtocolHasta::convertBytev2(unsigned char byte) {
 	std::string retval;
 	for(int i = 0; i < 8; ++i) {
 		if (byte & 1) {
-			retval.append(1, 68);
-			retval.append(1, 36);
+			retval.append(1, 63);
+			retval.append(1, 35);
 		} else {
-			retval.append(1, 36);
-			retval.append(1, 68);
+			retval.append(1, 35);
+			retval.append(1, 63);
 		}
 		byte >>= 1;
 	}
