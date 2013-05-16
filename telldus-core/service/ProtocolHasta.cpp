@@ -123,7 +123,7 @@ std::string ProtocolHasta::getStringForMethodv2(int method) {
 	strReturn.append(convertBytev2(0x01));
 	sum += 0x01;
 
-	int checksum = (((int)(sum/256)+1)*256+1) - sum;
+	int checksum = ((static_cast<int>(sum/256)+1)*256+1) - sum;
 	strReturn.append(convertBytev2(checksum));
 	strReturn.append(1, 63);
 	strReturn.append(1, 35);
