@@ -161,7 +161,7 @@ std::string ProtocolHasta::decodeData(const ControllerMessage& dataMsg) {
 	method = allData & 0xF;
 	allData >>= 4;
 	if(TelldusCore::comparei(dataMsg.model(), L"selflearning")) {
-		//version1
+		// version1
 		house = allData & 0xFFFF;
 		house = ((house << 8) | (house >> 8)) & 0xFFFF;
 		model = "selflearning";
@@ -179,14 +179,14 @@ std::string ProtocolHasta::decodeData(const ControllerMessage& dataMsg) {
 		}
 	}
 	else{
-		//version2
+		// version2
 		house = allData & 0xFFFF;
 
 		model = "selflearningv2";
 		if(method == 12){
 			methodstring = "up";
 		}
-		else if(method == 1 || method == 8){ //is method 8 correct?
+		else if(method == 1 || method == 8){ // is method 8 correct?
 			methodstring = "down";
 		}
 		else if(method == 5){
