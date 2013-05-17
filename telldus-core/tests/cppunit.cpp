@@ -8,32 +8,39 @@
 
 #include <fstream>
 
+#include "common/CommonTests.h"
+#include "service/ServiceTests.h"
+
 int main (int argc, char* argv[])
 {
-    // informs test-listener about testresults
-    CPPUNIT_NS :: TestResult testresult;
+	// Setup our tests
+	CommonTests::setup();
+	ServiceTests::setup();
 
-    // register listener for collecting the test-results
-    CPPUNIT_NS :: TestResultCollector collectedresults;
-    testresult.addListener (&collectedresults);
+	// informs test-listener about testresults
+	CPPUNIT_NS :: TestResult testresult;
 
-    // register listener for per-test progress output
-    CPPUNIT_NS :: BriefTestProgressListener progress;
-    testresult.addListener (&progress);
+	// register listener for collecting the test-results
+	CPPUNIT_NS :: TestResultCollector collectedresults;
+	testresult.addListener (&collectedresults);
 
-    // insert test-suite at test-runner by registry
-    CPPUNIT_NS :: TestRunner testrunner;
-    testrunner.addTest (CPPUNIT_NS :: TestFactoryRegistry :: getRegistry ().makeTest ());
-    testrunner.run (testresult);
+	// register listener for per-test progress output
+	CPPUNIT_NS :: BriefTestProgressListener progress;
+	testresult.addListener (&progress);
 
-    // output results in compiler-format
-    CPPUNIT_NS :: CompilerOutputter compileroutputter (&collectedresults, std::cerr);
-    compileroutputter.write ();
+	// insert test-suite at test-runner by registry
+	CPPUNIT_NS :: TestRunner testrunner;
+	testrunner.addTest (CPPUNIT_NS :: TestFactoryRegistry :: getRegistry ().makeTest ());
+	testrunner.run (testresult);
 
-    std::ofstream xmlFileOut("cpptestresults.xml");
-    CPPUNIT_NS :: XmlOutputter xmlOut(&collectedresults, xmlFileOut);
-    xmlOut.write();
+	// output results in compiler-format
+	CPPUNIT_NS :: CompilerOutputter compileroutputter (&collectedresults, std::cerr);
+	compileroutputter.write ();
 
-    // return 0 if tests were successful
-    return collectedresults.wasSuccessful () ? 0 : 1;
+	std::ofstream xmlFileOut("cpptestresults.xml");
+	CPPUNIT_NS :: XmlOutputter xmlOut(&collectedresults, xmlFileOut);
+	xmlOut.write();
+
+	// return 0 if tests were successful
+	return collectedresults.wasSuccessful () ? 0 : 1;
 }

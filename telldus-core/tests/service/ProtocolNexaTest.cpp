@@ -1,8 +1,6 @@
 #include "ProtocolNexaTest.h"
 #include "service/ProtocolNexa.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION (ProtocolNexaTest);
-
 class ProtocolNexaTest::PrivateData {
 public:
 	ProtocolNexa *protocol;

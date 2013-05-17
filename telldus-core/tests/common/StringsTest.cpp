@@ -1,8 +1,6 @@
 #include "StringsTest.h"
 #include "Strings.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION (StringsTest);
-
 void StringsTest :: setUp (void)
 {
 }

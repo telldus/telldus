@@ -1,8 +1,6 @@
 #include "ProtocolEverflourishTest.h"
 #include "service/ProtocolEverflourish.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION (ProtocolEverflourishTest);
-
 class ProtocolEverflourishTest::PrivateData {
 public:
 	ProtocolEverflourish *protocol;

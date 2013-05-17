@@ -1,8 +1,6 @@
 #include "ProtocolSartanoTest.h"
 #include "service/ProtocolSartano.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION (ProtocolSartanoTest);
-
 class ProtocolSartanoTest::PrivateData {
 public:
 	ProtocolSartano *protocol;

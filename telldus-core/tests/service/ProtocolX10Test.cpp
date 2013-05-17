@@ -1,8 +1,6 @@
 #include "ProtocolX10Test.h"
 #include "service/ProtocolX10.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION (ProtocolX10Test);
-
 class ProtocolX10Test::PrivateData {
 public:
 	ProtocolX10 *protocol;

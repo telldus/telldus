@@ -1,8 +1,6 @@
 #include "ProtocolOregonTest.h"
 #include "service/ProtocolOregon.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION (ProtocolOregonTest);
-
 class ProtocolOregonTest::PrivateData {
 public:
 };
