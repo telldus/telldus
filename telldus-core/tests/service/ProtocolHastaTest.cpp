@@ -1,8 +1,6 @@
 #include "ProtocolHastaTest.h"
 #include "service/ProtocolHasta.h"
 
-CPPUNIT_TEST_SUITE_REGISTRATION (ProtocolHastaTest);
-
 class ProtocolHastaTest::PrivateData {
 public:
 	ProtocolHasta *protocol;
