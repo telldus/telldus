@@ -85,7 +85,7 @@ void LiveObject::connectToServer() {
 		d->socket->abort();
 		PrivateData::Server server = d->serverList.takeFirst();
 		emit errorChanged("");
-		emit statusChanged("Connecting to server " + server.address);
+		emit statusChanged(tr("Connecting to server %1").arg(server.address));
 		d->socket->connectToHostEncrypted(server.address, server.port);
 	}
 }
@@ -115,7 +115,7 @@ void LiveObject::readyRead() {
 	} else if (msg->name() == "registered") {
 		d->registered = true;
 		emit registered(msg->argument(0));
-		emit errorChanged("Registered");
+		emit errorChanged(tr("Registered"));
 	} else if (msg->name() == "notregistered") {
 		LiveMessageToken token = msg->arg(0);
 		if (token.valueType != LiveMessageToken::Dictionary) {
@@ -126,7 +126,7 @@ void LiveObject::readyRead() {
 		QSettings s;
 		s.setValue("Live/UUID", d->uuid);
 		emit notRegistered();
-		emit errorChanged("Not registered");
+		emit errorChanged(tr("Not registered"));
 	} else if (msg->name() == "command") {
 		if (msg->arg(0).valueType == LiveMessageToken::Dictionary && msg->arg(0).dictVal.contains("ACK")) {
 			int ack = msg->arg(0).dictVal["ACK"].intVal;
@@ -142,7 +142,7 @@ void LiveObject::readyRead() {
 
 void LiveObject::refreshServerList() {
 	emit errorChanged("");
-	emit statusChanged("Discover servers");
+	emit statusChanged(tr("Discover servers"));
 	d->serverList.clear();
 	QUrl url(TELLDUS_LIVE_URI);
 	QPair<QString, QString> version("protocolVersion", "2");
@@ -199,7 +199,7 @@ void LiveObject::p_connected() {
 
 	this->sendMessage(msg);
 	emit errorChanged("");
-	emit statusChanged("Connected");
+	emit statusChanged(tr("Connected"));
 	emit connected();
 }
 
@@ -208,7 +208,7 @@ void LiveObject::p_disconnected() {
 	d->pongTimer.stop();
 	if (d->registered) {
 		//Clear the registered status
-		emit errorChanged("Disconnected from server");
+		emit errorChanged(tr("Disconnected from server"));
 	}
 	d->registered = false;
 }
@@ -221,9 +221,9 @@ void LiveObject::stateChanged( QAbstractSocket::SocketState socketState ) {
 	if (socketState == QAbstractSocket::UnconnectedState) {
 		int timeout = rand() % 40 + 10; //Random timeout from 10-50s to avoid flooding the servers
 		QTimer::singleShot(timeout*1000, this, SLOT(connectToServer()));
-		emit statusChanged("Reconnecting in " + QString::number(timeout) + " seconds...");
+		emit statusChanged(tr("Reconnecting in %1 seconds...").arg(QString::number(timeout)));
 	} else if (socketState == QAbstractSocket::ConnectingState) {
-		emit statusChanged("Connecting...");
+		emit statusChanged(tr("Connecting..."));
 		emit errorChanged("");
 	}
 }
@@ -237,7 +237,7 @@ void LiveObject::sslErrors( const QList<QSslError> & errors ) {
 			default:
 				//qDebug() << "SSL" << error.errorString();
 				everythingOK = false;
-				emit statusChanged("SSL Error");
+				emit statusChanged(tr("SSL Error"));
 				emit errorChanged(error.errorString());
 				break;
 		}
@@ -252,7 +252,7 @@ void LiveObject::serverAssignReply( QNetworkReply *r ) {
 	if (r->error() != QNetworkReply::NoError) {
 		int timeout = rand() % 300 + 60; //Random timeout from 60s-6min to avoid flooding the servers
 		emit errorChanged(r->errorString());
-		emit statusChanged("Retrying in " + QString::number(timeout) + " seconds...");
+		emit statusChanged(tr("Retrying in %1 seconds...").arg(QString::number(timeout)));
 		QTimer::singleShot(timeout * 1000, this, SLOT(connectToServer()));
 		return;
 	}
@@ -278,8 +278,8 @@ void LiveObject::serverAssignReply( QNetworkReply *r ) {
 		QTimer::singleShot(0, this, SLOT(connectToServer()));
 	} else {
 		int timeout = rand() % 300 + 60; //Random timeout from 60-6min to avoid flooding the servers
-		emit errorChanged("No servers found");
-		emit statusChanged("Retrying in " + QString::number(timeout) + " seconds...");
+		emit errorChanged(tr("No servers found"));
+		emit statusChanged(tr("Retrying in %1 seconds...").arg(QString::number(timeout)));
 		QTimer::singleShot(timeout * 1000, this, SLOT(connectToServer()));
 	}
 }

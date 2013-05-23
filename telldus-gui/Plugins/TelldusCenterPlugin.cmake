@@ -53,7 +53,7 @@ IF(Plugin_PATH)
 	#Add all extra files
 	FOREACH(_FILE ${Plugin_EXTRA})
 		GET_FILENAME_COMPONENT(ext "${CMAKE_CURRENT_SOURCE_DIR}/${_FILE}" EXT)
-		IF (ext STREQUAL ".qml")
+		IF (ext STREQUAL ".qml" OR ext STREQUAL ".ui")
 			LIST(APPEND translation_sources "${CMAKE_CURRENT_SOURCE_DIR}/${_FILE}")
 		ENDIF ()
 		LIST(APPEND Plugin_FILES "${CMAKE_CURRENT_SOURCE_DIR}/${_FILE}")

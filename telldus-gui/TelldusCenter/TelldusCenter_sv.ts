@@ -24,33 +24,33 @@
         <translation>&amp;Avsluta</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="95"/>
+        <location filename="mainwindow.cpp" line="96"/>
         <source>&amp;Help</source>
         <translation>&amp;Hjälp</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="97"/>
+        <location filename="mainwindow.cpp" line="98"/>
         <source>About &amp;Qt</source>
         <translation>Om &amp;Qt</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="99"/>
+        <location filename="mainwindow.cpp" line="100"/>
         <source>About &amp;TelldusCenter</source>
         <translation>Om &amp;TelldusCenter</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="106"/>
+        <location filename="mainwindow.cpp" line="107"/>
         <source>Pages</source>
         <translation>Sidor</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="135"/>
+        <location filename="mainwindow.cpp" line="136"/>
         <source>About TelldusCenter</source>
         <translation>Om TelldusCenter</translation>
     </message>
     <message>
-        <location filename="mainwindow.cpp" line="136"/>
-        <source>&lt;center&gt;&lt;img src=&apos;:/images/TelldusCenter_128.png&apos; width=128 height=128 /&gt;&lt;h2&gt;TelldusCenter %1&lt;/h2&gt;&lt;p&gt;Copyright &amp;copy; 2011 Telldus Technologies AB&lt;p&gt;&lt;/center&gt;</source>
+        <location filename="mainwindow.cpp" line="137"/>
+        <source>&lt;center&gt;&lt;img src=&apos;:/images/TelldusCenter_128.png&apos; width=128 height=128 /&gt;&lt;h2&gt;TelldusCenter %1&lt;/h2&gt;&lt;p&gt;Copyright &amp;copy; 2013 Telldus Technologies AB&lt;p&gt;&lt;/center&gt;</source>
         <translation></translation>
     </message>
 </context>

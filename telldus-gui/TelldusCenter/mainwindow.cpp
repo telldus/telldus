@@ -135,7 +135,7 @@ void MainWindow::addWidget( const QString &page, const QIcon &icon, QWidget *wid
 void MainWindow::slotAboutApplication() {
 	QMessageBox::about(this, tr("About TelldusCenter"),
 					   tr("<center><img src=':/images/TelldusCenter_128.png' width=128 height=128 /><h2>TelldusCenter %1</h2>"
-						  "<p>Copyright &copy; 2011 Telldus Technologies AB<p></center>").arg(VERSION_STRING(VERSION)));
+						  "<p>Copyright &copy; 2013 Telldus Technologies AB<p></center>").arg(VERSION_STRING(VERSION)));
 }
 
 void MainWindow::slotConfigure() {

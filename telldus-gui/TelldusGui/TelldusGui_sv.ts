@@ -171,37 +171,37 @@
 <context>
     <name>DeviceWidget</name>
     <message>
-        <location filename="devicewidget.cpp" line="40"/>
+        <location filename="devicewidget.cpp" line="44"/>
         <source>New device...</source>
         <translation>Ny enhet...</translation>
     </message>
     <message>
-        <location filename="devicewidget.cpp" line="42"/>
+        <location filename="devicewidget.cpp" line="46"/>
         <source>New group...</source>
         <translation>Ny grupp...</translation>
     </message>
     <message>
-        <location filename="devicewidget.cpp" line="46"/>
+        <location filename="devicewidget.cpp" line="50"/>
         <source>New</source>
         <translation>Ny</translation>
     </message>
     <message>
-        <location filename="devicewidget.cpp" line="56"/>
+        <location filename="devicewidget.cpp" line="60"/>
         <source>Edit</source>
         <translation>Redigera</translation>
     </message>
     <message>
-        <location filename="devicewidget.cpp" line="64"/>
+        <location filename="devicewidget.cpp" line="68"/>
         <source>Remove</source>
         <translation>Ta bort</translation>
     </message>
     <message>
-        <location filename="devicewidget.cpp" line="131"/>
+        <location filename="devicewidget.cpp" line="135"/>
         <source>Are you sure you want to remove the selected device?</source>
         <translation>Är du säker på att du vill ta bort vald enhet?</translation>
     </message>
     <message>
-        <location filename="devicewidget.cpp" line="132"/>
+        <location filename="devicewidget.cpp" line="136"/>
         <source>The device will be removed permanently from this application as well as all other applications.</source>
         <translation>Enheten kommer tas bort permanent från både detta program såväl som alla andra program.</translation>
     </message>
@@ -240,32 +240,32 @@
         <translation>Adresskod</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="216"/>
+        <location filename="editdevicedialog.cpp" line="241"/>
         <source>Please press a button on your remote</source>
         <translation>Tryck en knapp på din fjärrkontroll</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="223"/>
+        <location filename="editdevicedialog.cpp" line="248"/>
         <source>If you have a TellStick Duo connected,&lt;br&gt;you can use it to scan the code of the remote control</source>
         <translation>Om du har en TellStick Duo ansluten,&lt;br&gt;kan du använda den för att hitta rätt enhet och inställningar</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="235"/>
+        <location filename="editdevicedialog.cpp" line="260"/>
         <source>You must choose a device</source>
         <translation>Du måste välja en enhet</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="236"/>
+        <location filename="editdevicedialog.cpp" line="261"/>
         <source>Please select the device you have.</source>
         <translation>Välj den enhet du har.</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="252"/>
+        <location filename="editdevicedialog.cpp" line="277"/>
         <source>The device must have a name.</source>
         <translation>Enheten måste ha ett namn.</translation>
     </message>
     <message>
-        <location filename="editdevicedialog.cpp" line="253"/>
+        <location filename="editdevicedialog.cpp" line="278"/>
         <source>Please fill in a name in the field under &apos;Name&apos;</source>
         <translation>Skriv in ett namn i fältet &apos;Namn&apos;</translation>
     </message>
