@@ -59,7 +59,7 @@ bool TellStick::isUpgradable() const {
 
 	} else if (type() == 2) {
 		//TellStick Duo
-		if (firmware < 5) {
+		if (firmware < 10) {
 			return true;
 		}
 	}
