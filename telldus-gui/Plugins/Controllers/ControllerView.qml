@@ -77,8 +77,7 @@ BorderImage {
 				}
 			}
 			Image {
-				source: "btn_action_remove.png"
-				rotation: 90
+				source: "btn_action_upgrade.png"
 				visible: controller.upgradable
 				MouseArea {
 					anchors.fill: parent

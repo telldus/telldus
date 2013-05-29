@@ -31,6 +31,7 @@ SET( Plugin_PATH "com.telldus.controllers" )
 
 SET( Plugin_EXTRA
 	btn_action_remove.png
+	btn_action_upgrade.png
 	ControllerUpgradeDialog.qml
 	ControllerView.qml
 	header_bg.png
