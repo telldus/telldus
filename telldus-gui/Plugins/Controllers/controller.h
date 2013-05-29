@@ -12,14 +12,17 @@ class Controller : public QObject
 	Q_PROPERTY(int id READ id NOTIFY idChanged)
 	Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 	Q_PROPERTY(QString serial READ serial NOTIFY serialChanged)
-	Q_PROPERTY(int type READ type NOTIFY typeChanged())
+	Q_PROPERTY(int type READ type NOTIFY typeChanged)
+	Q_PROPERTY(bool upgradable READ upgradable NOTIFY upgradableChanged)
+	Q_PROPERTY(qreal upgradeProgress READ upgradeProgress NOTIFY upgradeProgressChanged)
+	Q_PROPERTY(int upgradeStep READ upgradeStep NOTIFY upgradeStepChanged)
 
 public:
 	explicit Controller(int id = 0, int type = 1, const QString &name = "", QObject *parent = 0);
-	~Controller();
+	virtual ~Controller();
 
 	bool available() const;
-	void setAvailable(bool available);
+	virtual void setAvailable(bool available);
 
 	QString firmware() const;
 	void setFirmware(const QString &version);
@@ -37,6 +40,11 @@ public:
 
 	int type() const;
 
+	bool upgradable() const;
+	Q_INVOKABLE virtual void upgrade();
+	qreal upgradeProgress();
+	int upgradeStep() const;
+
 signals:
 	void availableChanged();
 	void firmwareChanged();
@@ -44,6 +52,15 @@ signals:
 	void nameChanged();
 	void serialChanged();
 	void typeChanged();
+	void upgradableChanged();
+	void upgradeProgressChanged();
+	void upgradeStepChanged();
+	void upgradeDone();
+
+protected:
+	virtual bool isUpgradable() const;
+	void setUpgradeStep(int newStep);
+	void setUpgradeProgress(qreal completed);
 
 private:
 	class PrivateData;

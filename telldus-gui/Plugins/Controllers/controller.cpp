@@ -6,8 +6,9 @@
 class Controller::PrivateData {
 public:
 	bool available, nameChanged;
-	int id, type;
+	int id, type, upgradeStep;
 	QString name, serial, firmware;
+	qreal upgradeProgress;
 };
 
 Controller::Controller(int id, int type, const QString &name, QObject *parent) :
@@ -19,6 +20,8 @@ Controller::Controller(int id, int type, const QString &name, QObject *parent) :
 	d->available = false;
 	d->nameChanged = false;
 	d->name = name;
+	d->upgradeStep = -1;
+	d->upgradeProgress = 0;
 
 	const int DATA_LENGTH = 255;
 	char buff[DATA_LENGTH];
@@ -42,6 +45,7 @@ void Controller::setAvailable(bool available) {
 	d->available = available;
 	emit availableChanged();
 	emit firmwareChanged();
+	emit upgradableChanged();
 }
 
 QString Controller::firmware() const {
@@ -98,5 +102,41 @@ void Controller::tryRemove() {
 
 int Controller::type() const {
 	return d->type;
+}
+
+bool Controller::upgradable() const {
+	if (!this->available()) {
+		return false;
+	}
+	return isUpgradable();
+}
+
+void Controller::upgrade() {
+	//Do nothing
+}
+
+qreal Controller::upgradeProgress() {
+	return d->upgradeProgress;
+}
+
+int Controller::upgradeStep() const {
+	return d->upgradeStep;
+}
+
+void Controller::setUpgradeStep(int newStep) {
+	d->upgradeStep = newStep;
+	if (newStep = -1) {
+		setUpgradeProgress(0);
+	}
+	emit upgradeStepChanged();
+}
+
+void Controller::setUpgradeProgress(qreal completed) {
+	d->upgradeProgress = completed;
+	emit upgradeProgressChanged();
+}
+
+bool Controller::isUpgradable() const {
+	return false;
 }
 

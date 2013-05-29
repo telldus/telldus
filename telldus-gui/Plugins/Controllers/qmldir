@@ -1,2 +1,4 @@
 HeaderTitle 1.0 HeaderTitle.qml
 ControllerView 1.0 ControllerView.qml
+ControllerUpgradeDialog 1.0 ControllerUpgradeDialog.qml
+StateLabel 1.0 StateLabel.qml
