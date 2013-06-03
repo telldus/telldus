@@ -19,6 +19,8 @@ std::string ProtocolOregon::decodeData(const ControllerMessage &dataMsg) {
 		return decodeEA4C(data);
 	} else if (model.compare(L"0x1A2D") == 0) {
 		return decode1A2D(data);
+	} else if (model.compare(L"0xF824") == 0) {
+		return decodeF824(data);
 	}
 
 	return "";
@@ -120,6 +122,57 @@ std::string ProtocolOregon::decode1A2D(const std::string &data) {
 
 	std::stringstream retString;
 	retString << "class:sensor;protocol:oregon;model:1A2D;id:" << static_cast<int>(address)
+		<< ";temp:" << std::fixed << std::setprecision(1) << temperature
+		<< ";humidity:" << humidity << ";";
+
+	return retString.str();
+}
+
+std::string ProtocolOregon::decodeF824(const std::string &data) {
+
+	uint64_t value = TelldusCore::hexTo64l(data);
+
+	uint8_t crcCheck = value & 0xF; //PROBABLY crc
+	value >>= 4;
+	uint8_t messageChecksum1 = value & 0xF;
+	value >>= 4;
+	uint8_t messageChecksum2 = value & 0xF;
+	value >>= 4;
+	uint8_t unknown = value & 0xF;
+	value >>= 4;
+	uint8_t hum1 = value & 0xF;
+	value >>= 4;
+	uint8_t hum2 = value & 0xF;
+	value >>= 4;
+	uint8_t neg = value & 0xF;
+	value >>= 4;
+	uint8_t temp1 = value & 0xF;
+	value >>= 4;
+	uint8_t temp2 = value & 0xF;
+	value >>= 4;
+	uint8_t temp3 = value & 0xF;
+	value >>= 4;
+	uint8_t battery = value & 0xF; //PROBABLY battery
+	value >>= 4;
+	uint8_t rollingcode = ((value >> 4) & 0xF) + (value & 0xF);
+	uint8_t checksum = ((value >> 4) & 0xF) + (value & 0xF);
+	value >>= 8;
+	uint8_t channel = value & 0xF;
+	checksum += unknown + hum1 + hum2 + neg + temp1 + temp2 + temp3 + battery + channel + 0xF + 0x8 + 0x2 + 0x4;
+
+	if (((checksum >> 4) & 0xF) != messageChecksum1 || (checksum & 0xF) != messageChecksum2){
+		//checksum error
+		return "";
+	}
+
+	double temperature = ((temp1 * 100) + (temp2 * 10) + temp3)/10.0;
+	if (neg) {
+		temperature = -temperature;
+	}
+	int humidity = (hum1 * 10.0) + hum2;
+
+	std::stringstream retString;
+	retString << "class:sensor;protocol:oregon;model:F824;id:" << static_cast<int>(rollingcode)
 		<< ";temp:" << std::fixed << std::setprecision(1) << temperature
 		<< ";humidity:" << humidity << ";";
 
