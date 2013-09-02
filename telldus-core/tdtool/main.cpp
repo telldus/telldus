@@ -3,6 +3,7 @@
 #include <stdlib.h>
 #include <string.h>
 #include <ctime>
+#include <sstream>
 #include "../client/telldus-core.h"
 
 #ifdef _WINDOWS
@@ -140,13 +141,27 @@ int list_devices() {
 
 	int sensorStatus = tdSensor(protocol, DATA_LENGTH, model, DATA_LENGTH, &sensorId, &dataTypes);
 	if(sensorStatus == 0){
-		printf("\n\nSENSORS:\n\n%-20s\t%-20s\t%-5s\t%-5s\t%-8s\t%-20s\n", "PROTOCOL", "MODEL", "ID", "TEMP", "HUMIDITY", "LAST UPDATED");
+		printf("\n\nSENSORS:\n\n%-20s\t%-20s\t%-5s\t%-5s\t%-8s\t%-20s\t%-20s\t%-20s\n", "PROTOCOL", "MODEL", "ID", "TEMP", "HUMIDITY", "RAIN", "WIND", "LAST UPDATED");
 	}
 	while(sensorStatus == 0){
 		char tempvalue[DATA_LENGTH];
 		tempvalue[0] = 0;
 		char humidityvalue[DATA_LENGTH];
 		humidityvalue[0] = 0;
+		char windvalue[DATA_LENGTH];
+		windvalue[0] = 0;
+		char winddirectionvalue[DATA_LENGTH];
+		winddirectionvalue[0] = 0;
+		char windaveragevalue[DATA_LENGTH];
+		windaveragevalue[0] = 0;
+		char windgustvalue[DATA_LENGTH];
+		windgustvalue[0] = 0;
+		char rainvalue[DATA_LENGTH];
+		rainvalue[0] = 0;
+		char raintotvalue[DATA_LENGTH];
+		raintotvalue[0] = 0;
+		char rainratevalue[DATA_LENGTH];
+		rainratevalue[0] = 0;
 		char timeBuf[80];
 		timeBuf[0] = 0;
 		time_t timestamp = 0;
@@ -162,7 +177,98 @@ int list_devices() {
 			strcat(humidityvalue, "%");
 			strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
 		}
-		printf("%-20s\t%-20s\t%-5i\t%-5s\t%-8s\t%-20s\n", protocol, model, sensorId, tempvalue, humidityvalue, timeBuf);
+
+		if (dataTypes & TELLSTICK_RAINRATE) {
+			tdSensorValue(protocol, model, sensorId, TELLSTICK_RAINRATE, rainratevalue, DATA_LENGTH, (int *)&timestamp);
+			strcat(rainratevalue, " mm/h, ");
+			strcat(rainvalue, rainratevalue);
+			strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
+		}
+
+		if (dataTypes & TELLSTICK_RAINTOTAL) {
+			tdSensorValue(protocol, model, sensorId, TELLSTICK_RAINTOTAL, raintotvalue, DATA_LENGTH, (int *)&timestamp);
+			//TODO detta blir väl fel, kan väl hamna i andra ordningar, eller hur?
+			strcat(raintotvalue, " mm");
+			strcat(rainvalue, raintotvalue);
+			strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
+		}
+
+		if (dataTypes & TELLSTICK_WINDDIRECTION) {
+			tdSensorValue(protocol, model, sensorId, TELLSTICK_WINDDIRECTION, winddirectionvalue, DATA_LENGTH, (int *)&timestamp);
+			//TODO or use charToInteger in common?
+			std::stringstream inputstream;
+			inputstream << winddirectionvalue;
+			int direction;
+			inputstream >> direction;
+			direction = direction / 22.5;
+			std::string directionabbrev = "N";
+			switch (direction) {
+				case 1:
+					directionabbrev = "NNE";
+					break;
+				case 2:
+					directionabbrev = "NE";
+					break;
+				case 3:
+					directionabbrev = "ENE";
+					break;
+				case 4:
+					directionabbrev = "E";
+					break;
+				case 5:
+					directionabbrev = "ESE";
+					break;
+				case 6:
+					directionabbrev = "SE";
+					break;
+				case 7:
+					directionabbrev = "SSE";
+					break;
+				case 8:
+					directionabbrev = "S";
+					break;
+				case 9:
+					directionabbrev = "SSW";
+					break;
+				case 10:
+					directionabbrev = "SW";
+					break;
+				case 11:
+					directionabbrev = "WSW";
+					break;
+				case 12:
+					directionabbrev = "W";
+					break;
+				case 13:
+					directionabbrev = "WNW";
+					break;
+				case 14:
+					directionabbrev = "NW";
+					break;
+				case 15:
+					directionabbrev = "NNW";
+					break;
+			}
+			strcat(windvalue, directionabbrev.c_str());
+			strcat(windvalue, ", ");
+			strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
+		}
+
+		if (dataTypes & TELLSTICK_WINDAVERAGE) {
+			tdSensorValue(protocol, model, sensorId, TELLSTICK_WINDAVERAGE, windaveragevalue, DATA_LENGTH, (int *)&timestamp);
+			strcat(windaveragevalue, " m/s (");
+			strcat(windvalue, windaveragevalue);
+			strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
+		}
+
+		if (dataTypes & TELLSTICK_WINDGUST) {
+			tdSensorValue(protocol, model, sensorId, TELLSTICK_WINDGUST, windgustvalue, DATA_LENGTH, (int *)&timestamp);
+			strcat(windgustvalue, " m/s) ");
+			strcat(windvalue, windgustvalue);
+			strftime(timeBuf, sizeof(timeBuf), "%Y-%m-%d %H:%M:%S", localtime(&timestamp));
+		}
+
+		printf("%-20s\t%-20s\t%-5i\t%-5s\t%-8s\t%-20s\t%-20s\t%-20s\n", protocol, model, sensorId, tempvalue, humidityvalue, rainvalue, windvalue, timeBuf);
 
 		sensorStatus = tdSensor(protocol, DATA_LENGTH, model, DATA_LENGTH, &sensorId, &dataTypes);
 	}
@@ -207,6 +313,36 @@ int list_kv_sensors() {
 			char humidityvalue[DATA_LENGTH];
 			tdSensorValue(protocol, model, sensorId, TELLSTICK_HUMIDITY, humidityvalue, DATA_LENGTH, (int *)&timestamp);
 			printf("\thumidity=%s", humidityvalue);
+		}
+
+		if (dataTypes & TELLSTICK_WINDDIRECTION) {
+			char winddirectionvalue[DATA_LENGTH];
+			tdSensorValue(protocol, model, sensorId, TELLSTICK_WINDDIRECTION, winddirectionvalue, DATA_LENGTH, (int *)&timestamp);
+			printf("\twinddirection=%s", winddirectionvalue);
+		}
+
+		if (dataTypes & TELLSTICK_WINDAVERAGE) {
+			char windaveragevalue[DATA_LENGTH];
+			tdSensorValue(protocol, model, sensorId, TELLSTICK_WINDAVERAGE, windaveragevalue, DATA_LENGTH, (int *)&timestamp);
+			printf("\twindaverage=%s", windaveragevalue);
+		}
+
+		if (dataTypes & TELLSTICK_WINDGUST) {
+			char windgustvalue[DATA_LENGTH];
+			tdSensorValue(protocol, model, sensorId, TELLSTICK_WINDGUST, windgustvalue, DATA_LENGTH, (int *)&timestamp);
+			printf("\twindgust=%s", windgustvalue);
+		}
+
+		if (dataTypes & TELLSTICK_RAINRATE) {
+			char rainratevalue[DATA_LENGTH];
+			tdSensorValue(protocol, model, sensorId, TELLSTICK_RAINRATE, rainratevalue, DATA_LENGTH, (int *)&timestamp);
+			printf("\trainrate=%s", rainratevalue);
+		}
+
+		if (dataTypes & TELLSTICK_RAINTOTAL) {
+			char raintotalvalue[DATA_LENGTH];
+			tdSensorValue(protocol, model, sensorId, TELLSTICK_RAINTOTAL, raintotalvalue, DATA_LENGTH, (int *)&timestamp);
+			printf("\traintotal=%s", raintotalvalue);
 		}
 
 		if (dataTypes & (TELLSTICK_TEMPERATURE | TELLSTICK_HUMIDITY)) {

@@ -73,6 +73,16 @@
  *   The sensor can report the temperature.
  * @def TELLSTICK_HUMIDITY
  *   The sensor can report the humidity.
+ * @def TELLSTICK_RAINRATE
+ *   The sensor can report rain fall rate.
+ * @def TELLSTICK_RAINTOTAL
+ *   The sensor can report total rain fall.
+ * @def TELLSTICK_WINDDIRECTION
+ *   The sensor can report wind direction.
+ * @def TELLSTICK_WINDAVERAGE
+ *   The sensor can report average wind speed.
+ * @def TELLSTICK_WINDGUST
+ *   The sensor can report gust wind speed.
  *
  **//* @} */
 
@@ -255,8 +265,10 @@
  * @param id
  *   The unique id for the sensor.
  * @param dataType
- *   The type that @a value is. Can be one of @ref TELLSTICK_TEMPERATURE or
- *   @ref TELLSTICK_HUMIDITY.
+ *   The type that @a value is. Can be one of @ref TELLSTICK_TEMPERATURE,
+ *   @ref TELLSTICK_HUMIDITY, @ref TELLSTICK_RAINTOTAL,
+ *   @ref TELLSTICK_RAINRATE, @ref TELLSTICK_WINDDIRECTION,
+ *   @ref TELLSTICK_WINDAVERAGE or @ref TELLSTICK_WINDGUST.
  * @param value
  *   A human readable string of the data.
  * @param timestamp
@@ -1135,8 +1147,10 @@ int WINAPI tdSensor(char *protocol, int protocolLen, char *model, int modelLen, 
  * @param[in] id
  *   The id of the sensor.
  * @param[in] dataType
- *   Which sensor value to retrive (one of @ref TELLSTICK_TEMPERATURE or @ref
- *   TELLSTICK_HUMIDITY).
+ *   Which sensor value to retrive (one of @ref TELLSTICK_TEMPERATURE,
+ *   @ref TELLSTICK_HUMIDITY, @ref TELLSTICK_RAINTOTAL,
+ *   @ref TELLSTICK_RAINRATE, @ref TELLSTICK_WINDDIRECTION,
+ *   @ref TELLSTICK_WINDAVERAGE or @ref TELLSTICK_WINDGUST.
  * @param[out] value
  *   A by ref string where the value will be placed.
  * @param[in] len

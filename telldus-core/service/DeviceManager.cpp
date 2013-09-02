@@ -722,6 +722,11 @@ void DeviceManager::handleSensorMessage(const ControllerMessage &msg) {
 
 	setSensorValueAndSignal("temp", TELLSTICK_TEMPERATURE, sensor, msg, t);
 	setSensorValueAndSignal("humidity", TELLSTICK_HUMIDITY, sensor, msg, t);
+	setSensorValueAndSignal("rainrate", TELLSTICK_RAINRATE, sensor, msg, t);
+	setSensorValueAndSignal("raintotal", TELLSTICK_RAINTOTAL, sensor, msg, t);
+	setSensorValueAndSignal("winddirection", TELLSTICK_WINDDIRECTION, sensor, msg, t);
+	setSensorValueAndSignal("windaverage", TELLSTICK_WINDAVERAGE, sensor, msg, t);
+	setSensorValueAndSignal("windgust", TELLSTICK_WINDGUST, sensor, msg, t);
 }
 
 void DeviceManager::setSensorValueAndSignal( const std::string &dataType, int dataTypeId, Sensor *sensor, const ControllerMessage &msg, time_t timestamp) const {
