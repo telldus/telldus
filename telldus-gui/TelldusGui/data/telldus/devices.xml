@@ -126,6 +126,9 @@
 		<device model="selflearning:hasta" protocol="hasta" widget="16" image="hasta">Blinds</device>
 		<device model="selflearningv2:hasta" protocol="hasta" widget="16" image="hasta">Blinds (version 2)</device>
 	</vendor>
+	<vendor name="Rollertrol" image="rollertrol">
+		<device model="selflearningv2:rollertrol" protocol="hasta" widget="16" image="hasta">Blinds</device>
+	</vendor>
 	<vendor name="Roxcore" image="roxcore">
 		<device model="codeswitch:roxcore" protocol="brateck" widget="6" image="projectorscreen">Projector screen</device>
 	</vendor>
