@@ -11,7 +11,7 @@ com.telldus.sensors = function() {
 		var sensorData = 0;
 		sensorList = loadSensorModel();
 		sensorList.rowsRemoved.connect(function(){saveSensorModel();});
-				sensorList.rowsInserted.connect(function(){saveSensorModel(); sendSensorReport();});
+		sensorList.rowsInserted.connect(function(){saveSensorModel(); sendSensorReport();});
 
 		while(sensorData = com.telldus.core.sensor()) {
 			var p = sensorData["protocol"];
