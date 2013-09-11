@@ -27,12 +27,18 @@ com.telldus.sensors = function() {
 			}
 			tryFetchValue(p, m, id, types, com.telldus.core.TELLSTICK_TEMPERATURE);
 			tryFetchValue(p, m, id, types, com.telldus.core.TELLSTICK_HUMIDITY);
+			tryFetchValue(p, m, id, types, com.telldus.core.TELLSTICK_RAINRATE);
+			tryFetchValue(p, m, id, types, com.telldus.core.TELLSTICK_RAINTOTAL);
+			tryFetchValue(p, m, id, types, com.telldus.core.TELLSTICK_WINDDIRECTION);
+			tryFetchValue(p, m, id, types, com.telldus.core.TELLSTICK_WINDAVERAGE);
+			tryFetchValue(p, m, id, types, com.telldus.core.TELLSTICK_WINDGUST);
 
 		}
 
 		com.telldus.core.sensorEvent.connect(sensorEvent);
 		view = new com.telldus.qml.view({
-			deleteSensor: deleteSensor
+			deleteSensor: deleteSensor,
+			getWindDirection: getWindDirection
 		});
 
 		view.setProperty('sensorModel', sensorList);
@@ -82,6 +88,44 @@ com.telldus.sensors = function() {
 		}
 	}
 
+	function getWindDirection(degrees){
+		var number = degrees/22.5;
+		switch(number){
+			case 1:
+				return 'NNE';
+			case 2:
+				return 'NE';
+			case 3:
+				return 'ENE';
+			case 4:
+				return 'E';
+			case 5:
+				return 'ESE';
+			case 6:
+				return 'SE';
+			case 7:
+				return 'SSE';
+			case 8:
+				return 'S';
+			case 9:
+				return 'SSW';
+			case 10:
+				return 'SW';
+			case 11:
+				return 'WSW';
+			case 12:
+				return 'W';
+			case 13:
+				return 'WNW';
+			case 14:
+				return 'NW';
+			case 15:
+				return 'NNW';
+			default:
+				return 'N';
+		}
+	}
+
 	function loadSensorModel(){
 		var settings = new com.telldus.settings();
 		var sensors = new com.telldus.qml.array();
@@ -99,6 +143,46 @@ com.telldus.sensors = function() {
 		return sensors;
 	}
 
+	function pickSensorValues(sensor){
+		var allValues = new Array();
+		if(sensor.hasHumidity){
+			var sensorValue = sensor.sensorValue(com.telldus.core.TELLSTICK_HUMIDITY);
+			var value = {type: com.telldus.core.TELLSTICK_HUMIDITY, lastUpdated: sensorValue.lastUpdated, value: sensorValue.value};
+			allValues.push(value);
+		}
+		if(sensor.hasRainRate){
+			var sensorValue = sensor.sensorValue(com.telldus.core.TELLSTICK_RAINRATE);
+			var value = {type: com.telldus.core.TELLSTICK_RAINRATE, lastUpdated: sensorValue.lastUpdated, value: sensorValue.value};
+			allValues.push(value);
+		}
+		if(sensor.hasRainTotal){
+			var sensorValue = sensor.sensorValue(com.telldus.core.TELLSTICK_RAINTOTAL);
+			var value = {type: com.telldus.core.TELLSTICK_RAINTOTAL, lastUpdated: sensorValue.lastUpdated, value: sensorValue.value};
+			allValues.push(value);
+		}
+		if(sensor.hasTemperature){
+			var sensorValue = sensor.sensorValue(com.telldus.core.TELLSTICK_TEMPERATURE);
+			var value = {type: com.telldus.core.TELLSTICK_TEMPERATURE, lastUpdated: sensorValue.lastUpdated, value: sensorValue.value};
+			allValues.push(value);
+		}
+		if(sensor.hasWindDirection){
+			var sensorValue = sensor.sensorValue(com.telldus.core.TELLSTICK_WINDDIRECTION);
+			var value = {type: com.telldus.core.TELLSTICK_WINDDIRECTION, lastUpdated: sensorValue.lastUpdated, value: sensorValue.value};
+			allValues.push(value);
+		}
+		if(sensor.hasWindAverage){
+			var sensorValue = sensor.sensorValue(com.telldus.core.TELLSTICK_WINDAVERAGE);
+			var value = {type: com.telldus.core.TELLSTICK_WINDAVERAGE, lastUpdated: sensorValue.lastUpdated, value: sensorValue.value};
+			allValues.push(value);
+		}
+		if(sensor.hasWindGust){
+			var sensorValue = sensor.sensorValue(com.telldus.core.TELLSTICK_WINDGUST);
+			var value = {type: com.telldus.core.TELLSTICK_WINDGUST, lastUpdated: sensorValue.lastUpdated, value: sensorValue.value};
+			allValues.push(value);
+		}
+		return allValues;
+	}
+
 	function saveSensorModel(){
 		var settings = new com.telldus.settings();
 		var sensorProperties = new Array();
@@ -106,17 +190,7 @@ com.telldus.sensors = function() {
 		for (var i = 0; i < sensorList.length; ++i) {
 			var sensor = sensorList.get(i);
 
-			var allValues = new Array();
-			if(sensor.hasHumidity){
-				var sensorValue = sensor.sensorValue(com.telldus.core.TELLSTICK_HUMIDITY);
-				var value = {type: com.telldus.core.TELLSTICK_HUMIDITY, lastUpdated: sensorValue.lastUpdated, value: sensorValue.value};
-				allValues.push(value);
-			}
-			if(sensor.hasTemperature){
-				var sensorValue = sensor.sensorValue(com.telldus.core.TELLSTICK_TEMPERATURE);
-				var value = {type: com.telldus.core.TELLSTICK_TEMPERATURE, lastUpdated: sensorValue.lastUpdated, value: sensorValue.value};
-				allValues.push(value);
-			}
+			var allValues = pickSensorValues(sensor);
 
 			var sensorProp = {protocol:sensor.protocol, model:sensor.model, id:sensor.id, values:allValues, name:sensor.name, showInList:sensor.showInList};
 			sensorProperties.push(sensorProp);

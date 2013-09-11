@@ -28,7 +28,9 @@ SET( Plugin_EXTRA
 	header_bg.png
 	icon.png
 	icon_humidity.png
+	icon_rain.png
 	icon_temp.png
+	icon_wind.png
 	main.qml
 	HeaderTitle.qml
 	row_bg.png

@@ -5,7 +5,7 @@
 
 class Sensor::PrivateData {
 public:
-	bool hasTemperature, hasHumidity, showInList;
+	bool hasTemperature, hasHumidity, hasRainRate, hasRainTotal, hasWindDirection, hasWindAverage, hasWindGust, showInList;
 	int id;
 	QString model, name, protocol;
 	QDateTime lastUpdated;
@@ -67,8 +67,28 @@ void Sensor::setProtocol(const QString &protocol) {
 	emit protocolChanged();
 }
 
+bool Sensor::hasRainRate() const {
+	return d->values.contains(TELLSTICK_RAINRATE);
+}
+
+bool Sensor::hasRainTotal() const {
+	return d->values.contains(TELLSTICK_RAINTOTAL);
+}
+
 bool Sensor::hasTemperature() const {
 	return d->values.contains(TELLSTICK_TEMPERATURE);
+}
+
+bool Sensor::hasWindDirection() const {
+	return d->values.contains(TELLSTICK_WINDDIRECTION);
+}
+
+bool Sensor::hasWindAverage() const {
+	return d->values.contains(TELLSTICK_WINDAVERAGE);
+}
+
+bool Sensor::hasWindGust() const {
+	return d->values.contains(TELLSTICK_WINDGUST);
 }
 
 QObject * Sensor::sensorValue(int type) {
@@ -90,6 +110,16 @@ void Sensor::setValue(int type, const QString &value, const QDateTime &timestamp
 		emit hasTemperatureChanged();
 	} else if (type == TELLSTICK_HUMIDITY) {
 		emit hasHumidityChanged();
+	} else if (type == TELLSTICK_RAINRATE) {
+		emit hasRainRateChanged();
+	} else if (type == TELLSTICK_RAINTOTAL) {
+		emit hasRainTotalChanged();
+	} else if (type == TELLSTICK_WINDDIRECTION) {
+		emit hasWindDirectionChanged();
+	} else if (type == TELLSTICK_WINDAVERAGE) {
+		emit hasWindAverageChanged();
+	} else if (type == TELLSTICK_WINDGUST) {
+		emit hasWindGustChanged();
 	}
 }
 

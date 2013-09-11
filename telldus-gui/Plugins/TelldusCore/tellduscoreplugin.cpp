@@ -32,6 +32,11 @@ void TelldusCorePlugin::initialize ( const QString & key, QScriptEngine * engine
 
 		value.setProperty("TELLSTICK_TEMPERATURE", TELLSTICK_TEMPERATURE);
 		value.setProperty("TELLSTICK_HUMIDITY", TELLSTICK_HUMIDITY);
+		value.setProperty("TELLSTICK_RAINRATE", TELLSTICK_RAINRATE);
+		value.setProperty("TELLSTICK_RAINTOTAL", TELLSTICK_RAINTOTAL);
+		value.setProperty("TELLSTICK_WINDDIRECTION", TELLSTICK_WINDDIRECTION);
+		value.setProperty("TELLSTICK_WINDAVERAGE", TELLSTICK_WINDAVERAGE);
+		value.setProperty("TELLSTICK_WINDGUST", TELLSTICK_WINDGUST);
 
 		engine->globalObject().property("com").property("telldus").setProperty("core", value);
 	}

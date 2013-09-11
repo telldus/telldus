@@ -13,6 +13,11 @@ class Sensor : public QObject
 	Q_OBJECT
 	Q_PROPERTY(bool hasHumidity READ hasHumidity NOTIFY hasHumidityChanged)
 	Q_PROPERTY(bool hasTemperature READ hasTemperature NOTIFY hasTemperatureChanged)
+	Q_PROPERTY(bool hasRainRate READ hasRainRate NOTIFY hasRainRateChanged)
+	Q_PROPERTY(bool hasRainTotal READ hasRainTotal NOTIFY hasRainTotalChanged)
+	Q_PROPERTY(bool hasWindDirection READ hasWindDirection NOTIFY hasWindDirectionChanged)
+	Q_PROPERTY(bool hasWindAverage READ hasWindAverage NOTIFY hasWindAverageChanged)
+	Q_PROPERTY(bool hasWindGust READ hasWindGust NOTIFY hasWindGustChanged)
 	Q_PROPERTY(int id READ id WRITE setId NOTIFY idChanged)
 	Q_PROPERTY(QString model READ model WRITE setModel NOTIFY modelChanged)
 	Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
@@ -36,7 +41,12 @@ public:
 	QString protocol() const;
 	void setProtocol(const QString &protocol);
 
+	bool hasRainRate() const;
+	bool hasRainTotal() const;
 	bool hasTemperature() const;
+	bool hasWindDirection() const;
+	bool hasWindAverage() const;
+	bool hasWindGust() const;
 	bool showInList() const;
 
 	Q_INVOKABLE QObject *sensorValue(int type);
@@ -47,7 +57,12 @@ public:
 signals:
 	void idChanged();
 	void hasHumidityChanged();
+	void hasRainRateChanged();
+	void hasRainTotalChanged();
 	void hasTemperatureChanged();
+	void hasWindDirectionChanged();
+	void hasWindAverageChanged();
+	void hasWindGustChanged();
 	void modelChanged();
 	void nameChanged();
 	void protocolChanged();

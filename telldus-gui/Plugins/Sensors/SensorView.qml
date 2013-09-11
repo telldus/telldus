@@ -110,6 +110,36 @@ Item{
 				icon: "icon_humidity.png"
 				lastUpdated: visible ? modelData.sensorValue(2).lastUpdated : new Date()
 			}
+			SensorValue {
+				visible: modelData.hasRainRate
+				text: visible ? modelData.sensorValue(4).value + ' mm/h' : ''
+				icon: "icon_rain.png"
+				lastUpdated: visible ? modelData.sensorValue(4).lastUpdated : new Date()
+			}
+			SensorValue {
+				visible: modelData.hasRainTotal
+				text: visible ? modelData.sensorValue(8).value + ' mm' : ''
+				icon: "icon_rain.png"
+				lastUpdated: visible ? modelData.sensorValue(8).lastUpdated : new Date()
+			}
+			SensorValue {
+				visible: modelData.hasWindDirection
+				text: visible ? getWindDirection.callWith(modelData.sensorValue(16).value): ''
+				icon: "icon_wind.png"
+				lastUpdated: visible ? modelData.sensorValue(16).lastUpdated : new Date()
+			}
+			SensorValue {
+				visible: modelData.hasWindAverage
+				text: visible ? modelData.sensorValue(32).value + ' m/s' : ''
+				icon: "icon_wind.png"
+				lastUpdated: visible ? modelData.sensorValue(32).lastUpdated : new Date()
+			}
+			SensorValue {
+				visible: modelData.hasWindGust
+				text: visible ? '(' + modelData.sensorValue(64).value + ' m/s)' : ''
+				icon: "icon_wind.png"
+				lastUpdated: visible ? modelData.sensorValue(64).lastUpdated : new Date()
+			}
 		}
 	}
 
