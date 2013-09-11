@@ -6,6 +6,9 @@
 #include <QVariant>
 #include <QApplication>
 
+#define DEFINE_STRING_HELPER(X) #X
+#define DEFINE_STRING(X) DEFINE_STRING_HELPER(X)
+
 class QMLView::PrivateData {
 public:
 	QDir baseDir;
@@ -31,6 +34,10 @@ QMLView::QMLView(const QDir &dir, const QScriptValue &object) :
 	if (pluginsDir.cd("Plugins/declarative")) {
 		paths << pluginsDir.absolutePath();
 	}
+
+#if defined(Q_OS_UNIX)
+	paths << DEFINE_STRING(PLUGIN_LIB_PATH);
+#endif
 
 	eng->setImportPathList(paths);
 
