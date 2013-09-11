@@ -41,10 +41,18 @@ Column {
 		HeaderTitle {
 			id: visibleinlistTitle
 			text: qsTr("Visible in list")
-			anchors.right: sensorinformationTitle.left
+			anchors.right: sendtoliveTitle.left
 			horizontalAlignment: Text.AlignHCenter
 			visible: main.state == "EDIT"
 			width: 100
+		}
+		HeaderTitle {
+			id: sendtoliveTitle
+			text: qsTr("Send to Telldus Live!")
+			anchors.right: sensorinformationTitle.left
+			horizontalAlignment: Text.AlignHCenter
+			visible: main.state == "EDIT"
+			width: 150
 		}
 		HeaderTitle {
 			id: sensorinformationTitle
@@ -72,9 +80,11 @@ Column {
 			onClicked: {
 				if(main.state == "VIEW"){
 					main.state = "EDIT"
+					sendSensorReport.callWith(1);
 				}
 				else{
 					main.state = "VIEW"
+					sendSensorReport.callWith(2);
 				}
 			}
 		}

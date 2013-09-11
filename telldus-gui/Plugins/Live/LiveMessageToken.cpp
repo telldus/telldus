@@ -166,3 +166,11 @@ void LiveMessageTokenScriptWrapper::set(const QString &key, const QString &value
 	token.stringVal = value;
 	p_token.dictVal[key] = token;
 }
+
+void LiveMessageTokenScriptWrapper::set(const QString &key, const QDateTime value) {
+	p_token.valueType = LiveMessageToken::Dictionary;
+	LiveMessageToken token;
+	token.valueType = LiveMessageToken::Int;
+	token.intVal = value.toMSecsSinceEpoch();
+	p_token.dictVal[key] = token;
+}

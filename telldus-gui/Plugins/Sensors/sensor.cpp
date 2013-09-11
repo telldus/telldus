@@ -5,7 +5,7 @@
 
 class Sensor::PrivateData {
 public:
-	bool hasTemperature, hasHumidity, hasRainRate, hasRainTotal, hasWindDirection, hasWindAverage, hasWindGust, showInList;
+	bool hasTemperature, hasHumidity, hasRainRate, hasRainTotal, hasWindDirection, hasWindAverage, hasWindGust, showInList, sendToLive;
 	int id;
 	QString model, name, protocol;
 	QDateTime lastUpdated;
@@ -18,6 +18,7 @@ Sensor::Sensor(QObject *parent) :
 	d = new PrivateData;
 	d->id = 0;
 	d->showInList = false;
+	d->sendToLive = false;
 }
 
 Sensor::~Sensor() {
@@ -130,4 +131,13 @@ bool Sensor::showInList() const{
 void Sensor::setShowInList(bool show){
 	d->showInList = show;
 	emit showInListChanged();
+}
+
+bool Sensor::sendToLive() const{
+	return d->sendToLive;
+}
+
+void Sensor::setSendToLive(bool send){
+	d->sendToLive = send;
+	emit sendToLiveChanged();
 }

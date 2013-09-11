@@ -83,7 +83,7 @@ Item{
 			id: visibleinlistcheckbox
 			height: 40
 			width: 100
-			anchors.right: sensorInfo.left
+			anchors.right: sendtolivecheckbox.left
 			CheckBox {
 				id: checkBox
 				anchors.centerIn: parent
@@ -91,6 +91,20 @@ Item{
 				visible: sensorViewItem.state == "EDIT"
 				checked: modelData.showInList
 				onClicked: modelData.setShowInList(!modelData.showInList)
+			}
+		}
+		Item  {
+			id: sendtolivecheckbox
+			height: 40
+			width: 150
+			anchors.right: sensorInfo.left
+			CheckBox {
+				id: checkBoxSTL
+				anchors.centerIn: parent
+				width: checkBoxSTL.height
+				visible: sensorViewItem.state == "EDIT"
+				checked: modelData.sendToLive
+				onClicked: modelData.setSendToLive(!modelData.sendToLive)
 			}
 		}
 

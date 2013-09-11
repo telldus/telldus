@@ -11,7 +11,7 @@ com.telldus.sensors = function() {
 		var sensorData = 0;
 		sensorList = loadSensorModel();
 		sensorList.rowsRemoved.connect(function(){saveSensorModel();});
-		sensorList.rowsInserted.connect(function(){saveSensorModel();});
+				sensorList.rowsInserted.connect(function(){saveSensorModel(); sendSensorReport();});
 
 		while(sensorData = com.telldus.core.sensor()) {
 			var p = sensorData["protocol"];
@@ -38,7 +38,8 @@ com.telldus.sensors = function() {
 		com.telldus.core.sensorEvent.connect(sensorEvent);
 		view = new com.telldus.qml.view({
 			deleteSensor: deleteSensor,
-			getWindDirection: getWindDirection
+			getWindDirection: getWindDirection,
+			sendSensorReport: sendSensorReport
 		});
 
 		view.setProperty('sensorModel', sensorList);
@@ -55,7 +56,29 @@ com.telldus.sensors = function() {
 		application.addWidget("sensors.gui", "icon.png", view);
 	}
 
-	function createSensor(protocol, model, id, name, showInList){
+	function allValuesUpdated(sensorValues) {
+		var numSensors = sensorValues.length;
+		if (numSensors == 0) {
+			//error
+			return false;
+		}
+
+		if (numSensors == 1) {
+			//this sensor has only one sensor, so all values are updated
+			return true;
+		}
+
+		var updatedValue = sensorValues[0]['lastUpdated'];
+		for (var i=1; i<numSensors; i++) {
+			if (updatedValue.valueOf() != sensorValues[i]['lastUpdated'].valueOf()) {
+				//not all values updated yet
+				return false;
+			}
+		}
+		return true;
+	}
+
+	function createSensor(protocol, model, id, name, showInList, sendToLive){
 		var sensor = new com.telldus.sensors.sensor();
 		sensor.protocol = protocol;
 		sensor.model = model;
@@ -64,6 +87,8 @@ com.telldus.sensors = function() {
 		sensor.nameChanged.connect(function() { saveSensorModel(); });
 		sensor.showInList = showInList;
 		sensor.showInListChanged.connect(function() { saveSensorModel(); });
+		sensor.sendToLive = sendToLive;
+		sensor.sendToLiveChanged.connect(function() { saveSensorModel(); sendSensorReport(); });
 		return sensor;
 	}
 
@@ -133,7 +158,7 @@ com.telldus.sensors = function() {
 		var sensorProperties = settings.value("sensors", "");
 		if(sensorProperties){
 			for (var i = 0; i < sensorProperties.length; i++) {
-				var sensor = createSensor(sensorProperties[i].protocol, sensorProperties[i].model, sensorProperties[i].id, sensorProperties[i].name, sensorProperties[i].showInList=="true");
+				var sensor = createSensor(sensorProperties[i].protocol, sensorProperties[i].model, sensorProperties[i].id, sensorProperties[i].name, sensorProperties[i].showInList=="true", sensorProperties[i].sendToLive=="true");
 				for (var j = 0; j < sensorProperties[i].values.length; j++) {
 					sensor.setValue(sensorProperties[i].values[j].type, sensorProperties[i].values[j].value, sensorProperties[i].values[j].lastUpdated)
 				}
@@ -192,11 +217,32 @@ com.telldus.sensors = function() {
 
 			var allValues = pickSensorValues(sensor);
 
-			var sensorProp = {protocol:sensor.protocol, model:sensor.model, id:sensor.id, values:allValues, name:sensor.name, showInList:sensor.showInList};
+			var sensorProp = {protocol:sensor.protocol, model:sensor.model, id:sensor.id, values:allValues, name:sensor.name, showInList:sensor.showInList, sendToLive:sensor.sendToLive};
 			sensorProperties.push(sensorProp);
 		}
 
 		settings.setValue("sensors", sensorProperties);
+	}
+
+	function sendSensorReport(){
+		//TODO Only show "sendToLive" if Telldus Live! is activated
+		if(!com.telldus.live.isRegisteredToLive()){
+			return;
+		}
+
+		var liveSensors = new Array();
+
+		for (var i = 0; i < sensorList.length; ++i) {
+			var sensor = sensorList.get(i);
+			if(sensor.sendToLive){
+				var allValues = pickSensorValues(sensor);
+				liveSensors.push({protocol:sensor.protocol, model:sensor.model, id:sensor.id, values:allValues, name:sensor.name});
+			}
+		}
+
+		if(liveSensors.length > 0){
+			com.telldus.live.sendSensorsReport(liveSensors);
+		}
 	}
 
 	function sensorEvent(protocol, model, id, dataType, value, timestamp, avoidSave) {
@@ -222,6 +268,12 @@ com.telldus.sensors = function() {
 		}
 
 		sensor.setValue(dataType, value, timestamp);
+		if (sensor.sendToLive){
+			sensorValues = pickSensorValues(sensor)
+			if (allValuesUpdated(sensorValues)) {
+				com.telldus.live.sendSensorValues(sensor, sensorValues);
+			}
+		}
 
 		if(!avoidSave){
 			saveSensorModel();

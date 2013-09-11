@@ -23,6 +23,7 @@ class Sensor : public QObject
 	Q_PROPERTY(QString name READ name WRITE setName NOTIFY nameChanged)
 	Q_PROPERTY(QString protocol READ protocol WRITE setProtocol NOTIFY protocolChanged)
 	Q_PROPERTY(bool showInList READ showInList WRITE setShowInList NOTIFY showInListChanged)
+	Q_PROPERTY(bool sendToLive READ sendToLive WRITE setSendToLive NOTIFY sendToLiveChanged)
 
 public:
 	explicit Sensor(QObject *parent = 0);
@@ -48,11 +49,13 @@ public:
 	bool hasWindAverage() const;
 	bool hasWindGust() const;
 	bool showInList() const;
+	bool sendToLive() const;
 
 	Q_INVOKABLE QObject *sensorValue(int type);
 	Q_INVOKABLE void setValue(int type, const QString &value, const QDateTime &timestamp);
 	Q_INVOKABLE void setName(const QString &name);
 	Q_INVOKABLE void setShowInList(bool show);
+	Q_INVOKABLE void setSendToLive(bool send);
 
 signals:
 	void idChanged();
@@ -67,6 +70,7 @@ signals:
 	void nameChanged();
 	void protocolChanged();
 	void showInListChanged();
+	void sendToLiveChanged();
 
 private:
 	class PrivateData;

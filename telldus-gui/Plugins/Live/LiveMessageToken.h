@@ -2,6 +2,7 @@
 #define LIVEMESSAGETOKEN_H
 
 #include <QByteArray>
+#include <QDateTime>
 #include <QString>
 #include <QHash>
 #include <QMetaType>
@@ -42,6 +43,7 @@ public slots:
 
 	void set(const QString &key, int value);
 	void set(const QString &key, const QString &value);
+	void set(const QString &key, const QDateTime value);
 
 private:
 	LiveMessageToken p_token;

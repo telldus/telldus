@@ -69,6 +69,10 @@ com.telldus.live = function() {
 		}
 	}
 
+	function isRegisteredToLive(){
+		return isRegistered;
+	}
+
 	function registered(msg) {
 		if (menuId > 0) {
 			com.telldus.systray.removeMenuItem(menuId);
@@ -115,6 +119,58 @@ com.telldus.live = function() {
 		socket.sendMessage(msg);
 	}
 
+	function sendSensorsReport(sensorList) {
+		if (!isRegistered) {
+			return;
+		}
+		msg = new LiveMessage("SensorsReport");
+
+		list = new LiveMessageToken();
+		for( i in sensorList ) {
+			sensorFrame = new LiveMessageToken();
+			sensor = new LiveMessageToken();
+			sensor.set('name', sensorList[i].name);
+			sensor.set('protocol', sensorList[i].protocol);
+			sensor.set('model', sensorList[i].model);
+			sensor.set('sensor_id', sensorList[i].id);
+			var valueList = new LiveMessageToken();
+			for( j in sensorList[i].values ){
+				valueElement = new LiveMessageToken()
+				valueElement.set('type', sensorList[i].values[j].type);
+				valueElement.set('lastUp', sensorList[i].values[j].lastUpdated);
+				valueElement.set('value', sensorList[i].values[j].value);
+				valueList.add(valueElement);
+			}
+			sensorFrame.add(sensor);
+			sensorFrame.add(valueList);
+			list.add(sensorFrame);
+		}
+		msg.appendToken(list);
+		socket.sendMessage(msg);
+	}
+
+	function sendSensorValues(sensor, sensorvalues){
+		if (!isRegistered) {
+			return;
+		}
+		msg = new LiveMessage("SensorEvent");
+		sensortoken = new LiveMessageToken();
+		sensortoken.set('protocol', sensor.protocol);
+		sensortoken.set('model', sensor.model);
+		sensortoken.set('sensor_id', sensor.id);
+		var valueList = new LiveMessageToken();
+		for( j=0; j<sensorvalues.length; j++ ) {
+			valueElement = new LiveMessageToken()
+			valueElement.set('type', sensorvalues[j].type);
+			valueElement.set('lastUp', sensorvalues[j].lastUpdated);
+			valueElement.set('value', sensorvalues[j].value);
+			valueList.add(valueElement);
+		}
+		msg.appendToken(sensortoken);
+		msg.appendToken(valueList);
+		socket.sendMessage(msg);
+	}
+
 	function errorChanged(msg) {
 		configUI.findChild('errorLabel').text = msg;
 	}
@@ -124,7 +180,10 @@ com.telldus.live = function() {
 	}
 
 	return { //Public functions
-		init:init
+		init:init,
+		sendSensorsReport:sendSensorsReport,
+		isRegisteredToLive:isRegisteredToLive,
+		sendSensorValues:sendSensorValues
 	}
 }();
 
