@@ -94,6 +94,14 @@ INCLUDE_DIRECTORIES(${CMAKE_SOURCE_DIR})
 
 IF (UNIX AND NOT APPLE)
 	SET(SCRIPT_PATH "/usr/local/share/telldus/scripts" CACHE PATH "The paths for scripts to execute on sensor events")
+	SET(SYSCONF_INSTALL_DIR "/etc" CACHE PATH "The sysconfig install dir (default prefix/etc)" )
+	IF (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
+		SET(DEFAULT_STATE_INSTALL_DIR "/var/spool")
+	ELSE ()
+		SET(DEFAULT_STATE_INSTALL_DIR "/var/state")
+	ENDIF ()
+	SET(STATE_INSTALL_DIR "${DEFAULT_STATE_INSTALL_DIR}" CACHE PATH "The directory to store state information of the devices")
+
 ENDIF()
 
 ######## Platforms-specific, non configurable  ########
@@ -247,15 +255,6 @@ ENDIF (UNIX)
 
 IF (UNIX AND NOT APPLE)
 	INSTALL(TARGETS ${telldus-service_TARGET} RUNTIME DESTINATION sbin)
-	SET(SYSCONF_INSTALL_DIR "/etc" CACHE PATH "The sysconfig install dir (default prefix/etc)" )
-
-	IF (${CMAKE_SYSTEM_NAME} MATCHES "FreeBSD")
-		SET(DEFAULT_STATE_INSTALL_DIR "/var/spool")
-	ELSE ()
-		SET(DEFAULT_STATE_INSTALL_DIR "/var/state")
-	ENDIF ()
-	SET(STATE_INSTALL_DIR "${DEFAULT_STATE_INSTALL_DIR}" CACHE PATH "The directory to store state information of the devices")
-
 	INSTALL(FILES tellstick.conf
 		DESTINATION ${SYSCONF_INSTALL_DIR}
 	)

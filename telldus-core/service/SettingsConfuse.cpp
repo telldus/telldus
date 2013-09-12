@@ -13,6 +13,7 @@
 #include "service/config.h"
 #include "client/telldus-core.h"
 #include "common/Strings.h"
+#include "service/Log.h"
 
 class Settings::PrivateData {
 public:
@@ -405,12 +406,14 @@ bool readConfig(cfg_t **cfg) {
 
 	FILE *fp = fopen(CONFIG_FILE, "re");  // e for setting O_CLOEXEC on the file handle
 	if (!fp) {
+		Log::warning("Unable to open config file, %s", CONFIG_FILE);
 		return false;
 	}
 	(*cfg) = cfg_init(opts, CFGF_NOCASE);
 	if (cfg_parse_fp((*cfg), fp) == CFG_PARSE_ERROR) {
 		(*cfg) = 0;
 		fclose(fp);
+		Log::warning("Unable to parse config file, %s", CONFIG_FILE);
 		return false;
 	}
 
@@ -432,12 +435,14 @@ bool readVarConfig(cfg_t **cfg) {
 
 	FILE *fp = fopen(VAR_CONFIG_FILE, "re");  // e for setting O_CLOEXEC on the file handle
 	if (!fp) {
+		Log::warning("Unable to open var config file, %s", VAR_CONFIG_FILE);
 		return false;
 	}
 	(*cfg) = cfg_init(opts, CFGF_NOCASE);
 	if (cfg_parse_fp((*cfg), fp) == CFG_PARSE_ERROR) {
 		(*cfg) = 0;
 		fclose(fp);
+		Log::warning("Unable to parse var config file, %s", VAR_CONFIG_FILE);
 		return false;
 	}
 
