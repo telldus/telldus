@@ -117,8 +117,7 @@ std::string ProtocolOregon::decode1984(const std::string &data, const std::wstri
 
 	if (model.compare(L"0x1984") == 0) {
 		checksum += 0x1 + 0x9 + 0x8 + 0x4;
-	}
-	else {
+	} else {
 		checksum += 0x1 + 0x9 + 0x9 + 0x4;
 	}
 
