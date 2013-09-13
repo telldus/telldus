@@ -78,7 +78,6 @@ std::string ProtocolOregon::decodeEA4C(const std::string &data) {
 }
 
 std::string ProtocolOregon::decode1984(const std::string &data, const std::wstring &model) {
-
 	//wind
 	uint64_t value = TelldusCore::hexTo64l(data);
 
@@ -198,7 +197,6 @@ std::string ProtocolOregon::decode1A2D(const std::string &data) {
 }
 
 std::string ProtocolOregon::decode2914(const std::string &data) {
-
 	//rain
 	uint64_t value = TelldusCore::hexTo64l(data);
 
@@ -252,7 +250,6 @@ std::string ProtocolOregon::decode2914(const std::string &data) {
 }
 
 std::string ProtocolOregon::decodeF824(const std::string &data) {
-
 	uint64_t value = TelldusCore::hexTo64l(data);
 
 	uint8_t crcCheck = value & 0xF; //PROBABLY crc
