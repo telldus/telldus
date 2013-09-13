@@ -24,6 +24,7 @@ public:
 
 EventHandler::EventHandler() {
 	d = new PrivateData;
+	printf("");
 	pthread_cond_init(&d->event, NULL);
 	pthread_mutex_init(&d->mutex, NULL);
 }
