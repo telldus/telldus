@@ -78,10 +78,10 @@ std::string ProtocolOregon::decodeEA4C(const std::string &data) {
 }
 
 std::string ProtocolOregon::decode1984(const std::string &data, const std::wstring &model) {
-	//wind
+	// wind
 	uint64_t value = TelldusCore::hexTo64l(data);
 
-	uint8_t crcCheck = value & 0xF; //PROBABLY crc
+	uint8_t crcCheck = value & 0xF;  // PROBABLY crc
 	value >>= 4;
 	uint8_t messageChecksum1 = value & 0xF;
 	value >>= 4;
@@ -107,7 +107,7 @@ std::string ProtocolOregon::decode1984(const std::string &data, const std::wstri
 	uint8_t direction = value & 0xF;
 
 	value >>= 4;
-	uint8_t battery = value & 0xF; //PROBABLY battery
+	uint8_t battery = value & 0xF;  // PROBABLY battery
 	value >>= 4;
 	uint8_t rollingcode = ((value >> 4) & 0xF) + (value & 0xF);
 	uint8_t checksum = ((value >> 4) & 0xF) + (value & 0xF);
@@ -123,7 +123,7 @@ std::string ProtocolOregon::decode1984(const std::string &data, const std::wstri
 	}
 
 	if (((checksum >> 4) & 0xF) != messageChecksum1 || (checksum & 0xF) != messageChecksum2){
-		//checksum error
+		// checksum error
 		return "";
 	}
 
@@ -197,7 +197,7 @@ std::string ProtocolOregon::decode1A2D(const std::string &data) {
 }
 
 std::string ProtocolOregon::decode2914(const std::string &data) {
-	//rain
+	// rain
 	uint64_t value = TelldusCore::hexTo64l(data);
 
 	uint8_t messageChecksum1 = value & 0xF;
@@ -226,7 +226,7 @@ std::string ProtocolOregon::decode2914(const std::string &data) {
 	uint8_t rainRate4 = value & 0xF;
 
 	value >>= 4;
-	uint8_t battery = value & 0xF; //PROBABLY battery
+	uint8_t battery = value & 0xF;  // PROBABLY battery
 	value >>= 4;
 	uint8_t rollingcode = ((value >> 4) & 0xF) + (value & 0xF);
 	uint8_t checksum = ((value >> 4) & 0xF) + (value & 0xF);
@@ -235,7 +235,7 @@ std::string ProtocolOregon::decode2914(const std::string &data) {
 	checksum += totRain1 + totRain2 + totRain3 + totRain4 + totRain5 + totRain6 + rainRate1 + rainRate2 + rainRate3 + rainRate4 + battery + channel + 0x2 + 0x9 + 0x1 + 0x4;
 
 	if (((checksum >> 4) & 0xF) != messageChecksum1 || (checksum & 0xF) != messageChecksum2){
-		//checksum error
+		// checksum error
 		return "";
 	}
 
@@ -252,7 +252,7 @@ std::string ProtocolOregon::decode2914(const std::string &data) {
 std::string ProtocolOregon::decodeF824(const std::string &data) {
 	uint64_t value = TelldusCore::hexTo64l(data);
 
-	uint8_t crcCheck = value & 0xF; //PROBABLY crc
+	uint8_t crcCheck = value & 0xF;  // PROBABLY crc
 	value >>= 4;
 	uint8_t messageChecksum1 = value & 0xF;
 	value >>= 4;
@@ -272,7 +272,7 @@ std::string ProtocolOregon::decodeF824(const std::string &data) {
 	value >>= 4;
 	uint8_t temp3 = value & 0xF;
 	value >>= 4;
-	uint8_t battery = value & 0xF; //PROBABLY battery
+	uint8_t battery = value & 0xF;  // PROBABLY battery
 	value >>= 4;
 	uint8_t rollingcode = ((value >> 4) & 0xF) + (value & 0xF);
 	uint8_t checksum = ((value >> 4) & 0xF) + (value & 0xF);
@@ -281,7 +281,7 @@ std::string ProtocolOregon::decodeF824(const std::string &data) {
 	checksum += unknown + hum1 + hum2 + neg + temp1 + temp2 + temp3 + battery + channel + 0xF + 0x8 + 0x2 + 0x4;
 
 	if (((checksum >> 4) & 0xF) != messageChecksum1 || (checksum & 0xF) != messageChecksum2){
-		//checksum error
+		// checksum error
 		return "";
 	}
 
