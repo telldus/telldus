@@ -121,7 +121,7 @@ std::string ProtocolOregon::decode1984(const std::string &data, const std::wstri
 		checksum += 0x1 + 0x9 + 0x9 + 0x4;
 	}
 
-	if (((checksum >> 4) & 0xF) != messageChecksum1 || (checksum & 0xF) != messageChecksum2){
+	if (((checksum >> 4) & 0xF) != messageChecksum1 || (checksum & 0xF) != messageChecksum2) {
 		// checksum error
 		return "";
 	}
@@ -233,7 +233,7 @@ std::string ProtocolOregon::decode2914(const std::string &data) {
 	uint8_t channel = value & 0xF;
 	checksum += totRain1 + totRain2 + totRain3 + totRain4 + totRain5 + totRain6 + rainRate1 + rainRate2 + rainRate3 + rainRate4 + battery + channel + 0x2 + 0x9 + 0x1 + 0x4;
 
-	if (((checksum >> 4) & 0xF) != messageChecksum1 || (checksum & 0xF) != messageChecksum2){
+	if (((checksum >> 4) & 0xF) != messageChecksum1 || (checksum & 0xF) != messageChecksum2) {
 		// checksum error
 		return "";
 	}
@@ -279,7 +279,7 @@ std::string ProtocolOregon::decodeF824(const std::string &data) {
 	uint8_t channel = value & 0xF;
 	checksum += unknown + hum1 + hum2 + neg + temp1 + temp2 + temp3 + battery + channel + 0xF + 0x8 + 0x2 + 0x4;
 
-	if (((checksum >> 4) & 0xF) != messageChecksum1 || (checksum & 0xF) != messageChecksum2){
+	if (((checksum >> 4) & 0xF) != messageChecksum1 || (checksum & 0xF) != messageChecksum2) {
 		// checksum error
 		return "";
 	}
