@@ -37,6 +37,8 @@ LiveObject::LiveObject( QScriptEngine *engine, QObject * parent )
 	d->registered = false;
 
 	QSslSocket::addDefaultCaCertificates(":/Equifax_Secure_CA.pem");
+	QSslSocket::addDefaultCaCertificates(":/GeoTrustGlobalCA.pem");
+	QSslSocket::addDefaultCaCertificates(":/RapidSSLCA.pem");
 	d->socket = new QSslSocket(this);
 	d->socket->setProtocol( QSsl::TlsV1 );
 	connect(d->socket, SIGNAL(encrypted()), this, SLOT(p_connected()));
