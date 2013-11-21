@@ -27,6 +27,10 @@
         <translation>Visas i lista</translation>
     </message>
     <message>
+        <source>Send to Telldus Live!</source>
+        <translation>Visa i Telldus Live!</translation>
+    </message>
+    <message>
         <source>Sensor information</source>
         <translation>Sensorinformation</translation>
     </message>
