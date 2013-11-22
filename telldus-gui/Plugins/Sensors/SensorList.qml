@@ -51,8 +51,8 @@ Column {
 			text: qsTr("Send to Telldus Live!")
 			anchors.right: sensorinformationTitle.left
 			horizontalAlignment: Text.AlignHCenter
-			visible: main.state == "EDIT"
-			width: 150
+			visible: main.state == "EDIT" && showLiveOptions
+			width: showLiveOptions ? 150 : 0
 		}
 		HeaderTitle {
 			id: sensorinformationTitle
@@ -70,7 +70,9 @@ Column {
 	}
 	Repeater {
 		model: sensorModel
-		delegate: SensorView{ state: main.state == "EDIT" ? 'EDIT' : ''}
+		delegate: SensorView {
+			state: main.state == "EDIT" ? 'EDIT' : ''
+		}
 	}
 	Row{
 		spacing: 20

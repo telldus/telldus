@@ -7,6 +7,7 @@ __postInit__ = function() {
 
 com.telldus.sensors = function() {
 	var sensorList;
+	var view;
 	function init() {
 		var sensorData = 0;
 		sensorList = loadSensorModel();
@@ -51,6 +52,7 @@ com.telldus.sensors = function() {
 			}
 		}
 		view.setProperty('initialViewMode', initialViewMode);
+		view.setProperty('showLiveOptions', (!com.telldus.live || !com.telldus.live.isRegisteredToLive()));
 		saveSensorModel();
 		view.load("main.qml");
 		application.addWidget("sensors.gui", "icon.png", view);
@@ -224,9 +226,14 @@ com.telldus.sensors = function() {
 		settings.setValue("sensors", sensorProperties);
 	}
 
+	function showLiveOptions(status){
+		if(view){
+			view.setProperty('showLiveOptions', status);
+		}
+	}
+
 	function sendSensorReport(){
-		//TODO Only show "sendToLive" if Telldus Live! is activated
-		if(!com.telldus.live.isRegisteredToLive()){
+		if(!com.telldus.live || !com.telldus.live.isRegisteredToLive()){
 			return;
 		}
 
@@ -268,7 +275,7 @@ com.telldus.sensors = function() {
 		}
 
 		sensor.setValue(dataType, value, timestamp);
-		if (sensor.sendToLive){
+		if (com.telldus.live && com.telldus.live.isRegisteredToLive() && sensor.sendToLive){
 			sensorValues = pickSensorValues(sensor)
 			if (allValuesUpdated(sensorValues)) {
 				com.telldus.live.sendSensorValues(sensor, sensorValues);
@@ -281,7 +288,8 @@ com.telldus.sensors = function() {
 	}
 
 	return { //Public functions
-		init:init
+		init:init,
+		showLiveOptions: showLiveOptions
 	}
 
 }();

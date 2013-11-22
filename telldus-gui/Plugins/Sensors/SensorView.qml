@@ -96,13 +96,13 @@ Item{
 		Item  {
 			id: sendtolivecheckbox
 			height: 40
-			width: 150
+			width:  showLiveOptions ? 150 : 0
 			anchors.right: sensorInfo.left
 			CheckBox {
 				id: checkBoxSTL
 				anchors.centerIn: parent
 				width: checkBoxSTL.height
-				visible: sensorViewItem.state == "EDIT"
+				visible: sensorViewItem.state == "EDIT" && showLiveOptions
 				checked: modelData.sendToLive
 				onClicked: modelData.setSendToLive(!modelData.sendToLive)
 			}

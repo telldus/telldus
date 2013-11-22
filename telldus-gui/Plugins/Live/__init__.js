@@ -97,6 +97,9 @@ com.telldus.live = function() {
 
 	function registrationLinkVisible(visibleParam){
 		configUI.findChild('registrationLink').visible = visibleParam;
+		if (com.telldus.sensors) {
+			com.telldus.sensors.showLiveOptions(!visibleParam);
+		}
 	}
 
 	function sendDevicesReport() {
