@@ -1,13 +1,16 @@
 #include <unistd.h>
+#include <signal.h>
 #include <stdio.h>
 #include <telldus-core.h>
+
+bool running;
 
 class Events {
 public:
 	Events();
 	~Events();
 	void deviceEvent(int deviceId, int method, const char *data);
-	
+
 	static void deviceEventCallback(int deviceId, int method, const char *data, int callbackId, void *context);
 
 private:
@@ -43,15 +46,30 @@ void Events::deviceEventCallback(int deviceId, int method, const char *data, int
 	}
 }
 
+void signalHandler(int sig) {
+	if (sig == SIGINT) {
+		printf("Shutting down\n");
+		running = false;
+	}
+}
+
+void run() {
+	Events ev;
+
+	running = true;
+
+	printf("Listening for events, press control-c to quit...\n");
+	//Our own simple eventloop
+	while(running) {
+		sleep(1);
+	}
+}
+
 int main(void) {
 	tdInit();
 
-	Events ev;
-
-	//Our own simple eventloop
-	while(1) {
-		sleep(100);
-	}
+	signal(SIGINT, signalHandler);
+	run();
 
 	tdClose();
 
