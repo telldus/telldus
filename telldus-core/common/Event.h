@@ -42,6 +42,7 @@ namespace TelldusCore {
 		bool isSignaled();
 		void signal();
 		virtual void signal(EventData *eventData);
+		void signal(EventDataRef eventData);
 		EventDataRef takeSignal();
 
 	protected:
