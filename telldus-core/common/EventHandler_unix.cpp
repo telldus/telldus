@@ -4,8 +4,10 @@
 // Copyright: See COPYING file that comes with this distribution
 //
 //
+#include <errno.h>
 #include <pthread.h>
 #include <stdio.h>
+#include <sys/time.h>
 #include <list>
 #include "common/EventHandler.h"
 #include "common/Event.h"
@@ -20,6 +22,7 @@ public:
 	pthread_mutex_t mutex;
 	std::list<EventRef> eventList;
 	TelldusCore::Mutex listMutex;
+	bool isSignalled;
 };
 
 EventHandler::EventHandler() {
@@ -27,6 +30,7 @@ EventHandler::EventHandler() {
 	pthread_cond_init(&d->event, NULL);
 	pthread_cond_init(&d->event, NULL);
 	pthread_mutex_init(&d->mutex, NULL);
+	d->isSignalled = false;
 }
 
 EventHandler::~EventHandler(void) {
@@ -49,6 +53,10 @@ EventRef EventHandler::addEvent() {
 	return event;
 }
 
+bool EventHandler::isSignalled() {
+	return d->isSignalled;
+}
+
 bool EventHandler::listIsSignalled() {
 	TelldusCore::MutexLocker locker(&d->listMutex);
 
@@ -63,6 +71,7 @@ bool EventHandler::listIsSignalled() {
 
 void EventHandler::signal(Event *event) {
 	pthread_mutex_lock(&d->mutex);
+	d->isSignalled = true;
 	// event->setSignaled();
 	pthread_cond_signal(&d->event);
 	pthread_mutex_unlock(&d->mutex);
@@ -70,12 +79,22 @@ void EventHandler::signal(Event *event) {
 
 bool EventHandler::waitForAny() {
 	pthread_mutex_lock(&d->mutex);
-	while(!listIsSignalled()) {
-		pthread_cond_wait(&d->event, &d->mutex);
+	int ret;
+	while(!isSignalled()) {
+		timeval now;
+		gettimeofday(&now, NULL);
+		long int abstime_ns_large = now.tv_usec*1000 + 60000000000; //add 60 seconds wait (5 seconds before)?
+		timespec abstime = { now.tv_sec + (abstime_ns_large / 1000000000), abstime_ns_large % 1000000000 };
+		ret = pthread_cond_timedwait(&d->event, &d->mutex, &abstime);
+		if (ret == ETIMEDOUT){
+			continue;
+		}
+	}
+	if(!listIsSignalled()){
+		d->isSignalled = false;
 	}
 	pthread_mutex_unlock(&d->mutex);
-
-	return true;
+	return listIsSignalled();
 }
 
 }  // namespace TelldusCore

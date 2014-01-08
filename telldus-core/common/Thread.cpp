@@ -55,7 +55,9 @@ void Thread::startAndLock(Mutex *lock) {
 	d->threadStarted = handler.addEvent();
 	d->mutex = lock;
 	this->start();
-	handler.waitForAny();
+	while (!handler.waitForAny()) {
+		continue;
+	}
 	d->threadStarted.reset();
 }
 

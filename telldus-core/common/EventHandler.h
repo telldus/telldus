@@ -27,7 +27,9 @@ namespace TelldusCore {
 		class PrivateData;
 		PrivateData *d;
 		bool listIsSignalled();
-
+#ifndef _WINDOWS
+		bool isSignalled();
+#endif
 		friend class Event;
 	};
 }
