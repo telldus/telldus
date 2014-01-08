@@ -33,7 +33,6 @@ TDEventDispatcher::TDEventDispatcher(int id, void *func, void *context)
 }
 
 TDEventDispatcher::~TDEventDispatcher() {
-	printf("Stopping dispatcher\n");
 	d->stopEvent->signal();
 	this->wait();
 	delete d;
