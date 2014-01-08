@@ -21,7 +21,7 @@ public:
 	void *func, *context;
 };
 
-TDEventDispatcher::TDEventDispatcher(int id, void *func, void *context) //EventDataRef cbd, CallbackStruct *cb, EventRef cbDone)
+TDEventDispatcher::TDEventDispatcher(int id, void *func, void *context)
 	:Thread() {
 	d = new PrivateData;
 	d->stopEvent = d->eventHandler.addEvent();
