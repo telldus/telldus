@@ -47,11 +47,8 @@ void TDEventDispatcher::queue(EventDataRef eventData) {
 }
 
 void TDEventDispatcher::run() {
-	while (true) {
+	while (!d->stopEvent->isSignaled()) {
 		d->eventHandler.waitForAny();
-		if (d->stopEvent->isSignaled()) {
-			break;
-		}
 		if (d->callbackEvent->isSignaled()) {
 			TelldusCore::EventDataRef eventData = d->callbackEvent->takeSignal();
 			this->execute(eventData);
