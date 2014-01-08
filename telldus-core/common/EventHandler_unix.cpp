@@ -53,10 +53,6 @@ EventRef EventHandler::addEvent() {
 	return event;
 }
 
-bool EventHandler::isSignalled() {
-	return d->isSignalled;
-}
-
 bool EventHandler::listIsSignalled() {
 	TelldusCore::MutexLocker locker(&d->listMutex);
 
@@ -80,17 +76,17 @@ void EventHandler::signal(Event *event) {
 bool EventHandler::waitForAny() {
 	pthread_mutex_lock(&d->mutex);
 	int ret;
-	while(!isSignalled()) {
+	while (!d->isSignalled) {
 		timeval now;
 		gettimeofday(&now, NULL);
-		long int abstime_ns_large = now.tv_usec*1000 + 60000000000; //add 60 seconds wait (5 seconds before)?
+		uint64_t abstime_ns_large = now.tv_usec*1000 + 60000000000;  // add 60 seconds wait (5 seconds before)?
 		timespec abstime = { now.tv_sec + (abstime_ns_large / 1000000000), abstime_ns_large % 1000000000 };
 		ret = pthread_cond_timedwait(&d->event, &d->mutex, &abstime);
-		if (ret == ETIMEDOUT){
+		if (ret == ETIMEDOUT) {
 			continue;
 		}
 	}
-	if(!listIsSignalled()){
+	if (!listIsSignalled()) {
 		d->isSignalled = false;
 	}
 	pthread_mutex_unlock(&d->mutex);

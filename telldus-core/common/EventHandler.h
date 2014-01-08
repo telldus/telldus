@@ -7,6 +7,11 @@
 #ifndef TELLDUS_CORE_COMMON_EVENTHANDLER_H_
 #define TELLDUS_CORE_COMMON_EVENTHANDLER_H_
 
+#ifdef _MSC_VER
+typedef unsigned __int64 uint64_t;
+#else
+#include <stdint.h>
+#endif
 #include "common/Event.h"
 
 namespace TelldusCore {
@@ -27,9 +32,6 @@ namespace TelldusCore {
 		class PrivateData;
 		PrivateData *d;
 		bool listIsSignalled();
-#ifndef _WINDOWS
-		bool isSignalled();
-#endif
 		friend class Event;
 	};
 }
