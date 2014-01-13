@@ -25,6 +25,9 @@ std::string ProtocolOregon::decodeData(const ControllerMessage &dataMsg) {
 		return decode1984(data, model);
 	} else if (model.compare(L"0x2914") == 0) {
 		return decode2914(data);
+	} else if (model.compare(L"0xC844") == 0 || model.compare(L"0xEC40") == 0) {
+		// C844 - pool thermometer
+		return decodeC844(data, model);
 	}
 
 	return "";
@@ -295,5 +298,50 @@ std::string ProtocolOregon::decodeF824(const std::string &data) {
 		<< ";temp:" << std::fixed << std::setprecision(1) << temperature
 		<< ";humidity:" << humidity << ";";
 
+	return retString.str();
+}
+
+std::string ProtocolOregon::decodeC844(const std::string &data, const std::wstring &model) {
+	uint64_t value = TelldusCore::hexTo64l(data);
+
+	uint8_t messageChecksum1 = value & 0xF;
+	value >>= 4;
+	uint8_t messageChecksum2 = value & 0xF;
+	value >>= 4;
+	uint8_t neg = value & 0xF;
+	value >>= 4;
+	uint8_t temp1 = value & 0xF;
+	value >>= 4;
+	uint8_t temp2 = value & 0xF;
+	value >>= 4;
+	uint8_t temp3 = value & 0xF;
+	value >>= 4;
+	uint8_t battery = value & 0xF;  // PROBABLY battery
+	value >>= 4;
+	uint8_t rollingcode = ((value >> 4) & 0xF) + (value & 0xF);
+	uint8_t checksum = ((value >> 4) & 0xF) + (value & 0xF);
+	value >>= 8;
+	uint8_t channel = value & 0xF;
+	checksum += neg + temp1 + temp2 + temp3 + battery + channel;
+
+	if (model.compare(L"0xC844") == 0) {
+		checksum += 0xC + 0x8 + 0x4 + 0x4;
+	} else {
+		checksum += 0xE + 0xC + 0x4 + 0x0;
+	}
+
+	if (((checksum >> 4) & 0xF) != messageChecksum1 || (checksum & 0xF) != messageChecksum2) {
+		// checksum error
+		return "";
+	}
+
+	double temperature = ((temp1 * 100) + (temp2 * 10) + temp3)/10.0;
+	if (neg) {
+		temperature = -temperature;
+	}
+
+	std::stringstream retString;
+	retString << "class:sensor;protocol:oregon;model:C844;id:" << static_cast<int>(rollingcode)
+		<< ";temp:" << std::fixed << std::setprecision(1) << temperature << ";";
 	return retString.str();
 }
