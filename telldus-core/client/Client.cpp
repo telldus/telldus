@@ -33,7 +33,6 @@ Client::Client()
 	d->running = true;
 	d->sensorCached = false;
 	d->controllerCached = false;
-	d->callbackMainDispatcher.start();
 	start();
 }
 
@@ -105,20 +104,20 @@ void Client::run() {
 				data->deviceId = Message::takeInt(&clientMessage);
 				data->changeEvent = Message::takeInt(&clientMessage);
 				data->changeType = Message::takeInt(&clientMessage);
-				d->callbackMainDispatcher.retrieveCallbackEvent()->signal(data);
+				d->callbackMainDispatcher.execute(CallbackStruct::DeviceChangeEvent, data);
 
 			} else if(type == L"TDDeviceEvent") {
 				DeviceEventCallbackData *data = new DeviceEventCallbackData();
 				data->deviceId = Message::takeInt(&clientMessage);
 				data->deviceState = Message::takeInt(&clientMessage);
 				data->deviceStateValue = TelldusCore::wideToString(Message::takeString(&clientMessage));
-				d->callbackMainDispatcher.retrieveCallbackEvent()->signal(data);
+				d->callbackMainDispatcher.execute(CallbackStruct::DeviceEvent, data);
 
 			} else if(type == L"TDRawDeviceEvent") {
 				RawDeviceEventCallbackData *data = new RawDeviceEventCallbackData();
 				data->data = TelldusCore::wideToString(Message::takeString(&clientMessage));
 				data->controllerId = Message::takeInt(&clientMessage);
-				d->callbackMainDispatcher.retrieveCallbackEvent()->signal(data);
+				d->callbackMainDispatcher.execute(CallbackStruct::RawDeviceEvent, data);
 
 			} else if(type == L"TDSensorEvent") {
 				SensorEventCallbackData *data = new SensorEventCallbackData();
@@ -128,7 +127,7 @@ void Client::run() {
 				data->dataType = Message::takeInt(&clientMessage);
 				data->value = TelldusCore::wideToString(Message::takeString(&clientMessage));
 				data->timestamp = Message::takeInt(&clientMessage);
-				d->callbackMainDispatcher.retrieveCallbackEvent()->signal(data);
+				d->callbackMainDispatcher.execute(CallbackStruct::SensorEvent, data);
 
 			} else if(type == L"TDControllerEvent") {
 				ControllerEventCallbackData *data = new ControllerEventCallbackData();
@@ -136,7 +135,7 @@ void Client::run() {
 				data->changeEvent = Message::takeInt(&clientMessage);
 				data->changeType = Message::takeInt(&clientMessage);
 				data->newValue = TelldusCore::wideToString(Message::takeString(&clientMessage));
-				d->callbackMainDispatcher.retrieveCallbackEvent()->signal(data);
+				d->callbackMainDispatcher.execute(CallbackStruct::ControllerEvent, data);
 
 			} else {
 				clientMessage = L"";  // cleanup, if message contained garbage/unhandled data

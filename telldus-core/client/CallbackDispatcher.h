@@ -19,12 +19,6 @@
 
 namespace TelldusCore {
 
-	/*template <typename T> struct CallbackStruct {
-		T event;
-		int id;
-		void *context;
-		TelldusCore::Mutex mutex;
-	};*/
 	struct CallbackStruct {
 		enum CallbackType { DeviceEvent, DeviceChangeEvent, RawDeviceEvent, SensorEvent, ControllerEvent };
 		CallbackType type;
@@ -33,9 +27,6 @@ namespace TelldusCore {
 		void *context;
 		TelldusCore::Mutex mutex;
 	};
-	/*typedef CallbackStruct<TDDeviceChangeEvent> DeviceChangeEvent;
-	typedef CallbackStruct<TDRawDeviceEvent> RawDeviceEvent;
-	typedef CallbackStruct<TDSensorEvent> SensorEvent;*/
 
 	class CallbackData: public EventDataBase {
 	public:
@@ -86,17 +77,52 @@ namespace TelldusCore {
 
 	class TDEventDispatcher : public Thread {
 	public:
-		TDEventDispatcher(EventDataRef callbackData, CallbackStruct *callback, TelldusCore::EventRef cbDone);
+		TDEventDispatcher(int id, void *func, void *context);
 		virtual ~TDEventDispatcher();
-		bool done() const;
+		int id() const;
+		void queue(EventDataRef eventData);
+		virtual CallbackStruct::CallbackType type() = 0;
 	protected:
+		class PrivateData;
+		PrivateData *d;
+
 		virtual void run();
-		bool doneRunning;
-	private:
-		void fireEvent();
-		EventDataRef callbackData;
-		CallbackStruct *callback;
-		EventRef callbackExecuted;
+		virtual void execute(EventDataRef eventData) = 0;
+	};
+	class TDDeviceEventDispatcher : public TDEventDispatcher {
+	public:
+		TDDeviceEventDispatcher(int id, void *func, void *context);
+		virtual CallbackStruct::CallbackType type();
+	protected:
+		virtual void execute(EventDataRef eventData);
+	};
+	class TDDeviceChangeEventDispatcher : public TDEventDispatcher {
+	public:
+		TDDeviceChangeEventDispatcher(int id, void *func, void *context);
+		virtual CallbackStruct::CallbackType type();
+	protected:
+		virtual void execute(EventDataRef eventData);
+	};
+	class TDRawDeviceEventDispatcher : public TDEventDispatcher {
+	public:
+		TDRawDeviceEventDispatcher(int id, void *func, void *context);
+		virtual CallbackStruct::CallbackType type();
+	protected:
+		virtual void execute(EventDataRef eventData);
+	};
+	class TDSensorEventDispatcher : public TDEventDispatcher {
+	public:
+		TDSensorEventDispatcher(int id, void *func, void *context);
+		virtual CallbackStruct::CallbackType type();
+	protected:
+		virtual void execute(EventDataRef eventData);
+	};
+	class TDControllerEventDispatcher : public TDEventDispatcher {
+	public:
+		TDControllerEventDispatcher(int id, void *func, void *context);
+		virtual CallbackStruct::CallbackType type();
+	protected:
+		virtual void execute(EventDataRef eventData);
 	};
 }
 

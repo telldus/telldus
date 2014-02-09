@@ -61,9 +61,13 @@ void EventBase::signal() {
 }
 
 void EventBase::signal(EventData *eventData) {
+	this->signal(EventDataRef(eventData));
+}
+
+void EventBase::signal(EventDataRef eventData) {
 	{
 		TelldusCore::MutexLocker locker(&d->mutex);
-		d->eventDataList.push_back(EventDataRef(eventData));
+		d->eventDataList.push_back(eventData);
 	}
 	sendSignal();
 }
