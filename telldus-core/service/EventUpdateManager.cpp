@@ -226,7 +226,7 @@ void EventUpdateManager::executeScripts(EventUpdateData *data) {
 		newEnv[i] = new char[env.at(i).length()+1];
 		snprintf(newEnv[i], env.at(i).length()+1, "%s", env.at(i).c_str());
 	}
-	newEnv[env.size()] = 0;  // Mark end of array
+	newEnv[env.size()] = NULL;  // Mark end of array
 
 	for(StringList::iterator it = d->fileList[dir].begin(); it != d->fileList[dir].end(); ++it) {
 		executeScript(TelldusCore::formatf("%s/%s/%s", SCRIPT_PATH, dir.c_str(), (*it).c_str()), (*it), newEnv);
@@ -249,7 +249,7 @@ void EventUpdateManager::executeScript(std::string script, const std::string &na
 	if (pid == 0) {
 		char *n = new char[name.length()+1];
 		snprintf(n, name.length()+1, "%s", name.c_str());
-		static char * argv[] = { n };
+		static char * argv[] = { n, NULL };
 		execve(script.c_str(), argv, env);
 		delete[] n;
 		Log::error("Could not execute %s (%i): %s", script.c_str(), errno, strerror(errno));
