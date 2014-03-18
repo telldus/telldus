@@ -38,7 +38,7 @@ public:
 
 Socket::Socket() {
 	d = new PrivateData;
-	d->socket = 0;
+	d->socket = -1;
 	d->connected = false;
 	FD_ZERO(&d->infds);
 }
@@ -51,7 +51,7 @@ Socket::Socket(SOCKET_T socket) {
 }
 
 Socket::~Socket(void) {
-	if(d->socket) {
+	if(d->socket >= 0) {
 		close(d->socket);
 	}
 	delete d;
@@ -61,8 +61,10 @@ void Socket::connect(const std::wstring &server) {
 	struct sockaddr_un remote;
 	socklen_t len;
 
-	if ((d->socket = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0)) == -1) {
-		return;
+	if (d->socket == -1) {
+		if ((d->socket = socket(AF_UNIX, SOCK_STREAM | SOCK_CLOEXEC, 0)) == -1) {
+			return;
+		}
 	}
 #if defined(_MACOSX)
 	int op = fcntl(d->socket, F_GETFD);
