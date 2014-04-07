@@ -45,6 +45,15 @@ SET(BUILD_TDADMIN	${TDADMIN_DEFAULT}	CACHE BOOL "Build tdadmin")
 SET(GENERATE_DOXYGEN	FALSE	CACHE	BOOL "Enable generation of doxygen")
 SET(GENERATE_MAN	FALSE	CACHE	BOOL "Enable generation of man-files")
 
+
+IF (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+	SET(MAN_DIR_DEFAULT "man")
+ELSE()
+	SET(MAN_DIR_DEFAULT "share/man")
+ENDIF()
+SET(MAN_DIR ${MAN_DIR_DEFAULT} CACHE PATH "The directory where man pages are located (related to ${CMAKE_INSTALL_PREFIX})")
+
+
 ADD_SUBDIRECTORY(common)
 ADD_SUBDIRECTORY(service)
 ADD_SUBDIRECTORY(client)
