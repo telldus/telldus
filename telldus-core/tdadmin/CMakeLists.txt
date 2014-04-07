@@ -58,7 +58,7 @@ ENDIF (UNIX)
 
 INSTALL(TARGETS tdadmin RUNTIME DESTINATION sbin)
 
-IF (UNIX AND NOT APPLE)
+IF (UNIX AND NOT APPLE AND NOT CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
 	SET(UDEV_RULES_DIR	"/etc/udev/rules.d" CACHE PATH "The directory where udev store its rules" )
 	CONFIGURE_FILE(
 		${CMAKE_CURRENT_SOURCE_DIR}/05-tellstick.rules
@@ -76,4 +76,14 @@ IF (UNIX AND NOT APPLE)
 	INSTALL(PROGRAMS ${CMAKE_BINARY_DIR}/parsed/udev.sh
 		DESTINATION share/telldus-core/helpers/
 	)
-ENDIF (UNIX AND NOT APPLE)
+ELSEIF (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
+	SET(UDEV_RULES_DIR	"/usr/local/etc/devd/" CACHE PATH "The directory where devd store its rules" )
+	CONFIGURE_FILE(
+		${CMAKE_CURRENT_SOURCE_DIR}/freebsd-devd-tellstick.conf
+		${CMAKE_BINARY_DIR}/parsed/tellstick.conf
+		@ONLY
+	)
+	INSTALL(FILES ${CMAKE_BINARY_DIR}/parsed/tellstick.conf
+		DESTINATION ${UDEV_RULES_DIR}
+	)
+ENDIF ()
