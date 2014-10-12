@@ -746,6 +746,7 @@ static PyMethodDef telldus_methods[] = {
 	{NULL, NULL, 0, NULL}   /* sentinel */
 };
 
+#if PY_MAJOR_VERSION >= 3
 static struct PyModuleDef telldus_moduledef = {
         PyModuleDef_HEAD_INIT,
         "telldus",
@@ -760,6 +761,11 @@ static struct PyModuleDef telldus_moduledef = {
 
 PyObject *
 PyInit_telldus(void) {
+#else
+void
+inittelldus(void)
+{
+#endif
 	PyObject *module;
 	
 	PyObject *TELLSTICK_TURNON_GLUE;
@@ -782,7 +788,11 @@ PyInit_telldus(void) {
 		
 	/* Create the module and add the functions */
 	
+#if PY_MAJOR_VERSION >= 3
 	module = PyModule_Create(&telldus_moduledef);
+#else
+	module = Py_InitModule("telldus", telldus_methods);
+#endif
 	
 	TELLSTICK_TURNON_GLUE = PyLong_FromLong((long) TELLSTICK_TURNON);
 	PyObject_SetAttrString(module, "TELLSTICK_TURNON", TELLSTICK_TURNON_GLUE);
@@ -852,6 +862,8 @@ PyInit_telldus(void) {
 	PyObject_SetAttrString(module, "TELLSTICK_HUMIDITY", TELLSTICK_HUMIDITY_GLUE);
 	Py_DECREF(TELLSTICK_HUMIDITY_GLUE);
 
+#if PY_MAJOR_VERSION >= 3
     PyEval_InitThreads();
     return module;
+#endif
 }
