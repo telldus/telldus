@@ -64,7 +64,18 @@ ELSEIF (CMAKE_SYSTEM_NAME MATCHES "FreeBSD")
 	)
 
 	# FreeBSD 10 has iconv built in to libc
-	IF(FREEBSD_RELEASE LESS 10)
+	# However, if user has libiconv package installed, clang will find that header first,
+	# and we'd get a link error. This fix will at least let it build; we cannot
+	# force the user to NOT have libiconv installed.
+	#
+	# "proper" fix would be to force clang/gcc to use system header. How?
+	IF( (FREEBSD_RELEASE LESS 10) OR (EXISTS "/usr/local/include/iconv.h"))
+		IF(NOT (FREEBSD_RELEASE LESS 10))
+			# Note that building the freebsd port with this may or may not fail,
+			# as the port does not define a dependency on libiconv package.
+			# When building with poudriere, this is not an issue since it will not be installed.
+			MESSAGE(WARNING "building with libiconv from package instead of base")
+		ENDIF()
 		FIND_LIBRARY(ICONV_LIBRARY iconv)
 		LIST(APPEND telldus-common_LIBRARIES
 			${ICONV_LIBRARY}
