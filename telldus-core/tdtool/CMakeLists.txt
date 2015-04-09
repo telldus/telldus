@@ -13,6 +13,7 @@ SET(tdtool_SRCS
 ADD_EXECUTABLE(tdtool
 	${tdtool_SRCS}
 )
+ADD_DEPENDENCIES(tdtool ${telldus-core_TARGET})
 SIGN(tdtool)
 
 INCLUDE_DIRECTORIES(
