@@ -1,5 +1,9 @@
 import sys
-from distutils.core import setup, Extension
+
+# Swapped distutils for setuptools as it supports "VC for Python27" special edition compiler
+#from distutils.core import setup, Extension
+from setuptools.extension import Extension
+from setuptools import setup
 
 DEBUG = True
 
@@ -8,25 +12,25 @@ PLATFORM_IS_WINDOWS = sys.platform.lower().startswith('win')
 if PLATFORM_IS_WINDOWS:
 
 	__doc__="""This is a distutils setup-script for the telldus extension
-	
+
 	To build the telldus extensions, simply execute:
 	  python setup.py -q build
 	or
 	  python setup.py -q install
 	to build and install into your current Python installation.
-	
+
 	These extensions require a number of libraries to build, some of which may
 	require you to install special SDKs or toolkits.  This script will attempt
-	to build as many as it can, and at the end of the build will report any 
+	to build as many as it can, and at the end of the build will report any
 	extension modules that could not be built and why.
-	
+
 	This has got complicated due to the various different versions of
 	Visual Studio used - some VS versions are not compatible with some SDK
 	versions.  Below are the Windows SDK versions required (and the URL - although
 	these are subject to being changed by MS at any time:)
-	
-	Python 2.6+:    
-	
+
+	Python 2.6+:
+
 		Build using Microsoft Visual Studio 2008 Express Edition:
 			http://www.microsoft.com/en-us/download/details.aspx?id=6506
 			http://jenshuebel.wordpress.com/2009/02/12/visual-c-2008-express-edition-and-64-bit-targets/
@@ -37,51 +41,51 @@ if PLATFORM_IS_WINDOWS:
 			http://www.microsoft.com/downloads/en/details.aspx?FamilyID=6b6c21d2-2006-4afa-9702-529fa782d63b
 			Copy C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\vcvars32.bat to
 			C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\vcvarsall.bat
-			
+
 		For 64bit build:
-			Microsoft Windows SDK for Windows 7 and .NET Framework 3.5 SP1 (ISO) GRMSDKX_EN_DVD.iso 
-			http://www.microsoft.com/en-us/download/details.aspx?id=18950     
+			Microsoft Windows SDK for Windows 7 and .NET Framework 3.5 SP1 (ISO) GRMSDKX_EN_DVD.iso
+			http://www.microsoft.com/en-us/download/details.aspx?id=18950
 			Copy C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\vcvars64.bat to
 			C:\Program Files (x86)\Microsoft Visual Studio 9.0\VC\vcvarsall.bat
-			
+
 	Python 2.3->2.5:
-		
+
 		Microsoft Windows Software Development Kit Update for Windows Vista (version 6.0)
 		http://www.microsoft.com/downloads/en/details.aspx?FamilyID=4377f86d-c913-4b5c-b87e-ef72e5b4e065
 		** If you want to build Python 2.3, be sure to install the SDK compilers
 		 too - although we don't use them, this setup option installs some .lib
 		 files we do need.
 		**
-	
+
 	If you multiple SDK versions on a single machine, set the MSSDK environment
 	variable to point at the one you want to use.  Note that using the SDK for
 	a particular platform (eg, Windows 7) doesn't force you to use that OS as your
 	build environment.  If the links above don't work, use google to find them.
-	
+
 	Building:
 	---------
-	
+
 	To install the telldus extension, execute:
 	  python setup.py -q install
-	
+
 	This will install the built extensions into your site-packages directory,
 	create an appropriate .pth file, and should leave everything ready to use.
 	There is no need to modify the registry.
-	
+
 	To build or install debug (_d) versions of these extensions, ensure you have
 	built or installed a debug version of Python itself, then pass the "--debug"
 	flag to the build command - eg:
 	  python setup.py -q build --debug
 	or to build and install a debug version:
 	  python setup.py -q build --debug install
-	
+
 	To build 64bit versions of this:
-	
+
 	* py2.5 and earlier - sorry, I've given up in disgust.  Using VS2003 with
 	  the Vista SDK is just too painful to make work, and VS2005 is not used for
 	  any released versions of Python. See revision 1.69 of this file for the
 	  last version that attempted to support and document this process.
-	
+
 	*  2.6 and later: On a 64bit OS, just build as you would on a 32bit platform.
 	   On a 32bit platform (ie, to cross-compile), you must use VS2008 to
 	   cross-compile Python itself. Note that by default, the 64bit tools are not
@@ -89,13 +93,13 @@ if PLATFORM_IS_WINDOWS:
 	   use:
 		  vcs
 		  setup.py build --plat-name=win-amd64
-	
+
 	   see the distutils cross-compilation documentation for more details.
 	"""
 	# Originally by Thomas Heller, started in 2000 or so.
 	import os
 	import shutil
-	
+
 	is_py3k = sys.version_info > (3,) # get this out of the way early on...
 	# We have special handling for _winreg so our setup3.py script can avoid
 	# using the 'imports' fixer and therefore start much faster...
@@ -103,7 +107,7 @@ if PLATFORM_IS_WINDOWS:
 		import winreg as _winreg
 	else:
 		import _winreg
-		
+
 	try:
 		from distutils import log
 	except ImportError:
@@ -113,25 +117,25 @@ if PLATFORM_IS_WINDOWS:
 			def info(self, msg, *args):
 				print msg % args
 		log = Log()
-		
+
 	try:
 		this_file = __file__
 	except NameError:
 		this_file = sys.argv[0]
-	
+
 	this_file = os.path.abspath(this_file)
 	# We get upset if the cwd is not our source dir, but it is a PITA to
 	# insist people manually CD there first!
 	if os.path.dirname(this_file):
 		os.chdir(os.path.dirname(this_file))
 
-	
+
 	# We need to know the platform SDK dir before we can list the extensions.
 	def find_platform_sdk_dir():
 		# Finding the Platform SDK install dir is a treat. There can be some
 		# dead ends so we only consider the job done if we find the "windows.h"
 		# landmark.
-		landmark = "include\\windows.h"
+		landmark = "include\\10.0.14393.0\\um\\windows.h"
 		# 1. The use might have their current environment setup for the
 		#    SDK, in which case the "MSSdk" env var is set.
 		sdkdir = os.environ.get("MSSdk")
@@ -194,20 +198,21 @@ if PLATFORM_IS_WINDOWS:
 					   "\Windows\CurrentInstallFolder': '%s'" % sdkdir
 			if os.path.isfile(os.path.join(sdkdir, landmark)):
 				return sdkdir
-	
+
 		# 5. Failing this just try a few well-known default install locations.
 		progfiles = os.environ.get("ProgramFiles", r"C:\Program Files")
 		defaultlocs = [
 			os.path.join(progfiles, "Microsoft Platform SDK"),
 			os.path.join(progfiles, "Microsoft SDK"),
+			os.path.join(progfiles, "Windows Kits", "10")
 		]
 		for sdkdir in defaultlocs:
 			if DEBUG:
 				print "PSDK: try default location: '%s'" % sdkdir
 			if os.path.isfile(os.path.join(sdkdir, landmark)):
 				return sdkdir
-	
-	
+
+
 	# Some nasty hacks to prevent most of our extensions using a manifest, as
 	# the manifest - even without a reference to the CRT assembly - is enough
 	# to prevent the extension from loading.  For more details, see
@@ -218,7 +223,7 @@ if PLATFORM_IS_WINDOWS:
 		from distutils.msvc9compiler import MSVCCompiler
 		MSVCCompiler._orig_spawn = MSVCCompiler.spawn
 		MSVCCompiler._orig_link = MSVCCompiler.link
-	
+
 		# We need to override this method for versions where issue7833 *has* landed
 		# (ie, 2.7 and 3.2+)
 		def manifest_get_embed_info(self, target_desc, ld_args):
@@ -237,7 +242,7 @@ if PLATFORM_IS_WINDOWS:
 		# always monkeypatch it in even though it will only be called in 2.7
 		# and 3.2+.
 		MSVCCompiler.manifest_get_embed_info = manifest_get_embed_info
-			
+
 		def monkeypatched_spawn(self, cmd):
 			is_link = cmd[0].endswith("link.exe") or cmd[0].endswith('"link.exe"')
 			is_mt = cmd[0].endswith("mt.exe") or cmd[0].endswith('"mt.exe"')
@@ -268,9 +273,9 @@ if PLATFORM_IS_WINDOWS:
 						mfname = cmd[i][14:]
 						shutil.copyfile(mfname, mfname + ".orig")
 						break
-	
+
 		def monkeypatched_link(self, target_desc, objects, output_filename, *args, **kw):
-			# no manifests for 3.3+ 
+			# no manifests for 3.3+
 			self._want_assembly_kept = sys.version_info < (3,3) and \
 									   (os.path.basename(output_filename).startswith("PyISAPI_loader.dll") or \
 										os.path.basename(output_filename).startswith("perfmondata.dll") or \
@@ -282,7 +287,7 @@ if PLATFORM_IS_WINDOWS:
 				delattr(self, '_want_assembly_kept')
 		MSVCCompiler.spawn = monkeypatched_spawn
 		MSVCCompiler.link = monkeypatched_link
-	
+
 	def find_telldus_dev_dir():
 		landmark = "telldus-core.h"
 		dev_dir = os.environ.get("TELLDUS_DEVDIR")
@@ -311,12 +316,12 @@ if PLATFORM_IS_WINDOWS:
 	telldus_dev_dir = find_telldus_dev_dir()
 	telldus_platform = os.environ.get("TELLDUS_PLATFORM", 'x86_64')
 	telldus_library_dir = os.path.join(telldus_dev_dir, telldus_platform)
-	
+
 	include_dirs = [sdk_include_dir, telldus_dev_dir]
 	library_dirs = [telldus_library_dir]
 	libraries = ['python%i%i' % (sys.version_info[0], sys.version_info[1]) , 'TelldusCore']
 	define_macros = [('_WINDOWS', 1)]
-	
+
 else:
 	include_dirs = ['/usr/include', '/usr/local/include']
 	library_dirs = ['/usr/lib', '/usr/local/lib']
@@ -324,7 +329,7 @@ else:
 	define_macros = []
 
 define_macros.extend([('DATA_LENGTH', 20), ('CALLBACK_LENGTH', 20)])
-	
+
 telldus = Extension(
 	'telldus',
 	include_dirs = include_dirs,
@@ -336,9 +341,9 @@ telldus = Extension(
 
 setup(
 	name = 'telldus',
-	version = '1.0',
+	version = '1.1',
 	description = 'Python bindings for telldus',
-	author='Oyvind Saltvik',
+	author='Oyvind Saltvik, Daniel Nilsson <daniel.timmernabben@gmail.com>',
 	author_email='oyvind.saltvik@gmail.com',
 	url='http://github.com/fivethreeo/telldus/',
 	ext_modules = [telldus]
