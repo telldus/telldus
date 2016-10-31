@@ -341,8 +341,11 @@
  *
  * \subsection sec_ol_pyhon Python
  *
- * There is no native Python support for TellStick yet. To use telldus-core in Python,
+ * To use telldus-core in Python,
  * please have look at the <tt>ctypes</tt> library. It contains <tt>cdll</tt> and
  * <tt>windll</tt> to load any dynamic link libraries.
+ *
+ * There is also a third party library available:
+ * https://github.com/erijo/tellcore-py
  *
  */
