@@ -106,6 +106,8 @@ std::wstring Socket::read(int timeout) {
 		if (response == 0 && timeout > 0) {
 			return L"";
 		} else if (response <= 0) {
+			if(!isConnected())
+				break;
 			FD_SET(d->socket, &d->infds);
 			continue;
 		}
@@ -131,7 +133,10 @@ std::wstring Socket::read(int timeout) {
 void Socket::stopReadWait() {
 	TelldusCore::MutexLocker locker(&d->mutex);
 	d->connected = false;
-	// TODO(stefan): somehow signal the socket here?
+	if(d->socket != -1) {
+		close(d->socket);
+		d->socket = -1;
+	}
 }
 
 void Socket::write(const std::wstring &msg) {
