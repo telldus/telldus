@@ -23,7 +23,7 @@ int ProtocolIkea::methods() const {
 
 std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Controller *) {
 	const char B1[] = {84, 84, 0};
-	const char B0[] = {170, 0};
+	const unsigned char B0[] = {170, 0};
 
 	int intSystem = this->getIntParameter(L"system", 1, 16)-1;
 	int intFadeStyle = TelldusCore::comparei(this->getStringParameter(L"fade", L"true"), L"true");
@@ -86,13 +86,13 @@ std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Co
 			else
 				checksum1++;
 		} else {
-			strChannels.append(B0);
+			strChannels.append(reinterpret_cast<const char *>(B0));
 		}
 	}
 	strReturn.append(strChannels);  // System + Units
 
-	strReturn.append(checksum1 %2 == 0 ? B1 : B0);  // 1st checksum
-	strReturn.append(checksum2 %2 == 0 ? B1 : B0);  // 2nd checksum
+	strReturn.append(checksum1 %2 == 0 ? B1 : reinterpret_cast<const char *>(B0));  // 1st checksum
+	strReturn.append(checksum2 %2 == 0 ? B1 : reinterpret_cast<const char *>(B0));  // 2nd checksum
 
 	int intLevel = 0;
 	if (level <= 12) {
@@ -138,12 +138,12 @@ std::string ProtocolIkea::getStringForMethod(int method, unsigned char level, Co
 			else
 				checksum2++;
 		} else {
-			strReturn.append(B0);
+			strReturn.append(reinterpret_cast<const char *>(B0));
 		}
 	}
 
-	strReturn.append(checksum1 %2 == 0 ? B1 : B0);  // 1st checksum
-	strReturn.append(checksum2 %2 == 0 ? B1 : B0);  // 2nd checksum
+	strReturn += checksum1 %2 == 0 ? B1 : reinterpret_cast<const char *>(B0);  // 1st checksum
+	strReturn += checksum2 %2 == 0 ? B1 : reinterpret_cast<const char *>(B0);  // 2nd checksum
 
 	strReturn.append("+");
 
