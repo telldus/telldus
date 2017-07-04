@@ -19,6 +19,7 @@ class Settings::PrivateData {
 public:
 	cfg_t *cfg;
 	cfg_t *var_cfg;
+	PrivateData(void) : cfg(NULL), var_cfg(NULL) {};
 };
 
 bool readConfig(cfg_t **cfg);
