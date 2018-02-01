@@ -376,6 +376,7 @@ bool readConfig(cfg_t **cfg) {
 
 		CFG_STR(const_cast<char *>("house"), 0, CFGF_NONE),
 		CFG_STR(const_cast<char *>("unit"), 0, CFGF_NONE),
+		CFG_STR(const_cast<char *>("group"), 0, CFGF_NONE),
 		CFG_STR(const_cast<char *>("code"), 0, CFGF_NONE),
 		CFG_STR(const_cast<char *>("system"), 0, CFGF_NONE),
 		CFG_STR(const_cast<char *>("units"), 0, CFGF_NONE),

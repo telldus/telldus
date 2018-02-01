@@ -137,6 +137,7 @@ void DeviceManager::fillDevices() {
 		d->devices[id]->setLastSentCommand(d->set.getDeviceState(id), d->set.getDeviceStateValue(id));
 		d->devices[id]->setParameter(L"house", d->set.getDeviceParameter(id, L"house"));
 		d->devices[id]->setParameter(L"unit", d->set.getDeviceParameter(id, L"unit"));
+		d->devices[id]->setParameter(L"group", d->set.getDeviceParameter(id, L"group"));
 		d->devices[id]->setParameter(L"code", d->set.getDeviceParameter(id, L"code"));
 		d->devices[id]->setParameter(L"units", d->set.getDeviceParameter(id, L"units"));
 		d->devices[id]->setParameter(L"fade", d->set.getDeviceParameter(id, L"fade"));
