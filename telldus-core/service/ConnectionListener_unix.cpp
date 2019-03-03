@@ -13,6 +13,7 @@
 #include <fcntl.h>
 #include <errno.h>
 #include <string>
+#include <cstring> // strcpy
 
 #include "service/ConnectionListener.h"
 #include "common/Socket.h"

@@ -8,6 +8,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <sys/select.h> // POSIX.1-2001
 #include <sys/un.h>
 #include <fcntl.h>
 #include <math.h>
