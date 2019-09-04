@@ -12,6 +12,8 @@
 #include <fcntl.h>
 #include <math.h>
 #include <string>
+#include <sys/select.h>
+#include <unistd.h>
 
 #include "common/Socket.h"
 #include "common/Mutex.h"
