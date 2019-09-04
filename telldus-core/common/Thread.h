@@ -12,6 +12,9 @@
 #ifndef TELLDUS_CORE_COMMON_THREAD_H_
 #define TELLDUS_CORE_COMMON_THREAD_H_
 
+#ifdef __FreeBSD__
+#include <pthread.h>
+#endif
 #include <string>
 #include "common/Mutex.h"
 
