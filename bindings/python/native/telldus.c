@@ -2,6 +2,7 @@
 #include "datetime.h"
 #include <telldus-core.h>
 #include <stdio.h>   	
+#include <bytesobject.h>
 
 /* estrdup.c -- duplicate a string, die if error
 	* 
@@ -216,7 +217,7 @@ telldus_tdLastSentValue(PyObject *self, PyObject *args)
 	value = tdLastSentValue(id);
 	retval = estrdup(value);
 	tdReleaseString(value);
-	return PyString_FromString(retval);
+	return PyBytes_FromString(retval);
 }
 
 static PyObject *
@@ -260,7 +261,7 @@ telldus_tdGetErrorString(PyObject *self, PyObject *args)
 	errorString = tdGetErrorString(errorno);
 	retval = estrdup(errorString);
 	tdReleaseString(errorString);
-	return PyString_FromString(retval);
+	return PyBytes_FromString(retval);
 }
 
 static PyObject *
@@ -276,7 +277,7 @@ telldus_tdGetName(PyObject *self, PyObject *args)
 	name = tdGetName(id);
 	retval = estrdup(name);
 	tdReleaseString(name);
-	return PyString_FromString(retval);
+	return PyBytes_FromString(retval);
 }
 
 static PyObject *
@@ -304,7 +305,7 @@ telldus_tdGetProtocol(PyObject *self, PyObject *args)
 	protocol = tdGetProtocol(id);
 	retval = estrdup(protocol);
 	tdReleaseString(protocol);
-	return PyString_FromString(retval);
+	return PyBytes_FromString(retval);
 }
 
 static PyObject *
@@ -333,7 +334,7 @@ telldus_tdGetModel(PyObject *self, PyObject *args)
 	model = tdGetModel(id);
 	retval = estrdup(model);
 	tdReleaseString(model);
-	return PyString_FromString(retval);
+	return PyBytes_FromString(retval);
 }
 
 static PyObject *
@@ -364,7 +365,7 @@ telldus_tdGetDeviceParameter(PyObject *self, PyObject *args)
 	param = tdGetDeviceParameter(id, name, defaultValue);
 	retval = estrdup(param);
 	tdReleaseString(param);
-	return PyString_FromString(retval);
+	return PyBytes_FromString(retval);
 }
 
 static PyObject *
@@ -442,13 +443,13 @@ telldus_tdRegisterDeviceEvent(PyObject *self, PyObject *args)
 	PyObject *func;
 
 	if (!PyArg_ParseTuple(args, "O:tdRegisterDeviceEvent", &func)) {
-		PyErr_SetString(PyExc_StandardError, "Parse error!");
+		PyErr_SetString(PyExc_Exception, "Parse error!");
 		return NULL;
 	}
 		
 	if (!PyCallable_Check(func)) {
 		// Error
-		PyErr_SetString(PyExc_StandardError, "The object should be callable!");
+		PyErr_SetString(PyExc_Exception, "The object should be callable!");
 		return NULL;
 	}
 	
@@ -496,13 +497,13 @@ telldus_tdRegisterDeviceChangeEvent(PyObject *self, PyObject *args)
 	PyObject *func;
 
 	if (!PyArg_ParseTuple(args, "O", &func)) {
-		PyErr_SetString(PyExc_StandardError, "Parse error!");
+		PyErr_SetString(PyExc_Exception, "Parse error!");
 		return NULL;
 	}
 		
 	if (!PyCallable_Check(func)) {
 		// Error
-		PyErr_SetString(PyExc_StandardError, "The object should be callable!");
+		PyErr_SetString(PyExc_Exception, "The object should be callable!");
 		return NULL;
 	}
 	
@@ -550,13 +551,13 @@ telldus_tdRegisterRawDeviceEvent(PyObject *self, PyObject *args)
 	PyObject *func;
 
 	if (!PyArg_ParseTuple(args, "O", &func)) {
-		PyErr_SetString(PyExc_StandardError, "Parse error!");
+		PyErr_SetString(PyExc_Exception, "Parse error!");
 		return NULL;
 	}
 		
 	if (!PyCallable_Check(func)) {
 		// Error
-		PyErr_SetString(PyExc_StandardError, "The object should be callable!");
+		PyErr_SetString(PyExc_Exception, "The object should be callable!");
 		return NULL;
 	}
 	
@@ -604,13 +605,13 @@ telldus_tdRegisterSensorEvent(PyObject *self, PyObject *args)
 	PyObject *func;
 
 	if (!PyArg_ParseTuple(args, "O", &func)) {
-		PyErr_SetString(PyExc_StandardError, "Parse error!");
+		PyErr_SetString(PyExc_Exception, "Parse error!");
 		return NULL;
 	}
 		
 	if (!PyCallable_Check(func)) {
 		// Error
-		PyErr_SetString(PyExc_StandardError, "The object should be callable!");
+		PyErr_SetString(PyExc_Exception, "The object should be callable!");
 		return NULL;
 	}
 	
@@ -745,9 +746,26 @@ static PyMethodDef telldus_methods[] = {
 	{NULL, NULL, 0, NULL}   /* sentinel */
 };
 
+#if PY_MAJOR_VERSION >= 3
+static struct PyModuleDef telldus_moduledef = {
+        PyModuleDef_HEAD_INIT,
+        "telldus",
+        NULL,
+        -1,
+        telldus_methods,
+        NULL,
+        NULL,
+        NULL,
+        NULL
+};
+
+PyObject *
+PyInit_telldus(void) {
+#else
 void
 inittelldus(void)
 {
+#endif
 	PyObject *module;
 	
 	PyObject *TELLSTICK_TURNON_GLUE;
@@ -770,7 +788,11 @@ inittelldus(void)
 		
 	/* Create the module and add the functions */
 	
+#if PY_MAJOR_VERSION >= 3
+	module = PyModule_Create(&telldus_moduledef);
+#else
 	module = Py_InitModule("telldus", telldus_methods);
+#endif
 	
 	TELLSTICK_TURNON_GLUE = PyLong_FromLong((long) TELLSTICK_TURNON);
 	PyObject_SetAttrString(module, "TELLSTICK_TURNON", TELLSTICK_TURNON_GLUE);
@@ -840,4 +862,8 @@ inittelldus(void)
 	PyObject_SetAttrString(module, "TELLSTICK_HUMIDITY", TELLSTICK_HUMIDITY_GLUE);
 	Py_DECREF(TELLSTICK_HUMIDITY_GLUE);
 
+#if PY_MAJOR_VERSION >= 3
+    PyEval_InitThreads();
+    return module;
+#endif
 }

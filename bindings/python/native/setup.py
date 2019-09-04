@@ -109,9 +109,9 @@ if PLATFORM_IS_WINDOWS:
 	except ImportError:
 		class Log:
 			def debug(self, msg, *args):
-				print msg % args
+				print(msg % args)
 			def info(self, msg, *args):
-				print msg % args
+				print(msg % args)
 		log = Log()
 		
 	try:
@@ -137,7 +137,7 @@ if PLATFORM_IS_WINDOWS:
 		sdkdir = os.environ.get("MSSdk")
 		if sdkdir:
 			if DEBUG:
-				print "PSDK: try %%MSSdk%%: '%s'" % sdkdir
+				print("PSDK: try %%MSSdk%%: '%s'" % sdkdir)
 			if os.path.isfile(os.path.join(sdkdir, landmark)):
 				return sdkdir
 		# 2. The "Install Dir" value in the
@@ -152,8 +152,8 @@ if PLATFORM_IS_WINDOWS:
 			pass
 		else:
 			if DEBUG:
-				print r"PSDK: try 'HKLM\Software\Microsoft\MicrosoftSDK"\
-					   "\Directories\Install Dir': '%s'" % sdkdir
+				print(r"PSDK: try 'HKLM\Software\Microsoft\MicrosoftSDK"\
+					   "\Directories\Install Dir': '%s'" % sdkdir)
 			if os.path.isfile(os.path.join(sdkdir, landmark)):
 				return sdkdir
 		# 3. Each installed SDK (not just the platform SDK) seems to have GUID
@@ -173,9 +173,9 @@ if PLATFORM_IS_WINDOWS:
 					pass
 				else:
 					if DEBUG:
-						print r"PSDK: try 'HKLM\Software\Microsoft\MicrosoftSDK"\
+						print(r"PSDK: try 'HKLM\Software\Microsoft\MicrosoftSDK"\
 							   "\InstallSDKs\%s\Install Dir': '%s'"\
-							   % (guid, sdkdir)
+							   % (guid, sdkdir))
 					if os.path.isfile(os.path.join(sdkdir, landmark)):
 						return sdkdir
 				i += 1
@@ -190,8 +190,8 @@ if PLATFORM_IS_WINDOWS:
 			pass
 		else:
 			if DEBUG:
-				print r"PSDK: try 'HKLM\Software\Microsoft\MicrosoftSDKs"\
-					   "\Windows\CurrentInstallFolder': '%s'" % sdkdir
+				print(r"PSDK: try 'HKLM\Software\Microsoft\MicrosoftSDKs"\
+					   "\Windows\CurrentInstallFolder': '%s'" % sdkdir)
 			if os.path.isfile(os.path.join(sdkdir, landmark)):
 				return sdkdir
 	
@@ -203,7 +203,7 @@ if PLATFORM_IS_WINDOWS:
 		]
 		for sdkdir in defaultlocs:
 			if DEBUG:
-				print "PSDK: try default location: '%s'" % sdkdir
+				print("PSDK: try default location: '%s'" % sdkdir)
 			if os.path.isfile(os.path.join(sdkdir, landmark)):
 				return sdkdir
 	
@@ -288,7 +288,7 @@ if PLATFORM_IS_WINDOWS:
 		dev_dir = os.environ.get("TELLDUS_DEVDIR")
 		if dev_dir:
 			if DEBUG:
-				print "Telldus dev dir:" % dev_dir
+				print("Telldus dev dir:" % dev_dir)
 			if os.path.isfile(os.path.join(dev_dir, landmark)):
 				return dev_dir
 
@@ -299,11 +299,11 @@ if PLATFORM_IS_WINDOWS:
 		]
 		for dev_dir in defaultlocs:
 			if DEBUG:
-				print "Telldus dev dir: '%s'" % dev_dir
+				print("Telldus dev dir: '%s'" % dev_dir)
 			if os.path.isfile(os.path.join(dev_dir, landmark)):
 				return dev_dir
 		if DEBUG:
-			print "Telldus dev dir not found, make sure dev code is installed. Or set TELLDUS_DEVDIR."
+			print("Telldus dev dir not found, make sure dev code is installed. Or set TELLDUS_DEVDIR.")
 
 	sdk_dir = find_platform_sdk_dir()
 	sdk_include_dir = os.path.join(sdk_dir, 'Include')
