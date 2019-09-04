@@ -53,6 +53,8 @@ SET( telldus-service_protocol_SRCS
 	ProtocolOregon.cpp
 	ProtocolRisingSun.h
 	ProtocolRisingSun.cpp
+	ProtocolRFXCOM.h
+	ProtocolRFXCOM.cpp
 	ProtocolSartano.h
 	ProtocolSartano.cpp
 	ProtocolScene.h
