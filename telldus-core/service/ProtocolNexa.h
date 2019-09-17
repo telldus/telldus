@@ -28,7 +28,7 @@ protected:
 	std::string getStringBell();
 	virtual std::string getOffCode() const;
 	static std::string getCodeSwitchTuple(int code);
-	static std::string getStringSelflearningForCode(int house, int unit, int method, unsigned char data);
+	static std::string getStringSelflearningForCode(int house, int unit, int group, int method, unsigned char data);
 
 private:
 	static int lastArctecCodeSwitchWasTurnOff;

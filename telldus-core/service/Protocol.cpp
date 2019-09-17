@@ -154,6 +154,7 @@ std::list<std::string> Protocol::getParametersForProtocol(const std::wstring &pr
 	if(TelldusCore::comparei(protocolName, L"arctech")) {
 		parameters.push_back("house");
 		parameters.push_back("unit");
+		parameters.push_back("group");
 
 	} else if (TelldusCore::comparei(protocolName, L"brateck")) {
 		parameters.push_back("house");

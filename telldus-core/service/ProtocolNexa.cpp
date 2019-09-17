@@ -99,10 +99,11 @@ std::string ProtocolNexa::getStringBell() {
 std::string ProtocolNexa::getStringSelflearning(int method, unsigned char level) {
 	int intHouse = getIntParameter(L"house", 1, 67108863);
 	int intCode = getIntParameter(L"unit", 1, 16)-1;
-	return getStringSelflearningForCode(intHouse, intCode, method, level);
+	int intGroup = getIntParameter(L"group", 0, 1);
+	return getStringSelflearningForCode(intHouse, intCode, intGroup, method, level);
 }
 
-std::string ProtocolNexa::getStringSelflearningForCode(int intHouse, int intCode, int method, unsigned char level) {
+std::string ProtocolNexa::getStringSelflearningForCode(int intHouse, int intCode, int intGroup, int method, unsigned char level) {
 	const unsigned char START[] = {'T', 127, 255, 24, 1, 0};
 	// const char START[] = {'T',130,255,26,24,0};
 
@@ -113,7 +114,9 @@ std::string ProtocolNexa::getStringSelflearningForCode(int intHouse, int intCode
 	for (int i = 25; i >= 0; --i) {
 		m.append( intHouse & 1 << i ? "10" : "01" );
 	}
-	m.append("01");  // Group
+
+  // Group
+	m.append( intGroup == 1 ? "10" : "01" );
 
 	// On/off
 	if (method == TELLSTICK_DIM) {
