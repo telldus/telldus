@@ -437,6 +437,14 @@ bool readVarConfig(cfg_t **cfg) {
 
 	FILE *fp = fopen(VAR_CONFIG_FILE, "re");  // e for setting O_CLOEXEC on the file handle
 	if (!fp) {
+		(*cfg) = 0;
+		fp = fopen(VAR_CONFIG_FILE, "we"); // If missing, create file if possible
+		if(fp) {
+			fclose(fp);
+		}
+		else {
+			Log::warning("Unable to create var config file, %s", VAR_CONFIG_FILE);
+		}
 		Log::warning("Unable to open var config file, %s", VAR_CONFIG_FILE);
 		return false;
 	}
