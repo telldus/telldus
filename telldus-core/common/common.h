@@ -25,15 +25,13 @@
 #ifdef _WINDOWS
 #include <fstream>  // NOLINT(readability/streams)
 #endif
+#include <chrono>
 #include <string>
+#include <thread>
 #include "common/Strings.h"
 
 inline void msleep( const int msec) {
-#ifdef _WINDOWS
-	Sleep(msec);
-#else
-	usleep(msec*1000);
-#endif
+	std::this_thread::sleep_for(std::chrono::milliseconds(msec));
 }
 
 inline void dlog(const char *fmt, ...) {

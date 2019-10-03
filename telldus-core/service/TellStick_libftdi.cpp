@@ -8,7 +8,6 @@
 #include <string.h>
 #include <stdlib.h>
 #include <stdio.h>
-#include <unistd.h>
 #include <list>
 #include <string>
 
@@ -231,7 +230,7 @@ int TellStick::send( const std::string &strMessage ) {
 				return TELLSTICK_SUCCESS;
 			}
 		} else if(ret == 0) {  // No data available
-			usleep(100);
+			std::this_thread::sleep_for(std::chrono::microseconds(100));
 		} else {  // Error
 			Log::debug("Broken pipe on read");
 			return TELLSTICK_ERROR_BROKEN_PIPE;
