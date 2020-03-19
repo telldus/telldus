@@ -1,9 +1,14 @@
 #!/usr/bin/env python
 # -*- coding: utf-8 -*-
 
-import sys, getopt, httplib, urllib, json, os
-import oauth.oauth as oauth
+import sys
+import getopt
+import os
+import json
+import requests
+from requests_oauthlib import OAuth1 as oauth
 from configobj import ConfigObj
+from urllib.parse import parse_qs
 
 PUBLIC_KEY = ''
 PRIVATE_KEY = ''
@@ -83,7 +88,7 @@ def listDevices():
 		else:
 			state = 'Unknown state'
 
-		print("%s\t%s\t%s" % (device['id'], device['name'], state));
+		print("%s\t%s\t%s" % (device['id'], device['name'], state))
 
 def doMethod(deviceId, methodId, methodValue = 0):
 	response = doRequest('device/info', {'id': deviceId})
@@ -120,55 +125,37 @@ def doMethod(deviceId, methodId, methodValue = 0):
 
 def doRequest(method, params):
 	global config
-	consumer = oauth.OAuthConsumer(PUBLIC_KEY, PRIVATE_KEY)
-	token = oauth.OAuthToken(config['token'], config['tokenSecret'])
-
-	oauth_request = oauth.OAuthRequest.from_consumer_and_token(consumer, token=token, http_method='GET', http_url="http://api.telldus.com/json/" + method, parameters=params)
-	oauth_request.sign_request(oauth.OAuthSignatureMethod_HMAC_SHA1(), consumer, token)
-	headers = oauth_request.to_header()
-	headers['Content-Type'] = 'application/x-www-form-urlencoded'
-
-	conn = httplib.HTTPConnection("api.telldus.com:80")
-	conn.request('GET', "/json/" + method + "?" + urllib.urlencode(params, True).replace('+', '%20'), headers=headers)
-
-	response = conn.getresponse()
-	return json.load(response)
+	consumer = oauth(PUBLIC_KEY, client_secret=PRIVATE_KEY, resource_owner_key=config['token'], resource_owner_secret=config['tokenSecret'])
+	response = requests.post(url="http://api.telldus.com/json/" + method, data=params, auth=consumer)
+	return json.loads(response.content.decode('utf-8'))
 
 def requestToken():
 	global config
-	consumer = oauth.OAuthConsumer(PUBLIC_KEY, PRIVATE_KEY)
-	request = oauth.OAuthRequest.from_consumer_and_token(consumer, http_url='http://api.telldus.com/oauth/requestToken')
-	request.sign_request(oauth.OAuthSignatureMethod_HMAC_SHA1(), consumer, None)
-	conn = httplib.HTTPConnection('api.telldus.com:80')
-	conn.request(request.http_method, '/oauth/requestToken', headers=request.to_header())
-
-	resp = conn.getresponse().read()
-	token = oauth.OAuthToken.from_string(resp)
-	print 'Open the following url in your webbrowser:\nhttp://api.telldus.com/oauth/authorize?oauth_token=%s\n' % token.key
-	print 'After logging in and accepting to use this application run:\n%s --authenticate' % (sys.argv[0])
-	config['requestToken'] = str(token.key)
-	config['requestTokenSecret'] = str(token.secret)
+	consumer = oauth(PUBLIC_KEY, client_secret=PRIVATE_KEY, resource_owner_key=None, resource_owner_secret=None)
+	request = requests.post(url='http://api.telldus.com/oauth/requestToken', auth=consumer)
+	credentials = parse_qs(request.content.decode('utf-8'))
+	key = credentials.get('oauth_token')[0]
+	token = credentials.get('oauth_token_secret')[0]
+	print('Open the following url in your webbrowser:\nhttp://api.telldus.com/oauth/authorize?oauth_token=%s\n' % key)
+	print('After logging in and accepting to use this application run:\n%s --authenticate' % (sys.argv[0]))
+	config['requestToken'] = str(key)
+	config['requestTokenSecret'] = str(token)
 	saveConfig()
 
 def getAccessToken():
 	global config
-	consumer = oauth.OAuthConsumer(PUBLIC_KEY, PRIVATE_KEY)
-	token = oauth.OAuthToken(config['requestToken'], config['requestTokenSecret'])
-	request = oauth.OAuthRequest.from_consumer_and_token(consumer, token=token, http_method='GET', http_url='http://api.telldus.com/oauth/accessToken')
-	request.sign_request(oauth.OAuthSignatureMethod_HMAC_SHA1(), consumer, token)
-	conn = httplib.HTTPConnection('api.telldus.com:80')
-	conn.request(request.http_method, request.to_url(), headers=request.to_header())
-
-	resp = conn.getresponse()
-	if resp.status != 200:
-		print 'Error retreiving access token, the server replied:\n%s' % resp.read()
+	consumer = oauth(PUBLIC_KEY, client_secret=PRIVATE_KEY, resource_owner_key=config['requestToken'], resource_owner_secret=config['requestTokenSecret'])
+	request = requests.post(url='http://api.telldus.com/oauth/accessToken', auth=consumer)
+	credentials = parse_qs(request.content.decode('utf-8'))
+	if request.status_code != 200:
+		print('Error retreiving access token, the server replied:\n%s' %request.content)
 		return
-	token = oauth.OAuthToken.from_string(resp.read())
+	token = credentials.get('oauth_token_secret')[0]
 	config['requestToken'] = None
 	config['requestTokenSecret'] = None
-	config['token'] = str(token.key)
-	config['tokenSecret'] = str(token.secret)
-	print 'Authentication successful, you can now use tdtool'
+	config['token'] = str(credentials.get('oauth_token')[0])
+	config['tokenSecret'] = str(token)
+	print('Authentication successful, you can now use tdtool')
 	saveConfig()
 
 def authenticate():
@@ -185,7 +172,7 @@ def authenticate():
 def saveConfig():
 	global config
 	try:
-		os.makedirs(os.environ['HOME'] + '/.config/Telldus')
+		os.makedirs(os.path.expanduser('~') + '/.config/Telldus')
 	except:
 		pass
 	config.write()
@@ -235,5 +222,5 @@ def main(argv):
 			doMethod(arg, TELLSTICK_DOWN)
 
 if __name__ == "__main__":
-	config = ConfigObj(os.environ['HOME'] + '/.config/Telldus/tdtool.conf')
+	config = ConfigObj(os.path.expanduser('~') + '/.config/Telldus/tdtool.conf')
 	main(sys.argv[1:])
