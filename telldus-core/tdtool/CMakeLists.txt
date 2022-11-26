@@ -1,4 +1,6 @@
 PROJECT(tdtool)
+set(CMAKE_C_FLAGS "-pthread")
+set(CMAKE_CXX_FLAGS "-pthread")
 
 cmake_policy(SET CMP0005 NEW)
 

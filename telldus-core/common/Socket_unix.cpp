@@ -8,10 +8,11 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/socket.h>
+#include <sys/select.h>
 #include <sys/un.h>
 #include <fcntl.h>
 #include <math.h>
-#include <string>
+#include <cstring>
 
 #include "common/Socket.h"
 #include "common/Mutex.h"
@@ -130,8 +131,10 @@ std::wstring Socket::read(int timeout) {
 
 void Socket::stopReadWait() {
 	TelldusCore::MutexLocker locker(&d->mutex);
-	d->connected = false;
-	// TODO(stefan): somehow signal the socket here?
+	if(d->connected && d->socket != -1) {
+		d->connected = false;
+		shutdown(d->socket, SHUT_RDWR);
+    }
 }
 
 void Socket::write(const std::wstring &msg) {
