@@ -16,6 +16,7 @@
 #else
 #include <unistd.h>
 #endif
+#include <pthread.h>
 #include <stdarg.h>
 #include <stdio.h>
 #include <stdlib.h>

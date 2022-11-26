@@ -7,9 +7,7 @@
 #ifndef TELLDUS_CORE_SERVICE_SENSOR_H_
 #define TELLDUS_CORE_SERVICE_SENSOR_H_
 
-#ifdef __FreeBSD__
 #include <ctime>
-#endif
 #include <string>
 #include "common/Mutex.h"
 

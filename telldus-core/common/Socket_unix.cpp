@@ -12,7 +12,7 @@
 #include <sys/un.h>
 #include <fcntl.h>
 #include <math.h>
-#include <string>
+#include <cstring>
 
 #include "common/Socket.h"
 #include "common/Mutex.h"
